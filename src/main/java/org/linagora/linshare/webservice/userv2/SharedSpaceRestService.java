@@ -68,7 +68,7 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceMember deleteMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
 
-	SharedSpaceMember updateMember(SharedSpaceMemberDrive member, String memberUuid) throws BusinessException;
+	SharedSpaceMember updateMember(SharedSpaceMemberDrive member, String memberUuid, boolean force) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAll(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate, String nodeUuid);

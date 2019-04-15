@@ -78,4 +78,8 @@ public interface SharedSpaceMemberBusinessService {
 	List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid);
 
 	List<SharedSpaceMember> findAllMembersWithNoConflictedRoles(String accountUuid, String parentUuid, String roleUuid);
+
+	List<SharedSpaceNodeNested> findAllNodesByParent(String parentUuid);
+
+	List<SharedSpaceMember> findAllMembersByParent(String parentUuid);
 }

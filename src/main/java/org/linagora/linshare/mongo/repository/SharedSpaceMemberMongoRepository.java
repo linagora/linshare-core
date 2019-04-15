@@ -57,13 +57,11 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{ 'account.uuid' : ?0, 'role.uuid' : ?1 }")
 	List<SharedSpaceMember> findByAccountAndRole(String accountUuid, String roleUuid);
 
-<<<<<<< HEAD
 	@Query("{ 'node.uuid' : ?0, 'uuid' : ?1 }")
 	SharedSpaceMember findByNodeUuidAndUuid(String nodeUuid, String uuid);
-=======
+
 	@Query("{ 'account.uuid' : ?0, 'node.parent' : ?1,  'nested' : ?2 }")
 	List<SharedSpaceMember> findByAccountUuidAndParentAndNested(String accountUuid, String parentUuid, boolean nested);
->>>>>>> Issue #416 : Implementation CRUD workgroups inside drive
 
 	@Query("{ 'account.uuid' : ?0, 'node.parent' : ?1, 'nested' : ?2, 'role.uuid' : { $ne: ?3 } }")
 	List<SharedSpaceMember> findAllMembersWithConflictRoles(String accountUuid, String parentUuid, boolean nested, String roleUuid);
@@ -71,4 +69,6 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{ 'account.uuid' : ?0, 'node.parent' : ?1, 'nested' : ?2, 'role.uuid' : ?3 }")
 	List<SharedSpaceMember> findAllMembersWithNoConflictedRoles(String accountUuid, String parentUuid, boolean nested, String roleUuid);
 
+	@Query("{ 'node.parent' : ?0, 'nested' : ?1 }")
+	List<SharedSpaceMember> findByParentAndNested(String parentUuid, boolean nested);
 }

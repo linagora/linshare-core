@@ -213,23 +213,29 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-<<<<<<< HEAD
 	public SharedSpaceMember findByNodeAndUuid(String nodeUuid, String uuid) {
 		return repository.findByNodeUuidAndUuid(nodeUuid, uuid);
 	}
 
 	@Override
-	public List<SharedSpaceNodeNested> findAllByParentAndAccount(String parentUuid, String accountUuid) {
-		List<SharedSpaceMember> members = repository.findByAccountUuidAndParentAndNested(accountUuid, parentUuid, true);
-=======
 	public List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid) {
 		return repository.findByAccountUuidAndParentAndNested(accountUuid, parentUuid, true);
 	}
 
 	@Override
+	public List<SharedSpaceMember> findAllMembersByParent(String parentUuid) {
+		return repository.findByParentAndNested(parentUuid, true);
+	}
+
+	@Override
+	public List<SharedSpaceNodeNested> findAllNodesByParent(String parentUuid) {
+		List<SharedSpaceMember> members = findAllMembersByParent(parentUuid);
+		return Lists.transform(members, convertToSharedSpaceNode);
+	}
+
+	@Override
 	public List<SharedSpaceNodeNested> findAllByParentAndAccount(String accountUuid, String parentUuid) {
 		List<SharedSpaceMember> members = findAllMembersByParentAndAccount(accountUuid, parentUuid);
->>>>>>> Issue #430 : Update default workgroup role on the drive
 		return Lists.transform(members, convertToSharedSpaceNode);
 	}
 

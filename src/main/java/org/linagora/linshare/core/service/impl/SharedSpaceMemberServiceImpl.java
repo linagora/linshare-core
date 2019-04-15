@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessServ
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -59,10 +60,12 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -280,7 +283,6 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		} else {
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, "Node type not supported");
 		}
-		SharedSpaceMember updated = businessService.update(foundMemberToUpdate, memberToUpdate);
 		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
 		notify(new WorkGroupWarnUpdatedMemberEmailContext(updated, user, actor));
 		return updated;
@@ -330,7 +332,6 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	protected SharedSpaceMemberAuditLogEntry saveLog(Account authUser, Account actor, LogAction action,
 			SharedSpaceMember resource) {
-		AuditLogEntryType auditType = AuditLogEntryType.fromNodeType(resource.getNode().getNodeType().toString());
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
 				AuditLogEntryType.WORKGROUP_MEMBER, resource);
 		addMembersToLog(resource.getNode().getUuid(), log);
@@ -366,7 +367,12 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		preChecks(authUser, actor);
 		Validate.notEmpty(parentUuid, "ParentUuid must be set");
 		Validate.notEmpty(accountUuid, "AccountUuid must be set");
-		return businessService.findAllByParentAndAccount(accountUuid, parentUuid);
+		if (authUser.getRole().equals(Role.SUPERADMIN)) {
+			return businessService.findAllNodesByParent(parentUuid);
+		} else if (authUser.getRole().equals(Role.SIMPLE)) {
+			return businessService.findAllByParentAndAccount(accountUuid, parentUuid);
+		}
+		throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				"You are not authorized to use this service !!");
 	}
-
 }

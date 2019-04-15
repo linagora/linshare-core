@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
+import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -43,28 +44,28 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.repository.ThreadRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberDriveService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeDriveService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 public class SharedSpaceNodeDriveServiceImpl extends SharedSpaceNodeServiceImpl implements SharedSpaceNodeDriveService {
 
-	public SharedSpaceNodeDriveServiceImpl(
-			SharedSpaceNodeBusinessService businessService,
-			SharedSpaceNodeResourceAccessControl rac, 
-			SharedSpaceMemberBusinessService memberBusinessService,
-			SharedSpaceMemberService memberService, 
-			SharedSpaceRoleService ssRoleService,
-			LogEntryService logEntryService, 
-			ThreadService threadService,
-			SharedSpaceMemberDriveService memberDriveService) {
+	public SharedSpaceNodeDriveServiceImpl(SharedSpaceNodeBusinessService businessService,
+			SharedSpaceNodeResourceAccessControl rac, SharedSpaceMemberBusinessService memberBusinessService,
+			SharedSpaceMemberService memberService, SharedSpaceRoleService ssRoleService,
+			LogEntryService logEntryService, ThreadService threadService, ThreadRepository threadRepository,
+			FunctionalityReadOnlyService functionalityService, AccountQuotaBusinessService accountQuotaBusinessService,
+			WorkGroupNodeService workGroupNodeService, SharedSpaceMemberDriveService memberDriveService) {
 		super(businessService, rac, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
-				memberDriveService);
+				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService);
 	}
 
 	@Override

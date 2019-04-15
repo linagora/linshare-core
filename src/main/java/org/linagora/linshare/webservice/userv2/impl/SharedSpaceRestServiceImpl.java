@@ -256,18 +256,15 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember updateMember(
-			@ApiParam("The shared space member to update.")SharedSpaceMemberDrive member,
+			@ApiParam("The shared space member to update.") SharedSpaceMemberDrive member,
 			@ApiParam("The shared space member uuid")
-				@PathParam(value="memberUuid")String memberUuid)
+				@PathParam(value="memberUuid")String memberUuid,
+			@ApiParam("Parameter to update all nested roles of a member inside the node")
+				@QueryParam("force") @DefaultValue("false") boolean force)
 			throws BusinessException {
-		return memberFacade.update(null, member, memberUuid);
+		return memberFacade.update(null, member, memberUuid, force);
 	}
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> Issue #430 : Update default workgroup role on the drive
 	@Path("/{uuid}/audit")
 	@GET
 	@ApiOperation(value = "Get all traces for a sharedSpace.", response = AuditLogEntryUser.class, responseContainer="Set")
@@ -290,11 +287,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("nodeUuid") String nodeUuid) {
 		return workGroupFacade.findAll(sharedSpaceUuid, actions, types, beginDate, endDate, nodeUuid);
 	}
-<<<<<<< HEAD
-=======
-=======
->>>>>>> improve drive member crud
-=======
+
 	@Path("/{uuid}/workgroups")
 	@GET
 	@ApiOperation(value = "Get workgroups inside this node.", response = SharedSpaceNode.class)
@@ -310,6 +303,4 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		return nodeFacade.findAllWorkGroupsInsideNode(null, uuid);
 	}
 
->>>>>>> Issue #430 : Update default workgroup role on the drive
->>>>>>> Issue #430 : Update default workgroup role on the drive
 }

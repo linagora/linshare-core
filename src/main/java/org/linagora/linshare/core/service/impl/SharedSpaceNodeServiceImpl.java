@@ -102,7 +102,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	
 	protected final WorkGroupNodeService workGroupNodeService;
 
-	private final SharedSpaceMemberDriveService memberDriveService;
+	protected final SharedSpaceMemberDriveService memberDriveService;
 
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
@@ -156,7 +156,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
-		if (!NodeType.WORK_GROUP.equals(node.getNodeType())) {
+		if (!(NodeType.WORK_GROUP.equals(node.getNodeType()) || (NodeType.DRIVE.equals(node.getNodeType())))) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not create this kind of sharedSpace with this method.");
 		}

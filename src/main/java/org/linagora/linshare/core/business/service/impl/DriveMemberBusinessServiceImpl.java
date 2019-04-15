@@ -43,15 +43,16 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 public class DriveMemberBusinessServiceImpl extends SharedSpaceMemberBusinessServiceImpl
 		implements DriveMemberBusinessService {
 
 	public DriveMemberBusinessServiceImpl(SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
-			SharedSpaceRoleMongoRepository roleRepository,
-			SharedSpaceNodeMongoRepository nodeRepository,
-			UserRepository<User> userRepository) {
-		super(sharedSpaceMemberMongoRepository, roleRepository, nodeRepository, userRepository);
+			SharedSpaceRoleMongoRepository roleRepository, SharedSpaceNodeMongoRepository nodeRepository,
+			UserRepository<User> userRepository, MongoTemplate mongoTemplate) {
+		super(sharedSpaceMemberMongoRepository, roleRepository, nodeRepository, userRepository, mongoTemplate);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override

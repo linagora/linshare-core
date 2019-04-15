@@ -1433,6 +1433,7 @@ INSERT INTO mail_footer_lang (id,language,mail_config_id,mail_footer_id,readonly
   PRIMARY KEY (id));
 ALTER TABLE mail_attachment ADD CONSTRAINT FKmail_attachment35169 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 
+<<<<<<< HEAD
 --Update purgeStep for deleted workGroups
 UPDATE account SET purge_step = 'PURGED' where ((account_type = 5) AND (purge_step = 'IN_USE') AND (destroyed > 0));
 </html>',messages_french='workGroupUpdatedDateTitle = Date de la mise à jour
@@ -1551,6 +1552,8 @@ ALTER TABLE mail_layout ALTER COLUMN messages_english SET NOT NULL;
 ALTER TABLE mail_layout ALTER COLUMN messages_french SET NOT NULL;
 >>>>>>> Warn drive member when his role is updated
 >>>>>>> Warn drive member when his role is updated
+=======
+>>>>>>> Fix find workGroup inside of Drive for the admin api
 
 -- LinShare version
 SELECT ls_version();
