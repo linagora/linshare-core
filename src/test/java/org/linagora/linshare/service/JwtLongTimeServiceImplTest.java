@@ -151,6 +151,17 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	}
 
 	@Test
+	public void findTest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PermanentToken janeToken = new PermanentToken(TOKEN_LABEL, null);
+		janeToken = jwtLongTimeService.create(jane, jane, janeToken);
+		PermanentToken found = jwtLongTimeService.find(jane, jane, janeToken.getUuid());
+		assertEquals(jane.getMail(), found.getSubject());
+		jwtLongTimeService.delete(jane, jane, found);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void findAllByDomainTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);

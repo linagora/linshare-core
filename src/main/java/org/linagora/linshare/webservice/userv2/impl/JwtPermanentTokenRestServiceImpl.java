@@ -77,6 +77,19 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 		this.jwtLongTimeFacade = jwtLongTimeFacade;
 	}
 
+	@Path("/{uuid}")
+	@GET
+	@Override
+	@ApiOperation(value = "Find JWT permanent tokens owned by uuid.", response = PermanentToken.class, responseContainer = "List")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
+	public PermanentToken find(
+			@ApiParam(value = "token uuid", required = true)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return jwtLongTimeFacade.find(uuid);
+	}
+
 	@Path("/")
 	@POST
 	@Override

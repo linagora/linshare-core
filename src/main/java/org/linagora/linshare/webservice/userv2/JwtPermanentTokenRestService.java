@@ -43,6 +43,8 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface JwtPermanentTokenRestService {
 
+	PermanentToken find(String uuid) throws BusinessException;
+
 	PermanentToken create(PermanentToken permanentToken) throws BusinessException;
 
 	List<PermanentToken> findAll() throws BusinessException;
