@@ -40,6 +40,7 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -80,7 +81,7 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 	@Path("/{uuid}")
 	@GET
 	@Override
-	@ApiOperation(value = "Find JWT permanent tokens owned by uuid.", response = PermanentToken.class, responseContainer = "List")
+	@ApiOperation(value = "Find JWT permanent tokens owned by uuid.", response = PermanentToken.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
@@ -102,6 +103,19 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 					PermanentToken permanentToken)
 			throws BusinessException {
 		return jwtLongTimeFacade.create(permanentToken);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@Override
+	@ApiOperation(value = "Check if JWT permanent tokens exists.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
+	public void head(
+			@ApiParam(value = "token uuid", required = true)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		jwtLongTimeFacade.find(uuid);
 	}
 
 	@Path("/")

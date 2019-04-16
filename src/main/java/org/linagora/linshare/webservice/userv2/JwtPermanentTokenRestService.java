@@ -54,4 +54,6 @@ public interface JwtPermanentTokenRestService {
 	PermanentToken update(PermanentToken permanentToken, String uuid) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAllAudit(List<LogAction> actions) throws BusinessException;
+
+	void head(String uuid) throws BusinessException;
 }
