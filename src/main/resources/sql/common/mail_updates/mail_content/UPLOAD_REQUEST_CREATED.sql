@@ -74,7 +74,7 @@ name = {0} {1}
 recipientsOfDepot = Recipients
 subject = {0} {1} has sent an invitation to access to his Upload Request.',messages_russian='activationDate = Дата активации
 closureDate = Дата закрытия
-customDate= дд, мм, гггг.
+customDate= MMMM d, yyyy.
 depotSize = Допустимый размер
 mainMsg = <b>{0} {1}</b> открыл для вас доступ к его запросу загрузки, созданному
 msgFrom = Сообщение от

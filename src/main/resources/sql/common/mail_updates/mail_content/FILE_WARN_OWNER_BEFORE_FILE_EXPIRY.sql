@@ -37,6 +37,6 @@ uploadedThe = Déposé le',messages_english='beginningMainMsgInt = Your file
 endingMainMsgInt = will automatically be deleted in <b> {0} days</b> from your Personal Space.
 subject = The file {0} is about to be deleted
 uploadedThe = Upload date',messages_russian='beginningMainMsgInt = Ваш файл
-endingMainMsgInt = будет автоматически удален через <b> {0} days</b> из вашего личного пространства.
+endingMainMsgInt = будет автоматически удален через <b> {0} дней</b> из вашего личного пространства.
 subject = Файл {0} будет удален
 uploadedThe = Дата загрузки' WHERE id=1;

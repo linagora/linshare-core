@@ -80,8 +80,8 @@ recipientsURequest = Recipients
 subject =  {0}  has closed  your Upload Request depot : {1}
 ungroupedBeginningMainMsg  = <b>{0}</b> has closed your Upload Request depot.
 uploadedOverTotal = {0} / {1} files
-totalUploaded = {0} files',messages_russian='endingMainMsgPlural = Всего в хранилище <b> {0} files </b> файлов.
-endingMainMsgSingular =  Всего в хранилище <b>1 file </b файл.
+totalUploaded = {0} files',messages_russian='endingMainMsgPlural = Всего в хранилище <b> {0} файлов </b>.
+endingMainMsgSingular =  Всего в хранилище <b>1 файл </b.
 filesInURDepot = Файлы загружены
 fileSize =  Общий размер файла
 groupedBeginningMainMsg = <b>{0}</b> закрыл ваше групповое хранилище для файлов запроса загрузки.

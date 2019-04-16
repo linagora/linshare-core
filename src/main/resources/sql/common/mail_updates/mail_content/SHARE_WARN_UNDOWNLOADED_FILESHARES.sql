@@ -45,7 +45,7 @@ mainMsgplural = Some recipients have not downloaded <b>{0} files</b>. You may fi
 mainMsgSingular = Some recipients have not downloaded <b>{0} file</b>. You may find further details of the recipients downloads below.
 subjectPlural = Undownloaded shared files alert : {0} files have not been downloaded yet.
 subjectSingular = Undownloaded shared files alert : {0} file have not been downloaded yet.',messages_russian='downloadStatesTile = Статус загрузки
-mainMsgplural = Некоторые получатели рассылки не скачали файлы <b>{0} files</b>. Вы можете найти детали о получателях рассылки ниже.
-mainMsgSingular = Некоторые получатели рассылки не скачали <b>{0} file</b>. Вы можете найти детали о получателях рассылки ниже.
+mainMsgplural = Некоторые получатели рассылки не скачали <b>{0} файлов</b>. Вы можете найти детали о получателях рассылки ниже.
+mainMsgSingular = Некоторые получатели рассылки не скачали <b>{0} файлов</b>. Вы можете найти детали о получателях рассылки ниже.
 subjectPlural = Уведомдение о не скачанных файлах: {0} файлов были не скачанны.
 subjectSingular = Уведомдение о не скачанных файлах: {0} файлов были не скачанны.' WHERE id=7;
