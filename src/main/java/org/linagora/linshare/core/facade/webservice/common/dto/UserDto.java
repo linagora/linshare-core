@@ -146,6 +146,7 @@ public class UserDto extends AccountDto {
 			Internal internal = new Internal();
 			internal.setLsUuid(getUuid());
 			internal.setCanUpload(getCanUpload());
+			internal.setCanCreateGuest(getCanCreateGuest());
 			internal.setLocale(getLocale());
 			internal.setExternalMailLocale(getExternalMailLocale());
 			internal.setFirstName(getFirstName());

@@ -189,7 +189,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			update = userService.updateUser(authUser, userToUpdate,
 					userDto.getDomain());
 		}
-		return UserDto.getSimple(update);
+		return UserDto.getFull(update);
 	}
 
 	@Override
