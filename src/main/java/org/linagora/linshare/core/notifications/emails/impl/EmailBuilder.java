@@ -101,6 +101,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.ClassPath;
 
+import io.jsonwebtoken.lang.Strings;
+
 public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected final static String CST_MAIL_SUBJECT_VAR_NAME = "mailSubject";
@@ -399,16 +401,14 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			container.setInReplyTo(emailCtx.getInReplyTo());
 			container.setReferences(emailCtx.getReferences());
 
-			if (cfg.getMailAttachments().isEmpty()) {
-				addDefaultMailAttachment(emailCtx, container);
-			} else {
-				for (MailAttachment attachment : cfg.getMailAttachments()) {
-					if (attachment.getEnable()) {
-						if (attachment.getEnableForAll()) {
-							addLogo(container, attachment.getCid(), attachment.getDocument());
-						} else if (emailCtx.getLanguage().equals(Language.fromInt(attachment.getLanguage()))) {
-							addLogo(container, attachment.getCid(), attachment.getDocument());
-						}
+			addDefaultMailAttachment(emailCtx, container);
+			for (MailAttachment attachment : cfg.getMailAttachments()) {
+				if (attachment.getEnable()) {
+					if (attachment.getEnableForAll()) {
+						addLogo(container, attachment.getCid(), attachment.getDocument(), attachment.getName());
+					}
+					if (emailCtx.getLanguage().equals(Language.fromInt(attachment.getLanguage()))) {
+						addLogo(container, attachment.getCid(), attachment.getDocument(), attachment.getName());
 					}
 				}
 			}
@@ -423,11 +423,14 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	}
 
 	protected void addLogo(MailContainerWithRecipient container, String identifier,
-			org.linagora.linshare.core.domain.entities.Document document) {
+			org.linagora.linshare.core.domain.entities.Document document, String fileName) {
 		Validate.notNull(document);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
 		InputStream inputStream = fileDataStore.get(metadata);
-		container.addAttachment(identifier, new InputStreamDataSource(inputStream, metadata.getMimeType()));
+		String content = Strings.replace(container.getContent(), "logo.linshare@linshare.org", identifier);
+		container.setContent(content);
+		container.addAttachment(identifier,
+				new InputStreamDataSource(inputStream, metadata.getMimeType(), fileName));
 	}
 
 	private void addDefaultMailAttachment(EmailContext emailCtx, MailContainerWithRecipient container) {
