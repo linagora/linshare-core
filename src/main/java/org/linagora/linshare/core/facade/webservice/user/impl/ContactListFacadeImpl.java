@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -104,6 +104,9 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 		User authUser = checkAuthentication();
 		ContactList list = dto.toObject();
 		User actor = getActor(authUser, actorUuid);
+		if (list.getOwner() == null) {
+			list.setOwner(actor);
+		}
 		list = contactListService.create(authUser, actor, list);
 		return new ContactListDto(list);
 	}

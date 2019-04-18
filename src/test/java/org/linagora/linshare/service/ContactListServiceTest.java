@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -42,16 +42,20 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
 import org.linagora.linshare.core.service.ContactListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +90,7 @@ public class ContactListServiceTest extends AbstractTransactionalJUnit4SpringCon
 	private static final String CONTACT_MAIL = "c@mail";
 	private static final String CONTACT_MAIL1 = "c1@mail";
 	private static final String CONTACT_MAIL2 = "c2@mail";
+	private static final int CONTACT_CAN_CREATE_FUNCTIONALITY_ID = 27;
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
@@ -98,6 +103,9 @@ public class ContactListServiceTest extends AbstractTransactionalJUnit4SpringCon
 	
 	@Autowired
 	private ContactListService contactListService;
+
+	@Autowired
+	private FunctionalityRepository functionalityRepository;
 
 	private AbstractDomain domain;
 
@@ -177,6 +185,26 @@ public class ContactListServiceTest extends AbstractTransactionalJUnit4SpringCon
 		contactListService.deleteList(internal.getLsUuid(), duplicatedContactList.getUuid());
 		ContactList deletedContactList = contactListService.findByIdentifier(internal.getLsUuid(), duplicatedContactList.getUuid());
 		Assert.assertNull(deletedContactList);
+	}
+
+	@Test
+	public void testCreateWithfunctionalityDisabled() throws BusinessException {
+		Functionality canCreateContactListFunctionality = functionalityRepository
+				.findById(CONTACT_CAN_CREATE_FUNCTIONALITY_ID);
+		canCreateContactListFunctionality.getActivationPolicy().setStatus(false);
+		functionalityRepository.update(canCreateContactListFunctionality);
+		ContactList contactList = new ContactList();
+		contactList.setIdentifier(identifier2);
+		contactList.setOwner(internal);
+		contactList.setDomain(domain);
+		contactList.setPublic(false);
+		contactList.setDescription("fofo");
+		contactList.setMailingListContact(new ArrayList<ContactListContact>());
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			contactListService.create(internal, internal, contactList);
+		});
+		Assertions.assertEquals(BusinessErrorCode.FORBIDDEN, exception.getErrorCode());
+		Assertions.assertEquals("You are not authorized to create an entry.", exception.getMessage());
 	}
 
 	// helpers

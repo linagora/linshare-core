@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -297,7 +297,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		Validate.notNull(list, "Contact list must be set.");
 		preChecks(actor, owner);
 		sanitizerInputHtmlBusinessService.strictClean(list.getIdentifier());
-		checkCreatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, null);
+		checkCreatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, list);
 		ContactList listCreated = contactListBusinessService.createList(list, (User) owner);
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
 				new AccountMto(list.getOwner()), LogAction.CREATE, AuditLogEntryType.CONTACTS_LISTS, listCreated);
@@ -310,7 +310,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		Validate.notNull(list, "Mailing list must be set.");
 		Validate.notNull(identifier, "identifier must be set.");
 		preChecks(actor, owner);
-		checkCreatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, null);
+		checkCreatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, list);
 		ContactList duplicateMailingList = new ContactList();
 		duplicateMailingList.setIdentifier(identifier);
 		duplicateMailingList.setOwner(list.getOwner());
