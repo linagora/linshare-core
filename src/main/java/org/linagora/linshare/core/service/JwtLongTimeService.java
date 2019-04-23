@@ -51,7 +51,7 @@ public interface JwtLongTimeService {
 
 	List<PermanentToken> findAll(Account authUser, Account actor) throws BusinessException;
 
-	List<PermanentToken> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException;
+	List<PermanentToken> findAllByDomain(Account authUser, AbstractDomain domain, Boolean recursive) throws BusinessException;
 
 	PermanentToken update(User authUser, User actor, String uuid, PermanentToken permanentToken);
 

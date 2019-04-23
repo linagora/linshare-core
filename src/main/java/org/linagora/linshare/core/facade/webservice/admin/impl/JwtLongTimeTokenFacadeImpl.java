@@ -86,11 +86,13 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 	@Override
 	public List<PermanentToken> findAll(String domainUuid) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
+		Boolean recursive = false;
 		if (Strings.isNullOrEmpty(domainUuid)) {
 			domainUuid = authUser.getDomain().getUuid();
+			recursive = true;
 		}
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
-		return jwtLongTimeService.findAllByDomain(authUser, domain);
+		return jwtLongTimeService.findAllByDomain(authUser, domain, recursive);
 	}
 
 	@Override

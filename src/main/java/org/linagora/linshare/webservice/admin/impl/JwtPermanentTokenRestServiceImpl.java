@@ -113,13 +113,13 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 	@Path("/")
 	@GET
 	@Override
-	@ApiOperation(value = "Find all JWT permanent tokens of admin domain.", response = PermanentToken.class, responseContainer = "List")
+	@ApiOperation(value = "Find all JWT permanent tokens of admin domain and recursivly if uuid is not specified.", response = PermanentToken.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	public List<PermanentToken> findAll(
 			@ApiParam(value = "domain uuid.", required = false)
-				@QueryParam("domainUuid") String domainUuid) throws BusinessException {
+			@QueryParam("domainUuid") String domainUuid) throws BusinessException {
 		return jwtLongTimeTokenFacade.findAll(domainUuid);
 	}
 

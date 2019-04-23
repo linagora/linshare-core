@@ -80,6 +80,11 @@ public class JwtLongTimeBusinessServiceImpl implements JwtLongTimeBusinessServic
 	}
 
 	@Override
+	public List<PermanentToken> findAllByDomainRecursive(List<String> domains) {
+		return jwtLongTimeMongoRepository.findAllByDomainRecursive(domains);
+	}
+
+	@Override
 	public PermanentToken update(PermanentToken found) {
 		return jwtLongTimeMongoRepository.save(found);
 	}

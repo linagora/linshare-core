@@ -49,4 +49,8 @@ public interface JwtLongTimeMongoRepository extends MongoRepository<PermanentTok
 	
 	@Query("{'domain.uuid' : ?0}")
 	List<PermanentToken> findAllByDomainUuid(String domainUuid);
+
+	@Query("{'domain.uuid' : {'$in' : ?0 }}")
+	List<PermanentToken> findAllByDomainRecursive(List<String> domains);
+
 }

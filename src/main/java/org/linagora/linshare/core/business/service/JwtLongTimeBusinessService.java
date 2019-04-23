@@ -48,7 +48,9 @@ public interface JwtLongTimeBusinessService {
 
 	PermanentToken find(String uuid);
 
-	List<PermanentToken> findAllByDomain(String uuid);
+	List<PermanentToken> findAllByDomain(String domainsUuid);
+
+	List<PermanentToken> findAllByDomainRecursive(List<String> domains);
 
 	PermanentToken update(PermanentToken found);
 }

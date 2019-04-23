@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -95,6 +96,8 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 	protected AuditLogEntryService auditLogEntryService;
 
 	protected FunctionalityReadOnlyService functionalityReadOnlyService;
+	
+	protected DomainBusinessService domainBuisnessService;
 
 	public JwtLongTimeServiceImpl(
 			String issuer,
@@ -108,7 +111,8 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 			AccountRepository<Account> accountRepository,
 			LogEntryService logEntryService,
 			AuditLogEntryService auditLogEntryService,
-			FunctionalityReadOnlyService functionalityReadOnlyService) {
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			DomainBusinessService domainBuisnessService) {
 		super(rac);
 		this.issuer = issuer;
 		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
@@ -121,6 +125,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.domainBuisnessService = domainBuisnessService;
 	}
 
 	@Override
@@ -189,7 +194,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 	}
 
 	@Override
-	public List<PermanentToken> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException {
+	public List<PermanentToken> findAllByDomain(Account authUser, AbstractDomain domain, Boolean recursive) throws BusinessException {
 		Validate.notNull(domain, "domain must be set");
 		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
@@ -199,7 +204,13 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 			throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN,
 					"You are not allowed to use this domain");
 		}
-		return jwtLongTimeBusinessService.findAllByDomain(domain.getUuid());
+		if (!recursive) {
+			String domainUuids = domain.getUuid();
+			return jwtLongTimeBusinessService.findAllByDomain(domainUuids);
+		} else {
+			List<String> domainUuids = domainBuisnessService.getAllMyDomainIdentifiers(domain);
+			return jwtLongTimeBusinessService.findAllByDomainRecursive(domainUuids);
+		}
 	}
 
 	@Override
