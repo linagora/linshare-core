@@ -33,20 +33,24 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.WorkGroupNodeAbstractService;
 import org.linagora.linshare.core.utils.UniqueName;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
@@ -55,6 +59,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
+import com.google.common.base.Strings;
+
 
 public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeAbstractService {
 
@@ -164,4 +171,37 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 		List<String> members = sharedSpaceMemberBusinessService.findMembersUuidBySharedSpaceNodeUuid(workGroup.getLsUuid());
 		log.addRelatedAccounts(members);
 	}
+
+	protected String getFileName(WorkGroupDocument document, WorkGroupDocumentRevision revision, boolean isDocument) {
+		String documenExtension = FilenameUtils.getExtension(document.getName());
+		String revisionExtension = FilenameUtils.getExtension(revision.getName());
+		String documentName = document.getName();
+		if (!Strings.isNullOrEmpty(documenExtension)) {
+			int i = documentName.lastIndexOf('.');
+			documentName = documentName.substring(0, i);
+		}
+		if (isDocument) {
+			String extension = computeExtention(documenExtension, revisionExtension);
+			return documentName + extension;
+		} else {
+			SimpleDateFormat formatter = new SimpleDateFormat("YYYYMMdd-HHmmss");
+			String extension = computeExtention(documenExtension, revisionExtension);
+			documentName = documentName + "-r" + formatter.format(revision.getCreationDate()) + extension;
+			return documentName;
+		}
+	}
+
+	private String computeExtention(String documenExtension, String revisionExtension) {
+		if (Strings.isNullOrEmpty(documenExtension)) {
+			if (!Strings.isNullOrEmpty(revisionExtension)) {
+				return "." + revisionExtension;
+			}
+			return "";
+		} else if (documenExtension.equals(revisionExtension) || Strings.isNullOrEmpty(revisionExtension)) {
+			return "." + documenExtension;
+		} else {
+			return "." + revisionExtension;
+		}
+	}
+
 }

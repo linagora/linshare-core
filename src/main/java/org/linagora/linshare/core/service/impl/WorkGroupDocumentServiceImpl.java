@@ -37,9 +37,9 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -53,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -63,8 +64,10 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.core.utils.UniqueName;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
@@ -193,13 +196,24 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node)
-			throws BusinessException {
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
-				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
+	public InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node,
+			boolean isDocument) throws BusinessException {
+		AuditLogEntryType auditType = isDocument ? AuditLogEntryType.WORKGROUP_DOCUMENT
+				: AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION;
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, auditType,
+				node, workGroup);
 		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
 		return documentEntryBusinessService.getDocumentStream(node);
+	}
+
+	@Override
+	public FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, WorkGroupDocument node,
+			WorkGroupDocumentRevision revision, boolean isDocument) {
+		String fileName = getFileName(node, revision, isDocument);
+		revision.setName(fileName);
+		InputStream stream = getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) revision, isDocument);
+		return new FileAndMetaData(stream, revision.getSize(), fileName, revision.getMimeType());
 	}
 
 	@Override

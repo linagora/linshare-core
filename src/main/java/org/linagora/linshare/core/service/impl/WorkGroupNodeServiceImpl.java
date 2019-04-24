@@ -470,15 +470,19 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
-		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
-		if(isDocument(node)) {
-			node = revisionService.findMostRecent(workGroup, node.getUuid());
-		}
-		if (isRevision(node)) {
-			InputStream stream = workGroupDocumentService.getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) node);
-			return new FileAndMetaData((WorkGroupDocument)node, stream);
+		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
+				node, workGroup);
+		if (isDocument(node)) {
+			WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) revisionService.findMostRecent(workGroup,
+					node.getUuid());
+			return workGroupDocumentService.download(actor, owner, workGroup, (WorkGroupDocument) node, revision, true);
+		} else if (isRevision(node)) {
+			WorkGroupNode documentParent = workGroupDocumentService.find(actor, owner, workGroup, node.getParent());
+			return revisionService.download(actor, owner, workGroup, (WorkGroupDocument) documentParent,
+					(WorkGroupDocumentRevision) node, false);
 		} else {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not download this kind of node.");
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					"Can not download this kind of node.");
 		}
 	}
 
