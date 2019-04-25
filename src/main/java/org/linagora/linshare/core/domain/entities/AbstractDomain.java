@@ -47,8 +47,6 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
-import com.google.common.collect.Sets;
-
 public abstract class AbstractDomain {
 	/**
 	 * Database persistence identifier
@@ -97,7 +95,6 @@ public abstract class AbstractDomain {
 	private Set<MailFooter> mailFooters;
 	private Set<MailConfig> mailConfigs;
 	private Set<MailContent> mailContents;
-	private Set<MailAttachment> mailAttachments;
 	private MimePolicy mimePolicy;
 
 	private Set<MimePolicy> mimePolicies;
@@ -139,7 +136,6 @@ public abstract class AbstractDomain {
 		this.mailLayouts = new HashSet<MailLayout>();
 		this.mailFooters = new HashSet<MailFooter>();
 		this.mailContents = new HashSet<MailContent>();
-		this.mailAttachments = new HashSet<MailAttachment>();
 		this.mailConfigs = new HashSet<MailConfig>();
 		this.mimePolicies = new HashSet<MimePolicy>();
 		this.currentWelcomeMessage = null;
@@ -363,14 +359,6 @@ public abstract class AbstractDomain {
 
 	public void setPurgeStep(DomainPurgeStepEnum purgeStep) {
 		this.purgeStep = purgeStep;
-	}
-
-	public Set<MailAttachment> getMailAttachments() {
-		return mailAttachments;
-	}
-
-	public void setMailAttachments(Set<MailAttachment> mailAttachments) {
-		this.mailAttachments = mailAttachments;
 	}
 
 	public boolean isManagedBy(Account account) {

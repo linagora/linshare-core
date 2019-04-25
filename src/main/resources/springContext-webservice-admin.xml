@@ -187,7 +187,7 @@
 		<constructor-arg ref="wsAdminMailAttachmentFacade" />
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 		<constructor-arg ref="wsAccountQuotaFacade" />
-		<constructor-arg value="${mail.attchment.limit.size}" />
+		<constructor-arg value="${mail.attachment.limit.size}" />
 	</bean>
 
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">

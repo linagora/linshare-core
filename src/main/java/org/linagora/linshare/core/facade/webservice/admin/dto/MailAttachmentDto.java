@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.MailAttachment;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -54,7 +55,7 @@ public class MailAttachmentDto {
 	@ApiModelProperty(value = "The enableForAll gives the choice to apply this attachment for all languages or not")
 	private Boolean enableForAll;
 
-	@ApiModelProperty(value = "Language")
+	@ApiModelProperty(value = "The choosen language for which the mail attachment will be applied")
 	private Integer language;
 
 	@ApiModelProperty(value = "Description")
@@ -63,11 +64,8 @@ public class MailAttachmentDto {
 	@ApiModelProperty(value = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "The uuid of the choosen mailConfig")
-	private String mailConfig;
-
-	@ApiModelProperty(value = "The uuid of the choosen domain")
-	private String domain;
+	@ApiModelProperty(value = "The choosen mailConfig")
+	private GenericLightEntity mailConfig;
 
 	@ApiModelProperty(value = "Alternative text for the mail attachment")
 	private String alt;
@@ -80,7 +78,7 @@ public class MailAttachmentDto {
 	}
 
 	public MailAttachmentDto(String uuid, Boolean enable, Boolean enableForAll, Integer language,
-			String description, String name, String mailConfig, String domain, String alt, String cid) {
+			String description, String name, GenericLightEntity mailConfig, String alt, String cid) {
 		super();
 		this.uuid = uuid;
 		this.enable = enable;
@@ -89,7 +87,6 @@ public class MailAttachmentDto {
 		this.description = description;
 		this.name = name;
 		this.mailConfig = mailConfig;
-		this.domain = domain;
 		this.alt = alt;
 		this.cid = cid;
 	}
@@ -102,22 +99,21 @@ public class MailAttachmentDto {
 		this.language = attachment.getLanguage();
 		this.description = attachment.getDescription();
 		this.name = attachment.getName();
-		this.mailConfig = attachment.getMailConfig().getUuid();
-		this.domain = attachment.getDomain().getUuid();
 		this.alt = attachment.getAlt();
 		this.cid = attachment.getCid();
 	}
 
 	public MailAttachment toObject() {
-		MailAttachment mattchment = new MailAttachment();
-		mattchment.setEnable(getEnable());
-		mattchment.setEnableForAll(getEnableForAll());
-		mattchment.setLanguage(getLanguage());
-		mattchment.setDescription(getDescription());
-		mattchment.setName(getName());
-		mattchment.setCid(getCid());
-		mattchment.setAlt(getAlt());
-		return mattchment;
+		MailAttachment mattachment = new MailAttachment();
+		mattachment.setUuid(getUuid());
+		mattachment.setEnable(getEnable());
+		mattachment.setEnableForAll(getEnableForAll());
+		mattachment.setLanguage(getLanguage());
+		mattachment.setDescription(getDescription());
+		mattachment.setName(getName());
+		mattachment.setCid(getCid());
+		mattachment.setAlt(getAlt());
+		return mattachment;
 	}
 
 	public String getUuid() {
@@ -168,20 +164,12 @@ public class MailAttachmentDto {
 		this.name = name;
 	}
 
-	public String getMailConfig() {
+	public GenericLightEntity getMailConfig() {
 		return mailConfig;
 	}
 
-	public void setMailConfig(String mailConfig) {
+	public void setMailConfig(GenericLightEntity mailConfig) {
 		this.mailConfig = mailConfig;
-	}
-
-	public String getDomain() {
-		return domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
 	}
 
 	public String getAlt() {

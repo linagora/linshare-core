@@ -39,7 +39,17 @@ public class MailAttachmentMto {
 
 	protected String uuid;
 
-	protected DomainMto domain;
+	protected Boolean enable;
+
+	protected Boolean enableForAll;
+
+	protected Integer language;
+
+	protected String description;
+
+	protected String name;
+
+	protected String cid;
 
 	public MailAttachmentMto() {
 		super();
@@ -47,14 +57,66 @@ public class MailAttachmentMto {
 
 	public MailAttachmentMto(MailAttachment attachment) {
 		this.uuid = attachment.getUuid();
-		this.domain = new DomainMto(attachment.getDomain());
+		this.name = attachment.getName();
+		this.enable = attachment.getEnable();
+		this.language = attachment.getLanguage();
+		this.description = attachment.getDescription();
+		this.cid = attachment.getCid();
 	}
 
-	public DomainMto getDomain() {
-		return domain;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setDomain(DomainMto domain) {
-		this.domain = domain;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public Boolean getEnable() {
+		return enable;
+	}
+
+	public void setEnable(Boolean enable) {
+		this.enable = enable;
+	}
+
+	public Boolean getEnableForAll() {
+		return enableForAll;
+	}
+
+	public void setEnableForAll(Boolean enableForAll) {
+		this.enableForAll = enableForAll;
+	}
+
+	public Integer getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(Integer language) {
+		this.language = language;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCid() {
+		return cid;
+	}
+
+	public void setCid(String cid) {
+		this.cid = cid;
 	}
 }

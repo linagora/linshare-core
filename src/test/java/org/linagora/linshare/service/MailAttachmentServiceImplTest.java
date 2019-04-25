@@ -186,7 +186,7 @@ public class MailAttachmentServiceImplTest {
 		Assertions.assertNotNull(attachment);
 		MailConfig config = repository.findByUuid("946b190d-4c95-485f-bfe6-d288a2de1edd");
 		MailAttachment mailAttach = new MailAttachment(false, attachment.getDocument(), false, 1, "test update",
-				"update", config, admin.getDomain(), "cid", "alt");
+				"update", config, "cid", "alt");
 		attachmentService.update(admin, attachment, mailAttach);
 		Assertions.assertTrue(attachment.getEnable() == false);
 		Assertions.assertTrue(attachment.getEnableForAll() == false);
@@ -198,12 +198,13 @@ public class MailAttachmentServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		List<MailAttachment> list = attachmentService.findAllByDomain(admin, admin.getDomain());
+		MailConfig config = repository.findByUuid("946b190d-4c95-485f-bfe6-d288a2de1edd");
+		List<MailAttachment> list = attachmentService.findAllByMailConfig(admin, config);
 		MailAttachment attachment = attachmentService.create(admin, true, "Logo", true,
 				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "Logo", "logo.mail.attachment.test", 1,
 				tempFile, null);
 		Assertions.assertNotNull(attachment);
-		Assertions.assertEquals(list.size() + 1, attachmentService.findAllByDomain(admin, admin.getDomain()).size());
+		Assertions.assertEquals(list.size() + 1, attachmentService.findAllByMailConfig(admin, config).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -218,10 +219,11 @@ public class MailAttachmentServiceImplTest {
 		MailAttachment attachment = attachmentService.create(admin, false, "Logo", false,
 				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "Logo", "logo.mail.attachment.test", 1,
 				tempFile, null);
-		List<MailAttachment> list = attachmentService.findAllByDomain(admin, admin.getDomain());
+		MailConfig config = repository.findByUuid("946b190d-4c95-485f-bfe6-d288a2de1edd");
+		List<MailAttachment> list = attachmentService.findAllByMailConfig(admin, config);
 		Assertions.assertTrue(list.size() == 2);
 		attachmentService.delete(admin, attachmentToDelete);
-		Assertions.assertEquals(list.size() - 1, attachmentService.findAllByDomain(admin, admin.getDomain()).size());
+		Assertions.assertEquals(list.size() - 1, attachmentService.findAllByMailConfig(admin, config).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -260,7 +262,6 @@ public class MailAttachmentServiceImplTest {
 				Assertions.assertFalse(build.getAttachments().containsKey(attachment.getCid()));
 				Assertions.assertTrue(build.getAttachments().containsKey(attachment2.getCid()));
 				Assertions.assertTrue(build.getAttachments().containsKey(attachment3.getCid()));
-				Assertions.assertFalse(build.getAttachments().containsKey(attachment4.getCid()));
 				Assertions.assertFalse(build.getAttachments().containsKey(attachment4.getCid()));
 			});
 			findErrors.addAll(testMailGenerate(type, build));

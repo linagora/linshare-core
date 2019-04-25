@@ -41,7 +41,6 @@ import org.linagora.linshare.core.business.service.MailAttachmentBusinessService
 import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
@@ -91,7 +90,7 @@ public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessS
 			cid = defaultMailAttachmentCid;
 		}
 		MailAttachment mailAttachment = new MailAttachment(enable, document, enableForAll, language, description, fileName,
-				mailConfig, authUser.getDomain(), cid, alt);
+				mailConfig, cid, alt);
 		return attachmentRepository.create(mailAttachment);
 	}
 
@@ -101,8 +100,8 @@ public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessS
 	}
 
 	@Override
-	public List<MailAttachment> findAllByDomain(AbstractDomain domain) {
-		return attachmentRepository.findAllByDomainUuid(domain);
+	public List<MailAttachment> findAllByMailConfig(MailConfig config) {
+		return attachmentRepository.findAllByMailConfig(config);
 	}
 
 	@Override

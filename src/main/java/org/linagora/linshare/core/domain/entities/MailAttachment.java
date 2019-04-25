@@ -55,8 +55,6 @@ public class MailAttachment {
 
 	private MailConfig mailConfig;
 
-	private AbstractDomain domain;
-
 	private String alt;
 
 	private String cid;
@@ -66,7 +64,7 @@ public class MailAttachment {
 	}
 
 	public MailAttachment(Boolean enable, Document document, Boolean enableForAll, Integer language,
-			String description, String name, MailConfig mailConfig, AbstractDomain domain, String cid, String alt) {
+			String description, String name, MailConfig mailConfig, String cid, String alt) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.enable = enable;
@@ -75,7 +73,6 @@ public class MailAttachment {
 		this.description = description;
 		this.name = name;
 		this.mailConfig = mailConfig;
-		this.domain = domain;
 		this.cid = cid;
 		this.alt = alt;
 		this.document = document;
@@ -153,14 +150,6 @@ public class MailAttachment {
 		this.mailConfig = mailConfig;
 	}
 
-	public AbstractDomain getDomain() {
-		return domain;
-	}
-
-	public void setDomain(AbstractDomain domain) {
-		this.domain = domain;
-	}
-
 	public String getAlt() {
 		return alt;
 	}
@@ -181,6 +170,6 @@ public class MailAttachment {
 	public String toString() {
 		return "MailAttachment [uuid=" + uuid + ", enable=" + enable + ", document=" + document + ", enableForAll="
 				+ enableForAll + ", language=" + language + ", description=" + description + ", name=" + name
-				+ ", mailConfig=" + mailConfig + ", domain=" + domain + ", alt=" + alt + ", cid=" + cid + "]";
+				+ ", mailConfig=" + mailConfig + ", alt=" + alt + ", cid=" + cid + "]";
 	}
 }

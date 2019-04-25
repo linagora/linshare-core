@@ -37,8 +37,8 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.repository.MailAttachmentRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
@@ -63,8 +63,8 @@ public class MailAttachmentRepositoryImpl extends AbstractRepositoryImpl<MailAtt
 	}
 
 	@Override
-	public List<MailAttachment> findAllByDomainUuid(AbstractDomain domain) {
+	public List<MailAttachment> findAllByMailConfig(MailConfig config) {
 		return findByCriteria(DetachedCriteria.forClass(getPersistentClass())
-				.add(Restrictions.eq("domain", domain)));
+				.add(Restrictions.eq("mailConfig", config)));
 	}
 }

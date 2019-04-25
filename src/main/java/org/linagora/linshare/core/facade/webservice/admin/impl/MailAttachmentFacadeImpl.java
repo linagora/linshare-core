@@ -38,33 +38,34 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailAttachmentFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailAttachmentService;
+import org.linagora.linshare.core.service.MailConfigService;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements MailAttachmentFacade {
 
 	protected final  MailAttachmentService attachmentService;
 
-	protected final AbstractDomainService abstractDomainService;
+	protected final MailConfigService configService;
 
 	public MailAttachmentFacadeImpl(
 			AccountService accountService,
 			MailAttachmentService attachmentService,
-			AbstractDomainService abstractDomainService) {
+			MailConfigService configService) {
 		super(accountService);
 		this.attachmentService = attachmentService;
-		this.abstractDomainService = abstractDomainService;
+		this.configService = configService;
 	}
 
 	@Override
@@ -79,58 +80,69 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 		Validate.notNull(alt, "Missing mail attachment alternative");
 		MailAttachment attachment = attachmentService.create(authUser, enable, fileName, enableForAll, mailConfig,
 				description, alt, cid, language, tempFile, metaData);
-		return new MailAttachmentDto(attachment);
+		return getMailAttachmentDto(authUser, attachment);
+	}
+
+	private MailAttachmentDto getMailAttachmentDto(Account authUser, MailAttachment attachment) {
+		GenericLightEntity genericMailConf = new GenericLightEntity(attachment.getMailConfig().getUuid(), attachment.getMailConfig().getName());
+		MailAttachmentDto attachmentDto = new MailAttachmentDto(attachment);
+		attachmentDto.setMailConfig(genericMailConf);
+		return attachmentDto;
 	}
 
 	@Override
 	public MailAttachmentDto delete(String uuid, MailAttachmentDto attachment) {
 		Account authUser = checkAuthentication(Role.ADMIN);
+		Validate.notNull(attachment, "MailAttachment object must be set");
 		MailAttachment mailAttachment = new MailAttachment();
 		if (!Strings.isNullOrEmpty(uuid)) {
 			mailAttachment.setUuid(uuid);
 		} else {
-			Validate.notNull(attachment, "MailAttachment object must be set");
 			Validate.notEmpty(attachment.getUuid(), "MailAttachment uuid must be set");
 			mailAttachment.setUuid(attachment.getUuid());
 		}
 		mailAttachment = attachmentService.find(authUser, mailAttachment.getUuid());
 		mailAttachment = attachmentService.delete(authUser, mailAttachment);
-		return new MailAttachmentDto(mailAttachment);
+		return getMailAttachmentDto(authUser, mailAttachment);
 	}
 
 	@Override
 	public MailAttachmentDto find(String uuid) {
-		Validate.notEmpty(uuid, "Missing required mail attachment uuid");
 		Account authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(uuid, "Missing required mail attachment uuid");
 		MailAttachment mailAttachment = attachmentService.find(authUser, uuid);
-		return new MailAttachmentDto(mailAttachment);
+		return getMailAttachmentDto(authUser, mailAttachment);
 	}
 
 	@Override
-	public List<MailAttachmentDto> findAll(String domainUuid) {
+	public List<MailAttachmentDto> findAll(String configUuid) {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		if (Strings.isNullOrEmpty(domainUuid)) {
-			domainUuid = authUser.getDomain().getUuid();
+		if (Strings.isNullOrEmpty(configUuid)) {
+			configUuid = authUser.getDomain().getMailConfigs().iterator().next().getUuid();
 		}
-		AbstractDomain domain = abstractDomainService.findById(domainUuid);
-		List<MailAttachment> attachments = attachmentService.findAllByDomain(authUser, domain);
-		return ImmutableList.copyOf(Lists.transform(attachments, MailAttachmentDto.toDto()));
+		MailConfig config = configService.findConfigByUuid((User) authUser, configUuid);
+		List<MailAttachment> attachments = attachmentService.findAllByMailConfig(authUser, config);
+		List<MailAttachmentDto> attachmentDtos = Lists.newArrayList();
+		for (MailAttachment attachment : attachments) {
+			attachmentDtos.add(getMailAttachmentDto(authUser, attachment));
+		}
+		return attachmentDtos;
 	}
 
 	@Override
 	public MailAttachmentDto update(MailAttachmentDto attachment, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
+		Validate.notNull(attachment, "MailAttachment object must be set");
 		MailAttachment attachmentToUpdate = new MailAttachment();
 		if (!Strings.isNullOrEmpty(uuid)) {
 			attachmentToUpdate.setUuid(uuid);
 		} else {
-			Validate.notNull(attachment, "MailAttachment object must be set");
 			Validate.notEmpty(attachment.getUuid(), "MailAttachment uuid must be set");
 			attachmentToUpdate.setUuid(attachment.getUuid());
 		}
 		attachmentToUpdate = attachmentService.find(authUser, attachmentToUpdate.getUuid());
 		MailAttachment mailAttach = attachment.toObject();
 		attachmentService.update(authUser, attachmentToUpdate, mailAttach);
-		return new MailAttachmentDto(attachmentToUpdate);
+		return getMailAttachmentDto(authUser, attachmentToUpdate);
 	}
 }

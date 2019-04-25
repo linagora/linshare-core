@@ -1294,7 +1294,6 @@ ALTER TABLE mail_layout ALTER COLUMN messages_russian SET NOT NULL;
   description        text,
   name               varchar(255),
   mail_config_id    int8 NOT NULL,
-  domain_abstract_id int8 NOT NULL,
   cid               varchar(255),
   alt               varchar(255) NOT NULL,
   document_id             int8 NOT NULL,

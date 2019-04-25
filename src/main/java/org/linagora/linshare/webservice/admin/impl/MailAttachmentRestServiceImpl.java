@@ -100,7 +100,7 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Create a document which will contain the uploaded file.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -122,11 +122,11 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 					@Multipart(value = "enableForAll", required = true) boolean enableForAll,
 				@ApiParam(value = "The choosen mail config.", required = false)
 					@Multipart(value = "mail_config", required = true) String config,
-				@ApiParam(value = "True to enable asynchronous upload processing.", required = false)
+				@ApiParam(value = "Alternative text for the mail attachment.", required = false)
 					@Multipart(value = "alt", required = true) String alt,
-				@ApiParam(value = "True to enable asynchronous upload processing.", required = false)
+				@ApiParam(value = "Content id of the mail attachment.", required = false)
 					@Multipart(value = "cid", required = false) String cid,
-				@ApiParam(value = "True to enable asynchronous upload processing.", required = false)
+				@ApiParam(value = "Choose the language to apply the mail attachment for.", required = false)
 					@Multipart(value = "language", required = false) int language,
 			MultipartBody body) throws BusinessException {
 		checkMaintenanceMode();
@@ -181,9 +181,8 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 
 	@Path("/{uuid}")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Get a mail attachment.", response = MailAttachmentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
 			@ApiResponse(code = 404, message = "Mail attachment not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -197,28 +196,28 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 	@Path("/")
 	@GET
 	@ApiOperation(value = "Find all mail attachment of a domain.", response = MailAttachmentDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
 	public List<MailAttachmentDto> findAll(
-			@ApiParam(value = "domain uuid.", required = false)
-				@QueryParam("domainUuid") String domainUuid) throws BusinessException {
-		return mailAttachmentFacade.findAll(domainUuid);
+			@ApiParam(value = "mail configuration uuid.", required = false)
+				@QueryParam("configUuid") String configUuid) throws BusinessException {
+		return mailAttachmentFacade.findAll(configUuid);
 	}
 
 	@Path("/{uuid: .*}")
 	@PUT
 	@ApiOperation(value = "Update mail attachment by its uuid.", response = MailAttachmentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 404, message = "Mail attachment has not been found."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
 	public MailAttachmentDto update(
-			@ApiParam(value = "Mail attachment uuid to delete.", required = true)
+			@ApiParam(value = "Mail attachment uuid to update.", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "Mail attachment to delete.", required = true)
+			@ApiParam(value = "Mail attachment to update.", required = true)
 				MailAttachmentDto attachment) throws BusinessException {
 		return mailAttachmentFacade.update(attachment, uuid);
 	}

@@ -43,14 +43,14 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
 public interface MailAttachmentRestService {
 
 	MailAttachmentDto create(InputStream file, String description, String givenFileName, String metaData, Long fileSize,
-			boolean enable, boolean enableForAll, String confUuid, String alt, String cid, int language, MultipartBody body)
+			boolean enable, boolean enableForAll, String configUuid, String alt, String cid, int language, MultipartBody body)
 			throws BusinessException;
 
 	MailAttachmentDto delete(String uuid, MailAttachmentDto attachment) throws BusinessException;
 
 	MailAttachmentDto find(String uuid) throws BusinessException;
 
-	List<MailAttachmentDto> findAll(String domainUuid) throws BusinessException;
+	List<MailAttachmentDto> findAll(String configUuid) throws BusinessException;
 
 	MailAttachmentDto update(String uuid, MailAttachmentDto attachment) throws BusinessException;
 }

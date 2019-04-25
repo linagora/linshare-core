@@ -51,6 +51,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MailAttachmentService;
 import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.MailAttachmentMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
 public class MailAttachmentServiceImpl implements MailAttachmentService {
@@ -61,9 +62,9 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	protected final DocumentEntryService documentEntryService;
 
-	private final DomainPermissionBusinessService domainPermissionService;
+	protected final DomainPermissionBusinessService domainPermissionService;
 
-	private final AuditAdminMongoRepository mongoRepository;
+	protected final AuditAdminMongoRepository mongoRepository;
 
 	public MailAttachmentServiceImpl(
 			MailAttachmentBusinessService attachmentBusinessService,
@@ -82,6 +83,13 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 	@Override
 	public MailAttachment create(Account authUser, boolean enable, String fileName, boolean enableForAll, String mailConfig,
 			String description, String alt, String cid, int language, File tempFile, String metaData) {
+		checkAdminFor(authUser, authUser.getDomain());
+		Validate.notNull(tempFile, "Missing required file (check parameter named file)");
+		Validate.notEmpty(fileName, "Missing required file name");
+		Validate.notNull(enable, "Missing information to enable mail attachment (enabled)");
+		Validate.notNull(enableForAll, "Missing information to apply the mail attachment for all languages or not");
+		Validate.notNull(mailConfig, "Missing mail config");
+		Validate.notNull(alt, "Missing mail attachment alternative");
 		MailConfig config = configService.findByUuid(mailConfig);
 		MailAttachment attachment = attachmentBusinessService.create(authUser, enable, fileName, enableForAll, config,
 				description, alt, cid, language, tempFile, metaData);
@@ -91,9 +99,9 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	@Override
 	public MailAttachment find(Account authUser, String uuid) {
+		checkAdminFor(authUser, authUser.getDomain());
 		Validate.notNull(authUser, "AuthUser must be set.");
 		Validate.notEmpty(uuid, "Mail attachment's Uuid must be set");
-		checkAdminFor(authUser, authUser.getDomain());
 		MailAttachment found = attachmentBusinessService.findByUuid(uuid);
 		if (found == null) {
 			String message = "The requested mail attachment has not been found.";
@@ -112,16 +120,16 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 	}
 
 	@Override
-	public List<MailAttachment> findAllByDomain(Account authUser, AbstractDomain domain) {
-		Validate.notNull(domain, "domain must be set");
-		checkAdminFor(authUser, domain);
-		return attachmentBusinessService.findAllByDomain(domain);
+	public List<MailAttachment> findAllByMailConfig(Account authUser, MailConfig config) {
+		checkAdminFor(authUser, authUser.getDomain());
+		Validate.notNull(config, "MailConfig must be set");
+		return attachmentBusinessService.findAllByMailConfig(config);
 	}
 
 	@Override
 	public MailAttachment delete(Account authUser, MailAttachment mailAttachment) {
-		Validate.notNull(mailAttachment, "Mail attachment must be set");
 		checkAdminFor(authUser, authUser.getDomain());
+		Validate.notNull(mailAttachment, "Mail attachment must be set");
 		attachmentBusinessService.delete(mailAttachment);
 		saveLog(authUser, LogAction.DELETE, mailAttachment);
 		return mailAttachment;
@@ -129,9 +137,11 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	@Override
 	public MailAttachment update(Account authUser, MailAttachment attachmentToUpdate, MailAttachment mailAttach) {
+		checkAdminFor(authUser, authUser.getDomain());
 		Validate.notNull(attachmentToUpdate, "Mail attachment must be set");
 		Validate.notEmpty(mailAttach.getName(), "Name must be set");
-		checkAdminFor(authUser, authUser.getDomain());
+		MailAttachmentAuditLogEntry log = new MailAttachmentAuditLogEntry(authUser, LogAction.UPDATE,
+				AuditLogEntryType.MAIL_ATTACHMENT, attachmentToUpdate);
 		attachmentToUpdate.setEnable(mailAttach.getEnable());
 		attachmentToUpdate.setEnableForAll(mailAttach.getEnableForAll());
 		attachmentToUpdate.setLanguage(mailAttach.getLanguage());
@@ -139,7 +149,8 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 		attachmentToUpdate.setName(mailAttach.getName());
 		attachmentToUpdate.setCid(mailAttach.getCid());
 		attachmentToUpdate = attachmentBusinessService.update(attachmentToUpdate);
-		saveLog(authUser, LogAction.UPDATE, attachmentToUpdate);
+		log.setResourceUpdated(new MailAttachmentMto(attachmentToUpdate));
+		mongoRepository.insert(log);
 		return attachmentToUpdate;
 	}
 
