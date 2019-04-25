@@ -42,6 +42,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 public class SharedSpaceMemberBusinessServiceImpl extends org.linagora.linshare.core.business.service.impl.SharedSpaceMemberBusinessServiceImpl
 		implements SharedSpaceMemberBusinessService {
@@ -50,8 +51,10 @@ public class SharedSpaceMemberBusinessServiceImpl extends org.linagora.linshare.
 			SharedSpaceMemberMongoRepository repository,
 			SharedSpaceRoleMongoRepository roleRepository,
 			SharedSpaceNodeMongoRepository nodeRepository,
-			UserRepository<User> userRepository) {
-		super(repository, roleRepository, nodeRepository, userRepository);
+			UserRepository<User> userRepository,
+			MongoTemplate mongoTemplate
+	) {
+		super(repository, roleRepository, nodeRepository, userRepository, mongoTemplate);
 	}
 
 	@Override

@@ -53,9 +53,9 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
 
@@ -66,16 +66,20 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	protected final SharedSpaceNodeMongoRepository nodeRepository;
 
 	protected final UserRepository<User> userRepository;
+	
+	protected final MongoTemplate mongoTemplate;
 
 	public SharedSpaceMemberBusinessServiceImpl(SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
 			SharedSpaceRoleMongoRepository roleRepository,
 			SharedSpaceNodeMongoRepository nodeRepository,
-			UserRepository<User> userRepository) {
+			UserRepository<User> userRepository,
+			MongoTemplate mongoTemplate) {
 		super();
 		this.repository = sharedSpaceMemberMongoRepository;
 		this.roleRepository = roleRepository;
 		this.nodeRepository = nodeRepository;
 		this.userRepository = userRepository;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
@@ -163,14 +167,15 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public List<SharedSpaceNodeNested> findAllByAccount(String accountUuid) {
-		// Ugly ! :( We should use mongo template to get nested object.
-		List<SharedSpaceMember> list = repository.findByAccountUuid(accountUuid);
-		return Lists.transform(list, new Function<SharedSpaceMember, SharedSpaceNodeNested>() {
-			@Override
-			public SharedSpaceNodeNested apply(SharedSpaceMember member) {
-				return member.getNode();
-			}
-		});
+		Aggregation aggregation = Aggregation.newAggregation(
+				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
+				Aggregation.project("node.uuid",
+						"node.name",
+						"node.nodeType",
+						"node.creationDate",
+						"node.modificationDate"));
+		return mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
+				.getMappedResults();
 	}
 
 	@Override
