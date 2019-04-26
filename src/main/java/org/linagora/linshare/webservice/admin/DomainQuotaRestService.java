@@ -40,7 +40,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.DomainQuotaDto;
 
 public interface DomainQuotaRestService {
 
-	DomainQuotaDto find(String uuid) throws BusinessException;
+	DomainQuotaDto find(String uuid, boolean realTime) throws BusinessException;
 
 	List<DomainQuotaDto> findAll(String parentUuid) throws BusinessException;
 

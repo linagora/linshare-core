@@ -67,6 +67,11 @@ public class TopDomain extends AbstractDomain {
 	}
 
 	@Override
+	public boolean isTopDomain() {
+		return true;
+	}
+
+	@Override
 	public void updateDomainWith(AbstractDomain d) {
 		super.updateDomainWith(d);
 		if (!(this.defaultRole.equals(Role.SIMPLE) || this.defaultRole.equals(Role.ADMIN))) {
