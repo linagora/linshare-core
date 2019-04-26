@@ -47,6 +47,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.ContainerQuotaDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ContainerQuotaService;
+import org.linagora.linshare.core.service.QuotaService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -58,21 +59,30 @@ public class ContainerQuotaFacadeImpl extends AdminGenericFacadeImpl implements 
 	
 	private final AbstractDomainService abstractDomainService;
 
+	private final QuotaService quotaService;
+
 	public ContainerQuotaFacadeImpl(
 			final AccountService accountService,
 			final ContainerQuotaService containerQuotaService,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final QuotaService quotaService) {
 		super(accountService);
 		this.service = containerQuotaService;
 		this.abstractDomainService = abstractDomainService;
+		this.quotaService = quotaService;
 	}
 
 	@Override
-	public ContainerQuotaDto find(String uuid) throws BusinessException {
+	public ContainerQuotaDto find(String uuid, boolean realTime) throws BusinessException {
 		Validate.notEmpty(uuid, "uuid must be set.");
 		User authUser = checkAuthentication(Role.ADMIN);
 		ContainerQuota quota = service.find(authUser, uuid);
-		return new ContainerQuotaDto(quota);
+		ContainerQuotaDto dto = new ContainerQuotaDto(quota);
+		if (realTime) {
+			Long usedSpace = quotaService.getRealTimeUsedSpace(authUser, authUser, quota);
+			dto.setUsedSpace(usedSpace);
+		}
+		return dto;
 	}
 
 	@Override

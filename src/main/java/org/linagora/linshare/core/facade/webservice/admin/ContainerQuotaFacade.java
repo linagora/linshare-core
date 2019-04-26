@@ -41,7 +41,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.ContainerQuotaDto;
 
 public interface ContainerQuotaFacade {
 
-	ContainerQuotaDto find(String uuid) throws BusinessException;
+	ContainerQuotaDto find(String uuid, boolean realTime) throws BusinessException;
 
 	/**
 	 * Find all quota containers, you can filter them by domain and or by type.

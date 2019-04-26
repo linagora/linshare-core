@@ -181,6 +181,7 @@
 	</bean>
 	<bean id="wsAdminContainerQuotaFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.ContainerQuotaFacadeImpl">
 		<constructor-arg ref="accountService" />
+		<constructor-arg ref="quotaService" />
 		<constructor-arg ref="containerQuotaService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
