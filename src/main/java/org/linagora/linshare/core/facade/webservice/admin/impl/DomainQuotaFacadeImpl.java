@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -48,6 +49,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ContainerQuotaService;
 import org.linagora.linshare.core.service.DomainQuotaService;
+import org.linagora.linshare.core.service.QuotaService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -56,22 +58,25 @@ import com.google.common.collect.Lists;
 public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements DomainQuotaFacade {
 
 	private final DomainQuotaService service;
+	private final QuotaService quotaService;
 	private final ContainerQuotaService containerQuotaService;
 	private final AbstractDomainService abstractDomainService;
 
 	public DomainQuotaFacadeImpl(
 			final AccountService accountService,
 			final DomainQuotaService domainQuotaService,
+			final QuotaService quotaService,
 			final ContainerQuotaService containerQuotaService,
 			final AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.service = domainQuotaService;
+		this.quotaService = quotaService;
 		this.containerQuotaService = containerQuotaService;
 		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
-	public DomainQuotaDto find(String uuid) throws BusinessException {
+	public DomainQuotaDto find(String uuid, boolean realTime) throws BusinessException {
 		Validate.notNull(uuid, "Domain quota uuid must be set.");
 		User authUser = checkAuthentication(Role.ADMIN);
 		DomainQuota quota = service.find(authUser, uuid);
@@ -79,6 +84,22 @@ public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements Dom
 		List<ContainerQuota> containers = containerQuotaService.findAll(authUser, quota.getDomain());
 		for (ContainerQuota containerQuota : containers) {
 			dto.addContainerUuids(containerQuota.getUuid());
+		}
+		if (realTime) {
+			Long usedSpace = quotaService.getRealTimeUsedSpace(authUser, authUser, quota);
+			dto.setUsedSpace(usedSpace);
+			if (quota.getDomain().isRootDomain()) {
+				long currentValueForSubdomains = quotaService.getTodayUsedSpace(authUser, authUser);
+				dto.setCurrentValueForSubdomains(currentValueForSubdomains);
+			} else if (quota.getDomain().isTopDomain()) {
+				long currentValueForSubdomains = 0;
+				Set<AbstractDomain> subdomain = quota.getDomain().getSubdomain();
+				for (AbstractDomain domain : subdomain) {
+					DomainQuota domainQuota = quotaService.find(domain);
+					currentValueForSubdomains += quotaService.getRealTimeUsedSpace(authUser, authUser, domainQuota);
+				}
+				dto.setCurrentValueForSubdomains(currentValueForSubdomains);
+			}
 		}
 		return dto;
 	}

@@ -58,4 +58,6 @@ public interface QuotaService {
 
 	Long getRealTimeUsedSpace(Account actor, Account owner, DomainQuota cq) throws BusinessException;
 
+	Long getTodayUsedSpace(Account actor, Account owner) throws BusinessException;
+
 }

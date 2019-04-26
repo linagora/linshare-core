@@ -73,7 +73,6 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 	}
 
-
 	@Override
 	public AccountQuota find(Account actor, Account owner, String uuid) throws BusinessException {
 		// TODO FMA Quota
@@ -144,6 +143,14 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, dq.getDomain(), new Date(),
 				null, null);
 		return dq.getCurrentValue() + todayConsumption;
+	}
+
+	@Override
+	public Long getTodayUsedSpace(Account actor, Account owner) throws BusinessException {
+		preChecks(actor, owner);
+		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, null, new Date(),
+				null, null);
+		return todayConsumption;
 	}
 
 	@Override

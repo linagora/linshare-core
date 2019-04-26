@@ -390,6 +390,10 @@ public abstract class AbstractDomain {
 		return false;
 	}
 
+	public boolean isTopDomain() {
+		return false;
+	}
+
 	private boolean checkIfManagedByParent(AbstractDomain domain, String accountDomainId) {
 		AbstractDomain d = domain.getParentDomain();
 		if (d != null) {
