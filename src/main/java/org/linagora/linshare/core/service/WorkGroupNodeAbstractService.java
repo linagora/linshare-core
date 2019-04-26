@@ -37,6 +37,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface WorkGroupNodeAbstractService {
@@ -49,5 +51,7 @@ public interface WorkGroupNodeAbstractService {
 	void checkUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
 
 	boolean isUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
+
+	String computeFileName(WorkGroupDocument document, WorkGroupDocumentRevision revision, boolean isDocument);
 
 }

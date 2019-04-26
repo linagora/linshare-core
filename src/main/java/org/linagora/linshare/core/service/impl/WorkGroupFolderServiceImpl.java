@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -63,8 +64,9 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 			MongoTemplate mongoTemplate,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			LogEntryService logEntryService,
-			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
-		super(repository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService);
+			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
+			MimeTypeMagicNumberDao mimeTypeIdentifier) {
+		super(repository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService, mimeTypeIdentifier);
 	}
 
 	@Override

@@ -34,6 +34,7 @@
 package org.linagora.linshare.mongo.entities.mto;
 
 import org.linagora.linshare.core.domain.constants.TargetKind;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -59,6 +60,9 @@ public class CopyMto {
 
 	@ApiModelProperty(value = "contextName")
 	protected String contextName;
+
+	@ApiModelProperty(value = "nodeType")
+	protected WorkGroupNodeType nodeType;
 
 	public CopyMto() {
 		super();
@@ -91,6 +95,7 @@ public class CopyMto {
 		this.uuid = node.getUuid();
 		this.name = node.getName();
 		this.contextUuid = workGroup.getLsUuid();
+		this.nodeType = node.getNodeType();
 	}
 
 	public String getUuid() {
@@ -131,6 +136,14 @@ public class CopyMto {
 
 	public void setContextName(String contextName) {
 		this.contextName = contextName;
+	}
+
+	public WorkGroupNodeType getNodeType() {
+		return nodeType;
+	}
+
+	public void setNodeType(WorkGroupNodeType nodeType) {
+		this.nodeType = nodeType;
 	}
 
 }

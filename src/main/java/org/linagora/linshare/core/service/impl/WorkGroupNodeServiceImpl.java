@@ -475,11 +475,11 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		if (isDocument(node)) {
 			WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) revisionService.findMostRecent(workGroup,
 					node.getUuid());
-			return workGroupDocumentService.download(actor, owner, workGroup, (WorkGroupDocument) node, revision, true);
+			return workGroupDocumentService.download(actor, owner, workGroup, (WorkGroupDocument) node, revision);
 		} else if (isRevision(node)) {
 			WorkGroupNode documentParent = workGroupDocumentService.find(actor, owner, workGroup, node.getParent());
 			return revisionService.download(actor, owner, workGroup, (WorkGroupDocument) documentParent,
-					(WorkGroupDocumentRevision) node, false);
+					(WorkGroupDocumentRevision) node);
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not download this kind of node.");
@@ -541,10 +541,10 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 					fromNode.getUuid());
 			WorkGroupDocument doc = (WorkGroupDocument) fromNode;
 			CopyMto copyFrom = new CopyMto(doc, fromWorkGroup);
+			String fileName = workGroupDocumentService.computeFileName(doc, mostRecent, true);
 			if (isFolder(toNode)) {
 				// members of the "recipient workgroup" do not need to know the name of the source workgroup.
-				String fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode,
-						fromNode.getName());
+				fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode, fileName);
 				WorkGroupDocument newDocument = (WorkGroupDocument) workGroupDocumentService.create(actor, owner,
 						toWorkGroup, doc.getSize(), doc.getMimeType(), fileName, toNode);
 				// copy the most recent revision into the new document.
@@ -559,7 +559,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy to this kind of node.");
 				}
 				// copy the most recent revision into the document.
-				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor, owner, fromWorkGroup, mostRecent.getDocumentUuid(), doc.getName(),
+				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor, owner, fromWorkGroup, mostRecent.getDocumentUuid(), fileName,
 						toNode, doc.getCiphered(), doc.getSize(), doc.getUuid(), copyFrom);
 				toNode = revisionService.updateDocument(actor, owner, toWorkGroup, revision);
 				CopyMto copiedTo = new CopyMto(revision, toWorkGroup);
@@ -572,11 +572,13 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			}
 		} else if (isRevision(fromNode)) {
 			WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) fromNode;
+			WorkGroupDocument parent = (WorkGroupDocument) workGroupDocumentService.find(actor, owner, fromWorkGroup,
+					revision.getParent());
+			String fileName = workGroupDocumentService.computeFileName(parent, revision, false);
 			CopyMto copyFrom = new CopyMto(revision, fromWorkGroup);
 			if (isFolder(toNode)) {
 				// Create a new document from this revision
-				String fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode,
-						fromNode.getName());
+				fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode, fileName);
 				WorkGroupDocument newDocument = (WorkGroupDocument) workGroupDocumentService.create(actor, owner,
 						toWorkGroup, revision.getSize(), revision.getMimeType(), fileName, toNode);
 				// copy the revision into the new document.
@@ -592,7 +594,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				}
 				// Copy the revision into the document.
 				WorkGroupDocumentRevision newRevision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor,
-						owner, fromWorkGroup, revision.getDocumentUuid(), revision.getName(), toNode,
+						owner, fromWorkGroup, revision.getDocumentUuid(), fileName, toNode,
 						revision.getCiphered(), revision.getSize(), revision.getUuid(), copyFrom);
 				toNode = revisionService.updateDocument(actor, owner, toWorkGroup, newRevision);
 				CopyMto copiedTo = new CopyMto(newRevision, toWorkGroup);

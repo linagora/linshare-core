@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 import java.io.InputStream;
 
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -60,12 +61,12 @@ public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 			throws BusinessException;
 
 	InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node,
-			boolean isDocument) throws BusinessException;
+			WorkGroupNodeType nodeType) throws BusinessException;
 
 	InputStream getThumbnailStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node, ThumbnailType thumbnailType)
 			throws BusinessException;
 
 	FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, WorkGroupDocument node,
-			WorkGroupDocumentRevision revision, boolean isDocument);
+			WorkGroupDocumentRevision revision);
 
 }

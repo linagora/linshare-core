@@ -162,7 +162,7 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 				org.apache.tika.mime.MimeType forName = defaultMimeTypes.forName(strMimeType);
 				List<String> extensions = forName.getExtensions();
 				for (String found : extensions) {
-					if (extension.equals(found)) {
+					if (found.equals(extension)) {
 						return true;
 					}
 				}

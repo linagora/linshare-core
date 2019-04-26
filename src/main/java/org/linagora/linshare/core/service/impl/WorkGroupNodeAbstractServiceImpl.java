@@ -37,8 +37,12 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -79,13 +83,16 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 
 	protected final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
 
+	protected final MimeTypeMagicNumberDao mimeTypeIdentifier;
+
 	public WorkGroupNodeAbstractServiceImpl(
 			WorkGroupNodeMongoRepository repository,
 			MongoTemplate mongoTemplate,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			ThreadMemberRepository threadMemberRepository,
 			LogEntryService logEntryService,
-			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
+			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
+			MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
 		super();
 		this.repository = repository;
 		this.mongoTemplate = mongoTemplate;
@@ -93,6 +100,7 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.threadMemberRepository = threadMemberRepository;
 		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
+		this.mimeTypeIdentifier = mimeTypeMagicNumberDao;
 	}
 
 	protected abstract BusinessErrorCode getBusinessExceptionAlreadyExists();
@@ -172,35 +180,40 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 		log.addRelatedAccounts(members);
 	}
 
-	protected String getFileName(WorkGroupDocument document, WorkGroupDocumentRevision revision, boolean isDocument) {
-		String documenExtension = FilenameUtils.getExtension(document.getName());
-		String revisionExtension = FilenameUtils.getExtension(revision.getName());
-		String documentName = document.getName();
-		if (!Strings.isNullOrEmpty(documenExtension)) {
-			int i = documentName.lastIndexOf('.');
-			documentName = documentName.substring(0, i);
-		}
-		if (isDocument) {
-			String extension = computeExtention(documenExtension, revisionExtension);
-			return documentName + extension;
-		} else {
-			SimpleDateFormat formatter = new SimpleDateFormat("YYYYMMdd-HHmmss");
-			String extension = computeExtention(documenExtension, revisionExtension);
-			documentName = documentName + "-r" + formatter.format(revision.getCreationDate()) + extension;
-			return documentName;
-		}
-	}
-
-	private String computeExtention(String documenExtension, String revisionExtension) {
-		if (Strings.isNullOrEmpty(documenExtension)) {
-			if (!Strings.isNullOrEmpty(revisionExtension)) {
-				return "." + revisionExtension;
+	@Override
+	public String computeFileName(WorkGroupDocument document, WorkGroupDocumentRevision revision, boolean isDocument) {
+		try {
+			MimeTypes types = MimeTypes.getDefaultMimeTypes();
+			MimeType revisionType;
+			revisionType = types.forName(revision.getMimeType());
+			String preferedRevisionExtension = revisionType.getExtension();
+			String documentExtension = FilenameUtils.getExtension(document.getName());
+			String revisionExtension = FilenameUtils.getExtension(revision.getName());
+			String documentName = document.getName();
+			if (!Strings.isNullOrEmpty(documentExtension)) {
+				int i = documentName.lastIndexOf(".");
+				documentName = documentName.substring(0, i);
 			}
-			return "";
-		} else if (documenExtension.equals(revisionExtension) || Strings.isNullOrEmpty(revisionExtension)) {
-			return "." + documenExtension;
-		} else {
-			return "." + revisionExtension;
+			if (isDocument) {
+				if (document.getMimeType().equals(revision.getMimeType())) {
+					return document.getName();
+				} else {
+					if (mimeTypeIdentifier.isKnownExtension(revisionExtension)) {
+						return documentName.concat(revisionExtension);
+					} else {
+						return documentName.concat(preferedRevisionExtension);
+					}
+				}
+			} else {
+				String extension = mimeTypeIdentifier.isKnownExtension(revisionExtension) ? revisionExtension
+						: preferedRevisionExtension;
+				SimpleDateFormat formatter = new SimpleDateFormat("YYYYMMdd-HHmmss");
+				documentName = documentName + "-r" + formatter.format(revision.getCreationDate()).concat(extension);
+				return documentName;
+			}
+		} catch (MimeTypeException e) {
+			logger.debug("Error when trying to get the extension of file", e.getMessage());
+			return document.getName();
 		}
 	}
 

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +51,7 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -61,6 +63,7 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
@@ -209,6 +212,16 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, WorkGroupDocument node,
+			WorkGroupDocumentRevision revision) {
+		String fileName = computeFileName(node, revision, false);
+		revision.setName(fileName);
+		InputStream stream = getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) revision,
+				WorkGroupNodeType.DOCUMENT_REVISION);
+		return new FileAndMetaData(stream, revision.getSize(), fileName, revision.getMimeType());
 	}
 
 	@Override

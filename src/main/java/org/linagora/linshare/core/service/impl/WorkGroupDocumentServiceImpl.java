@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -88,8 +89,6 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 
 	protected final VirusScannerService virusScannerService;
 
-	protected final MimeTypeMagicNumberDao mimeTypeIdentifier;
-
 	protected final OperationHistoryBusinessService operationHistoryBusinessService;
 
 	protected final QuotaService quotaService;
@@ -112,13 +111,12 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService,
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
-		super(workGroupNodeMongoRepository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService);
+		super(workGroupNodeMongoRepository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService, mimeTypeIdentifier);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
-		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.quotaService = quotaService;
 		this.repository = workGroupNodeMongoRepository;
@@ -172,8 +170,9 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		checkSpace(toWorkGroup, size);
 		WorkGroupDocument node = documentEntryBusinessService.copy(owner, toWorkGroup, nodeParent, documentUuid, fileName,
 				ciphered);
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_DOCUMENT, node, toWorkGroup);
+		AuditLogEntryType auditType = getAuditType(copiedFrom.getNodeType());
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE, auditType, node,
+				toWorkGroup);
 		addMembersToLog(toWorkGroup, log);
 		log.setCause(LogActionCause.COPY);
 		log.setFromResourceUuid(fromNodeUuid);
@@ -182,6 +181,12 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		logEntryService.insert(log);
 		addToQuota(toWorkGroup, size);
 		return node;
+	}
+
+	private AuditLogEntryType getAuditType(WorkGroupNodeType nodeType) {
+		String type = "WORKGROUP_" + nodeType.toString();
+		AuditLogEntryType auditType = AuditLogEntryType.fromString(type);
+		return auditType;
 	}
 
 	@Override
@@ -197,9 +202,8 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 
 	@Override
 	public InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node,
-			boolean isDocument) throws BusinessException {
-		AuditLogEntryType auditType = isDocument ? AuditLogEntryType.WORKGROUP_DOCUMENT
-				: AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION;
+			WorkGroupNodeType nodeType) throws BusinessException {
+		AuditLogEntryType auditType = getAuditType(nodeType);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, auditType,
 				node, workGroup);
 		addMembersToLog(workGroup, log);
@@ -209,11 +213,12 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 
 	@Override
 	public FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, WorkGroupDocument node,
-			WorkGroupDocumentRevision revision, boolean isDocument) {
-		String fileName = getFileName(node, revision, isDocument);
-		revision.setName(fileName);
-		InputStream stream = getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) revision, isDocument);
-		return new FileAndMetaData(stream, revision.getSize(), fileName, revision.getMimeType());
+			WorkGroupDocumentRevision revision) {
+		String documentName = computeFileName(node, revision, true);
+		revision.setName(documentName);
+		InputStream stream = getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) revision,
+				WorkGroupNodeType.DOCUMENT);
+		return new FileAndMetaData(stream, revision.getSize(), documentName, revision.getMimeType());
 	}
 
 	@Override
