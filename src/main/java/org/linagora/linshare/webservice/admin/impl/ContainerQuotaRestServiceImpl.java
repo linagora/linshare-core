@@ -36,11 +36,13 @@ package org.linagora.linshare.webservice.admin.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -79,8 +81,14 @@ public class ContainerQuotaRestServiceImpl extends WebserviceBase implements Con
 	@ApiOperation(value = "find container quota", response = AccountQuotaDto.class)
 	@Override
 	public ContainerQuotaDto find(
-			@ApiParam(value = "Container quota Uuid", required = true) @PathParam("uuid") String uuid) throws BusinessException {
-		return facade.find(uuid);
+			@ApiParam(value = "Container quota Uuid", required = true)
+				@PathParam("uuid")
+					String uuid,
+			@ApiParam(value = "Compute real time quota value. Carefull it could be time consuming.", required = false)
+				@QueryParam("realtime") @DefaultValue("false")
+					boolean realTime
+				) throws BusinessException {
+		return facade.find(uuid, realTime);
 	}
 
 	@Path("/containers/{uuid : .* }")
