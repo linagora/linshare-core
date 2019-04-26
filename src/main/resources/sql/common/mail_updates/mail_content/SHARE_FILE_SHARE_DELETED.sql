@@ -35,4 +35,5 @@ subject = {0} {1} a supprimé le partage de {2}',messages_english='deletedDate =
 mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span></b> has deleted the  fileshare
 subject = {0} {1} has deleted the fileshare {2}',messages_russian='deletedDate = Дата удаления
 mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span></b> удалил файл рассылки
+mainMsgAdmin = Вы удалили себя из созданной вами рабочей группы <b>{0}</b>
 subject = {0} {1} удалил файл рассылки {2}' WHERE id=5;
