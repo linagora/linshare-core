@@ -41,7 +41,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 
 public interface AccountQuotaFacade {
 
-	AccountQuotaDto find(String uuid) throws BusinessException;
+	AccountQuotaDto find(String uuid, boolean realTime) throws BusinessException;
 
 	List<AccountQuotaDto> findAll(String domainUuid, ContainerQuotaType type) throws BusinessException;
 

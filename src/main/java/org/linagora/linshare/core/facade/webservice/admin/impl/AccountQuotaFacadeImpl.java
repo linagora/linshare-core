@@ -45,6 +45,7 @@ import org.linagora.linshare.core.facade.webservice.admin.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.core.service.AccountQuotaService;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.QuotaService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -54,19 +55,28 @@ public class AccountQuotaFacadeImpl extends AdminGenericFacadeImpl implements Ac
 
 	private final AccountQuotaService service;
 
+	private final QuotaService quotaService;
+
 	public AccountQuotaFacadeImpl(
 			final AccountService accountService,
-			final AccountQuotaService service) {
+			final AccountQuotaService service,
+			final QuotaService quotaService) {
 		super(accountService);
 		this.service = service;
+		this.quotaService = quotaService;
 	}
 
 	@Override
-	public AccountQuotaDto find(String uuid) throws BusinessException {
+	public AccountQuotaDto find(String uuid, boolean realTime) throws BusinessException {
 		Validate.notNull(uuid, "Account quota uuid must be set.");
 		User authUser = checkAuthentication(Role.ADMIN);
 		AccountQuota quota = service.find(authUser, uuid);
-		return new AccountQuotaDto(quota);
+		AccountQuotaDto dto = new AccountQuotaDto(quota);
+		if (realTime) {
+			Long usedSpace = quotaService.getRealTimeUsedSpace(authUser, authUser, uuid);
+			dto.setUsedSpace(usedSpace);
+		}
+		return dto;
 	}
 
 	@Override

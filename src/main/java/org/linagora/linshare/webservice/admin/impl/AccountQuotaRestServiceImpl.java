@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.admin.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -78,8 +79,14 @@ public class AccountQuotaRestServiceImpl implements AccountQuotaRestService {
 	@ApiOperation(value = "find account quota", response = AccountQuotaDto.class)
 	@Override
 	public AccountQuotaDto find(
-			@ApiParam(value = "Account quota Uuid", required = true) @PathParam("uuid") String uuid) throws BusinessException {
-		return facade.find(uuid);
+			@ApiParam(value = "Account quota Uuid", required = true)
+				@PathParam("uuid")
+					String uuid,
+			@ApiParam(value = "Compute real time quota value. Carefull it could be time consuming.", required = false)
+				@QueryParam("realtime") @DefaultValue("false")
+					boolean realTime
+			) throws BusinessException {
+		return facade.find(uuid, realTime);
 	}
 
 	@Path("/accounts/{uuid : .*}")
