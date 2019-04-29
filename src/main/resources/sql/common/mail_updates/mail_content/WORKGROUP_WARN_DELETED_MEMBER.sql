@@ -44,5 +44,6 @@ mainMsgAdmin = You have removed yourself from your own workgroup  <b>{0}</b>
 simpleMsg =  Your access to the workgroup <b>{0}</b> was withdrawn.     
 workGroupNameTitle = Workgroup Name',messages_russian='subject = У вас больше нет доступа к рабочей группе {0}.
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> удалил вас из рабочей группы  <b>{2}</b>
+mainMsgAdmin = Вы удалили себя из созданной вами рабочей группы  <b>{0}</b>
 simpleMsg =  У вас больше нет доступа к рабочей группе <b>{0}</b>.
 workGroupNameTitle = Название рабочей группы' WHERE id=30;
