@@ -182,6 +182,7 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 				dto.getMailContentType()).toInt());
 		content.setMessagesEnglish(dto.getMessagesEnglish());
 		content.setMessagesFrench(dto.getMessagesFrench());
+		content.setMessagesRussian(dto.getMessagesRussian());
 		return content;
 	}
 
