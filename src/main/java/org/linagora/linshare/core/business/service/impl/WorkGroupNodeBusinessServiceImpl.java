@@ -33,16 +33,36 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.IOUtils;
+import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.DocumentEntryRevisionBusinessService;
 import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.utils.FileAndMetaData;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
 import org.linagora.linshare.utils.DocumentCount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -52,11 +72,28 @@ import com.google.common.collect.Maps;
 
 public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessService {
 
-	private final MongoTemplate mongoTemplate;
+	protected Logger logger = LoggerFactory.getLogger(WorkGroupNodeBusinessServiceImpl.class);
 
-	public WorkGroupNodeBusinessServiceImpl(
-			MongoTemplate mongoTemplate) {
+	protected final static String PATH_SEPARATOR = "/";
+	protected final static String ARCHIVE_MIME_TYPE = "application/zip";
+	protected final static String ARCHIVE_EXTENTION = ".zip";
+
+	protected final DocumentEntryBusinessService documentEntryBusinessService;
+
+	protected final DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService;
+
+	protected final MongoTemplate mongoTemplate;
+
+	protected final Long archiveMaximumSize;
+
+	public WorkGroupNodeBusinessServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
+			DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService,
+			MongoTemplate mongoTemplate,
+			Long archiveMaximumSize) {
+		this.documentEntryBusinessService = documentEntryBusinessService;
+		this.documentEntryRevisionBusinessService = documentEntryRevisionBusinessService;
 		this.mongoTemplate = mongoTemplate;
+		this.archiveMaximumSize = archiveMaximumSize;
 	}
 
 	@Override
@@ -106,6 +143,80 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		}
 		Long result = mongoTemplate.count(query, WorkGroupNode.class);
 		return result;
+	}
+
+	@Override
+	public Boolean downloadIsAllowed(WorkGroup workGroup, String pattern) {
+		return this.archiveMaximumSize > computeNodeSize(workGroup, pattern);
+	}
+
+	@Override
+	public List<WorkGroupNode> findAllSubNodes(WorkGroup workGroup, String pattern) {
+		Query query = new Query();
+		Criteria criteria = new Criteria();
+		query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
+		query.addCriteria(criteria.orOperator(Criteria.where("nodeType").is("DOCUMENT"),
+				Criteria.where("nodeType").is("FOLDER")));
+		query.addCriteria(Criteria.where("path").regex(pattern));
+		return mongoTemplate.find(query, WorkGroupNode.class);
+	}
+
+	@Override
+	public FileAndMetaData downloadFolder(Account actor, User owner, WorkGroup workGroup, WorkGroupNode rootNode,
+			List<WorkGroupNode> nodes) {
+		FileAndMetaData fileAndMetaData = null;
+		File zipFile = new File(rootNode.getName().concat(ARCHIVE_EXTENTION));
+		Map<String, WorkGroupNode> map = nodes.stream()
+				.collect(Collectors.toMap(WorkGroupNode::getUuid, Function.identity()));
+		try (FileOutputStream fos = new FileOutputStream(zipFile);
+			ZipOutputStream zos = new ZipOutputStream(fos);) {
+			for (WorkGroupNode node : nodes) {
+				String path = getGlobalPath(map, node.getPath(), rootNode);
+				if (WorkGroupNodeType.DOCUMENT.equals(node.getNodeType())) {
+					WorkGroupDocument revision = (WorkGroupDocument) documentEntryRevisionBusinessService.findMostRecent(workGroup, node.getUuid());
+					try (InputStream stream = documentEntryBusinessService.getDocumentStream(revision);) {
+						addFileToZip(stream, zos, node.getName(), path, revision.getSize());
+					}
+				}
+			}
+			zos.close();
+			InputStream inputStream = new FileInputStream(zipFile);
+			fileAndMetaData = new FileAndMetaData(inputStream, zipFile.length(), zipFile.getName(), ARCHIVE_MIME_TYPE);
+		} catch (IOException e) {
+			logger.debug("Download folder failed : ", e);
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not generate the archive for this directory.");
+		} finally {
+			if (zipFile != null) {
+				zipFile.delete();
+			}
+		}
+		return fileAndMetaData;
+	}
+
+	private String getGlobalPath(Map<String, WorkGroupNode> nodes, String path, WorkGroupNode root) {
+		String nodePath = root.getName() + PATH_SEPARATOR;
+		if (path == null) {
+			return "";
+		}
+		String[] split = path.split(",");
+		for (String uuid : split) {
+			if (!uuid.isEmpty()) {
+				WorkGroupNode currentNode = nodes.get(uuid);
+				if (currentNode != null) {
+						nodePath = nodePath + currentNode.getName() + PATH_SEPARATOR;
+				}
+			}
+		}
+		return nodePath;
+	}
+
+	private void addFileToZip(InputStream stream, ZipOutputStream zos, String documentName, String path, Long size)
+			throws IOException {
+		String filePath = path + documentName;
+		ZipEntry zipEntry = new ZipEntry(filePath);
+		zos.putNextEntry(zipEntry);
+		IOUtils.copy(stream, zos);
+		zos.closeEntry();
 	}
 
 }

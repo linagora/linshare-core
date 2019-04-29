@@ -39,10 +39,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryRevisionBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -74,11 +74,7 @@ import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
 public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServiceImpl
 		implements WorkGroupDocumentRevisionService {
@@ -191,13 +187,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	public WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid) throws BusinessException {
 		Validate.notNull(workGroup);
 		Validate.notNull(parentUuid);
-		Query query = new Query();
-		query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
-		query.addCriteria(Criteria.where("parent").is(parentUuid));
-		query.addCriteria(Criteria.where("nodeType").is(WorkGroupNodeType.DOCUMENT_REVISION));
-		query.with(new Sort(Direction.DESC, "creationDate"));
-		query.limit(1);
-		return mongoTemplate.findOne(query, WorkGroupNode.class);
+		return documentEntryRevisionBusinessService.findMostRecent(workGroup, parentUuid);
 	}
 
 	@Override

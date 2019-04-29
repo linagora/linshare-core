@@ -480,6 +480,14 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			WorkGroupNode documentParent = workGroupDocumentService.find(actor, owner, workGroup, node.getParent());
 			return revisionService.download(actor, owner, workGroup, (WorkGroupDocument) documentParent,
 					(WorkGroupDocumentRevision) node);
+		} else if (isFolder(node)) {
+			String pattern = "^" + node.getPath() + node.getUuid();
+			if (!workGroupNodeBusinessService.downloadIsAllowed(workGroup, pattern)) {
+				throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_FORBIDDEN,
+						"Can not download this folder, The Folder size is too large. ");
+			}
+			List<WorkGroupNode> nodes = workGroupNodeBusinessService.findAllSubNodes(workGroup, pattern);
+			return workGroupNodeBusinessService.downloadFolder(actor, owner, workGroup, node, nodes);
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not download this kind of node.");

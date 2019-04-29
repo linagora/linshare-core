@@ -40,6 +40,7 @@ import org.linagora.linshare.core.business.service.SignatureBusinessService;
 import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -54,12 +55,19 @@ import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepos
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusinessServiceImpl
 		implements DocumentEntryRevisionBusinessService {
 
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryRevisionBusinessServiceImpl.class);
+
+	private final MongoTemplate mongoTemplate;
 
 	public DocumentEntryRevisionBusinessServiceImpl(
 			final FileDataStore fileSystemDao,
@@ -72,10 +80,12 @@ public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusin
 			final boolean deduplication,
 			final WorkGroupNodeMongoRepository repository,
 			final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
-			final ThumbnailRepository thumbnailRepository) {
+			final ThumbnailRepository thumbnailRepository,
+			MongoTemplate mongoTemplate) {
 		super(fileSystemDao, timeStampingService, documentEntryRepository, documentRepository, signatureBusinessService,
 				uploadRequestEntryBusinessService, thumbnailGeneratorBusinessService, deduplication, repository,
 				documentGarbageCollectorRepository, thumbnailRepository);
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
@@ -87,5 +97,16 @@ public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusin
 		setDocumentProperties(actor, node, fileName, parentNode, myFile, checkIfIsCiphered);
 		node = repository.insert(node);
 		return node;
+	}
+
+	@Override
+	public WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
+		query.addCriteria(Criteria.where("parent").is(parentUuid));
+		query.addCriteria(Criteria.where("nodeType").is(WorkGroupNodeType.DOCUMENT_REVISION));
+		query.with(new Sort(Direction.DESC, "creationDate"));
+		query.limit(1);
+		return mongoTemplate.findOne(query, WorkGroupNode.class);
 	}
 }

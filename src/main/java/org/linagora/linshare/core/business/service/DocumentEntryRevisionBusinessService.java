@@ -47,4 +47,6 @@ public interface DocumentEntryRevisionBusinessService extends DocumentEntryBusin
 			Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType,
 			WorkGroupNode nodeParent) throws BusinessException;
 
+	WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid);
+
 }

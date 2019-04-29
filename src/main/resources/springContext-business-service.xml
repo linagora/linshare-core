@@ -43,6 +43,7 @@
 		<constructor-arg ref="workGroupNodeMongoRepository" />
 		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 		<constructor-arg ref="thumbnailRepository" />
+		<constructor-arg ref="mongoTemplate" />
 	</bean>
 
 	<bean id="shareEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.ShareEntryBusinessServiceImpl">
@@ -347,7 +348,11 @@
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="mongoTemplate"/>
 	</bean>
-	<bean name="workGroupNodeBusinessService" class="org.linagora.linshare.core.business.service.impl.WorkGroupNodeBusinessServiceImpl">
+	<bean name="workGroupNodeBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.WorkGroupNodeBusinessServiceImpl">
+		<constructor-arg ref="documentEntryBusinessService"/>
+		<constructor-arg ref="documentEntryRevisionBusinessService"/>
 		<constructor-arg ref="mongoTemplate" />
+		<constructor-arg value="${linshare.download.archive.maximum.size}" />
 	</bean>
 </beans>

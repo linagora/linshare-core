@@ -37,7 +37,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface WorkGroupNodeBusinessService {
@@ -47,5 +50,12 @@ public interface WorkGroupNodeBusinessService {
 	Long computeNodeSize(WorkGroup workGroup, String pattern);
 
 	Long computeNodeCount(WorkGroup workGroup, String pattern, WorkGroupNode node);
+
+	Boolean downloadIsAllowed(WorkGroup workGroup, String pattern);
+
+	List<WorkGroupNode> findAllSubNodes(WorkGroup workGroup, String pattern);
+
+	FileAndMetaData downloadFolder(Account actor, User owner, WorkGroup workGroup, WorkGroupNode node,
+			List<WorkGroupNode> nodes);
 
 }
