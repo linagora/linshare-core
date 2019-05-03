@@ -151,6 +151,17 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	}
 
 	@Test
+	public void findTest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PermanentToken janeToken = new PermanentToken(TOKEN_LABEL, "Description test");
+		janeToken = jwtLongTimeService.create(jane, jane, janeToken);
+		PermanentToken found = jwtLongTimeService.find(jane, jane, janeToken.getUuid());
+		assertEquals(jane.getMail(), found.getSubject());
+		jwtLongTimeService.delete(jane, jane, found);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void findAllByDomainTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
@@ -187,7 +198,7 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		PermanentToken deleted = jwtLongTimeService.delete(john, john, token);
 		assertEquals(token.getUuid(), deleted.getUuid());
 		assertEquals(token.getLabel(), deleted.getLabel());
-		assertEquals(deleted.getActorUuid(), john.getLsUuid());
+		assertEquals(deleted.getActor().getUuid(), john.getLsUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -199,7 +210,7 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		PermanentToken deleted = jwtLongTimeService.delete(root, john, token);
 		assertEquals(token.getUuid(), deleted.getUuid());
 		assertEquals(token.getLabel(), deleted.getLabel());
-		assertEquals(deleted.getActorUuid(), john.getLsUuid());
+		assertEquals(deleted.getActor().getUuid(), john.getLsUuid());
 		wiser.checkGeneratedMessages();
 		logger.info(LinShareTestConstants.END_TEST);
 	}

@@ -46,6 +46,8 @@ public class JwtLongTimeAuditLogEntry extends AuditLogEntryUser {
 
 	protected PermanentToken resource;
 
+	protected PermanentToken resourceUpdated;
+
 	public JwtLongTimeAuditLogEntry() {
 		super();
 	}
@@ -54,6 +56,7 @@ public class JwtLongTimeAuditLogEntry extends AuditLogEntryUser {
 			PermanentToken jwtLongTime) {
 		super(new AccountMto(authUser), new AccountMto(actor), action, type, jwtLongTime.getUuid());
 		this.resource = new PermanentToken(jwtLongTime);
+
 	}
 
 	public PermanentToken getResource() {
@@ -62,5 +65,13 @@ public class JwtLongTimeAuditLogEntry extends AuditLogEntryUser {
 
 	public void setResource(PermanentToken resource) {
 		this.resource = resource;
+	}
+
+	public PermanentToken getResourceUpdated() {
+		return resourceUpdated;
+	}
+
+	public void setResourceUpdated(PermanentToken resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
 	}
 }

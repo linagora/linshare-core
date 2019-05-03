@@ -43,6 +43,8 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface JwtPermanentTokenRestService {
 
+	PermanentToken find(String uuid) throws BusinessException;
+
 	PermanentToken create(PermanentToken permanentToken) throws BusinessException;
 
 	List<PermanentToken> findAll() throws BusinessException;
@@ -52,4 +54,6 @@ public interface JwtPermanentTokenRestService {
 	PermanentToken update(PermanentToken permanentToken, String uuid) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAllAudit(List<LogAction> actions) throws BusinessException;
+
+	void head(String uuid) throws BusinessException;
 }

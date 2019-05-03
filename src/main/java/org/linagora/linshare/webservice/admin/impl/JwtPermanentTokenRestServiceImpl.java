@@ -38,6 +38,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -70,6 +71,19 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 		this.jwtLongTimeTokenFacade = jwtLongTimeTokenFacade;
 	}
 
+	@Path("/{uuid}")
+	@GET
+	@Override
+	@ApiOperation(value = "Find JWT permanent tokens owned by uuid.", response = PermanentToken.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
+	public PermanentToken find(
+			@ApiParam(value = "token uuid", required = true)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return jwtLongTimeTokenFacade.find(uuid);
+	}
+
 	@Path("/")
 	@POST
 	@Override
@@ -78,12 +92,22 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public PermanentToken create(
-			@ApiParam(value = "actor uuid", required = true)
-				@QueryParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Permanent token to create from two fields : label (mandatory), description (optional)", required = true)
-				PermanentToken permanentToken)
-						throws BusinessException {
-		return jwtLongTimeTokenFacade.create(actorUuid, permanentToken);
+			@ApiParam(value = "Permanent token to create from two fields : label (mandatory), description (optional), actorUuid (mandatory)", required = true) PermanentToken permanentToken)
+			throws BusinessException {
+		return jwtLongTimeTokenFacade.create(permanentToken);
+	}
+
+	@Path("/{uuid}")
+	@HEAD
+	@Override
+	@ApiOperation(value = "Check if JWT permanent tokens exists.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
+	public void head(
+			@ApiParam(value = "token uuid", required = true)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		jwtLongTimeTokenFacade.find(uuid);
 	}
 
 	@Path("/")
@@ -94,21 +118,21 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	public List<PermanentToken> findAll(
-			@ApiParam(value = "domain uuid.", required = true)
+			@ApiParam(value = "domain uuid.", required = false)
 				@QueryParam("domainUuid") String domainUuid) throws BusinessException {
 		return jwtLongTimeTokenFacade.findAll(domainUuid);
 	}
 
-	@Path("/findbyactor")
+	@Path("/actor/{actoruuid}")
 	@GET
 	@Override
-	@ApiOperation(value = "Find all JWT permanent tokens of admin domain.", response = PermanentToken.class, responseContainer = "List")
+	@ApiOperation(value = "Find all JWT permanent for a specific actor.", response = PermanentToken.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	public List<PermanentToken> findAllByActor(
 			@ApiParam(value = "actor uuid.", required = true)
-				@QueryParam("actorUuid") String actorUuid) throws BusinessException {
+				@PathParam("actoruuid") String actorUuid) throws BusinessException {
 		return jwtLongTimeTokenFacade.findAllByActor(actorUuid);
 	}
 

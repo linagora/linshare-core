@@ -64,6 +64,7 @@ import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.mongo.entities.PermanentToken;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
 
@@ -128,8 +129,10 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		Validate.notNull(actor, "actor must be set");
 		final Date creationDate = clock.now();
 		final String tokenUuid = UUID.randomUUID().toString();
+		GenericLightEntity lightActor = new GenericLightEntity(actor.getLsUuid(), actor.getFullName());
+		GenericLightEntity lightDomain = new GenericLightEntity(actor.getDomain());
 		PermanentToken jwtLongTime = new PermanentToken(tokenUuid, creationDate, issuer, permanentToken.getLabel(),
-				permanentToken.getDescription(), actor.getLsUuid(), actor.getMail(), actor.getDomainId());
+				permanentToken.getDescription(), lightActor, actor.getMail(), lightDomain);
 		String token = jwtService.generateToken(actor, tokenUuid, creationDate);
 		checkCreatePermission(authUser, authUser, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_CREATE, jwtLongTime);
 		jwtLongTimeBusinessService.create(jwtLongTime);
@@ -182,7 +185,11 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 			String message = "The requested token has not been found.";
 			throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_NOT_FOUND, message);
 		}
-		checkReadPermission(authUser, actor, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_READ, found);
+		checkReadPermission(authUser, actor, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_READ,
+				found);
+		AuditLogEntryUser getLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.GET,
+				AuditLogEntryType.JWT_PERMANENT_TOKEN, found);
+		logEntryService.insert(getLog);
 		return found;
 	}
 
@@ -206,10 +213,15 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		Validate.notNull(permanentToken, "permanentToken must be set");
 		Validate.notNull(permanentToken.getLabel(), "Label must be set");
 		PermanentToken found = jwtLongTimeBusinessService.find(uuid);
-		checkUpdatePermission(authUser, actor, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_READ, found);
+		JwtLongTimeAuditLogEntry updateLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.UPDATE,
+				AuditLogEntryType.JWT_PERMANENT_TOKEN, found);
+		checkUpdatePermission(authUser, actor, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_READ,
+				found);
 		found.setLabel(permanentToken.getLabel());
 		found.setDescription(permanentToken.getDescription());
-		return jwtLongTimeBusinessService.update(found);
+		PermanentToken updatedToken = jwtLongTimeBusinessService.update(found);
+		updateLog.setResourceUpdated(updatedToken);
+		logEntryService.insert(updateLog);
+		return updatedToken;
 	}
-
 }

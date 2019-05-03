@@ -40,7 +40,9 @@ import org.linagora.linshare.mongo.entities.PermanentToken;
 
 public interface JwtPermanentTokenRestService {
 
-	PermanentToken create(String actorUuid, PermanentToken permanentToken) throws BusinessException;
+	PermanentToken find(String uuid) throws BusinessException;
+
+	PermanentToken create(PermanentToken permanentToken) throws BusinessException;
 
 	PermanentToken delete(PermanentToken jwtLongTime, String uuid) throws BusinessException;
 
@@ -49,5 +51,7 @@ public interface JwtPermanentTokenRestService {
 	List<PermanentToken> findAllByActor(String actorUuid) throws BusinessException;
 
 	PermanentToken update(PermanentToken permanentToken, String uuid) throws BusinessException;
+
+	void head(String uuid) throws BusinessException;
 
 }

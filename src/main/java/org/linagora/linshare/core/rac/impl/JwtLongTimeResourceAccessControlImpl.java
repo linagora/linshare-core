@@ -101,7 +101,7 @@ public class JwtLongTimeResourceAccessControlImpl extends
 			return true;
 		}
 		if (account.hasAdminRole() && functionality.getConfigurationPolicy().getStatus()) {
-			AbstractDomain domain = abstractDomainService.findById(entry.getDomainUuid());
+			AbstractDomain domain = abstractDomainService.findById(entry.getDomain().getUuid());
 			return permissionService.isAdminforThisDomain(account, domain);
 		}
 		Functionality userCreateFunctionality = functionalityReadOnlyService
@@ -126,7 +126,7 @@ public class JwtLongTimeResourceAccessControlImpl extends
 
 	@Override
 	protected Account getOwner(PermanentToken entry, Object... opt) {
-		return accountRepository.findByLsUuid(entry.getActorUuid());
+		return accountRepository.findByLsUuid(entry.getActor().getUuid());
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public class JwtLongTimeResourceAccessControlImpl extends
 			return true;
 		}
 		if (account.hasAdminRole() && functionality.getConfigurationPolicy().getStatus()) {
-			AbstractDomain domain = abstractDomainService.findById(entry.getDomainUuid());
+			AbstractDomain domain = abstractDomainService.findById(entry.getDomain().getUuid());
 			return permissionService.isAdminforThisDomain(account, domain);
 		}
 		Functionality userCreateFunctionality = functionalityReadOnlyService
