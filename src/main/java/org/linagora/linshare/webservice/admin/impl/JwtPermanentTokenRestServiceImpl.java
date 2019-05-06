@@ -119,7 +119,7 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	public List<PermanentToken> findAll(
 			@ApiParam(value = "domain uuid.", required = false)
-			@QueryParam("domainUuid") String domainUuid) throws BusinessException {
+				@QueryParam("domainUuid") String domainUuid) throws BusinessException {
 		return jwtLongTimeTokenFacade.findAll(domainUuid);
 	}
 

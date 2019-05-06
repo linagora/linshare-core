@@ -42,8 +42,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.impl.JwtServiceImpl;
 import org.linagora.linshare.mongo.entities.PermanentToken;
@@ -93,6 +95,9 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 
 	private Account root;
 
+	@Autowired
+	private GuestService guestService;
+
 	public JwtLongTimeServiceImplTest() {
 		super();
 		wiser = new LinShareWiser(2525);
@@ -102,6 +107,7 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-jwt-long-time-functionnality.sql", false);
+		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
@@ -165,12 +171,22 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	public void findAllByDomainTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
-		int  initSize = jwtLongTimeService.findAllByDomain(root, john.getDomain()).size();
+		int initSize = jwtLongTimeService.findAllByDomain(root, john.getDomain(), false).size();
 		for (int i = 0; i < 5; i++) {
 			jwtLongTimeService.create(john, john, johnToken);
 		}
-		List<PermanentToken> mongoEntities = jwtLongTimeService.findAllByDomain(root, john.getDomain());
+		List<PermanentToken> mongoEntities = jwtLongTimeService.findAllByDomain(root, john.getDomain(), false);
 		assertEquals(initSize + 5, mongoEntities.size());
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = guestService.create(john, john, guest, null);
+		PermanentToken guestToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
+		int initSizeGuest = jwtLongTimeService.findAllByDomain(root, guest.getDomain(), true).size();
+		for (int i = 0; i < 5; i++) {
+			jwtLongTimeService.create(root, guest, guestToken);
+		}
+		List<PermanentToken> mongoEntitiesRecursive = jwtLongTimeService.findAllByDomain(root, john.getDomain(), true);
+		assertEquals(initSize + initSizeGuest + 10, mongoEntitiesRecursive.size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

@@ -194,7 +194,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 	}
 
 	@Override
-	public List<PermanentToken> findAllByDomain(Account authUser, AbstractDomain domain, Boolean recursive) throws BusinessException {
+	public List<PermanentToken> findAllByDomain(Account authUser, AbstractDomain domain, Boolean isRecursive) throws BusinessException {
 		Validate.notNull(domain, "domain must be set");
 		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
@@ -204,9 +204,8 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 			throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN,
 					"You are not allowed to use this domain");
 		}
-		if (!recursive) {
-			String domainUuids = domain.getUuid();
-			return jwtLongTimeBusinessService.findAllByDomain(domainUuids);
+		if (!isRecursive) {
+			return jwtLongTimeBusinessService.findAllByDomain(domain.getUuid());
 		} else {
 			List<String> domainUuids = domainBuisnessService.getAllMyDomainIdentifiers(domain);
 			return jwtLongTimeBusinessService.findAllByDomainRecursive(domainUuids);
