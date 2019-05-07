@@ -59,8 +59,8 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
 import org.linagora.linshare.core.domain.constants.TargetKind;
-import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
@@ -266,7 +266,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		return res;
 	}
 
-	@Path("/")
+	@Path("/{uuid: .*}")
 	@DELETE
 	@ApiOperation(value = "Delete a thread entry.", response = WorkGroupEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -277,27 +277,11 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	@Override
 	public WorkGroupEntryDto delete(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The thread entry to delete.", required = true) WorkGroupEntryDto threadEntry)
+			@ApiParam(value = "The thread entry uuid to delete.", required = false) @PathParam("uuid") String uuid,
+			@ApiParam(value = "The thread entry to delete.", required = false) WorkGroupEntryDto threadEntry)
 					throws BusinessException {
-		Validate.notNull(threadEntry, "WorkGroupEntry must be set");
-		WorkGroupNode node = facade.delete(null, threadUuid, threadEntry.getUuid());
-		return toDto(node);
-	}
-
-	@Path("/{uuid}")
-	@DELETE
-	@ApiOperation(value = "Delete a thread entry.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Thread entry or thread entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public WorkGroupEntryDto delete(
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The thread entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
-					throws BusinessException {
-		WorkGroupNode node = facade.delete(null, threadUuid, uuid);
+		WorkGroupNode workGroupNode = facade.find(null, threadUuid, threadEntry.getUuid(), false);
+		WorkGroupNode node = facade.delete(null, threadUuid, uuid, workGroupNode);
 		return toDto(node);
 	}
 

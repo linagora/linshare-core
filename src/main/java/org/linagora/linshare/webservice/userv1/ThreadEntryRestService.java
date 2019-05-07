@@ -65,11 +65,7 @@ public interface ThreadEntryRestService {
 	List<WorkGroupEntryDto> findAll(String threadUuid)
 			throws BusinessException;
 
-	WorkGroupEntryDto delete(String threadUuid,
-			WorkGroupEntryDto threadEntry) throws BusinessException;
-
-	WorkGroupEntryDto delete(String threadUuid,
-			String uuid) throws BusinessException;
+	WorkGroupEntryDto delete(String threadUuid, String uuid, WorkGroupEntryDto threadEntry) throws BusinessException;
 
 	Response download(String threadUuid, String uuid)
 			throws BusinessException;
