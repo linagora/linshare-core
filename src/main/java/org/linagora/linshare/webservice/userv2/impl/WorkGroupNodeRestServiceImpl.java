@@ -207,26 +207,9 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		return workGroupNodeFacade.update(null, workGroupUuid, workGroupFolder);
 	}
 
-	@Path("/")
+	@Path("/{workGroupNodeUuid: .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup folder.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or workgroup folder not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public WorkGroupNode delete(
-			@ApiParam(value = "The workgroup uuid.", required = true) 
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup folder to delete. Only uuid is required", required = true) WorkGroupNode workGroupFolder)
-					throws BusinessException {
-		return workGroupNodeFacade.delete(null, workGroupUuid, workGroupFolder.getUuid());
-	}
-
-	@Path("/{workGroupFolderUuid}")
-	@DELETE
-	@ApiOperation(value = "Delete a workgroup folder.", response = WorkGroupNode.class)
+	@ApiOperation(value = "Delete a workgroup node.", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
 					@ApiResponse(code = 404, message = "Workgroup or workgroup folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -236,10 +219,11 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	public WorkGroupNode delete(
 			@ApiParam(value = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workGroup folder uuid.", required = true)
-				@PathParam("workGroupFolderUuid") String workGroupFolderUuid)
+			@ApiParam(value = "The workGroup node uuid.", required = false)
+				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
+			@ApiParam(value = "The workgroup node to delete. Only uuid is required", required = false) WorkGroupNode workGroupNode)
 					throws BusinessException {
-		return workGroupNodeFacade.delete(null, workGroupUuid, workGroupFolderUuid);
+		return workGroupNodeFacade.delete(null, workGroupUuid, workGroupNodeUuid, workGroupNode);
 	}
 
 	@Path("/")

@@ -218,26 +218,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 		return sharedSpaceNodeFacade.update(null, sharedSpaceUuid, sharedSpaceNode);
 	}
 
-	@Path("/")
-	@DELETE
-	@ApiOperation(value = "Delete a sharedSpace node (folder, document, revision).", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "SharedSpace or sharedSpace folder not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public WorkGroupNode delete(
-			@ApiParam(value = "The sharedSpace uuid.", required = true)
-				@PathParam("sharedSpaceUuid")
-					String sharedSpaceUuid,
-			@ApiParam(value = "The sharedSpace folder to delete. Only uuid is required", required = true)
-				WorkGroupNode sharedSpaceNode)
-					throws BusinessException {
-		return sharedSpaceNodeFacade.delete(null, sharedSpaceUuid, sharedSpaceNode.getUuid());
-	}
-
-	@Path("/{sharedSpaceNodeUuid}")
+	@Path("/{sharedSpaceNodeUuid: .*}")
 	@DELETE
 	@ApiOperation(value = "Delete a sharedSpace node (folder, document, revision).", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
@@ -249,10 +230,12 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 	public WorkGroupNode delete(
 			@ApiParam(value = "The sharedSpace uuid.", required = true)
 				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
-			@ApiParam(value = "The sharedSpace folder uuid.", required = true)
-				@PathParam("sharedSpaceNodeUuid") String sharedSpaceNodeUuid)
+			@ApiParam(value = "The sharedSpace folder uuid.", required = false)
+				@PathParam("sharedSpaceNodeUuid") String sharedSpaceNodeUuid,
+			@ApiParam(value = "The sharedSpace folder to delete. Only uuid is required", required = false)
+				WorkGroupNode sharedSpaceNode)
 					throws BusinessException {
-		return sharedSpaceNodeFacade.delete(null, sharedSpaceUuid, sharedSpaceNodeUuid);
+		return sharedSpaceNodeFacade.delete(null, sharedSpaceUuid, sharedSpaceNodeUuid, sharedSpaceNode);
 	}
 
 	@Path("/")

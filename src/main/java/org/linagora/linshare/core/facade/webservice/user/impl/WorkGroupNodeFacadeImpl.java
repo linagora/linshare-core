@@ -75,6 +75,7 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements WorkGroupNodeFacade {
@@ -232,8 +233,13 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public WorkGroupNode delete(String actorUuid, String workGroupUuid, String workGroupNodeUuid)
+	public WorkGroupNode delete(String actorUuid, String workGroupUuid, String workGroupNodeUuid, WorkGroupNode workGroupNode)
 			throws BusinessException {
+		if (Strings.isNullOrEmpty(workGroupNodeUuid)) {
+			Validate.notNull(workGroupNode, "Missing required workGroup folder");
+			Validate.notEmpty(workGroupNode.getUuid(), "Missing required workGroup folder uuid");
+			workGroupNodeUuid = workGroupNode.getUuid();
+		}
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
@@ -241,20 +247,6 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		// The workgroup here is used for the OperationHistory
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.delete(authUser, actor, workGroup, workGroupNodeUuid);
-	}
-
-	@Override
-	public WorkGroupNode delete(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode)
-			throws BusinessException {
-		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
-		Validate.notNull(workGroupNode, "Missing required workGroup folder");
-		Validate.notEmpty(workGroupNode.getUuid(), "Missing required workGroup folder uuid");
-		User authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);
-		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		// The workgroup here is used for the OperationHistory
-		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
-		return service.delete(authUser, actor, workGroup, workGroupNode.getUuid());
 	}
 
 	@Override
