@@ -22,24 +22,6 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-	<!-- SOAP -->
-
-	<bean id="soapExceptionInterceptor" class="org.linagora.linshare.webservice.interceptor.SoapExceptionInterceptor" />
-
-	<cxf:bus>
-		<cxf:features>
-			<!-- Could be uncommented : inbound cxf messages and outbound cxf messages are written to stdout. -->
-			<!-- <cxf:logging /> -->
-		</cxf:features>
-
-		<cxf:inInterceptors />
-		<cxf:outInterceptors />
-		<cxf:outFaultInterceptors>
-			<ref bean="soapExceptionInterceptor" />
-		</cxf:outFaultInterceptors>
-	</cxf:bus>
-	
-	
 	<!-- REST  -->
 
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />

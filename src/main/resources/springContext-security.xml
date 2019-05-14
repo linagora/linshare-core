@@ -57,13 +57,6 @@
 			<sec:filter-chain pattern="/urentryurldownload/**" filters="none" />
 			<sec:filter-chain pattern="/urentryurldownload.passwordpopup.formpassword" filters="none" />
 
-			<!-- allow soap wsdl to be public with these rule -->
-			<sec:filter-chain pattern="/webservice/soap?wsdl" filters="none" />
-			<sec:filter-chain pattern="/webservice/soap?wsdl=SoapService.wsdl" filters="none" />
-
-			<sec:filter-chain pattern="/webservice/upload?wsdl" filters="none" />
-			<sec:filter-chain pattern="/webservice/upload?wsdl=MTOMUploadSoapService.wsdl" filters="none" />
-
 			<!-- allow rest wadl to be public with these rule -->
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			<sec:filter-chain pattern="/webservice/api-docs/**" filters="CORSRequestFilter" />

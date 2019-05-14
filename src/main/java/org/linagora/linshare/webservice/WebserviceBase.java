@@ -49,15 +49,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * common utility methods for webservice implementation (rest, soap)
+ * common utility methods for webservice implementation (rest)
  */
 public class WebserviceBase {
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	// SOAP
-
-	public static final String NAME_SPACE_NS = "http://org/linagora/linshare/webservice/";
 
 	/**
 	 * 1mo

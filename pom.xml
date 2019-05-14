@@ -672,12 +672,7 @@
 			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
-		<!-- cxf soap jaxws -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
+		<!-- cxf -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-transports-http</artifactId>
@@ -998,32 +993,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<!--generate stub client SOAP for test purpose mvn cxf-codegen:wsdl2java -->
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.version}</version>
-				<configuration>
-					<sourceRoot>${project.basedir}/src/test/generated/cxf</sourceRoot>
-					<wsdlOptions>
-						<wsdlOption>
-							<wsdl>http://localhost:8080/linshare/webservice/soap?wsdl</wsdl>
-							<extraargs>
-								<extraarg>-client</extraarg>
-								<extraarg>-verbose</extraarg>
-								<extraarg>-p</extraarg>
-								<extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
-								<extraarg>-p</extraarg>
-								<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
-							</extraargs>
-						</wsdlOption>
-						<!-- <wsdlOption> <wsdl>http://localhost:8080/linshare/webservice/soap/share?wsdl</wsdl> <extraargs> <extraarg>-client</extraarg>
-							<extraarg>-verbose</extraarg> <extraarg>-p</extraarg> <extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
-							<extraarg>-p</extraarg> <extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg> </extraargs>
-							</wsdlOption> -->
-					</wsdlOptions>
-				</configuration>
 			</plugin>
 			<!-- hibernate tool : ?? -->
 			<plugin>
