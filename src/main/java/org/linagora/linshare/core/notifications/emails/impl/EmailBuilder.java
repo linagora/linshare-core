@@ -35,6 +35,7 @@ package org.linagora.linshare.core.notifications.emails.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,7 +53,6 @@ import javax.activation.FileDataSource;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -100,8 +100,6 @@ import org.thymeleaf.templatemode.TemplateMode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.ClassPath;
-
-import io.jsonwebtoken.lang.Strings;
 
 public abstract class EmailBuilder implements IEmailBuilder {
 
@@ -426,11 +424,29 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			org.linagora.linshare.core.domain.entities.Document document, String fileName) {
 		Validate.notNull(document);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
-		InputStream inputStream = fileDataStore.get(metadata);
-		String content = Strings.replace(container.getContent(), "logo.linshare@linshare.org", identifier);
-		container.setContent(content);
-		container.addAttachment(identifier,
-				new InputStreamDataSource(inputStream, metadata.getMimeType(), fileName));
+		DataSource attachment = new DataSource() {
+
+			@Override
+			public InputStream getInputStream() throws IOException {
+				return fileDataStore.get(metadata);
+			}
+
+			@Override
+			public OutputStream getOutputStream() throws IOException {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getContentType() {
+				return metadata.getMimeType();
+			}
+
+			@Override
+			public String getName() {
+				return identifier;
+			}
+		};
+		container.addAttachment(identifier, attachment);
 	}
 
 	private void addDefaultMailAttachment(EmailContext emailCtx, MailContainerWithRecipient container) {
