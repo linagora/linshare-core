@@ -70,7 +70,7 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	Set<AuditLogEntryUser> findWorkGroupHistoryForUser(String workGroupUuid, List<LogAction> actions,
 			List<AuditLogEntryType> types, Date beginDate, Date endDate, Sort sort);
 
-	@Query("{ 'workGroup.uuid' : ?0, 'resourceUuid' : ?1, 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } , 'creationDate' : { '$gt' : ?4 , '$lt' : ?5} }")
+	@Query("{ 'workGroup.uuid' : ?0, $or: [ {'resourceUuid' : ?1} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?1 }} } ] , 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } , 'creationDate' : { '$gt' : ?4 , '$lt' : ?5} }")
 	Set<AuditLogEntryUser> findWorkGroupNodeHistoryForUser(String workGroupUuid, String workGroupNodeUuid,
 			List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate, Date endDate, Sort sort);
 
