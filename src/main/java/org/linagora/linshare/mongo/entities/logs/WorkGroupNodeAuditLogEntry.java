@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.mongo.entities.logs;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -41,11 +43,13 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.light.AuditDownloadLightEntity;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.google.common.collect.Lists;
 
 
 @XmlRootElement
@@ -54,6 +58,9 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 	protected WorkGroupLightDto workGroup;
 
 	protected WorkGroupNode resource;
+
+	// Content of folder at download time
+	protected List<AuditDownloadLightEntity> downloadAuditLightEntities;
 
 	protected WorkGroupNode resourceUpdated;
 
@@ -130,4 +137,21 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 	public void setCopiedFrom(CopyMto copiedFrom) {
 		this.copiedFrom = copiedFrom;
 	}
+
+	public List<AuditDownloadLightEntity> getDownloadAuditLightEntities() {
+		return downloadAuditLightEntities;
+	}
+
+	public List<AuditDownloadLightEntity> addDownloadAuditLightEntities(AuditDownloadLightEntity lightEntities) {
+		if (this.downloadAuditLightEntities == null) {
+			this.downloadAuditLightEntities = Lists.newArrayList();
+		}
+		downloadAuditLightEntities.add(lightEntities);
+		return downloadAuditLightEntities;
+	}
+
+	public void setDownloadAuditLightEntities(List<AuditDownloadLightEntity> downloadAuditLightEntities) {
+		this.downloadAuditLightEntities = downloadAuditLightEntities;
+	}
+
 }

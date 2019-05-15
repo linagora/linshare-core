@@ -75,6 +75,6 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 
 	String findByWorkGroupNodeUuid(String workGroupNodeUuid) throws BusinessException;
 
-	NodeDetailsMto findDetails(String actorUuid, String sharedSpaceUuid, String sharedSpaceNodeUuid);
+	NodeDetailsMto findDetails(String actorUuid, String sharedSpaceUuid, String sharedSpaceNodeUuid, WorkGroupNodeType nodeType);
 
 }

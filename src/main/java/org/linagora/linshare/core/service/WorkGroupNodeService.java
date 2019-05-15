@@ -94,6 +94,6 @@ public interface WorkGroupNodeService {
 
 	WorkGroupNode findByWorkGroupNodeUuid(String uuid) throws BusinessException;
 
-	NodeDetailsMto findDetails(User authUser, User actor, WorkGroup workGroup, WorkGroupNode node);
+	NodeDetailsMto findDetails(User authUser, User actor, WorkGroup workGroup, WorkGroupNode node, WorkGroupNodeType nodeType);
 
 }

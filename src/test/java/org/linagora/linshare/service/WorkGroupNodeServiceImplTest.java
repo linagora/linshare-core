@@ -49,6 +49,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -172,17 +173,19 @@ public class WorkGroupNodeServiceImplTest {
 				.getResourceAsStream("linshare-default.properties");
 		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream1, tempFile1);
-		WorkGroupNode document1 = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(),
+		Long size = tempFile1.length();
+		WorkGroupNode document1 = workGroupDocumentService.create(john, john, workGroup, size,
 				"text/plain", tempFile1.getName(), folder);
-		workGroupDocumentService.create(john, john, workGroup, tempFile1.length(),
+		workGroupDocumentService.create(john, john, workGroup, size,
 				"text/plain", tempFile1.getName() + "test", folder);
 		WorkGroupDocumentRevision revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1,
 				tempFile1.getName(), document1);
 
-		NodeDetailsMto folderDetails = workGroupNodeService.findDetails(john, john, workGroup, rootFolder);
-		NodeDetailsMto documentDetails = workGroupNodeService.findDetails(john, john, workGroup, document1);
+		NodeDetailsMto folderDetails = workGroupNodeService.findDetails(john, john, workGroup, rootFolder, WorkGroupNodeType.DOCUMENT);
+		NodeDetailsMto documentDetails = workGroupNodeService.findDetails(john, john, workGroup, document1, WorkGroupNodeType.DOCUMENT_REVISION);
+		Long folderSize = size + size;
 		Assertions.assertAll("Details informations doesn't match", () -> {
-			assertEquals(revision.getSize(), folderDetails.getSize(), "Size doesn't match");
+			assertEquals(folderSize, folderDetails.getSize(), "Size doesn't match");
 			assertEquals(Long.valueOf(3), folderDetails.getCount(), "Count doesn't match");
 
 			assertEquals(revision.getSize(), documentDetails.getSize(), "Size doesn't match");
@@ -190,7 +193,7 @@ public class WorkGroupNodeServiceImplTest {
 		});
 
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			workGroupNodeService.findDetails(john, john, workGroup, revision);
+			workGroupNodeService.findDetails(john, john, workGroup, revision, WorkGroupNodeType.DOCUMENT_REVISION);
 		});
 		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, exception.getErrorCode());
 	}

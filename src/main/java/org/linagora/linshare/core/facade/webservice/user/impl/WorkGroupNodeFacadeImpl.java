@@ -302,15 +302,17 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public NodeDetailsMto findDetails(String actorUuid, String sharedSpaceUuid, String sharedSpaceNodeUuid) {
+	public NodeDetailsMto findDetails(String actorUuid, String sharedSpaceUuid, String sharedSpaceNodeUuid,
+			WorkGroupNodeType nodeType) {
 		Validate.notEmpty(sharedSpaceUuid, "Missing required workGroup uuid");
 		Validate.notEmpty(sharedSpaceNodeUuid, "Missing required workGroup folder uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
+		nodeType = nodeType == null ? WorkGroupNodeType.DOCUMENT_REVISION : nodeType;
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, sharedSpaceUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		WorkGroupNode node = service.find(authUser, actor, workGroup, sharedSpaceNodeUuid, true);
-		return service.findDetails(authUser, actor, workGroup, node);
+		return service.findDetails(authUser, actor, workGroup, node, nodeType);
 	}
 
 }

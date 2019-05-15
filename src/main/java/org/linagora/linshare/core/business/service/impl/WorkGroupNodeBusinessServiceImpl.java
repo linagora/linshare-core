@@ -57,8 +57,10 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
-import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.light.AuditDownloadLightEntity;
+import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
 import org.linagora.linshare.utils.DocumentCount;
 import org.slf4j.Logger;
@@ -116,10 +118,10 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 	}
 
 	@Override
-	public Long computeNodeSize(WorkGroup workGroup, String pattern) {
+	public Long computeNodeSize(WorkGroup workGroup, String pattern, WorkGroupNodeType nodeType) throws BusinessException {
 		Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(
 				Criteria.where("workGroup").is(workGroup.getLsUuid())
-				.and("path").regex(pattern).and("nodeType").is("DOCUMENT_REVISION")),
+				.and("path").regex(pattern).and("nodeType").is(nodeType)),
 				Aggregation.group().sum("size").as("size"));
 		NodeDetailsMto result = mongoTemplate.aggregate(aggregation, "work_group_nodes", NodeDetailsMto.class)
 				.getUniqueMappedResult();
@@ -135,11 +137,11 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 				|| WorkGroupNodeType.ROOT_FOLDER.equals(node.getNodeType())) {
 			query.addCriteria(Criteria.where("path").regex(pattern));
 			query.addCriteria(criteria.orOperator(
-					Criteria.where("nodeType").is("DOCUMENT"),
-					Criteria.where("nodeType").is("FOLDER")));
+					Criteria.where("nodeType").is(WorkGroupNodeType.DOCUMENT),
+					Criteria.where("nodeType").is(WorkGroupNodeType.FOLDER)));
 		} else {
 			query.addCriteria(Criteria.where("parent").is(node.getUuid())
-					.and("nodeType").is("DOCUMENT_REVISION"));
+					.and("nodeType").is(WorkGroupNodeType.DOCUMENT_REVISION));
 		}
 		Long result = mongoTemplate.count(query, WorkGroupNode.class);
 		return result;
@@ -147,44 +149,57 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 
 	@Override
 	public Boolean downloadIsAllowed(WorkGroup workGroup, String pattern) {
-		return this.archiveMaximumSize > computeNodeSize(workGroup, pattern);
+		return this.archiveMaximumSize > computeNodeSize(workGroup, pattern, WorkGroupNodeType.DOCUMENT);
 	}
 
 	@Override
-	public List<WorkGroupNode> findAllSubNodes(WorkGroup workGroup, String pattern) {
+	public Map<String, WorkGroupNode> findAllSubNodes(WorkGroup workGroup, String pattern) {
 		Query query = new Query();
-		Criteria criteria = new Criteria();
+		query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()).orOperator(
+				Criteria.where("nodeType").is(WorkGroupNodeType.DOCUMENT),
+				Criteria.where("nodeType").is(WorkGroupNodeType.FOLDER)));
+		query.addCriteria(Criteria.where("path").regex(pattern));
+		List<WorkGroupNode> nodes = mongoTemplate.find(query, WorkGroupNode.class);
+		return nodes.stream().collect(Collectors.toMap(WorkGroupNode::getUuid, Function.identity()));
+	}
+
+	@Override
+	public List<WorkGroupNode> findAllSubDocuments(WorkGroup workGroup, String pattern) {
+		Query query = new Query();
 		query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
-		query.addCriteria(criteria.orOperator(Criteria.where("nodeType").is("DOCUMENT"),
-				Criteria.where("nodeType").is("FOLDER")));
+		query.addCriteria(Criteria.where("nodeType").is(WorkGroupNodeType.DOCUMENT));
 		query.addCriteria(Criteria.where("path").regex(pattern));
 		return mongoTemplate.find(query, WorkGroupNode.class);
 	}
 
 	@Override
 	public FileAndMetaData downloadFolder(Account actor, User owner, WorkGroup workGroup, WorkGroupNode rootNode,
-			List<WorkGroupNode> nodes) {
+			Map<String, WorkGroupNode> map, List<WorkGroupNode> documentNodes, WorkGroupNodeAuditLogEntry log) {
 		FileAndMetaData fileAndMetaData = null;
 		File zipFile = new File(rootNode.getName().concat(ARCHIVE_EXTENTION));
-		Map<String, WorkGroupNode> map = nodes.stream()
-				.collect(Collectors.toMap(WorkGroupNode::getUuid, Function.identity()));
 		try (FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(fos);) {
-			for (WorkGroupNode node : nodes) {
-				String path = getGlobalPath(map, node.getPath(), rootNode);
-				if (WorkGroupNodeType.DOCUMENT.equals(node.getNodeType())) {
-					WorkGroupDocument revision = (WorkGroupDocument) documentEntryRevisionBusinessService.findMostRecent(workGroup, node.getUuid());
-					try (InputStream stream = documentEntryBusinessService.getDocumentStream(revision);) {
-						addFileToZip(stream, zos, node.getName(), path, revision.getSize());
-					}
+			for (WorkGroupNode node : documentNodes) {
+				String humanPath = getGlobalPath(map, node.getPath(), rootNode);
+				log.addDownloadAuditLightEntities(
+						new AuditDownloadLightEntity(node.getUuid(), humanPath.concat(node.getName())));
+				log.addRelatedResources(node.getUuid());
+				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) documentEntryRevisionBusinessService
+						.findMostRecent(workGroup, node.getUuid());
+				try (InputStream stream = documentEntryBusinessService.getDocumentStream(revision);) {
+					addFileToZip(stream, zos, node.getName(), humanPath, revision.getSize());
+				} catch (IOException ioException) {
+					logger.error("Download folder with UUID {} was failed.", rootNode.getUuid(), ioException);
+					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+							"Can not generate the archive for this directory");
 				}
 			}
 			zos.close();
 			InputStream inputStream = new FileInputStream(zipFile);
 			fileAndMetaData = new FileAndMetaData(inputStream, zipFile.length(), zipFile.getName(), ARCHIVE_MIME_TYPE);
-		} catch (IOException e) {
-			logger.debug("Download folder failed : ", e);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not generate the archive for this directory.");
+		} catch (IOException ioException) {
+			logger.error("Download folder {} failed.", rootNode.getUuid(), ioException);
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not generate the archive for this directory");
 		} finally {
 			if (zipFile != null) {
 				zipFile.delete();
@@ -193,6 +208,10 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		return fileAndMetaData;
 	}
 
+	/**
+	 * Transform a path from uuid,uuid.. to /nodeName1/NodeName2..
+	 * @return String
+	 */
 	private String getGlobalPath(Map<String, WorkGroupNode> nodes, String path, WorkGroupNode root) {
 		String nodePath = root.getName() + PATH_SEPARATOR;
 		if (path == null) {

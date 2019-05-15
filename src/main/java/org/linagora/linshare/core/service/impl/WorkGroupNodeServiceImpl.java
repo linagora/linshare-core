@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
@@ -486,8 +487,14 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_FORBIDDEN,
 						"Can not download this folder, The Folder size is too large. ");
 			}
-			List<WorkGroupNode> nodes = workGroupNodeBusinessService.findAllSubNodes(workGroup, pattern);
-			return workGroupNodeBusinessService.downloadFolder(actor, owner, workGroup, node, nodes);
+			Map<String, WorkGroupNode> nodes = workGroupNodeBusinessService.findAllSubNodes(workGroup, pattern);
+			List<WorkGroupNode> documentNodes = workGroupNodeBusinessService.findAllSubDocuments(workGroup, pattern);
+			WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
+					AuditLogEntryType.WORKGROUP_FOLDER, node, workGroup);
+			FileAndMetaData dataFile = workGroupNodeBusinessService.downloadFolder(actor, owner, workGroup, node, nodes,
+					documentNodes, log);
+			logEntryService.insert(log);
+			return dataFile;
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not download this kind of node.");
@@ -621,7 +628,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public NodeDetailsMto findDetails(User authUser, User actor, WorkGroup workGroup, WorkGroupNode node) {
+	public NodeDetailsMto findDetails(User authUser, User actor, WorkGroup workGroup, WorkGroupNode node,
+			WorkGroupNodeType nodeType) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null,
 				workGroup);
@@ -631,7 +639,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 		String pattern = Strings.isNullOrEmpty(node.getPath()) ? "^," + node.getUuid()
 				: "^" + node.getPath() + node.getUuid();
-		Long size = workGroupNodeBusinessService.computeNodeSize(workGroup, pattern);
+		Long size = workGroupNodeBusinessService.computeNodeSize(workGroup, pattern, nodeType);
 		Long count = workGroupNodeBusinessService.computeNodeCount(workGroup, pattern, node);
 		NodeDetailsMto details = new NodeDetailsMto(node.getUuid(), node.getNodeType(), size, count);
 		return details;

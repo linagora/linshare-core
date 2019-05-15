@@ -37,25 +37,29 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 
 public interface WorkGroupNodeBusinessService {
 
 	Map<String, Long> findTotalOccurenceOfMimeTypeByDomain(List<String> workgroupsByDomains, Date bDate, Date eDate);
 
-	Long computeNodeSize(WorkGroup workGroup, String pattern);
+	Long computeNodeSize(WorkGroup workGroup, String pattern, WorkGroupNodeType type);
 
 	Long computeNodeCount(WorkGroup workGroup, String pattern, WorkGroupNode node);
 
 	Boolean downloadIsAllowed(WorkGroup workGroup, String pattern);
 
-	List<WorkGroupNode> findAllSubNodes(WorkGroup workGroup, String pattern);
+	Map<String, WorkGroupNode> findAllSubNodes(WorkGroup workGroup, String pattern);
 
-	FileAndMetaData downloadFolder(Account actor, User owner, WorkGroup workGroup, WorkGroupNode node,
-			List<WorkGroupNode> nodes);
+	FileAndMetaData downloadFolder(Account actor, User owner, WorkGroup workGroup, WorkGroupNode rootNode,
+			Map<String, WorkGroupNode> map, List<WorkGroupNode> documentNodes, WorkGroupNodeAuditLogEntry log);
+
+	List<WorkGroupNode> findAllSubDocuments(WorkGroup workGroup, String pattern);
 
 }

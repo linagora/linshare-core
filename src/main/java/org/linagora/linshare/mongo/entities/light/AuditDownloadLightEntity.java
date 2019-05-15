@@ -31,14 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.mongo.entities.light;
 
-import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
+public class AuditDownloadLightEntity {
 
-public interface SharedSpaceNodeRestService extends WorkGroupNodeRestService {
+	private String uuid;
 
-	NodeDetailsMto findDetails(String sharedSpaceUuid, String sharedSpaceNodeUuid, WorkGroupNodeType nodeType) throws BusinessException;
+	private String path;
+
+	public AuditDownloadLightEntity() {
+		super();
+	}
+
+	public AuditDownloadLightEntity(String uuid, String path) {
+		super();
+		this.uuid = uuid;
+		this.path = path;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	@Override
+	public String toString() {
+		return "AuditDownloadLightEntity [uuid=" + uuid + ", path=" + path + "]";
+	}
 
 }

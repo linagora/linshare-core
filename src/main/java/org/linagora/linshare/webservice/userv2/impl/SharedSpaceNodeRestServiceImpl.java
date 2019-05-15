@@ -494,8 +494,10 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@ApiParam(value = "The sharedSpace uuid.", required = true)
 				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
 			@ApiParam(value = "The sharedSpace node (Folder or document) uuid.", required = true)
-				@PathParam("sharedSpaceNodeUuid") String sharedSpaceNodeUuid) throws BusinessException {
-		return sharedSpaceNodeFacade.findDetails(null, sharedSpaceUuid, sharedSpaceNodeUuid);
+				@PathParam("sharedSpaceNodeUuid") String sharedSpaceNodeUuid,
+			@ApiParam(value = "The sharedSpace node type.", required = false)
+				@QueryParam("nodeType") WorkGroupNodeType nodeType) throws BusinessException {
+		return sharedSpaceNodeFacade.findDetails(null, sharedSpaceUuid, sharedSpaceNodeUuid, nodeType);
 	}
 
 	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {

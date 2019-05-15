@@ -105,8 +105,7 @@ public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusin
 		query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
 		query.addCriteria(Criteria.where("parent").is(parentUuid));
 		query.addCriteria(Criteria.where("nodeType").is(WorkGroupNodeType.DOCUMENT_REVISION));
-		query.with(new Sort(Direction.DESC, "creationDate"));
-		query.limit(1);
+		query.with(new Sort(Direction.DESC, "creationDate")).limit(1);
 		return mongoTemplate.findOne(query, WorkGroupNode.class);
 	}
 }
