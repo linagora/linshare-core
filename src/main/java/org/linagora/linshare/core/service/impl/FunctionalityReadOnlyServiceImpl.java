@@ -171,7 +171,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public Functionality getEnciphermentFunctionality(AbstractDomain domain) {
 		Functionality functionality = _getFunctionality(domain, FunctionalityNames.ENCIPHERMENT);
-		functionality = getForbiddenFunctionnality(functionality);
 		return functionality;
 	}
 
@@ -384,38 +383,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public Functionality getUploadPropositionFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.UPLOAD_PROPOSITION);
-	}
-
-	@Override
-	public Functionality getCmisFunctionality(AbstractDomain domain) {
-		Functionality functionality = _getFunctionality(domain, FunctionalityNames.CMIS);
-		functionality = getForbiddenFunctionnality(functionality);
-		return functionality;
-	}
-
-	@Override
-	public Functionality getCmisDocumentsFunctionality(AbstractDomain domain) {
-		Functionality functionality = _getFunctionality(domain, FunctionalityNames.CMIS);
-		functionality = getForbiddenFunctionnality(functionality);
-		return functionality;
-	}
-
-	@Override
-	public Functionality getCmisThreadsFunctionality(AbstractDomain domain) {
-		Functionality functionality = _getFunctionality(domain, FunctionalityNames.CMIS);
-		functionality = getForbiddenFunctionnality(functionality);
-		return functionality;
-	}
-
-	private Functionality getForbiddenFunctionnality(Functionality functionality) {
-		if (functionality == null) {
-			Policy activation = new Policy(Policies.FORBIDDEN, false, true);
-			functionality = new Functionality();
-			functionality.setIdentifier(FunctionalityNames.CMIS.toString());
-			functionality.setActivationPolicy(activation);
-			functionality.setConfigurationPolicy(activation);
-		}
-		return functionality;
 	}
 
 	@Override

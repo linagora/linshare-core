@@ -22,7 +22,6 @@
                               or execution(* org.linagora.linshare.core.facade.webservice.safe.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.webservice.external.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.auth.*.*(..))
-                              or execution(* org.linagora.linshare.cmis.facade.impl.*.*(..))
                               or execution(* org.linagora.linshare.core.batches.*.*(..))" />
 
     <!-- added admin and user pkgs to pointcut for webservices facade -->

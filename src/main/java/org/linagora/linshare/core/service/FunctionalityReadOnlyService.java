@@ -117,11 +117,6 @@ public interface FunctionalityReadOnlyService {
 	 */
 	String getCustomNotificationURLInRootDomain() throws BusinessException;
 
-//	CMIS
-	Functionality getCmisFunctionality(AbstractDomain domain);
-	Functionality getCmisDocumentsFunctionality(AbstractDomain domain);
-	Functionality getCmisThreadsFunctionality(AbstractDomain domain);
-
 	Functionality getJwtLongTimeFunctionality(AbstractDomain domain);
 
 	Functionality getJwtLongTimeFunctionalityForUser(AbstractDomain domain);
