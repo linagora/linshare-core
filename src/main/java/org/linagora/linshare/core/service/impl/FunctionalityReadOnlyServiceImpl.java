@@ -171,6 +171,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public Functionality getEnciphermentFunctionality(AbstractDomain domain) {
 		Functionality functionality = _getFunctionality(domain, FunctionalityNames.ENCIPHERMENT);
+		functionality = getForbiddenFunctionnality(functionality);
 		return functionality;
 	}
 
@@ -383,6 +384,16 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public Functionality getUploadPropositionFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.UPLOAD_PROPOSITION);
+	}
+
+	private Functionality getForbiddenFunctionnality(Functionality functionality) {
+		if (functionality == null) {
+			Policy activation = new Policy(Policies.FORBIDDEN, false, true);
+			functionality = new Functionality();
+			functionality.setActivationPolicy(activation);
+			functionality.setConfigurationPolicy(activation);
+		}
+		return functionality;
 	}
 
 	@Override
