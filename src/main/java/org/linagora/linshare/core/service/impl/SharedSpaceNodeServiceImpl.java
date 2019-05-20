@@ -218,6 +218,9 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notEmpty(nodeToUpdate.getUuid(), "shared space node uuid to update must be set.");
 		Validate.notNull(nodeToUpdate.getVersioningParameters());
 		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
+		SharedSpaceNode nodeLog = new SharedSpaceNode(node);
+		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
+				AuditLogEntryType.WORKGROUP, nodeLog);
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				nodeToUpdate);
 		checkUpdateVersioningParameters(nodeToUpdate.getVersioningParameters(), node.getVersioningParameters(),
@@ -225,7 +228,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		threadService.update(authUser, actor, updated.getUuid(), updated.getName());
-		saveUpdateLog(authUser, actor, node, updated);
+		log.setResourceUpdated(updated);
+		logEntryService.insert(log);
 		return updated;
 	}
 

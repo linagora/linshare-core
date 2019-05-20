@@ -109,6 +109,18 @@ public class SharedSpaceNode {
 		this.modificationDate = modificationDate;
 	}
 
+	public SharedSpaceNode(SharedSpaceNode node) {
+		super();
+		this.uuid = node.getUuid();
+		this.name = node.getName();
+		this.parentUuid = node.getParentUuid();
+		this.nodeType = node.getNodeType();
+		this.versioningParameters = node.getVersioningParameters();
+		this.creationDate = node.getCreationDate();
+		this.modificationDate = node.getModificationDate();
+		this.quotaUuid = node.getQuotaUuid();
+	}
+
 	@XmlTransient
 	@JsonIgnore
 	public String getId() {
