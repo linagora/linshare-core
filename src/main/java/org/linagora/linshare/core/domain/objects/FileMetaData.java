@@ -37,6 +37,7 @@ package org.linagora.linshare.core.domain.objects;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.Signature;
 
 /**
@@ -84,11 +85,21 @@ public class FileMetaData {
 			this.uuid = document.getThumbnails().get(ThumbnailType.getThumbnailType(kind)).getThumbnailUuid();
 		} else if (kind.equals(FileMetaDataKind.THUMBNAIL)) {
 			this.uuid = document.getThmbUuid();
-		}
+		} 
 		this.kind = kind;
 		this.mimeType = document.getType();
 		this.size = document.getSize();
 		this.bucketUuid = document.getBucketUuid();
+	}
+
+	public FileMetaData(FileMetaDataKind kind, MailAttachment mailAttachment) {
+		super();
+		this.uuid = mailAttachment.getRessourceUuid();
+		this.fileName = mailAttachment.getName();
+		this.kind = kind;
+		this.mimeType = mailAttachment.getMimeType();
+		this.size = mailAttachment.getSize();
+		this.bucketUuid = mailAttachment.getBucketUuid();
 	}
 
 	public FileMetaData(FileMetaDataKind kind, Document document, String mimeType) {

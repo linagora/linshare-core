@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -49,7 +50,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.MailAttachmentFacade;
 import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
@@ -71,9 +74,13 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 
 	private final MailConfigFacade mailConfigFacade;
 
-	public MailConfigRestServiceImpl(final MailConfigFacade mailConfigFacade) {
+	protected final MailAttachmentFacade mailAttachmentFacade;
+
+	public MailConfigRestServiceImpl(final MailConfigFacade mailConfigFacade,
+			MailAttachmentFacade mailAttachmentFacade) {
 		super();
 		this.mailConfigFacade = mailConfigFacade;
+		this.mailAttachmentFacade = mailAttachmentFacade;
 	}
 
 	@Path("/")
@@ -84,6 +91,18 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 	public Set<MailConfigDto> findAll(@QueryParam(value = "domainId") String domainId,
 			@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain) throws BusinessException {
 		return mailConfigFacade.findAll(domainId, onlyCurrentDomain);
+	}
+
+	@Path("/{uuid}/mail_attachments")
+	@GET
+	@ApiOperation(value = "Find a mail configuration.", response = MailConfigDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public List<MailAttachmentDto> findAllMailAttachments(
+			@ApiParam(value = "Mail configuration's uuid.", required = true)
+				@PathParam("uuid") String uuid)
+			throws BusinessException {
+		return mailAttachmentFacade.findAll(uuid);
 	}
 
 	@Path("/{uuid}")

@@ -33,9 +33,11 @@
  */
 package org.linagora.linshare.webservice.admin;
 
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
@@ -60,5 +62,7 @@ public interface MailConfigRestService {
 
 	Set<MailContentDto> findAllContents(String mailConfigUuid,
 			String mailContentType) throws BusinessException;
+
+	List<MailAttachmentDto> findAllMailAttachments(String uuid) throws BusinessException;
 
 }

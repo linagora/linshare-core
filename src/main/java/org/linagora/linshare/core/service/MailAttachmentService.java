@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 import java.io.File;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -43,13 +44,13 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 public interface MailAttachmentService {
 
 	MailAttachment create(Account authUser, boolean enable, String fileName, boolean enableForAll, String mailConfig,
-			String description, String alt, String cid, int language, File tempFile, String metaData);
+			String description, String cid, Language language, File tempFile, String metaData);
 
 	MailAttachment find(Account authUser, String uuid);
 
-	MailAttachment delete(Account authUser, MailAttachment mailAttachment);
+	MailAttachment delete(Account authUser, String uuid);
 
 	List<MailAttachment> findAllByMailConfig(Account authUser, MailConfig config);
 
-	MailAttachment update(Account authUser, MailAttachment attachmentToUpdate, MailAttachment mailAttach);
+	MailAttachment update(Account authUser, MailAttachment mailAttach);
 }

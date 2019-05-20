@@ -56,6 +56,11 @@ public class LinShareConstants {
 	public static final String defaultMailConfigIdentifier = "946b190d-4c95-485f-bfe6-d288a2de1edd";
 
 	/**
+	 * Default mail attachment identifier (Cid)
+	 */
+	public static final String defaultMailAttachmentCid = "logo.linshare@linshare.org";
+
+	/**
 	 * Default application root domain identifier
 	 */
 	public static final Integer completionThresholdConstantForDeactivation = 999999999;

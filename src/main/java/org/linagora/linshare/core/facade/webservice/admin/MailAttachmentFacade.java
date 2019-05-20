@@ -36,13 +36,14 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import java.io.File;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
 
 public interface MailAttachmentFacade extends AdminGenericFacade {
 
 	MailAttachmentDto create(File tempFile, String fileName, String description, String metaData, boolean enable,
-			boolean override, String mailConfig, String alt, String cid, int language);
+			boolean override, String mailConfig, String cid, Language language);
 
 	MailAttachmentDto delete(String uuid, MailAttachmentDto attachment);
 

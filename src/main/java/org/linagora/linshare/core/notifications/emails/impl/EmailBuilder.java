@@ -52,7 +52,6 @@ import javax.activation.FileDataSource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -403,10 +402,10 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			for (MailAttachment attachment : cfg.getMailAttachments()) {
 				if (attachment.getEnable()) {
 					if (attachment.getEnableForAll()) {
-						addLogo(container, attachment.getCid(), attachment.getDocument(), attachment.getName());
+						addLogo(container, attachment);
 					}
-					if (emailCtx.getLanguage().equals(Language.fromInt(attachment.getLanguage()))) {
-						addLogo(container, attachment.getCid(), attachment.getDocument(), attachment.getName());
+					if (emailCtx.getLanguage().equals(attachment.getLanguage())) {
+						addLogo(container, attachment);
 					}
 				}
 			}
@@ -420,10 +419,9 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		}
 	}
 
-	protected void addLogo(MailContainerWithRecipient container, String identifier,
-			org.linagora.linshare.core.domain.entities.Document document, String fileName) {
-		Validate.notNull(document);
-		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
+	protected void addLogo(MailContainerWithRecipient container, MailAttachment mailAttachment) {
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.MAIL_ATTACHMENT, mailAttachment);
+		String identifier = mailAttachment.getCid();
 		DataSource attachment = new DataSource() {
 
 			@Override

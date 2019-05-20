@@ -7,16 +7,20 @@
 			</generator>
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="ressourceUuid" column="ressource_uuid" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
 		<property name="enableForAll" column="enable_for_all" type="boolean" not-null="true" lazy="false"/>
-		<property name="language" column="language" type="integer" not-null="false" lazy="false"/>
+		<property name="language" column="language" type="enumLanguage" not-null="false" lazy="false"/>
 		<property name="description" column="description" type="text" not-null="false" />
 		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="size" column="size" type="long" not-null="true" lazy="false" />
+		<property name="sha256sum" column="sha256sum" type="string" length="255" lazy="false"/>
 		<many-to-one name="mailConfig" column="mail_config_id" class="org.linagora.linshare.core.domain.entities.MailConfig" not-null="true" lazy="false">
 		</many-to-one>
-		<property name="cid" column="cid" type="string" length="255" lazy="false"/>
-		<property name="alt" column="alt" type="string" length="255" lazy="false"/>
-		<many-to-one name="document" column="document_id" class="org.linagora.linshare.core.domain.entities.Document" not-null="true" lazy="false">
-		</many-to-one>
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false" />
+		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false" />
+		<property name="mimeType" column="mime_type" type="string" length="255" not-null="true" lazy="false" />
+		<property name="cid" column="cid" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="bucketUuid" column="bucket_uuid" type="string" length="255" lazy="false" />
 	</class>
 </hibernate-mapping>

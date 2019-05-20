@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
@@ -70,16 +71,15 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 
 	@Override
 	public MailAttachmentDto create(File tempFile, String fileName, String description, String metaData, boolean enable,
-			boolean enableForAll, String mailConfig, String alt, String cid, int language) {
+			boolean enableForAll, String mailConfig, String cid, Language language) {
 		Account authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(tempFile, "Missing required file (check parameter named file)");
 		Validate.notEmpty(fileName, "Missing required file name");
 		Validate.notNull(enable, "Missing information to enable mail attachment (enabled)");
 		Validate.notNull(enableForAll, "Missing information to apply the mail attachment for all languages or not");
 		Validate.notNull(mailConfig, "Missing mail config");
-		Validate.notNull(alt, "Missing mail attachment alternative");
 		MailAttachment attachment = attachmentService.create(authUser, enable, fileName, enableForAll, mailConfig,
-				description, alt, cid, language, tempFile, metaData);
+				description, cid, language, tempFile, metaData);
 		return getMailAttachmentDto(authUser, attachment);
 	}
 
@@ -93,16 +93,13 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 	@Override
 	public MailAttachmentDto delete(String uuid, MailAttachmentDto attachment) {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		Validate.notNull(attachment, "MailAttachment object must be set");
-		MailAttachment mailAttachment = new MailAttachment();
-		if (!Strings.isNullOrEmpty(uuid)) {
-			mailAttachment.setUuid(uuid);
-		} else {
-			Validate.notEmpty(attachment.getUuid(), "MailAttachment uuid must be set");
-			mailAttachment.setUuid(attachment.getUuid());
+		if (Strings.isNullOrEmpty(uuid)) {
+			Validate.notNull(attachment, "Missing required attachment");
+			Validate.notEmpty(attachment.getUuid(), "Missing required attachment uuid");
+			uuid = attachment.getUuid();
 		}
-		mailAttachment = attachmentService.find(authUser, mailAttachment.getUuid());
-		mailAttachment = attachmentService.delete(authUser, mailAttachment);
+		Validate.notNull(uuid, "uuid must be set");
+		MailAttachment mailAttachment = attachmentService.delete(authUser, uuid);
 		return getMailAttachmentDto(authUser, mailAttachment);
 	}
 
@@ -117,9 +114,7 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 	@Override
 	public List<MailAttachmentDto> findAll(String configUuid) {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		if (Strings.isNullOrEmpty(configUuid)) {
-			configUuid = authUser.getDomain().getMailConfigs().iterator().next().getUuid();
-		}
+		Validate.notEmpty(configUuid, "configUuid must be set");
 		MailConfig config = configService.findConfigByUuid((User) authUser, configUuid);
 		List<MailAttachment> attachments = attachmentService.findAllByMailConfig(authUser, config);
 		List<MailAttachmentDto> attachmentDtos = Lists.newArrayList();
@@ -133,16 +128,11 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 	public MailAttachmentDto update(MailAttachmentDto attachment, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(attachment, "MailAttachment object must be set");
-		MailAttachment attachmentToUpdate = new MailAttachment();
 		if (!Strings.isNullOrEmpty(uuid)) {
-			attachmentToUpdate.setUuid(uuid);
-		} else {
-			Validate.notEmpty(attachment.getUuid(), "MailAttachment uuid must be set");
-			attachmentToUpdate.setUuid(attachment.getUuid());
+			attachment.setUuid(uuid);
 		}
-		attachmentToUpdate = attachmentService.find(authUser, attachmentToUpdate.getUuid());
 		MailAttachment mailAttach = attachment.toObject();
-		attachmentService.update(authUser, attachmentToUpdate, mailAttach);
-		return getMailAttachmentDto(authUser, attachmentToUpdate);
+		mailAttach = attachmentService.update(authUser, mailAttach);
+		return getMailAttachmentDto(authUser, mailAttach);
 	}
 }

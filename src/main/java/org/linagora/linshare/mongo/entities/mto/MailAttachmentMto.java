@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.mongo.entities.mto;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 
 public class MailAttachmentMto {
@@ -43,7 +44,7 @@ public class MailAttachmentMto {
 
 	protected Boolean enableForAll;
 
-	protected Integer language;
+	protected Language language;
 
 	protected String description;
 
@@ -88,11 +89,11 @@ public class MailAttachmentMto {
 		this.enableForAll = enableForAll;
 	}
 
-	public Integer getLanguage() {
+	public Language getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(Integer language) {
+	public void setLanguage(Language language) {
 		this.language = language;
 	}
 

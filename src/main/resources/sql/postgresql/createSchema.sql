@@ -404,15 +404,20 @@ CREATE TABLE mail_content (
   CREATE TABLE mail_attachment (
   id                  int8 NOT NULL,
   uuid               varchar(255) NOT NULL,
-  enable           bool DEFAULT 'false' NOT NULL,
-  enable_for_all           bool DEFAULT 'false' NOT NULL,
-  language          int4,
-  description        text,
+  ressource_uuid               varchar(255) NOT NULL,
+  enable           bool DEFAULT 'true' NOT NULL,
+  enable_for_all           bool DEFAULT 'true' NOT NULL,
+  language          varchar(255) NOT NULL,
+  description        text  NOT NULL,
   name               varchar(255),
+  size                  int8 NOT NULL,
+  creation_date                   timestamp(6) NOT NULL,
+  modification_date               timestamp(6) NOT NULL,
+  mime_type         varchar(255) NOT NULL,
+  sha256sum     varchar(255) NOT NULL,
   mail_config_id    int8 NOT NULL,
-  cid               varchar(255),
-  alt               varchar(255) NOT NULL,
-  document_id             int8 NOT NULL,
+  cid               varchar(255) NOT NULL,
+  bucket_uuid       varchar(255),
   PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
   id                 int8 NOT NULL,
@@ -1056,3 +1061,4 @@ ALTER TABLE async_task ADD CONSTRAINT FKasync_task970702 FOREIGN KEY (upgrade_ta
 ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi815203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+ALTER TABLE mail_attachment ADD CONSTRAINT FKmail_attachment35169 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);

@@ -66,6 +66,7 @@
 
 	<bean id="adminMailConfigRestService" class="org.linagora.linshare.webservice.admin.impl.MailConfigRestServiceImpl">
 		<constructor-arg ref="wsAdminMailConfigFacade" />
+		<constructor-arg ref="wsAdminMailAttachmentFacade" />
 	</bean>
 
 	<bean id="adminMailContentLangRestService" class="org.linagora.linshare.webservice.admin.impl.MailContentLangRestServiceImpl">

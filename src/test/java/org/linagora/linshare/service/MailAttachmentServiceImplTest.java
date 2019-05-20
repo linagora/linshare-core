@@ -45,23 +45,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
-import org.linagora.linshare.core.dao.FileDataStore;
-import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
-import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.MailConfigRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.MailAttachmentService;
@@ -105,10 +100,6 @@ public class MailAttachmentServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	@Qualifier("jcloudFileDataStore")
-	@Autowired
-	private FileDataStore fileDataStore;
-
 	LoadingServiceTestDatas datas;
 
 	@Autowired
@@ -119,12 +110,7 @@ public class MailAttachmentServiceImplTest {
 
 	private Account admin;
 
-	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-
 	private final String defaultMailAttachmentCid = "logo.linshare@linshare.org";
-
-	@Autowired
-	private DocumentRepository documentRepository;
 
 	@Autowired
 	private MailBuildingService buildingService;
@@ -147,27 +133,24 @@ public class MailAttachmentServiceImplTest {
 	@Test
 	public void createMailAttachmentTest() throws IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		InputStream stream = getStream("linshare-default.properties");
 		File tempFile = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		MailAttachment attachment = attachmentService.create(admin, true, "Logo", true,
-				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "Logo", "logo.mail.attachment.test", 1,
+				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "logo.mail.attachment.test", Language.FRENCH,
 				tempFile, null);
 		Assertions.assertNotNull(attachment);
-		Document aDocument = attachment.getDocument();
-		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, aDocument, "image/png");
-		metadata.setUuid(aDocument.getUuid());
-		fileDataStore.remove(metadata);
-		documentRepository.delete(aDocument);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void findMailAttachmentTest() throws IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		InputStream stream = getStream("linshare-default.properties");
 		File tempFile = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		MailAttachment attachment = attachmentService.create(admin, true, "Logo", true,
-				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "Logo", "logo.mail.attachment.test", 1,
+				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "logo.mail.attachment.test", Language.FRENCH,
 				tempFile, null);
 		Assertions.assertNotNull(attachment);
 		attachment = attachmentService.find(admin, attachment.getUuid());
@@ -178,16 +161,17 @@ public class MailAttachmentServiceImplTest {
 	@Test
 	public void updateMailAttachmentsTest() throws IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		InputStream stream = getStream("linshare-default.properties");
 		File tempFile = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		MailAttachment attachment = attachmentService.create(admin, true, "Logo", true,
-				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "Logo", "logo.mail.attachment.test", 1,
+				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "logo.mail.attachment.test", Language.FRENCH,
 				tempFile, null);
 		Assertions.assertNotNull(attachment);
 		MailConfig config = repository.findByUuid("946b190d-4c95-485f-bfe6-d288a2de1edd");
-		MailAttachment mailAttach = new MailAttachment(false, attachment.getDocument(), false, 1, "test update",
-				"update", config, "cid", "alt");
-		attachmentService.update(admin, attachment, mailAttach);
+		MailAttachment mailAttach = new MailAttachment(false, false, Language.FRENCH, "test update", "update", config, "cid");
+		mailAttach.setUuid(attachment.getUuid());
+		attachmentService.update(admin, mailAttach);
 		Assertions.assertTrue(attachment.getEnable() == false);
 		Assertions.assertTrue(attachment.getEnableForAll() == false);
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -196,12 +180,13 @@ public class MailAttachmentServiceImplTest {
 	@Test
 	public void findAllMailAttachmentsTest() throws IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		InputStream stream = getStream("linshare-default.properties");
 		File tempFile = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		MailConfig config = repository.findByUuid("946b190d-4c95-485f-bfe6-d288a2de1edd");
 		List<MailAttachment> list = attachmentService.findAllByMailConfig(admin, config);
 		MailAttachment attachment = attachmentService.create(admin, true, "Logo", true,
-				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "Logo", "logo.mail.attachment.test", 1,
+				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "logo.mail.attachment.test", Language.FRENCH,
 				tempFile, null);
 		Assertions.assertNotNull(attachment);
 		Assertions.assertEquals(list.size() + 1, attachmentService.findAllByMailConfig(admin, config).size());
@@ -211,18 +196,19 @@ public class MailAttachmentServiceImplTest {
 	@Test
 	public void deleteMailAttachmentnTest() throws IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		InputStream stream = getStream("linshare-default.properties");
 		File tempFile = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		MailAttachment attachmentToDelete = attachmentService.create(admin, true, "Logo", true,
-				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "Logo", "logo.mail.attachment.test", 1,
+				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "logo.mail.attachment.test", Language.FRENCH,
 				tempFile, null);
 		MailAttachment attachment = attachmentService.create(admin, false, "Logo", false,
-				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "Logo", "logo.mail.attachment.test", 1,
+				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "logo.mail.attachment.test", Language.FRENCH,
 				tempFile, null);
 		MailConfig config = repository.findByUuid("946b190d-4c95-485f-bfe6-d288a2de1edd");
 		List<MailAttachment> list = attachmentService.findAllByMailConfig(admin, config);
 		Assertions.assertTrue(list.size() == 2);
-		attachmentService.delete(admin, attachmentToDelete);
+		attachmentService.delete(admin, attachmentToDelete.getUuid());
 		Assertions.assertEquals(list.size() - 1, attachmentService.findAllByMailConfig(admin, config).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -231,23 +217,24 @@ public class MailAttachmentServiceImplTest {
 	public void testMailAttachmentBuild() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
+		InputStream stream = getStream("linshare-default.properties");
 		File tempFile = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		//EnableForAll is disabled and the language != emailContext language -> not inserted
 		MailAttachment attachment = attachmentService.create(admin, true, "Logo", false,
-				cfg.getUuid(), "Test mail attachment", "Logo", "logo.mail.attachment.test", Language.FRENCH.toInt(),
+				cfg.getUuid(), "Test mail attachment", "logo.mail.attachment.test", Language.FRENCH,
 				tempFile, null);
 		//EnableForAll is disabled and the language == emailContext language -> inserted
 		MailAttachment attachment2 = attachmentService.create(admin, true, "Logo", false,
-				cfg.getUuid(), "Test mail attachment", "Logo", "logo.mail.attachment2.test", Language.ENGLISH.toInt(),
+				cfg.getUuid(), "Test mail attachment", "logo.mail.attachment2.test", Language.ENGLISH,
 				tempFile, null);
 		//EnableForAll is enabled and the language != emailContext language -> inserted
 		MailAttachment attachment3 = attachmentService.create(admin, true, "Logo", true,
-				cfg.getUuid(), "Test mail attachment", "Logo", "logo.mail.attachment3.test", Language.RUSSIAN.toInt(),
+				cfg.getUuid(), "Test mail attachment", "logo.mail.attachment3.test", Language.RUSSIAN,
 				tempFile, null);
 		//Enable is disabled and the language != emailContext language -> not inserted
 		MailAttachment attachment4 = attachmentService.create(admin, false, "Logo", true,
-				cfg.getUuid(), "Test mail attachment", "Logo", "logo.mail.attachment4.test", Language.RUSSIAN.toInt(),
+				cfg.getUuid(), "Test mail attachment", "logo.mail.attachment4.test", Language.RUSSIAN,
 				tempFile, null);
 		// !cfg.getMailAttachments().isEmpty() -> default mail attachment is not inserted
 		Assertions.assertFalse(cfg.getMailAttachments().isEmpty());
@@ -292,5 +279,9 @@ public class MailAttachmentServiceImplTest {
 		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getSubject()));
 		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getContent()));
 		return findErrors;
+	}
+
+	private InputStream getStream(String resourceName) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
 	}
 }

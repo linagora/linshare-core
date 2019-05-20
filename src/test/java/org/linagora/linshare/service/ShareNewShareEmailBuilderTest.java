@@ -34,23 +34,31 @@
 
 package org.linagora.linshare.service;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.MailAttachment;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.MailAttachmentService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -97,6 +105,12 @@ public class ShareNewShareEmailBuilderTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
+	@Autowired
+	private DomainBusinessService domainBusinessService;
+
+	@Autowired
+	protected MailAttachmentService attachmentService;
+
 	private LoadingServiceTestDatas datas;
 
 	private User owner;
@@ -104,6 +118,8 @@ public class ShareNewShareEmailBuilderTest {
 	private Account actor;
 
 	private User recipient;
+
+	private Account admin;
 
 	private LinShareWiser wiser;
 
@@ -121,6 +137,7 @@ public class ShareNewShareEmailBuilderTest {
 		owner = datas.getUser1();
 		actor = (Account) owner;
 		recipient = datas.getUser2();
+		admin = datas.getRoot();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -133,6 +150,26 @@ public class ShareNewShareEmailBuilderTest {
 
 	@Test
 	public void testCreateNewSharesFiles() throws BusinessException, IOException {
+		List<String> documents = new  ArrayList<String>();
+		documents.add("bfaf3fea-c64a-4ee0-bae8-b1482f1f6401");
+		documents.add("fd87394a-41ab-11e5-b191-080027b8274b");
+		ShareContainer shareContainer = new ShareContainer();
+		shareContainer.addShareRecipient(recipient);
+		shareContainer.addDocumentUuid(documents);
+		Assertions.assertNotNull(shareService.create(actor, owner, shareContainer));
+		wiser.checkGeneratedMessages();
+	}
+
+	@Test
+	public void testCreateNewSharesFiles_MailAttachment() throws BusinessException, IOException {
+		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
+		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
+		File tempFile = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		// EnableForAll is disabled and the language == emailContext language -> inserted
+		MailAttachment attachment = attachmentService.create(admin, true, "Logo", false, cfg.getUuid(),
+				"Test mail attachment", "logo.mail.attachment2.test", Language.ENGLISH, tempFile, null);
+		Assertions.assertFalse(cfg.getMailAttachments().isEmpty());
 		List<String> documents = new  ArrayList<String>();
 		documents.add("bfaf3fea-c64a-4ee0-bae8-b1482f1f6401");
 		documents.add("fd87394a-41ab-11e5-b191-080027b8274b");

@@ -52,6 +52,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailAttachmentFacade;
@@ -122,12 +123,10 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 					@Multipart(value = "enableForAll", required = true) boolean enableForAll,
 				@ApiParam(value = "The choosen mail config.", required = false)
 					@Multipart(value = "mail_config", required = true) String config,
-				@ApiParam(value = "Alternative text for the mail attachment.", required = false)
-					@Multipart(value = "alt", required = true) String alt,
 				@ApiParam(value = "Content id of the mail attachment.", required = false)
 					@Multipart(value = "cid", required = false) String cid,
 				@ApiParam(value = "Choose the language to apply the mail attachment for.", required = false)
-					@Multipart(value = "language", required = false) int language,
+					@Multipart(value = "language", required = false) Language language,
 			MultipartBody body) throws BusinessException {
 		checkMaintenanceMode();
 		if (file == null) {
@@ -146,7 +145,7 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 		}
 		try {
 			logger.debug("Async mode is not used");
-			MailAttachmentDto create = mailAttachmentFacade.create(tempFile, fileName, description, metaData, enable, enableForAll, config, alt, cid, language);
+			MailAttachmentDto create = mailAttachmentFacade.create(tempFile, fileName, description, metaData, enable, enableForAll, config, cid, language);
 			return create;
 		} finally {
 			WebServiceUtils.deleteTempFile(tempFile);
@@ -172,9 +171,9 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailAttachmentDto delete(
-			@ApiParam(value = "Mail attachment uuid to delete.", required = true)
+			@ApiParam(value = "Mail attachment uuid to delete.", required = false)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "Mail attachment to delete.", required = true)
+			@ApiParam(value = "Mail attachment to delete.", required = false)
 				MailAttachmentDto attachment) throws BusinessException {
 		return mailAttachmentFacade.delete(uuid, attachment);
 	}
@@ -201,7 +200,7 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
 	public List<MailAttachmentDto> findAll(
-			@ApiParam(value = "mail configuration uuid.", required = false)
+			@ApiParam(value = "mail configuration uuid.", required = true)
 				@QueryParam("configUuid") String configUuid) throws BusinessException {
 		return mailAttachmentFacade.findAll(configUuid);
 	}

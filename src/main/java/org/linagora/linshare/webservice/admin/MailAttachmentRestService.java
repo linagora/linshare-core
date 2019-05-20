@@ -37,13 +37,14 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
 
 public interface MailAttachmentRestService {
 
 	MailAttachmentDto create(InputStream file, String description, String givenFileName, String metaData, Long fileSize,
-			boolean enable, boolean enableForAll, String configUuid, String alt, String cid, int language, MultipartBody body)
+			boolean enable, boolean enableForAll, String configUuid, String cid, Language language, MultipartBody body)
 			throws BusinessException;
 
 	MailAttachmentDto delete(String uuid, MailAttachmentDto attachment) throws BusinessException;

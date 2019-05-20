@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
@@ -56,7 +57,7 @@ public class MailAttachmentDto {
 	private Boolean enableForAll;
 
 	@ApiModelProperty(value = "The choosen language for which the mail attachment will be applied")
-	private Integer language;
+	private Language language;
 
 	@ApiModelProperty(value = "Description")
 	private String description;
@@ -67,9 +68,6 @@ public class MailAttachmentDto {
 	@ApiModelProperty(value = "The choosen mailConfig")
 	private GenericLightEntity mailConfig;
 
-	@ApiModelProperty(value = "Alternative text for the mail attachment")
-	private String alt;
-
 	@ApiModelProperty(value = "Content id of the mail attachment")
 	private String cid;
 
@@ -77,8 +75,8 @@ public class MailAttachmentDto {
 		super();
 	}
 
-	public MailAttachmentDto(String uuid, Boolean enable, Boolean enableForAll, Integer language,
-			String description, String name, GenericLightEntity mailConfig, String alt, String cid) {
+	public MailAttachmentDto(String uuid, Boolean enable, Boolean enableForAll, Language language,
+			String description, String name, GenericLightEntity mailConfig, String cid) {
 		super();
 		this.uuid = uuid;
 		this.enable = enable;
@@ -87,7 +85,6 @@ public class MailAttachmentDto {
 		this.description = description;
 		this.name = name;
 		this.mailConfig = mailConfig;
-		this.alt = alt;
 		this.cid = cid;
 	}
 
@@ -99,7 +96,6 @@ public class MailAttachmentDto {
 		this.language = attachment.getLanguage();
 		this.description = attachment.getDescription();
 		this.name = attachment.getName();
-		this.alt = attachment.getAlt();
 		this.cid = attachment.getCid();
 	}
 
@@ -112,7 +108,6 @@ public class MailAttachmentDto {
 		mattachment.setDescription(getDescription());
 		mattachment.setName(getName());
 		mattachment.setCid(getCid());
-		mattachment.setAlt(getAlt());
 		return mattachment;
 	}
 
@@ -140,11 +135,11 @@ public class MailAttachmentDto {
 		this.enableForAll = enableForAll;
 	}
 
-	public Integer getLanguage() {
+	public Language getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(Integer language) {
+	public void setLanguage(Language language) {
 		this.language = language;
 	}
 
@@ -170,14 +165,6 @@ public class MailAttachmentDto {
 
 	public void setMailConfig(GenericLightEntity mailConfig) {
 		this.mailConfig = mailConfig;
-	}
-
-	public String getAlt() {
-		return alt;
-	}
-
-	public void setAlt(String alt) {
-		this.alt = alt;
 	}
 
 	public String getCid() {

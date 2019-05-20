@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.DomainPermissionBusinessServi
 import org.linagora.linshare.core.business.service.MailAttachmentBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -82,17 +83,16 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	@Override
 	public MailAttachment create(Account authUser, boolean enable, String fileName, boolean enableForAll, String mailConfig,
-			String description, String alt, String cid, int language, File tempFile, String metaData) {
+			String description, String cid, Language language, File tempFile, String metaData) {
 		checkAdminFor(authUser, authUser.getDomain());
 		Validate.notNull(tempFile, "Missing required file (check parameter named file)");
 		Validate.notEmpty(fileName, "Missing required file name");
 		Validate.notNull(enable, "Missing information to enable mail attachment (enabled)");
 		Validate.notNull(enableForAll, "Missing information to apply the mail attachment for all languages or not");
 		Validate.notNull(mailConfig, "Missing mail config");
-		Validate.notNull(alt, "Missing mail attachment alternative");
 		MailConfig config = configService.findByUuid(mailConfig);
 		MailAttachment attachment = attachmentBusinessService.create(authUser, enable, fileName, enableForAll, config,
-				description, alt, cid, language, tempFile, metaData);
+				description, cid, language, tempFile, metaData);
 		saveLog(authUser, LogAction.CREATE, attachment);
 		return attachment;
 	}
@@ -127,19 +127,21 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 	}
 
 	@Override
-	public MailAttachment delete(Account authUser, MailAttachment mailAttachment) {
+	public MailAttachment delete(Account authUser, String uuid) {
 		checkAdminFor(authUser, authUser.getDomain());
-		Validate.notNull(mailAttachment, "Mail attachment must be set");
+		Validate.notNull(uuid, "Mail attachment uuid must be set");
+		MailAttachment mailAttachment = find(authUser, uuid);
 		attachmentBusinessService.delete(mailAttachment);
 		saveLog(authUser, LogAction.DELETE, mailAttachment);
 		return mailAttachment;
 	}
 
 	@Override
-	public MailAttachment update(Account authUser, MailAttachment attachmentToUpdate, MailAttachment mailAttach) {
+	public MailAttachment update(Account authUser, MailAttachment mailAttach) {
 		checkAdminFor(authUser, authUser.getDomain());
-		Validate.notNull(attachmentToUpdate, "Mail attachment must be set");
+		Validate.notNull(mailAttach, "Mail attachment must be set");
 		Validate.notEmpty(mailAttach.getName(), "Name must be set");
+		MailAttachment attachmentToUpdate = find(authUser, mailAttach.getUuid());
 		MailAttachmentAuditLogEntry log = new MailAttachmentAuditLogEntry(authUser, LogAction.UPDATE,
 				AuditLogEntryType.MAIL_ATTACHMENT, attachmentToUpdate);
 		attachmentToUpdate.setEnable(mailAttach.getEnable());
