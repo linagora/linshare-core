@@ -1756,7 +1756,7 @@
 		<mozilla.rhino.version>1.7.10</mozilla.rhino.version>
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
 		<slf4j-release-version>1.7.25</slf4j-release-version>
-		<cxf.version>3.2.4</cxf.version>
+		<cxf.version>3.3.2</cxf.version>
 		<jclouds.version>2.1.0</jclouds.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
