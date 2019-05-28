@@ -1284,6 +1284,80 @@ ALTER TABLE mail_layout ALTER COLUMN messages_french SET NOT NULL;
 ALTER TABLE mail_layout ALTER COLUMN messages_russian SET NOT NULL;
 --End
 
+-- Add mail_content_lang for russian
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (201,2,1,1,1,true,'28e5855a-c0e7-40fc-8401-9cf25eb53f30');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (202,2,1,2,2,true,'41d0f03d-57dd-420e-84b0-7908179c8392');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (203,2,1,3,3,true,'72c0fff4-4638-4e98-8223-df27f8f8eab8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (204,2,1,4,4,true,'6fbabf1a-58c0-49b9-859e-d24b0af38c78');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (205,2,1,5,5,true,'b85fc62f-d9eb-454b-9289-fec5eab51a67');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (206,2,1,6,6,true,'25540d2d-b3b8-46a9-811b-0549ad300f0e');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (207,2,1,7,7,true,'6580009b-36fd-472d-9937-41d0097ead19');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (208,2,1,8,8,true,'86fdc43c-5fd7-4aba-b01a-90fccbfb5444');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (209,2,1,9,9,true,'f9455b1d-3582-4998-8675-bc0a8137fd25');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (210,2,1,10,10,true,'e5a9f689-c005-47c2-958f-b68071b1b666');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (211,2,1,11,11,true,'2daaea2a-1b13-48b4-89a6-032f7e034a3s');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (212,2,1,12,12,true,'8f579a8a-e352-11e4-99b3-08002722e5de');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (213,2,1,13,13,true,'fa7a23cb-f545-45b4-b9dc-c39586cb2ggg');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (214,2,1,14,14,true,'44bc0912-cf91-4fc0-b376-f0ebb82acmmm');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (215,2,1,15,15,true,'cccb263e-1c24-4eb9-bff7-298713cc3854');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (216,2,1,16,16,true,'9f02736e-60e7-11e7-bf58-080027146bb7');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (217,2,1,17,17,true,'9f05d3ec-60e7-11e7-98a3-080027146bb7');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (218,2,1,18,18,true,'9f08b468-60e7-11e7-87e7-080027146bb7');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (219,2,1,19,19,true,'9f0c0672-60e7-11e7-ba0a-080027146bb7');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (220,2,1,20,20,true,'9f0f3ea0-60e7-11e7-a25e-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (221,2,1,21,21,true,'9f12e0f0-60e7-11e7-8c20-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (222,2,1,22,22,true,'9f164a06-60e7-11e7-998e-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (223,2,1,23,23,true,'9f199652-60e7-11e7-a9cf-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (224,2,1,24,24,true,'9f1c879a-60e7-11e7-95d8-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (225,2,1,25,25,true,'82ce572e-b968-11e7-9f2c-8b110ac9988y');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (226,2,1,26,26,true,'4376471e-c3ca-11e7-96f0-df378884dyur');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (227,2,1,27,27,true,'935a7b10-c53c-11e7-8ce9-17fe85e6bhji');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (228,2,1,28,28,true,'cd33d42c-c617-11e7-979a-6bf962f5cii9');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (229,2,1,29,29,true,'a4efd518-c619-11e7-8cdf-13a90ce64aaz');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (230,2,1,30,30,true,'4740d3f8-c61a-11e7-8d5a-3f431ce96zza');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (231,2,1,31,31,true,'d5c55f44-d6b5-11e7-b521-4f65da9d0zaz');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (232,2,1,32,32,true,'dbf12958-8389-11e8-964e-6b7eef81d99z');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (233,2,1,33,33,true,'dbf23f1e-8389-11e8-b430-a3d498f96z88');
+
+-- end
+
+-- add mail_footer_lang for russian
+INSERT INTO mail_footer_lang (id,language,mail_config_id,mail_footer_id,readonly,uuid) VALUES (3,2,1,1,true,'a6c8ee84-b5a8-4c96-b148-43301fbccde8');
+-- end
+
 --create mail_attachment
   CREATE TABLE mail_attachment (
   id                  int8 NOT NULL,
