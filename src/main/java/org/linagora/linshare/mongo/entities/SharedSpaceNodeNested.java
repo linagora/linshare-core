@@ -40,6 +40,7 @@ import javax.persistence.Enumerated;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.springframework.data.annotation.Transient;
 
 @XmlRootElement(name = "SharedSpaceNodeNested")
 public class SharedSpaceNodeNested {
@@ -50,6 +51,9 @@ public class SharedSpaceNodeNested {
 
 	@Enumerated(EnumType.STRING)
 	protected NodeType nodeType;
+
+	@Transient
+	protected String role;
 
 	protected Date creationDate;
 
@@ -100,6 +104,14 @@ public class SharedSpaceNodeNested {
 		this.nodeType = nodeType;
 	}
 
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -118,7 +130,7 @@ public class SharedSpaceNodeNested {
 
 	@Override
 	public String toString() {
-		return "SharedSpaceNodeNested [uuid=" + uuid + ", name=" + name + ", nodeType=" + nodeType + ", creationDate="
-				+ creationDate + ", modificationDate=" + modificationDate + "]";
+		return "SharedSpaceNodeNested [uuid=" + uuid + ", name=" + name + ", nodeType=" + nodeType + ", role=" + role
+				+ ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + "]";
 	}
 }
