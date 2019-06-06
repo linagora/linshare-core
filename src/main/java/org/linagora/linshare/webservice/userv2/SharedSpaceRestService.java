@@ -54,7 +54,7 @@ public interface SharedSpaceRestService {
 
 	List<SharedSpaceMember> members(String uuid) throws BusinessException;
 
-	SharedSpaceMember findMemberByAccountUuid(String uuid, String accountUuid) throws BusinessException;
+	SharedSpaceMember findMemberByNodeAndUuid(String uuid, String accountUuid) throws BusinessException;
 
 	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
 

@@ -122,12 +122,12 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	}
 
 	@Override
-	public SharedSpaceMember findByNodeAndAccount(String actorUuid, String nodeUuid, String accountUuid) {
+	public SharedSpaceMember findByNodeAndMemberUuid(String actorUuid, String nodeUuid, String memberUuid) {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		Validate.notEmpty(accountUuid, "The account uuid must be set.");
+		Validate.notEmpty(memberUuid, "The member uuid must be set.");
 		Validate.notEmpty(nodeUuid, "The node uuid must be set.");
-		return memberService.findMemberByUuid(authUser, actor, accountUuid, nodeUuid);
+		return memberService.findMemberByNodeAndUuid(authUser, actor, nodeUuid, memberUuid);
 	}
 
 	@Override

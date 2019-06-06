@@ -166,21 +166,21 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		return nodeFacade.members(null, uuid);
 	}
 
-	@Path("/{uuid}/members/{accountUuid}")
+	@Path("/{uuid}/members/{memberUuid}")
 	@GET
-	@ApiOperation(value = "Get member for the shared space node and an account.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all members for this shared space node."),
+	@ApiOperation(value = "Get member for the shared space node.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list the member for this shared space node."),
 			@ApiResponse(code = 404, message = "Not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public SharedSpaceMember findMemberByAccountUuid(
+	public SharedSpaceMember findMemberByNodeAndUuid(
 			@ApiParam("The members node uuid.")
 				@PathParam("uuid")String uuid,
-			@ApiParam("The uuid of an account within a node")
-				@PathParam("accountUuid")String accountUuid) 
+			@ApiParam("The uuid of a member within a node")
+				@PathParam("memberUuid")String memberUuid)
 			throws BusinessException {
-		return memberFacade.findByNodeAndAccount(null, uuid, accountUuid);
+		return memberFacade.findByNodeAndMemberUuid(null, uuid, memberUuid);
 	}
 
 	@Path("/{uuid}/members")

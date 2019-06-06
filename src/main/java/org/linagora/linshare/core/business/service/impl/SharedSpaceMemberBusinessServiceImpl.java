@@ -202,4 +202,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return repository.findByAccountAndRole(accountUuid, roleUuid);
 	}
 
+	@Override
+	public SharedSpaceMember findByNodeAndUuid(String nodeUuid, String uuid) {
+		return repository.findByNodeUuidAndUuid(nodeUuid, uuid);
+	}
+
 }

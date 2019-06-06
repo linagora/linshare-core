@@ -75,4 +75,7 @@ public interface SharedSpaceMemberService {
 
 	List<SharedSpaceMember> findAllUserMemberships(Account authUser, Account actor);
 
+	SharedSpaceMember findMemberByNodeAndUuid(Account authUser, Account actor, String nodeUuid, String memberUuid)
+			throws BusinessException;
+
 }

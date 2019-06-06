@@ -107,6 +107,23 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
+	public SharedSpaceMember findMemberByNodeAndUuid(Account authUser, Account actor, String nodeUuid, String uuid)
+			throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notEmpty(uuid, "memberUuid must be set.");
+		Validate.notEmpty(nodeUuid, "nodeUuid must be set.");
+		SharedSpaceMember foundMember = businessService.findByNodeAndUuid(nodeUuid, uuid);
+		if (foundMember == null) {
+			String message = String.format(
+					"The member with the UUID : %s is not a member of the node with the uuid : %s", uuid, nodeUuid);
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
+		}
+		checkReadPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				foundMember);
+		return foundMember;
+	}
+
+	@Override
 	public SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
 			throws BusinessException {
 		preChecks(authUser, actor);

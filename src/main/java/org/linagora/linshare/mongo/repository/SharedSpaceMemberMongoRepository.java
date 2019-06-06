@@ -57,4 +57,7 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{ 'account.uuid' : ?0, 'role.uuid' : ?1 }")
 	List<SharedSpaceMember> findByAccountAndRole(String accountUuid, String roleUuid);
 
+	@Query("{ 'node.uuid' : ?0, 'uuid' : ?1 }")
+	SharedSpaceMember findByNodeUuidAndUuid(String nodeUuid, String uuid);
+
 }
