@@ -34,11 +34,15 @@
 package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface SharedSpaceRestService {
 
@@ -61,5 +65,8 @@ public interface SharedSpaceRestService {
 	SharedSpaceMember deleteMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
 
 	SharedSpaceMember updateMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
+
+	Set<AuditLogEntryUser> findAll(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
+			String beginDate, String endDate);
 
 }

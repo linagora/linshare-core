@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -46,13 +47,19 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.SharedSpaceRestService;
+
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -69,11 +76,16 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	private final SharedSpaceMemberFacade memberFacade;
 
+	private final WorkGroupFacade workGroupFacade;
+
 	public SharedSpaceRestServiceImpl(SharedSpaceNodeFacade nodeFacade,
-			SharedSpaceMemberFacade memberFacade) {
+			SharedSpaceMemberFacade memberFacade,
+			WorkGroupFacade workGroupFacade
+			) {
 		super();
 		this.nodeFacade = nodeFacade;
 		this.memberFacade = memberFacade;
+		this.workGroupFacade = workGroupFacade;
 	}
 
 	@Path("/")
@@ -231,5 +243,26 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@PathParam(value="memberUuid")String memberUuid)
 			throws BusinessException {
 		return memberFacade.update(null, member, memberUuid);
+	}
+
+	@Path("/{uuid}/audit")
+	@GET
+	@ApiOperation(value = "Get all traces for a sharedSpace.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Workgroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public Set<AuditLogEntryUser> findAll(
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("uuid") String sharedSpaceUuid,
+			@ApiParam(value = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<LogAction> actions,
+			@ApiParam(value = "Filter by type of resource's types.", required = false)
+				@QueryParam("types") List<AuditLogEntryType> types,
+				@QueryParam("beginDate") String beginDate,
+				@QueryParam("endDate") String endDate) {
+		return workGroupFacade.findAll(sharedSpaceUuid, actions, types, beginDate, endDate);
 	}
 }
