@@ -52,7 +52,7 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException;
 
-	List<SharedSpaceMember> members(String uuid) throws BusinessException;
+	List<SharedSpaceMember> members(String uuid, String accountUuid);
 
 	SharedSpaceMember findMemberByNodeAndUuid(String uuid, String accountUuid) throws BusinessException;
 

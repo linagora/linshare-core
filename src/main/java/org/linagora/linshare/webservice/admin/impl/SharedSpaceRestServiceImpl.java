@@ -43,6 +43,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -143,9 +144,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	@Override
 	public List<SharedSpaceMember> members(
 			@ApiParam("The members node uuid.")
-				@PathParam("uuid")String uuid) 
+				@PathParam("uuid")String uuid,
+			@ApiParam("The uuid of an account within a node")
+				@QueryParam("accountUuid")String accountUuid)
 			throws BusinessException {
-		return ssNodeFacade.members(null, uuid);
+		return ssNodeFacade.members(null, uuid, accountUuid);
 	}
 	
 	@Path("{uuid}/members")

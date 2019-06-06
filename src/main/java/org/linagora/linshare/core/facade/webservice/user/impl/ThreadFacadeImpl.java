@@ -138,7 +138,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		SharedSpaceNode ssnode = ssNodeService.find(authUser, authUser, uuid);
 		WorkGroupDto dto = null;
 		if (members) {
-			List<SharedSpaceMember> ssMembers = ssNodeService.findAllMembers(authUser, authUser, uuid);
+			List<SharedSpaceMember> ssMembers = ssNodeService.findAllMembers(authUser, authUser, uuid, null);
 			Set<WorkGroupMemberDto> memberDtos = Sets.newHashSet();
 			for (SharedSpaceMember ssMember : ssMembers) {
 				WorkGroupMemberDto memberDto = new WorkGroupMemberDto(ssMember, userService.findByLsUuid(ssMember.getAccount().getUuid()));

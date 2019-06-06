@@ -107,10 +107,10 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 	}
 
 	@Override
-	public List<SharedSpaceMember> members(String actorUuid, String uuid) throws BusinessException {
+	public List<SharedSpaceMember> members(String actorUuid, String uuid, String accountUuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required shared space node");
 		Account authUser = checkAuthentication();
-		return nodeService.findAllMembers(authUser, authUser, uuid);
+		return nodeService.findAllMembers(authUser, authUser, uuid, accountUuid);
 	}
 
 	@Override

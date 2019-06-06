@@ -86,7 +86,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		List<WorkGroupMemberDto> res = Lists.newArrayList();
-		for (SharedSpaceMember member : ssNodeService.findAllMembers(authUser, actor, threadUuid)) {
+		for (SharedSpaceMember member : ssNodeService.findAllMembers(authUser, actor, threadUuid, null)) {
 			res.add(new WorkGroupMemberDto(member, userService.findByLsUuid(member.getAccount().getUuid())));
 		}
 		return res;

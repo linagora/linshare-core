@@ -81,7 +81,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User authUser = checkAuthentication();
 		List<WorkGroupMemberDto> res = Lists.newArrayList();
-		for (SharedSpaceMember member : sharedSpaceNodeService.findAllMembers(authUser, authUser, threadUuid)) {
+		for (SharedSpaceMember member : sharedSpaceNodeService.findAllMembers(authUser, authUser, threadUuid, null)) {
 			res.add(new WorkGroupMemberDto(member, userService.findByLsUuid(member.getAccount().getUuid())));
 		}
 		return res;

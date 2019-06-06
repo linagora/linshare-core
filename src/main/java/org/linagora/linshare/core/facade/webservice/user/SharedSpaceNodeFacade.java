@@ -52,7 +52,7 @@ public interface SharedSpaceNodeFacade {
 
 	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
-	List<SharedSpaceMember> members(String actorUuid, String uuid) throws BusinessException;
+	List<SharedSpaceMember> members(String actorUuid, String uuid, String accountUuid) throws BusinessException;
 
 	List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole);
 

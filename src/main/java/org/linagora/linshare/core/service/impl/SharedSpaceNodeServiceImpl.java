@@ -66,6 +66,9 @@ import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, SharedSpaceNode>
 		implements SharedSpaceNodeService {
 
@@ -261,8 +264,15 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	}
 
 	@Override
-	public List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid) {
-		return memberService.findAll(authUser, actor, sharedSpaceNodeUuid);
+	public List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid,
+			String accountUuid) {
+		List<SharedSpaceMember> members = Lists.newArrayList();
+		if (Strings.isNullOrEmpty(accountUuid)) {
+			members = memberService.findAll(authUser, actor, sharedSpaceNodeUuid);
+		} else {
+			members.add(memberService.findMemberByUuid(authUser, actor, accountUuid, sharedSpaceNodeUuid));
+		}
+		return members;
 	}
 
 	@Override

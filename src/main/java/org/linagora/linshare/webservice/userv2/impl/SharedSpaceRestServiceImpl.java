@@ -161,9 +161,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	@Override
 	public List<SharedSpaceMember> members(
 			@ApiParam("The members node uuid.")
-				@PathParam("uuid")String uuid) 
+				@PathParam("uuid")String uuid,
+			@ApiParam("It allows to filter the list of SSM by an account uuid")
+				@QueryParam("accountUuid")String accountUuid)
 			throws BusinessException {
-		return nodeFacade.members(null, uuid);
+		return nodeFacade.members(null, uuid, accountUuid);
 	}
 
 	@Path("/{uuid}/members/{memberUuid}")
