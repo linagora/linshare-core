@@ -141,10 +141,10 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid) {
+	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid, boolean withRole) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(accountUuid, "accountUuid must be set.");
-		return businessService.findAllByAccount(accountUuid);
+		return businessService.findAllNestedNodeByAccountUuid(accountUuid, withRole);
 	}
 
 	@Override
@@ -283,6 +283,12 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		log.setResourceUpdated(resourceUpdated);
 		logEntryService.insert(log);
 		return log;
+	}
+
+	@Override
+	public List<SharedSpaceMember> findAllUserMemberships(Account authUser, Account actor) {
+		preChecks(authUser, actor);
+		return businessService.findAllUserMemberships(actor.getLsUuid());
 	}
 
 }

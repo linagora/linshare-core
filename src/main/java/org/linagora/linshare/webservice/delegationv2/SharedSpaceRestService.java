@@ -49,6 +49,6 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
-	List<SharedSpaceNodeNested> findAll(String actorUuid) throws BusinessException;
+	List<SharedSpaceNodeNested> findAll(String actorUuid, boolean withRole) throws BusinessException;
 
 }

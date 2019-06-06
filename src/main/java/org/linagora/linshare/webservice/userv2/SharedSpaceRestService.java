@@ -42,7 +42,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 public interface SharedSpaceRestService {
 
-	List<SharedSpaceNodeNested> findAll() throws BusinessException;
+	List<SharedSpaceNodeNested> findAll(boolean withRole) throws BusinessException;
 
 	SharedSpaceNode find(String uuid) throws BusinessException;
 

@@ -54,9 +54,8 @@ import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
 
@@ -167,15 +166,20 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public List<SharedSpaceNodeNested> findAllByAccount(String accountUuid) {
-		List<SharedSpaceMember> members = repository.findByAccountUuid(accountUuid);
-		return Lists.transform(members, new Function<SharedSpaceMember, SharedSpaceNodeNested>() {
-			@Override
-			public SharedSpaceNodeNested apply(SharedSpaceMember member) {
-				member.getNode().setRole(member.getRole().getName());
-				return member.getNode();
-			}
-		});
+	public List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole) {
+		if (withRole) {
+			List<SharedSpaceMember> members = repository.findByAccountUuid(accountUuid);
+			return members.stream().map(member -> new SharedSpaceNodeNested(member)).collect(Collectors.toList());
+		}
+		Aggregation aggregation = Aggregation.newAggregation(
+				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
+				Aggregation.project("node.uuid",
+						"node.name",
+						"node.nodeType",
+						"node.creationDate",
+						"node.modificationDate"));
+		return mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
+				.getMappedResults();
 	}
 
 	@Override

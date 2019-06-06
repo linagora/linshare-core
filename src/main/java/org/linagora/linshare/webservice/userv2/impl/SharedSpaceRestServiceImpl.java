@@ -37,12 +37,14 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
@@ -82,8 +84,10 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public List<SharedSpaceNodeNested> findAll() throws BusinessException {
-		return nodeFacade.findAllMyNodes(null);
+	public List<SharedSpaceNodeNested> findAll(
+			@ApiParam(value = "Return also the role of the member", required = false)
+				@QueryParam("withRole") @DefaultValue("false") boolean withRole) throws BusinessException {
+		return nodeFacade.findAllMyNodes(null, withRole);
 	}
 
 	@Path("/{uuid}")

@@ -55,7 +55,7 @@ public interface SharedSpaceMemberService {
 	List<SharedSpaceMember> findAll(Account authUser, Account actor, String shareSpaceNodeUuid)
 			throws BusinessException;
 
-	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid);
+	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid, boolean withRole);
 
 	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
 
@@ -72,5 +72,7 @@ public interface SharedSpaceMemberService {
 	List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
 
 	List<SharedSpaceMember> deleteAllUserMemberships(Account authUser, Account actor, String sharedSpaceNodeUuid);
+
+	List<SharedSpaceMember> findAllUserMemberships(Account authUser, Account actor);
 
 }

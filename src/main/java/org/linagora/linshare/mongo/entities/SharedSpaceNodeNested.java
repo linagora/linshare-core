@@ -40,7 +40,10 @@ import javax.persistence.Enumerated;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.annotation.Transient;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @XmlRootElement(name = "SharedSpaceNodeNested")
 public class SharedSpaceNodeNested {
@@ -53,7 +56,8 @@ public class SharedSpaceNodeNested {
 	protected NodeType nodeType;
 
 	@Transient
-	protected String role;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected GenericLightEntity role;
 
 	protected Date creationDate;
 
@@ -80,6 +84,19 @@ public class SharedSpaceNodeNested {
 		this.modificationDate = node.getModificationDate();
 	}
 
+	public SharedSpaceNodeNested(SharedSpaceNodeNested nestedNode) {
+		this.uuid = nestedNode.getUuid();
+		this.name = nestedNode.getName();
+		this.nodeType = nestedNode.getNodeType();
+		this.creationDate = nestedNode.getCreationDate();
+		this.modificationDate = nestedNode.getModificationDate();
+	}
+
+	public SharedSpaceNodeNested(SharedSpaceMember member) {
+		this(member.getNode());
+		this.role = new GenericLightEntity(member.getRole());
+	}
+
 	public String getUuid() {
 		return uuid;
 	}
@@ -104,11 +121,11 @@ public class SharedSpaceNodeNested {
 		this.nodeType = nodeType;
 	}
 
-	public String getRole() {
+	public GenericLightEntity getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(GenericLightEntity role) {
 		this.role = role;
 	}
 

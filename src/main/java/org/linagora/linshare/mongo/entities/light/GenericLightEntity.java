@@ -57,6 +57,12 @@ public class GenericLightEntity {
 		this.name = role.getName();
 	}
 
+	public GenericLightEntity(GenericLightEntity entity) {
+		super();
+		this.uuid = entity.getUuid();
+		this.name = entity.getName();
+	}
+
 	public GenericLightEntity(AbstractDomain domain) {
 		super();
 		this.uuid = domain.getUuid();

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -127,4 +129,12 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Validate.notEmpty(nodeUuid, "The node uuid must be set.");
 		return memberService.findMemberByUuid(authUser, actor, accountUuid, nodeUuid);
 	}
+
+	@Override
+	public List<SharedSpaceMember> findAll(String actorUuid) {
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return memberService.findAllUserMemberships(authUser, actor);
+	}
+
 }

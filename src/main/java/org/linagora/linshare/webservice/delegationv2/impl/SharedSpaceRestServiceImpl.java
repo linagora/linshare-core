@@ -37,12 +37,14 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
@@ -67,7 +69,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		super();
 		this.nodeFacade = nodeFacade;
 	}
-	
+
 	@Path("/")
 	@GET
 	@ApiOperation(value = "Get all shared space nodes.", response = SharedSpaceNodeNested.class)
@@ -78,11 +80,13 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	@Override
 	public List<SharedSpaceNodeNested> findAll(
 			@ApiParam(value = "The actor uuid.", required = true)
-				@PathParam("actorUuid")String actorUuid)
+				@PathParam("actorUuid")String actorUuid,
+			@ApiParam(value = "Return also the role of the member", required = false)
+				@QueryParam("withRole") @DefaultValue("false") boolean withRole)
 			throws BusinessException {
-		return nodeFacade.findAllMyNodes(actorUuid);
+		return nodeFacade.findAllMyNodes(actorUuid, withRole);
 	}
-	
+
 	@Path("/{uuid}")
 	@GET
 	@ApiOperation(value = "Find a shared space node.", response = SharedSpaceNode.class)
