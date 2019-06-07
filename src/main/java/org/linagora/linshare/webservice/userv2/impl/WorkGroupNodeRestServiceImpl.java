@@ -188,7 +188,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		return workGroupNodeFacade.find(null, workGroupUuid, workGroupNodeUuid, withTree);
 	}
 
-	@Path("/{workGroupNodeUuid}")
+	@Path("/{workGroupNodeUuid: .*}")
 	@PUT
 	@ApiOperation(value = "Update a workgroup folder (name or parent).", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
@@ -204,7 +204,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
 			@ApiParam(value = "The workgroup folder to update. Only name or parent can be updated, Uuid is required, others fields are useless.", required = true) WorkGroupNode workGroupFolder)
 					throws BusinessException {
-		return workGroupNodeFacade.update(null, workGroupUuid, workGroupFolder);
+		return workGroupNodeFacade.update(null, workGroupUuid, workGroupFolder, workGroupNodeUuid);
 	}
 
 	@Path("/{workGroupNodeUuid: .*}")

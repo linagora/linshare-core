@@ -196,7 +196,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 		return sharedSpaceNodeFacade.find(null, sharedSpaceUuid, sharedSpaceNodeUuid, withTree);
 	}
 
-	@Path("/{sharedSpaceNodeUuid}")
+	@Path("/{sharedSpaceNodeUuid: .*}")
 	@PUT
 	@ApiOperation(value = "Delete a sharedSpace node (folder, document, revision). Only name, parent or description can be updated.", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
@@ -215,7 +215,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@ApiParam(value = "The sharedSpace folder to update. Only name or parent can be updated, Uuid is required, others fields are useless.", required = true)
 				WorkGroupNode sharedSpaceNode)
 					throws BusinessException {
-		return sharedSpaceNodeFacade.update(null, sharedSpaceUuid, sharedSpaceNode);
+		return sharedSpaceNodeFacade.update(null, sharedSpaceUuid, sharedSpaceNode, sharedSpaceNodeUuid);
 	}
 
 	@Path("/{sharedSpaceNodeUuid: .*}")

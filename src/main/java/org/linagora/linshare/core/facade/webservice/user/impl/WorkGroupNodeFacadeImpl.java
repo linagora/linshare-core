@@ -219,16 +219,18 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public WorkGroupNode update(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode)
+	public WorkGroupNode update(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode, String workGroupNodeUuid)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notNull(workGroupNode, "Missing required workGroupFolder");
-		Validate.notEmpty(workGroupNode.getUuid(), "Missing required workGroupNode uuid");
 		Validate.notEmpty(workGroupNode.getName(), "Missing required name");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
+		if (!Strings.isNullOrEmpty(workGroupNodeUuid)) {
+			workGroupNode.setUuid(workGroupNodeUuid);
+		}
+		SharedSpaceNode sharedSpace = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpace.getUuid());
 		return service.update(authUser, actor, workGroup, workGroupNode);
 	}
 

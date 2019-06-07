@@ -318,7 +318,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		return facade.thumbnail(null, threadUuid, uuid, base64, ThumbnailType.MEDIUM);
 	}
 
-	@Path("/{uuid}")
+	@Path("/{uuid: .*}")
 	@PUT
 	@ApiOperation(value = "Update a thread entry.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -337,7 +337,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		dto.setDescription(threadEntryDto.getDescription());
 		dto.setName(threadEntryDto.getName());
 		dto.setMetaData(threadEntryDto.getMetaData());
-		WorkGroupNode node = facade.update(null, threadUuid, dto);
+		WorkGroupNode node = facade.update(null, threadUuid, dto, threadEntryUuid);
 		return toDto(node);
 	}
 

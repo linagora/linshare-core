@@ -62,7 +62,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 
 	List<WorkGroupNode> copy(String actorUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy, boolean deleteShare);
 
-	WorkGroupNode update(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
+	WorkGroupNode update(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode, String workGroupNodeUuid) throws BusinessException;
 
 	WorkGroupNode delete(String actorUuid, String workGroupUuid, String workGroupNodeUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
