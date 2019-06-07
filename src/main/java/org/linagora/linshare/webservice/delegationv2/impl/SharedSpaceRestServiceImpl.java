@@ -99,9 +99,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@ApiParam(value = "The actor uuid.", required = true) 
 				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The shared space node uuid", required = true) 
-				@PathParam("uuid") String uuid)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "Return also the role of the actor", required = false)
+				@QueryParam("withRole") @DefaultValue("false") boolean withRole)
 			throws BusinessException {
-		return nodeFacade.find(actorUuid, uuid);
+		return nodeFacade.find(actorUuid, uuid, withRole);
 	}
 
 	@Path("/")

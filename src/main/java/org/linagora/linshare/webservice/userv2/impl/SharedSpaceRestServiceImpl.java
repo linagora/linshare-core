@@ -100,9 +100,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	@Override
 	public SharedSpaceNode find(
 			@ApiParam(value = "shared space node's uuid.", required = true)
-				@PathParam("uuid") String uuid) 
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "Return also the role of the current user", required = false)
+				@QueryParam("withRole") @DefaultValue("false") boolean withRole)
 			throws BusinessException {
-		return nodeFacade.find(null, uuid);
+		return nodeFacade.find(null, uuid, withRole);
 	}
 
 	@Path("/")

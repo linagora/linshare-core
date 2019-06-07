@@ -44,7 +44,7 @@ public interface SharedSpaceNodeFacade {
 
 	List<SharedSpaceNode> findAll();
 
-	SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException;
+	SharedSpaceNode find(String actorUuid, String uuid, boolean withRole) throws BusinessException;
 
 	SharedSpaceNode create(String actorUuid, SharedSpaceNode node) throws BusinessException;
 

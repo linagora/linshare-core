@@ -87,7 +87,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@ApiParam(value = "shared space node's uuid.", required = true)
 				@PathParam("uuid") String uuid) 
 			throws BusinessException {
-		return ssNodeFacade.find(null, uuid);
+		return ssNodeFacade.find(null, uuid, false);
 	}
 	
 	@Path("/{uuid : .*}")

@@ -44,9 +44,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @XmlRootElement(name = "SharedSpace")
 @Document(collection = "shared_space_nodes")
@@ -73,6 +76,10 @@ public class SharedSpaceNode {
 	protected VersioningParameters versioningParameters;
 
 	protected String quotaUuid;
+
+	@Transient
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected GenericLightEntity role;
 
 	public SharedSpaceNode() {
 		super();
@@ -195,11 +202,20 @@ public class SharedSpaceNode {
 		this.quotaUuid = quotaUuid;
 	}
 
+	public GenericLightEntity getRole() {
+		return role;
+	}
+
+	public void setRole(GenericLightEntity role) {
+		this.role = role;
+	}
+
 	@Override
 	public String toString() {
 		return "SharedSpaceNode [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
 				+ ", nodeType=" + nodeType + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate
-				+ ", versioningParameters=" + versioningParameters + ", quotaUuid=" + quotaUuid + "]";
+				+ ", versioningParameters=" + versioningParameters + ", quotaUuid=" + quotaUuid + ", role=" + role
+				+ "]";
 	}
 
 }

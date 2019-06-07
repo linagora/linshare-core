@@ -64,6 +64,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 
 import com.google.common.base.Strings;
@@ -109,13 +110,18 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	}
 
 	@Override
-	public SharedSpaceNode find(Account authUser, Account actor, String uuid) throws BusinessException {
+	public SharedSpaceNode find(Account authUser, Account actor, String uuid, boolean withRole) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		SharedSpaceNode found = businessService.find(uuid);
 		if (found == null) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NOT_FOUND,
 					"The shared space node with uuid: " + uuid + " is not found");
+		}
+		if (withRole) {
+			SharedSpaceMember member = memberService.findMemberByUuid(authUser, actor, actor.getLsUuid(), uuid);
+			GenericLightEntity role = new GenericLightEntity(member.getRole());
+			found.setRole(role);
 		}
 		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, found);
 		return found;
@@ -180,7 +186,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notNull(node, "missing required node to delete.");
 		Validate.notEmpty(node.getUuid(), "missing required node uuid to delete");
-		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid());
+		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid(), false);
 		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				foundedNodeTodel);
 		simpleDelete(authUser, actor, foundedNodeTodel);
@@ -197,7 +203,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notNull(node, "missing required node to delete.");
 		Validate.notEmpty(node.getUuid(), "missing required node uuid to delete");
-		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid());
+		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid(), false);
 		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				foundedNodeTodel);
 		WorkGroup workGroup = simpleDelete(authUser, actor, foundedNodeTodel);
@@ -220,7 +226,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notNull(nodeToUpdate, "nodeToUpdate must be set.");
 		Validate.notEmpty(nodeToUpdate.getUuid(), "shared space node uuid to update must be set.");
 		Validate.notNull(nodeToUpdate.getVersioningParameters());
-		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
+		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid(), false);
 		SharedSpaceNode nodeLog = new SharedSpaceNode(node);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
 				AuditLogEntryType.WORKGROUP, nodeLog);

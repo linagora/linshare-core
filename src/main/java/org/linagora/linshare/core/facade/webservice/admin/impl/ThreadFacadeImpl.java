@@ -82,7 +82,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 	public WorkGroupDto find(String uuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		SharedSpaceNode sSNode = ssNodeService.find(authUser, authUser, uuid);
+		SharedSpaceNode sSNode = ssNodeService.find(authUser, authUser, uuid, false);
 		return new WorkGroupDto(threadService.find(authUser, authUser, uuid), sSNode);
 	}
 
@@ -142,7 +142,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 		Validate.notNull(threadDto, "thread must be set.");
 		WorkGroupDto workGroupDto = new WorkGroupDto(
 				threadService.update(authUser, authUser, threadDto.getUuid(), threadDto.getName()));
-		SharedSpaceNode ssNodeFoundToUpdate = ssNodeService.find(authUser, authUser, workGroupDto.getUuid());
+		SharedSpaceNode ssNodeFoundToUpdate = ssNodeService.find(authUser, authUser, workGroupDto.getUuid(), false);
 		ssNodeFoundToUpdate.setName(threadDto.getName());
 		ssNodeService.update(authUser, authUser, ssNodeFoundToUpdate);
 		return workGroupDto;
@@ -153,7 +153,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
 		WorkGroup workGroup = threadService.find(authUser, authUser, uuid);
-		SharedSpaceNode node = ssNodeService.find(authUser, authUser, workGroup.getLsUuid());
+		SharedSpaceNode node = ssNodeService.find(authUser, authUser, workGroup.getLsUuid(), false);
 		return ssNodeService.deleteWorkgroupDto(authUser, authUser, node);
 	}
 }

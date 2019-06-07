@@ -135,7 +135,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 		User authUser = checkAuthentication();
 		WorkGroup workGroup = threadService.find(authUser, authUser, uuid);
-		SharedSpaceNode ssnode = ssNodeService.find(authUser, authUser, uuid);
+		SharedSpaceNode ssnode = ssNodeService.find(authUser, authUser, uuid, false);
 		WorkGroupDto dto = null;
 		if (members) {
 			List<SharedSpaceMember> ssMembers = ssNodeService.findAllMembers(authUser, authUser, uuid, null);
@@ -167,7 +167,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required thread dto");
 		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
 		User authUser = checkAuthentication();
-		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadDto.getUuid());
+		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadDto.getUuid(), false);
 		return ssNodeService.deleteWorkgroupDto(authUser, authUser, node);
 	}
 
@@ -175,7 +175,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	public WorkGroupDto delete(String threadUuid) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User authUser = checkAuthentication();
-		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadUuid);
+		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadUuid, false);
 		return ssNodeService.deleteWorkgroupDto(authUser, authUser, node);
 	}
 
@@ -186,7 +186,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
 		User authUser = checkAuthentication();
 		WorkGroup workGroup = threadService.update(authUser, authUser, threadUuid, threadDto.getName());
-		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadUuid);
+		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadUuid, false);
 		node.setName(threadDto.getName());
 		node = ssNodeService.update(authUser, authUser, node);
 		return new WorkGroupDto(workGroup, node);
