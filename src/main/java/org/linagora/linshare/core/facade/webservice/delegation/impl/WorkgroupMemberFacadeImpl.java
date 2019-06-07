@@ -103,7 +103,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User authActor = checkAuthentication();
 		User actor = getActor(actorUuid);
 		User user = userService.findOrCreateUser(mail, domainId);
-		SharedSpaceNode foundSharedSpaceNode = ssNodeService.find(authActor, actor, threadUuid, false);
+		SharedSpaceNode foundSharedSpaceNode = ssNodeService.find(authActor, actor, threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(actor, admin);
 		SharedSpaceMember create = ssMemberService.create(authActor, actor, foundSharedSpaceNode, defaultRole, new SharedSpaceAccount(user));
 		return new WorkGroupMemberDto(create, user);

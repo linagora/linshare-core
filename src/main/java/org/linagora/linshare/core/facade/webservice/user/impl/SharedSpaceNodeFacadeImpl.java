@@ -67,7 +67,10 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		return nodeService.find(authUser, actor, uuid, withRole);
+		if (withRole) {
+			return nodeService.findWithRole(authUser, actor, uuid);
+		}
+		return nodeService.find(authUser, actor, uuid);
 	}
 
 	@Override
@@ -85,7 +88,7 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		if (!Strings.isNullOrEmpty(uuid)) {
-			node = nodeService.find(authUser, actor, uuid, false);
+			node = nodeService.find(authUser, actor, uuid);
 		} else {
 			Validate.notNull(node, "node must be set");
 			Validate.notEmpty(node.getUuid(), "node uuid must be set.");

@@ -83,7 +83,7 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, uuid);
-		SharedSpaceNode ssnode = ssNodeService.find(authUser, actor, uuid, false);
+		SharedSpaceNode ssnode = ssNodeService.find(authUser, actor, uuid);
 		WorkGroupDto dto = new WorkGroupDto(workGroup, ssnode);
 		AccountQuota quota = quotaService.findByRelatedAccount(workGroup);
 		dto.setQuotaUuid(quota.getUuid());
@@ -123,7 +123,7 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
-		SharedSpaceNode node = ssNodeService.find(authUser, actor, threadDto.getUuid(), false);
+		SharedSpaceNode node = ssNodeService.find(authUser, actor, threadDto.getUuid());
 		return ssNodeService.deleteWorkgroupDto(authUser, authUser, node);
 	}
 
@@ -136,7 +136,7 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		WorkGroup workGroup = threadService.update(authUser, actor, threadUuid, threadDto.getName());
-		SharedSpaceNode node = ssNodeService.find(authUser, actor, threadUuid, false);
+		SharedSpaceNode node = ssNodeService.find(authUser, actor, threadUuid);
 		node.setName(threadDto.getName());
 		node = ssNodeService.update(authUser, actor, node);
 		return new WorkGroupDto(workGroup, node);

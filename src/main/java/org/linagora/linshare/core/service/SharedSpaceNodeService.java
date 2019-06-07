@@ -44,7 +44,9 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 public interface SharedSpaceNodeService {
 
-	SharedSpaceNode find(Account authUser, Account actor, String uuid, boolean withRole) throws BusinessException;
+	SharedSpaceNode find(Account authUser, Account actor, String uuid) throws BusinessException;
+
+	SharedSpaceNode findWithRole(Account authUser, Account actor, String uuid) throws BusinessException;
 
 	SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
 

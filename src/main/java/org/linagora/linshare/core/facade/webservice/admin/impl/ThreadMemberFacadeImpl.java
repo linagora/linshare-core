@@ -94,7 +94,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean admin = dto.isAdmin();
 		// TODO Retrieve the role from the restService once the front will pass the info
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
-		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid(), false);
+		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid());
 		SharedSpaceMember created = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, new SharedSpaceAccount(user));
 		return new WorkGroupMemberDto(created, user);
 	}

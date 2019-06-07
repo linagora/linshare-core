@@ -144,7 +144,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void find() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode toFindNode = service.find(authUser, authUser, sharedSpaceNodes.get(0).getUuid(), false);
+		SharedSpaceNode toFindNode = service.find(authUser, authUser, sharedSpaceNodes.get(0).getUuid());
 		Assert.assertNotNull("Node has not been found.", toFindNode);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -157,7 +157,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		SharedSpaceNode toDelete=service.create(authUser, authUser, node);
 		service.delete(authUser, authUser, toDelete);
 		try {
-			service.find(authUser, authUser, toDelete.getUuid(), false);
+			service.find(authUser, authUser, toDelete.getUuid());
 			Assert.fail("An exception should be thrown because the node is found.");
 		} catch (BusinessException e) {
 			Assert.assertEquals("The node has been found in the data base. but it has not been deleted",
