@@ -112,13 +112,13 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	public SharedSpaceMember delete(String actorUuid, SharedSpaceMember member, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		if (!Strings.isNullOrEmpty(uuid)) {
-			member.setUuid(uuid);
-		} else {
-			Validate.notNull(member, "The shared space member to delete must be set.");
-			Validate.notEmpty(member.getUuid(), "The shared space member uuid must be set.");
+		if (Strings.isNullOrEmpty(uuid)) {
+			Validate.notNull(member, "Missing sharedSpace member");
+			Validate.notEmpty(member.getUuid(), "Missing required sharedSpace member uuid");
+			uuid = member.getUuid();
 		}
-		return memberService.delete(authUser, actor, member.getUuid());
+		Validate.notEmpty(uuid, "Missing required sharedSpace member uuid");
+		return memberService.delete(authUser, actor, uuid);
 	}
 
 	@Override
