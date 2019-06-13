@@ -254,6 +254,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public SizeUnitValueFunctionality getWorkGoupDownloadArchive(AbstractDomain domain) {
+		return new SizeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.WORK_GROUP__DOWNLOAD_ARCHIVE));
+	}
+	
+	@Override
 	public Functionality getContactsListFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.CONTACTS_LIST);
 	}
