@@ -42,6 +42,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface SharedSpaceMemberService {
 
@@ -77,5 +78,7 @@ public interface SharedSpaceMemberService {
 
 	SharedSpaceMember findMemberByNodeAndUuid(Account authUser, Account actor, String nodeUuid, String memberUuid)
 			throws BusinessException;
+
+	void addMembersToLog(String uuid, AuditLogEntryUser log);
 
 }

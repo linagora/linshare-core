@@ -139,6 +139,8 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			if (hasRevision(workGroup.getLsUuid(), parentNode.getUuid())) {
 				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, parentNode, workGroup);
+				addMembersToLog(workGroup.getLsUuid(), log);
+				log.addRelatedResources(parentNode.getUuid());
 				logEntryService.insert(log);
 			}
 			addToQuota(workGroup, size);

@@ -245,6 +245,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		threadService.update(authUser, actor, updated.getUuid(), updated.getName());
+		memberService.addMembersToLog(updated.getUuid(), log);
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
 		return updated;

@@ -381,6 +381,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		// updating the new treePath.
 		log.initResourceUpdated(node);
 		log.getResourceUpdated().setTreePath(getTreePath(workGroup, node));
+		workGroupDocumentService.addMembersToLog(workGroup.getLsUuid(), log);
 		logEntryService.insert(log);
 		if (updatePath) {
 			Query query = new Query();
