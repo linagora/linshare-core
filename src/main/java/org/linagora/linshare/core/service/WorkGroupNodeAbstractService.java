@@ -34,12 +34,13 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface WorkGroupNodeAbstractService {
 
@@ -53,5 +54,7 @@ public interface WorkGroupNodeAbstractService {
 	boolean isUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
 
 	String computeFileName(WorkGroupDocument document, WorkGroupDocumentRevision revision, boolean isDocument);
+
+	void addMembersToLog(WorkGroup workGroup, AuditLogEntryUser log);
 
 }

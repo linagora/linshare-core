@@ -64,7 +64,7 @@ public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 
-	InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node,
+	InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision node,
 			WorkGroupNodeType nodeType) throws BusinessException;
 
 	InputStream getThumbnailStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node, ThumbnailType thumbnailType)

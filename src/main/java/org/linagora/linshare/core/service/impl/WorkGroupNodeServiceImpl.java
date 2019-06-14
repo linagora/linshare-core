@@ -494,6 +494,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 					AuditLogEntryType.WORKGROUP_FOLDER, node, workGroup);
 			FileAndMetaData dataFile = workGroupNodeBusinessService.downloadFolder(actor, owner, workGroup, node, nodes,
 					documentNodes, log);
+			workGroupDocumentService.addMembersToLog(workGroup, log);
 			logEntryService.insert(log);
 			return dataFile;
 		} else {

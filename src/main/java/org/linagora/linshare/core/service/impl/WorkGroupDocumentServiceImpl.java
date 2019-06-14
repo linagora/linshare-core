@@ -209,15 +209,15 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		return workGroupNode;
 	}
 
-	@Override
-	public InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node,
-			WorkGroupNodeType nodeType) throws BusinessException {
+	public InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup,
+			WorkGroupDocumentRevision revision, WorkGroupNodeType nodeType) throws BusinessException {
 		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(nodeType);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, auditType,
-				node, workGroup);
+				revision, workGroup);
 		addMembersToLog(workGroup, log);
+		log.addRelatedResources(revision.getParent());
 		logEntryService.insert(log);
-		return documentEntryBusinessService.getDocumentStream(node);
+		return documentEntryBusinessService.getDocumentStream(revision);
 	}
 
 	@Override
@@ -225,7 +225,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			WorkGroupDocumentRevision revision) {
 		String documentName = computeFileName(node, revision, true);
 		revision.setName(documentName);
-		InputStream stream = getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) revision,
+		InputStream stream = getDocumentStream(actor, owner, workGroup, revision,
 				WorkGroupNodeType.DOCUMENT);
 		return new FileAndMetaData(stream, revision.getSize(), documentName, revision.getMimeType());
 	}

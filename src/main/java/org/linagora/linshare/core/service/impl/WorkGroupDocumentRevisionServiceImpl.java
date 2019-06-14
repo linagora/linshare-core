@@ -209,7 +209,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			WorkGroupDocumentRevision revision) {
 		String fileName = computeFileName(node, revision, false);
 		revision.setName(fileName);
-		InputStream stream = getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) revision,
+		InputStream stream = getDocumentStream(actor, owner, workGroup, revision,
 				WorkGroupNodeType.DOCUMENT_REVISION);
 		return new FileAndMetaData(stream, revision.getSize(), fileName, revision.getMimeType());
 	}
