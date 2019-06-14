@@ -130,7 +130,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 				nodeParent);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
-		addMembersToLog(workgroup, log);
+		addMembersToLog(workgroup.getLsUuid(), log);
 		logEntryService.insert(log);
 		return document;
 	}
@@ -192,7 +192,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		}
 		log.setFromResourceUuid(fromNodeUuid);
 		log.setCopiedFrom(copiedFrom);
-		addMembersToLog(toWorkGroup, log);
+		addMembersToLog(toWorkGroup.getLsUuid(), log);
 		logEntryService.insert(log);
 		addToQuota(toWorkGroup, size);
 		return node;
@@ -201,10 +201,6 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	@Override
 	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException {
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE,
-				AuditLogEntryType.WORKGROUP_DOCUMENT, workGroupNode, workGroup);
-		addMembersToLog(workGroup, log);
-		logEntryService.insert(log);
 		repository.delete(workGroupNode);
 		return workGroupNode;
 	}
@@ -214,7 +210,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(nodeType);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, auditType,
 				revision, workGroup);
-		addMembersToLog(workGroup, log);
+		addMembersToLog(workGroup.getLsUuid(), log);
 		log.addRelatedResources(revision.getParent());
 		logEntryService.insert(log);
 		return documentEntryBusinessService.getDocumentStream(revision);
@@ -237,7 +233,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, auditType,
 				node, workGroup);
 		log.setCause(LogActionCause.COPY);
-		addMembersToLog(workGroup, log);
+		addMembersToLog(workGroup.getLsUuid(), log);
 		log.setCopiedTo(copiedTo);
 		logEntryService.insert(log);
 	}

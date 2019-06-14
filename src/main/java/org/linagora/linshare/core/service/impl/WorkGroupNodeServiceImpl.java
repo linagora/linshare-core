@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -67,6 +68,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.light.AuditLightEntity;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
@@ -424,25 +426,52 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
 		checkDeletePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
 				node, workGroup);
-		deleteNode(actor, owner, workGroup, node);
+		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(node.getNodeType());
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE, auditType, node,
+				workGroup);
+		workGroupDocumentService.addMembersToLog(workGroup.getLsUuid(), log);
+		deleteNode(actor, owner, workGroup, node, log);
+		logEntryService.insert(log);
 		return node;
 	}
 
-	private void deleteNode(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) {
+	private void deleteNode(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode,
+			WorkGroupNodeAuditLogEntry log) {
 		if (isFolder(workGroupNode)) {
 			List<WorkGroupNode> findAll = findAll(actor, owner, workGroup, workGroupNode.getUuid(), false, Lists.newArrayList());
 			for (WorkGroupNode node : findAll) {
-				deleteNode(actor, owner, workGroup, node);
+				deleteNode(actor, owner, workGroup, node, log);
+			}
+			if (!findAll.isEmpty()) {
+				log.addAuditLightEntities(transformToAuditLightEntity(findAll));
+				log.addRelatedResources(getListUuid(findAll));
 			}
 			workGroupFolderService.delete(actor, owner, workGroup, workGroupNode);
 		} else if (isDocument(workGroupNode)) {
-			revisionService.deleteAll(actor, owner, workGroup, workGroupNode);
+//			Delete all revisions into the document.
+			List<WorkGroupNode> revisions = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(),
+					workGroupNode.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION);
+			log.addRelatedResources(getListUuid(revisions));
+			log.addAuditLightEntities(transformToAuditLightEntity(revisions));
+			revisionService.deleteAll(actor, owner, workGroup, revisions);
+//			Delete the document.
 			workGroupDocumentService.delete(actor, owner, workGroup, workGroupNode);
 		} else if (isRevision(workGroupNode)) {
+			log.addRelatedResources(workGroupNode.getParent());
 			revisionService.delete(actor, owner, workGroup, workGroupNode);
 		} else {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not delete this type of node, type not supported.");
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					"Can not delete this type of node, type not supported.");
 		}
+	}
+
+	protected List<String> getListUuid(List<WorkGroupNode> findAll) {
+		return findAll.stream().map(WorkGroupNode::getUuid).collect(Collectors.toList());
+	}
+
+	protected List<AuditLightEntity> transformToAuditLightEntity(List<WorkGroupNode> nodes) {
+		return nodes.stream().map(node -> new AuditLightEntity(node.getUuid(), node.getName()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -494,7 +523,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 					AuditLogEntryType.WORKGROUP_FOLDER, node, workGroup);
 			FileAndMetaData dataFile = workGroupNodeBusinessService.downloadFolder(actor, owner, workGroup, node, nodes,
 					documentNodes, log);
-			workGroupDocumentService.addMembersToLog(workGroup, log);
+			workGroupDocumentService.addMembersToLog(workGroup.getLsUuid(), log);
 			logEntryService.insert(log);
 			return dataFile;
 		} else {

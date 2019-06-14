@@ -278,7 +278,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		assertNotNull(createdDocument);
 		assertEquals(3, createdRevisions.size());
 
-		workGroupDocumentRevisionService.deleteAll(john, john, workGroup, document);
+		workGroupDocumentRevisionService.deleteAll(john, john, workGroup, createdRevisions);
 		workGroupDocumentService.delete(john, john, workGroup, document);
 
 		try{

@@ -80,6 +80,9 @@ public enum AuditLogEntryType {
 	}
 
 	public static AuditLogEntryType getWorkgroupAuditType(WorkGroupNodeType nodeType) {
+		if (WorkGroupNodeType.ROOT_FOLDER.equals(nodeType)) {
+			return WORKGROUP_FOLDER;
+		}
 		String type = "WORKGROUP_" + nodeType.toString();
 		AuditLogEntryType auditType = fromString(type);
 		return auditType;

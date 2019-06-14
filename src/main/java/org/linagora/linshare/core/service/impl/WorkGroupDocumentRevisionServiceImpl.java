@@ -215,11 +215,8 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	}
 
 	@Override
-	public List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode parentNode)
-			throws BusinessException {
-		Validate.notNull(parentNode, "revision must not be null");
-		List<WorkGroupNode> revisions = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(),
-				parentNode.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION);
+	public List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup,
+			List<WorkGroupNode> revisions) throws BusinessException {
 		for (WorkGroupNode rev : revisions) {
 			deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) rev);
 		}
@@ -250,9 +247,6 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	private WorkGroupDocumentRevision deleteRevision(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision revision) throws BusinessException {
 		repository.delete(revision);
 		delFromQuota(workGroup, revision.getSize());
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE, AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, revision, workGroup);
-		addMembersToLog(workGroup, log);
-		logEntryService.insert(log);
 		if (isGarbageCollectorReady(revision.getDocumentUuid())) {
 			documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(revision.getDocumentUuid()));
 		}

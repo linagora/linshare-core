@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.light.AuditDownloadLightEntity;
+import org.linagora.linshare.mongo.entities.light.AuditLightEntity;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
@@ -60,7 +61,10 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 	protected WorkGroupNode resource;
 
 	// Content of folder at download time
-	protected List<AuditDownloadLightEntity> downloadAuditLightEntities;
+	protected List<AuditDownloadLightEntity> getDownloadAuditLightEntities;
+
+	// Light content of related resources with Name and Uuid
+	protected List<AuditLightEntity> auditLightEntities;
 
 	protected WorkGroupNode resourceUpdated;
 
@@ -138,20 +142,44 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 		this.copiedFrom = copiedFrom;
 	}
 
-	public List<AuditDownloadLightEntity> getDownloadAuditLightEntities() {
-		return downloadAuditLightEntities;
+	public List<AuditDownloadLightEntity> getAuditDownloadLightEntities() {
+		return getDownloadAuditLightEntities;
 	}
 
-	public List<AuditDownloadLightEntity> addDownloadAuditLightEntities(AuditDownloadLightEntity lightEntities) {
-		if (this.downloadAuditLightEntities == null) {
-			this.downloadAuditLightEntities = Lists.newArrayList();
+	public List<AuditDownloadLightEntity> addAuditDownloadLightEntity(AuditDownloadLightEntity lightEntity) {
+		if (this.getDownloadAuditLightEntities == null) {
+			this.getDownloadAuditLightEntities = Lists.newArrayList();
 		}
-		downloadAuditLightEntities.add(lightEntities);
-		return downloadAuditLightEntities;
+		getDownloadAuditLightEntities.add(lightEntity);
+		return getDownloadAuditLightEntities;
 	}
 
-	public void setDownloadAuditLightEntities(List<AuditDownloadLightEntity> downloadAuditLightEntities) {
-		this.downloadAuditLightEntities = downloadAuditLightEntities;
+	public List<AuditDownloadLightEntity> addAuditDownloadLightEntities(List<AuditDownloadLightEntity> lightEntities) {
+		if (this.getDownloadAuditLightEntities == null) {
+			this.getDownloadAuditLightEntities = Lists.newArrayList();
+		}
+		getDownloadAuditLightEntities.addAll(lightEntities);
+		return getDownloadAuditLightEntities;
+	}
+
+	public List<AuditLightEntity> getAuditLightEntities() {
+		return auditLightEntities;
+	}
+
+	public List<AuditLightEntity> addAuditLightEntity(AuditLightEntity lightEntity) {
+		if (this.auditLightEntities == null) {
+			this.auditLightEntities = Lists.newArrayList();
+		}
+		auditLightEntities.add(lightEntity);
+		return auditLightEntities;
+	}
+
+	public List<AuditLightEntity> addAuditLightEntities(List<AuditLightEntity> lightEntities) {
+		if (this.auditLightEntities == null) {
+			this.auditLightEntities = Lists.newArrayList();
+		}
+		auditLightEntities.addAll(lightEntities);
+		return auditLightEntities;
 	}
 
 }

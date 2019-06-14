@@ -181,7 +181,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			ZipOutputStream zos = new ZipOutputStream(fos);) {
 			for (WorkGroupNode node : documentNodes) {
 				String humanPath = getGlobalPath(map, node.getPath(), rootNode);
-				log.addDownloadAuditLightEntities(
+				log.addAuditDownloadLightEntity(
 						new AuditDownloadLightEntity(node.getUuid(), humanPath.concat(node.getName())));
 				log.addRelatedResources(node.getUuid());
 				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) documentEntryRevisionBusinessService

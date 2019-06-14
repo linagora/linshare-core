@@ -52,7 +52,7 @@ public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentServi
 	WorkGroupDocument updateDocument(Account actor, Account owner, WorkGroup workGroup,
 			WorkGroupDocumentRevision documentRevision) throws BusinessException;
 
-	List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
+	List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, List<WorkGroupNode> revisions)
 			throws BusinessException;
 
 	WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid) throws BusinessException;

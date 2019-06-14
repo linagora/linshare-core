@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,30 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.mongo.entities.light;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.WorkGroupDocument;
-import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
-import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+public class AuditLightEntity {
 
-public interface WorkGroupNodeAbstractService {
+	private String uuid;
 
-	WorkGroupNode find(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
-			throws BusinessException;
+	private String name;
 
-	String getNewName(Account actor, User owner, WorkGroup workGroup, WorkGroupNode nodeParent, String currentName);
+	public AuditLightEntity() {
+		super();
+	}
 
-	void checkUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
+	public AuditLightEntity(String uuid, String name) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+	}
 
-	boolean isUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
+	public String getUuid() {
+		return uuid;
+	}
 
-	String computeFileName(WorkGroupDocument document, WorkGroupDocumentRevision revision, boolean isDocument);
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
-	void addMembersToLog(String workGroupUuid, AuditLogEntryUser log);
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "AuditLightEntity [uuid=" + uuid + ", name=" + name + "]";
+	}
 
 }

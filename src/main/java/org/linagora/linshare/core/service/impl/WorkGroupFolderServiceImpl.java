@@ -114,18 +114,13 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 		}
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_FOLDER, workGroupNode, workGroup);
-		addMembersToLog(workGroup, log);
+		addMembersToLog(workGroup.getLsUuid(), log);
 		logEntryService.insert(log);
 		return workGroupNode;
 	}
 
 	@Override
-	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
-			throws BusinessException {
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE,
-				AuditLogEntryType.WORKGROUP_FOLDER, workGroupNode, workGroup);
-		addMembersToLog(workGroup, log);
-		logEntryService.insert(log);
+	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException {
 		repository.delete(workGroupNode);
 		return workGroupNode;
 	}
