@@ -46,6 +46,7 @@ import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -104,7 +105,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	private static final String MODIFICATION_DATE = "modificationDate";
 
-	protected final WorkGroupNodeBusinessService workGroupNodeBusinessService; 
+	protected final WorkGroupNodeBusinessService workGroupNodeBusinessService;
 
 	public WorkGroupNodeServiceImpl(WorkGroupNodeMongoRepository repository,
 			LogEntryService logEntryService,
@@ -514,10 +515,14 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 		WorkGroupNode nodeParent = getParentNode(actor, owner, toWorkGroup, toNodeUuid);
 		fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, nodeParent, fileName);
-		WorkGroupNode newWGDocument = workGroupDocumentService.create(actor, owner, toWorkGroup, cr.getSize(),
+		WorkGroupNode newWGDocument = workGroupDocumentService.createWithoutLogStorage(actor, owner, toWorkGroup, cr.getSize(),
 				cr.getMimeType(), fileName, nodeParent);
+		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(newWGDocument.getNodeType());
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+				auditType, newWGDocument, toWorkGroup);
+		log.setCause(LogActionCause.COPY);
 		workGroupDocumentService.copy(actor, owner, toWorkGroup, cr.getDocumentUuid(), fileName, newWGDocument,
-				cr.getCiphered(), cr.getSize(), cr.getResourceUuid(), cr.getCopyFrom());
+				cr.getCiphered(), cr.getSize(), cr.getResourceUuid(), cr.getCopyFrom(), log);
 		return newWGDocument;
 	}
 
@@ -560,11 +565,14 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			if (isFolder(toNode)) {
 				// members of the "recipient workgroup" do not need to know the name of the source workgroup.
 				fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode, fileName);
-				WorkGroupDocument newDocument = (WorkGroupDocument) workGroupDocumentService.create(actor, owner,
+				WorkGroupDocument newDocument = (WorkGroupDocument) workGroupDocumentService.createWithoutLogStorage(actor, owner,
 						toWorkGroup, doc.getSize(), doc.getMimeType(), fileName, toNode);
+				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+						AuditLogEntryType.WORKGROUP_DOCUMENT, newDocument, toWorkGroup);
+				log.setCause(LogActionCause.COPY);
 				// copy the most recent revision into the new document.
 				workGroupDocumentService.copy(actor, owner, toWorkGroup, mostRecent.getDocumentUuid(), fileName,
-						newDocument, doc.getCiphered(), doc.getSize(), doc.getUuid(), copyFrom);
+						newDocument, doc.getCiphered(), doc.getSize(), doc.getUuid(), copyFrom, log);
 				CopyMto copiedTo = new CopyMto(newDocument, toWorkGroup);
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
 				return newDocument;
@@ -574,8 +582,9 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy to this kind of node.");
 				}
 				// copy the most recent revision into the document.
-				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor, owner, fromWorkGroup, mostRecent.getDocumentUuid(), fileName,
-						toNode, doc.getCiphered(), doc.getSize(), doc.getUuid(), copyFrom);
+				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor,
+						owner, fromWorkGroup, mostRecent.getDocumentUuid(), fileName, toNode, doc.getCiphered(),
+						doc.getSize(), doc.getUuid(), copyFrom, null);
 				toNode = revisionService.updateDocument(actor, owner, toWorkGroup, revision);
 				CopyMto copiedTo = new CopyMto(revision, toWorkGroup);
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
@@ -594,11 +603,14 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			if (isFolder(toNode)) {
 				// Create a new document from this revision
 				fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode, fileName);
-				WorkGroupDocument newDocument = (WorkGroupDocument) workGroupDocumentService.create(actor, owner,
+				WorkGroupDocument newDocument = (WorkGroupDocument) workGroupDocumentService.createWithoutLogStorage(actor, owner,
 						toWorkGroup, revision.getSize(), revision.getMimeType(), fileName, toNode);
+				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+						AuditLogEntryType.WORKGROUP_DOCUMENT, newDocument, toWorkGroup);
+				log.setCause(LogActionCause.COPY);
 				// copy the revision into the new document.
 				workGroupDocumentService.copy(actor, owner, toWorkGroup, revision.getDocumentUuid(), fileName,
-						newDocument, revision.getCiphered(), revision.getSize(), revision.getUuid(), copyFrom);
+						newDocument, revision.getCiphered(), revision.getSize(), revision.getUuid(), copyFrom, log);
 				CopyMto copiedTo = new CopyMto(newDocument, toWorkGroup);
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
 				return newDocument;
@@ -610,7 +622,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				// Copy the revision into the document.
 				WorkGroupDocumentRevision newRevision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor,
 						owner, fromWorkGroup, revision.getDocumentUuid(), fileName, toNode,
-						revision.getCiphered(), revision.getSize(), revision.getUuid(), copyFrom);
+						revision.getCiphered(), revision.getSize(), revision.getUuid(), copyFrom, null);
 				toNode = revisionService.updateDocument(actor, owner, toWorkGroup, newRevision);
 				CopyMto copiedTo = new CopyMto(newRevision, toWorkGroup);
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);

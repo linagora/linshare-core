@@ -119,7 +119,7 @@ public class UpgradeDocumentForVersionningImpl extends GenericUpgradeTaskImpl {
 		CopyMto copyMto = new CopyMto(node.getUuid(), node.getName(), TargetKind.SHARED_SPACE);
 		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) documentService.copy(actor, actor, workGroup,
 				node.getDocumentUuid(), node.getName(), node, node.getCiphered(), node.getSize(), node.getUuid(),
-				copyMto);
+				copyMto, null);
 		documentRevisionService.updateDocument(actor, actor, workGroup, revision);
 		node.setDocumentUuid(null);
 		nodeRepository.save(node);

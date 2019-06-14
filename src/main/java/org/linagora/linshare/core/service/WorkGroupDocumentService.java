@@ -45,15 +45,19 @@ import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
+
+	WorkGroupDocument createWithoutLogStorage(Account actor, Account owner, WorkGroup workGroup, Long size, String mimeType, String fileName,
+			WorkGroupNode nodeParent) throws BusinessException;
 
 	WorkGroupNode create(Account actor, Account owner, WorkGroup workGroup, Long size, String mimeType, String fileName,
 			WorkGroupNode nodeParent) throws BusinessException;
 
 	WorkGroupNode copy(Account actor, Account owner, WorkGroup toWorkGroup, String documentUuid, String fileName,
-			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom) throws BusinessException;
+			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom, WorkGroupNodeAuditLogEntry auditLogEntry) throws BusinessException;
 
 	void markAsCopied(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode node, CopyMto copiedTo) throws BusinessException;
 

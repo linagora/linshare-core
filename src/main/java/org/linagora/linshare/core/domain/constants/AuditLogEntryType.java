@@ -78,4 +78,11 @@ public enum AuditLogEntryType {
 			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION, StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
 	}
+
+	public static AuditLogEntryType getWorkgroupAuditType(WorkGroupNodeType nodeType) {
+		String type = "WORKGROUP_" + nodeType.toString();
+		AuditLogEntryType auditType = fromString(type);
+		return auditType;
+	}
+
 }

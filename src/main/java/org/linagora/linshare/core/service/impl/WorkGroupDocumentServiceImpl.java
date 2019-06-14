@@ -126,22 +126,29 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	@Override
 	public WorkGroupNode create(Account actor, Account owner, WorkGroup workgroup, Long size, String mimeType, String fileName,
 			WorkGroupNode nodeParent) throws BusinessException {
+		WorkGroupDocument document = createWithoutLogStorage(actor, owner, workgroup, size, mimeType, fileName,
+				nodeParent);
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+				AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
+		addMembersToLog(workgroup, log);
+		logEntryService.insert(log);
+		return document;
+	}
+
+	@Override
+	public WorkGroupDocument createWithoutLogStorage(Account actor, Account owner, WorkGroup workGroup, Long size,
+			String mimeType, String fileName, WorkGroupNode nodeParent) throws BusinessException {
 		Validate.notNull(nodeParent);
-		WorkGroupDocument document= null;
 		AbstractDomain domain = owner.getDomain();
-		checkSpace(workgroup, size);
+		checkSpace(workGroup, size);
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 		if (mimeFunctionality.getActivationPolicy().getStatus()) {
 			mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 		}
-		document = new WorkGroupDocument(actor, fileName, size, mimeType, workgroup, nodeParent);
+		WorkGroupDocument document = new WorkGroupDocument(actor, fileName, size, mimeType, workGroup, nodeParent);
 		document.setPathFromParent(nodeParent);
 		document = repository.insert(document);
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
-		addMembersToLog(workgroup, log);
-		logEntryService.insert(log);
 		return document;
 	}
 
@@ -163,30 +170,32 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 
 	@Override
 	public WorkGroupNode copy(Account actor, Account owner, WorkGroup toWorkGroup, String documentUuid, String fileName,
-			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom) throws BusinessException {
+			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom, WorkGroupNodeAuditLogEntry log) throws BusinessException {
 		Validate.notEmpty(documentUuid, "documentUuid is required.");
 		Validate.notEmpty(fileName, "fileName is required.");
 		Validate.notNull(nodeParent);
 		checkSpace(toWorkGroup, size);
 		WorkGroupDocument node = documentEntryBusinessService.copy(owner, toWorkGroup, nodeParent, documentUuid, fileName,
 				ciphered);
-		AuditLogEntryType auditType = getAuditType(copiedFrom.getNodeType());
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE, auditType, node,
-				toWorkGroup);
-		addMembersToLog(toWorkGroup, log);
-		log.setCause(LogActionCause.COPY);
+//		LOG can be null in case of copy into a document.
+		if (log == null) {
+			log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+					AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, node, toWorkGroup);
+			if (copiedFrom.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION)) {
+				log.setCause(LogActionCause.RESTORE);
+			} else {
+				log.setCause(LogActionCause.COPY);
+			}
+			log.addRelatedResources(node.getParent());
+		} else {
+			log.addRelatedResources(node.getUuid());
+		}
 		log.setFromResourceUuid(fromNodeUuid);
 		log.setCopiedFrom(copiedFrom);
 		addMembersToLog(toWorkGroup, log);
 		logEntryService.insert(log);
 		addToQuota(toWorkGroup, size);
 		return node;
-	}
-
-	private AuditLogEntryType getAuditType(WorkGroupNodeType nodeType) {
-		String type = "WORKGROUP_" + nodeType.toString();
-		AuditLogEntryType auditType = AuditLogEntryType.fromString(type);
-		return auditType;
 	}
 
 	@Override
@@ -203,7 +212,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	@Override
 	public InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node,
 			WorkGroupNodeType nodeType) throws BusinessException {
-		AuditLogEntryType auditType = getAuditType(nodeType);
+		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(nodeType);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, auditType,
 				node, workGroup);
 		addMembersToLog(workGroup, log);
@@ -224,8 +233,9 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	@Override
 	public void markAsCopied(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode node, CopyMto copiedTo)
 			throws BusinessException {
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
-				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
+		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(node.getNodeType());
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, auditType,
+				node, workGroup);
 		log.setCause(LogActionCause.COPY);
 		addMembersToLog(workGroup, log);
 		log.setCopiedTo(copiedTo);
@@ -289,4 +299,5 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	protected BusinessErrorCode getBusinessExceptionForbidden() {
 		return BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN;
 	}
+
 }
