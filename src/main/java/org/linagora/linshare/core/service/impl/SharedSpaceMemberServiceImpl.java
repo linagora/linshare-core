@@ -234,6 +234,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.UPDATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, foundMemberToUpdate);
 		log.setResourceUpdated(updated);
+		addMembersToLog(memberToUpdate.getNode().getUuid(), log);
 		logEntryService.insert(log);
 		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
 		notify(new WorkGroupWarnUpdatedMemberEmailContext(updated, user, actor));
@@ -289,6 +290,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 			SharedSpaceMember resource) {
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
 				AuditLogEntryType.WORKGROUP_MEMBER, resource);
+		addMembersToLog(resource.getNode().getUuid(), log);
 		logEntryService.insert(log);
 		return log;
 	}
@@ -298,6 +300,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
 				AuditLogEntryType.WORKGROUP_MEMBER, resource);
 		log.setResourceUpdated(resourceUpdated);
+		addMembersToLog(resource.getNode().getUuid(), log);
 		logEntryService.insert(log);
 		return log;
 	}
@@ -306,6 +309,11 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	public List<SharedSpaceMember> findAllUserMemberships(Account authUser, Account actor) {
 		preChecks(authUser, actor);
 		return businessService.findAllUserMemberships(actor.getLsUuid());
+	}
+
+	protected void addMembersToLog(String workGroupUuid, AuditLogEntryUser log) {
+		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(workGroupUuid);
+		log.addRelatedResources(members);
 	}
 
 }
