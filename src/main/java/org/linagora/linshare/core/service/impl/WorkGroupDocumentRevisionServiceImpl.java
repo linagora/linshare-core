@@ -138,7 +138,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			updateThumbnailOnDocument(workGroup, documentRevision);
 			if (hasRevision(workGroup.getLsUuid(), parentNode.getUuid())) {
 				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
-						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, parentNode, workGroup);
+						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, documentRevision, workGroup);
 				addMembersToLog(workGroup.getLsUuid(), log);
 				log.addRelatedResources(parentNode.getUuid());
 				logEntryService.insert(log);
