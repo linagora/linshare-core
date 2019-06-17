@@ -61,7 +61,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.light.AuditDownloadLightEntity;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
-import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
+import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 import org.linagora.linshare.utils.DocumentCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,8 +123,12 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 				Criteria.where("workGroup").is(workGroup.getLsUuid())
 				.and("path").regex(pattern).and("nodeType").is(nodeType)),
 				Aggregation.group().sum("size").as("size"));
-		NodeDetailsMto result = mongoTemplate.aggregate(aggregation, "work_group_nodes", NodeDetailsMto.class)
+		NodeMetadataMto result = mongoTemplate.aggregate(aggregation, "work_group_nodes", NodeMetadataMto.class)
 				.getUniqueMappedResult();
+		if (result == null) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND,
+					"We can't compute the size of this node");
+		}
 		return result.getSize();
 	}
 

@@ -33,12 +33,11 @@
  */
 package org.linagora.linshare.webservice.userv2;
 
-import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
+import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 
 public interface SharedSpaceNodeRestService extends WorkGroupNodeRestService {
 
-	NodeDetailsMto findDetails(String sharedSpaceUuid, String sharedSpaceNodeUuid, WorkGroupNodeType nodeType) throws BusinessException;
+	NodeMetadataMto findMetaData(String sharedSpaceUuid, String sharedSpaceNodeUuid, Boolean storage) throws BusinessException;
 
 }

@@ -72,7 +72,7 @@ import org.linagora.linshare.mongo.entities.light.AuditLightEntity;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
-import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
+import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -671,8 +671,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public NodeDetailsMto findDetails(User authUser, User actor, WorkGroup workGroup, WorkGroupNode node,
-			WorkGroupNodeType nodeType) {
+	public NodeMetadataMto findMetadata(User authUser, User actor, WorkGroup workGroup, WorkGroupNode node,
+			boolean storage) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null,
 				workGroup);
@@ -682,10 +682,21 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 		String pattern = Strings.isNullOrEmpty(node.getPath()) ? "^," + node.getUuid()
 				: "^" + node.getPath() + node.getUuid();
-		Long size = workGroupNodeBusinessService.computeNodeSize(workGroup, pattern, nodeType);
-		Long count = workGroupNodeBusinessService.computeNodeCount(workGroup, pattern, node);
-		NodeDetailsMto details = new NodeDetailsMto(node.getUuid(), node.getNodeType(), size, count);
-		return details;
+		NodeMetadataMto metaData = new NodeMetadataMto();
+		if (storage) {
+			metaData.setStorageSize(workGroupNodeBusinessService.computeNodeSize(workGroup, pattern,
+					WorkGroupNodeType.DOCUMENT_REVISION));
+		}
+		metaData.setSize(getSize(workGroup, pattern, node));
+		metaData.setCount(workGroupNodeBusinessService.computeNodeCount(workGroup, pattern, node));
+		return metaData;
+	}
+
+	private Long getSize(WorkGroup workGroup, String pattern, WorkGroupNode node) {
+		if (isDocument(node)) {
+			return ((WorkGroupDocument) node).getSize();
+		}
+		return workGroupNodeBusinessService.computeNodeSize(workGroup, pattern, WorkGroupNodeType.DOCUMENT);
 	}
 
 	protected WorkGroupNode getRootFolder(Account owner, WorkGroup workGroup) {

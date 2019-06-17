@@ -77,7 +77,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 import org.linagora.linshare.mongo.entities.WorkGroupAsyncTask;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
+import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
@@ -490,14 +490,14 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public NodeDetailsMto findDetails(
+	public NodeMetadataMto findMetaData(
 			@ApiParam(value = "The sharedSpace uuid.", required = true)
 				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
 			@ApiParam(value = "The sharedSpace node (Folder or document) uuid.", required = true)
 				@PathParam("sharedSpaceNodeUuid") String sharedSpaceNodeUuid,
-			@ApiParam(value = "The sharedSpace node type.", required = false)
-				@QueryParam("nodeType") WorkGroupNodeType nodeType) throws BusinessException {
-		return sharedSpaceNodeFacade.findDetails(null, sharedSpaceUuid, sharedSpaceNodeUuid, nodeType);
+			@ApiParam(value = "True to also compute the total storage size of the current node.", required = false) @DefaultValue("false")
+				@QueryParam("storage") Boolean storage) throws BusinessException {
+		return sharedSpaceNodeFacade.findMetaData(null, sharedSpaceUuid, sharedSpaceNodeUuid, storage);
 	}
 
 	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {

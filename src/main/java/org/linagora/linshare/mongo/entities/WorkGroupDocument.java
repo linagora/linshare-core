@@ -56,7 +56,6 @@ public class WorkGroupDocument extends WorkGroupNode {
 	@JsonIgnore
 	protected String documentUuid;
 
-	@JsonIgnore
 	protected Boolean hasRevision;
 
 	@JsonIgnore

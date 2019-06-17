@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 
 @XmlRootElement(name = "NodeDetailsMto")
-public class NodeDetailsMto {
+public class NodeMetadataMto {
 
 	private String uuid;
 
@@ -48,11 +48,13 @@ public class NodeDetailsMto {
 
 	private Long count;
 
-	public NodeDetailsMto() {
+	private Long storageSize;
+
+	public NodeMetadataMto() {
 		super();
 	}
 
-	public NodeDetailsMto(String uuid, WorkGroupNodeType type, Long size, Long count) {
+	public NodeMetadataMto(String uuid, WorkGroupNodeType type, Long size, Long count) {
 		super();
 		this.uuid = uuid;
 		this.type = type;
@@ -92,9 +94,18 @@ public class NodeDetailsMto {
 		this.count = count;
 	}
 
+	public Long getStorageSize() {
+		return storageSize;
+	}
+
+	public void setStorageSize(Long storageSize) {
+		this.storageSize = storageSize;
+	}
+
 	@Override
 	public String toString() {
-		return "NodeDetailsMto [uuid=" + uuid + ", type=" + type + ", size=" + size + ", count=" + count + "]";
+		return "NodeMetadataMto [uuid=" + uuid + ", type=" + type + ", size=" + size + ", count=" + count
+				+ ", storageSize=" + storageSize + "]";
 	}
 
 }

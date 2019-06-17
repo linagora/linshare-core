@@ -47,7 +47,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
+import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 
 public interface WorkGroupNodeFacade extends GenericFacade {
 
@@ -75,6 +75,6 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 
 	String findByWorkGroupNodeUuid(String workGroupNodeUuid) throws BusinessException;
 
-	NodeDetailsMto findDetails(String actorUuid, String sharedSpaceUuid, String sharedSpaceNodeUuid, WorkGroupNodeType nodeType);
+	NodeMetadataMto findMetaData(String actorUuid, String sharedSpaceUuid, String sharedSpaceNodeUuid, boolean storage);
 
 }
