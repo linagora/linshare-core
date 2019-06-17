@@ -314,7 +314,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	@Override
 	public void addMembersToLog(String workGroupUuid, AuditLogEntryUser log) {
 		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(workGroupUuid);
-		log.addRelatedResources(members);
+		log.addRelatedAccounts(members);
 	}
 
 }
