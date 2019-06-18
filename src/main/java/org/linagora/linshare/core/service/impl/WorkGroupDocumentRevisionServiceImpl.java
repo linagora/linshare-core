@@ -142,6 +142,9 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 				addMembersToLog(workGroup.getLsUuid(), log);
 				log.addRelatedResources(parentNode.getUuid());
 				logEntryService.insert(log);
+			} else {
+				((WorkGroupDocument) parentNode).setSha256sum(documentRevision.getSha256sum());
+				repository.save(parentNode);
 			}
 			addToQuota(workGroup, size);
 		} finally {
@@ -181,6 +184,8 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		parentDocument.setHasThumbnail(documentRevision.getHasThumbnail());
 		boolean hasRevision = hasRevision(workGroup.getLsUuid(), parentDocument.getUuid());
 		parentDocument.setHasRevision(hasRevision);
+		parentDocument.setSha256sum(documentRevision.getSha256sum());
+		parentDocument.setMimeType(documentRevision.getMimeType());
 		parentDocument = repository.save(parentDocument);
 		return parentDocument;
 	}
