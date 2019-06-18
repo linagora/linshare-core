@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
@@ -72,6 +73,15 @@ public class FunctionalitySizeDto extends FunctionalityDto {
 
 	public Integer getValue() {
 		return value;
+	}
+
+	@XmlElement
+	public Long getRawSize() {
+		if (getUnit() != null) {
+			FileSizeUnit unit = FileSizeUnit.valueOf(getUnit());
+			return unit.getSiSize(value);
+		}
+		return 0L;
 	}
 
 	public void setValue(Integer value) {
