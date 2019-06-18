@@ -33,20 +33,25 @@
  */
 package org.linagora.linshare.mongo.entities.light;
 
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+
 public class AuditLightEntity {
 
 	private String uuid;
 
 	private String name;
 
+	private WorkGroupNodeType nodeType;
+
 	public AuditLightEntity() {
 		super();
 	}
 
-	public AuditLightEntity(String uuid, String name) {
+	public AuditLightEntity(String uuid, String name, WorkGroupNodeType nodeType) {
 		super();
 		this.uuid = uuid;
 		this.name = name;
+		this.nodeType = nodeType;
 	}
 
 	public String getUuid() {
@@ -65,9 +70,17 @@ public class AuditLightEntity {
 		this.name = name;
 	}
 
+	public WorkGroupNodeType getNodeType() {
+		return nodeType;
+	}
+
+	public void setNodeType(WorkGroupNodeType nodeType) {
+		this.nodeType = nodeType;
+	}
+
 	@Override
 	public String toString() {
-		return "AuditLightEntity [uuid=" + uuid + ", name=" + name + "]";
+		return "AuditLightEntity [uuid=" + uuid + ", name=" + name + ", nodeType=" + nodeType + "]";
 	}
 
 }

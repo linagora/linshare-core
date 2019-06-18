@@ -126,7 +126,6 @@ public class WorkGroupDocument extends WorkGroupNode {
 		this.documentUuid = documentUuid;
 	}
 
-	@XmlTransient
 	public Boolean getHasRevision() {
 		return hasRevision;
 	}

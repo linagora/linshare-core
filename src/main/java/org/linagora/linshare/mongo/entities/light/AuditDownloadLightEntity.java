@@ -37,7 +37,7 @@ public class AuditDownloadLightEntity {
 
 	private String uuid;
 
-	private String context;
+	private String path;
 
 	public AuditDownloadLightEntity() {
 		super();
@@ -46,7 +46,7 @@ public class AuditDownloadLightEntity {
 	public AuditDownloadLightEntity(String uuid, String path) {
 		super();
 		this.uuid = uuid;
-		this.context = path;
+		this.path = path;
 	}
 
 	public String getUuid() {
@@ -58,16 +58,16 @@ public class AuditDownloadLightEntity {
 	}
 
 	public String getPath() {
-		return context;
+		return path;
 	}
 
 	public void setPath(String path) {
-		this.context = path;
+		this.path = path;
 	}
 
 	@Override
 	public String toString() {
-		return "AuditDownloadLightEntity [uuid=" + uuid + ", path=" + context + "]";
+		return "AuditDownloadLightEntity [uuid=" + uuid + ", path=" + path + "]";
 	}
 
 }

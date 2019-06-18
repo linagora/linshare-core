@@ -312,10 +312,15 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			revisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
 			return documentRevision;
 		} else {
-			WorkGroupNode dto = workGroupDocumentService.create(actor, owner, workGroup, size, mimeType, fileName,
+			WorkGroupNode document = workGroupDocumentService.createWithoutLogStorage(actor, owner, workGroup, size, mimeType, fileName,
 					parentNode);
-			revisionService.create(actor, owner, workGroup, tempFile, fileName, dto);
-			return dto;
+			WorkGroupDocumentRevision revision = revisionService.create(actor, owner, workGroup, tempFile, fileName, document);
+			WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+					AuditLogEntryType.WORKGROUP_DOCUMENT, document, workGroup);
+			workGroupDocumentService.addMembersToLog(workGroup.getLsUuid(), log);
+			log.addRelatedResources(revision.getUuid());
+			logEntryService.insert(log);
+			return document;
 		}
 	}
 
@@ -471,7 +476,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	protected List<AuditLightEntity> transformToAuditLightEntity(List<WorkGroupNode> nodes) {
-		return nodes.stream().map(node -> new AuditLightEntity(node.getUuid(), node.getName()))
+		return nodes.stream().map(node -> new AuditLightEntity(node.getUuid(), node.getName(), node.getNodeType()))
 				.collect(Collectors.toList());
 	}
 

@@ -61,7 +61,7 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 	protected WorkGroupNode resource;
 
 	// Content of folder at download time
-	protected List<AuditDownloadLightEntity> getDownloadAuditLightEntities;
+	protected List<AuditDownloadLightEntity> auditDownloadLightEntities;
 
 	// Light content of related resources with Name and Uuid
 	protected List<AuditLightEntity> auditLightEntities;
@@ -143,23 +143,23 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 	}
 
 	public List<AuditDownloadLightEntity> getAuditDownloadLightEntities() {
-		return getDownloadAuditLightEntities;
+		return auditDownloadLightEntities;
 	}
 
 	public List<AuditDownloadLightEntity> addAuditDownloadLightEntity(AuditDownloadLightEntity lightEntity) {
-		if (this.getDownloadAuditLightEntities == null) {
-			this.getDownloadAuditLightEntities = Lists.newArrayList();
+		if (this.auditDownloadLightEntities == null) {
+			this.auditDownloadLightEntities = Lists.newArrayList();
 		}
-		getDownloadAuditLightEntities.add(lightEntity);
-		return getDownloadAuditLightEntities;
+		auditDownloadLightEntities.add(lightEntity);
+		return auditDownloadLightEntities;
 	}
 
 	public List<AuditDownloadLightEntity> addAuditDownloadLightEntities(List<AuditDownloadLightEntity> lightEntities) {
-		if (this.getDownloadAuditLightEntities == null) {
-			this.getDownloadAuditLightEntities = Lists.newArrayList();
+		if (this.auditDownloadLightEntities == null) {
+			this.auditDownloadLightEntities = Lists.newArrayList();
 		}
-		getDownloadAuditLightEntities.addAll(lightEntities);
-		return getDownloadAuditLightEntities;
+		auditDownloadLightEntities.addAll(lightEntities);
+		return auditDownloadLightEntities;
 	}
 
 	public List<AuditLightEntity> getAuditLightEntities() {
