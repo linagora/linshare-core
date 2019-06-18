@@ -44,7 +44,7 @@ import org.owasp.html.PolicyFactory;
 
 public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtmlBusinessService {
 
-	private final Pattern specialChars = Pattern.compile("[$&?@#+=\\|<>/'^*%!]");
+	private final Pattern specialChars = Pattern.compile("[$&?@+=\\|<>/'^*%!]");
 
 	private final PolicyFactory policyFactory;
 
@@ -65,10 +65,10 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 	public String strictClean(String entry) throws IllegalArgumentException {
 		entry = policyFactory.sanitize(entry).trim();
 		if (entry.isEmpty()) {
-			throw new IllegalArgumentException("This entry is empty after been sanitized");
+			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after been sanitized");
 		}
 		if (specialChars.matcher(entry).find()) {
-			throw new IllegalArgumentException("This entry contain a special character.");
+			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "This entry contain a special character.");
 		}
 		return entry;
 	}
@@ -94,9 +94,6 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 		fileName = fileName.replace("\"", "_");
 		fileName = fileName.replace("|", "_");
 		fileName = strictClean(fileName);
-		if (fileName.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after been sanitized");
-		}
 		return fileName;
 	}
 
