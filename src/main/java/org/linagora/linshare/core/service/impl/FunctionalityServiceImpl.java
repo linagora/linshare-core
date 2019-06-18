@@ -160,7 +160,7 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 				logger.debug("Functionality {} has no children.", parentIdentifier.toString());
 				return Lists.newArrayList();
 			}
-			return list;
+			return Iterables.filter(list, isDisplayable());
 		}
 		if (withSubFunctionalities) {
 			result.addAll(subs);
