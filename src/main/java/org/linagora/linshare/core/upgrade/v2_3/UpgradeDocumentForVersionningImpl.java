@@ -37,7 +37,7 @@ import java.util.List;
 
 import org.bson.Document;
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
-import org.linagora.linshare.core.domain.constants.TargetKind;
+import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -49,10 +49,8 @@ import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
-import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
-import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -67,7 +65,7 @@ public class UpgradeDocumentForVersionningImpl extends GenericUpgradeTaskImpl {
 
 	private WorkGroupNodeMongoRepository nodeRepository;
 
-	private WorkGroupDocumentService documentService;
+	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private ThreadRepository threadRepository;
 
@@ -78,13 +76,13 @@ public class UpgradeDocumentForVersionningImpl extends GenericUpgradeTaskImpl {
 	public UpgradeDocumentForVersionningImpl(AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			WorkGroupNodeMongoRepository nodeRepository,
-			WorkGroupDocumentService documentService,
+			DocumentEntryBusinessService documentEntryBusinessService,
 			ThreadRepository threadRepository,
 			WorkGroupDocumentRevisionService documentRevisionService,
 			MongoTemplate mongoTemplate) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.nodeRepository = nodeRepository;
-		this.documentService = documentService;
+		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.threadRepository = threadRepository;
 		this.documentRevisionService = documentRevisionService;
 		this.mongoTemplate = mongoTemplate;
@@ -116,10 +114,8 @@ public class UpgradeDocumentForVersionningImpl extends GenericUpgradeTaskImpl {
 		BatchResultContext<WorkGroupDocument> res = new BatchResultContext<WorkGroupDocument>(node);
 		WorkGroup workGroup = threadRepository.findByLsUuid(node.getWorkGroup());
 		Account actor = accountRepository.findByLsUuid(node.getLastAuthor().getUuid());
-		CopyMto copyMto = new CopyMto(node.getUuid(), node.getName(), TargetKind.SHARED_SPACE);
-		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) documentService.copy(actor, actor, workGroup,
-				node.getDocumentUuid(), node.getName(), node, node.getCiphered(), node.getSize(), node.getUuid(),
-				copyMto, null);
+		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) documentEntryBusinessService.copy(actor,
+				workGroup, node, node.getDocumentUuid(), node.getName(), node.getCiphered());
 		documentRevisionService.updateDocument(actor, actor, workGroup, revision);
 		node.setDocumentUuid(null);
 		nodeRepository.save(node);

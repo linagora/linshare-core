@@ -216,7 +216,7 @@
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="workGroupNodeMongoRepository" />
-					<constructor-arg ref="workGroupDocumentService" />
+					<constructor-arg ref="documentEntryBusinessService" />
 					<constructor-arg ref="threadRepository" />
 					<constructor-arg ref="workGroupDocumentRevisionService" />
 					<constructor-arg ref="mongoTemplate" />
