@@ -100,6 +100,7 @@
 			<ref bean="jsonParseExceptionMapper" />
 			<ref bean="unrecognizedPropertyExceptionMapper" />
 			<ref bean="dataIntegrityViolationExceptionMapper" />
+			<ref bean="mismatchedInputExceptionMapper" />
 			<!-- Json provider for serialisation -->
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
