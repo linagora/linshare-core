@@ -54,6 +54,11 @@ public class NodeMetadataMto {
 		super();
 	}
 
+	public NodeMetadataMto(String uuid, WorkGroupNodeType type) {
+		this.uuid = uuid;
+		this.type = type;
+	}
+
 	public NodeMetadataMto(String uuid, WorkGroupNodeType type, Long size, Long count) {
 		super();
 		this.uuid = uuid;

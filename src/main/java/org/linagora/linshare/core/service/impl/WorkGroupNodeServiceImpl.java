@@ -687,8 +687,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 		String pattern = Strings.isNullOrEmpty(node.getPath()) ? "^," + node.getUuid()
 				: "^" + node.getPath() + node.getUuid();
-		NodeMetadataMto metaData = new NodeMetadataMto();
-		metaData.setUuid(node.getUuid());
+		NodeMetadataMto metaData = new NodeMetadataMto(node.getUuid(), node.getNodeType());
 		if (storage) {
 			metaData.setStorageSize(workGroupNodeBusinessService.computeNodeSize(workGroup, pattern,
 					WorkGroupNodeType.DOCUMENT_REVISION));
