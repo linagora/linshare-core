@@ -126,8 +126,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		NodeMetadataMto result = mongoTemplate.aggregate(aggregation, "work_group_nodes", NodeMetadataMto.class)
 				.getUniqueMappedResult();
 		if (result == null) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND,
-					"We can't compute the size of this node");
+			return 0L;
 		}
 		return result.getSize();
 	}
