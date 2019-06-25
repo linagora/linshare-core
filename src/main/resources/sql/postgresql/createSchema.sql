@@ -407,7 +407,7 @@ CREATE TABLE mail_content (
   ressource_uuid               varchar(255) NOT NULL,
   enable           bool DEFAULT 'true' NOT NULL,
   enable_for_all           bool DEFAULT 'true' NOT NULL,
-  language          varchar(255) NOT NULL,
+  language          varchar(255),
   description        text  NOT NULL,
   name               varchar(255),
   size                  int8 NOT NULL,

@@ -82,7 +82,11 @@ public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessS
 		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 		String sha256sum = SHA256CheckSumFileStream(tempFile);
 		cid = Strings.isNullOrEmpty(cid) ? LinShareConstants.defaultMailAttachmentCid : cid;
-		language = language == null ? Language.ENGLISH : language;
+		if(language == null && (!enableForAll)) {
+			language = Language.ENGLISH;
+		} else if (enableForAll) {
+			language = null;
+		}
 		description = description == null ? "" : description;
 		MailAttachment mailAttachment = new MailAttachment(enable, enableForAll, language, description, fileName,
 				tempFile.length(), mimeType, sha256sum, mailConfig, cid);
