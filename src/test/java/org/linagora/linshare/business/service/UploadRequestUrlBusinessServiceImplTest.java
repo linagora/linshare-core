@@ -34,10 +34,12 @@
 package org.linagora.linshare.business.service;
 
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -53,10 +55,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -67,8 +72,10 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-test.xml", })
-public class UploadRequestUrlBusinessServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+		"classpath:springContext-test.xml"})
+@Sql({"/import-tests-upload-request-delete-recipients.sql"})
+@Transactional
+public class UploadRequestUrlBusinessServiceImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestUrlBusinessServiceImplTest.class);
 
@@ -99,10 +106,9 @@ public class UploadRequestUrlBusinessServiceImplTest extends AbstractTransaction
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-upload-request-delete-recipients.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
@@ -112,7 +118,7 @@ public class UploadRequestUrlBusinessServiceImplTest extends AbstractTransaction
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -126,8 +132,8 @@ public class UploadRequestUrlBusinessServiceImplTest extends AbstractTransaction
 		for (String uploadRequestUrlUuid : urlList) {
 			UploadRequestUrl url = uploadRequestUrlBusinessService.findByUuid(uploadRequestUrlUuid);
 			uploadRequestUrlBusinessService.delete(url);
-			Assert.assertNull("The Upload request url has not been deleted",
-					uploadRequestUrlBusinessService.findByUuid(uploadRequestUrlUuid));
+			Assertions.assertNull(uploadRequestUrlBusinessService.findByUuid(uploadRequestUrlUuid),
+					"The Upload request url has not been deleted");
 		}
 	}
 }

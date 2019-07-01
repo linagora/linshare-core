@@ -33,15 +33,14 @@
  */
 package org.linagora.linshare.business.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
@@ -56,11 +55,16 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -74,7 +78,12 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+@Sql({"/import-tests-stat.sql","/import-tests-operationHistory.sql","/import-tests-quota.sql"})
+@Transactional
+public class QuotaBusinessServiceTest {
+
+	private static Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImplTest.class);
+
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
@@ -95,12 +104,10 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 	LoadingServiceTestDatas datas;
 	private User jane;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-stat.sql", false);
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
-		this.executeSqlScript("import-tests-quota.sql", false);
+
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
@@ -114,55 +121,55 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		AbstractDomain domain = jane.getDomain();
 
 		DomainQuota domainQuota = domainQuotaBusinessService.find(domain);
-		assertNotNull(domainQuota);
-		assertEquals(1096, (long) domainQuota.getCurrentValue());
-		assertEquals(500, (long) domainQuota.getLastValue());
-		assertEquals(1900, (long) domainQuota.getQuota());
-		assertEquals(1800, (long) domainQuota.getQuotaWarning());
+		Assertions.assertNotNull(domainQuota);
+		Assertions.assertEquals(1096, (long) domainQuota.getCurrentValue());
+		Assertions.assertEquals(500, (long) domainQuota.getLastValue());
+		Assertions.assertEquals(1900, (long) domainQuota.getQuota());
+		Assertions.assertEquals(1800, (long) domainQuota.getQuotaWarning());
 		domainQuotaBusinessService.sumOfCurrentValue(domainQuota);
 		domainQuota = domainQuotaBusinessService.find(domain);
-		assertEquals(1396, (long) domainQuota.getCurrentValue());
-		assertEquals(1096, (long) domainQuota.getLastValue());
+		Assertions.assertEquals(1396, (long) domainQuota.getCurrentValue());
+		Assertions.assertEquals(1096, (long) domainQuota.getLastValue());
 
 		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.USER);
-		assertNotNull(ensembleQuota);
-		assertEquals(496, (long) ensembleQuota.getCurrentValue());
-		assertEquals(0, (long) ensembleQuota.getLastValue());
-		assertEquals(1900, (long) ensembleQuota.getQuota());
-		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
-		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
+		Assertions.assertNotNull(ensembleQuota);
+		Assertions.assertEquals(496, (long) ensembleQuota.getCurrentValue());
+		Assertions.assertEquals(0, (long) ensembleQuota.getLastValue());
+		Assertions.assertEquals(1900, (long) ensembleQuota.getQuota());
+		Assertions.assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
+		Assertions.assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
 		ensembleQuotaBusinessService.sumOfCurrentValue(ensembleQuota);
 		ensembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.USER);
-		assertEquals(1700, (long) ensembleQuota.getCurrentValue());
-		assertEquals(496, (long) ensembleQuota.getLastValue());
+		Assertions.assertEquals(1700, (long) ensembleQuota.getCurrentValue());
+		Assertions.assertEquals(496, (long) ensembleQuota.getLastValue());
 
 		ContainerQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.WORK_GROUP);
-		assertNotNull(threadEnsembleQuota);
-		assertEquals(900, (long) threadEnsembleQuota.getCurrentValue());
-		assertEquals(200, (long) threadEnsembleQuota.getLastValue());
-		assertEquals(2000, (long) threadEnsembleQuota.getQuota());
-		assertEquals(1500, (long) threadEnsembleQuota.getQuotaWarning());
-		assertEquals(5, (long) threadEnsembleQuota.getDefaultMaxFileSize());
+		Assertions.assertNotNull(threadEnsembleQuota);
+		Assertions.assertEquals(900, (long) threadEnsembleQuota.getCurrentValue());
+		Assertions.assertEquals(200, (long) threadEnsembleQuota.getLastValue());
+		Assertions.assertEquals(2000, (long) threadEnsembleQuota.getQuota());
+		Assertions.assertEquals(1500, (long) threadEnsembleQuota.getQuotaWarning());
+		Assertions.assertEquals(5, (long) threadEnsembleQuota.getDefaultMaxFileSize());
 		ensembleQuotaBusinessService.sumOfCurrentValue(threadEnsembleQuota);
 		threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.WORK_GROUP);
-		assertEquals(1200, (long) threadEnsembleQuota.getCurrentValue());
-		assertEquals(900, (long) threadEnsembleQuota.getLastValue());
+		Assertions.assertEquals(1200, (long) threadEnsembleQuota.getCurrentValue());
+		Assertions.assertEquals(900, (long) threadEnsembleQuota.getLastValue());
 
 		AccountQuota qo = accountQuotaBusinessService.find(account);
-		assertNotNull(qo);
-		assertEquals(800, (long) qo.getCurrentValue());
-		assertEquals(0, (long) qo.getLastValue());
-		assertEquals(1600, (long) qo.getQuota());
-		assertEquals(1480, (long) qo.getQuotaWarning());
-		assertEquals(5, (long) qo.getMaxFileSize());
+		Assertions.assertNotNull(qo);
+		Assertions.assertEquals(800, (long) qo.getCurrentValue());
+		Assertions.assertEquals(0, (long) qo.getLastValue());
+		Assertions.assertEquals(1600, (long) qo.getQuota());
+		Assertions.assertEquals(1480, (long) qo.getQuotaWarning());
+		Assertions.assertEquals(5, (long) qo.getMaxFileSize());
 		accountQuotaBusinessService.createOrUpdate(account, new GregorianCalendar(2042, 10, 11, 00, 00).getTime());
 		qo = accountQuotaBusinessService.find(account);
-		assertNotNull(qo);
-		assertEquals(1700, (long) qo.getCurrentValue());
-		assertEquals(800, (long) qo.getLastValue());
+		Assertions.assertNotNull(qo);
+		Assertions.assertEquals(1700, (long) qo.getCurrentValue());
+		Assertions.assertEquals(800, (long) qo.getLastValue());
 
 		List<String> listDomain = accountQuotaBusinessService.findDomainUuidByBatchModificationDate(yesterday());
-		assertEquals(1, listDomain.size());
+		Assertions.assertEquals(1, listDomain.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

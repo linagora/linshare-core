@@ -33,10 +33,10 @@
  */
 package org.linagora.linshare.business.service;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -49,8 +49,11 @@ import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -64,7 +67,10 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class DomainQuotaBusinessServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+@Sql({"/import-tests-default-domain-quotas.sql",
+"/import-tests-domain-quota-updates.sql"})
+@Transactional
+public class DomainQuotaBusinessServiceImplTest {
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
@@ -85,10 +91,8 @@ public class DomainQuotaBusinessServiceImplTest extends AbstractTransactionalJUn
 
 	private AbstractDomain topDomain;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-domain-quota-updates.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 //		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
@@ -99,7 +103,6 @@ public class DomainQuotaBusinessServiceImplTest extends AbstractTransactionalJUn
 	@Test
 	public void testCascadeDefaultQuota() {
 		Long quotaValue = 698L;
-
 		DomainQuota quota = businessService.find(topDomain);
 		DomainQuota dq = new DomainQuota(quota);
 		dq.setQuotaOverride(true);
@@ -110,14 +113,14 @@ public class DomainQuotaBusinessServiceImplTest extends AbstractTransactionalJUn
 		businessService.update(quota, dq);
 
 		quota = businessService.find(guestDomain);
-		assertEquals(quotaValue, quota.getDefaultQuota());
-		assertEquals(false, quota.getDefaultQuotaOverride());
-		assertEquals(quotaValue, quota.getQuota());
+		Assertions.assertEquals(quotaValue, quota.getDefaultQuota());
+		Assertions.assertEquals(false, quota.getDefaultQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getQuota());
 
 		quota = businessService.find(topDomain);
-		assertEquals(quotaValue, quota.getDefaultQuota());
-		assertEquals(true, quota.getDefaultQuotaOverride());
-		assertEquals(quotaValue, quota.getQuota());
-		assertEquals(true, quota.getQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getDefaultQuota());
+		Assertions.assertEquals(true, quota.getDefaultQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getQuota());
+		Assertions.assertEquals(true, quota.getQuotaOverride());
 	}
 }

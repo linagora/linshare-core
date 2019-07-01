@@ -36,10 +36,11 @@ package org.linagora.linshare.business.service;
 import java.util.Date;
 import java.util.UUID;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.UploadPropositionFilterBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
@@ -54,10 +55,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -69,7 +72,8 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
-public class UploadPropositionFilterBusinessServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+@Transactional
+public class UploadPropositionFilterBusinessServiceTest {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadPropositionFilterBusinessServiceTest.class);
 
@@ -85,7 +89,7 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
@@ -97,7 +101,7 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -109,7 +113,7 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadPropositionFilter filterToCreate = initFilter(referenceFilter);
 		UploadPropositionFilter persistedFilter = filterBusinessService.create(filterToCreate);
-		Assert.assertNotNull("No Filter has been created", persistedFilter);
+		Assertions.assertNotNull(persistedFilter, "No Filter has been created");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -120,7 +124,7 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 		UploadPropositionFilter persistedFilter = filterBusinessService.create(filterToCreate);
 		UploadPropositionFilter found = filterBusinessService.find(persistedFilter.getDomainUuid(),
 				persistedFilter.getUuid());
-		Assert.assertNotNull("No Filter has been found", found);
+		Assertions.assertNotNull(found, "No Filter has been found");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -132,9 +136,10 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 		persistedFilter.setMatchType(UploadPropositionMatchType.ANY);
 		persistedFilter.setEnabled(Boolean.FALSE);
 		UploadPropositionFilter updated = filterBusinessService.update(persistedFilter);
-		Assert.assertEquals("Filter field has not been updated : MatchType", UploadPropositionMatchType.ANY,
-				updated.getMatchType());
-		Assert.assertEquals("Filter field has not been updated : Enabled", Boolean.FALSE, updated.isEnabled());
+		Assertions.assertEquals( UploadPropositionMatchType.ANY, updated.getMatchType(),
+				"Filter field has not been updated : MatchType");
+		Assertions.assertEquals(Boolean.FALSE, updated.isEnabled(),
+				"Filter field has not been updated : Enabled");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -144,8 +149,8 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 		UploadPropositionFilter filterToCreate = initFilter(referenceFilter);
 		UploadPropositionFilter persistedFilter = filterBusinessService.create(filterToCreate);
 		filterBusinessService.delete(persistedFilter);
-		Assert.assertNull("The filter has not been deleted",
-				filterBusinessService.find(persistedFilter.getDomainUuid(), persistedFilter.getUuid()));
+		Assertions.assertNull(filterBusinessService.find(persistedFilter.getDomainUuid(), persistedFilter.getUuid()),
+				"The filter has not been deleted");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

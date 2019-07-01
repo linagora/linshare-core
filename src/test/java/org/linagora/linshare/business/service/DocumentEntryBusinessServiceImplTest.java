@@ -43,11 +43,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
@@ -73,10 +74,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.beust.jcommander.internal.Sets;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -90,7 +94,10 @@ import com.beust.jcommander.internal.Sets;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml",
 		})
-public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+@Sql({"/import-tests-default-domain-quotas.sql",
+"/import-tests-domain-quota-updates.sql"})
+@Transactional
+public class DocumentEntryBusinessServiceImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImplTest.class);
 
@@ -124,11 +131,9 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 
 	private User jane;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
@@ -137,7 +142,7 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -153,8 +158,8 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 		Calendar cal = Calendar.getInstance();
 		DocumentEntry createDocumentEntry = documentEntryBusinessService.createDocumentEntry(jane, tempFile,
 				tempFile.length(), "file.txt", null, false, null, "text/plain", cal, false, null);
-		Assert.assertTrue(documentEntryBusinessService.find(createDocumentEntry.getUuid()) != null);
-//		Assert.assertTrue(documentEntryBusinessService.getDocumentThumbnailStream(createDocumentEntry,
+		Assertions.assertTrue(documentEntryBusinessService.find(createDocumentEntry.getUuid()) != null);
+//		Assertions.assertTrue(documentEntryBusinessService.getDocumentThumbnailStream(createDocumentEntry,
 //				ThumbnailType.SMALL) != null);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -169,13 +174,13 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 		Calendar cal = Calendar.getInstance();
 		DocumentEntry createDocumentEntry = documentEntryBusinessService.createDocumentEntry(jane, tempFile,
 				tempFile.length(), "file.txt", null, false, null, "text/plain", cal, false, null);
-		Assert.assertTrue(documentEntryBusinessService.find(createDocumentEntry.getUuid()) != null);
+		Assertions.assertTrue(documentEntryBusinessService.find(createDocumentEntry.getUuid()) != null);
 		Document document = createDocumentEntry.getDocument();
 //		Map<ThumbnailType, Thumbnail> thumbnails = document.getThumbnails();
 		documentEntryRepository.delete(createDocumentEntry);
 		documentEntryBusinessService.deleteDocument(document);
-		Assert.assertTrue(documentRepository.findByUuid(document.getUuid()) == null);
-//		Assert.assertTrue(thumbnails != null);
+		Assertions.assertTrue(documentRepository.findByUuid(document.getUuid()) == null);
+//		Assertions.assertTrue(thumbnails != null);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -192,11 +197,11 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 //		update the document
 		createDocumentEntry = documentEntryBusinessService.updateDocumentEntry(jane, createDocumentEntry, tempFile,
 				tempFile.length(), "file.png", false, null, "image/png", cal);
-		Assert.assertTrue(documentEntryRepository.findById(createDocumentEntry.getUuid()).getType() == "image/png");
+		Assertions.assertTrue(documentEntryRepository.findById(createDocumentEntry.getUuid()).getType() == "image/png");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-	@Ignore
+	@Disabled
 	@Test
 	public void testUpdateThumbnail() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -204,15 +209,15 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 		Set<DocumentEntry> documentEntries = createdDocument.getDocumentEntries();
 		List<WorkGroupDocument> wgDocuments = workGroupNodeMongoRepository
 				.findByDocumentUuid(createdDocument.getUuid());
-		Assert.assertTrue("The created document should have a thumbnail", createdDocument.getHasThumbnail());
+		Assertions.assertTrue(createdDocument.getHasThumbnail(),"The created document should have a thumbnail");
 		documentEntryBusinessService.updateThumbnail(createdDocument, jane);
 		for (DocumentEntry docEntry : documentEntries) {
-			Assert.assertEquals("The document entry and the document should have the same thumbnail status",
-					createdDocument.getHasThumbnail(), docEntry.isHasThumbnail());
+			Assertions.assertEquals(createdDocument.getHasThumbnail(), docEntry.isHasThumbnail(),
+					"The document entry and the document should have the same thumbnail status");
 		}
 		for (WorkGroupDocument wgDocument : wgDocuments) {
-			Assert.assertEquals("The wgDocument entry and the document should have the same thumbnail status",
-					createdDocument.getHasThumbnail(), wgDocument.getHasThumbnail());
+			Assertions.assertEquals(createdDocument.getHasThumbnail(), wgDocument.getHasThumbnail(), 
+					"The wgDocument entry and the document should have the same thumbnail status");
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

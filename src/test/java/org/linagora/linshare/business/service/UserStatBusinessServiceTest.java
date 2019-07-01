@@ -33,14 +33,14 @@
  */
 package org.linagora.linshare.business.service;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.UserMonthlyStatBusinessService;
 import org.linagora.linshare.core.business.service.UserWeeklyStatBusinessService;
@@ -51,11 +51,16 @@ import org.linagora.linshare.core.domain.entities.UserMonthlyStat;
 import org.linagora.linshare.core.domain.entities.UserWeeklyStat;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -69,7 +74,11 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class UserStatBusinessServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+@Sql({"/import-tests-stat.sql","/import-tests-operationHistory.sql"})
+@Transactional
+public class UserStatBusinessServiceTest {
+
+	private static Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImplTest.class);
 
 	@Autowired
 	private UserDailyStatBusinessService userDailyStatBusinessService;
@@ -87,11 +96,9 @@ public class UserStatBusinessServiceTest extends AbstractTransactionalJUnit4Spri
 	LoadingServiceTestDatas dates;
 	private User jane;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-stat.sql", false);
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		jane = dates.getUser2();
@@ -104,54 +111,54 @@ public class UserStatBusinessServiceTest extends AbstractTransactionalJUnit4Spri
 		Date start = new GregorianCalendar(2042, 07, 10, 00, 00).getTime();
 		Date end = new GregorianCalendar(2042, 12, 19, 00, 00).getTime();
 		List<UserDailyStat> listUserDaily = userDailyStatBusinessService.findBetweenTwoDates(jane, start, end);
-		assertEquals(5, listUserDaily.size());
+		Assertions.assertEquals(5, listUserDaily.size());
 		List<UserDailyStat> listUserDailyOctober = userDailyStatBusinessService.findBetweenTwoDates(jane,
 				new GregorianCalendar(2042, 9, 01, 00, 00).getTime(),
 				new GregorianCalendar(2042, 9, 30, 00, 00).getTime());
-		assertEquals(1, listUserDailyOctober.size());
+		Assertions.assertEquals(1, listUserDailyOctober.size());
 		UserDailyStat entity = userDailyStatBusinessService
 				.findBetweenTwoDates(jane, new GregorianCalendar(2042, 10, 16, 00, 00).getTime(), null).get(0);
-		assertEquals(jane, entity.getAccount());
-		assertEquals(5, (long) entity.getOperationCount());
-		assertEquals(50, (long) entity.getActualOperationSum());
-		assertEquals(3, (long) entity.getCreateOperationCount());
-		assertEquals(100, (long) entity.getCreateOperationSum());
-		assertEquals(2, (long) entity.getDeleteOperationCount());
-		assertEquals(-50, (long) entity.getDeleteOperationSum());
-		assertEquals(50, (long) entity.getDiffOperationSum());
+		Assertions.assertEquals(jane, entity.getAccount());
+		Assertions.assertEquals(5, (long) entity.getOperationCount());
+		Assertions.assertEquals(50, (long) entity.getActualOperationSum());
+		Assertions.assertEquals(3, (long) entity.getCreateOperationCount());
+		Assertions.assertEquals(100, (long) entity.getCreateOperationSum());
+		Assertions.assertEquals(2, (long) entity.getDeleteOperationCount());
+		Assertions.assertEquals(-50, (long) entity.getDeleteOperationSum());
+		Assertions.assertEquals(50, (long) entity.getDiffOperationSum());
 		// WEEKLY STATISTIC
 		List<UserWeeklyStat> listAllUserWeeklyStat = userWeeklyStatBusinessService.findBetweenTwoDates(jane, null,
 				null);
-		assertEquals(3, listAllUserWeeklyStat.size());
+		Assertions.assertEquals(3, listAllUserWeeklyStat.size());
 		userWeeklyStatBusinessService.create(jane, new GregorianCalendar(2042, 10, 10, 00, 00).getTime(), new GregorianCalendar(2042, 10, 18, 00, 00).getTime());
 		listAllUserWeeklyStat = userWeeklyStatBusinessService.findBetweenTwoDates(jane, null, null);
-		assertEquals(4, listAllUserWeeklyStat.size());
+		Assertions.assertEquals(4, listAllUserWeeklyStat.size());
 		List<UserWeeklyStat> listUserWeekly = userWeeklyStatBusinessService.findBetweenTwoDates(jane, new GregorianCalendar(2042, 10, 12, 00, 00).getTime(),
 				new GregorianCalendar(2042, 10, 19, 00, 00).getTime());
-		assertEquals(1, listUserWeekly.size());
+		Assertions.assertEquals(1, listUserWeekly.size());
 		UserWeeklyStat entityWeekly = listUserWeekly.get(0);
-		assertEquals(jane, entityWeekly.getAccount());
-		assertEquals(21, (long) entityWeekly.getOperationCount());
-		assertEquals(700, (long) entityWeekly.getActualOperationSum());
-		assertEquals(11, (long) entityWeekly.getCreateOperationCount());
-		assertEquals(1800, (long) entityWeekly.getCreateOperationSum());
-		assertEquals(10, (long) entityWeekly.getDeleteOperationCount());
-		assertEquals(-1100, (long) entityWeekly.getDeleteOperationSum());
-		assertEquals(700, (long) entityWeekly.getDiffOperationSum());
+		Assertions.assertEquals(jane, entityWeekly.getAccount());
+		Assertions.assertEquals(21, (long) entityWeekly.getOperationCount());
+		Assertions.assertEquals(700, (long) entityWeekly.getActualOperationSum());
+		Assertions.assertEquals(11, (long) entityWeekly.getCreateOperationCount());
+		Assertions.assertEquals(1800, (long) entityWeekly.getCreateOperationSum());
+		Assertions.assertEquals(10, (long) entityWeekly.getDeleteOperationCount());
+		Assertions.assertEquals(-1100, (long) entityWeekly.getDeleteOperationSum());
+		Assertions.assertEquals(700, (long) entityWeekly.getDiffOperationSum());
 //		MONTHLY STATISTIC
 		userMonthStatBusinessService.create(jane, new GregorianCalendar(2042, 10, 01, 00, 00).getTime(), new GregorianCalendar(2042, 10, 30, 00, 00).getTime());
 		List<UserMonthlyStat> listUserMonthly = userMonthStatBusinessService.findBetweenTwoDates(jane, new GregorianCalendar(2042, 10, 29, 00, 00).getTime(),
 				new GregorianCalendar(2042, 11, 10, 00, 00).getTime());
-		assertEquals(1, listUserMonthly.size());
+		Assertions.assertEquals(1, listUserMonthly.size());
 		UserMonthlyStat entityMonthly = listUserMonthly.get(0);
-		assertEquals(jane, entityMonthly.getAccount());
-		assertEquals(30, (long) entityMonthly.getOperationCount());
-		assertEquals(1200, (long) entityMonthly.getActualOperationSum());
-		assertEquals(16, (long) entityMonthly.getCreateOperationCount());
-		assertEquals(3300, (long) entityMonthly.getCreateOperationSum());
-		assertEquals(14, (long) entityMonthly.getDeleteOperationCount());
-		assertEquals(-2100, (long) entityMonthly.getDeleteOperationSum());
-		assertEquals(1200, (long) entityMonthly.getDiffOperationSum());
+		Assertions.assertEquals(jane, entityMonthly.getAccount());
+		Assertions.assertEquals(30, (long) entityMonthly.getOperationCount());
+		Assertions.assertEquals(1200, (long) entityMonthly.getActualOperationSum());
+		Assertions.assertEquals(16, (long) entityMonthly.getCreateOperationCount());
+		Assertions.assertEquals(3300, (long) entityMonthly.getCreateOperationSum());
+		Assertions.assertEquals(14, (long) entityMonthly.getDeleteOperationCount());
+		Assertions.assertEquals(-2100, (long) entityMonthly.getDeleteOperationSum());
+		Assertions.assertEquals(1200, (long) entityMonthly.getDiffOperationSum());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

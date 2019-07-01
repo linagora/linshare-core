@@ -33,14 +33,13 @@
  */
 package org.linagora.linshare.business.service;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -52,11 +51,16 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -70,8 +74,11 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class OperationHistoryBusinessServiceTest
-		extends AbstractTransactionalJUnit4SpringContextTests {
+@Sql({"/import-tests-stat.sql"})
+@Transactional
+public class OperationHistoryBusinessServiceTest {
+
+	private static Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImplTest.class);
 
 	@Autowired
 	@Qualifier("accountRepository")
@@ -87,10 +94,9 @@ public class OperationHistoryBusinessServiceTest
 	LoadingServiceTestDatas dataes;
 	private User jane;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-stat.sql", false);
 		dataes = new LoadingServiceTestDatas(userRepository);
 		dataes.loadUsers();
 		jane = dataes.getUser2();
@@ -106,15 +112,15 @@ public class OperationHistoryBusinessServiceTest
 				ContainerQuotaType.USER);
 		operationHistoryBusinessService.create(entity);
 		List<OperationHistory> result = operationHistoryBusinessService.find(account, null, null, null);
-		assertEquals(1, result.size());
+		Assertions.assertEquals(1, result.size());
 		result = operationHistoryBusinessService.find(account, null, null, new Date());
-		assertEquals(1, result.size());
+		Assertions.assertEquals(1, result.size());
 		entity = result.get(0);
-		assertEquals(jane, entity.getAccount());
-		assertEquals(domain, entity.getDomain());
-		assertEquals(50, (long) entity.getOperationValue());
-		assertEquals(OperationHistoryTypeEnum.CREATE, entity.getOperationType());
-		assertEquals(ContainerQuotaType.USER, entity.getContainerQuotaType());
+		Assertions.assertEquals(jane, entity.getAccount());
+		Assertions.assertEquals(domain, entity.getDomain());
+		Assertions.assertEquals(50, (long) entity.getOperationValue());
+		Assertions.assertEquals(OperationHistoryTypeEnum.CREATE, entity.getOperationType());
+		Assertions.assertEquals(ContainerQuotaType.USER, entity.getContainerQuotaType());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -127,10 +133,10 @@ public class OperationHistoryBusinessServiceTest
 				ContainerQuotaType.USER);
 		operationHistoryBusinessService.create(entity);
 		List<OperationHistory> result = operationHistoryBusinessService.find(account, null, null, null);
-		assertEquals(1, result.size());
+		Assertions.assertEquals(1, result.size());
 		operationHistoryBusinessService.deleteBeforeDateByAccount(new Date(), account);
 		result = operationHistoryBusinessService.find(account, null, null, null);
-		assertEquals(0, result.size());
+		Assertions.assertEquals(0, result.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

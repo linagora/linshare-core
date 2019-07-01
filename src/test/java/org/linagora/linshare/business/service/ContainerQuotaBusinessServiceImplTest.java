@@ -33,10 +33,11 @@
  */
 package org.linagora.linshare.business.service;
 
-import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -52,8 +53,11 @@ import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -67,7 +71,10 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+@Sql({"/import-tests-default-domain-quotas.sql",
+"/import-tests-domain-quota-updates.sql"})
+@Transactional
+public class ContainerQuotaBusinessServiceImplTest {
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
@@ -99,10 +106,8 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 		super();
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-domain-quota-updates.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
@@ -131,19 +136,19 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 		businessService.update(quota, dto);
 
 		quota = businessService.find(guestDomain, ContainerQuotaType.USER);
-		assertEquals(quotaValue, quota.getDefaultQuota());
-		assertEquals(false, quota.getDefaultQuotaOverride());
-		assertEquals(quotaValue, quota.getQuota());
+		Assertions.assertEquals(quotaValue, quota.getDefaultQuota());
+		Assertions.assertEquals(false, quota.getDefaultQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getQuota());
 
 		quota = businessService.find(topDomain, ContainerQuotaType.USER);
-		assertEquals(quotaValue, quota.getDefaultQuota());
-		assertEquals(true, quota.getDefaultQuotaOverride());
-		assertEquals(quotaValue, quota.getQuota());
-		assertEquals(true, quota.getQuotaOverride());
-		assertEquals(quotaValue, quota.getDefaultMaxFileSize());
-		assertEquals(true, quota.getDefaultMaxFileSizeOverride());
-		assertEquals(quotaValue, quota.getMaxFileSize());
-		assertEquals(true, quota.getMaxFileSizeOverride());
+		Assertions.assertEquals(quotaValue, quota.getDefaultQuota());
+		Assertions.assertEquals(true, quota.getDefaultQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getQuota());
+		Assertions.assertEquals(true, quota.getQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getDefaultMaxFileSize());
+		Assertions.assertEquals(true, quota.getDefaultMaxFileSizeOverride());
+		Assertions.assertEquals(quotaValue, quota.getMaxFileSize());
+		Assertions.assertEquals(true, quota.getMaxFileSizeOverride());
 	}
 
 	@Test
@@ -160,16 +165,16 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 		businessService.update(quota, dto);
 
 		quota = businessService.find(topDomain, ContainerQuotaType.USER);
-		assertEquals(quotaValue, quota.getMaxFileSize());
-		assertEquals(true, quota.getMaxFileSizeOverride());
+		Assertions.assertEquals(quotaValue, quota.getMaxFileSize());
+		Assertions.assertEquals(true, quota.getMaxFileSizeOverride());
 
 		quota = businessService.find(guestDomain, ContainerQuotaType.USER);
-		assertEquals(originalQuotaValue, quota.getMaxFileSize());
-		assertEquals(false, quota.getMaxFileSizeOverride());
+		Assertions.assertEquals(originalQuotaValue, quota.getMaxFileSize());
+		Assertions.assertEquals(false, quota.getMaxFileSizeOverride());
 
 		AccountQuota aq = accountBusinessService.find(jane);
-		assertEquals(quotaValue, aq.getMaxFileSize());
-		assertEquals(false, aq.getMaxFileSizeOverride());
+		Assertions.assertEquals(quotaValue, aq.getMaxFileSize());
+		Assertions.assertEquals(false, aq.getMaxFileSizeOverride());
 	}
 
 	@Test
@@ -186,17 +191,17 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 		businessService.update(quota, dto);
 
 		quota = businessService.find(topDomain, ContainerQuotaType.USER);
-		assertEquals(quotaValue, quota.getDefaultMaxFileSize());
-		assertEquals(true, quota.getDefaultMaxFileSizeOverride());
+		Assertions.assertEquals(quotaValue, quota.getDefaultMaxFileSize());
+		Assertions.assertEquals(true, quota.getDefaultMaxFileSizeOverride());
 
 		quota = businessService.find(guestDomain, ContainerQuotaType.USER);
-		assertEquals(quotaValue, quota.getDefaultMaxFileSize());
-		assertEquals(false, quota.getDefaultMaxFileSizeOverride());
+		Assertions.assertEquals(quotaValue, quota.getDefaultMaxFileSize());
+		Assertions.assertEquals(false, quota.getDefaultMaxFileSizeOverride());
 
 		// Jane is in topdomain, so she is not impacted by defaultMaxFileSize modification.
 		AccountQuota aq = accountBusinessService.find(jane);
-		assertEquals(originalQuotaValue, aq.getMaxFileSize());
-		assertEquals(false, aq.getMaxFileSizeOverride());
+		Assertions.assertEquals(originalQuotaValue, aq.getMaxFileSize());
+		Assertions.assertEquals(false, aq.getMaxFileSizeOverride());
 	}
 
 	@Test
@@ -212,12 +217,12 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 		businessService.update(quota, dto);
 
 		quota = businessService.find(topDomain, ContainerQuotaType.USER);
-		assertEquals(quotaValue, quota.getAccountQuota());
-		assertEquals(true, quota.getAccountQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getAccountQuota());
+		Assertions.assertEquals(true, quota.getAccountQuotaOverride());
 
 		AccountQuota aq = accountBusinessService.find(jane);
-		assertEquals(quotaValue, aq.getQuota());
-		assertEquals(false, aq.getQuotaOverride());
+		Assertions.assertEquals(quotaValue, aq.getQuota());
+		Assertions.assertEquals(false, aq.getQuotaOverride());
 
 	}
 
@@ -234,12 +239,12 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 		businessService.update(quota, dto);
 
 		quota = businessService.find(topDomain, ContainerQuotaType.USER);
-		assertEquals(quotaValue, quota.getDefaultAccountQuota());
-		assertEquals(false, quota.getDefaultAccountQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getDefaultAccountQuota());
+		Assertions.assertEquals(false, quota.getDefaultAccountQuotaOverride());
 
 		AccountQuota aq = accountBusinessService.find(jane);
-		assertEquals(quotaValue, aq.getQuota());
-		assertEquals(false, aq.getQuotaOverride());
+		Assertions.assertEquals(quotaValue, aq.getQuota());
+		Assertions.assertEquals(false, aq.getQuotaOverride());
 
 	}
 
@@ -249,10 +254,10 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 
 		ContainerQuota quota = businessService.find(topDomain.getParentDomain(), ContainerQuotaType.USER);
 
-		assertEquals(null, quota.getQuotaOverride());
-		assertEquals(null, quota.getDefaultQuotaOverride());
-		assertEquals(null, quota.getDefaultMaxFileSizeOverride());
-		assertEquals(null, quota.getDefaultAccountQuotaOverride());
+		Assertions.assertEquals(null, quota.getQuotaOverride());
+		Assertions.assertEquals(null, quota.getDefaultQuotaOverride());
+		Assertions.assertEquals(null, quota.getDefaultMaxFileSizeOverride());
+		Assertions.assertEquals(null, quota.getDefaultAccountQuotaOverride());
 
 		ContainerQuota dto = new ContainerQuota(quota);
 		dto.setQuota(quotaValue);
@@ -262,15 +267,15 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 		businessService.update(quota, dto);
 
 		quota = businessService.find(guestDomain, ContainerQuotaType.USER);
-		assertEquals(quotaValue, quota.getDefaultQuota());
-		assertEquals(false, quota.getDefaultQuotaOverride());
-		assertEquals(quotaValue, quota.getQuota());
+		Assertions.assertEquals(quotaValue, quota.getDefaultQuota());
+		Assertions.assertEquals(false, quota.getDefaultQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getQuota());
 
 		quota = businessService.find(topDomain, ContainerQuotaType.USER);
-		assertEquals(quotaValue, quota.getDefaultQuota());
-		assertEquals(false, quota.getDefaultQuotaOverride());
-		assertEquals(quotaValue, quota.getQuota());
-		assertEquals(false, quota.getQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getDefaultQuota());
+		Assertions.assertEquals(false, quota.getDefaultQuotaOverride());
+		Assertions.assertEquals(quotaValue, quota.getQuota());
+		Assertions.assertEquals(false, quota.getQuotaOverride());
 		// assertEquals(quotaValue, quota.getDefaultMaxFileSize());
 		// assertEquals(true, quota.getDefaultMaxFileSizeOverride());
 	}
