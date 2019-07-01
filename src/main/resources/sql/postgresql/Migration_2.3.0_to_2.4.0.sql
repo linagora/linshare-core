@@ -89,6 +89,9 @@ DROP VIEW IF EXISTS alias_threads_list_destroyed;
 
 ALTER TABLE mail_attachment ALTER COLUMN language DROP NOT NULL;
 
+--Cancel NOT NULL constraint for table statistic
+ALTER TABLE statistic ALTER COLUMN domain_parent_id DROP NOT NULL;
+
 -- End of your requests
 
 -- LinShare version

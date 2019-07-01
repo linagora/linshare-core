@@ -821,7 +821,7 @@ CREATE TABLE statistic (
   actual_operation_sum   int8 NOT NULL,
   account_id             int8,
   domain_id              int8 NOT NULL,
-  domain_parent_id       int8 NOT NULL,
+  domain_parent_id       int8,
   PRIMARY KEY (id));
 CREATE TABLE batch_history (
   id                int8 NOT NULL,
