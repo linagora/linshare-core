@@ -193,6 +193,6 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate) {
-		return workGroupFacade.findAll(workGroupUuid, actions, types, beginDate, endDate);
+		return workGroupFacade.findAll(workGroupUuid, actions, types, beginDate, endDate, null);
 	}
 }

@@ -245,7 +245,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		return memberFacade.update(null, member, memberUuid);
 	}
 
-	@Path("/{uuid}/audit")
+	@Path("/{uuid}/audits")
 	@GET
 	@ApiOperation(value = "Get all traces for a sharedSpace.", response = AuditLogEntryUser.class, responseContainer="Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -262,7 +262,9 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@ApiParam(value = "Filter by type of resource's types.", required = false)
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
-				@QueryParam("endDate") String endDate) {
-		return workGroupFacade.findAll(sharedSpaceUuid, actions, types, beginDate, endDate);
+				@QueryParam("endDate") String endDate,
+			@ApiParam(value = "Choose the specific node which you like to list the audits ", required = true)
+				@QueryParam("nodeUuid") String nodeUuid) {
+		return workGroupFacade.findAll(sharedSpaceUuid, actions, types, beginDate, endDate, nodeUuid);
 	}
 }

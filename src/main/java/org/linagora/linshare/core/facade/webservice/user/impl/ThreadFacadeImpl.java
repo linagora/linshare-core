@@ -59,11 +59,14 @@ import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -86,6 +89,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 	protected final SharedSpaceRoleService ssRoleService;
 
+	protected final WorkGroupNodeService workGroupNodeService;
+
 	public ThreadFacadeImpl(
 			final ThreadService threadService,
 			final AccountService accountService,
@@ -95,7 +100,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 			final AuditLogEntryService auditLogEntryService,
 			final SharedSpaceNodeService ssNodeService,
 			final SharedSpaceMemberService ssMemberService,
-			final SharedSpaceRoleService ssRoleService) {
+			final SharedSpaceRoleService ssRoleService,
+			WorkGroupNodeService workGroupNodeService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityReadOnlyService = functionalityService;
@@ -105,6 +111,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		this.ssNodeService = ssNodeService;
 		this.ssMemberService = ssMemberService;
 		this.ssRoleService = ssRoleService;
+		this.workGroupNodeService = workGroupNodeService;
 	}
 
 	@Override
@@ -194,10 +201,15 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public Set<AuditLogEntryUser> findAll(String workGroupUuid, List<LogAction> actions, List<AuditLogEntryType> types,
-			String beginDate, String endDate) {
+			String beginDate, String endDate, String nodeUuid) {
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);
 		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
-		return auditLogEntryService.findAll(authUser, actor, workGroup, null, actions, types, beginDate, endDate);
+		WorkGroupNode node = new WorkGroupNode();
+		if (!Strings.isNullOrEmpty(nodeUuid)) {
+			node = workGroupNodeService.find(authUser, actor, workGroup, nodeUuid, false);
+			Validate.notNull(node, "Missing required node");
+		}
+		return auditLogEntryService.findAll(authUser, actor, workGroup, node, actions, types, beginDate, endDate);
 	}
 }
