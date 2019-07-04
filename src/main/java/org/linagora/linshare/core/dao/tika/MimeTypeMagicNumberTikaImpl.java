@@ -48,7 +48,6 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.entities.MimeType;
@@ -56,7 +55,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
 
 import com.google.common.collect.Sets;
 
@@ -74,8 +72,8 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 	public String getMimeType(InputStream theFileInputStream) throws BusinessException {
 		try {
 			Metadata metadata = new Metadata();
-			ContentHandler contenthandler = new BodyContentHandler();
-			Parser parser = new AutoDetectParser();
+			BodyContentHandler contenthandler = new BodyContentHandler();
+			AutoDetectParser parser = new AutoDetectParser();
 			try {
 				parser.parse(theFileInputStream, contenthandler, metadata, null);
             } catch (Exception e) {

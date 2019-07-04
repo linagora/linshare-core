@@ -758,10 +758,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
+				<version>3.8.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 					<optimize>true</optimize>
 				</configuration>
 				</plugin>
@@ -910,7 +910,7 @@
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.4.8.v20171121</version>
+				<version>9.4.18.v20190429</version>
 				<configuration>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webApp>
@@ -949,7 +949,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.0</version>
+				<version>3.0.0-M3</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
 				</configuration>
@@ -1749,8 +1749,8 @@
 		<spring-release-version>5.1.2.RELEASE</spring-release-version>
 		<spring-security-release-version>5.1.2.RELEASE</spring-security-release-version>
 		<spring-data.version>Kay-SR12</spring-data.version>
-		<hibernate.version>5.3.7.Final</hibernate.version>
-		<h2.version>1.4.196</h2.version>
+		<hibernate.version>5.4.2.Final</hibernate.version>
+		<h2.version>1.4.199</h2.version>
 		<guava.version>27.0-jre</guava.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
 		<mozilla.rhino.version>1.7.10</mozilla.rhino.version>
