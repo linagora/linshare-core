@@ -361,9 +361,11 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The workgroup node uuid.", required = true)
-				@PathParam("uuid") String uuid)
-					throws BusinessException {
-		return workGroupNodeFacade.download(null, workGroupUuid, uuid);
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "If withRevision is TRUE you will download the workGroupDocument with all its revisions (Available just for workGroupDocument).", required = false)
+				@QueryParam("withRevision") @DefaultValue("false") Boolean withRevision)
+						throws BusinessException {
+		return workGroupNodeFacade.download(null, workGroupUuid, uuid, withRevision);
 	}
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")

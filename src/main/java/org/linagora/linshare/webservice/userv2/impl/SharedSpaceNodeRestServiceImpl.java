@@ -375,9 +375,11 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@ApiParam(value = "The sharedSpace uuid.", required = true)
 				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
 			@ApiParam(value = "The sharedSpace node uuid.", required = true)
-				@PathParam("uuid") String uuid)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "If withRevision is TRUE you will download the workGroupDocument with all its revisions (Available just for workGroupDocument).", required = false)
+				@QueryParam("withRevision") @DefaultValue("false") Boolean withRevision)
 					throws BusinessException {
-		return sharedSpaceNodeFacade.download(null, sharedSpaceUuid, uuid);
+		return sharedSpaceNodeFacade.download(null, sharedSpaceUuid, uuid, withRevision);
 	}
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")

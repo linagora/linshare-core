@@ -187,7 +187,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
-		FileAndMetaData data = workGroupNodeService.download(authUser, actor, workGroup, entryUuid);
+		FileAndMetaData data = workGroupNodeService.download(authUser, actor, workGroup, entryUuid, false);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return builder.build();
 	}

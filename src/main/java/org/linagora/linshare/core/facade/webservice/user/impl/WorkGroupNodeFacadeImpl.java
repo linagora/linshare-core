@@ -252,7 +252,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public Response download(String actorUuid, String workGroupUuid, String workGroupNodeUuid)
+	public Response download(String actorUuid, String workGroupUuid, String workGroupNodeUuid, Boolean withRevision)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup node uuid");
@@ -260,7 +260,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
-		FileAndMetaData data = service.download(authUser, actor, workGroup, workGroupNodeUuid);
+		FileAndMetaData data = service.download(authUser, actor, workGroup, workGroupNodeUuid, withRevision);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return builder.build();
 	}

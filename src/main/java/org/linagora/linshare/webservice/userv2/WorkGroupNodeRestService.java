@@ -73,7 +73,7 @@ public interface WorkGroupNodeRestService {
 
 	void head(String workGroupUuid, String uuid) throws BusinessException;
 
-	Response download(String workGroupUuid, String uuid) throws BusinessException;
+	Response download(String workGroupUuid, String uuid, Boolean withRevision) throws BusinessException;
 
 	Response thumbnail(String workGroupUuid, String uuid, ThumbnailType thumbnailType, boolean base64) throws BusinessException;
 
