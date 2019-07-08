@@ -54,8 +54,8 @@ public interface BasicStatisticMongoRepository extends MongoRepository<BasicStat
 	Long countBasicStatistic(String domainUuid, LogAction action, Date beginDate, Date endDate,
 			AuditLogEntryType resourceType, BasicStatisticType type);
 
-	@Query(value = "{'creationDate' : { '$lt' : ?0}}", count = true)
-	Long countBeforeDate(Date endDate);
+	@Query(value = "{'creationDate' : { '$lt' : ?0}, 'domainUuid' : ?1}", count = true)
+	Long countBeforeDate(Date endDate, String domainUuid);
 
 	BasicStatistic findCreationDateByOrderByIdAsc();
 }

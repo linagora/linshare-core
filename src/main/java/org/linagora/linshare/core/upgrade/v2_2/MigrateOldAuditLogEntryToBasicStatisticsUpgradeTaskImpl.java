@@ -41,9 +41,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.BasicStatisticType;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -56,9 +53,15 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.BasicStatisticService;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
+
 import com.google.common.collect.Lists;
 
 public class MigrateOldAuditLogEntryToBasicStatisticsUpgradeTaskImpl extends GenericUpgradeTaskImpl {
@@ -71,18 +74,22 @@ public class MigrateOldAuditLogEntryToBasicStatisticsUpgradeTaskImpl extends Gen
 
 	protected DomainBusinessService domainBusinessService;
 
+	protected final MongoTemplate mongoTemplate;
+
 	public MigrateOldAuditLogEntryToBasicStatisticsUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			AbstractDomainRepository domainRepository,
 			AuditAdminMongoRepository auditUserMongoRepository, 
 			BasicStatisticService basicStatisticService,
-			DomainBusinessService domainBusinessService) {
+			DomainBusinessService domainBusinessService,
+			MongoTemplate mongoTemplate) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.abstractDomainRepository = domainRepository;
 		this.auditUserMongoRepository = auditUserMongoRepository;
 		this.basicStatisticService = basicStatisticService;
 		this.domainBusinessService = domainBusinessService;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
@@ -101,42 +108,39 @@ public class MigrateOldAuditLogEntryToBasicStatisticsUpgradeTaskImpl extends Gen
 			throws BatchBusinessException, BusinessException {
 		AbstractDomain abstractDomain = abstractDomainRepository.findById(identifier);
 		BatchResultContext<AbstractDomain> res = new BatchResultContext<AbstractDomain>(abstractDomain);
-		Date endDate = basicStatisticService.getFirstStatisticCreationDate();
+		Date endDate = getTodayEnd();
 		console.logDebug(batchRunContext, total, position, "Processing domain : " + abstractDomain.toString());
-		List<AuditLogEntry> auditLogEntryList = auditUserMongoRepository.findAllBeforeDateByDomainUuid(identifier,
-				endDate);
-		 String  parentDomainUuid = null;
+		String parentDomainUuid = null;
 		AbstractDomain parentDomain = abstractDomain.getParentDomain();
 		if (parentDomain != null) {
 			parentDomainUuid = parentDomain.getUuid();
 		}
-		List<BasicStatistic> basicStatisticsList = Lists.newArrayList();
-		for (AuditLogEntry auditLogEntry : auditLogEntryList) {
-			basicStatisticsList
-					.add(new BasicStatistic(1L, parentDomainUuid, auditLogEntry, BasicStatisticType.ONESHOT));
-		}
-		basicStatisticService.insert(basicStatisticsList);
 		Date beginDate = getBeginDate(endDate);
-		while (basicStatisticService.countBeforeDate(endDate) != 0L) {
-			List<BasicStatistic> dailyBasicStatisticList = Lists.newArrayList();
-			for (AuditLogEntryType resourceType : AuditLogEntryType.values()) {
-				for (LogAction action : LogAction.values()) {
-					Long value = basicStatisticService.countBasicStatistic(identifier, action, beginDate, endDate,
-							resourceType, BasicStatisticType.ONESHOT);
-					if (value != 0L) {
-						dailyBasicStatisticList.add(new BasicStatistic(value, identifier, parentDomainUuid, action,
-								endDate, resourceType, BasicStatisticType.DAILY));
-					}
-				}
-			}
-			if (!dailyBasicStatisticList.isEmpty()) {
-				basicStatisticService.insert(dailyBasicStatisticList);
-			}
+		while (auditUserMongoRepository.countBeforeDate(endDate, abstractDomain.getUuid()) > 0) {
+			List<BasicStatistic> dailyBasicStatisticList = computeDailyStatistics(abstractDomain.getUuid(),
+					parentDomainUuid, beginDate, endDate);
+			basicStatisticService.insert(dailyBasicStatisticList);
 			endDate = decrementEndDate(endDate);
 			beginDate = decrementBeginDate(beginDate);
 		}
 		res.setProcessed(true);
 		return res;
+	}
+
+	private List<BasicStatistic> computeDailyStatistics(String domainUuid, String parentDomain, Date begDate,
+			Date endDate) {
+		MatchOperation match = Aggregation
+				.match(Criteria.where("creationDate").gte(begDate).lt(endDate).and("actor.domain.uuid").is(domainUuid));
+		ProjectionOperation projection = Aggregation.project("action", "type", "value");
+		GroupOperation group = Aggregation.group("action", "type").count().as("value");
+		Aggregation aggregation = Aggregation.newAggregation(match, group, projection);
+		List<BasicStatisticLight> results = mongoTemplate
+				.aggregate(aggregation, "audit_log_entries", BasicStatisticLight.class).getMappedResults();
+		List<BasicStatistic> basicStatistics = Lists.newArrayList();
+		for (BasicStatisticLight basicStatisticLight : results) {
+			basicStatistics.add(new BasicStatistic(domainUuid, parentDomain, begDate, basicStatisticLight));
+		}
+		return basicStatistics;
 	}
 
 	@Override
@@ -192,5 +196,14 @@ public class MigrateOldAuditLogEntryToBasicStatisticsUpgradeTaskImpl extends Gen
 		endCalendar.set(GregorianCalendar.SECOND, 0);
 		endCalendar.set(GregorianCalendar.MILLISECOND, 0);
 		return endCalendar.getTime();
+	}
+
+	protected Date getTodayEnd() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		calendar.set(GregorianCalendar.MINUTE, 59);
+		calendar.set(GregorianCalendar.SECOND, 59);
+		calendar.set(GregorianCalendar.MILLISECOND, 999);
+		return calendar.getTime();
 	}
 }

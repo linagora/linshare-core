@@ -72,4 +72,7 @@ public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntry
 	@Query("{ 'resource.domainUuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : ?2 }")
 	Set<AuditLogEntryAdmin> findAll(String domainUuid, List<LogAction> action, AuditLogEntryType type,
 			Sort sort);
+
+	@Query(value = "{'creationDate' : { '$lt' : ?0}, 'actor.domain.uuid' : ?1}", count = true)
+	Long countBeforeDate(Date endDate, String identifier);
 }

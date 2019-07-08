@@ -123,8 +123,8 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 	}
 
 	@Override
-	public Long countBeforeDate(Date endDate) {
-		return basicStatisticMongoRepository.countBeforeDate(endDate);
+	public Long countBeforeDate(Date endDate, String domainUuid) {
+		return basicStatisticMongoRepository.countBeforeDate(endDate, domainUuid);
 	}
 
 	@Override

@@ -43,6 +43,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.upgrade.v2_2.BasicStatisticLight;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -98,6 +99,17 @@ public class BasicStatistic {
 		this.creationDate = creationDate;
 		this.resourceType = resourceType;
 		this.type = type;
+		this.uuid = UUID.randomUUID().toString();
+	}
+
+	public BasicStatistic(String domainUuid, String parentDomainUuid, Date creationDate, BasicStatisticLight basicStatisticLight) {
+		this.domainUuid = domainUuid;
+		this.parentDomainUuid = parentDomainUuid;
+		this.creationDate = creationDate;
+		this.action = basicStatisticLight.getAction();
+		this.resourceType = basicStatisticLight.getType();
+		this.value = basicStatisticLight.getValue();
+		this.type = BasicStatisticType.DAILY;
 		this.uuid = UUID.randomUUID().toString();
 	}
 
@@ -171,5 +183,12 @@ public class BasicStatistic {
 
 	public void setType(BasicStatisticType type) {
 		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+		return "BasicStatistic [id=" + id + ", uuid=" + uuid + ", value=" + value + ", domainUuid=" + domainUuid
+				+ ", parentDomainUuid=" + parentDomainUuid + ", action=" + action + ", creationDate=" + creationDate
+				+ ", resourceType=" + resourceType + ", type=" + type + "]";
 	}
 }
