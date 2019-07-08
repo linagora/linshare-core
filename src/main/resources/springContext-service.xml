@@ -11,9 +11,6 @@
 	<bean name="threadService" class="org.linagora.linshare.core.service.impl.ThreadServiceImpl">
 		<constructor-arg ref="threadRepository" />
 		<constructor-arg ref="threadMemberRepository" />
-		<constructor-arg ref="logEntryService" />
-		<constructor-arg ref="threadResourceAccessControl" />
-		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="accountQuotaBusinessService"/>
 		<constructor-arg ref="containerQuotaBusinessService"/>
 		<constructor-arg ref="workGroupNodeService"/>
@@ -440,6 +437,8 @@
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadService" />
+		<constructor-arg ref="threadRepository" />
+		<constructor-arg ref="workGroupNodeService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="accountQuotaBusinessService" />
 	</bean>
@@ -450,6 +449,8 @@
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadService" />
+		<constructor-arg ref="threadRepository" />
+		<constructor-arg ref="workGroupNodeBusinessService"/>
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 	<bean id="sharedSpaceRoleService" class="org.linagora.linshare.core.service.impl.SharedSpaceRoleServiceImpl">

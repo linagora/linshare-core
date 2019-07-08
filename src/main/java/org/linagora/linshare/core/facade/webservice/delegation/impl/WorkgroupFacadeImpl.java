@@ -128,14 +128,13 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public WorkGroupDto update(String actorUuid, String threadUuid,
-			WorkGroupDto threadDto) throws BusinessException {
+	public WorkGroupDto update(String actorUuid, String threadUuid, WorkGroupDto threadDto) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadDto, "Missing required ThreadDto");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
-		WorkGroup workGroup = threadService.update(authUser, actor, threadUuid, threadDto.getName());
+		WorkGroup workGroup = threadService.findByLsUuidUnprotected(threadDto.getUuid());
 		SharedSpaceNode node = ssNodeService.find(authUser, actor, threadUuid);
 		node.setName(threadDto.getName());
 		node = ssNodeService.update(authUser, actor, node);

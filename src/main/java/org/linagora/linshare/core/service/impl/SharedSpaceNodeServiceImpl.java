@@ -53,18 +53,21 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 
@@ -86,9 +89,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	protected final ThreadService threadService;
 
+	protected final ThreadRepository threadRepository;
+	
 	protected final FunctionalityReadOnlyService functionalityService;
 
 	protected final AccountQuotaBusinessService accountQuotaBusinessService;
+	
+	protected final WorkGroupNodeService workGroupNodeService;
 
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
@@ -97,8 +104,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService,
 			ThreadService threadService,
+			ThreadRepository threadRepository,
 			FunctionalityReadOnlyService functionalityService,
-			AccountQuotaBusinessService accountQuotaBusinessService) {
+			AccountQuotaBusinessService accountQuotaBusinessService,
+			WorkGroupNodeService workGroupNodeService) {
 		super(rac);
 		this.businessService = businessService;
 		this.memberService = memberService;
@@ -108,6 +117,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
+		this.threadRepository = threadRepository;
+		this.workGroupNodeService = workGroupNodeService;
 	}
 
 	@Override
@@ -244,7 +255,15 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 				actor.getDomain());
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
-		threadService.update(authUser, actor, updated.getUuid(), updated.getName());
+		//For compatibility with deprecated Thread API, should be removed when this api taken off
+		if (updated.getNodeType().equals(NodeType.WORK_GROUP)) {
+			WorkGroup wg = threadRepository.findByLsUuid(updated.getUuid());
+			wg.setName(updated.getName());
+			threadRepository.update(wg);
+			WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(authUser, actor, wg);
+			rootFolder.setName(updated.getName());
+			workGroupNodeService.update(authUser, actor, wg, rootFolder);
+		}
 		memberService.addMembersToLog(updated.getUuid(), log);
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);

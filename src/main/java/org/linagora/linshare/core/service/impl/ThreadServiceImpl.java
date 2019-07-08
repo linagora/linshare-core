@@ -33,42 +33,27 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.List;
-
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.ThreadResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.logs.ThreadAuditLogEntry;
-import org.linagora.linshare.mongo.entities.mto.ThreadMto;
 
 public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> implements ThreadService {
 
 	private final ThreadRepository threadRepository;
-
-	private final ThreadMemberRepository threadMemberRepository;
-
-	private final LogEntryService logEntryService;
-
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
@@ -81,15 +66,11 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 			ThreadMemberRepository threadMemberRepository,
 			LogEntryService logEntryService,
 			ThreadResourceAccessControl rac,
-			FunctionalityReadOnlyService functionalityReadOnlyService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			ContainerQuotaBusinessService containerQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService) {
 		super(rac);
 		this.threadRepository = threadRepository;
-		this.threadMemberRepository = threadMemberRepository;
-		this.logEntryService = logEntryService;
-		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.workGroupNodeService = workGroupNodeService;
@@ -142,23 +123,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		threadRepository.delete(workGroup);
 	}
 
-	@Override
-	public WorkGroup update(Account actor, Account owner, String threadUuid,
-			String threadName) throws BusinessException {
-		WorkGroup workGroup = find(actor, owner, threadUuid);
-		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.WORKGROUP,
-				new ThreadMto(workGroup, true));
-		workGroup.setName(threadName);
-		addMembersToLog(workGroup, log);
-		WorkGroup update = threadRepository.update(workGroup);
-		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner, workGroup);
-		rootFolder.setName(threadName);
-		workGroupNodeService.update(actor, owner, workGroup, rootFolder);
-		log.setResourceUpdated(new ThreadMto(update, true));
-		logEntryService.insert(log);
-		return update;
-	}
-
 	private void createQuotaThread(WorkGroup workGroup) throws BusinessException {
 		Validate.notNull(workGroup, "Thread must be set.");
 		ContainerQuota containerQuota = containerQuotaBusinessService.find(workGroup.getDomain(), ContainerQuotaType.WORK_GROUP);
@@ -172,15 +136,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		threadQuota.setDomainShared(containerQuota.getDomainQuota().getDomainShared());
 		threadQuota.setDomainSharedOverride(containerQuota.getDomainQuota().getDomainSharedOverride());
 		accountQuotaBusinessService.create(threadQuota);
-	}
-
-    /* ***********************************************************
-     *                   Helpers
-     ************************************************************ */
-
-	protected void addMembersToLog(WorkGroup workGroup, AuditLogEntryUser log) {
-		List<String> members = threadMemberRepository.findAllAccountUuidForThreadMembers(workGroup);
-		log.addRelatedAccounts(members);
 	}
 
 }

@@ -36,17 +36,22 @@ package org.linagora.linshare.core.ldap.service.impl;
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.ldap.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.ldap.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.service.impl.SharedSpaceNodeServiceImpl implements SharedSpaceNodeService {
 
@@ -59,10 +64,12 @@ public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.servi
 			SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService,
 			ThreadService threadService,
+			ThreadRepository threadRepository,
 			FunctionalityReadOnlyService functionalityService,
-			AccountQuotaBusinessService accountQuotaBusinessService) {
+			AccountQuotaBusinessService accountQuotaBusinessService,
+			WorkGroupNodeService workGroupNodeService) {
 		super(businessService, sharedSpaceNodeResourceAccessControl, memberBusinessService, sharedSpaceMemberService,
-				ssRoleService, logEntryService, threadService, functionalityService, accountQuotaBusinessService);
+				ssRoleService, logEntryService, threadService,threadRepository,functionalityService, accountQuotaBusinessService, workGroupNodeService);
 		this.businessService = businessService;
 	}
 
@@ -86,7 +93,15 @@ public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.servi
 		checkUpdatePermission(actor, actor, SharedSpaceLDAPGroup.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				ldapGroup);
 		SharedSpaceLDAPGroup updated = businessService.update(ldapGroup);
-		threadService.update(actor, actor, updated.getUuid(), updated.getName());
+		//For compatibility with deprecated Thread API, should be removed when this api taken off
+		if (updated.getNodeType().equals(NodeType.WORK_GROUP)) {
+			WorkGroup wg = threadRepository.findByLsUuid(updated.getUuid());
+			wg.setName(updated.getName());
+			threadRepository.update(wg);
+			WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, actor, wg);
+			rootFolder.setName(updated.getName());
+			workGroupNodeService.update(actor, actor, wg, rootFolder);
+		}
 		saveUpdateLog(actor, actor, ldapGroup, updated);
 		return updated;
 	}

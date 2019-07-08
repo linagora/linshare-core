@@ -40,6 +40,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -192,7 +193,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required ThreadDto");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
 		User authUser = checkAuthentication();
-		WorkGroup workGroup = threadService.update(authUser, authUser, threadUuid, threadDto.getName());
+		WorkGroup workGroup = threadService.findByLsUuidUnprotected(threadDto.getUuid());
 		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadUuid);
 		node.setName(threadDto.getName());
 		node = ssNodeService.update(authUser, authUser, node);
