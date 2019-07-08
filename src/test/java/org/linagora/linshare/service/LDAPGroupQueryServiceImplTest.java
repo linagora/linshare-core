@@ -41,10 +41,11 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
@@ -54,17 +55,19 @@ import org.linagora.linshare.core.service.LDAPGroupQueryService;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.Role;
+import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@ExtendWith(LdapServerRule.class)
 @ContextConfiguration(locations = { "classpath:springContext-test.xml",
-		"classpath:springContext-ldap.xml", 
-		"classpath:springContext-start-embedded-ldap.xml"
+		"classpath:springContext-ldap.xml"
 })
-public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
+public class LDAPGroupQueryServiceImplTest {
 
 	protected Logger logger = LoggerFactory.getLogger(LDAPGroupQueryServiceImplTest.class);
 
@@ -99,13 +102,13 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		baseDn = "ou=Groups,dc=linshare,dc=org";
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -120,12 +123,12 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 			if (!ldapGroup.getMembers().isEmpty()) {
 				logger.info(ldapGroup.getMembers().toString());
 			}
-			Assert.assertEquals("wg-1", ldapGroup.getName());
-			Assert.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());
-			Assert.assertEquals("cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Assert.assertEquals(Role.READER, ldapGroup.getRole());
+			Assertions.assertEquals("wg-1", ldapGroup.getName());
+			Assertions.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());
+			Assertions.assertEquals("cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Assertions.assertEquals(Role.READER, ldapGroup.getRole());
 		}
-		Assert.assertEquals(1, listGroups.size());
+		Assertions.assertEquals(1, listGroups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -139,12 +142,12 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 			if (!ldapGroup.getMembers().isEmpty()) {
 				logger.info(ldapGroup.getMembers().toString());
 			}
-			Assert.assertEquals("wg-3", ldapGroup.getName());
-			Assert.assertEquals("workgroup-wg-3", ldapGroup.getNameWithPrefix());
-			Assert.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Assert.assertEquals(Role.READER, ldapGroup.getRole());
+			Assertions.assertEquals("wg-3", ldapGroup.getName());
+			Assertions.assertEquals("workgroup-wg-3", ldapGroup.getNameWithPrefix());
+			Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Assertions.assertEquals(Role.READER, ldapGroup.getRole());
 		}
-		Assert.assertEquals(1, listGroups.size());
+		Assertions.assertEquals(1, listGroups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -155,18 +158,18 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("GROUPS:" + ldapGroup.toString());
-			Assert.assertEquals("cn=workgroup-wg-2,ou=Groups2,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Assertions.assertEquals("cn=workgroup-wg-2,ou=Groups2,dc=linshare,dc=org", ldapGroup.getExternalId());
 			Set<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
 			for (LdapGroupMemberObject member : listMembers) {
 				logger.info(member.toString());
-				Assert.assertEquals("John", member.getFirstName());
-				Assert.assertEquals("Doe", member.getLastName());
-				Assert.assertEquals("user1@linshare.org", member.getEmail());
-				Assert.assertEquals(Role.READER, member.getRole());
+				Assertions.assertEquals("John", member.getFirstName());
+				Assertions.assertEquals("Doe", member.getLastName());
+				Assertions.assertEquals("user1@linshare.org", member.getEmail());
+				Assertions.assertEquals(Role.READER, member.getRole());
 			}
-			Assert.assertEquals(1, listMembers.size());
+			Assertions.assertEquals(1, listMembers.size());
 		}
-		Assert.assertEquals(1, listGroups.size());
+		Assertions.assertEquals(1, listGroups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -176,11 +179,11 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		String baseDn = "ou=Groups3,dc=linshare,dc=org";
 		Date date_before = new Date();
 		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
-		Assert.assertEquals(1, listGroups.size());
+		Assertions.assertEquals(1, listGroups.size());
 		LdapGroupObject ldapGroup = listGroups.iterator().next();
-		Assert.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
+		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
 		Set<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
-		Assert.assertEquals(3, listMembers.size());
+		Assertions.assertEquals(3, listMembers.size());
 		for (LdapGroupMemberObject member : listMembers) {
 			logger.info(member.toString());
 		}
@@ -195,14 +198,14 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		String baseDn = "ou=Groups4,dc=linshare,dc=org";
 		Date date_before = new Date();
 		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
-		Assert.assertEquals(1, listGroups.size());
+		Assertions.assertEquals(1, listGroups.size());
 		LdapGroupObject ldapGroup = listGroups.iterator().next();
-		Assert.assertEquals("cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org", ldapGroup.getExternalId());
+		Assertions.assertEquals("cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org", ldapGroup.getExternalId());
 		Set<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
-		Assert.assertEquals(2, listMembers.size());
+		Assertions.assertEquals(2, listMembers.size());
 		for (LdapGroupMemberObject member : listMembers) {
 			logger.info(member.toString());
-			Assert.assertNotEquals(Role.READER, member.getRole());
+			Assertions.assertNotEquals(Role.READER, member.getRole());
 		}
 		Date date_after = new Date();
 		logger.info("End test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
@@ -215,19 +218,19 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		String baseDn = "ou=Groups5,dc=linshare,dc=org";
 		Date date_before = new Date();
 		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
-		Assert.assertEquals(1, listGroups.size());
+		Assertions.assertEquals(1, listGroups.size());
 		LdapGroupObject ldapGroup = listGroups.iterator().next();
-		Assert.assertEquals("cn=workgroup-wg-5,ou=Groups5,dc=linshare,dc=org", ldapGroup.getExternalId());
+		Assertions.assertEquals("cn=workgroup-wg-5,ou=Groups5,dc=linshare,dc=org", ldapGroup.getExternalId());
 		Set<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
-		Assert.assertEquals(3, listMembers.size());
+		Assertions.assertEquals(3, listMembers.size());
 		for (LdapGroupMemberObject member : listMembers) {
 			logger.info(member.toString());
-			Assert.assertNotEquals(Role.READER, member.getRole());
+			Assertions.assertNotEquals(Role.READER, member.getRole());
 			if ("user2@linshare.org".equals(member.getEmail())) {
-				Assert.assertEquals(Role.CONTRIBUTOR, member.getRole());
+				Assertions.assertEquals(Role.CONTRIBUTOR, member.getRole());
 			}
 			else{
-				Assert.assertEquals(Role.WRITER, member.getRole());
+				Assertions.assertEquals(Role.WRITER, member.getRole());
 			}
 		}
 		Date date_after = new Date();

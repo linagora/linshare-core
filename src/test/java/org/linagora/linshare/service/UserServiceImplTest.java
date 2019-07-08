@@ -36,11 +36,15 @@ package org.linagora.linshare.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -70,6 +74,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,10 +82,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@ExtendWith(LdapServerRule.class)
+@TestMethodOrder(OrderAnnotation.class)
+@Sql({"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql"})
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -90,12 +103,10 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-start-embedded-ldap.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class UserServiceImplTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class UserServiceImplTest {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(UserServiceImplTest.class);
@@ -138,17 +149,15 @@ public class UserServiceImplTest extends
 
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
 
 		logger.debug(LinShareTestConstants.END_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -184,7 +193,7 @@ public class UserServiceImplTest extends
 		} catch (TechnicalException e) {
 			logger.info("Impossible to send mail, normal in test environment");
 		}
-		Assert.assertNotNull(userRepository.findByMail("guest1@linshare.org"));
+		Assertions.assertNotNull(userRepository.findByMail("guest1@linshare.org"));
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -201,7 +210,7 @@ public class UserServiceImplTest extends
 		logger.info("Save user in DB");
 		userService.saveOrUpdateUser(user);
 
-		Assert.assertNotNull(userService.findUserInDB(
+		Assertions.assertNotNull(userService.findUserInDB(
 				LoadingServiceTestDatas.sqlSubDomain, "user1@linshare.org"));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -218,7 +227,7 @@ public class UserServiceImplTest extends
 		logger.info("Save user in DB");
 		userService.saveOrUpdateUser(user);
 
-		Assert.assertTrue(userService.findUsersInDB(
+		Assertions.assertTrue(userService.findUsersInDB(
 				LoadingServiceTestDatas.sqlSubDomain).contains(user));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -251,12 +260,12 @@ public class UserServiceImplTest extends
 					LoadingServiceTestDatas.sqlSubDomain, "user2@linshare.org");
 			userService.deleteUser(user1, u.getLsUuid());
 		} catch (BusinessException e) {
-			Assert.fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 
-		Assert.assertNull(userService.findUserInDB(
+		Assertions.assertNull(userService.findUserInDB(
 				LoadingServiceTestDatas.sqlSubDomain, "user2@linshare.org"));
-		Assert.assertNotNull(userService.findUserInDB(
+		Assertions.assertNotNull(userService.findUserInDB(
 				LoadingServiceTestDatas.sqlDomain, "user1@linshare.org"));
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -292,15 +301,15 @@ public class UserServiceImplTest extends
 			userService.deleteAllUsersFromDomain(user1,
 					subDomain.getUuid());
 		} catch (BusinessException e) {
-			Assert.fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 
-		Assert.assertNull(userService.findUserInDB(
+		Assertions.assertNull(userService.findUserInDB(
 				LoadingServiceTestDatas.sqlSubDomain, "user2@linshare.org"));
-		Assert.assertNull(userService.findUserInDB(
+		Assertions.assertNull(userService.findUserInDB(
 				LoadingServiceTestDatas.sqlSubDomain, "user3@linshare.org"));
 
-		Assert.assertNotNull(userService.findUserInDB(
+		Assertions.assertNotNull(userService.findUserInDB(
 				LoadingServiceTestDatas.sqlDomain, "user1@linshare.org"));
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -320,7 +329,7 @@ public class UserServiceImplTest extends
 		user2.setDomain(subDomain);
 		user1.setCmisLocale("en");
 		user2.setCmisLocale("en");
-		Assert.assertTrue(userService.isAdminForThisUser(user1, user2));
+		Assertions.assertTrue(userService.isAdminForThisUser(user1, user2));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -345,13 +354,14 @@ public class UserServiceImplTest extends
 		List<User> searchUser = userService
 				.searchUser(user2.getMail(), user2.getFirstName(),
 						user2.getLastName(), AccountType.INTERNAL, user1);
-		Assert.assertNotEquals(searchUser.size(), 0);
-		Assert.assertTrue(searchUser
+		Assertions.assertNotEquals(searchUser.size(), 0);
+		Assertions.assertTrue(searchUser
 				.get(0).getMail().equals(user2.getMail()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
+	@Order(1)
 	public void testUpdateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain subDomain = abstractDomainRepository
@@ -388,10 +398,10 @@ public class UserServiceImplTest extends
 		List <String> restricted = Lists.newArrayList();
 		restricted.add("user1@linshare.org");
 		guestService.update(user2, user2, guest, restricted);
-		Assert.assertFalse(guest.getCanCreateGuest());
+		Assertions.assertFalse(guest.getCanCreateGuest());
 		guest.setCanCreateGuest(true);
 		guestService.update(user2, user2, guest, restricted);
-		Assert.assertTrue(guest.getCanCreateGuest());
+		Assertions.assertTrue(guest.getCanCreateGuest());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -418,10 +428,10 @@ public class UserServiceImplTest extends
 		userService.saveOrUpdateUser(user2);
 
 
-		Assert.assertTrue(user2.getRole() == Role.SIMPLE);
+		Assertions.assertTrue(user2.getRole() == Role.SIMPLE);
 		user2.setRole(Role.ADMIN);
 		user2 = userService.updateUser(user2, user2, user2.getDomainId());
-		Assert.assertTrue(user2.getRole() == Role.ADMIN);
+		Assertions.assertTrue(user2.getRole() == Role.ADMIN);
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -437,9 +447,9 @@ public class UserServiceImplTest extends
 		user1.setPassword(HashUtils.hashBcrypt(oldPassword));
 		user1.setCmisLocale("en");
 		userService.saveOrUpdateUser(user1);
-		Assert.assertTrue(HashUtils.matches(oldPassword, user1.getPassword()));
+		Assertions.assertTrue(HashUtils.matches(oldPassword, user1.getPassword()));
 		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", oldPassword, newPassword);
-		Assert.assertTrue(HashUtils.matches(newPassword, user1.getPassword()));
+		Assertions.assertTrue(HashUtils.matches(newPassword, user1.getPassword()));
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -459,9 +469,9 @@ public class UserServiceImplTest extends
 		user1.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 		user1.setCmisLocale("en");
 		userService.saveOrUpdateUser(user1);
-		Assert.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
+		Assertions.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", oldPassword, newPassword);
-		Assert.assertTrue(HashUtils.matches(newPassword, user1.getPassword()));
+		Assertions.assertTrue(HashUtils.matches(newPassword, user1.getPassword()));
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -498,7 +508,7 @@ public class UserServiceImplTest extends
 		guest = guestRepository.create(guest);
 		// Disable. We don't change guest password anymore, we send him a link to reset it.
 //		guestService.triggerResetPassword(guest.getLsUuid());
-//		Assert.assertFalse(guest.getPassword().equals(
+//		Assertions.assertFalse(guest.getPassword().equals(
 //				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -532,10 +542,10 @@ public class UserServiceImplTest extends
 		guest.setCmisLocale("en");
 		guest = guestRepository.create(guest);
 
-		Assert.assertTrue(guest.isRestricted());
+		Assertions.assertTrue(guest.isRestricted());
 		guest.setRestricted(false);
 		guest = guestService.update(user1, user1, guest, null);
-		Assert.assertFalse(guest.isRestricted());
+		Assertions.assertFalse(guest.isRestricted());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -583,14 +593,14 @@ public class UserServiceImplTest extends
 		guestService.update(user1, user1, guest, contacts);
 		List<AllowedContact> listAllowedContact = allowedContactRepository
 				.findByOwner(guest);
-		Assert.assertEquals(1, listAllowedContact.size());
+		Assertions.assertEquals(1, listAllowedContact.size());
 		boolean test = false;
 		for (AllowedContact allowedContact : listAllowedContact) {
 			if (allowedContact.getContact().getMail().equals("user1@linshare.org")) {
 				test = true;
 			}
 		}
-		Assert.assertTrue(test);
+		Assertions.assertTrue(test);
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -644,7 +654,7 @@ public class UserServiceImplTest extends
 //				test = true;
 //			}
 //		}
-//		Assert.assertTrue(test);
+//		Assertions.assertTrue(test);
 //
 //		logger.debug(LinShareTestConstants.END_TEST);
 //	}
@@ -694,7 +704,7 @@ public class UserServiceImplTest extends
 //				contain = true;
 //			}
 //		}
-//		Assert.assertTrue(contain);
+//		Assertions.assertTrue(contain);
 //
 //		logger.debug(LinShareTestConstants.END_TEST);
 //	}
@@ -744,7 +754,7 @@ public class UserServiceImplTest extends
 //				contain = true;
 //			}
 //		}
-//		Assert.assertTrue(contain);
+//		Assertions.assertTrue(contain);
 //
 //		logger.debug(LinShareTestConstants.END_TEST);
 //	}
@@ -808,7 +818,7 @@ public class UserServiceImplTest extends
 					LoadingServiceTestDatas.sqlSubDomain);
 
 			logger.error("Test shouldn't go here because findOrCreateUserWithDomainPolicies should rise a exception");
-			Assert.fail();
+			Assertions.fail();
 		} catch (BusinessException e) {
 			logger.debug("Test succeed");
 		}
@@ -825,8 +835,8 @@ public class UserServiceImplTest extends
 			logger.debug("Trying to find john doe: should create this user");
 			User user = userService.findOrCreateUserWithDomainPolicies(
 					"user1@linshare.org", LoadingServiceTestDatas.sqlSubDomain);
-			Assert.assertEquals("John", user.getFirstName());
-			Assert.assertEquals("Doe", user.getLastName());
+			Assertions.assertEquals("John", user.getFirstName());
+			Assertions.assertEquals("Doe", user.getLastName());
 			id_user = user.getId();
 			logger.debug("the user created was " + user.getFirstName() + " "
 					+ user.getLastName() + " (id=" + user.getId() + ")");
@@ -839,10 +849,10 @@ public class UserServiceImplTest extends
 			logger.debug("Trying to find john doe: should return this user");
 			User user = userService.findOrCreateUser("user1@linshare.org",
 					LoadingServiceTestDatas.sqlSubDomain);
-			Assert.assertEquals("John", user.getFirstName());
-			Assert.assertEquals("Doe", user.getLastName());
+			Assertions.assertEquals("John", user.getFirstName());
+			Assertions.assertEquals("Doe", user.getLastName());
 			// Should be the same user, not a new one.
-			Assert.assertEquals(id_user, user.getId());
+			Assertions.assertEquals(id_user, user.getId());
 			logger.debug("the user created was " + user.getFirstName() + " "
 					+ user.getLastName() + " (id=" + user.getId() + ")");
 
@@ -855,10 +865,10 @@ public class UserServiceImplTest extends
 			logger.debug("Trying to find john doe: should return this user");
 			User user = userService.findOrCreateUser("user1@linshare.org",
 					LoadingServiceTestDatas.sqlSubDomain);
-			Assert.assertEquals("John", user.getFirstName());
-			Assert.assertEquals("Doe", user.getLastName());
+			Assertions.assertEquals("John", user.getFirstName());
+			Assertions.assertEquals("Doe", user.getLastName());
 			// Should be the same user, not a new one.
-			Assert.assertEquals(id_user, user.getId());
+			Assertions.assertEquals(id_user, user.getId());
 			logger.debug("the user created was " + user.getFirstName() + " "
 					+ user.getLastName() + " (id=" + user.getId() + ")");
 
@@ -882,7 +892,7 @@ public class UserServiceImplTest extends
 		logger.info("Trying to create a user without domain : should fail.");
 		try {
 			userService.saveOrUpdateUser(user);
-			Assert.fail("It should fail before this message.");
+			Assertions.fail("It should fail before this message.");
 		} catch (TechnicalException e) {
 			logger.debug("TechnicalException raise as planned.");
 		}
@@ -891,10 +901,10 @@ public class UserServiceImplTest extends
 		user.setDomain(domain);
 		userService.saveOrUpdateUser(user);
 		logger.debug("user id : " + user.getId());
-		Assert.assertTrue(user.getCanUpload());
+		Assertions.assertTrue(user.getCanUpload());
 		user.setCanUpload(false);
 		userService.saveOrUpdateUser(user);
-		Assert.assertFalse(user.getCanUpload());
+		Assertions.assertFalse(user.getCanUpload());
 		logger.debug(LinShareTestConstants.END_TEST);
 		wiser.checkGeneratedMessages();
 	}

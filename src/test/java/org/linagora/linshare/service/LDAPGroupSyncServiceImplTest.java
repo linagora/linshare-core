@@ -43,10 +43,11 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.GroupProviderType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -76,16 +77,22 @@ import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 import org.subethamail.wiser.Wiser;
 
 import com.beust.jcommander.internal.Lists;
 
+@ExtendWith(SpringExtension.class)
+@ExtendWith(LdapServerRule.class)
+@Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -97,10 +104,9 @@ import com.beust.jcommander.internal.Lists;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",
-		"classpath:springContext-ldap.xml", 
-		"classpath:springContext-start-embedded-ldap.xml"
+		"classpath:springContext-ldap.xml"
 })
-public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class LDAPGroupSyncServiceImplTest {
 
 	@Autowired
 	LDAPGroupSyncService syncService;
@@ -158,7 +164,7 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		wiser = new Wiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
@@ -166,7 +172,7 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		systemAccount = userRepository.getBatchSystemAccount();
-		domain = datas.getUser1().getDomain();
+		domain = datas.getUser2().getDomain();
 		attributes = new HashMap<String, LdapAttribute>();
 		attributes.put(GroupLdapPattern.GROUP_NAME, new LdapAttribute(GroupLdapPattern.GROUP_NAME, "cn"));
 		attributes.put(GroupLdapPattern.GROUP_MEMBER, new LdapAttribute(GroupLdapPattern.GROUP_MEMBER, "member"));
@@ -197,15 +203,17 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		systemAccount = null;
 		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
 	public void testCreateLDAPGroupFromLDAPGroupObject() {
+		systemAccount = userRepository.getBatchSystemAccount();
 		Date syncDate = new Date();
 		LdapGroupObject ldapGroupObject = new LdapGroupObject();
 		LdapGroupsBatchResultContext resultContext = new LdapGroupsBatchResultContext(domain);
@@ -215,15 +223,17 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		ldapGroupObject.setPrefix("prefix");
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext);
-		Assert.assertNotNull("The group has not been found", group);
-		Assert.assertEquals("The externalId do not match", "cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
-				group.getExternalId());
-		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, group.getSyncDate());
+		Assertions.assertNotNull(group, "The group has not been found");
+		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
+				group.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(syncDate, group.getSyncDate(), "The given syncDate is not the same as the found one");
 		syncServiceImpl.deleteLDAPGroup(systemAccount, group);
 	}
 
 	@Test
+	@DirtiesContext
 	public void testCreateLDAPMemberFromLDAPGroupMember() {
+		systemAccount = userRepository.getBatchSystemAccount();
 		Date syncDate = new Date();
 		LdapGroupObject ldapGroupObject = new LdapGroupObject();
 		LdapGroupsBatchResultContext resultContext = new LdapGroupsBatchResultContext(domain);
@@ -236,22 +246,24 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		ldapGroupMemberObject.setRole(Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext);
-		Assert.assertNotNull("The group has not been found", group);
-		Assert.assertEquals("The externalId do not match", "cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
-				group.getExternalId());
-		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, group.getSyncDate());
+		Assertions.assertNotNull(group, "The group has not been found");
+		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
+				group.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(syncDate, group.getSyncDate(), "The given syncDate is not the same as the found one");
 		SharedSpaceLDAPGroupMember member = syncService.createOrUpdateLDAPGroupMember(systemAccount, domain.getUuid(), group,
 				ldapGroupMemberObject, syncDate, resultContext, domain.getGroupProvider().getSearchInOtherDomains());
-		Assert.assertNotNull("The member has not been found", member);
-		Assert.assertEquals("The externalId do not match", "uid=user1,ou=People,dc=linshare,dc=org",
-				member.getExternalId());
-		Assert.assertEquals(Role.CONTRIBUTOR.toString(), member.getRole().getName());
-		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, member.getSyncDate());
+		Assertions.assertNotNull(member, "The member has not been found");
+		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
+				member.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(Role.CONTRIBUTOR.toString(), member.getRole().getName());
+		Assertions.assertEquals(syncDate, member.getSyncDate(), "The given syncDate is not the same as the found one");
 		syncServiceImpl.deleteLDAPGroup(systemAccount, group);
 	}
 
 	@Test
+	@DirtiesContext
 	public void testCreateLDAPMemberInOtherDomains() {
+		systemAccount = userRepository.getBatchSystemAccount();
 		Date syncDate = new Date();
 		Boolean searchInOtherDomains = true;
 		LdapGroupObject ldapGroupObject = new LdapGroupObject();
@@ -265,22 +277,24 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		ldapGroupMemberObject.setRole(Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext);
-		Assert.assertNotNull("The group has not been found", group);
-		Assert.assertEquals("The externalId do not match", "cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
-				group.getExternalId());
-		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, group.getSyncDate());
+		Assertions.assertNotNull(group, "The group has not been found");
+		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
+				group.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(syncDate, group.getSyncDate(), "The given syncDate is not the same as the found one");
 		SharedSpaceLDAPGroupMember member = syncService.createOrUpdateLDAPGroupMember(systemAccount, domain.getUuid(), group,
 				ldapGroupMemberObject, syncDate, resultContext, searchInOtherDomains);
-		Assert.assertNotNull("The member has not been found", member);
-		Assert.assertEquals("The externalId do not match", "uid=user1,ou=People,dc=linshare,dc=org",
-				member.getExternalId());
-		Assert.assertEquals(Role.CONTRIBUTOR.toString(), member.getRole().getName());
-		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, member.getSyncDate());
+		Assertions.assertNotNull(member, "The member has not been found");
+		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
+				member.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(Role.CONTRIBUTOR.toString(), member.getRole().getName());
+		Assertions.assertEquals(syncDate, member.getSyncDate(), "The given syncDate is not the same as the found one");
 		syncServiceImpl.deleteLDAPGroup(systemAccount, group);
 	}
 
 	@Test
+	@DirtiesContext
 	public void testUpdateLDAPMemberFromLDAPGroupMember() {
+		systemAccount = userRepository.getBatchSystemAccount();
 		Date syncDate = new Date();
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Year.now().getValue() + 1, 1, 1);
@@ -305,17 +319,19 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		// Update a member
 		SharedSpaceLDAPGroupMember updated = syncService.createOrUpdateLDAPGroupMember(systemAccount, domain.getUuid(), group,
 				ldapGroupMemberObject, syncDate, resultContext, domain.getGroupProvider().getSearchInOtherDomains());
-		Assert.assertEquals(1, memberService.findByNode(systemAccount, systemAccount, group.getUuid()).size());
-		Assert.assertNotNull("The member has not been found", updated);
-		Assert.assertEquals("The externalId do not match", "uid=user1,ou=People,dc=linshare,dc=org",
-				updated.getExternalId());
-		Assert.assertEquals(Role.ADMIN.toString(), updated.getRole().getName());
-		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, updated.getSyncDate());
+		Assertions.assertEquals(1, memberService.findByNode(systemAccount, systemAccount, group.getUuid()).size());
+		Assertions.assertNotNull(updated, "The member has not been found");
+		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
+				updated.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(Role.ADMIN.toString(), updated.getRole().getName());
+		Assertions.assertEquals(syncDate, updated.getSyncDate(), "The given syncDate is not the same as the found one");
 		syncServiceImpl.deleteLDAPGroup(systemAccount, group);
 	}
 
 	@Test
+	@DirtiesContext
 	public void testUpdateLDAPGroupFromLDAPGroupObject() {
+		systemAccount = userRepository.getBatchSystemAccount();
 		Date syncDate = new Date();
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Year.now().getValue() + 1, 1, 1);
@@ -327,20 +343,22 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		ldapGroupObject.setPrefix("prefix");
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext);
-		Assert.assertNotNull("The group has not been found", group);
-		Assert.assertEquals("The externalId do not match", "cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
-				group.getExternalId());
-		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, group.getSyncDate());
+		Assertions.assertNotNull(group, "The group has not been found");
+		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
+				group.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(syncDate, group.getSyncDate(), "The given syncDate is not the same as the found one");
 		int nbLDAPGroup = nodeService.findAll(systemAccount, systemAccount).size();
 		group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, calendar.getTime(), resultContext);
-		Assert.assertTrue("The new syncDate is not after the previous syncDate", group.getSyncDate().after(syncDate));
-		Assert.assertEquals("A SharedSpaceLDAPGroup has been added and not updated", nbLDAPGroup,
-				nodeService.findAll(systemAccount, systemAccount).size());
+		Assertions.assertTrue(group.getSyncDate().after(syncDate), "The new syncDate is not after the previous syncDate");
+		Assertions.assertEquals(nbLDAPGroup,
+				nodeService.findAll(systemAccount, systemAccount).size(), "A SharedSpaceLDAPGroup has been added and not updated");
 		syncServiceImpl.deleteLDAPGroup(systemAccount, group);
 	}
 
 	@Test
+	@DirtiesContext
 	public void testDeleteNodeFromLDAPGroupSync() {
+		systemAccount = userRepository.getBatchSystemAccount();
 		Date syncDate = new Date();
 		LdapGroupObject ldapGroupObject = new LdapGroupObject();
 		LdapGroupsBatchResultContext resultContext = new LdapGroupsBatchResultContext(domain);
@@ -350,57 +368,61 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		ldapGroupObject.setPrefix("prefix");
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject,
 				syncDate, resultContext);
-		Assert.assertNotNull("The group has not been found", group);
-		Assert.assertEquals("The externalId do not match", "cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
-				group.getExternalId());
-		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, group.getSyncDate());
+		Assertions.assertNotNull(group, "The group has not been found");
+		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
+				group.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(syncDate, group.getSyncDate(), "The given syncDate is not the same as the found one");
 		int nbLDAPGroup = nodeService.findAll(systemAccount, systemAccount).size();
 		syncServiceImpl.deleteLDAPGroup(systemAccount, group);
-		Assert.assertEquals("A SharedSpaceLDAPGroup has not been deleted", nbLDAPGroup - 1,
-				nodeService.findAll(systemAccount, systemAccount).size());
+		Assertions.assertEquals(nbLDAPGroup - 1,
+				nodeService.findAll(systemAccount, systemAccount).size(), "A SharedSpaceLDAPGroup has not been deleted");
 	}
 
 	@Test
+	@DirtiesContext
 	public void testExecuteBatchWithDatas() throws BusinessException, IOException, NamingException {
+		systemAccount = userRepository.getBatchSystemAccount();
 		LdapGroupsBatchResultContext resultContext = new LdapGroupsBatchResultContext(domain);
 		syncService.executeBatch(systemAccount, domain, ldapConnection, baseDn, groupPattern, resultContext);
 		List<SharedSpaceNode> foundNodes = nodeService.findAll(systemAccount, systemAccount);
 		for (SharedSpaceNode sharedSpaceNode : foundNodes) {
 			List<SharedSpaceMember> foundMembers = memberService.findByNode(systemAccount, systemAccount,
 					sharedSpaceNode.getUuid());
-			Assert.assertTrue("The node has at least a member", foundMembers.size() > 0);
+			Assertions.assertTrue(foundMembers.size() > 0, "The node has at least a member");
 		}
 		logger.info(String.format("%d ldap Groups found", foundNodes.size()));
-		Assert.assertTrue("At least 1 node found", foundNodes.size() > 0);
+		Assertions.assertTrue(foundNodes.size() > 0, "At least 1 node found");
 		for (SharedSpaceNode group : foundNodes) {
 			syncServiceImpl.deleteLDAPGroup(systemAccount, (SharedSpaceLDAPGroup) group);
 		}
 	}
 
 	@Test
+	@DirtiesContext
 	public void testDeleteGroupByLdapSynchro() throws BusinessException, IOException, NamingException {
+		systemAccount = userRepository.getBatchSystemAccount();
 		LdapGroupsBatchResultContext resultContext = new LdapGroupsBatchResultContext(domain);
 		syncService.executeBatch(systemAccount, domain, ldapConnection, baseDn, groupPattern, resultContext);
 		List<SharedSpaceNode> foundNodes = nodeService.findAll(systemAccount, systemAccount);
-		Assert.assertTrue("At least 1 node found", foundNodes.size() > 0);
+		Assertions.assertTrue(foundNodes.size() > 0, "At least 1 node found");
 		syncService.executeBatch(systemAccount, domain, ldapConnection, "dc=linshare1,dc=org", groupPattern,
 				resultContext);
 		List<SharedSpaceNode> afterBatchNodes = nodeService.findAll(systemAccount, systemAccount);
-		Assert.assertEquals("Bad number of nodes avec ldap synchro deleting groups", foundNodes.size(),
-				afterBatchNodes.size());
+		Assertions.assertEquals(foundNodes.size(),
+				afterBatchNodes.size(), "Bad number of nodes avec ldap synchro deleting groups");
 		for (SharedSpaceNode sharedSpaceNode : foundNodes) {
 			List<SharedSpaceMember> foundMembers = memberService.findByNode(systemAccount, systemAccount,
 					sharedSpaceNode.getUuid());
-			Assert.assertTrue("The node has at least a member", foundMembers.size() == 0);
+			Assertions.assertTrue(foundMembers.size() == 0, "The node has at least a member");
 		}
 		syncService.executeBatch(systemAccount, domain, ldapConnection, baseDn, groupPattern, resultContext);
 		foundNodes = nodeService.findAll(systemAccount, systemAccount);
-		Assert.assertEquals("Bad number of nodes avec ldap synchro deleting groups", foundNodes.size(),
-				afterBatchNodes.size());
+		Assertions.assertEquals(foundNodes.size(),
+				afterBatchNodes.size(), "Bad number of nodes avec ldap synchro deleting groups");
 		for (SharedSpaceNode sharedSpaceNode : foundNodes) {
 			List<SharedSpaceMember> foundMembers = memberService.findByNode(systemAccount, systemAccount,
 					sharedSpaceNode.getUuid());
-			Assert.assertTrue("The node has no member", foundMembers.size() > 0);
+			Assertions.assertTrue(foundMembers.size() > 0, "The node has no member");
 		}
 		logger.info(String.format("%d ldap Groups found", foundNodes.size()));
 		for (SharedSpaceNode group : foundNodes) {

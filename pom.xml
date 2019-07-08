@@ -578,13 +578,6 @@
 			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- embedded LDAP server for tests (used by spring security) -->
-		<dependency>
-			<groupId>org.apache.directory.server</groupId>
-			<artifactId>apacheds-server-jndi</artifactId>
-			<version>${apache-directory-server.version}</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -750,6 +743,13 @@
 			<artifactId>jjwt</artifactId>
 			<version>${jjwt.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.unboundid</groupId>
+			<artifactId>unboundid-ldapsdk</artifactId>
+			<version>4.0.11</version>
+			<scope>test</scope>
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<finalName>linshare-core</finalName>
@@ -1026,9 +1026,6 @@
 		<testResources>
 			<testResource>
 				<directory>src/test/resources</directory>
-			</testResource>
-			<testResource>
-				<directory>src/apacheds/resources</directory>
 			</testResource>
 			<testResource>
 				<directory>src/fongo/resources</directory>
@@ -1466,34 +1463,6 @@
 				</plugins>
 			</build>
 		</profile>
-		<!--  profile:id=apacheds -->
-		<profile>
-			<id>apacheds</id>
-			<activation>
-				<property>
-					<name>target</name>
-					<value>distribution</value>
-				</property>
-			</activation>
-			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources</directory>
-					</resource>
-					<resource>
-						<directory>src/apacheds/resources</directory>
-					</resource>
-				</resources>
-			</build>
-			<dependencies>
-				<!-- embedded LDAP server for tests (used by spring security) -->
-				<dependency>
-					<groupId>org.apache.directory.server</groupId>
-					<artifactId>apacheds-server-jndi</artifactId>
-					<version>${apache-directory-server.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
 		<!--  profile:id=fongo -->
 		<profile>
 			<id>fongo</id>
@@ -1559,9 +1528,6 @@
 					<resource>
 						<directory>src/subethamail/resources</directory>
 					</resource>
-					<resource>
-						<directory>src/apacheds/resources</directory>
-					</resource>
 				</resources>
 				<plugins>
 					<plugin>
@@ -1600,12 +1566,6 @@
 				</plugins>
 			</build>
 			<dependencies>
-				<!-- embedded LDAP server for tests (used by spring security) -->
-				<dependency>
-					<groupId>org.apache.directory.server</groupId>
-					<artifactId>apacheds-server-jndi</artifactId>
-					<version>${apache-directory-server.version}</version>
-				</dependency>
 				<dependency>
 					<groupId>org.subethamail</groupId>
 					<artifactId>subethasmtp</artifactId>

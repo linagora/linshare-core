@@ -59,7 +59,6 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-start-embedded-ldap.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",

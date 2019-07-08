@@ -43,11 +43,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -68,11 +68,13 @@ import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
+import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -81,6 +83,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.beust.jcommander.internal.Sets;
 
 @ExtendWith(SpringExtension.class)
+@ExtendWith(LdapServerRule.class)
+@Sql({"/import-tests-default-domain-quotas.sql",
+"/import-tests-quota-other.sql"})
+@Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -94,9 +100,6 @@ import com.beust.jcommander.internal.Sets;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml",
 		})
-@Sql({"/import-tests-default-domain-quotas.sql",
-"/import-tests-domain-quota-updates.sql"})
-@Transactional
 public class DocumentEntryBusinessServiceImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImplTest.class);
@@ -145,10 +148,13 @@ public class DocumentEntryBusinessServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		workGroup = null;
+		workGroupFolder = null;
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
+	@DirtiesContext
 	public void testCreateDocument() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
@@ -165,6 +171,7 @@ public class DocumentEntryBusinessServiceImplTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testCreateAndDeleteDocument() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
@@ -185,6 +192,7 @@ public class DocumentEntryBusinessServiceImplTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testUpdateDocument() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
@@ -200,7 +208,7 @@ public class DocumentEntryBusinessServiceImplTest {
 		Assertions.assertTrue(documentEntryRepository.findById(createDocumentEntry.getUuid()).getType() == "image/png");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Disabled
 	@Test
 	public void testUpdateThumbnail() throws BusinessException, IOException {
@@ -209,15 +217,13 @@ public class DocumentEntryBusinessServiceImplTest {
 		Set<DocumentEntry> documentEntries = createdDocument.getDocumentEntries();
 		List<WorkGroupDocument> wgDocuments = workGroupNodeMongoRepository
 				.findByDocumentUuid(createdDocument.getUuid());
-		Assertions.assertTrue(createdDocument.getHasThumbnail(),"The created document should have a thumbnail");
+		Assertions.assertTrue(createdDocument.getHasThumbnail(), "The created document should have a thumbnail");
 		documentEntryBusinessService.updateThumbnail(createdDocument, jane);
 		for (DocumentEntry docEntry : documentEntries) {
-			Assertions.assertEquals(createdDocument.getHasThumbnail(), docEntry.isHasThumbnail(),
-					"The document entry and the document should have the same thumbnail status");
+			Assertions.assertEquals(createdDocument.getHasThumbnail(), docEntry.isHasThumbnail(), "The document entry and the document should have the same thumbnail status");
 		}
 		for (WorkGroupDocument wgDocument : wgDocuments) {
-			Assertions.assertEquals(createdDocument.getHasThumbnail(), wgDocument.getHasThumbnail(), 
-					"The wgDocument entry and the document should have the same thumbnail status");
+			Assertions.assertEquals(createdDocument.getHasThumbnail(), wgDocument.getHasThumbnail(), "The wgDocument entry and the document should have the same thumbnail status");
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

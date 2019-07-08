@@ -36,10 +36,11 @@ package org.linagora.linshare.service;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -59,15 +60,23 @@ import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@ExtendWith(LdapServerRule.class)
+@Sql({"/import-tests-default-domain-quotas.sql",
+"/import-tests-quota-other.sql"})
+@Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -78,12 +87,10 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-start-embedded-ldap.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class GuestServiceImplTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class GuestServiceImplTest {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(GuestServiceImplTest.class);
@@ -128,11 +135,9 @@ public class GuestServiceImplTest extends
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		wiser.start();
 		root = rootUserRepository
 				.findByLsUuid("root@localhost.localdomain@test");
@@ -166,7 +171,7 @@ public class GuestServiceImplTest extends
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -180,11 +185,11 @@ public class GuestServiceImplTest extends
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
-		Assert.assertNotNull(guest);
-		Assert.assertEquals(Role.SIMPLE, guest.getRole());
+		Assertions.assertNotNull(guest);
+		Assertions.assertEquals(Role.SIMPLE, guest.getRole());
 		AccountQuota aq = quotaService.findByRelatedAccount(guest);
-		Assert.assertNotNull(aq.getDomainShared());
-		Assert.assertNotNull(aq.getMaxFileSize());
+		Assertions.assertNotNull(aq.getDomainShared());
+		Assertions.assertNotNull(aq.getMaxFileSize());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -200,7 +205,7 @@ public class GuestServiceImplTest extends
 		} catch (BusinessException e) {
 			logger.debug("Can not create an internal user as guest");
 		}
-		Assert.assertEquals(size, guestService.findAll(owner1, owner1, null).size());
+		Assertions.assertEquals(size, guestService.findAll(owner1, owner1, null).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -218,9 +223,9 @@ public class GuestServiceImplTest extends
 		guest.setFirstName("First");
 		guest.setLastName("Last");
 		Guest update = guestService.update(owner1, owner1, guest, null);
-		Assert.assertEquals(Role.SIMPLE, update.getRole());
-		Assert.assertEquals("First", update.getFirstName());
-		Assert.assertEquals("Last", update.getLastName());
+		Assertions.assertEquals(Role.SIMPLE, update.getRole());
+		Assertions.assertEquals("First", update.getFirstName());
+		Assertions.assertEquals("Last", update.getLastName());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -236,8 +241,8 @@ public class GuestServiceImplTest extends
 		guest.setDomain(guestDomain);
 		guest = guestService.create(owner1, owner1, guest, null);
 		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
-		Assert.assertNotNull(find);
-		Assert.assertEquals(Role.SIMPLE, find.getRole());
+		Assertions.assertNotNull(find);
+		Assertions.assertEquals(Role.SIMPLE, find.getRole());
 		
 		// updateGuestDomain
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.guestDomainName1);
@@ -255,7 +260,7 @@ public class GuestServiceImplTest extends
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
 		guestService.triggerResetPassword(guest.getLsUuid());
-		Assert.assertFalse(HashUtils.matches(oldPassword, guest.getPassword()));
+		Assertions.assertFalse(HashUtils.matches(oldPassword, guest.getPassword()));
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -273,10 +278,10 @@ public class GuestServiceImplTest extends
 		restrictedContacts.add("user2@linshare.org");
 		restrictedContacts.add("user1@linshare.org");
 		guest = guestService.create(owner1, owner1, guest, restrictedContacts);
-		Assert.assertTrue(guest.isRestricted());
-		Assert.assertTrue(guest.isGuest());
+		Assertions.assertTrue(guest.isRestricted());
+		Assertions.assertTrue(guest.isGuest());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
-		Assert.assertEquals(3, ac.size());
+		Assertions.assertEquals(3, ac.size());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -295,10 +300,10 @@ public class GuestServiceImplTest extends
 		// This one is not an internal or a guest user.So it will be skip.
 		restrictedContacts.add("user-do-not-exist@linshare.org");
 		guest = guestService.create(owner1, owner1, guest, restrictedContacts);
-		Assert.assertTrue(guest.isRestricted());
-		Assert.assertTrue(guest.isGuest());
+		Assertions.assertTrue(guest.isRestricted());
+		Assertions.assertTrue(guest.isGuest());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
-		Assert.assertEquals(2, ac.size());
+		Assertions.assertEquals(2, ac.size());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -322,7 +327,7 @@ public class GuestServiceImplTest extends
 		restrictedContacts.add("user1@linshare.org");
 		guest = guestService.update(owner1, owner1, guest, restrictedContacts);
 		List<AllowedContact> ac = guestService.load(owner1, guest);
-		Assert.assertEquals(1, ac.size());
+		Assertions.assertEquals(1, ac.size());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -341,16 +346,16 @@ public class GuestServiceImplTest extends
 		restrictedContacts.add("user1@linshare.org");
 		guest = guestService.create(owner1, owner1, guest, restrictedContacts);
 
-		Assert.assertTrue(guest.isRestricted());
+		Assertions.assertTrue(guest.isRestricted());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
-		Assert.assertEquals(3, ac.size());
+		Assertions.assertEquals(3, ac.size());
 
 		guest.setRestricted(false);
 		guest = guestService.update(owner1, owner1, guest, restrictedContacts);
-		Assert.assertFalse(guest.isRestricted());
+		Assertions.assertFalse(guest.isRestricted());
 
 		ac = guestService.load(owner1, guest);
-		Assert.assertEquals(0, ac.size());
+		Assertions.assertEquals(0, ac.size());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -359,23 +364,23 @@ public class GuestServiceImplTest extends
 		boolean mine= true;
 		List<Guest> search = guestService.search(owner1, owner1, "org", mine);
 		logger.info("nb guests : " + search.size());
-		Assert.assertEquals(0, search.size());
+		Assertions.assertEquals(0, search.size());
 
 		search = guestService.search(owner1, owner1, "org", null);
 		logger.info("nb guests : " + search.size());
-		Assert.assertEquals(1, search.size());
+		Assertions.assertEquals(1, search.size());
 
 		search = guestService.search(owner1, owner1, "toto", mine);
 		logger.info("nb guests : " + search.size());
-		Assert.assertEquals(0, search.size());
+		Assertions.assertEquals(0, search.size());
 
 		search = guestService.search(owner1, owner1, "test", null);
 		logger.info("nb guests : " + search.size());
-		Assert.assertEquals(1, search.size());
+		Assertions.assertEquals(1, search.size());
 
 		search = guestService.search(owner1, owner1, null, null, "guest", mine);
 		logger.info("nb guests : " + search.size());
-		Assert.assertEquals(1, search.size());
+		Assertions.assertEquals(1, search.size());
 	}
 
 }

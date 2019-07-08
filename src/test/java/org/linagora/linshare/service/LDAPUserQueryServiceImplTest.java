@@ -41,10 +41,11 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
@@ -52,19 +53,32 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPUserQueryService;
+import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
-@ContextConfiguration(locations = { "classpath:springContext-test.xml",
-		"classpath:springContext-ldap.xml", 
-		"classpath:springContext-start-embedded-ldap.xml"
-})
-public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+@ExtendWith(LdapServerRule.class)
+@Transactional
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml",
+		"classpath:springContext-ldap.xml",
+		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-facade.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-test.xml" })
+public class LDAPUserQueryServiceImplTest {
 
 	protected Logger logger = LoggerFactory.getLogger(LDAPUserQueryServiceImplTest.class);
 
@@ -93,7 +107,7 @@ public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTes
 		// logger.debug(user.getLdapUid());
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
@@ -171,7 +185,7 @@ public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTes
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -183,7 +197,7 @@ public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTes
 		Date date_before = new Date();
 		User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, userPassword1);
 		Date date_after = new Date();
-		Assert.assertNotNull(user);
+		Assertions.assertNotNull(user);
 		logUser(user);
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -200,7 +214,7 @@ public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTes
 
 		}
 		Date date_after = new Date();
-		Assert.assertNull(user);
+		Assertions.assertNull(user);
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -211,10 +225,10 @@ public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTes
 		Date date_before = new Date();
 		try {
 			ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1 + "undefined", userPassword1);
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		} catch (NameNotFoundException e) {
 			// spring exception when user is not found
-			Assert.assertTrue(true);
+			Assertions.assertTrue(true);
 		}
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
@@ -229,10 +243,10 @@ public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTes
 		Boolean exist = ldapQueryService.isUserExist(ldapConn, baseDn, domainPattern, userMail1);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
-		Assert.assertEquals(exist, true);
+		Assertions.assertEquals(exist, true);
 
 		exist = ldapQueryService.isUserExist(ldapConn, baseDn, domainPattern, userMail1 + "undefined");
-		Assert.assertEquals(exist, false);
+		Assertions.assertEquals(exist, false);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -265,7 +279,7 @@ public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTes
 		User user = ldapQueryService.getUser(ldapConn, baseDn, domainPattern, userMail1);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
-		Assert.assertNotNull(user);
+		Assertions.assertNotNull(user);
 		logUser(user);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -278,7 +292,7 @@ public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTes
 		User user = ldapQueryService.getUser(ldapConn, baseDn, domainPattern, userMail1);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
-		Assert.assertNull(user);
+		Assertions.assertNull(user);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

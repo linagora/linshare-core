@@ -51,7 +51,6 @@ import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
@@ -117,8 +116,6 @@ public class ShareNewShareEmailBuilderTest {
 
 	private Account actor;
 
-	private User recipient;
-
 	private Account admin;
 
 	private LinShareWiser wiser;
@@ -136,7 +133,6 @@ public class ShareNewShareEmailBuilderTest {
 		datas.loadUsers();
 		owner = datas.getUser1();
 		actor = (Account) owner;
-		recipient = datas.getUser2();
 		admin = datas.getRoot();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -150,6 +146,7 @@ public class ShareNewShareEmailBuilderTest {
 
 	@Test
 	public void testCreateNewSharesFiles() throws BusinessException, IOException {
+		User recipient = datas.getUser2();
 		List<String> documents = new  ArrayList<String>();
 		documents.add("bfaf3fea-c64a-4ee0-bae8-b1482f1f6401");
 		documents.add("fd87394a-41ab-11e5-b191-080027b8274b");
@@ -162,12 +159,13 @@ public class ShareNewShareEmailBuilderTest {
 
 	@Test
 	public void testCreateNewSharesFiles_MailAttachment() throws BusinessException, IOException {
+		User recipient = datas.getUser3();
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
 		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 		File tempFile = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		// EnableForAll is disabled and the language == emailContext language -> inserted
-		MailAttachment attachment = attachmentService.create(admin, true, "Logo", false, cfg.getUuid(),
+		attachmentService.create(admin, true, "Logo", false, cfg.getUuid(),
 				"Test mail attachment", "logo.mail.attachment2.test", Language.ENGLISH, tempFile, null);
 		Assertions.assertFalse(cfg.getMailAttachments().isEmpty());
 		List<String> documents = new  ArrayList<String>();

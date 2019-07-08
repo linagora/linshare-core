@@ -33,19 +33,27 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ContactRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations={"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
-        "classpath:springContext-repository.xml"})
-public class ContactRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests  {
+		"classpath:springContext-repository.xml"})
+public class ContactRepositoryImplTest {
+
+	private static Logger logger = LoggerFactory.getLogger(ContactRepositoryImplTest.class);
 
 	@Autowired
 	private ContactRepository contactRepository;
@@ -57,7 +65,6 @@ public class ContactRepositoryImplTest extends AbstractTransactionalJUnit4Spring
 	
 		Contact contact = new Contact(mail);
 		contactRepository.create(contact);
-		contactRepository.delete(contact);
 	}
 	
 	@Test
@@ -69,7 +76,7 @@ public class ContactRepositoryImplTest extends AbstractTransactionalJUnit4Spring
 		
 		Contact c = contactRepository.findByMail(mail);
 		logger.debug("mail id : " + c.getPersistenceId());
-		Assert.assertNotNull(c.getPersistenceId());
+		Assertions.assertNotNull(c.getPersistenceId());
 	}
 
 	
@@ -80,9 +87,9 @@ public class ContactRepositoryImplTest extends AbstractTransactionalJUnit4Spring
 		contactRepository.create(contact);
 		try {
 			contactRepository.create(contact);
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		} catch (BusinessException e) {
-			Assert.assertTrue(true);
+			Assertions.assertTrue(true);
 		}
 		
 		contactRepository.delete(contact);
