@@ -47,9 +47,38 @@
 			</roles>
 		</developer>
 		<developer>
+			<id>ysebahi</id>
+			<name>Yazid SEBAHI</name>
+			<email>ysebahi@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>mjebahi</id>
+			<name>Marwan JEBAHI</name>
+			<email>mjebahi@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>fbordjah</id>
+			<name>Fayçal BORDJAH</name>
+			<email>fbordjah@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
 			<id>akone</id>
 			<name>Alioune Badara Kone</name>
-			<email>akone@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
@@ -59,7 +88,6 @@
 		<developer>
 			<id>asall</id>
 			<name>Alpha Sall</name>
-			<email>asall@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
@@ -69,7 +97,6 @@
 		<developer>
 			<id>asiba</id>
 			<name>Anais Siba</name>
-			<email>asiba@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
