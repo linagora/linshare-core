@@ -65,6 +65,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
+@Deprecated(since = "2.0", forRemoval = true)
 @Path("/work_groups")
 @Api(value = "/rest/user/work_groups", description = "workgroups service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

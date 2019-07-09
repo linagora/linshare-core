@@ -71,6 +71,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+@Deprecated(since = "2.0", forRemoval = true)
 public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		WorkGroupFacade {
 

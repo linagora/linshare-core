@@ -56,6 +56,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 import com.google.common.collect.Sets;
 
+@Deprecated(since = "2.0", forRemoval = true)
 public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFacade {
 
 	private ThreadService threadService;

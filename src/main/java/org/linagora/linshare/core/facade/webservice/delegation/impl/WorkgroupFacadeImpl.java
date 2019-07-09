@@ -54,6 +54,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 import com.google.common.collect.Lists;
 
+@Deprecated(since = "2.0", forRemoval = true)
 public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		WorkgroupFacade {
 

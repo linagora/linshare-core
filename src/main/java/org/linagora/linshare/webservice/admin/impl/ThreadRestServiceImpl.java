@@ -58,6 +58,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
+@Deprecated(since = "2.0", forRemoval = true)
 @Path("/threads")
 @Api(value = "/rest/admin/threads", description = "Threads service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
