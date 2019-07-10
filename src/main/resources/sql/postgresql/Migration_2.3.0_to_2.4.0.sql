@@ -92,6 +92,19 @@ ALTER TABLE mail_attachment ALTER COLUMN language DROP NOT NULL;
 --Cancel NOT NULL constraint for table statistic
 ALTER TABLE statistic ALTER COLUMN domain_parent_id DROP NOT NULL;
 
+--Enable WORKGROUP__FILE_EDITION functionality
+UPDATE policy SET status = TRUE, default_status = TRUE WHERE id=303;
+UPDATE policy SET policy = 1 WHERE id = 303;
+UPDATE policy SET system = FALSE WHERE id = 303;
+
+UPDATE policy SET status = TRUE, default_status = TRUE WHERE id = 304;
+UPDATE policy SET policy = 1 WHERE id = 304;
+UPDATE policy SET system = FALSE WHERE id = 304;
+
+UPDATE policy SET status = TRUE, default_status = TRUE WHERE id = 305;
+UPDATE policy SET policy = 1 WHERE id = 305;
+UPDATE policy SET system = FALSE WHERE id = 305;
+
 -- End of your requests
 
 -- LinShare version
