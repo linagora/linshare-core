@@ -72,4 +72,13 @@ driveRight = Drive right
 workGroupRight = Workgroup right
 workGroupNameTitle = Drive Name
 nestedWorkGroupsList = Workgroups list
+nbrWorkgoups = Number of updated workGroups',messages_russian='workGroupUpdatedDateTitle = Updated date
+mainMsg = Your rights on the DRIVE 
+mainMsgNext= and workgroups inside it, have been updated
+mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Your rights on the DRIVE {0} was updated.
+driveRight = Drive right
+workGroupRight = Workgroup right
+workGroupNameTitle = Drive Name
+nestedWorkGroupsList = Workgroups list
 nbrWorkgoups = Number of updated workGroups' WHERE id=35;

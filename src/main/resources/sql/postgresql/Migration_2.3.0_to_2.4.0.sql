@@ -110,6 +110,7 @@ UPDATE policy SET system = FALSE WHERE id = 305;
 ALTER TABLE upload_request_entry ALTER COLUMN ls_type DROP NOT NULL;
 ALTER TABLE upload_request_entry ALTER COLUMN document_id DROP NOT NULL;
 
+
 -- Group ldap pattern
 WITH ldap_pattern_already_exists AS ( UPDATE ldap_pattern SET id=id WHERE id=4 RETURNING *)
 INSERT INTO ldap_pattern(
@@ -267,6 +268,251 @@ VALUES
   null);
  
   -- End Upgrade Task
+
+-- Functionality DRIVE
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (295, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (296, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES (62, false, 'WORK_GROUP__DRIVE_CAN_CREATE', 295, 296, 1, 'WORK_GROUP', true, now(), now());
+
+
+-- Update the mail_content
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,34,34,'','','',NOW(),true,'','16a7001a-ee6d-11e8-bb18-ef4f3a73c249',true);
+
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,35,35,'','','',NOW(),true,'','01acd058-fc92-11e8-b2b3-d7189fc47d83',true);
+
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,36,36,'','','',NOW(),true,'','a9983e78-ffa9-11e8-b920-7b238822b4bb',true);
+
+-- Update the mail_lang
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (34,0,1,34,34,true,'16a78382-ee6d-11e8-b388-13bb3e6feb85');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (35,0,1,35,35,true,'01ad9c5e-fc92-11e8-9736-ef560a979e00');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (36,0,1,36,36,true,'a9992e32-ffa9-11e8-bbfe-b32f26c4955b');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (134,1,1,34,34,true,'16a7f1aa-ee6d-11e8-9dab-3b0fd56ae1eb');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (135,1,1,35,35,true,'01ae8e66-fc92-11e8-9e2e-2b5cc9cf184f');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (136,1,1,36,36,true,'a99a4650-ffa9-11e8-b09e-83360a30f184');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (234,2,1,34,34,true,'250c2fe2-5f7c-11e9-8a15-bfaa0debac8a');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (235,2,1,35,35,true,'dbaef9ba-5f7b-11e9-909b-b73741598b74');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (236,2,1,36,36,true,'e6d0bb08-5f7b-11e9-a49e-bffcfe6b06bf');
+
+
+--Set English text into message_russian (To be deleted once the Russian translation is done)
+UPDATE mail_content SET messages_russian = messages_english WHERE id=34;
+UPDATE mail_content SET messages_russian = messages_english WHERE id=35;
+UPDATE mail_content SET messages_russian = messages_english WHERE id=36;
+
+
+-- New Mails
+-- Drive notification :
+-- DRIVE_WARN_NEW_MEMBER
+UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+            <span th:if="${owner.firstName} !=null AND ${owner.lastName} !=null" data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}"></span>
+            <span th:if="${owner.firstName} ==null OR ${owner.lastName} ==null" data-th-utext="#{simpleMainMsg}"></span>
+            <span>
+              <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
+               link
+             </a>
+            </span>
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+       <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, ${threadMember.role.name})"/>
+    </th:block>
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupCreationDateTitle},${threadMember.creationDate})"/>
+    <div th:if="${!childMembers.isEmpty()}">
+      <th:block data-th-utext="#{nestedWorkGroupsList}"/>
+      <ul style="padding: 5px 17px; margin: 0;list-style-type:disc;">
+        <li style="color:#787878;font-size:10px" th:each="member : ${childMembers}">
+            <span style="color:#787878;font-size:13px">
+              <th:block data-th-utext="#{displayDriveAndRole(${member.node.name},${member.role.name})}"/>
+          </li>
+      </ul>  
+    </div>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',messages_french='workGroupCreationDateTitle = Date de création
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au drive <br>
+simpleMainMsg = Vous avez été ajouté au drive
+subject = Vous avez été ajouté au drive {0}
+workGroupRight = Droit par défaut 
+workGroupNameTitle = Nom du drive
+nestedWorkGroupsList=Vous avez automatiquement été ajouté aux groupes de travail suivants :
+displayDriveAndRole ={0} avec un rôle <span style="text-transform:uppercase">{1}</span>',messages_english='workGroupCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the drive <br>
+simpleMainMsg = You have been added to the drive
+subject = You have been added to the drive {0}
+workGroupRight = Default right
+workGroupNameTitle = Drive Name
+nestedWorkGroupsList=You have been automatically added to the following workgroups:
+displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_russian='workGroupCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the drive <br>
+simpleMainMsg = You have been added to the drive
+subject = You have been added to the drive {0}
+workGroupRight = Default right
+workGroupNameTitle = Drive Name
+nestedWorkGroupsList=You have been automatically added to the following workgroups:
+displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role' WHERE id=34;
+
+
+--DRIVE warn updated member
+UPDATE mail_content SET subject='[(#{subject(${workGroupName})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span data-th-utext="#{mainMsg}"></span>
+          <span>
+               <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
+                link </a>
+          </span>
+          <span data-th-utext="#{mainMsgNext}"></span>
+          <span th:if="${owner.firstName} != null AND ${owner.firstName} != null" data-th-utext="#{mainMsgNextBy(${owner.firstName},${owner.lastName})}"></span>
+
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block th:switch="${threadMember.role.name}">
+      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightAdminTitle})"/></p>  
+      <p th:case="''DRIVE_CREATOR''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightWirteTitle})"/></p>  
+      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightReadTitle})"/></p>  
+    </th:block>
+    <th:block th:switch="${threadMember.nestedRole.name}">
+      <p th:case="''ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/></p>  
+      <p th:case="''CONTRIBUTOR''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>  
+      <p th:case="''WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>
+      <p th:case="''READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/></p>  
+    </th:block>
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupUpdatedDateTitle},${threadMember.creationDate})"/>
+    <div th:if="${nbrWorkgroupsUpdated != 0}">
+    <th:block data-th-replace="layout :: infoStandardArea(#{nbrWorkgoups},${nbrWorkgroupsUpdated})"/>
+      <th:block data-th-utext="#{nestedWorkGroupsList}"/>
+      <ul>
+        <li  th:each="member : ${nestedMembers}">
+              <th:block data-th-utext="${member.node.name}"/>
+        </li>
+        <span th:if="${nbrWorkgroupsUpdated > 3}">
+             <li>...</li>
+        </span>
+      </ul>  
+    </div>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',messages_french='workGroupUpdatedDateTitle = Date de la mise à jour
+mainMsg = Vos droits sur le DRIVE
+mainMsgNext = et dans ses WorkGroups contenus ont été mis à jour
+mainMsgNextBy= par <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Vos droits sur le DRIVE {0} ont été mis à jour
+driveRight = Droit sur le DRIVE
+workGroupRight =  Droit sur le groupe de travail
+workGroupNameTitle = Nom du DRIVE
+nestedWorkGroupsList = Liste des workgoups
+nbrWorkgoups = Nombre de groupe de travail mis à jours',messages_english='workGroupUpdatedDateTitle = Updated date
+mainMsg = Your rights on the DRIVE 
+mainMsgNext= and workgroups inside it, have been updated
+mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Your rights on the DRIVE {0} was updated.
+driveRight = Drive right
+workGroupRight = Workgroup right
+workGroupNameTitle = Drive Name
+nestedWorkGroupsList = Workgroups list
+nbrWorkgoups = Number of updated workGroups',messages_russian='workGroupUpdatedDateTitle = Updated date
+mainMsg = Your rights on the DRIVE 
+mainMsgNext= and workgroups inside it, have been updated
+mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Your rights on the DRIVE {0} was updated.
+driveRight = Drive right
+workGroupRight = Workgroup right
+workGroupNameTitle = Drive Name
+nestedWorkGroupsList = Workgroups list
+nbrWorkgoups = Number of updated workGroups' WHERE id=35;
+
+
+--DRIVE warn deleted member
+UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span th:if="${owner.firstName} !=null AND ${owner.lastName} !=null" data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
+          <span th:if="${owner.firstName} ==null OR ${owner.lastName} ==null" data-th-utext="#{simpleMsg(${workGroupName})}"></span>
+            
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',messages_french='subject = Les accès au drive {0} et à ses workgroups vous ont été retirés.
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a retiré du drive <b>{2}</b>
+simpleMsg = Les accès au drive <b>{0}</b> vous ont été retirés.
+workGroupNameTitle = Nom du Drive',messages_english='subject = Your access to the drive {0}  and its workgroups was withdrawn
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the drive  <b>{2}</b>
+simpleMsg =  Your access to the drive <b>{0}</b> was withdrawn.     
+workGroupNameTitle = Drive Name',messages_russian='subject = Your access to the drive {0}  and its workgroups was withdrawn
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the drive  <b>{2}</b>
+simpleMsg =  Your access to the drive <b>{0}</b> was withdrawn.
+workGroupNameTitle = Drive Name' WHERE id=36;
+
+>>>>>>> Init migration script 2.3 to 2.4 and add russian mails to DRIVE
+>>>>>>> Init migration script 2.3 to 2.4 and add russian mails to DRIVE
+>>>>>>> Init migration script 2.3 to 2.4 and add russian mails to DRIVE
+>>>>>>> Init migration script 2.3 to 2.4 and add russian mails to DRIVE
 
 -- End of your requests
 

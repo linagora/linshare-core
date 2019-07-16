@@ -32,4 +32,7 @@ simpleMsg = Les accès au drive <b>{0}</b> vous ont été retirés.
 workGroupNameTitle = Nom du Drive',messages_english='subject = Your access to the drive {0}  and its workgroups was withdrawn
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the drive  <b>{2}</b>
 simpleMsg =  Your access to the drive <b>{0}</b> was withdrawn.     
+workGroupNameTitle = Drive Name',messages_russian='subject = Your access to the drive {0}  and its workgroups was withdrawn
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the drive  <b>{2}</b>
+simpleMsg =  Your access to the drive <b>{0}</b> was withdrawn.
 workGroupNameTitle = Drive Name' WHERE id=36;

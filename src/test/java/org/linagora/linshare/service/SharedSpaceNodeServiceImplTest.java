@@ -185,7 +185,7 @@ public class SharedSpaceNodeServiceImplTest {
 			service.find(authUser, authUser, toDelete.getUuid());
 			Assertions.fail("An exception should be thrown because the node is found.");
 		} catch (BusinessException e) {
-			Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_NOT_FOUND, e.getErrorCode(),
+			Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, e.getErrorCode(),
 					"The node has been found in the data base. but it has not been deleted");
 		}
 		logger.info(LinShareTestConstants.END_TEST);

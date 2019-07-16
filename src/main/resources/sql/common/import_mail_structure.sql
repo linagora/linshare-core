@@ -68,11 +68,11 @@ INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,m
 
 INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,33,33,'','','',NOW(),true,'','dbf1b49a-8389-11e8-a006-77d9edee84a4',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,34,34,'','',NOW(),true,'','16a7001a-ee6d-11e8-bb18-ef4f3a73c249',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,34,34,'','','',NOW(),true,'','16a7001a-ee6d-11e8-bb18-ef4f3a73c249',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,35,35,'','',NOW(),true,'','01acd058-fc92-11e8-b2b3-d7189fc47d83',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,35,35,'','','',NOW(),true,'','01acd058-fc92-11e8-b2b3-d7189fc47d83',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,36,36,'','',NOW(),true,'','a9983e78-ffa9-11e8-b920-7b238822b4bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,36,36,'','','',NOW(),true,'','a9983e78-ffa9-11e8-b920-7b238822b4bb',true);
 
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (1,0,1,1,1,true,'4f3c4723-531e-449b-a1ae-d304fd3d2387');
 

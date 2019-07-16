@@ -56,4 +56,11 @@ subject = You have been added to the drive {0}
 workGroupRight = Default right
 workGroupNameTitle = Drive Name
 nestedWorkGroupsList=You have been automatically added to the following workgroups:
+displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_russian='workGroupCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the drive <br>
+simpleMainMsg = You have been added to the drive
+subject = You have been added to the drive {0}
+workGroupRight = Default right
+workGroupNameTitle = Drive Name
+nestedWorkGroupsList=You have been automatically added to the following workgroups:
 displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role' WHERE id=34;
