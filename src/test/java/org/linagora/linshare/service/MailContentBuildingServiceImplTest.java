@@ -35,8 +35,11 @@ package org.linagora.linshare.service;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -54,16 +57,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml", "classpath:springContext-repository.xml",
 		"classpath:springContext-fongo.xml", "classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-business-service.xml", "classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
-public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class MailContentBuildingServiceImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(MailContentBuildingServiceImplTest.class);
 
@@ -119,7 +124,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 				}
 			}
 		}
-		Assert.assertTrue(findErrors.isEmpty());
+		Assertions.assertTrue(findErrors.isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -148,7 +153,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 				}
 			}
 		}
-		Assert.assertTrue(findErrors.isEmpty());
+		Assertions.assertTrue(findErrors.isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -161,11 +166,11 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	}
 
 	public List<TestMailResult> testMailGenerate(MailContentType type, MailContainer mailContainer) {
-		Assert.assertNotNull(mailContainer);
+		Assertions.assertNotNull(mailContainer);
 		logger.debug("Subject: {}", mailContainer.getSubject());
 		logger.debug("Content: {}", mailContainer.getContent());
-		Assert.assertNotNull(mailContainer.getSubject());
-		Assert.assertNotNull(mailContainer.getContent());
+		Assertions.assertNotNull(mailContainer.getSubject());
+		Assertions.assertNotNull(mailContainer.getContent());
 		List<TestMailResult> findErrors = Lists.newArrayList();
 		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getSubject()));
 		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getContent()));

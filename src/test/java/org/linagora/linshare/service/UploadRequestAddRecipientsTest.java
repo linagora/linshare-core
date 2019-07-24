@@ -37,10 +37,13 @@ package org.linagora.linshare.service;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -58,10 +61,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Sql("/import-tests-upload-request-add-recipients.sql")
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -73,7 +80,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
-public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class UploadRequestAddRecipientsTest {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestAddRecipientsTest.class);
 
@@ -102,10 +109,9 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-upload-request-add-recipients.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
@@ -117,7 +123,7 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -128,14 +134,14 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 	public void addNewRecipientInRestrictedMode() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<UploadRequestGroup> uploadRequestGroups = uploadRequestGroupService.findAll(john, john, null);
-		Assert.assertEquals(uploadRequestGroups.size(), 3);
+		Assertions.assertEquals(uploadRequestGroups.size(), 3);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroups.get(0);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		List<ContactDto> recipients = Lists.newArrayList();
 		recipients.add(addToList("amy@mail.test"));
 		recipients.add(addToList("peter@mail.test"));
 		uploadRequestGroup = uploadRequestGroupService.addNewRecipients(john, john, uploadRequestGroup, recipients);
-		Assert.assertEquals(uploadRequestGroup.getUploadRequests().size(), 3);
+		Assertions.assertEquals(uploadRequestGroup.getUploadRequests().size(), 3);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -143,19 +149,19 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 	public void addNewRecipientInGroupedMode() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<UploadRequestGroup> uploadRequestGroups = uploadRequestGroupService.findAll(jane, jane, null);
-		Assert.assertEquals(uploadRequestGroups.size(), 1);
+		Assertions.assertEquals(uploadRequestGroups.size(), 1);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroups.get(0);
-		Assert.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1);
+		Assertions.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Set<UploadRequestUrl> uploadRequestUrls = uploadRequest.getUploadRequestURLs();
-		Assert.assertEquals(uploadRequestUrls.size(), 0);
+		Assertions.assertEquals(uploadRequestUrls.size(), 0);
 		List<ContactDto> recipients = Lists.newArrayList();
 		recipients.add(addToList("amy@mail.test"));
 		recipients.add(addToList("peter@mail.test"));
 		uploadRequestGroup = uploadRequestGroupService.addNewRecipients(jane, jane, uploadRequestGroup, recipients);
 		Set<UploadRequestUrl> requestUrls = uploadRequest.getUploadRequestURLs();
-		Assert.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1);
-		Assert.assertEquals(requestUrls.size(), 2);
+		Assertions.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1);
+		Assertions.assertEquals(requestUrls.size(), 2);
 	}
 
 	public ContactDto addToList(String mail) {

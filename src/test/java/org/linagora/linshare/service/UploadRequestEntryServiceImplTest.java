@@ -39,13 +39,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+import javax.transaction.Transactional;
+
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -73,10 +74,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Sql({"/import-tests-default-domain-quotas.sql",
+	"/import-tests-upload-request.sql",
+	"/import-tests-quota-other.sql"})
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -88,7 +95,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
-public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class UploadRequestEntryServiceImplTest {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestEntryServiceImplTest.class);
 
 	@Qualifier("userRepository")
@@ -148,12 +155,9 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
-		this.executeSqlScript("import-tests-upload-request.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
@@ -165,7 +169,7 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 		// UPLOAD REQUEST CREATE
 		ure.setCanClose(true);
 		ure.setMaxDepositSize((long) 100);
-		ure.setMaxFileCount(new Integer(3));
+		ure.setMaxFileCount(Integer.valueOf(3));
 		ure.setMaxFileSize((long) 50);
 		ure.setStatus(UploadRequestStatus.CREATED);
 		ure.setExpiryDate(new Date());
@@ -180,15 +184,12 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
-
-	@Rule
-	public ExpectedException expectedEx = ExpectedException.none();
 
 	@Test
 	public void testUploadRequestCreateDocumentEntry() throws BusinessException, IOException {
@@ -197,7 +198,7 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 		IOUtils.transferTo(stream, tempFile);
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				uploadRequest.getUploadRequestURLs().iterator().next());
-		Assert.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
+		Assertions.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
 		Document aDocument = uploadRequestEntry.getDocument();
 		uploadRequestEntryRepository.delete(uploadRequestEntry);
 		jane.getEntries().clear();
@@ -211,16 +212,16 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 
 	@Test
 	public void deleteUploadRequestEntryFail() throws BusinessException, IOException {
-		expectedEx.expect(BusinessException.class);
-		expectedEx.expectMessage("Cannot delete file when upload request is not closed or archived");
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				uploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
-		Assert.assertNotNull(entry);
-		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
-		uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
+		Assertions.assertNotNull(entry);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
+		});
+		Assertions.assertEquals("Cannot delete file when upload request is not closed or archived", exception.getMessage());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -231,11 +232,11 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				uploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
-		Assert.assertNotNull(entry);
+		Assertions.assertNotNull(entry);
 		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
 		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		UploadRequestEntry deletedEntry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
-		Assert.assertNull(deletedEntry);
+		Assertions.assertNull(deletedEntry);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

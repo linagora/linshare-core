@@ -35,19 +35,26 @@ package org.linagora.linshare.service;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.impl.JwtServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import io.jsonwebtoken.Claims;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -60,7 +67,9 @@ import io.jsonwebtoken.Claims;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml" })
-public class JwtServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class JwtServiceImplTest {
+
+	private static final Logger logger = LoggerFactory.getLogger(GroupPatternServiceImplTest.class);
 
 	@Autowired
 	private JwtServiceImpl jwtService;
@@ -73,7 +82,7 @@ public class JwtServiceImplTest extends AbstractTransactionalJUnit4SpringContext
 
 	private User jane;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		// this.executeSqlScript("import-tests-quota.sql", false);

@@ -41,11 +41,13 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.objects.MailContainer;
@@ -56,16 +58,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-test.xml"
 		})
-public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class MailNotifierServiceImplTest {
 	private static Logger logger = LoggerFactory.getLogger(MailNotifierServiceImplTest.class);
 
 	@Autowired
@@ -79,8 +83,8 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 		super();
 		wiser = new Wiser(2525);
 	}
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		mailNotifierService.setHost("localhost");
@@ -88,7 +92,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.END_SETUP);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
         wiser.stop();
@@ -126,7 +130,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
             assertEquals("'ReplyTo' address did not match", fromUser,
                     msg.getReplyTo()[0].toString());
         }else {
-        	Assert.fail();
+        	Assertions.fail();
         }
 
         mailNotifierService.sendNotification(fromDomain, fromUser, recipient, subject, "<span>htmlContent</span>", null,null, null);
@@ -144,7 +148,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
                     msg.getReplyTo()[0].toString());
         }else {
         	logger.error("No mail received");
-        	Assert.fail();
+        	Assertions.fail();
         }
 		logger.debug(LinShareTestConstants.END_TEST);
     }
@@ -198,7 +202,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
             
         }else {
         	logger.error("No mail received");
-        	Assert.fail();
+        	Assertions.fail();
         }
         
         mailContainerWithRecipientList.get(0).setReplyTo(fromUser);
@@ -229,7 +233,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
                     msg.getReplyTo()[0].toString());
         }else {
         	logger.error("No mail received");
-        	Assert.fail();
+        	Assertions.fail();
         }
 		logger.debug(LinShareTestConstants.END_TEST);
     }

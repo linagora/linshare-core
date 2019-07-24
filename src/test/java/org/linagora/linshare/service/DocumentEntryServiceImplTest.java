@@ -43,11 +43,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
@@ -77,8 +80,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Sql({"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql"})
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -92,7 +100,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
 		})
-public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
+public class DocumentEntryServiceImplTest {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(DocumentEntryServiceImplTest.class);
@@ -129,10 +137,9 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	private LoadingServiceTestDatas datas;
 
 	private static final String EXCEPTION_GET_MESSAGE = "You are not authorized to get this entry.";
-	@Before
+
+	@BeforeEach
 	public void setUp() throws Exception {
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
@@ -142,7 +149,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -156,7 +163,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
-		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
+		Assertions.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
 		Document aDocument = aDocumentEntry.getDocument();
 		documentEntryRepository.delete(aDocumentEntry);
 		jane.getEntries().clear();
@@ -218,7 +225,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		List<DocumentEntry> documents = documentEntryService.findAll(actor, owner);
-		Assert.assertTrue(documents.contains(aDocumentEntry));
+		Assertions.assertTrue(documents.contains(aDocumentEntry));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -239,7 +246,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		}
 		try {
 			documentEntryService.delete(actor, actor, aDocumentEntry.getUuid());
-			Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);
+			Assertions.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);
 		} catch (BusinessException e) {
 			assertFalse(
 					"The user should have access to this resource. This exception must not be thrown " + e.getMessage(),
@@ -290,7 +297,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		}
 		try {
 			documentEntryService.update(actor, actor, aDocumentEntry.getUuid(), tempFile, "New file Name");
-			Assert.assertTrue(
+			Assertions.assertTrue(
 					"New file Name".equals(documentEntryRepository.findById(aDocumentEntry.getUuid()).getName()));
 		} catch (BusinessException e) {
 			assertFalse(

@@ -37,10 +37,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
@@ -50,10 +53,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -63,8 +70,10 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
-public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
-	
+public class UserProviderServiceImplTest {
+
+	private static final Logger logger = LoggerFactory.getLogger(UserProviderServiceImplTest.class);
+
 	@SuppressWarnings("unused")
 	private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_LDAP_DE_TEST2";
@@ -81,13 +90,13 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@Autowired
 	private AccountService accountService;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -103,7 +112,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 			ldapConnectionService.create(ldapconnexion);
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't create connection.");
+			Assertions.fail("Can't create connection.");
 		}
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
@@ -126,7 +135,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 			userProviderService.createDomainPattern(actor, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't create domain pattern.");
+			Assertions.fail("Can't create domain pattern.");
 		}
 		logger.debug("Current pattern object: " + domainPattern.toString());
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -141,7 +150,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 			ldapConnectionService.create(ldapconnexion);
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't create connection.");
+			Assertions.fail("Can't create connection.");
 		}
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
@@ -150,7 +159,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 			ldapConnectionService.delete(ldapconnexion.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't delete connection.");
+			Assertions.fail("Can't delete connection.");
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 
@@ -170,7 +179,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 			domainPattern = userProviderService.createDomainPattern(actor, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't create pattern.");
+			Assertions.fail("Can't create pattern.");
 		}
 		logger.debug("Current pattern object: " + domainPattern.toString());
 
@@ -179,7 +188,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		} catch (BusinessException e) {
 			logger.error(e.toString());
 			e.printStackTrace();
-			Assert.fail("Can't delete pattern.");
+			Assertions.fail("Can't delete pattern.");
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 
@@ -196,7 +205,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 			domainPattern = listD.get(0);
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't retrieve pattern.");
+			Assertions.fail("Can't retrieve pattern.");
 		}
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
@@ -205,7 +214,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 			userProviderService.updateDomainPattern(actor, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't update pattern.");
+			Assertions.fail("Can't update pattern.");
 		}
 
 		logger.debug(LinShareTestConstants.END_TEST);

@@ -36,10 +36,13 @@ package org.linagora.linshare.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Internal;
@@ -47,8 +50,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DomainPolicyRepository;
-import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.repository.hibernate.RecipientFavouriteRepositoryImpl;
 import org.slf4j.Logger;
@@ -56,27 +57,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations={"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests{
+public class RecipientFavouriteRepositoryImplTest {
 	private static Logger logger = LoggerFactory.getLogger(RecipientFavouriteRepositoryImplTest.class);
 
 	@Qualifier("recipientFavouriteRepository")
 	@Autowired
 	private RecipientFavouriteRepositoryImpl favouriteRepository;	
-	
-	@Autowired
-	private FunctionalityRepository functionalityRepository;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
-	
-	@Autowired
-	private DomainPolicyRepository domainPolicyRepository;
-	
+
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
@@ -98,7 +95,7 @@ public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJ
 		return user3;
 	}
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 
@@ -126,7 +123,7 @@ public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJ
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 	
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		userRepository.delete(user1);
@@ -151,8 +148,8 @@ public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJ
 
 		favouriteRepository.incAndCreate(owner, recipients);
 		
-		Assert.assertTrue(favouriteRepository.existFavourite(owner, user2));
-		Assert.assertTrue(favouriteRepository.existFavourite(owner, user3));
+		Assertions.assertTrue(favouriteRepository.existFavourite(owner, user2));
+		Assertions.assertTrue(favouriteRepository.existFavourite(owner, user3));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -179,11 +176,11 @@ public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJ
 		favouriteRepository.incAndCreate(owner, user3);
 
 		elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeight(owner);
-		Assert.assertTrue(elementsOrderByWeightDesc.get(1).equals(user3));
-		Assert.assertTrue(elementsOrderByWeightDesc.get(0).equals(user2));
+		Assertions.assertTrue(elementsOrderByWeightDesc.get(1).equals(user3));
+		Assertions.assertTrue(elementsOrderByWeightDesc.get(0).equals(user2));
 		List<String> recipientsOrderedByWeightDesc = favouriteRepository.reorderElementsByWeightDesc(elementsOrderByWeightDesc, owner); 
-		Assert.assertTrue(recipientsOrderedByWeightDesc.get(1).equals(user2));
-		Assert.assertTrue(recipientsOrderedByWeightDesc.get(0).equals(user3));
+		Assertions.assertTrue(recipientsOrderedByWeightDesc.get(1).equals(user2));
+		Assertions.assertTrue(recipientsOrderedByWeightDesc.get(0).equals(user3));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -206,12 +203,12 @@ public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJ
 		favouriteRepository.incAndCreate(owner, user3);
 		
 		List<String> recipientsOrderedByWeightDesc = favouriteRepository.reorderElementsByWeightDesc(recipients, owner);
-		Assert.assertTrue(recipientsOrderedByWeightDesc.get(0).equals(user3));
-		Assert.assertTrue(recipientsOrderedByWeightDesc.get(1).equals(user2));
+		Assertions.assertTrue(recipientsOrderedByWeightDesc.get(0).equals(user3));
+		Assertions.assertTrue(recipientsOrderedByWeightDesc.get(1).equals(user2));
 		
 		List<String> elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeightDesc(owner);
-		Assert.assertTrue(elementsOrderByWeightDesc.get(0).equals(user3));
-		Assert.assertTrue(elementsOrderByWeightDesc.get(1).equals(user2));
+		Assertions.assertTrue(elementsOrderByWeightDesc.get(0).equals(user3));
+		Assertions.assertTrue(elementsOrderByWeightDesc.get(1).equals(user2));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -232,8 +229,8 @@ public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJ
 		favouriteRepository.incAndCreate(owner, recipients);
 		
 		favouriteRepository.incAndCreate(owner, user3);
-		Assert.assertFalse(favouriteRepository.findMatchElementsOrderByWeight( getUser3().getMail(), owner).isEmpty());
-		Assert.assertTrue(favouriteRepository.findMatchElementsOrderByWeight( "failMail@mail.com", owner).isEmpty());
+		Assertions.assertFalse(favouriteRepository.findMatchElementsOrderByWeight( getUser3().getMail(), owner).isEmpty());
+		Assertions.assertTrue(favouriteRepository.findMatchElementsOrderByWeight( "failMail@mail.com", owner).isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -250,9 +247,9 @@ public class RecipientFavouriteRepositoryImplTest extends AbstractTransactionalJ
 
 		favouriteRepository.incAndCreate(owner, recipients);
 		
-		Assert.assertFalse(favouriteRepository.findMatchElementsOrderByWeight(getUser3().getMail(), owner).isEmpty());
+		Assertions.assertFalse(favouriteRepository.findMatchElementsOrderByWeight(getUser3().getMail(), owner).isEmpty());
 		favouriteRepository.deleteFavoritesOfUser(owner);
-		Assert.assertTrue(favouriteRepository.findMatchElementsOrderByWeight( getUser3().getMail(), owner).isEmpty());
+		Assertions.assertTrue(favouriteRepository.findMatchElementsOrderByWeight( getUser3().getMail(), owner).isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

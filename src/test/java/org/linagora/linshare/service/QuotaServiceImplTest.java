@@ -37,8 +37,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.GregorianCalendar;
 
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -48,11 +51,19 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.QuotaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Sql({"/import-tests-stat.sql",
+"/import-tests-operationHistory.sql",
+"/import-tests-quota.sql"})
+@Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -65,7 +76,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml" })
-public class QuotaServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class QuotaServiceImplTest {
+
+	private static final Logger logger = LoggerFactory.getLogger(GroupPatternServiceImplTest.class);
 
 	@Autowired
 	QuotaService quotaService;
@@ -84,12 +97,9 @@ public class QuotaServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 	LoadingServiceTestDatas datas;
 	private User jane;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-stat.sql", false);
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
-		this.executeSqlScript("import-tests-quota.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();

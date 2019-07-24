@@ -38,10 +38,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.MailContentType;
@@ -58,16 +61,17 @@ import org.linagora.linshare.core.repository.MailContentRepository;
 import org.linagora.linshare.core.repository.MailFooterLangRepository;
 import org.linagora.linshare.core.repository.MailFooterRepository;
 import org.linagora.linshare.core.repository.MailLayoutRepository;
-import org.linagora.linshare.core.service.MailConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -77,13 +81,10 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
-public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class MailConfigServiceImplTest {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(FunctionalityServiceImplTest.class);
-
-	@Autowired
-	private MailConfigService mailConfigService;
 
 	@Autowired
 	private MailContentRepository mailContentRepository;
@@ -112,7 +113,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 
 	private AbstractDomain rootDomain;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		rootDomain = abstractDomainRepository
@@ -120,7 +121,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -138,7 +139,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		 * Validate mail contents
 		 */
 		Set<MailContentLang> contents = current.getMailContentLangs();
-		Assert.assertNotNull(contents);
+		Assertions.assertNotNull(contents);
 		/*
 		 * iterate over mailcontent langs, searching for all <Language,
 		 * MailContentType> pair
@@ -152,10 +153,8 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 							&& c.getLanguage() == lang.toInt())
 						found = true;
 				}
-				Assert.assertTrue(
-						"Missing MailContentLang in root domain mail config : lang="
-								+ lang.toString() + ";type=" + type.toString(),
-						found);
+				Assertions.assertTrue(found, "Missing MailContentLang in root domain mail config : lang="
+						+ lang.toString() + ";type=" + type.toString());
 			}
 		}
 
@@ -163,44 +162,43 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		 * Validate mail footers
 		 */
 		Map<Integer, MailFooterLang> footers = current.getMailFooters();
-		Assert.assertNotNull(current.getMailFooters());
+		Assertions.assertNotNull(current.getMailFooters());
 		for (Language lang : supportedLangs) {
-			Assert.assertNotNull(
-					"Missing MailFooter in root domain mail config : lang="
-							+ lang.toString(), footers.get(lang.toInt()));
+			Assertions.assertNotNull(footers.get(lang.toInt()), "Missing MailFooter in root domain mail config : lang="
+					+ lang.toString());
 		}
 
-		Assert.assertNotNull(current.getMailLayoutHtml());
+		Assertions.assertNotNull(current.getMailLayoutHtml());
 	}
 
 	@Test
 	public void testMailLayoutCount() {
 		List<MailLayout> findAll = mailLayoutRepository.findAll();
-		Assert.assertEquals(1, findAll.size());
+		Assertions.assertEquals(1, findAll.size());
 	}
 
 	@Test
 	public void testMailContentCount() {
 		List<MailContent> findAll = mailContentRepository.findAll();
-		Assert.assertEquals(NB_CONTENT, findAll.size());
+		Assertions.assertEquals(NB_CONTENT, findAll.size());
 	}
 
 	@Test
 	public void testMailContentLangCount() {
 		List<MailContentLang> findAll = mailContentLangRepository.findAll();
-		Assert.assertEquals(NB_LANG * NB_CONTENT, findAll.size());
+		Assertions.assertEquals(NB_LANG * NB_CONTENT, findAll.size());
 	}
 
 	@Test
 	public void testMailFooterCount() {
 		List<MailFooter> findAll = mailFooterRepository.findAll();
-		Assert.assertEquals(1, findAll.size());
+		Assertions.assertEquals(1, findAll.size());
 	}
 
 	@Test
 	public void testMailFooterLangCount() {
 		List<MailFooterLang> findAll = mailFooterLangRepository.findAll();
-		Assert.assertEquals(NB_LANG, findAll.size());
+		Assertions.assertEquals(NB_LANG, findAll.size());
 	}
 
 	private List<MailContentType> getMailContentTypes() {

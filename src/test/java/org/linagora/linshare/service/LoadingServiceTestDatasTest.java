@@ -33,9 +33,13 @@
  */
 package org.linagora.linshare.service;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -46,14 +50,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.util.Assert;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-test.xml" })
-public class LoadingServiceTestDatasTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class LoadingServiceTestDatasTest {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(LoadingServiceTestDatasTest.class);
@@ -64,14 +68,14 @@ public class LoadingServiceTestDatasTest extends
 
 	private LoadingServiceTestDatas datas;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 
@@ -84,9 +88,9 @@ public class LoadingServiceTestDatasTest extends
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		Account a = datas.getUser1();
-		Assert.notNull(a);
+		Assertions.assertNotNull(a);
 		Account b = datas.getUser2();
-		Assert.notNull(b);
+		Assertions.assertNotNull(b);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

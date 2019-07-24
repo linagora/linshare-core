@@ -39,11 +39,14 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.transaction.Transactional;
+
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -65,10 +68,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Sql({"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql",
+	"/import-tests-upload-request.sql"})
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -80,7 +89,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
-public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class UploadRequestUpdateStatusTest {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTestV2.class);
 
@@ -117,12 +126,9 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
-		this.executeSqlScript("import-tests-upload-request.sql", false);
 		wiser.start();
 		// UPLOAD REQUEST CREATE
 		Calendar calendar = Calendar.getInstance();
@@ -130,7 +136,7 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		Date expiryDate = calendar.getTime();
 		referenceUploadRequest.setCanClose(true);
 		referenceUploadRequest.setMaxDepositSize((long) 100);
-		referenceUploadRequest.setMaxFileCount(new Integer(3));
+		referenceUploadRequest.setMaxFileCount(Integer.valueOf(3));
 		referenceUploadRequest.setMaxFileSize((long) 5000000);
 		referenceUploadRequest.setStatus(UploadRequestStatus.CREATED);
 		referenceUploadRequest.setExpiryDate(expiryDate);
@@ -142,7 +148,7 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -158,8 +164,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assert.assertNotNull("This initial upload request is null", uploadRequest);
-		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
+		Assertions.assertNotNull(uploadRequest, "This initial upload request is null");
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus(), "Wrong upload Request status");
 		//UploadFileIntoUploadRequest : STATUS ENABLED
 		UploadRequestUrl uploadRequestUrl = uploadRequest.getUploadRequestURLs().iterator().next();
 		uploadRequestUrlService.createUploadRequestEntry(uploadRequestUrl.getUuid(), tempFile, fileName, "");
@@ -181,8 +187,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assert.assertNotNull("This initial upload request is null", uploadRequest);
-		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
+		Assertions.assertNotNull(uploadRequest, "This initial upload request is null");
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus(), "Wrong upload Request status");
 		//UploadFileIntoUploadRequest : STATUS ENABLED
 		UploadRequestUrl uploadRequestUrl = uploadRequest.getUploadRequestURLs().iterator().next();
 		uploadRequestUrlService.createUploadRequestEntry(uploadRequestUrl.getUuid(), tempFile, fileName, "");
@@ -204,8 +210,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assert.assertNotNull("This initial upload request is null", uploadRequest);
-		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
+		Assertions.assertNotNull(uploadRequest, "This initial upload request is null");
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus(), "Wrong upload Request status");
 		//UploadFileIntoUploadRequest : STATUS ENABLED
 		UploadRequestUrl uploadRequestUrl = uploadRequest.getUploadRequestURLs().iterator().next();
 		uploadRequestUrlService.createUploadRequestEntry(uploadRequestUrl.getUuid(), tempFile, fileName, "");
@@ -225,8 +231,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assert.assertNotNull("This initial upload request is null", uploadRequest);
-		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
+		Assertions.assertNotNull(uploadRequest, "This initial upload request is null");
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus(), "Wrong upload Request status");
 		//UploadFileIntoUploadRequest : STATUS ENABLED
 		UploadRequestUrl uploadRequestUrl = uploadRequest.getUploadRequestURLs().iterator().next();
 		uploadRequestUrlService.createUploadRequestEntry(uploadRequestUrl.getUuid(), tempFile, fileName, "");
@@ -246,8 +252,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assert.assertNotNull("This initial upload request is null", uploadRequest);
-		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
+		Assertions.assertNotNull(uploadRequest, "This initial upload request is null");
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus(), "Wrong upload Request status");
 		//UploadFileIntoUploadRequest : STATUS ENABLED
 		UploadRequestUrl uploadRequestUrl = uploadRequest.getUploadRequestURLs().iterator().next();
 		uploadRequestUrlService.createUploadRequestEntry(uploadRequestUrl.getUuid(), tempFile, fileName, "");
@@ -260,6 +266,6 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 
 	private void checkUpdateStatus(Account actor, UploadRequest uploadReq, UploadRequestStatus requestStatus, boolean copy) {
 		uploadRequestService.updateStatus(actor, actor, uploadReq.getUuid(), requestStatus, copy);
-		Assert.assertEquals("Wrong upload Request status", requestStatus, uploadReq.getStatus());
+		Assertions.assertEquals(requestStatus, uploadReq.getStatus(), "Wrong upload Request status");
 	}
 }

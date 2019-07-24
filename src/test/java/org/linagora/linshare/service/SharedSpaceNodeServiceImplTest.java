@@ -36,11 +36,13 @@ package org.linagora.linshare.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -58,8 +60,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Sql({"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql"})
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -71,7 +78,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class SharedSpaceNodeServiceImplTest {
 	private static Logger logger = LoggerFactory.getLogger(SharedSpaceNodeServiceImplTest.class);
 
 	@Autowired
@@ -106,11 +113,9 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepo);
 		datas.loadUsers();
@@ -122,7 +127,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -132,11 +137,11 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void create() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Assert.assertNotNull("node not created", sharedSpaceNodes);
+		Assertions.assertNotNull(sharedSpaceNodes, "node not created");
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
-		Assert.assertNotNull("node not created", expectedNode);
-		Assert.assertEquals(expectedNode.getUuid(), node.getUuid());
+		Assertions.assertNotNull(expectedNode, "node not created");
+		Assertions.assertEquals(expectedNode.getUuid(), node.getUuid());
 		Assertions.assertNotNull(node.getQuotaUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -145,7 +150,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	public void find() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpaceNode toFindNode = service.find(authUser, authUser, sharedSpaceNodes.get(0).getUuid());
-		Assert.assertNotNull("Node has not been found.", toFindNode);
+		Assertions.assertNotNull(toFindNode, "Node has not been found.");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -158,10 +163,10 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		service.delete(authUser, authUser, toDelete);
 		try {
 			service.find(authUser, authUser, toDelete.getUuid());
-			Assert.fail("An exception should be thrown because the node is found.");
+			Assertions.fail("An exception should be thrown because the node is found.");
 		} catch (BusinessException e) {
-			Assert.assertEquals("The node has been found in the data base. but it has not been deleted",
-					BusinessErrorCode.WORK_GROUP_NOT_FOUND, e.getErrorCode());
+			Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_NOT_FOUND, e.getErrorCode(),
+					"The node has been found in the data base. but it has not been deleted");
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -176,8 +181,8 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		SharedSpaceNode updatedNode = new SharedSpaceNode("nodeName Updated", null, NodeType.WORK_GROUP, param);
 		updatedNode.setUuid(createdNodeToUpdate.getUuid());
 		service.update(authUser, authUser, updatedNode);
-		Assert.assertEquals("The shared space node is not updated.", updatedNode.getName(),
-				service.update(authUser, authUser, updatedNode).getName());
+		Assertions.assertEquals(updatedNode.getName(),
+				service.update(authUser, authUser, updatedNode).getName(), "The shared space node is not updated.");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -204,7 +209,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		List<SharedSpaceNode> foundNodes = service.findAll(root, root);
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
 		service.create(authUser, authUser, node);
-		Assert.assertEquals(foundNodes.size() + 1, service.findAll(root, root).size());
+		Assertions.assertEquals(foundNodes.size() + 1, service.findAll(root, root).size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

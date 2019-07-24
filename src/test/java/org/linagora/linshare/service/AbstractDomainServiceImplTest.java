@@ -39,10 +39,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -70,8 +73,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Sql({"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql"})
+@Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -86,7 +94,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
 		})
-public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
+public class AbstractDomainServiceImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(AbstractDomainServiceImplTest.class);
 
@@ -126,11 +134,9 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 
 	private WelcomeMessages current;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
@@ -154,7 +160,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		logger.debug("Current pattern object: " + domainPattern.toString());
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -185,7 +191,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 			abstractDomainService.markToPurge(actor, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't create top domain.");
+			Assertions.fail("Can't create top domain.");
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -215,14 +221,14 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 			abstractDomainService.createTopDomain(actor, topDomain);
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't create domain.");
+			Assertions.fail("Can't create domain.");
 		}
 		
 		try {
 			abstractDomainService.markToPurge(actor, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't delete top domain.");
+			Assertions.fail("Can't delete top domain.");
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -252,17 +258,17 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 			abstractDomainService.createTopDomain(actor, topDomain);
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't create domain.");
+			Assertions.fail("Can't create domain.");
 		}
 		List<AbstractDomain> abstractDomainsService = abstractDomainService.findAll(actor);
-		Assert.assertEquals(initSize + 1, abstractDomainsService.size());
+		Assertions.assertEquals(initSize + 1, abstractDomainsService.size());
 		try {
 			abstractDomainService.markToPurge(actor, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail("Can't delete top domain.");
+			Assertions.fail("Can't delete top domain.");
 		}
-		Assert.assertEquals(initSize, abstractDomainService.findAll(actor).size());
+		Assertions.assertEquals(initSize, abstractDomainService.findAll(actor).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -270,7 +276,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	public void testPurgeDomainWithFunctionalities() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
-		Assert.assertNotNull(subDomain);
+		Assertions.assertNotNull(subDomain);
 		assertNotNull(subDomain.getFunctionalities());
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		int initSize = abstractDomainService.findAll(actor).size();
@@ -278,9 +284,9 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 			abstractDomainService.markToPurge(actor, subDomain.getUuid());
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail("Can't delete top domain.");
+			Assertions.fail("Can't delete top domain.");
 		}
-		Assert.assertEquals(initSize - 1, abstractDomainService.findAll(actor).size());
+		Assertions.assertEquals(initSize - 1, abstractDomainService.findAll(actor).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

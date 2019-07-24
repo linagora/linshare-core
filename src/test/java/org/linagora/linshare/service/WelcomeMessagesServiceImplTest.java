@@ -36,10 +36,13 @@ package org.linagora.linshare.service;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
@@ -51,8 +54,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -62,8 +67,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
-public class WelcomeMessagesServiceImplTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class WelcomeMessagesServiceImplTest {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(WelcomeMessagesServiceImplTest.class);
@@ -76,7 +80,7 @@ public class WelcomeMessagesServiceImplTest extends
 	@Autowired
 	private RootUserRepository rootUserRepository;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		try {
@@ -89,7 +93,7 @@ public class WelcomeMessagesServiceImplTest extends
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -102,9 +106,9 @@ public class WelcomeMessagesServiceImplTest extends
 
 		try {
 			List<WelcomeMessages> wlcms = welcomeService.findAll(actor, null, false);
-			Assert.assertEquals(1, wlcms.size());
+			Assertions.assertEquals(1, wlcms.size());
 			wlcms = welcomeService.findAll(actor, null, true);
-			Assert.assertEquals(1, wlcms.size());
+			Assertions.assertEquals(1, wlcms.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());
@@ -138,7 +142,7 @@ public class WelcomeMessagesServiceImplTest extends
 			e.printStackTrace();
 			logger.debug(e.getMessage());
 			logger.debug(e.getMessage());
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -153,8 +157,8 @@ public class WelcomeMessagesServiceImplTest extends
 			WelcomeMessages welcm_create = welcomeService.create(actor, welcm,
 					LoadingServiceTestDatas.rootDomainName);
 			logger.debug("Object created.");
-			Assert.assertNotNull(welcm_create);
-			Assert.assertEquals(4, welcm_create.getWelcomeMessagesEntries()
+			Assertions.assertNotNull(welcm_create);
+			Assertions.assertEquals(4, welcm_create.getWelcomeMessagesEntries()
 					.size());
 
 			logger.debug("Deleting the welcome message we just created.");
@@ -165,7 +169,7 @@ public class WelcomeMessagesServiceImplTest extends
 					wlcm_tmp.getUuid());
 			logger.debug("Object deleted.");
 
-			Assert.assertEquals(wlcm_delete, welcm_create);
+			Assertions.assertEquals(wlcm_delete, welcm_create);
 		} catch (Exception e) {
 			logger.debug("FAIL");
 			e.printStackTrace();
@@ -199,22 +203,22 @@ public class WelcomeMessagesServiceImplTest extends
 			}
 			WelcomeMessages wlcm_updated = welcomeService.update(actor, tmp,
 					null);
-			Assert.assertEquals(wlcm_updated.getDescription(),
+			Assertions.assertEquals(wlcm_updated.getDescription(),
 					"a new welcome descreption");
-			Assert.assertEquals(wlcm_updated.getName(), "A new name for tests");
+			Assertions.assertEquals(wlcm_updated.getName(), "A new name for tests");
 			for (WelcomeMessagesEntry wEntry : wlcm_updated
 					.getWelcomeMessagesEntries().values()) {
 				if (wEntry.getLang().toString().equals("ENGLISH"))
-					Assert.assertEquals(wEntry.getValue(), "This is epic!!!");
+					Assertions.assertEquals(wEntry.getValue(), "This is epic!!!");
 				if (wEntry.getLang().toString().equals("FRENCH"))
-					Assert.assertEquals(wEntry.getValue(),
+					Assertions.assertEquals(wEntry.getValue(),
 							"Ceci est un exploit!!!");
 			}
 		} catch (Exception e) {
 			logger.debug("FAIL!");
 			e.printStackTrace();
 			logger.debug(e.getMessage());
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

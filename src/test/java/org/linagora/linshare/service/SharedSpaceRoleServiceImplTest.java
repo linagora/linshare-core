@@ -34,10 +34,14 @@
 package org.linagora.linshare.service;
 
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -52,8 +56,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Sql({"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql"})
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml", 
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -65,7 +74,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SharedSpaceRoleServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class SharedSpaceRoleServiceImplTest {
+
 	private static Logger logger = LoggerFactory.getLogger(SharedSpaceNodeServiceImplTest.class);
 
 	@Autowired
@@ -86,11 +96,9 @@ public class SharedSpaceRoleServiceImplTest extends AbstractTransactionalJUnit4S
 	@Autowired
 	private SharedSpaceRoleService service;
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		datas = new LoadingServiceTestDatas(userRepo);
 		datas.loadUsers();
 		authUser = datas.getRoot();
@@ -98,7 +106,7 @@ public class SharedSpaceRoleServiceImplTest extends AbstractTransactionalJUnit4S
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -108,7 +116,7 @@ public class SharedSpaceRoleServiceImplTest extends AbstractTransactionalJUnit4S
 	public void findByNameDefaultRoles() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpaceRole toFindRole = service.findByName(authUser, authUser, "ADMIN");
-		Assert.assertNotNull("Role has not been found.", toFindRole);
+		Assertions.assertNotNull(toFindRole, "Role has not been found.");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -116,7 +124,7 @@ public class SharedSpaceRoleServiceImplTest extends AbstractTransactionalJUnit4S
 	public void findByUuidDefaultRoles() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpaceRole toFindRole = service.find(authUser, authUser, "234be74d-2966-41c1-9dee-e47c8c63c14e");
-		Assert.assertNotNull("Role has not been found.", toFindRole);
+		Assertions.assertNotNull(toFindRole, "Role has not been found.");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -124,7 +132,7 @@ public class SharedSpaceRoleServiceImplTest extends AbstractTransactionalJUnit4S
 	public void findAllExistingDefaultRoles() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<SharedSpaceRole> toFindRoles = service.findAll(authUser, authUser);
-		Assert.assertNotNull("Roles has not been not found", toFindRoles);
+		Assertions.assertNotNull(toFindRoles, "Roles has not been not found");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

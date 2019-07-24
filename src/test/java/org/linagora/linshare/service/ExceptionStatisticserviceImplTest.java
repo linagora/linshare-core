@@ -40,8 +40,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -53,10 +56,12 @@ import org.linagora.linshare.mongo.repository.ExceptionStatisticMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -66,7 +71,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
-public class ExceptionStatisticserviceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class ExceptionStatisticserviceImplTest {
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -101,7 +106,7 @@ public class ExceptionStatisticserviceImplTest extends AbstractTransactionalJUni
 		beginDate.add(Calendar.DATE, -3);
 		Set<ExceptionStatistic> exceptionStatistics = exceptionStatisticMongoRepository.findBetweenTwoDates(topDomain.getUuid(), exceptionTypes, beginDate.getTime(),
 				new Date(), ExceptionStatisticType.DAILY);
-		Assert.assertEquals(2, exceptionStatistics.size());
+		Assertions.assertEquals(2, exceptionStatistics.size());
 	}
 
 	private ExceptionStatistic newExceptionStatistic(AbstractDomain domain, Date time) {

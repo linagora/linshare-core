@@ -38,9 +38,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.linagora.linshare.core.business.service.VirusScannerBusinessService;
 import org.linagora.linshare.core.business.service.impl.ClamavVirusScannerBusinessServiceImpl;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -57,7 +57,7 @@ public class ClamavVirusScannerServiceImplTest {
 
 	private static String fileNameToCheck;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
@@ -87,7 +87,7 @@ public class ClamavVirusScannerServiceImplTest {
 		} catch (TechnicalException e) {
 			hasFailed = true;
 		}
-		Assert.assertTrue(hasFailed);
+		Assertions.assertTrue(hasFailed);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -98,12 +98,12 @@ public class ClamavVirusScannerServiceImplTest {
 		try{
 
 			boolean flag=virusScannerService.check(this.getClass().getResourceAsStream("/linshare-test.properties"));
-			Assert.assertTrue(flag);
+			Assertions.assertTrue(flag);
 		}catch(TechnicalException co){
 			if(co.getErrorCode().equals(TechnicalErrorCode.VIRUS_SCANNER_IS_DISABLED)){
-				Assert.assertTrue("WARNING ! The virus scan is disabled", true);
+				Assertions.assertTrue(true, "WARNING ! The virus scan is disabled");
 			}else if(co.getErrorCode().equals(TechnicalErrorCode.VIRUS_SCANNER_COMMUNICATION_FAILED)){
-				Assert.assertTrue("WARNING ! The communication to the virus scanner is failed", true);
+				Assertions.assertTrue(true, "WARNING ! The communication to the virus scanner is failed");
 			}
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -117,17 +117,17 @@ public class ClamavVirusScannerServiceImplTest {
 		try{
 			File f = new File(fileNameToCheck);
 			if(!f.exists()){
-				Assert.assertTrue("WARNING you haven't set a correct path to the file to test the anti virus in linshare-test.properties",true);
+				Assertions.assertTrue(true, "WARNING you haven't set a correct path to the file to test the anti virus in linshare-test.properties");
 			}
 
 			boolean flag=virusScannerService.check(f);
-			Assert.assertTrue(flag);
+			Assertions.assertTrue(flag);
 		}catch(TechnicalException co){
 			if(co.getErrorCode().equals(TechnicalErrorCode.VIRUS_SCANNER_IS_DISABLED)){
-				Assert.assertTrue("WARNING ! The virus scan is disabled", true);
+				Assertions.assertTrue(true, "WARNING ! The virus scan is disabled");
 			}else 
 				if(co.getErrorCode().equals(TechnicalErrorCode.VIRUS_SCANNER_COMMUNICATION_FAILED)){
-					Assert.assertTrue("WARNING ! The communication to the virus scanner is failed", true);
+					Assertions.assertTrue(true, "WARNING ! The communication to the virus scanner is failed");
 				}
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -145,7 +145,7 @@ public class ClamavVirusScannerServiceImplTest {
 			if (TechnicalErrorCode.VIRUS_SCANNER_IS_DISABLED.equals(e.getErrorCode()))
 				hasFailed = true;
 		}
-		Assert.assertTrue(hasFailed);	
+		Assertions.assertTrue(hasFailed);	
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
