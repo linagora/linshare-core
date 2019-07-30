@@ -219,7 +219,7 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(mail, "Mail must be set.");
 		if (!actor.hasUploadPropositionRole()) {
-			logger.equals(actor.getAccountRepresentation()
+			logger.error(actor.getAccountRepresentation()
 					+ " is using an unauthorized api");
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to use this method.");
