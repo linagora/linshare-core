@@ -503,7 +503,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return container;
 	}
 
-	@SuppressWarnings("unused")
 	private boolean isDisable(Contact contact, Account sender, MailActivationType type) {
 		AbstractDomain recipientDomain = domainBusinessService.findGuestDomain(sender.getDomain());
 		// guest domain could be inexistent into the database.
