@@ -105,6 +105,11 @@ UPDATE policy SET status = TRUE, default_status = TRUE WHERE id = 305;
 UPDATE policy SET policy = 1 WHERE id = 305;
 UPDATE policy SET system = FALSE WHERE id = 305;
 
+
+--Cancel NOT NULL constraint of document_id and ls_type for upload_request_entry
+ALTER TABLE upload_request_entry ALTER COLUMN ls_type DROP NOT NULL;
+ALTER TABLE upload_request_entry ALTER COLUMN document_id DROP NOT NULL;
+
 -- End of your requests
 
 -- LinShare version

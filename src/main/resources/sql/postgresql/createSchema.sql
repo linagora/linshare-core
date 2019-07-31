@@ -513,12 +513,12 @@ CREATE TABLE upload_request_history (
 CREATE TABLE upload_request_entry (
   entry_id                int8 NOT NULL,
   document_entry_entry_id int8,
-  document_id             int8 NOT NULL,
+  document_id             int8,
   upload_request_url_id   int8 NOT NULL,
   ls_size                 int8 NOT NULL,
   copied                  bool DEFAULT 'false' NOT NULL,
   ciphered                bool NOT NULL,
-  ls_type                 varchar(255) NOT NULL,
+  ls_type                 varchar(255),
   sha256sum               varchar(255),
   PRIMARY KEY (entry_id));
 CREATE TABLE upload_proposition_filter (
