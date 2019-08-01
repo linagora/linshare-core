@@ -34,21 +34,19 @@
 package org.linagora.linshare.core.upgrade.v2_3;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.bson.Document;
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
-import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.repository.ThreadRepository;
-import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
@@ -65,26 +63,14 @@ public class UpgradeDocumentForVersionningImpl extends GenericUpgradeTaskImpl {
 
 	private WorkGroupNodeMongoRepository nodeRepository;
 
-	private final DocumentEntryBusinessService documentEntryBusinessService;
-
-	private ThreadRepository threadRepository;
-
-	private WorkGroupDocumentRevisionService documentRevisionService;
-
 	private MongoTemplate mongoTemplate;
 
 	public UpgradeDocumentForVersionningImpl(AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			WorkGroupNodeMongoRepository nodeRepository,
-			DocumentEntryBusinessService documentEntryBusinessService,
-			ThreadRepository threadRepository,
-			WorkGroupDocumentRevisionService documentRevisionService,
 			MongoTemplate mongoTemplate) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.nodeRepository = nodeRepository;
-		this.documentEntryBusinessService = documentEntryBusinessService;
-		this.threadRepository = threadRepository;
-		this.documentRevisionService = documentRevisionService;
 		this.mongoTemplate = mongoTemplate;
 	}
 
@@ -110,15 +96,33 @@ public class UpgradeDocumentForVersionningImpl extends GenericUpgradeTaskImpl {
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		WorkGroupDocument node = (WorkGroupDocument) nodeRepository.findByUuid(identifier);
-		BatchResultContext<WorkGroupDocument> res = new BatchResultContext<WorkGroupDocument>(node);
-		WorkGroup workGroup = threadRepository.findByLsUuid(node.getWorkGroup());
-		Account actor = accountRepository.findByLsUuid(node.getLastAuthor().getUuid());
-		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) documentEntryBusinessService.copy(actor,
-				workGroup, node, node.getDocumentUuid(), node.getName(), node.getCiphered());
-		documentRevisionService.updateDocument(actor, actor, workGroup, revision);
-		node.setDocumentUuid(null);
-		nodeRepository.save(node);
+		WorkGroupDocument wkDocument = (WorkGroupDocument) nodeRepository.findByUuid(identifier);
+		BatchResultContext<WorkGroupDocument> res = new BatchResultContext<WorkGroupDocument>(wkDocument);
+
+		WorkGroupDocumentRevision revision = new WorkGroupDocumentRevision();
+		revision.setUuid(UUID.randomUUID().toString());
+		revision.setName(wkDocument.getName());
+		revision.setParent(wkDocument.getUuid());
+		revision.setWorkGroup(wkDocument.getWorkGroup());
+		revision.setPath(null);
+		revision.setSize(wkDocument.getSize());
+		revision.setMimeType(wkDocument.getMimeType());
+		revision.setDocumentUuid(wkDocument.getUuid());
+		revision.setSha256sum(wkDocument.getSha256sum());
+		revision.setHasThumbnail(wkDocument.getHasThumbnail());
+		revision.setNodeType(WorkGroupNodeType.DOCUMENT_REVISION);
+		revision.setHasRevision(false);
+		revision.setLastRevision(0L);
+		revision.setCreationDate(wkDocument.getCreationDate());
+		revision.setModificationDate(wkDocument.getModificationDate());
+		revision.setUploadDate(wkDocument.getUploadDate());
+		revision.setPathFromParent(wkDocument);
+		revision.setCiphered(wkDocument.getCiphered());
+		revision.setLastAuthor(wkDocument.getLastAuthor());
+
+		revision = nodeRepository.insert(revision);
+		wkDocument.setDocumentUuid(null);
+		nodeRepository.save(wkDocument);
 		res.setProcessed(true);
 		return res;
 	}
@@ -143,4 +147,5 @@ public class UpgradeDocumentForVersionningImpl extends GenericUpgradeTaskImpl {
 		logger.error("Error occured while updating the document structure for versioning : " + resource
 				+ ". BatchBusinessException", exception);
 	}
+
 }
