@@ -34,26 +34,41 @@
 
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.user.MimeTypeFacade;
-import org.linagora.linshare.webservice.userv1.MimeTypeRestService;
+import org.linagora.linshare.webservice.userv2.MimeTypeRestService;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 //Class created to generate the swagger documentation of v1 RestServices
 @Path("/mime_types")
 @Api(value = "/rest/user/v2/mime_types", description = "Mime types service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MimeTypeRestServiceImpl extends org.linagora.linshare.webservice.userv1.impl.MimeTypeRestServiceImpl
-		implements MimeTypeRestService {
+public class MimeTypeRestServiceImpl implements MimeTypeRestService {
+
+	private final MimeTypeFacade facade;
 
 	public MimeTypeRestServiceImpl(final MimeTypeFacade facade) {
-		super(facade);
+		this.facade = facade;
 	}
 
+	@GET
+	@Path("/")
+	@ApiOperation(value = "Find all Mime types.", response = MimeTypeDto.class)
+	@Override
+	public List<MimeTypeDto> find(@QueryParam("disabled") @DefaultValue("false") boolean disabled) {
+		return facade.find(null, disabled);
+	}
 }

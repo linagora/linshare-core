@@ -32,22 +32,39 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv1;
+package org.linagora.linshare.webservice.userv2;
+
+import java.util.List;
+import java.util.Set;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 
-public interface AuthenticationRestService {
+/**
+ * Interface for the Share service REST jaxRS interface Allows for creation of a
+ * sharing
+ */
 
-	void noop();
+@Path("/shares")
+public interface ShareRestService {
 
-	UserDto isAuthorized() throws BusinessException;
+	List<ShareDto> getShares() throws BusinessException;
 
-	void logout();
+	ShareDto getShare(String shareUuid) throws BusinessException;
 
-	VersionDto getVersion();
+	void head(String shareUuid) throws BusinessException;
 
-	JwtToken generateToken() throws BusinessException;
+	Response getDocumentStream(String shareUuid) throws BusinessException;
+
+	Response getThumbnailStream(String shareUuid, boolean base64) throws BusinessException;
+
+	Set<ShareDto> create(ShareCreationDto createDto) throws BusinessException;
+
+	ShareDto delete(String shareUuid) throws BusinessException;
+
+	ShareDto delete(ShareDto shareDto) throws BusinessException;
 }

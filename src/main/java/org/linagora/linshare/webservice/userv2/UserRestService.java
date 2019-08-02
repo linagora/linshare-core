@@ -30,20 +30,19 @@
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
- */
-package org.linagora.linshare.webservice.userv1;
+*/
+
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
-public interface FunctionalityRestService {
+public interface UserRestService {
+	
+	List<UserDto> findAll() throws BusinessException;
 
-	FunctionalityDto find(String identifier) throws BusinessException;
-
-	void head(String identifier)throws BusinessException;
-
-	List<FunctionalityDto> findAll() throws BusinessException;
-
+	Set<UserDto> autocomplete(String pattern) throws BusinessException;
 }

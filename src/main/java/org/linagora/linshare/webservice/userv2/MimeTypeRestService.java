@@ -32,24 +32,13 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv1;
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ShareEntryGroupDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 
-public interface ShareEntryGroupRestService {
+public interface MimeTypeRestService {
 
-	List<ShareEntryGroupDto> findAll(boolean full) throws BusinessException;
-
-	ShareEntryGroupDto find(String uuid, boolean full) throws BusinessException;
-
-	void head(String uuid) throws BusinessException;
-
-	ShareEntryGroupDto update(ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
-
-	ShareEntryGroupDto delete(String uuid) throws BusinessException;
-
-	ShareEntryGroupDto delete(ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
+	List<MimeTypeDto> find(boolean disabled);
 }

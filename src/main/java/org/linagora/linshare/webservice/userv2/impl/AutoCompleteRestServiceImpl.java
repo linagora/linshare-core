@@ -34,26 +34,56 @@
 
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.facade.webservice.user.AutoCompleteFacade;
-import org.linagora.linshare.webservice.userv1.AutoCompleteRestService;
+import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
+import org.linagora.linshare.webservice.userv2.AutoCompleteRestService;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 //Class created to generate the swagger documentation of v1 RestServices
 @Path("/autocomplete")
 @Api(value = "/rest/user/v2/autocomplete", basePath = "/rest/user/v2/", description = "Auto complete service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class AutoCompleteRestServiceImpl extends
-		org.linagora.linshare.webservice.userv1.impl.AutoCompleteRestServiceImpl implements AutoCompleteRestService {
+public class AutoCompleteRestServiceImpl implements AutoCompleteRestService {
 
-	public AutoCompleteRestServiceImpl(AutoCompleteFacade autoCompleteFacade) {
-		super(autoCompleteFacade);
+	private final AutoCompleteFacade autoCompleteFacade;
+
+	public AutoCompleteRestServiceImpl(final AutoCompleteFacade autoCompleteFacade) {
+		super();
+		this.autoCompleteFacade = autoCompleteFacade;
 	}
 
+	@Path("/{pattern}")
+	@GET
+	@ApiOperation(value = "Perform search.", response = AutoCompleteResultDto.class)
+	@ApiResponses({ @ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<AutoCompleteResultDto> autoComplete(
+			@ApiParam(value = "The pattern.", required = true)
+				@PathParam("pattern") String pattern,
+			@ApiParam(value = "The search type.", required = true)
+				@QueryParam("type") String type,
+			@ApiParam(value = "If your are looking for thread members, you must fill this parameter.", required = false)
+				@QueryParam("threadUuid") String threadUuid) {
+		Validate.notEmpty(type, "Type must be set.");
+		Validate.notEmpty(pattern, "Pattern must be set.");
+		return autoCompleteFacade.search(pattern, type, threadUuid);
+	}
 }

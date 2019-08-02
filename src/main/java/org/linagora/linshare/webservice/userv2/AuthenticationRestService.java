@@ -31,77 +31,23 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv1.impl;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+package org.linagora.linshare.webservice.userv2;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.userv1.AuthenticationRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+public interface AuthenticationRestService {
 
-@Path("/authentication")
-@Api(value = "/rest/user/authentication", basePath = "/rest/user/", description = "Authentication API",
-produces = "application/json,application/xml", consumes = "application/json,application/xml")
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class AuthenticationRestServiceImpl extends WebserviceBase implements
-		AuthenticationRestService {
+	void noop();
 
-	private final UserFacade userFacade;
+	UserDto isAuthorized() throws BusinessException;
 
-	public AuthenticationRestServiceImpl(final UserFacade userFacade) {
-		this.userFacade = userFacade;
-	}
+	void logout();
 
-	@Path("/")
-	@GET
-	@ApiOperation(value = "No operation.")
-	@Override
-	public void noop() {
-		return; // do nothing
-	}
+	VersionDto getVersion();
 
-	@Path("/authorized")
-	@GET
-	@ApiOperation(value = "Check if user is authorized.", response = UserDto.class)
-	@Override
-	public UserDto isAuthorized() throws BusinessException {
-		return userFacade.isAuthorized();
-	}
-
-	@Path("/logout")
-	@GET
-	@ApiOperation(value = "Logout the current user.")
-	@Override
-	public void logout() {
-		// This code is never reach because the URL will be catch by spring
-		// security before.
-		// This function was created just to show the logout URL into WADL.
-	}
-
-	@Path("/version")
-	@GET
-	@Override
-	public VersionDto getVersion() {
-		return new VersionDto(getCoreVersion());
-	}
-
-	@Path("/jwt")
-	@GET
-	@Override
-	public JwtToken generateToken() throws BusinessException {
-		String token = userFacade.generateToken();
-		return new JwtToken(token);
-	}
+	JwtToken generateToken() throws BusinessException;
 }

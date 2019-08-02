@@ -31,38 +31,19 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.userv2;
 
-package org.linagora.linshare.webservice.userv1;
-
-import java.util.Set;
+import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 
-public interface MailingListRestService {
+public interface FunctionalityRestService {
 
-	Set<MailingListDto> findAll() throws BusinessException;
+	FunctionalityDto find(String identifier) throws BusinessException;
 
-	MailingListDto find(String uuid) throws BusinessException;
+	void head(String identifier)throws BusinessException;
 
-	void head(String uuid) throws BusinessException;
+	List<FunctionalityDto> findAll() throws BusinessException;
 
-	MailingListDto create(MailingListDto dto) throws BusinessException;
-
-	MailingListDto update(MailingListDto dto) throws BusinessException;
-
-	MailingListDto delete(MailingListDto dto) throws BusinessException;
-
-	MailingListDto delete(String uuid) throws BusinessException;
-
-	Set<MailingListContactDto> findAllContacts(String listUuid) throws BusinessException;
-
-	MailingListContactDto createContact(String uuid, MailingListContactDto dto) throws BusinessException;
-
-	void updateContact(String uuid, MailingListContactDto dto) throws BusinessException;
-
-	void deleteContact(String uuid, MailingListContactDto dto) throws BusinessException;
-
-	void deleteContact(String uuid, String contactUuid) throws BusinessException;
 }

@@ -31,59 +31,25 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv1.impl;
+
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.FunctionalityFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.userv1.FunctionalityRestService;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareEntryGroupDto;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+public interface ShareEntryGroupRestService {
 
-@Path("/functionalities")
-@Api(value = "/rest/user/functionalities", description = "functionality service.")
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class FunctionalityRestServiceImpl extends WebserviceBase implements FunctionalityRestService {
+	List<ShareEntryGroupDto> findAll(boolean full) throws BusinessException;
 
-	private FunctionalityFacade functionalityFacade;
+	ShareEntryGroupDto find(String uuid, boolean full) throws BusinessException;
 
-	public FunctionalityRestServiceImpl(FunctionalityFacade functionalityFacade) {
-		super();
-		this.functionalityFacade = functionalityFacade;
-	}
+	void head(String uuid) throws BusinessException;
 
-	@Path("/")
-	@GET
-	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityDto.class, responseContainer = "Set")
-	@Override
-	public List<FunctionalityDto> findAll() throws BusinessException {
-		return functionalityFacade.findAll();
-	}
+	ShareEntryGroupDto update(ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
 
-	@Path("/{funcId}")
-	@GET
-	@ApiOperation(value = "Find a functionality.", response = FunctionalityDto.class)
-	@Override
-	public FunctionalityDto find(@PathParam(value = "funcId") String funcId) throws BusinessException {
-		return functionalityFacade.find(funcId);
-	}
+	ShareEntryGroupDto delete(String uuid) throws BusinessException;
 
-	@Path("/{funcId}")
-	@HEAD
-	@ApiOperation(value = "Find a functionality.")
-	@Override
-	public void head(@PathParam(value = "funcId") String identifier) throws BusinessException {
-		functionalityFacade.find(identifier);
-	}
+	ShareEntryGroupDto delete(ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
 }

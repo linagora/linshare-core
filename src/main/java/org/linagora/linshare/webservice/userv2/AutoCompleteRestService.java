@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv1;
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
 

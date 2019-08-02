@@ -20,12 +20,12 @@
 
 	<jaxrs:server id="emailClientRestContainer" address="/rest/email-clients">
 		<jaxrs:serviceBeans>
-			<ref bean="userAuthenticationRestService" />
+			<ref bean="userv2AuthenticationRestService" />
 			<ref bean="userv2DocumentRestService" />
-			<ref bean="userFunctionalityRestService" />
+			<ref bean="userv2FunctionalityRestService" />
 			<ref bean="userv2AccountQuotaRestService" />
-			<ref bean="userMimeTypeRestService" />
-			<ref bean="userShareRestService" />
+			<ref bean="userv2MimeTypeRestService" />
+			<ref bean="userv2ShareRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -33,22 +33,58 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.util.List;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.FunctionalityFacade;
-import org.linagora.linshare.webservice.userv1.FunctionalityRestService;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.userv2.FunctionalityRestService;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 //Class created to generate the swagger documentation of v1 RestServices
 @Path("/functionalities")
 @Api(value = "/rest/user/v2/functionalities", description = "functionality service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class FunctionalityRestServiceImpl extends org.linagora.linshare.webservice.userv1.impl.FunctionalityRestServiceImpl implements FunctionalityRestService {
+public class FunctionalityRestServiceImpl extends WebserviceBase implements FunctionalityRestService {
+
+	private FunctionalityFacade functionalityFacade;
 
 	public FunctionalityRestServiceImpl(FunctionalityFacade functionalityFacade) {
-		super(functionalityFacade);
+		super();
+		this.functionalityFacade = functionalityFacade;
+	}
+
+	@Path("/")
+	@GET
+	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityDto.class, responseContainer = "Set")
+	@Override
+	public List<FunctionalityDto> findAll() throws BusinessException {
+		return functionalityFacade.findAll();
+	}
+
+	@Path("/{funcId}")
+	@GET
+	@ApiOperation(value = "Find a functionality.", response = FunctionalityDto.class)
+	@Override
+	public FunctionalityDto find(@PathParam(value = "funcId") String funcId) throws BusinessException {
+		return functionalityFacade.find(funcId);
+	}
+
+	@Path("/{funcId}")
+	@HEAD
+	@ApiOperation(value = "Find a functionality.")
+	@Override
+	public void head(@PathParam(value = "funcId") String identifier) throws BusinessException {
+		functionalityFacade.find(identifier);
 	}
 }

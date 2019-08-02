@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv1.impl;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.Set;
 
@@ -52,7 +52,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.core.facade.webservice.user.MailingListFacade;
-import org.linagora.linshare.webservice.userv1.MailingListRestService;
+import org.linagora.linshare.webservice.userv2.MailingListRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -61,7 +61,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/lists")
-@Api(value = "/rest/user/lists", description = "Mailing lists user api.")
+@Api(value = "/rest/user/v2/lists", description = "Mailing lists user api.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailingListRestServiceImpl implements MailingListRestService {

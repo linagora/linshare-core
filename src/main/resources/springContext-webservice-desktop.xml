@@ -20,11 +20,11 @@
 
 	<jaxrs:server id="desktopRestContainer" address="/rest/desktop">
 		<jaxrs:serviceBeans>
-			<ref bean="userAuthenticationRestService" />
+			<ref bean="userv2AuthenticationRestService" />
 			<ref bean="userv2DocumentRestService" />
-			<ref bean="userFunctionalityRestService" />
+			<ref bean="userv2FunctionalityRestService" />
 			<ref bean="userv2AccountQuotaRestService" />
-			<ref bean="userMimeTypeRestService" />
+			<ref bean="userv2MimeTypeRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

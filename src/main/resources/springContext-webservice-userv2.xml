@@ -101,6 +101,10 @@
 		<constructor-arg ref="wsFunctionalityFacade" />
 	</bean>
 
+	<bean id="userv2MailingListRestService" class="org.linagora.linshare.webservice.userv2.impl.MailingListRestServiceImpl">
+		<constructor-arg ref="wsMailingListFacade" />
+	</bean>
+
 	<bean id="userv2ShareEntryGroupRestService" class="org.linagora.linshare.webservice.userv2.impl.ShareEntryGroupRestServiceImpl">
 		<constructor-arg ref="wsShareEntryGroupFacade" />
 	</bean>
@@ -202,6 +206,7 @@
 			<ref bean="userv2DocumentRestService" />
 			<ref bean="userv2WorkGroupRestService" />
 			<ref bean="userv2WorkGroupMemberRestService" />
+			<ref bean="userv2MailingListRestService" />
 			<ref bean="userv2WorkGroupNodeRestService" />
 			<ref bean="userv2WorkGroupNodeLightRestService" />
 			<ref bean="userv2GuestRestService" />
