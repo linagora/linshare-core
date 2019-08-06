@@ -39,6 +39,7 @@ import javax.ws.rs.NotSupportedException;
 
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -59,7 +60,6 @@ import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.SharedSpaceMemberDriveService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
@@ -67,6 +67,7 @@ import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -95,14 +96,14 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	protected final ThreadService threadService;
 
 	protected final ThreadRepository threadRepository;
-	
+
 	protected final FunctionalityReadOnlyService functionalityService;
 
 	protected final AccountQuotaBusinessService accountQuotaBusinessService;
-	
+
 	protected final WorkGroupNodeService workGroupNodeService;
 
-	protected final SharedSpaceMemberDriveService memberDriveService;
+	protected final DriveMemberBusinessService driveMemberBusinessService;
 
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
@@ -115,7 +116,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService,
-			SharedSpaceMemberDriveService memberDriveService) {
+			DriveMemberBusinessService driveMemberBusinessService) {
 		super(rac);
 		this.businessService = businessService;
 		this.memberService = memberService;
@@ -127,7 +128,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.threadRepository = threadRepository;
 		this.workGroupNodeService = workGroupNodeService;
-		this.memberDriveService = memberDriveService;
+		this.driveMemberBusinessService = driveMemberBusinessService;
 	}
 
 	@Override
@@ -173,10 +174,11 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceRole workGroupRole = ssRoleService.getAdmin(authUser, actor);
 		if (NodeType.DRIVE.equals(node.getNodeType())) {
 			SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
-			memberDriveService.createWithoutCheckPermission(authUser, actor, created, driveRole, workGroupRole,
-					new SharedSpaceAccount((User) actor));
+			SharedSpaceMemberContext context = new SharedSpaceMemberContext(driveRole, workGroupRole);
+			memberService.create(authUser, actor, node, context, new SharedSpaceAccount((User) actor));
 		} else if (NodeType.WORK_GROUP.equals(node.getNodeType())) {
-			SharedSpaceMember firstMember = memberService.createWithoutCheckPermission(authUser, actor, created, workGroupRole,
+			SharedSpaceMemberContext context = new SharedSpaceMemberContext(workGroupRole);
+			SharedSpaceMember firstMember = memberService.create(authUser, actor, node, context,
 					new SharedSpaceAccount((User) actor));
 			// Adding all drive members to the workgroup
 			if (parent != null && firstMember.isNested()) {
@@ -234,8 +236,9 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		memberService.createWithoutCheckPermission(authUser, actor, created, role,
-					new SharedSpaceAccount((User) actor));
+		SharedSpaceMember memberWg = new SharedSpaceMember(new SharedSpaceNodeNested(created),
+				new GenericLightEntity(role.getUuid(), role.getName()), new SharedSpaceAccount((User) actor));
+		memberBusinessService.create(memberWg);
 		WorkGroup workGroup = threadService.find(authUser, actor, created.getUuid());
 		return new WorkGroupDto(workGroup, created);
 	}
@@ -275,7 +278,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		if (NodeType.WORK_GROUP.equals(foundedNodeTodel.getNodeType())) {
 			workGroup = threadService.find(authUser, authUser, foundedNodeTodel.getUuid());
 			threadService.deleteThread(authUser, authUser, workGroup);
-			memberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
+			memberService.deleteAllMembers(authUser, actor, foundedNodeTodel);
 		}
 		businessService.delete(foundedNodeTodel);
 		saveLog(authUser, actor, LogAction.DELETE, foundedNodeTodel);
@@ -414,4 +417,5 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			return BusinessErrorCode.WORK_GROUP_FORBIDDEN;
 		}
 	}
+
 }

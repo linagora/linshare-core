@@ -34,41 +34,34 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jsoup.helper.Validate;
-import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
 		implements SharedSpaceMemberService {
@@ -87,7 +80,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	protected final MailBuildingService mailBuildingService;
 
-	protected final DriveMemberBusinessService driveMemberBusinessService;
+	protected final Map<NodeType, SharedSpaceMemberFragmentService> sharedSpaceBuildingService;
 
 	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,
@@ -95,14 +88,14 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 			SharedSpaceMemberResourceAccessControl rac,
 			LogEntryService logEntryService,
 			UserRepository<User> userRepository,
-			DriveMemberBusinessService driveMemberBusinessService) {
+			Map<NodeType, SharedSpaceMemberFragmentService> sharedSpaceBuildingService) {
 		super(rac);
 		this.businessService = businessService;
 		this.logEntryService = logEntryService;
 		this.userRepository = userRepository;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
-		this.driveMemberBusinessService = driveMemberBusinessService;
+		this.sharedSpaceBuildingService = sharedSpaceBuildingService;
 	}
 
 	@Override
@@ -194,63 +187,28 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	@Override
 	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
 			SharedSpaceMemberContext context, SharedSpaceAccount account) throws BusinessException {
-		checkCreateMemberPermission(authUser, actor, node, context, account);
-		User newMember = userRepository.findByLsUuid(account.getUuid());
-		if (newMember == null) {
-			String message = String.format("The account with the UUID : %s is not existing", account.getUuid());
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
-		}
-		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, context.getRole(), account);
-		notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
-		return member;
-	}
-
-	protected void checkCreateMemberPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceMemberContext context, SharedSpaceAccount account) throws BusinessException {
-		Validate.notNull(context.getRole(), "Role must be set.");
-		Validate.notNull(node, "Node uuid must be set.");
-		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				null, node);
-		if (!checkMemberNotInNode(account.getUuid(), node.getUuid())) {
-			String message = String.format(
-					"The account with the UUID : %s is already a member of the node with the uuid : %s",
-					account.getUuid(), node.getUuid());
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
-		}
-	}
-
-	@Override
-	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException {
-		preChecks(authUser, actor);
-		Validate.notNull(role, "Role must be set.");
-		Validate.notNull(node, "Node must be set.");
-		SharedSpaceMember memberWg = new SharedSpaceMember(new SharedSpaceNodeNested(node),
-				new GenericLightEntity(role.getUuid(), role.getName()), account);
-		String parentUuid = node.getParentUuid();
-		boolean isDriveMember = (parentUuid != null) && (!checkMemberNotInNode(account.getUuid(), parentUuid));
-		memberWg.setNested(isDriveMember);
-		SharedSpaceMember toAdd = businessService.create(memberWg);
-		saveLog(authUser, actor, LogAction.CREATE, toAdd);
-		return toAdd;
+		Validate.notNull(node, "shared space node must be set");
+		SharedSpaceMemberFragmentService service = getService(node.getNodeType());
+		return service.create(authUser, actor, node, context, account);
 	}
 
 	@Override
 	public SharedSpaceMember delete(Account authUser, Account actor, String uuid) {
 		preChecks(authUser, actor);
-		Validate.notNull(uuid, "Missing required member uuid to delete");
-		SharedSpaceMember foundMemberToDelete = find(authUser, actor, uuid);
-		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				foundMemberToDelete);
-		businessService.delete(foundMemberToDelete);
-		saveLog(authUser, actor, LogAction.DELETE, foundMemberToDelete);
-		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
-		notify(new WorkGroupWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user));
-		return foundMemberToDelete;
+		Validate.notEmpty(uuid, "shared space member uuid must be set");
+		SharedSpaceMember foundMemberToDelete = businessService.find(uuid);
+		Validate.notNull(foundMemberToDelete, "shared space member not found");
+		SharedSpaceMemberFragmentService service = getService(foundMemberToDelete.getNode().getNodeType());
+		return service.delete(authUser, actor, uuid);
 	}
 
 	@Override
 	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate) {
+		return update(authUser, actor, memberToUpdate, false);
+	}
+
+	@Override
+	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		SharedSpaceMember foundMemberToUpdate = null;
@@ -267,47 +225,16 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 			foundMemberToUpdate = findMemberByUuid(authUser, actor, memberToUpdate.getAccount().getUuid(),
 					memberToUpdate.getNode().getUuid());
 		}
-		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
-		SharedSpaceMember foundMemberToUpdate = findMemberByUuid(authUser, actor, memberToUpdate.getAccount().getUuid(),
-				memberToUpdate.getNode().getUuid());
-		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				foundMemberToUpdate);
-		SharedSpaceMember updated = new SharedSpaceMember();
-		if (NodeType.DRIVE.equals(memberToUpdate.getNode().getNodeType())) {
-			foundMemberToUpdate = (SharedSpaceMemberDrive) foundMemberToUpdate;
-			updated = driveMemberBusinessService.update(foundMemberToUpdate, foundMemberToUpdate);
-		} else if (NodeType.WORK_GROUP.equals(memberToUpdate.getNode().getNodeType())) {
-			updated = businessService.update(foundMemberToUpdate, memberToUpdate);
-			User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
-			notify(new WorkGroupWarnUpdatedMemberEmailContext(updated, user, actor));
-		} else {
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, "Node type not supported");
-		}
-		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
-		notify(new WorkGroupWarnUpdatedMemberEmailContext(updated, user, actor));
-		return updated;
+		SharedSpaceMemberFragmentService service = getService(memberToUpdate.getNode().getNodeType());
+		return service.update(authUser, actor, memberToUpdate, force);
 	}
 
 	@Override
-	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid) {
-		preChecks(authUser, actor);
-		Validate.notNull(sharedSpaceNodeUuid, "Missing required sharedSpaceNodeUuid");
-		List<SharedSpaceMember> foundMembersToDelete = findAll(authUser, actor, sharedSpaceNodeUuid);
-		if (foundMembersToDelete != null && !foundMembersToDelete.isEmpty()) {
-			// We check the user has the right to delete members of this node
-			// If he can delete one member, he can delete them all
-			checkDeletePermission(authUser, actor, SharedSpaceMember.class,
-					BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
-		}
-		businessService.deleteAll(foundMembersToDelete);
-		for (SharedSpaceMember member : foundMembersToDelete) {
-			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
-			if (NodeType.WORK_GROUP.equals(member.getNode().getNodeType())) {
-				notify(new WorkGroupWarnDeletedMemberEmailContext(member, actor, user));
-				saveLog(authUser, actor, LogAction.DELETE, member);
-			}
-		}
-		return foundMembersToDelete;
+	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node) {
+		Validate.notNull(node, "shared space node must be set");
+		Validate.notEmpty(node.getUuid(), "shared space node uuid must be set");
+		SharedSpaceMemberFragmentService service = getService(node.getNodeType());
+		return service.deleteAllMembers(authUser, actor, node);
 	}
 
 	@Override
@@ -321,45 +248,10 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		return foundMembersToDelete;
 	}
 
-	protected boolean checkMemberNotInNode(String possibleMemberUuid, String nodeUuid) {
-		return businessService.findByAccountAndNode(possibleMemberUuid, nodeUuid) == null;
-	}
-
-	protected void notify(EmailContext context) {
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail, true);
-	}
-
-	protected SharedSpaceMemberAuditLogEntry saveLog(Account authUser, Account actor, LogAction action,
-			SharedSpaceMember resource) {
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
-				AuditLogEntryType.WORKGROUP_MEMBER, resource);
-		addMembersToLog(resource.getNode().getUuid(), log);
-		logEntryService.insert(log);
-		return log;
-	}
-
-	protected SharedSpaceMemberAuditLogEntry saveUpdateLog(Account authUser, Account actor, LogAction action,
-			SharedSpaceMember resource, SharedSpaceMember resourceUpdated) {
-		AuditLogEntryType auditType = AuditLogEntryType.fromNodeType(resource.getNode().getNodeType().toString());
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
-				AuditLogEntryType.fromString(auditType.toString().concat(AUDIT_MEMBER)), resource);
-		log.setResourceUpdated(resourceUpdated);
-		addMembersToLog(resource.getNode().getUuid(), log);
-		logEntryService.insert(log);
-		return log;
-	}
-
 	@Override
 	public List<SharedSpaceMember> findAllUserMemberships(Account authUser, Account actor) {
 		preChecks(authUser, actor);
 		return businessService.findAllUserMemberships(actor.getLsUuid());
-	}
-
-	@Override
-	public void addMembersToLog(String workGroupUuid, AuditLogEntryUser log) {
-		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(workGroupUuid);
-		log.addRelatedAccounts(members);
 	}
 
 	@Override
@@ -375,4 +267,18 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				"You are not authorized to use this service !!");
 	}
+
+	private SharedSpaceMemberFragmentService getService(NodeType type) {
+		Validate.notNull(type, "type must be set");
+		SharedSpaceMemberFragmentService service = sharedSpaceBuildingService.get(type);
+		Validate.notNull(service, "Node type not supported");
+		return service;
+	}
+
+	@Override
+	public void addMembersToLog(String workGroupUuid, AuditLogEntryUser log) {
+		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(workGroupUuid);
+		log.addRelatedAccounts(members);
+	}
+
 }

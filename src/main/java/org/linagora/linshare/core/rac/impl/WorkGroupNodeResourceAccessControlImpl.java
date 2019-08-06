@@ -136,14 +136,14 @@ public class WorkGroupNodeResourceAccessControlImpl
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
 		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_GET, SharedSpaceActionType.GET);
+				TechnicalAccountPermissionType.THREAD_ENTRIES_GET, SharedSpaceActionType.READ);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
 		WorkGroup workGroup = (WorkGroup) opt[0];
 		return defaultSharedSpacePermissionCheck(authUser, actor, workGroup.getLsUuid(),
-				TechnicalAccountPermissionType.THREAD_ENTRIES_LIST, SharedSpaceActionType.GET);
+				TechnicalAccountPermissionType.THREAD_ENTRIES_LIST, SharedSpaceActionType.READ);
 	}
 
 	@Override

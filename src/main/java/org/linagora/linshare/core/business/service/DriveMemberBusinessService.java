@@ -33,11 +33,16 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 
 public interface DriveMemberBusinessService extends SharedSpaceMemberBusinessService {
 
-	SharedSpaceMemberDrive create(SharedSpaceMemberDrive member);
+	SharedSpaceMemberDrive create(SharedSpaceAccount account, SharedSpaceNode node, SharedSpaceRole role,
+			SharedSpaceRole nestedRole);
 
 	SharedSpaceMemberDrive update(SharedSpaceMemberDrive foundMemberToUpdate, SharedSpaceMemberDrive memberToUpdate);
+	
 }

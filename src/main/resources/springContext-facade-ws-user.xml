@@ -180,10 +180,9 @@
 		<constructor-arg ref="sharedSpacePermissionService" />
 	</bean>	
 	<bean id="sharedSpaceMemberFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.SharedSpaceMemberFacadeImpl">
-		<constructor-arg ref="accountService" />
 		<constructor-arg ref="sharedSpaceMemberService" />
+		<constructor-arg ref="accountService" />
 		<constructor-arg ref="sharedSpaceNodeService" />
 		<constructor-arg ref="sharedSpaceRoleService" />
-		<constructor-arg ref="sharedSpaceMemberDriveService" />
 	</bean>	
 </beans>

@@ -70,6 +70,7 @@ import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
@@ -212,11 +213,11 @@ public class AdvancedStatisticBatchTest extends LoggerParent {
 	private void createSharedSpaceNode(Account account, String label, String groupUuid) {
 		SharedSpaceRole adminRole = roleBusinessService.findByName("ADMIN");
 		Validate.notNull(adminRole, "adminRole must be set");
-		SharedSpaceNode node = new SharedSpaceNode(label, null, NodeType.DRIVE);
+		SharedSpaceNode node = new SharedSpaceNode(label, null, NodeType.WORK_GROUP);
 		node.setUuid(groupUuid);
 		sharedSpaceNodeBusinessService.create(node);
-		memberService.createWithoutCheckPermission(account, account, node, adminRole,
-				new SharedSpaceAccount((User) account));
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(adminRole);
+		memberService.create(jane, jane, node, context, new SharedSpaceAccount((User) account));
 	}
 
 	private void createUploadRequestEntry() throws IOException {

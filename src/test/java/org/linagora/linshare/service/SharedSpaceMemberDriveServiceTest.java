@@ -46,7 +46,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
-import org.linagora.linshare.core.service.SharedSpaceMemberDriveService;
+import org.linagora.linshare.core.service.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
@@ -93,7 +93,7 @@ public class SharedSpaceMemberDriveServiceTest extends AbstractTransactionalJUni
 
 	@Autowired
 	@Qualifier("sharedSpaceMemberDriveService")
-	private SharedSpaceMemberDriveService ssMemberDriveService;
+	private SharedSpaceMemberFragmentService ssMemberDriveService;
 
 	@Autowired
 	@Qualifier("sharedSpaceRoleService")

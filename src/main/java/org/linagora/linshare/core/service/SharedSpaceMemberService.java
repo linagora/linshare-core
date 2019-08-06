@@ -39,53 +39,39 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
-public interface SharedSpaceMemberService {
+public interface SharedSpaceMemberService extends SharedSpaceMemberFragmentService {
 
 	SharedSpaceMember find(Account authUser, Account actor, String uuid) throws BusinessException;
 
 	SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
 			throws BusinessException;
 
-	List<SharedSpaceMember> findByNode(Account authUser, Account actor, String ssnodeUuid);
-
 	List<SharedSpaceMember> findAll(Account authUser, Account actor, String shareSpaceNodeUuid)
 			throws BusinessException;
+
+	List<SharedSpaceMember> findByNode(Account authUser, Account actor, String ssnodeUuid);
 
 	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid, boolean withRole);
 
 	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
-
-	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
-
-	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
-
-	List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
-
-	List<SharedSpaceMember> deleteAllUserMemberships(Account authUser, Account actor, String sharedSpaceNodeUuid);
 
 	List<SharedSpaceMember> findAllUserMemberships(Account authUser, Account actor);
 
 	SharedSpaceMember findMemberByNodeAndUuid(Account authUser, Account actor, String nodeUuid, String memberUuid)
 			throws BusinessException;
 
-	void addMembersToLog(String uuid, AuditLogEntryUser log);
+	List<SharedSpaceNodeNested> findAllWorkGroupsInNode(Account authUser, Account actor, String parentUuid,
+			String accountUuid);
 
 	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role,
 			SharedSpaceAccount account) throws BusinessException;
 
-	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceMemberContext context,
-			SharedSpaceAccount account) throws BusinessException;
+	List<SharedSpaceMember> deleteAllUserMemberships(Account authUser, Account actor, String userUuid);
 
-	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException;
-
-	List<SharedSpaceNodeNested> findAllWorkGroupsInNode(Account authUser, Account actor, String parentUuid,
-			String accountUuid);
+	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
 
 }

@@ -57,14 +57,14 @@ public class SharedSpaceMemberResourceAccessControlImpl
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
 		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_GET, SharedSpaceActionType.GET);
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_GET, SharedSpaceActionType.READ);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
 		String nodeUuid = (String) opt[0];
 		return defaultSharedSpacePermissionCheck(authUser, actor, nodeUuid,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_LIST, SharedSpaceActionType.GET);
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_LIST, SharedSpaceActionType.READ);
 	}
 
 	@Override
@@ -76,8 +76,27 @@ public class SharedSpaceMemberResourceAccessControlImpl
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
 		SharedSpaceNode node = (SharedSpaceNode) opt[0];
-		return defaultSharedSpacePermissionCheck(authUser, actor, node.getUuid(),
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_CREATE, SharedSpaceActionType.CREATE);
+		if (authUser.hasSuperAdminRole()) {
+			return true;
+		}
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_CREATE);
+		}
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (actor != null && authUser.equals(actor)) {
+				SharedSpaceMember foundMember = sharedSpaceMemberMongoRepository.findByAccountAndNode(actor.getLsUuid(),
+						node.getUuid());
+				if (foundMember == null) {
+					if (sharedSpaceMemberMongoRepository.findByNodeUuid(node.getUuid()).isEmpty()) {
+						return true;
+					}
+					return false;
+				}
+				return hasPermission(foundMember.getRole().getUuid(), SharedSpaceActionType.CREATE, getSharedSpaceResourceType());
+			}
+		}
+		return false;
+
 	}
 
 	@Override

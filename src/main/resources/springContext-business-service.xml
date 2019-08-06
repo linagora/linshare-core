@@ -320,7 +320,11 @@
 	</bean>
 	<bean name="driveMemberBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.DriveMemberBusinessServiceImpl">
+		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
+		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
 		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+		<constructor-arg ref="userRepository" />
+		<constructor-arg ref="mongoTemplate"/>
 	</bean>
 	<bean name="sharedSpaceRoleBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceRoleBusinessServiceImpl">

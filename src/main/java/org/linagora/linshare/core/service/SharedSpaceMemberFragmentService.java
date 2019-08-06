@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2018 LINAGORA
+ * Copyright (C) 2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,22 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.service;
 
-public enum SharedSpaceActionType {
+import java.util.List;
 
-	READ,
-	UPDATE,
-	CREATE,
-	DELETE,
-	DOWNLOAD,
-	DOWNLOAD_THUMBNAIL;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
-	public static SharedSpaceActionType fromString(String s) {
-		try {
-			return SharedSpaceActionType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing action");
-		}
-	}
+public interface SharedSpaceMemberFragmentService {
+
+	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceMemberContext context,
+			SharedSpaceAccount account) throws BusinessException;
+
+	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force);
+
+	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
+
+	List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node);
+
+	void addMembersToLog(String workGroupUuid, AuditLogEntryUser log);
+
 }

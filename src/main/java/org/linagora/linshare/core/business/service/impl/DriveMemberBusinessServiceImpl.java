@@ -36,9 +36,12 @@ package org.linagora.linshare.core.business.service.impl;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
@@ -49,16 +52,21 @@ public class DriveMemberBusinessServiceImpl extends SharedSpaceMemberBusinessSer
 		implements DriveMemberBusinessService {
 
 	public DriveMemberBusinessServiceImpl(SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
-			SharedSpaceRoleMongoRepository roleRepository, SharedSpaceNodeMongoRepository nodeRepository,
-			UserRepository<User> userRepository, MongoTemplate mongoTemplate) {
+			SharedSpaceRoleMongoRepository roleRepository,
+			SharedSpaceNodeMongoRepository nodeRepository,
+			UserRepository<User> userRepository,
+			MongoTemplate mongoTemplate) {
 		super(sharedSpaceMemberMongoRepository, roleRepository, nodeRepository, userRepository, mongoTemplate);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public SharedSpaceMemberDrive create(SharedSpaceMemberDrive member) throws BusinessException {
-		GenericLightEntity nestedRole = new GenericLightEntity(checkRole(member.getNestedRole().getUuid()));
-		member.setNestedRole(nestedRole);
+	public SharedSpaceMemberDrive create(SharedSpaceAccount account, SharedSpaceNode node, SharedSpaceRole role,
+			SharedSpaceRole nestedRole) {
+		checkRole(nestedRole.getUuid());
+		SharedSpaceMemberDrive member = new SharedSpaceMemberDrive(new SharedSpaceNodeNested(node),
+				new GenericLightEntity(role.getUuid(), role.getName()), account,
+				new GenericLightEntity(nestedRole.getUuid(), nestedRole.getName()));
+		member.setNestedRole(new GenericLightEntity(nestedRole.getUuid(), nestedRole.getName()));
 		return (SharedSpaceMemberDrive) super.create(member);
 	}
 

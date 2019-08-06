@@ -34,13 +34,18 @@
 package org.linagora.linshare.core.ldap.service.impl;
 
 
+import java.util.Map;
+
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.ldap.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -48,7 +53,9 @@ import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 
 public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.service.impl.SharedSpaceMemberServiceImpl
 		implements SharedSpaceMemberService {
@@ -61,8 +68,9 @@ public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.ser
 			SharedSpaceMemberResourceAccessControl rac,
 			LogEntryService logEntryService,
 			UserRepository<User> userRepository,
-			DriveMemberBusinessService memberBusinessService) {
-		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, memberBusinessService);
+			Map<NodeType, SharedSpaceMemberFragmentService> sharedSpaceBuildingService) {
+		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository,
+				sharedSpaceBuildingService);
 		this.businessService = businessService;
 	}
 
@@ -78,8 +86,13 @@ public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.ser
 		Validate.notEmpty(member.getExternalId(), "The external ID must be set");
 		SharedSpaceLDAPGroupMember created = businessService.create(member);
 		User newMember = userRepository.findByLsUuid(created.getAccount().getUuid());
-		notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
-		saveLog(actor, actor, LogAction.CREATE, created);
+		EmailContext context = new WorkGroupWarnNewMemberEmailContext(member, actor, newMember);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail, true);
+		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(actor, actor, LogAction.CREATE,
+				AuditLogEntryType.WORKGROUP_MEMBER, created);
+		addMembersToLog(created.getNode().getUuid(), log);
+		logEntryService.insert(log);
 		return created;
 	}
 
@@ -95,8 +108,14 @@ public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.ser
 		Validate.notEmpty(member.getExternalId(), "The external ID must be set");
 		SharedSpaceLDAPGroupMember updated = businessService.update(member);
 		User newMember = userRepository.findByLsUuid(updated.getAccount().getUuid());
-		notify(new WorkGroupWarnUpdatedMemberEmailContext(member, newMember, actor));
-		saveUpdateLog(actor, actor, LogAction.UPDATE, member, updated);
+		EmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(member, newMember, actor);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail, true);
+		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(actor, actor, LogAction.UPDATE,
+				AuditLogEntryType.WORKGROUP_MEMBER, member);
+		log.setResourceUpdated(updated);
+		addMembersToLog(member.getNode().getUuid(), log);
+		logEntryService.insert(log);
 		return updated;
 	}
 

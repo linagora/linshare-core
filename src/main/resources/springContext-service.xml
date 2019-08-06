@@ -437,10 +437,10 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="threadRepository" />
-		<constructor-arg ref="workGroupNodeService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="accountQuotaBusinessService" />
-		<constructor-arg ref="sharedSpaceMemberDriveService" />
+		<constructor-arg ref="workGroupNodeService" />
+		<constructor-arg ref="driveMemberBusinessService" />
 	</bean>
 	<bean id="sharedSpaceLdapGroupService" class="org.linagora.linshare.core.ldap.service.impl.SharedSpaceNodeServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupBusinessService" />
@@ -452,7 +452,7 @@
 		<constructor-arg ref="threadRepository" />
 		<constructor-arg ref="workGroupNodeBusinessService"/>
 		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="sharedSpaceMemberDriveService" />
+		<constructor-arg ref="driveMemberBusinessService" />
 	</bean>
 	<bean id="sharedSpaceRoleService" class="org.linagora.linshare.core.service.impl.SharedSpaceRoleServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleBusinessService" />
@@ -473,40 +473,61 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="userRepository" />
-		<constructor-arg ref="driveMemberBusinessService" />
+		<constructor-arg>
+			<map>
+				<entry key="WORK_GROUP" value-ref="workgroupMemberService" />
+				<entry key="DRIVE" value-ref="sharedSpaceMemberDriveService" />
+			</map>
+		</constructor-arg>
 	</bean>
 	<bean id="sharedSpaceLdapGroupMemberService" class="org.linagora.linshare.core.ldap.service.impl.SharedSpaceMemberServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupMemberBusinessService" />
-		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="userRepository" />
+		<constructor-arg>
+			<map>
+				<entry key="WORK_GROUP" value-ref="workgroupMemberService" />
+				<entry key="DRIVE" value-ref="sharedSpaceMemberDriveService" />
+			</map>
+		</constructor-arg>
 	</bean>
-	<bean id="sharedSpaceMemberDriveService" class="org.linagora.linshare.core.service.impl.SharedSpaceMemberDriveServiceImpl">
+	<bean id="sharedSpaceMemberDriveService" class="org.linagora.linshare.core.service.impl.DriveMemberServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
-		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="driveMemberBusinessService" />
 		<constructor-arg ref="sharedSpaceNodeBusinessService" />
 	</bean>
+	<bean id="workgroupMemberService" class="org.linagora.linshare.core.service.impl.WorkgroupMemberServiceImpl">
+		<constructor-arg ref="sharedSpaceMemberBusinessService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="userRepository" />
+	</bean>
 
 	<bean id="sharedSpaceNodeDriveService" class="org.linagora.linshare.core.service.impl.SharedSpaceNodeDriveServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupBusinessService" />
 		<constructor-arg ref="sharedSpaceNodeResourceAccessControl" />
+		<constructor-arg ref="sharedSpaceMemberService"/>
 		<constructor-arg ref="sharedSpaceRoleService" />
-		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadService" />
-		<constructor-arg ref="sharedSpaceMemberDriveService" />
+		<constructor-arg ref="sharedSpaceMemberBusinessService" />
+		<constructor-arg ref="driveMemberBusinessService" />
 	</bean>
 
 	<bean id="ldapGroupSyncService" class="org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupService"/>
 		<constructor-arg ref="ldapGroupQueryService"/>
+		<constructor-arg ref="userService"/>
 		<constructor-arg ref="sharedSpaceRoleService"/>
 		<constructor-arg ref="sharedSpaceLdapGroupMemberService"/>
 		<constructor-arg ref="mongoTemplate"/>

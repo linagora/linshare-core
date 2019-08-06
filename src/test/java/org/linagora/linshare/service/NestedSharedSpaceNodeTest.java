@@ -48,7 +48,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
-import org.linagora.linshare.core.service.SharedSpaceMemberDriveService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
@@ -97,10 +96,6 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 	@Autowired
 	@Qualifier("sharedSpaceMemberService")
 	private SharedSpaceMemberService ssMemberService;
-
-	@Autowired
-	@Qualifier("sharedSpaceMemberDriveService")
-	private SharedSpaceMemberDriveService ssMemberDriveService;
 
 	@Autowired
 	@Qualifier("sharedSpaceRoleService")
@@ -189,7 +184,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
-		ssMemberDriveService.create(john, john, drive, new SharedSpaceMemberContext(readerDriveRole, reader),
+		ssMemberService.create(john, john, drive, new SharedSpaceMemberContext(readerDriveRole, reader),
 				new SharedSpaceAccount((User) jane));
 		try {
 			SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Forbidden WorkGroup", drive.getUuid(),
@@ -211,7 +206,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
-		ssMemberDriveService.create(john, john, drive, new SharedSpaceMemberContext(creatorDriveRole, reader),
+		ssMemberService.create(john, john, drive, new SharedSpaceMemberContext(creatorDriveRole, reader),
 				new SharedSpaceAccount((User) jane));
 		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
 				NodeType.WORK_GROUP);
@@ -297,7 +292,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
-		ssMemberDriveService.create(john, john, drive, new SharedSpaceMemberContext(creatorDriveRole, reader),
+		ssMemberService.create(john, john, drive, new SharedSpaceMemberContext(creatorDriveRole, reader),
 				new SharedSpaceAccount((User) jane));
 		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
 				NodeType.WORK_GROUP);
@@ -320,14 +315,14 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest8", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
-		SharedSpaceMemberDrive janeMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
+		SharedSpaceMemberDrive janeMember = (SharedSpaceMemberDrive) ssMemberService.create(john, john, drive,
 				new SharedSpaceMemberContext(creatorDriveRole, reader), new SharedSpaceAccount((User) jane));
 		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
 				NodeType.WORK_GROUP);
 		// Create a workgroup with Jane having the creator role
 		ssNodeService.create(john, john, workGroupInsideDrive);
 		janeMember.setNestedRole(new GenericLightEntity(contributor));
-		janeMember = (SharedSpaceMemberDrive)ssMemberDriveService.update(john, john, janeMember, false);
+		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, false);
 		Assert.assertThat("ERROR : Jane's role should be updated", janeMember.getNestedRole().getUuid(),
 				CoreMatchers.is(contributor.getUuid()));
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
@@ -345,14 +340,14 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest8", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
-		SharedSpaceMemberDrive janeMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
+		SharedSpaceMemberDrive janeMember = (SharedSpaceMemberDrive) ssMemberService.create(john, john, drive,
 				new SharedSpaceMemberContext(creatorDriveRole, reader), new SharedSpaceAccount((User) jane));
 		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
 				NodeType.WORK_GROUP);
 		// Create a workgroup with Jane having the creator role
 		ssNodeService.create(jane, jane, workGroupInsideDrive);
 		janeMember.setNestedRole(new GenericLightEntity(contributor));
-		janeMember = (SharedSpaceMemberDrive)ssMemberDriveService.update(john, john, janeMember, true);
+		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, true);
 		Assert.assertThat("ERROR : Jane's role should be updated", janeMember.getNestedRole().getUuid(),
 				CoreMatchers.is(contributor.getUuid()));
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());

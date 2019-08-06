@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -47,7 +48,6 @@ import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.SharedSpaceMemberDriveService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeDriveService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
@@ -59,13 +59,19 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 public class SharedSpaceNodeDriveServiceImpl extends SharedSpaceNodeServiceImpl implements SharedSpaceNodeDriveService {
 
 	public SharedSpaceNodeDriveServiceImpl(SharedSpaceNodeBusinessService businessService,
-			SharedSpaceNodeResourceAccessControl rac, SharedSpaceMemberBusinessService memberBusinessService,
-			SharedSpaceMemberService memberService, SharedSpaceRoleService ssRoleService,
-			LogEntryService logEntryService, ThreadService threadService, ThreadRepository threadRepository,
-			FunctionalityReadOnlyService functionalityService, AccountQuotaBusinessService accountQuotaBusinessService,
-			WorkGroupNodeService workGroupNodeService, SharedSpaceMemberDriveService memberDriveService) {
+			SharedSpaceNodeResourceAccessControl rac,
+			SharedSpaceMemberBusinessService memberBusinessService,
+			SharedSpaceMemberService memberService,
+			SharedSpaceRoleService ssRoleService,
+			LogEntryService logEntryService,
+			ThreadService threadService,
+			ThreadRepository threadRepository,
+			FunctionalityReadOnlyService functionalityService,
+			AccountQuotaBusinessService accountQuotaBusinessService,
+			WorkGroupNodeService workGroupNodeService,
+			DriveMemberBusinessService driveMemberBusinessService) {
 		super(businessService, rac, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
-				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService);
+				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, driveMemberBusinessService);
 	}
 
 	@Override
@@ -81,7 +87,7 @@ public class SharedSpaceNodeDriveServiceImpl extends SharedSpaceNodeServiceImpl 
 			SharedSpaceNode wg = find(authUser, actor, nested.getUuid());
 			simpleDelete(authUser, actor, wg);
 		}
-		memberDriveService.deleteAllDriveMembers(authUser, actor, foundedNodeToDel.getUuid());
+		memberService.deleteAllMembers(authUser, actor, foundedNodeToDel);
 		businessService.delete(foundedNodeToDel);
 		saveLog(authUser, actor, LogAction.DELETE, foundedNodeToDel);
 		return foundedNodeToDel;
