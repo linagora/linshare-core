@@ -94,7 +94,7 @@ public class UploadRequestReminderEmailBuilder extends GenericUploadRequestEmail
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("isRestricted", false);
 		ctx.setVariable("recipients", recipients);
-		ctx.setVariable("totalMaxDepotSize", new Long(45687656));
+		ctx.setVariable("totalMaxDepotSize", Long.valueOf(45687656));
 		ctx.setVariable("recipientsCount", recipients.size());
 
 		return ctx;

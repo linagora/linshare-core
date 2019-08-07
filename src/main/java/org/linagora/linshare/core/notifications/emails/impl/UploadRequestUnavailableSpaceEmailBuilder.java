@@ -117,7 +117,7 @@ public class UploadRequestUnavailableSpaceEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
-		ctx.setVariable("maxDepositSize", new Long(566135489));
+		ctx.setVariable("maxDepositSize", Long.valueOf(566135489));
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 

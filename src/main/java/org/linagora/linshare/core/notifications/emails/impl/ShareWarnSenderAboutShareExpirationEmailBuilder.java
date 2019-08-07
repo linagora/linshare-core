@@ -88,7 +88,7 @@ public class ShareWarnSenderAboutShareExpirationEmailBuilder extends EmailBuilde
 		Share share = new Share("a-shared-file.txt", true);
 		share.setHref(getRecipientShareLink(fakeLinshareURL, share.getUuid()));
 		ctx.setVariable("share", share);
-		ctx.setVariable("daysLeft", new Integer(7));
+		ctx.setVariable("daysLeft", Integer.valueOf(7));
 		res.add(ctx);
 		return res;
 	}

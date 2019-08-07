@@ -125,18 +125,18 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 		
 		try {
 			//Check the weight
-			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(new Long(1)));
-			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(new Long(1)));
+			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(1)));
+			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(1)));
 			
 			//Check if it's incremented correctly.
 			favouriteRepository.incAndCreate(userRepo.findByMail("robert.lechat@linagora.com"), array);
-			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(new Long(2)));
-			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(new Long(2)));
+			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(2)));
+			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(2)));
 			
 			//Check if it's incremented.
 			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"));
-			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(new Long(3)));
-			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(new Long(3)));
+			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
+			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
 			
 			//Check the order after retrieving by getElementsOrderByWeightDesc and getElementsOrderByWeight.
 			array.remove(1);

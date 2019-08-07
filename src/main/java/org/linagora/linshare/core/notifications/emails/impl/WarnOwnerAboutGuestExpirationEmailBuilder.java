@@ -84,7 +84,7 @@ public class WarnOwnerAboutGuestExpirationEmailBuilder extends EmailBuilder {
 		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("guestCreationDate", getFakeCreationDate());
 		ctx.setVariable("guestExpirationDate", getFakeExpirationDate());
-		ctx.setVariable("daysLeft", new Integer(7));
+		ctx.setVariable("daysLeft", Integer.valueOf(7));
 		res.add(ctx);
 		return res;
 	}

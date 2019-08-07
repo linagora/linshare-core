@@ -221,7 +221,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		domain.setPolicy(policy);
 		domain.setParentDomain(parentDomain);
-		domain.setAuthShowOrder(new Long(1));
+		domain.setAuthShowOrder(Long.valueOf(1));
 		// Object creation
 		domain = abstractDomainRepository.create(domain);
 		createDomainQuotaAndContainerQuota(domain);

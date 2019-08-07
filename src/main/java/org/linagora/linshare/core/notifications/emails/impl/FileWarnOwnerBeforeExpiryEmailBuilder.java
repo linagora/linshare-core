@@ -77,7 +77,7 @@ public class FileWarnOwnerBeforeExpiryEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		ctx.setVariable("daysLeft", new Integer(8));
+		ctx.setVariable("daysLeft", Integer.valueOf(8));
 		ctx.setVariable("owner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		Document document = getNewFakeDocument("a-shared-file.txt", fakeLinshareURL);
 		document.setSize(489663L);

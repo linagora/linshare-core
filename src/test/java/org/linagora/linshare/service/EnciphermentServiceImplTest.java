@@ -235,7 +235,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
 		Calendar exp = inputStreamInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
-		aDocument = new Document(uuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,new Long(10000));
+		aDocument = new Document(uuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,Long.valueOf(10000));
 		aDocumentEntry = new DocumentEntry(jane, "new document", aDocument);
 		HashSet<Signature> signatures = new HashSet<Signature>();
 		aDocument.setSignatures(signatures);

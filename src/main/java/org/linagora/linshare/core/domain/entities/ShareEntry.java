@@ -61,7 +61,7 @@ public class ShareEntry extends Entry {
 		super(entryOwner, name, comment);
 		this.recipient = recipient;
 		this.documentEntry = documentEntry;
-		this.downloaded = new Long(0);
+		this.downloaded = Long.valueOf(0);
 		this.expirationDate = expirationDate;
 		this.shareEntryGroup = shareEntryGroup;
 	}

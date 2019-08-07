@@ -85,11 +85,11 @@ public class UploadRequest implements Cloneable {
 
 	private Set<UploadRequestHistory> uploadRequestHistory = Sets.newHashSet();
 
-	private Boolean notified = new Boolean(false);
+	private Boolean notified = Boolean.valueOf(false);
 
-	private Boolean dirty = new Boolean(false);
+	private Boolean dirty = Boolean.valueOf(false);
 
-	private Boolean enableNotification = new Boolean(true);
+	private Boolean enableNotification = Boolean.valueOf(true);
 
 	public UploadRequest() {
 		super();

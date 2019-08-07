@@ -58,7 +58,7 @@ public class AnonymousShareEntry extends Entry{
 		super(entryOwner, name, comment);
 		this.documentEntry = documentEntry;
 		this.anonymousUrl = anonymousUrl;
-		this.downloaded = new Long(0);
+		this.downloaded = Long.valueOf(0);
 		this.expirationDate = expirationDate;
 		this.shareEntryGroup = shareEntryGroup;
 	}

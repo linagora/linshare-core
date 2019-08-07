@@ -145,7 +145,7 @@ public class ShareEntryRepositoryImpl extends
 		nextDateBeforeExpiration.add(Calendar.DATE, daysLeftExpiration + 1);
 
 		criteria.add(Restrictions.between("expirationDate", dateBeforeExpiration, nextDateBeforeExpiration));
-		criteria.add(Restrictions.eq("downloaded", new Long(0)));
+		criteria.add(Restrictions.eq("downloaded", Long.valueOf(0)));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
 		return list;

@@ -99,7 +99,7 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("deletionDate", new Date());
 		ctx.setVariable("document", document);
-		ctx.setVariable("totalMaxDepotSize", new Long(45687656));
+		ctx.setVariable("totalMaxDepotSize", Long.valueOf(45687656));
 
 		return ctx;
 	}

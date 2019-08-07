@@ -57,7 +57,7 @@ public class RecipientFavourite extends AbstractFavourite<User>{
 	public RecipientFavourite(User owner,String recipient){
 		super();
 		super.setOwner(owner);
-		super.setWeight(new Long(1));
+		super.setWeight(Long.valueOf(1));
 		this.recipient=recipient;
 		
 	}

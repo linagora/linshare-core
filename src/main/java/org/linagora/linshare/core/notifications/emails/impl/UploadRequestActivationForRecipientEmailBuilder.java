@@ -102,7 +102,7 @@ public class UploadRequestActivationForRecipientEmailBuilder extends GenericUplo
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("protected", true);
 		ctx.setVariable("password", "a generated password");
-		ctx.setVariable("totalMaxDepotSize", new Long(45687656));
+		ctx.setVariable("totalMaxDepotSize", Long.valueOf(45687656));
 		ctx.setVariable("recipientsCount", recipients.size());
 
 		return ctx;

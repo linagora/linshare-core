@@ -261,7 +261,7 @@ public abstract class JScriptLdapQuery<T extends Object> {
 		// store into the current object.
 		setUserAttribute(obj, LdapPattern.DN, dn + "," + baseDn);
 		NamingEnumeration<SearchResult> results = lqlctx.getLdapCtx().search(dn, "(objectclass=*)", scs);
-		Integer cpt = new Integer(0);
+		Integer cpt = Integer.valueOf(0);
 		while (results != null && results.hasMore()) {
 			cpt += 1;
 			SearchResult entry = (SearchResult) results.next();

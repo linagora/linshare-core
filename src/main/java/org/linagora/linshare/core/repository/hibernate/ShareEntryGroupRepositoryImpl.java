@@ -103,7 +103,7 @@ public class ShareEntryGroupRepositoryImpl extends AbstractRepositoryImpl<ShareE
 		// join
 		det.createAlias("anonymousShareEntries", "ase");
 		// restrict
-		det.add(Restrictions.eq("ase.downloaded", new Long(0)));
+		det.add(Restrictions.eq("ase.downloaded", Long.valueOf(0)));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(det);
 		return list;

@@ -95,14 +95,14 @@ public class ShareWarnRecipientBeforeExpiryEmailBuilder extends EmailBuilder {
 		share.setHref(getRecipientShareLink(fakeLinshareURL, share.getUuid()));
 		Context ctx = newFakeContext(language);
 		ctx.setVariable("anonymous", false);
-		ctx.setVariable("daysLeft", new Integer(8));
+		ctx.setVariable("daysLeft", Integer.valueOf(8));
 		ctx.setVariable("share", share);
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		res.add(ctx);
 		Context ctx2 = newFakeContext(language);
 		ctx2.setVariable("anonymous", true);
-		ctx2.setVariable("daysLeft", new Integer(8));
+		ctx2.setVariable("daysLeft", Integer.valueOf(8));
 		ctx2.setVariable("share", share);
 		ctx2.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx2.setVariable("shareRecipient", new MailContact("unkown@linshare.org"));

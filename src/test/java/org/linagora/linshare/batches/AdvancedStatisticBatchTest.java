@@ -217,7 +217,7 @@ public class AdvancedStatisticBatchTest extends AbstractTransactionalJUnit4Sprin
 		UploadRequest ure = new UploadRequest();
 		ure.setCanClose(true);
 		ure.setMaxDepositSize((long) 100);
-		ure.setMaxFileCount(new Integer(3));
+		ure.setMaxFileCount(Integer.valueOf(3));
 		ure.setMaxFileSize((long) 50);
 		ure.setStatus(UploadRequestStatus.CREATED);
 		ure.setExpiryDate(new Date());

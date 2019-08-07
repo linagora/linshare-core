@@ -108,7 +108,7 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		// LinShareRootDomain : 1 domain, 2 containers, 1 account
 		// MyDomain : 1 domain, 2 containers, 2 accounts
 		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2 containers, 1 account)
-		assertEquals(new Long(16), count);
+		assertEquals(Long.valueOf(16), count);
 		Quota quota = accountQuotaRepository.find(jane);
 		assertEquals(true, quota.getMaintenance());
 		quota = accountQuotaRepository.find(root);
@@ -122,7 +122,7 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		Long count = domainQuotaRepository.cascadeMaintenanceMode(myDomain, true);
 		// MyDomain : 1 domain, 2 containers, 2 accounts
 		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2 containers, 1 account)
-		assertEquals(new Long(12), count);
+		assertEquals(Long.valueOf(12), count);
 		Quota quota = accountQuotaRepository.find(jane);
 		assertEquals(true, quota.getMaintenance());
 		quota = accountQuotaRepository.find(root);
@@ -161,7 +161,7 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		assertEquals(2, quotaIds.size());
 		count = domainQuotaRepository.cascadeDefaultQuotaToSubDomainsDefaultQuota(root.getDomain(), newQuotaValue,
 				quotaIds);
-		assertEquals(new Long(2), count);
+		assertEquals(Long.valueOf(2), count);
 
 		quota = domainQuotaRepository.find(guestDomain);
 		assertEquals(newQuotaValue, quota.getDefaultQuota());
@@ -187,7 +187,7 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 				QuotaType.DOMAIN_QUOTA);
 		assertEquals(2, quotaIds.size());
 		count = domainQuotaRepository.cascadeDefaultQuotaToSubDomainsQuota(root.getDomain(), newQuotaValue, quotaIds);
-		assertEquals(new Long(2), count);
+		assertEquals(Long.valueOf(2), count);
 
 		quota = domainQuotaRepository.find(guestDomain);
 		assertEquals(quotaValue, quota.getDefaultQuota());
@@ -212,7 +212,7 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		Long newQuotaValue = 8L;
 		count = domainQuotaRepository.cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(root.getDomain(),
 				newQuotaValue);
-		assertEquals(new Long(1), count);
+		assertEquals(Long.valueOf(1), count);
 
 		quota = domainQuotaRepository.find(guestDomain);
 		assertEquals(quotaValue, quota.getDefaultQuota());
@@ -240,7 +240,7 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 
 		Long newQuotaValue = 8L;
 		count = domainQuotaRepository.cascadeDefaultQuotaToQuotaOfChildrenDomains(root.getDomain(), newQuotaValue);
-		assertEquals(new Long(1), count);
+		assertEquals(Long.valueOf(1), count);
 
 		quota = domainQuotaRepository.find(guestDomain);
 		assertEquals(quotaValue, quota.getDefaultQuota());
@@ -268,7 +268,7 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 
 		Long newQuotaValue = 8L;
 		count = domainQuotaRepository.cascadeDefaultQuotaToQuotaOfChildrenDomains(jane.getDomain(), newQuotaValue);
-		assertEquals(new Long(2), count);
+		assertEquals(Long.valueOf(2), count);
 
 		quota = domainQuotaRepository.find(guestDomain);
 		assertEquals(quotaValue, quota.getDefaultQuota());
@@ -292,7 +292,7 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		Long newQuotaValue = 8L;
 		count = domainQuotaRepository.cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(jane.getDomain(),
 				newQuotaValue);
-		assertEquals(new Long(2), count);
+		assertEquals(Long.valueOf(2), count);
 
 		quota = domainQuotaRepository.find(topDomain);
 		assertEquals(quotaValue, quota.getDefaultQuota());
@@ -321,7 +321,7 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		Long newQuotaValue = 8L;
 		count = domainQuotaRepository.cascadeDefaultQuota(root.getDomain(), newQuotaValue);
 		// 1 top (2 quotas), 1 sub (2 quotas), 1 sub (2 quotas),
-		assertEquals(new Long(6), count);
+		assertEquals(Long.valueOf(6), count);
 
 		quota = domainQuotaRepository.find(topDomain);
 		assertEquals(newQuotaValue, quota.getDefaultQuota());

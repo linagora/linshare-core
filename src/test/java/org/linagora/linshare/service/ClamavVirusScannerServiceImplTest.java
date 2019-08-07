@@ -71,7 +71,7 @@ public class ClamavVirusScannerServiceImplTest {
 			throw new Exception("Impossible to parse linshare-test.properties");
 		}
 		String clamavHost = (String) properties.get("test.virusscanner.clamav.host");
-		Integer clamavPort = new Integer((String) properties.get("test.virusscanner.clamav.port"));
+		Integer clamavPort = Integer.valueOf((String) properties.get("test.virusscanner.clamav.port"));
 		fileNameToCheck = properties.getProperty("test.virusscanner.clamav.filetocheck");
 		virusScannerService = new ClamavVirusScannerBusinessServiceImpl(clamavHost,clamavPort.intValue());
 		logger.debug(LinShareTestConstants.END_SETUP);

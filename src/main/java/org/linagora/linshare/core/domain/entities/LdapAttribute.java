@@ -109,7 +109,7 @@ public class LdapAttribute {
 	}
 
 	public void setSync(boolean value) {
-		setSync(new Boolean(value));
+		setSync(Boolean.valueOf(value));
 	}
 
 	public void setSync(Boolean value) {
@@ -121,7 +121,7 @@ public class LdapAttribute {
 	}
 
 	public void setSystem(boolean value) {
-		setSystem(new Boolean(value));
+		setSystem(Boolean.valueOf(value));
 	}
 
 	public void setSystem(Boolean value) {
@@ -133,7 +133,7 @@ public class LdapAttribute {
 	}
 
 	public void setEnable(boolean value) {
-		setEnable(new Boolean(value));
+		setEnable(Boolean.valueOf(value));
 	}
 
 	public void setEnable(Boolean value) {

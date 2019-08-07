@@ -123,7 +123,7 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		ctx.setVariable("isRestricted", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("totalSize", new Long(5682642));
+		ctx.setVariable("totalSize", Long.valueOf(5682642));
 
 		return ctx;
 	}
@@ -151,7 +151,7 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		ctx.setVariable("isRestricted", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("totalSize", new Long(5682642));
+		ctx.setVariable("totalSize", Long.valueOf(5682642));
 
 		return ctx;
 	}

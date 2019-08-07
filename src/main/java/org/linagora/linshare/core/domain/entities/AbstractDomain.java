@@ -132,7 +132,7 @@ public abstract class AbstractDomain {
 		this.purgeStep = DomainPurgeStepEnum.IN_USE;
 		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
 		this.policy = null;
-		this.authShowOrder = new Long(1);
+		this.authShowOrder = Long.valueOf(1);
 		this.mailLayouts = new HashSet<MailLayout>();
 		this.mailFooters = new HashSet<MailFooter>();
 		this.mailContents = new HashSet<MailContent>();
