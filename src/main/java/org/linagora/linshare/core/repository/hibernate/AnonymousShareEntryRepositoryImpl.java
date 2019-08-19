@@ -93,7 +93,6 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.setProjection(Projections.property("uuid"));
 		criteria.add(Restrictions.lt("expirationDate", Calendar.getInstance()));
-		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
 		return list;
 	}
@@ -110,7 +109,6 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 		criteria.setProjection(Projections.distinct(Projections.property("uuid")))
 				.add(Restrictions.lt("expirationDate", calMax))
 				.add(Restrictions.gt("expirationDate", calMin));
-		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
 		return list;
 	}

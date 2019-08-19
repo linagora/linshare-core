@@ -67,8 +67,7 @@ public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
 		Assert.assertTrue(unitRepository.findAll() != null);
 		Assert.assertTrue(unitRepository.findById(unit.getPersistenceId()) != null);
 		
-		@SuppressWarnings("rawtypes")
-		Unit newUnit = unitRepository.findById(unit.getPersistenceId());
+		Unit<?> newUnit = unitRepository.findById(unit.getPersistenceId());
 		
 		Assert.assertTrue(newUnit instanceof FileSizeUnitClass);
 		Assert.assertTrue(((FileSizeUnitClass)newUnit).getUnitValue().toInt() == FileSizeUnit.GIGA.toInt());
@@ -88,8 +87,7 @@ public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
 		Assert.assertTrue(unitRepository.findAll() != null);
 		Assert.assertTrue(unitRepository.findById(unit.getPersistenceId()) != null);
 		
-		@SuppressWarnings("rawtypes")
-		Unit newUnit = unitRepository.findById(unit.getPersistenceId());
+		Unit<?> newUnit = unitRepository.findById(unit.getPersistenceId());
 		
 		Assert.assertTrue(newUnit instanceof TimeUnitClass);
 		Assert.assertTrue(((TimeUnitClass)newUnit).getUnitValue().toInt() == TimeUnit.WEEK.toInt());
@@ -101,8 +99,7 @@ public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testBothUnitEntry() throws BusinessException{
 		
-		@SuppressWarnings("rawtypes")
-		Unit unit = new FileSizeUnitClass(FileSizeUnit.GIGA);
+		Unit<?> unit = new FileSizeUnitClass(FileSizeUnit.GIGA);
 
 		unitRepository.create(unit);
 		Assert.assertNotNull(unit.getPersistenceId());
@@ -110,8 +107,7 @@ public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
 		
 		Assert.assertTrue(unitRepository.findAll() != null);
 		
-		@SuppressWarnings("rawtypes")
-		Unit newUnit = unitRepository.findById(unit.getPersistenceId());
+		Unit<?> newUnit = unitRepository.findById(unit.getPersistenceId());
 		
 		Assert.assertTrue(newUnit != null);
 		
@@ -120,8 +116,7 @@ public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
 		Assert.assertTrue(((FileSizeUnitClass)newUnit).getUnitValue().toInt() == FileSizeUnit.GIGA.toInt());
 
 		
-		@SuppressWarnings("rawtypes")
-		Unit unit2 = new TimeUnitClass(TimeUnit.MONTH);
+		Unit<?> unit2 = new TimeUnitClass(TimeUnit.MONTH);
 
 		unitRepository.create(unit2);
 		Assert.assertNotNull(unit2.getPersistenceId());
@@ -129,8 +124,7 @@ public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
 		
 		Assert.assertTrue(unitRepository.findAll() != null);
 		
-		@SuppressWarnings("rawtypes")
-		Unit newUnit2 = unitRepository.findById(unit2.getPersistenceId());
+		Unit<?> newUnit2 = unitRepository.findById(unit2.getPersistenceId());
 		
 		Assert.assertTrue(newUnit2 != null);
 		

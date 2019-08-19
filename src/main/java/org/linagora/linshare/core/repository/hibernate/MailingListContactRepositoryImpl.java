@@ -91,13 +91,12 @@ public class MailingListContactRepositoryImpl extends
 		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllContactMails(ContactList list) {
 		DetachedCriteria det = DetachedCriteria.forClass(ContactListContact.class);
 		det.add(Restrictions.eq("mailingList", list));
 		det.setProjection(Projections.property("mail"));
-		return (List<String>) listByCriteria(det);
+		return listByCriteria(det);
 	}
 
 	@Override

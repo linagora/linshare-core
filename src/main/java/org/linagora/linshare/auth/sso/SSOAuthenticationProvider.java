@@ -99,8 +99,7 @@ public class SSOAuthenticationProvider implements AuthenticationProvider {
 				authentication.getCredentials(), grantedAuthorities);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public boolean supports(Class authentication) {
+	public boolean supports(Class<?> authentication) {
 		return (PreAuthenticatedAuthenticationToken.class)
 				.isAssignableFrom(authentication);
 	}

@@ -214,7 +214,7 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
      * @param criteria a detached criteria.
      * @return List search result.
      */
-    @SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes" })
 	protected List listByCriteria(final DetachedCriteria criteria) {
     	return hibernateTemplate.findByCriteria(criteria);
     }

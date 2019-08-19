@@ -101,10 +101,6 @@ public class GuestServiceImplTest {
 	@Autowired
 	private UserService userService;
 
-//	@SuppressWarnings("rawtypes")
-//	@Autowired
-//	private UserRepository userRepository;
-
 	@Autowired
 	private FunctionalityService functionalityService;
 

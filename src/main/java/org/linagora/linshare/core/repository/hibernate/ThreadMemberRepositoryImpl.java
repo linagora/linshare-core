@@ -136,8 +136,7 @@ public class ThreadMemberRepositoryImpl extends
 		det.add(Restrictions.eq("thread", workGroup));
 		det.add(Restrictions.eq("member.destroyed", 0L));
 		det.setProjection(Projections.property("member.lsUuid"));
-		@SuppressWarnings("unchecked")
-		List<String> ret = (List<String>)listByCriteria(det);
+		List<String> ret = listByCriteria(det);
 		return ret;
 	}
 

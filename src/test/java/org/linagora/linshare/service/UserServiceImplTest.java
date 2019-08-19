@@ -114,10 +114,9 @@ public class UserServiceImplTest {
 	@Autowired
 	private UserService userService;
 
-	@SuppressWarnings("rawtypes")
 	@Qualifier("userRepository")
 	@Autowired
-	private UserRepository userRepository;
+	private UserRepository<User> userRepository;
 
 	@Qualifier("guestRepository")
 	@Autowired

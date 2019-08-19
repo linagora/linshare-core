@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.Validate;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -54,7 +55,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
-import org.springframework.util.Assert;
 
 public class AbstractDomainRepositoryImpl extends
 		AbstractRepositoryImpl<AbstractDomain> implements
@@ -83,7 +83,6 @@ public class AbstractDomainRepositoryImpl extends
 				Restrictions.eq("uuid", identifier)));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllDomainIdentifiers() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
@@ -100,7 +99,6 @@ public class AbstractDomainRepositoryImpl extends
 				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE)));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<AbstractDomain> findAllTopAndSubDomain() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
@@ -111,7 +109,6 @@ public class AbstractDomainRepositoryImpl extends
 		return listByCriteria(crit);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllGuestAndSubDomainIdentifiers() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
@@ -169,8 +166,7 @@ public class AbstractDomainRepositoryImpl extends
 		det.add(Restrictions.eq("parent.uuid", domain));
 		det.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
 		det.setProjection(Projections.property("uuid"));
-		@SuppressWarnings("unchecked")
-		List<String> ret = (List<String>)listByCriteria(det);
+		List<String> ret = listByCriteria(det);
 		return ret;
 	}
 
@@ -202,7 +198,6 @@ public class AbstractDomainRepositoryImpl extends
 		this.update(abstractDomain);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllAbstractDomainsReadyToPurge() {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
@@ -213,7 +208,7 @@ public class AbstractDomainRepositoryImpl extends
 
 	@Override
 	public AbstractDomain findDomainReadyToPurge(String lsUuid) {
-		Assert.notNull(lsUuid);
+		Validate.notNull(lsUuid);
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.WAIT_FOR_PURGE));
 		criteria.add(Restrictions.eq("uuid", lsUuid).ignoreCase());
@@ -238,7 +233,6 @@ public class AbstractDomainRepositoryImpl extends
 		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllDomainIdentifiersWithGroupProviders() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
