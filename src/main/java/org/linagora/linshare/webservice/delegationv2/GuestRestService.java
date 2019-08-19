@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2015-2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,28 +31,28 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.delegation;
+
+package org.linagora.linshare.webservice.delegationv2;
 
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 
-public interface ThreadRestService {
+public interface GuestRestService {
 
-	WorkGroupDto create(String actorUuid, WorkGroupDto thread)
-			throws BusinessException;
+	GuestDto create(String actorUuid, GuestDto guest) throws BusinessException;
 
-	WorkGroupDto find(String actorUuid, String uuid) throws BusinessException;
+	GuestDto get(String actorUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
 
-	void head(String actorUuid, String uuid) throws BusinessException;
+	void head(String actorUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
 
-	List<WorkGroupDto> findAll(String actorUuid) throws BusinessException;
+	List<GuestDto> getAll(String actorUuid) throws BusinessException;
 
-	WorkGroupDto delete(String actorUuid, WorkGroupDto thread) throws BusinessException;
+	GuestDto update(String actorUuid, GuestDto guest) throws BusinessException;
 
-	WorkGroupDto delete(String actorUuid, String uuid) throws BusinessException;
+	GuestDto delete(String actorUuid, GuestDto guest) throws BusinessException;
 
-	WorkGroupDto update(String actorUuid, String threadUuid, WorkGroupDto threadDto)
-			throws BusinessException;
+	GuestDto delete(String actorUuid, String uuid) throws BusinessException;
+
 }

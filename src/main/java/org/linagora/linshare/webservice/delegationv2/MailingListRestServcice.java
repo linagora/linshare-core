@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2015-2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,53 +32,37 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.delegation;
+package org.linagora.linshare.webservice.delegationv2;
 
-import java.io.InputStream;
-import java.util.List;
+import java.util.Set;
 
-import javax.ws.rs.core.Response;
-
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
-public interface ThreadEntryRestService {
+public interface MailingListRestServcice {
 
-	WorkGroupEntryDto create(String actorUuid, String threadUuid,
-			InputStream file, String description, String givenFileName,
-			Boolean async,
-			Long contentLength,
-			Long fileSize,
-			MultipartBody body) throws BusinessException;
+	Set<MailingListDto> findAll(String actorUuid) throws BusinessException;
 
-	WorkGroupEntryDto copy(String actorUuid, String threadUuid, String entryUuid, Boolean async)
-			throws BusinessException;
+	MailingListDto find(String actorUuid, String uuid) throws BusinessException;
 
-	public WorkGroupEntryDto find(String actorUuid, String threadUuid, String uuid)
-			throws BusinessException;
+	void head(String actorUuid, String uuid) throws BusinessException;
 
-	void head(String actorUuid, String threadUuid, String uuid) throws BusinessException;
+	MailingListDto create(String actorUuid, MailingListDto dto) throws BusinessException;
 
-	public List<WorkGroupEntryDto> findAll(String actorUuid, String threadUuid)
-			throws BusinessException;
+	MailingListDto update(String actorUuid, MailingListDto dto) throws BusinessException;
 
-	public WorkGroupEntryDto delete(String actorUuid, String threadUuid,
-			WorkGroupEntryDto threadEntry) throws BusinessException;
+	MailingListDto delete(String actorUuid, MailingListDto dto) throws BusinessException;
 
-	public WorkGroupEntryDto delete(String actorUuid, String threadUuid, String uuid)
-			throws BusinessException;
+	MailingListDto delete(String actorUuid, String uuid) throws BusinessException;
 
-	Response download(String actorUuid, String threadUuid, String uuid)
-			throws BusinessException;
+	Set<MailingListContactDto> findAllContacts(String actorUuid, String listUuid) throws BusinessException;
 
-	Response thumbnail(String actorUuid, String threadUuid, String uuid) throws BusinessException;
+	void createContact(String actorUuid, String uuid, MailingListContactDto dto) throws BusinessException;
 
-	WorkGroupEntryDto update(String actorUuid, String threadUuid,
-			String threadEntryuuid, WorkGroupEntryDto threadEntryDto)
-			throws BusinessException;
+	void updateContact(String actorUuid, String uuid, MailingListContactDto dto) throws BusinessException;
 
-	AsyncTaskDto findAsync(String actorUuid, String uuid)
-			throws BusinessException;
+	void deleteContact(String actorUuid, String uuid, MailingListContactDto dto) throws BusinessException;
+
+	void deleteContact(String actorUuid, String uuid, String contactUuid) throws BusinessException;
 }

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2015-2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,21 +32,23 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.delegation.impl;
+package org.linagora.linshare.webservice.delegationv2.impl;
+
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.ShareFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
+import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareDto;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.delegation.UserRestService;
+import org.linagora.linshare.webservice.delegationv2.ShareRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -54,34 +56,33 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/users")
-@Api(value = "/rest/delegation/users", basePath = "/rest/delegation/users", description = "Guests service.",
+@Path("/{actorUuid}/shares")
+@Api(value = "/rest/v2/delegation/{actorUuid}/shares", basePath = "/rest/shares", description = "shares service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class UserRestServiceImpl extends WebserviceBase implements
-		UserRestService {
+public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
 
-	private final UserFacade userFacade;
+	private final ShareFacade shareFacade;
 
-	public UserRestServiceImpl(
-			final UserFacade userFacade) {
+	public ShareRestServiceImpl(ShareFacade shareFacade) {
 		super();
-		this.userFacade = userFacade;
+		this.shareFacade = shareFacade;
 	}
 
-	@Path("/{mail}")
-	@GET
-	@ApiOperation(value = "Find a user.", response = GenericUserDto.class, responseContainer = "Set")
+	@Path("/")
+	@POST
+	@ApiOperation(value = "Create a share.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "Actor not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public GenericUserDto getUser(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("mail") String mail,
-			@ApiParam(value = "The actor (user) uuid.", required = false) @QueryParam("domainId") String domainId)
-			throws BusinessException {
-		return userFacade.getUser(mail, domainId);
+	public Set<ShareDto> create(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			ShareCreationDto createDto)
+					throws BusinessException {
+		return shareFacade.create(actorUuid, createDto);
 	}
 }

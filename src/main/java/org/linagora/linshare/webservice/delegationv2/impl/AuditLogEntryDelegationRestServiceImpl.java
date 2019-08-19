@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2018 LINAGORA
+ * Copyright (C) 2016-2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,17 +31,50 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.delegation;
+package org.linagora.linshare.webservice.delegationv2.impl;
 
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.webservice.delegationv2.AuditLogEntryDelegationRestService;
 
-public interface AuditLogEntryDelegationRestService {
+import com.wordnik.swagger.annotations.Api;
 
-	Set<AuditLogEntryUser> findAll(String actorUuid, List<LogAction> action, List<AuditLogEntryType> type,
-			boolean forceAll, String beginDate, String endDate);
+@Path("/audit")
+@Api(value = "/rest/delegation/v2/audits/{actorUuid}", basePath = "/rest/delegation/v2/", description = "Audit log entry services",
+	produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public class AuditLogEntryDelegationRestServiceImpl implements AuditLogEntryDelegationRestService {
+
+	private final AuditLogEntryUserFacade auditFacade;
+
+	public AuditLogEntryDelegationRestServiceImpl(final AuditLogEntryUserFacade auditFacade) {
+		this.auditFacade = auditFacade;
+	}
+
+	@Path("/{actorUuid}")
+	@GET
+	@Override
+	public Set<AuditLogEntryUser> findAll(@PathParam("actorUuid") String actorUuid,
+			@QueryParam("action") List<LogAction> action,
+			@QueryParam("type") List<AuditLogEntryType> type,
+			@QueryParam("forceAll") @DefaultValue("false") boolean forceAll,
+			@QueryParam("beginDate") String beginDate,
+			@QueryParam("endDate") String endDate) {
+		return auditFacade.findAll(actorUuid, action, type, forceAll, beginDate, endDate);
+	}
 }

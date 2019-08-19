@@ -30,9 +30,21 @@
 		<constructor-arg ref="wsDelegationUserFacade" />
 	</bean>
 
+	<bean id="delegationV2GuestRestService" class="org.linagora.linshare.webservice.delegationv2.impl.GuestRestServiceImpl">
+		<constructor-arg ref="wsDelegationGuestFacade" />
+	</bean>
+
+	<bean id="delegationV2AuditLogEntryDelegationRestService" class="org.linagora.linshare.webservice.delegationv2.impl.AuditLogEntryDelegationRestServiceImpl">
+		<constructor-arg ref="wsAuditLogEntryUserFacade" />
+	</bean>
+
 	<bean id="delegationV2WorkGroupMemberRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.WorkGroupMemberRestServiceImpl">
 		<constructor-arg ref="wsDelegationThreadMemberFacade" />
+	</bean>
+
+	<bean id="delegationV2MailingListRestService" class="org.linagora.linshare.webservice.delegationv2.impl.MailingListRestServiceImpl">
+		<constructor-arg ref="wsMailingListFacade" />
 	</bean>
 
 	<bean id="delegationV2WorkGroupRestService"
@@ -72,11 +84,21 @@
 		<constructor-arg ref="wsUploadRequestGroupFacade" />
 	</bean>
 
+	<bean id="delegationV2MimeTypeRestService" class="org.linagora.linshare.webservice.delegationv2.impl.MimeTypeRestServiceImpl">
+		<constructor-arg ref="wsMimeTypeFacade" />
+	</bean>
+
 	<bean id="delegationV2UploadRequestEntryRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestEntryRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestEntryFacade" />
 	</bean>
 
+	<bean id="delegationV2ShareEntryGroupRestService" class="org.linagora.linshare.webservice.delegationv2.impl.ShareEntryGroupRestServiceImpl">
+		<constructor-arg ref="wsDelegationShareEntryGroupFacade" />
+	</bean>
+	<bean id="delegationV2ShareRestService" class="org.linagora.linshare.webservice.delegationv2.impl.ShareRestServiceImpl">
+		<constructor-arg ref="wsDelegationShareFacade" />
+	</bean>
 	<bean id="delegationV2UploadRequestUrlRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestUrlRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestUrlUserFacade" />
@@ -105,7 +127,13 @@
 			<ref bean="delegationV2WorkGroupRestService" />
 			<ref bean="delegationV2WorkGroupMemberRestService" />
 			<ref bean="delegationV2DocumentRestService" />
-			<ref bean="delegationV2WorkGroupEntryRestService" />	
+			<ref bean="delegationV2WorkGroupEntryRestService" />
+			<ref bean="delegationV2GuestRestService" />
+			<ref bean="delegationV2ShareEntryGroupRestService" />
+			<ref bean="delegationV2MimeTypeRestService" />
+			<ref bean="delegationV2ShareRestService" />
+			<ref bean="delegationV2MailingListRestService" />
+			<ref bean="delegationV2AuditLogEntryDelegationRestService" />
 			<ref bean="delegationV2UploadRequestRestService" />	
 			<ref bean="delegationV2UploadRequestEntryRestService" />
 			<ref bean="delegationV2UploadRequestGroupRestService" />

@@ -47,7 +47,7 @@ import org.linagora.linshare.core.facade.webservice.delegation.DelegationGeneric
 import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.AccountDto;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.delegation.AuthenticationRestService;
+import org.linagora.linshare.webservice.delegationv2.AuthenticationRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

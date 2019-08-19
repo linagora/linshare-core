@@ -32,27 +32,16 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.delegation;
+package org.linagora.linshare.webservice.delegationv2;
 
-import java.util.List;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 
-public interface GuestRestService {
+public interface EnumRestService {
 
-	GuestDto create(String actorUuid, GuestDto guest) throws BusinessException;
+	Response get(UriInfo info) throws BusinessException;
 
-	GuestDto get(String actorUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
-
-	void head(String actorUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
-
-	List<GuestDto> getAll(String actorUuid) throws BusinessException;
-
-	GuestDto update(String actorUuid, GuestDto guest) throws BusinessException;
-
-	GuestDto delete(String actorUuid, GuestDto guest) throws BusinessException;
-
-	GuestDto delete(String actorUuid, String uuid) throws BusinessException;
-
+	Response options(String enumName) throws BusinessException;
 }

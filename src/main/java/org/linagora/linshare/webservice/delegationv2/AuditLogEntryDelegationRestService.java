@@ -31,25 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
-package org.linagora.linshare.webservice.delegation;
+package org.linagora.linshare.webservice.delegationv2;
 
 import java.util.List;
+import java.util.Set;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestTemplateDto;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
-public interface UploadRequestTemplateRestService {
+public interface AuditLogEntryDelegationRestService {
 
-	List<UploadRequestTemplateDto> findAll(String actorUuid) throws BusinessException;
-
-	UploadRequestTemplateDto find(String actorUuid, String uuid) throws BusinessException;
-
-	UploadRequestTemplateDto create(String actorUuid, UploadRequestTemplateDto templateDto) throws BusinessException;
-
-	UploadRequestTemplateDto update(String actorUuid, String uuid, UploadRequestTemplateDto templateDto) throws BusinessException;
-
-	UploadRequestTemplateDto delete(String actorUuid, String uuid) throws BusinessException;
-
-	UploadRequestTemplateDto delete(String actorUuid, UploadRequestTemplateDto dto) throws BusinessException;
+	Set<AuditLogEntryUser> findAll(String actorUuid, List<LogAction> action, List<AuditLogEntryType> type,
+			boolean forceAll, String beginDate, String endDate);
 }

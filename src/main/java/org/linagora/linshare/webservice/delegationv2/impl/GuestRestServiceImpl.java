@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2015-2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,12 +32,13 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.delegation.impl;
+package org.linagora.linshare.webservice.delegationv2.impl;
 
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
@@ -45,13 +46,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
-import org.linagora.linshare.core.facade.webservice.delegation.WorkgroupFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.delegation.GuestFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.delegation.ThreadRestService;
+import org.linagora.linshare.webservice.delegationv2.GuestRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -59,133 +61,142 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Deprecated(since = "2.0", forRemoval = true)
-@Path("/{actorUuid}/threads")
-@Api(value = "/rest/delegation/{actorUuid}/threads", basePath = "/rest/threads", description = "threads service.",
+
+
+@Path("{actorUuid}/guests")
+@Api(value = "/rest/delegation/v2/{actorUuid}/guests", basePath = "/rest/delegation/v2/", description = "Guests service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class ThreadRestServiceImpl extends WebserviceBase implements
-		ThreadRestService {
+public class GuestRestServiceImpl extends WebserviceBase implements GuestRestService {
 
-	private final WorkgroupFacade workgroupFacade;
+	private GuestFacade guestFacade;
 
-	public ThreadRestServiceImpl(final WorkgroupFacade workgroupFacade) {
-		this.workgroupFacade = workgroupFacade;
+	public GuestRestServiceImpl(GuestFacade guestFacade) {
+		super();
+		this.guestFacade = guestFacade;
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a thread.", response = WorkGroupDto.class)
+	@ApiOperation(value = "Create a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Thread not found."),
+					@ApiResponse(code = 404, message = "Guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public WorkGroupDto create(
+	public GuestDto create(
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Thread to create.", required = true) WorkGroupDto thread)
-			throws BusinessException {
-		return workgroupFacade.create(actorUuid, thread);
-	}
-
-	@Path("/{uuid}")
-	@GET
-	@ApiOperation(value = "Get a thread.", response = WorkGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Thread not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public WorkGroupDto find(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
+			@ApiParam(value = "Guest to create.", required = true) GuestDto guest)
 					throws BusinessException {
-		return workgroupFacade.find(actorUuid, uuid);
+		return guestFacade.create(actorUuid, guest);
 	}
 
-	@Path("/{uuid}")
-	@HEAD
-	@ApiOperation(value = "Get a thread.", response = WorkGroupDto.class)
+	@Path("/{identifier}")
+	@GET
+	@ApiOperation(value = "Get a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Thread not found."),
+					@ApiResponse(code = 404, message = "Guest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public GuestDto get(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
+			@ApiParam(value = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
+			@ApiParam(value = "Domain identifier.") @QueryParam("domain") String domain)
+			throws BusinessException {
+		if (isMail) {
+			return guestFacade.find(actorUuid, domain, identifier);
+		}
+		return guestFacade.find(actorUuid, identifier);
+	}
+
+	@Path("/{identifier}")
+	@HEAD
+	@ApiOperation(value = "Get a guest.", response = GuestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public void head(
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
-					throws BusinessException {
-		workgroupFacade.find(actorUuid, uuid);
+			@ApiParam(value = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
+			@ApiParam(value = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
+			@ApiParam(value = "Domain identifier.") @QueryParam("domain") String domain)
+			throws BusinessException {
+		if (isMail) {
+			guestFacade.find(actorUuid, domain, identifier);
+		}
+		guestFacade.find(actorUuid, identifier);
 	}
 
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all threads.", response = WorkGroupDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Get all guests.", response = GuestDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Thread not found."),
+					@ApiResponse(code = 404, message = "Guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public List<WorkGroupDto> findAll(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid)
-					throws BusinessException {
-		return workgroupFacade.findAll(actorUuid);
+	public List<GuestDto> getAll(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid) throws BusinessException {
+		return guestFacade.findAll(actorUuid);
+	}
+
+	@Path("/")
+	@PUT
+	@ApiOperation(value = "Update a guest.", response = GuestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Guest or guest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public GuestDto update(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Guest to update.", required = true) GuestDto guest)
+			throws BusinessException {
+		return guestFacade.update(actorUuid, guest);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.", response = WorkGroupDto.class)
+	@ApiOperation(value = "Delete a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Thread or thread not found."),
+					@ApiResponse(code = 404, message = "Guest or guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public WorkGroupDto delete(
+	public GuestDto delete(
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Thread to delete.", required = true) WorkGroupDto thread)
+			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest)
 					throws BusinessException {
-		return workgroupFacade.delete(actorUuid, thread);
+		return guestFacade.delete(actorUuid, guest);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.", response = WorkGroupDto.class)
+	@ApiOperation(value = "Delete a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Thread or thread not found."),
+					@ApiResponse(code = 404, message = "Guest or guest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public WorkGroupDto delete(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
+	public GuestDto delete(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid, 
+			@ApiParam(value = "The guest uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		WorkGroupDto tmp = new WorkGroupDto();
-		tmp.setUuid(uuid);
-		return workgroupFacade.delete(actorUuid, tmp);
-	}
-
-	@Path("/{uuid}")
-	@PUT
-	@ApiOperation(value = "Update a thread.", response = WorkGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Thread or thread not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public WorkGroupDto update(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String threadUuid,
-			@ApiParam(value = "Thread to create.", required = true) WorkGroupDto threadDto)
-			throws BusinessException {
-		return workgroupFacade.update(actorUuid, threadUuid, threadDto);
+		return guestFacade.delete(actorUuid, uuid);
 	}
 
 }
