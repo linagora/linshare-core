@@ -114,7 +114,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Override
 	public GuestDto find(@ApiParam(value = "Guest's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return guestFacade.find(uuid);
+		return guestFacade.find(null, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -127,7 +127,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Override
 	public void head(@ApiParam(value = "Guest's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		guestFacade.find(uuid);
+		guestFacade.find(null, uuid);
 	}
 
 	@Path("/")
@@ -139,7 +139,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Override
 	public GuestDto create(@ApiParam(value = "Guest to create.", required = true) GuestDto guest)
 			throws BusinessException {
-		return guestFacade.create(guest);
+		return guestFacade.create(null, guest);
 	}
 
 	@Path("/{uuid : .*}")
@@ -155,11 +155,11 @@ public class GuestRestServiceImpl implements GuestRestService {
 			@ApiParam(value = "Guest uuid, if null dto.uuid is used.", required = false)
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return guestFacade.update(guest, uuid);
+		return guestFacade.update(null, guest, uuid);
 
 	}
 
-	@Path("/")
+	@Path("/{uuid : .*}")
 	@DELETE
 	@ApiOperation(value = "Delete a guest.", response = GuestDto.class)
 	@ApiResponses({
@@ -169,24 +169,11 @@ public class GuestRestServiceImpl implements GuestRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public GuestDto delete(
-			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest)
+			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest,
+			@ApiParam(value = "Guest's uuid to delete.", required = true)
+			@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return guestFacade.delete(guest);
-	}
-
-	@Path("/{uuid}")
-	@DELETE
-	@ApiOperation(value = "Delete a guest.", response = GuestDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "No permission to delete."),
-			@ApiResponse(code = 404, message = "Guest not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
-	@Override
-	public GuestDto delete(
-			@ApiParam(value = "Guest's uuid to delete.", required = true) @PathParam("uuid") String uuid)
-			throws BusinessException {
-		return guestFacade.delete(uuid);
+		return guestFacade.delete(null, guest, uuid);
 	}
 
 	@Path("/{uuid}/reset")

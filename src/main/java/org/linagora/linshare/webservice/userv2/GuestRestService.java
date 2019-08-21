@@ -52,9 +52,7 @@ public interface GuestRestService {
 
 	GuestDto update(GuestDto guest, String uuid) throws BusinessException;
 
-	GuestDto delete(GuestDto guest) throws BusinessException;
-
-	GuestDto delete(String uuid) throws BusinessException;
+	GuestDto delete(GuestDto guest, String uuid) throws BusinessException;
 
 	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
 

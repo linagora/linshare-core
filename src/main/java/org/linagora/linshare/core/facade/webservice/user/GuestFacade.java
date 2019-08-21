@@ -44,17 +44,19 @@ public interface GuestFacade extends GenericFacade {
 
 	List<GuestDto> findAll(Boolean mine, String pattern) throws BusinessException;
 
+	List<GuestDto> findAll(String actorUuid) throws BusinessException;
+
 	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
 
-	GuestDto find(String uuid) throws BusinessException;
+	GuestDto find(String actorUuid, String uuid) throws BusinessException;
 
-	GuestDto create(GuestDto dto) throws BusinessException;
+	GuestDto find(String actorUuid, String domain, String mail) throws BusinessException;
 
-	GuestDto update(GuestDto dto, String uuid) throws BusinessException;
+	GuestDto create(String actorUuid, GuestDto dto) throws BusinessException;
 
-	GuestDto delete(GuestDto dto) throws BusinessException;
+	GuestDto update(String actorUuid, GuestDto dto, String uuid) throws BusinessException;
 
-	GuestDto delete(String uuid) throws BusinessException;
+	GuestDto delete(String actorUuid, GuestDto dto, String uuid) throws BusinessException;
 
 	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
 }

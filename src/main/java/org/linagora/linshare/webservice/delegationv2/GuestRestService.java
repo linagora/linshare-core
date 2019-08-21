@@ -49,10 +49,8 @@ public interface GuestRestService {
 
 	List<GuestDto> getAll(String actorUuid) throws BusinessException;
 
-	GuestDto update(String actorUuid, GuestDto guest) throws BusinessException;
+	GuestDto update(String actorUuid, GuestDto guest, String uuid) throws BusinessException;
 
-	GuestDto delete(String actorUuid, GuestDto guest) throws BusinessException;
-
-	GuestDto delete(String actorUuid, String uuid) throws BusinessException;
+	GuestDto delete(String actorUuid, GuestDto guest, String uuid) throws BusinessException;
 
 }

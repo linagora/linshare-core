@@ -51,7 +51,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-public class GuestFacadeImpl extends UserGenericFacadeImp implements
+public class GuestFacadeImpl extends GenericFacadeImpl implements
 		GuestFacade {
 
 	private final GuestService guestService;
@@ -76,6 +76,29 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
+	public GuestDto find(String actorUuid, String domain, String mail)
+			throws BusinessException {
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		Validate.notEmpty(mail, "Missing required guest mail");
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		return GuestDto.getFull(guestService.find(authUser, actor, domain, mail));
+	}
+
+	@Override
+	public List<GuestDto> findAll(String actorUuid) throws BusinessException {
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		List<GuestDto> res = Lists.newArrayList();
+		List<Guest> guests = guestService.findAll(authUser, actor, null);
+		for (Guest guest : guests) {
+			res.add(GuestDto.getFull(guest));
+		}
+		return res;
+	}
+
+	@Override
 	public List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, null);
@@ -85,14 +108,14 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public GuestDto find(String uuid) throws BusinessException {
+	public GuestDto find(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "guest uuid is required");
 		User authUser = checkAuthentication();
 		return GuestDto.getFull(guestService.find(authUser, authUser, uuid));
 	}
 
 	@Override
-	public GuestDto create(GuestDto guestDto) throws BusinessException {
+	public GuestDto create(String actorUuid, GuestDto guestDto) throws BusinessException {
 		Validate.notNull(guestDto, "guest dto is required");
 		User authUser = checkAuthentication();
 		Guest guest = guestDto.toUserObject();
@@ -109,7 +132,7 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public GuestDto update(GuestDto dto, String uuid) throws BusinessException {
+	public GuestDto update(String actorUuid, GuestDto dto, String uuid) throws BusinessException {
 		Validate.notNull(dto, "guest dto is required");
 		if (!Strings.isNullOrEmpty(uuid)) {
 			dto.setUuid(uuid);
@@ -127,19 +150,15 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public GuestDto delete(GuestDto guestDto) throws BusinessException {
-		Validate.notNull(guestDto, "guest dto is required");
-		Validate.notEmpty(guestDto.getUuid(), "guest uuid is required");
+	public GuestDto delete(String actorUuid, GuestDto guestDto, String uuid) throws BusinessException {
 		User authUser = checkAuthentication();
-		Guest guest = guestService.delete(authUser, authUser, guestDto.getUuid());
-		return GuestDto.getSimple(guest);
-	}
-
-	@Override
-	public GuestDto delete(String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "guest uuid is required");
-		User authUser = checkAuthentication();
-		Guest guest = guestService.delete(authUser, authUser, uuid);
+		User actor = getActor(authUser, actorUuid);
+		if (Strings.isNullOrEmpty(uuid)) {
+			Validate.notNull(guestDto, "Missing required guest");
+			Validate.notEmpty(guestDto.getUuid(), "Missing required guest uuid");
+			uuid = guestDto.getUuid();
+		}
+		Guest guest = guestService.delete(authUser, actor, uuid);
 		return GuestDto.getSimple(guest);
 	}
 

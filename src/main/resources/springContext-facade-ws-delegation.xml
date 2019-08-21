@@ -24,12 +24,6 @@
 		<constructor-arg ref="documentEntryService" />
 	</bean>
 
-	<bean id="wsDelegationGuestFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.GuestFacadeImpl">
-		<constructor-arg ref="accountService" />
-		<constructor-arg ref="userService" />
-		<constructor-arg ref="guestService" />
-	</bean>
-
 	<bean id="wsDelegationThreadFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.WorkgroupFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
