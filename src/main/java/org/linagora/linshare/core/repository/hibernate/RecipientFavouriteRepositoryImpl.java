@@ -281,7 +281,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
 					throws HibernateException {
-				final Query query = session.createQuery(
+				final Query<?> query = session.createQuery(
 						"UPDATE RecipientFavourite SET recipient_mail = :newEmail WHERE recipient_mail = :currentEmail");
 				query.setParameter("newEmail", newEmail);
 				query.setParameter("currentEmail", currentEmail);

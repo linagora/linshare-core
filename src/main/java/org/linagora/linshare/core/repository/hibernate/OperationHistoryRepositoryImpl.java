@@ -172,7 +172,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	public void deleteBeforeDateByAccount(Date date, Account account) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws HibernateException {
-				final Query query = session.createQuery("DELETE from OperationHistory WHERE account = :account and creationDate <= :date");
+				final Query<?> query = session.createQuery("DELETE from OperationHistory WHERE account = :account and creationDate <= :date");
 				query.setParameter("date", date);
 				query.setParameter("account", account);
 				return (long) query.executeUpdate();

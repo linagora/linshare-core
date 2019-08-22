@@ -134,14 +134,14 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 				}
 				sb.append(" AND child.default_quota_override = false");
 				sb.append(";");
-				final NativeQuery query = session.createSQLQuery(sb.toString());
+				@SuppressWarnings("unchecked")
+				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
 				if (containerType != null) {
 					query.setParameter("containerType", containerType.name());
 				}
-				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
 				logger.debug("child_ids :"  + res);
 				return res;
@@ -159,7 +159,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 					throws HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_quota = :quota WHERE id IN :list_quota_id ;");
-				final Query query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createSQLQuery(sb.toString());
 				query.setParameter("quota", quota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
@@ -194,14 +194,14 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 				}
 				sb.append(" AND child.quota_override = false");
 				sb.append(";");
-				final NativeQuery query = session.createSQLQuery(sb.toString());
+				@SuppressWarnings("unchecked")
+				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
 				if (containerType != null) {
 					query.setParameter("containerType", containerType.name());
 				}
-				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
 				logger.debug("child_ids :"  + res);
 				return res;
@@ -219,7 +219,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 					throws HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET quota = :quota WHERE id IN :list_quota_id ;");
-				final Query query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createSQLQuery(sb.toString());
 				query.setParameter("quota", quota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();

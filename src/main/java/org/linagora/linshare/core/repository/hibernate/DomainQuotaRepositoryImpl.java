@@ -101,7 +101,7 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 			action = new HibernateCallback<Long>() {
 				public Long doInHibernate(final Session session)
 						throws HibernateException {
-					final Query query = session.createQuery("UPDATE Quota SET maintenance = :maintenance");
+					final Query<?> query = session.createQuery("UPDATE Quota SET maintenance = :maintenance");
 					query.setParameter("maintenance", maintenance);
 					return (long) query.executeUpdate();
 				}
@@ -110,7 +110,7 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 			action = new HibernateCallback<Long>() {
 				public Long doInHibernate(final Session session)
 						throws HibernateException {
-					final Query query = session.createQuery("UPDATE Quota SET maintenance = :maintenance WHERE domain = :domain OR parentDomain = :domain");
+					final Query<?> query = session.createQuery("UPDATE Quota SET maintenance = :maintenance WHERE domain = :domain OR parentDomain = :domain");
 					query.setParameter("domain", domain);
 					query.setParameter("maintenance", maintenance);
 					return (long) query.executeUpdate();
@@ -141,7 +141,7 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
 					throws HibernateException {
-				final Query query = session.createQuery("UPDATE DomainQuota SET quota = :quota WHERE parentDomain = :parentDomain AND quotaOverride = false");
+				final Query<?> query = session.createQuery("UPDATE DomainQuota SET quota = :quota WHERE parentDomain = :parentDomain AND quotaOverride = false");
 				query.setParameter("quota", quota);
 				query.setParameter("parentDomain", domain);
 				return (long) query.executeUpdate();
@@ -156,7 +156,7 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
 					throws HibernateException {
-				final Query query = session.createQuery("UPDATE DomainQuota SET defaultQuota = :defaultQuota WHERE parentDomain = :parentDomain AND defaultQuotaOverride = false");
+				final Query<?> query = session.createQuery("UPDATE DomainQuota SET defaultQuota = :defaultQuota WHERE parentDomain = :parentDomain AND defaultQuotaOverride = false");
 				query.setParameter("defaultQuota", quota);
 				query.setParameter("parentDomain", domain);
 				return (long) query.executeUpdate();
@@ -179,7 +179,7 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
 					throws HibernateException {
-				final Query query = session.createQuery("UPDATE AccountQuota SET domainShared = :domainShared WHERE domain = :domain AND domainSharedOverride = false");
+				final Query<?> query = session.createQuery("UPDATE AccountQuota SET domainShared = :domainShared WHERE domain = :domain AND domainSharedOverride = false");
 				query.setParameter("domainShared", domainShared);
 				query.setParameter("domain", quota.getDomain());
 				return (long) query.executeUpdate();

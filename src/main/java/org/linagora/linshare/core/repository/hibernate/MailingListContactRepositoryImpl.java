@@ -128,7 +128,7 @@ public class MailingListContactRepositoryImpl extends
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
 					throws HibernateException {
-				final Query query = session.createQuery(
+				final Query<?> query = session.createQuery(
 						"UPDATE MailingListContact SET mail = :newEmail WHERE mail = :currentEmail");
 				query.setParameter("newEmail", newEmail);
 				query.setParameter("currentEmail", currentEmail);

@@ -89,7 +89,7 @@ public class MimePolicyRepositoryImpl extends
 	public MimePolicy enableAll(final MimePolicy entity) throws BusinessException {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws HibernateException {
-				final Query query = session.createQuery("UPDATE MimeType SET enable = true WHERE mimePolicy = :mimePolicy");
+				final Query<?> query = session.createQuery("UPDATE MimeType SET enable = true WHERE mimePolicy = :mimePolicy");
 				query.setParameter("mimePolicy", entity);
 				return (long) query.executeUpdate();
 			}
@@ -102,7 +102,7 @@ public class MimePolicyRepositoryImpl extends
 	public MimePolicy disableAll(final MimePolicy entity) throws BusinessException {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws HibernateException {
-				final Query query = session.createQuery("UPDATE MimeType SET enable = false WHERE mimePolicy = :mimePolicy");
+				final Query<?> query = session.createQuery("UPDATE MimeType SET enable = false WHERE mimePolicy = :mimePolicy");
 				query.setParameter("mimePolicy", entity);
 				return (long) query.executeUpdate();
 			}

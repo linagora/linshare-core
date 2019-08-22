@@ -114,7 +114,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws  HibernateException {
-				final Query query = session.createQuery("select count(*) from ShareEntry s where s.documentEntry = :documentEntry");
+				final Query<?> query = session.createQuery("select count(*) from ShareEntry s where s.documentEntry = :documentEntry");
 				query.setParameter("documentEntry", documentEntry);
 				return 	((Long)query.iterate().next()).longValue();
 			}
@@ -123,9 +123,9 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 
 		action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws  HibernateException {
-				final Query query = session.createQuery("select count(*) from AnonymousShareEntry s where s.documentEntry = :documentEntry");
+				final Query<?> query = session.createQuery("select count(*) from AnonymousShareEntry s where s.documentEntry = :documentEntry");
 				query.setParameter("documentEntry", documentEntry);
-				return 	((Long)query.iterate().next()).longValue();
+				return 	((Long) query.iterate().next()).longValue();
 			}
 		};
 		Long anonymousShareResult = getHibernateTemplate().execute(action);
@@ -185,7 +185,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 			throws BusinessException {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws  HibernateException {
-				final Query query = session.createQuery("UPDATE Entry SET cmisSync = false WHERE name = :fileName and entryOwner = :owner");
+				final Query<?> query = session.createQuery("UPDATE Entry SET cmisSync = false WHERE name = :fileName and entryOwner = :owner");
 				query.setParameter("owner", owner);
 				query.setParameter("fileName", fileName);
 				return (long) query.executeUpdate();
