@@ -261,7 +261,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 				sb.append(" AND q.account_id is null");
 				sb.append(";");
 				@SuppressWarnings("unchecked")
-				final NativeQuery<String> query = session.createSQLQuery(sb.toString());
+				final NativeQuery<String> query = session.createNativeQuery(sb.toString());
 				List<String> res = query.list();
 				return res;
 			}

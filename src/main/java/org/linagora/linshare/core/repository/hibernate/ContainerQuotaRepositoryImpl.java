@@ -255,7 +255,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				sb.append(" AND child.default_max_file_size_override = false");
 				sb.append(";");
 				@SuppressWarnings("unchecked")
-				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
+				final NativeQuery<Long> query = session.createNativeQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
@@ -282,7 +282,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				sb.append(" AND domain_parent_id = :domainId ");
 				sb.append(";");
 				@SuppressWarnings("unchecked")
-				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
+				final NativeQuery<Long> query = session.createNativeQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
@@ -304,7 +304,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_max_file_size = :maxFileSize WHERE id IN :list_quota_id ;");
-				final Query<?> query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createNativeQuery(sb.toString());
 				query.setParameter("maxFileSize", maxFileSize);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
@@ -336,7 +336,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				sb.append(" AND child.max_file_size_override = false");
 				sb.append(";");
 				@SuppressWarnings("unchecked")
-				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
+				final NativeQuery<Long> query = session.createNativeQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
@@ -360,7 +360,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET max_file_size = :maxFileSize WHERE id IN :list_quota_id ;");
-				final Query<?> query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createNativeQuery(sb.toString());
 				query.setParameter("maxFileSize", maxFileSize);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
@@ -380,7 +380,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET max_file_size = :maxFileSize WHERE quota_container_id IN :list_quota_id AND max_file_size_override = false;");
-				final Query<?> query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createNativeQuery(sb.toString());
 				query.setParameter("maxFileSize", maxFileSize);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
@@ -443,7 +443,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				sb.append(" AND domain_parent_id = :domainId ");
 				sb.append(";");
 				@SuppressWarnings("unchecked")
-				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
+				final NativeQuery<Long> query = session.createNativeQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
@@ -490,7 +490,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				sb.append(" AND child.account_quota_override = false");
 				sb.append(";");
 				@SuppressWarnings("unchecked")
-				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
+				final NativeQuery<Long> query = session.createNativeQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
@@ -514,7 +514,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_account_quota = :accountQuota WHERE id IN :list_quota_id ;");
-				final Query<?> query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createNativeQuery(sb.toString());
 				query.setParameter("accountQuota", accountQuota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
@@ -534,7 +534,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET quota = :accountQuota WHERE quota_container_id IN :list_quota_id AND quota_override = false;");
-				final Query<?> query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createNativeQuery(sb.toString());
 				query.setParameter("accountQuota", accountQuota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
@@ -566,7 +566,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				sb.append(" AND child.account_quota_override = false");
 				sb.append(";");
 				@SuppressWarnings("unchecked")
-				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
+				final NativeQuery<Long> query = session.createNativeQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
@@ -590,7 +590,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET account_quota = :accountQuota WHERE id IN :list_quota_id ;");
-				final Query<?> query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createNativeQuery(sb.toString());
 				query.setParameter("accountQuota", accountQuota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();

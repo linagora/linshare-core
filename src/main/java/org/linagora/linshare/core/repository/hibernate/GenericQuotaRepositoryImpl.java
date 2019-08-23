@@ -135,7 +135,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 				sb.append(" AND child.default_quota_override = false");
 				sb.append(";");
 				@SuppressWarnings("unchecked")
-				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
+				final NativeQuery<Long> query = session.createNativeQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
@@ -159,7 +159,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 					throws HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_quota = :quota WHERE id IN :list_quota_id ;");
-				final Query<?> query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createNativeQuery(sb.toString());
 				query.setParameter("quota", quota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
@@ -195,7 +195,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 				sb.append(" AND child.quota_override = false");
 				sb.append(";");
 				@SuppressWarnings("unchecked")
-				final NativeQuery<Long> query = session.createSQLQuery(sb.toString());
+				final NativeQuery<Long> query = session.createNativeQuery(sb.toString());
 				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
 				query.setParameter("domainType", type.name());
@@ -219,7 +219,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 					throws HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET quota = :quota WHERE id IN :list_quota_id ;");
-				final Query<?> query = session.createSQLQuery(sb.toString());
+				final Query<?> query = session.createNativeQuery(sb.toString());
 				query.setParameter("quota", quota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
