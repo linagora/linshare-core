@@ -29,7 +29,7 @@
 		<property name="description" value="LinShare's API documentation"/>
 		<property name="contact" value="linshare-dev@list.linpki.com"/>
 		<property name="license" value="AGPLv3"/>
-		<property name="licenseUrl" value="http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3_en.pdf"/>
+		<property name="licenseUrl" value="https://www.linshare.org/files/LinShare-License_AfferoGPL-v3_en.pdf"/>
 		<property name="scan" value="true"/>
 	</bean>
 	<jaxrs:server id="swaggerContainer" address="/">
