@@ -88,6 +88,10 @@
 		<constructor-arg ref="wsMimeTypeFacade" />
 	</bean>
 
+	<bean id="delegationV2AccountQuotaRestService" class="org.linagora.linshare.webservice.delegationv2.impl.QuotaRestServiceImpl">
+		<constructor-arg ref="wsAccountQuotaFacade" />
+	</bean>
+
 	<bean id="delegationV2UploadRequestEntryRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestEntryRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestEntryFacade" />
@@ -143,6 +147,7 @@
 			<ref bean="delegationV2SharedSpaceRoleRestService" />
 			<ref bean="delegationV2SharedSpaceMemberRestService"/>
 			<ref bean="delegationV2StatisticRestService" /> 
+			<ref bean="delegationV2AccountQuotaRestService" /> 
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -43,7 +43,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.AccountQuotaDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.QuotaService;
 
-public class AccountQuotaFacadeImpl extends UserGenericFacadeImp implements AccountQuotaFacade {
+public class AccountQuotaFacadeImpl extends GenericFacadeImpl implements AccountQuotaFacade {
 
 	protected final QuotaService quotaService;
 
