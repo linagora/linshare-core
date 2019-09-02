@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2018 LINAGORA
+ * Copyright (C) 2009-2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,32 +31,58 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.VersioningParameters;
 
-public interface SharedSpaceNodeFacade {
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	List<SharedSpaceNode> findAll();
-
-	SharedSpaceNode find(String actorUuid, String uuid, boolean withRole) throws BusinessException;
-
-	SharedSpaceNode create(String actorUuid, SharedSpaceNode node) throws BusinessException;
-
-	SharedSpaceNode delete(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
-
-	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
+@XmlRootElement
+public class PatchDto {
 	
-	SharedSpaceNode updatePartial(String actorUuid, PatchDto patchNode, String uuid) throws BusinessException;
+	@ApiModelProperty(value="Uuid of the resource that will be updated")
+	protected String uuid;
+	
+	@ApiModelProperty(value = "Name of the attribute that will be updated")
+	protected String name;
+	
+	@ApiModelProperty(value = "Value of the attribute that will be updated")
+	protected String value;
 
-	List<SharedSpaceMember> members(String actorUuid, String uuid, String accountUuid) throws BusinessException;
+	public PatchDto() {
+	}
+	
+	public PatchDto(String uuid, String name, String value) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+		this.value = value;
+	}
 
-	List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole);
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
 
 }

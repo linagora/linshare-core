@@ -39,6 +39,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -55,6 +56,8 @@ public interface SharedSpaceRestService {
 	SharedSpaceNode delete(SharedSpaceNode node, String uuid) throws BusinessException;
 
 	SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException;
+	
+	SharedSpaceNode update(PatchDto patchNode, String uuid) throws BusinessException;
 
 	List<SharedSpaceMember> members(String uuid, String accountUuid);
 

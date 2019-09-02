@@ -40,6 +40,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -51,6 +52,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
@@ -163,6 +165,21 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return nodeFacade.update(null, node, uuid);
+	}
+	
+	@Path("/{uuid}")
+	@PATCH
+	@ApiOperation(value = "Update a shared space node. If versionning delegation functionality is enabled, the user will be able to update the versionning parameter into a workgroup", response = SharedSpaceNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceNode update(
+			@ApiParam(value = "The Patch that contains the feilds that'll be updated in the node")PatchDto patchNode,
+			@ApiParam(value = "The uuid of the node that'll be updated.")
+				@PathParam("uuid")String uuid) throws BusinessException {
+		return nodeFacade.updatePartial(null, patchNode, uuid);
 	}
 
 	@Path("/{uuid}/members")

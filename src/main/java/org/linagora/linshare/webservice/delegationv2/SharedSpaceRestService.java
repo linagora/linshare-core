@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.delegationv2;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
@@ -50,5 +51,7 @@ public interface SharedSpaceRestService {
 	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
 	List<SharedSpaceNodeNested> findAll(String actorUuid, boolean withRole) throws BusinessException;
+
+	SharedSpaceNode update(PatchDto patchNode, String uuid) throws BusinessException;
 
 }

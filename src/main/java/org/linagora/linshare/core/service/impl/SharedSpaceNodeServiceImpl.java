@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadRepository;
@@ -244,7 +245,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			throws BusinessException {
 		Validate.notNull(nodeToUpdate, "nodeToUpdate must be set.");
 		Validate.notEmpty(nodeToUpdate.getUuid(), "shared space node uuid to update must be set.");
-		Validate.notNull(nodeToUpdate.getVersioningParameters());
+		Validate.notNull(nodeToUpdate.getVersioningParameters(),
+				"The nested versioning object must be set for the whole object update");
 		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
 		SharedSpaceNode nodeLog = new SharedSpaceNode(node);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
@@ -268,6 +270,21 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
 		return updated;
+	}
+
+	/**
+	 * Method that allow to do a partial update of shared space by sending a patch
+	 * that contains the name of the attributes and there values.
+	 */
+	@Override
+	public SharedSpaceNode updatePartial(Account authUser, Account actor, PatchDto patchNode) throws BusinessException {
+		SharedSpaceNode nodeToUpdate = find(authUser, actor, patchNode.getUuid());
+		if (patchNode.getName().equals("name")) {
+			nodeToUpdate.setName(patchNode.getValue());
+		} else {
+			throw new BusinessException("Unsupported field name, allowed values: name");
+		}
+		return update(authUser, actor, nodeToUpdate);
 	}
 
 	protected void checkUpdateVersioningParameters(VersioningParameters newParam, VersioningParameters parameter,

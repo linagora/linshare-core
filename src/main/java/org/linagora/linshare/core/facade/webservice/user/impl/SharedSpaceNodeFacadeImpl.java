@@ -38,6 +38,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
@@ -96,6 +97,17 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		return nodeService.delete(authUser, actor, node);
 	}
 
+	@Override
+	public SharedSpaceNode updatePartial(String actorUuid, PatchDto patchNode, String uuid) throws BusinessException {
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notNull(patchNode, "Missind required input patch node.");
+		Validate.notNull(patchNode.getName(), "The name of the attribute to update must be set .");
+		Validate.notNull(patchNode.getValue(),"The value of the attribute to update must be set.");
+		patchNode.setUuid(uuid);
+		return nodeService.updatePartial(authUser, actor, patchNode);
+	}
+	
 	@Override
 	public SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException {
 		Validate.notNull(node, "Missind required input shared space node.");
