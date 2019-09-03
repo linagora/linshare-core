@@ -311,7 +311,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			rootFolder.setName(updated.getName());
 			workGroupNodeService.update(authUser, actor, wg, rootFolder);
 		}
-		memberService.addMembersToLog(updated.getUuid(), log);
+		List<String> members = memberBusinessService.findMembersUuidBySharedSpaceNodeUuid(updated.getUuid());
+		log.addRelatedAccounts(members);
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
 		return updated;

@@ -54,6 +54,4 @@ public interface SharedSpaceMemberFragmentService {
 
 	List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node);
 
-	void addMembersToLog(String workGroupUuid, AuditLogEntryUser log);
-
 }

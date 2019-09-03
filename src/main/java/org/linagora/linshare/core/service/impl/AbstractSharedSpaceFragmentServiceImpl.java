@@ -119,7 +119,8 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 			SharedSpaceMember resource, AuditLogEntryType auditType) {
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
 				auditType, resource);
-		addMembersToLog(resource.getNode().getUuid(), log);
+		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(resource.getNode().getUuid());
+		log.addRelatedAccounts(members);
 		logEntryService.insert(log);
 		return log;
 	}
@@ -129,15 +130,10 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action, auditType,
 				resource);
 		log.setResourceUpdated(resourceUpdated);
-		addMembersToLog(resource.getNode().getUuid(), log);
+		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(resource.getNode().getUuid());
+		log.addRelatedAccounts(members);
 		logEntryService.insert(log);
 		return log;
-	}
-
-	@Override
-	public void addMembersToLog(String workGroupUuid, AuditLogEntryUser log) {
-		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(workGroupUuid);
-		log.addRelatedAccounts(members);
 	}
 
 	protected SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,

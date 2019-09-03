@@ -57,11 +57,8 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
 		implements SharedSpaceMemberService {
@@ -274,11 +271,4 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		Validate.notNull(service, "Node type not supported");
 		return service;
 	}
-
-	@Override
-	public void addMembersToLog(String workGroupUuid, AuditLogEntryUser log) {
-		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(workGroupUuid);
-		log.addRelatedAccounts(members);
-	}
-
 }
