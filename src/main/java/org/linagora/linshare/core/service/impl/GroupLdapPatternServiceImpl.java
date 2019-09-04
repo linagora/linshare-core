@@ -104,11 +104,13 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 			throw new BusinessException(BusinessErrorCode.GROUP_LDAP_PATTERN_CANNOT_BE_UPDATED,
 					"System group patterns cannot be updated");
 		}
+		Validate.notEmpty(groupLdapPattern.getLabel(), "Pattern's label must be set.");
 		Validate.notEmpty(groupLdapPattern.getDescription(), "Pattern's description must be set.");
 		Validate.notNull(groupLdapPattern.getSearchPageSize(), "Pattern's search page size must be set.");
 		Validate.notNull(groupLdapPattern.getSearchAllGroupsQuery(), "Pattern's search all groups query must be set.");
 		Validate.notEmpty(groupLdapPattern.getSearchGroupQuery(), "Pattern's search group query must be set.");
 
+		pattern.setLabel(groupLdapPattern.getLabel());
 		pattern.setDescription(groupLdapPattern.getDescription());
 		pattern.setSearchPageSize(groupLdapPattern.getSearchPageSize());
 		pattern.setSearchAllGroupsQuery(groupLdapPattern.getSearchAllGroupsQuery());
@@ -146,7 +148,7 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 					"System group patterns cannot be removed");
 		}
 		groupPatternRepository.delete(pattern);
-		return groupLdapPattern;
+		return pattern;
 	}
 
 	@Override
