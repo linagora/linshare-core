@@ -24,6 +24,10 @@
 		<constructor-arg value="${safe.detail.iufsc}" />
 	</bean>
 
+	<bean id="delegationV2UserRestService" class="org.linagora.linshare.webservice.delegationv2.impl.UserRestServiceImpl">
+		<constructor-arg ref="wsDelegationUserFacade" />
+	</bean>
+
 	<bean id="delegationV2AuthenticationRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="wsDelegationGenericFacade" />
@@ -147,7 +151,8 @@
 			<ref bean="delegationV2SharedSpaceRoleRestService" />
 			<ref bean="delegationV2SharedSpaceMemberRestService"/>
 			<ref bean="delegationV2StatisticRestService" /> 
-			<ref bean="delegationV2AccountQuotaRestService" /> 
+			<ref bean="delegationV2AccountQuotaRestService" />
+			<ref bean="delegationV2UserRestService" /> 
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
