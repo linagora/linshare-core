@@ -34,19 +34,30 @@
 
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDetailsDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
 
 public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
 		UserFacade {
 
-	public UserFacadeImpl(AccountService accountService, UserService userService) {
+	private final QuotaService quotaService;
+
+	public UserFacadeImpl(
+			AccountService accountService,
+			UserService userService,
+			QuotaService quotaService) {
 		super(accountService, userService);
+		this.quotaService = quotaService;
 	}
 
 	@Override
@@ -67,5 +78,31 @@ public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
 		mail = mail.replace("*", "");
 		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId);
 		return new GenericUserDto(user);
+	}
+
+	@Override
+	public UserDto findUser(UserDetailsDto userDetailsDto) throws BusinessException {
+		User authUser = checkAuthentication();
+		Validate.notEmpty(userDetailsDto.getMail(), "User mail must be set.");
+		if (userDetailsDto.getDomain() == null) {
+			userDetailsDto.setDomain(authUser.getDomainId());
+		}
+		User user = userService.findOrCreateUserWithDomainPolicies(userDetailsDto.getMail(),
+				userDetailsDto.getDomain());
+		UserDto dto = UserDto.getFull(user);
+		AccountQuota quota = quotaService.findByRelatedAccount(user);
+		dto.setQuotaUuid(quota.getUuid());
+		return dto;
+	}
+
+	@Override
+	public UserDto findUser(String uuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		Validate.notEmpty(uuid, "User uuid must be set.");
+		User user = userService.findByLsUuid(uuid);
+		UserDto dto = UserDto.getFull(user);
+		AccountQuota quota = quotaService.findByRelatedAccount(user);
+		dto.setQuotaUuid(quota.getUuid());
+		return dto;
 	}
 }

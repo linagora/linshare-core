@@ -10,6 +10,7 @@
 	<bean id="wsDelegationUserFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.UserFacadeImpl">
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="accountService" />
+		<constructor-arg ref="quotaService" />
 	</bean>
 
 	<bean id="wsDelegationGenericFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.DelegationGenericFacadeImpl">

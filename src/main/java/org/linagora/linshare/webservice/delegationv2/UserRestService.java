@@ -35,9 +35,15 @@ package org.linagora.linshare.webservice.delegationv2;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDetailsDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public interface UserRestService {
 
 	GenericUserDto getUser(String mail, String domainId) throws BusinessException;
+
+	UserDto findUser(UserDetailsDto userDetailsDto) throws BusinessException;
+
+	UserDto findUser(String uuid) throws BusinessException;
 }
 

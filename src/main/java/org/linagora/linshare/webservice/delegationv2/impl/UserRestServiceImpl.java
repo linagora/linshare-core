@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.delegationv2.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -43,6 +44,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDetailsDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.UserRestService;
@@ -84,6 +87,35 @@ public class UserRestServiceImpl extends WebserviceBase implements
 				@QueryParam("domainId") String domainId)
 			throws BusinessException {
 		return userFacade.getUser(mail, domainId);
+	}
+
+	@Path("/details/{uuid}")
+	@GET
+	@ApiOperation(value = "Find all the user's informations from the given uuid.", response = UserDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public UserDto findUser(
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("uuid") String uuid)
+			throws BusinessException {
+		return userFacade.findUser(uuid);
+	}
+
+	@Path("/details")
+	@POST
+	@ApiOperation(value = "Looking for user LinShare account, if it does not exists it will be created from ldap directories.", response = UserDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public UserDto findUser(
+			@ApiParam(value = "User details (mail and domain) to send to recover the whole informations about user", required = true) UserDetailsDto userDetailsDto)
+			throws BusinessException {
+		return userFacade.findUser(userDetailsDto);
 	}
 }
 

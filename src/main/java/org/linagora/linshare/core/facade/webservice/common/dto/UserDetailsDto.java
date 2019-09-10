@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,22 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-package org.linagora.linshare.core.facade.webservice.delegation;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDetailsDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-public interface UserFacade extends DelegationGenericFacade {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@XmlRootElement(name = "UserDetails")
+public class UserDetailsDto {
 
-	void changePassword(PasswordDto password) throws BusinessException;
+	@ApiModelProperty(value = "User mail is required")
+	private String mail;
 
-	GenericUserDto getUser(String mail, String domainId) throws BusinessException;
+	@ApiModelProperty(value = "Domain uuid is optional")
+	private String domain;
 
-	UserDto findUser(UserDetailsDto userDetailsDto) throws BusinessException;
+	public String getMail() {
+		return mail;
+	}
 
-	UserDto findUser(String uuid) throws BusinessException;
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
 }
