@@ -31,16 +31,19 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.service.fragment.impl;
 
+import java.util.List;
+
+import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
@@ -49,15 +52,15 @@ import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.SharedSpaceMemberFragmentService;
+import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
-public class WorkgroupMemberServiceImpl extends AbstractSharedSpaceFragmentServiceImpl implements SharedSpaceMemberFragmentService {
+public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceFragmentServiceImpl implements SharedSpaceMemberFragmentService {
 
-	public WorkgroupMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
+	public WorkGroupMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
 			SharedSpaceMemberResourceAccessControl rac,
@@ -95,15 +98,33 @@ public class WorkgroupMemberServiceImpl extends AbstractSharedSpaceFragmentServi
 	@Override
 	protected SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember foundMemberToDelete) {
 		businessService.delete(foundMemberToDelete);
-		saveLog(authUser, actor, LogAction.DELETE, foundMemberToDelete, AuditLogEntryType.WORKGROUP_MEMBER);
+		saveLogForCreateAndDelete(authUser, actor, LogAction.DELETE, foundMemberToDelete, AuditLogEntryType.WORKGROUP_MEMBER);
 		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
 		notify(new WorkGroupWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user));
 		return foundMemberToDelete;
 	}
 
 	@Override
-	protected void notifyMember(EmailContext context) {
-		notify(context);
+	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node) {
+		preChecks(authUser, actor);
+		Validate.notNull(node, "Missing required shared space node");
+		Validate.isTrue(NodeType.WORK_GROUP.equals(node.getNodeType()), "Node type need to be a Workgroup");
+		List<SharedSpaceMember> foundMembersToDelete = businessService.findBySharedSpaceNodeUuid(node.getUuid());
+		if (foundMembersToDelete == null || foundMembersToDelete.isEmpty()) {
+			// There is no members on this Workgroup
+			return null;
+		}
+		// We check the user has the right to delete members of this node
+		// If he can delete one member, he can delete them all
+		checkDeletePermission(authUser, actor, SharedSpaceMember.class,
+				BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
+		businessService.deleteAll(foundMembersToDelete);
+		for (SharedSpaceMember member : foundMembersToDelete) {
+			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
+			notify(new WorkGroupWarnDeletedMemberEmailContext(member, actor, user));
+			saveLogForCreateAndDelete(authUser, actor, LogAction.DELETE, member, AuditLogEntryType.WORKGROUP_MEMBER);
+		}
+		return foundMembersToDelete;
 	}
 
 }

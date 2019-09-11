@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.service.fragment.impl;
 
 import java.util.List;
 
@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessServ
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -48,14 +49,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.DriveWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.DriveWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.DriveWarnUpdatedMemberEmailContext;
-import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.SharedSpaceMemberFragmentService;
+import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
@@ -118,7 +118,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceFragmentServiceIm
 		if (!actor.getLsUuid().equals(account.getUuid())) {
 			notify(new DriveWarnNewMemberEmailContext(toAdd, actor, newMember, nestedMembers));
 		}
-		saveLog(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORKGROUP_MEMBER);
+		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORKGROUP_MEMBER);
 		return toAdd;
 	}
 
@@ -161,7 +161,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceFragmentServiceIm
 	@Override
 	protected SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember foundMemberToDelete) {
 		businessService.delete(foundMemberToDelete);
-		saveLog(authUser, actor, LogAction.DELETE, foundMemberToDelete, AuditLogEntryType.DRIVE_MEMBER);
+		saveLogForCreateAndDelete(authUser, actor, LogAction.DELETE, foundMemberToDelete, AuditLogEntryType.DRIVE_MEMBER);
 		// Delete the member on all workgroups inside the drive
 		List<SharedSpaceNodeNested> nestedWorkgroups = businessService.findAllByParentAndAccount(
 				foundMemberToDelete.getAccount().getUuid(), foundMemberToDelete.getNode().getUuid());
@@ -169,7 +169,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceFragmentServiceIm
 			SharedSpaceMember wgFoundMember = businessService
 					.findByAccountAndNode(foundMemberToDelete.getAccount().getUuid(), wgNode.getUuid());
 			businessService.delete(wgFoundMember);
-			saveLog(authUser, actor, LogAction.DELETE, wgFoundMember, AuditLogEntryType.WORKGROUP_MEMBER);
+			saveLogForCreateAndDelete(authUser, actor, LogAction.DELETE, wgFoundMember, AuditLogEntryType.WORKGROUP_MEMBER);
 		}
 		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
 		if (!actor.getLsUuid().equals(user.getLsUuid())) {
@@ -179,7 +179,26 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceFragmentServiceIm
 	}
 
 	@Override
-	protected void notifyMember(EmailContext context) {
+	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node) {
+		preChecks(authUser, actor);
+		Validate.notNull(node, "Missing required shared space node");
+		Validate.isTrue(NodeType.DRIVE.equals(node.getNodeType()), "Node type need to be a Drive");
+		List<SharedSpaceMember> foundMembersToDelete = businessService.findBySharedSpaceNodeUuid(node.getUuid());
+		if (foundMembersToDelete == null || foundMembersToDelete.isEmpty()) {
+			// There is no members on this Drive
+			return null;
+		}
+		// We check the user has the right to delete members of this node
+		// If he can delete one member, he can delete them all
+		checkDeletePermission(authUser, actor, SharedSpaceMember.class,
+				BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
+		driveMemberBusinessService.deleteAll(foundMembersToDelete);
+		for (SharedSpaceMember member : foundMembersToDelete) {
+			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
+			notify(new DriveWarnDeletedMemberEmailContext(member, (User) actor, user));
+			saveLogForCreateAndDelete(authUser, actor, LogAction.DELETE, member, AuditLogEntryType.DRIVE_MEMBER);
+		}
+		return foundMembersToDelete;
 	}
 
 }

@@ -54,7 +54,7 @@ import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.SharedSpaceMemberFragmentService;
+import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 

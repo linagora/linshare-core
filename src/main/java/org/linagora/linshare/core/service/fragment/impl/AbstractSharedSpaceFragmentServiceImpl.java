@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.service.fragment.impl;
 
 import java.util.List;
 
@@ -39,20 +39,19 @@ import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.SharedSpaceMemberFragmentService;
+import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
+import org.linagora.linshare.core.service.impl.GenericServiceImpl;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
@@ -60,7 +59,6 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 
 public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
@@ -114,8 +112,17 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail, true);
 	}
-
-	protected SharedSpaceMemberAuditLogEntry saveLog(Account authUser, Account actor, LogAction action,
+	/**
+	 * Save audit log for create and delete actions.
+	 * 
+	 * @param authUser
+	 * @param actor
+	 * @param action
+	 * @param resource
+	 * @param auditType
+	 * @return SharedSpaceMemberAuditLogEntry
+	 */
+	protected SharedSpaceMemberAuditLogEntry saveLogForCreateAndDelete(Account authUser, Account actor, LogAction action,
 			SharedSpaceMember resource, AuditLogEntryType auditType) {
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
 				auditType, resource);
@@ -125,6 +132,17 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 		return log;
 	}
 
+	/**
+	 * Save audit log for update actions
+	 * 
+	 * @param authUser
+	 * @param actor
+	 * @param action
+	 * @param resource
+	 * @param resourceUpdated
+	 * @param auditType
+	 * @return SharedSpaceMemberAuditLogEntry
+	 */
 	protected SharedSpaceMemberAuditLogEntry saveUpdateLog(Account authUser, Account actor, LogAction action,
 			SharedSpaceMember resource, SharedSpaceMember resourceUpdated, AuditLogEntryType auditType) {
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action, auditType,
@@ -147,7 +165,7 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 		boolean isDriveMember = (parentUuid != null) && (!checkMemberNotInNode(account.getUuid(), parentUuid));
 		memberWg.setNested(isDriveMember);
 		SharedSpaceMember toAdd = businessService.create(memberWg);
-		saveLog(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORKGROUP_MEMBER);
+		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORKGROUP_MEMBER);
 		return toAdd;
 	}
 
@@ -183,34 +201,9 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 		return delete(authUser, actor, foundMemberToDelete);
 	}
 
-	@Override
-	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node) {
-		preChecks(authUser, actor);
-		Validate.notNull(node, "Missing required shared space node");
-		List<SharedSpaceMember> foundMembersToDelete = businessService.findBySharedSpaceNodeUuid(node.getUuid());
-		if (foundMembersToDelete != null && !foundMembersToDelete.isEmpty()) {
-			// We check the user has the right to delete members of this node
-			// If he can delete one member, he can delete them all
-			checkDeletePermission(authUser, actor, SharedSpaceMember.class,
-					BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
-		}
-		businessService.deleteAll(foundMembersToDelete);
-		for (SharedSpaceMember member : foundMembersToDelete) {
-			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
-			if (NodeType.WORK_GROUP.equals(member.getNode().getNodeType())) {
-				notifyMember(new WorkGroupWarnDeletedMemberEmailContext(member, actor, user));
-				notify(new WorkGroupWarnDeletedMemberEmailContext(member, actor, user));
-				saveLog(authUser, actor, LogAction.DELETE, member, AuditLogEntryType.WORKGROUP_MEMBER);
-			}
-		}
-		return foundMembersToDelete;
-	}
-
 	protected abstract SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember foundMemberToDelete);
 
 	protected abstract SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, SharedSpaceMember foundMemberToUpdate,
 			boolean force);
-
-	protected abstract void notifyMember(EmailContext context);
 
 }

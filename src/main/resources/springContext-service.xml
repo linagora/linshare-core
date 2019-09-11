@@ -494,7 +494,7 @@
 			</map>
 		</constructor-arg>
 	</bean>
-	<bean id="sharedSpaceMemberDriveService" class="org.linagora.linshare.core.service.impl.DriveMemberServiceImpl">
+	<bean id="sharedSpaceMemberDriveService" class="org.linagora.linshare.core.service.fragment.impl.DriveMemberServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />
@@ -504,7 +504,7 @@
 		<constructor-arg ref="driveMemberBusinessService" />
 		<constructor-arg ref="sharedSpaceNodeBusinessService" />
 	</bean>
-	<bean id="workgroupMemberService" class="org.linagora.linshare.core.service.impl.WorkgroupMemberServiceImpl">
+	<bean id="workgroupMemberService" class="org.linagora.linshare.core.service.fragment.impl.WorkGroupMemberServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />

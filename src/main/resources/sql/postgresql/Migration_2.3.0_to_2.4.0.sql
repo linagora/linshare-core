@@ -509,10 +509,35 @@ mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed 
 simpleMsg =  Your access to the drive <b>{0}</b> was withdrawn.
 workGroupNameTitle = Drive Name' WHERE id=36;
 
->>>>>>> Init migration script 2.3 to 2.4 and add russian mails to DRIVE
->>>>>>> Init migration script 2.3 to 2.4 and add russian mails to DRIVE
->>>>>>> Init migration script 2.3 to 2.4 and add russian mails to DRIVE
->>>>>>> Init migration script 2.3 to 2.4 and add russian mails to DRIVE
+-- MailActivation : DRIVE_WARN_NEW_MEMBER
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (308, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (309, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (310, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(34, false, 'DRIVE_WARN_NEW_MEMBER', 308, 309, 310, 1, true);
+
+	-- MailActivation : DRIVE_WARN_UPDATED_MEMBER
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (311, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (312, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (313, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(35, false, 'DRIVE_WARN_UPDATED_MEMBER', 311, 312, 313, 1, true);
+
+	-- MailActivation : DRIVE_WARN_DELETED_MEMBER
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (314, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (315, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (316, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(36, false, 'DRIVE_WARN_DELETED_MEMBER', 314, 315, 316, 1, true);
 
 -- End of your requests
 

@@ -101,7 +101,7 @@ public class GenericServiceImpl<R, E> {
 				entry, opt);
 	}
 
-	void checkDeletePermission(Account actor, Account targetedAccount,
+	protected void checkDeletePermission(Account actor, Account targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException {
 		rac.checkDeletePermission(actor, targetedAccount, clazz, errCode,
