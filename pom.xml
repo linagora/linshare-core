@@ -1119,6 +1119,44 @@
 			</activation>
 			<build>
 			  <plugins>
+				<plugin>
+				        <artifactId>maven-resources-plugin</artifactId>
+				        <version>3.0.2</version>
+				        <executions>
+				          <execution>
+				            <id>documentation-ws-api-userv2</id>
+				            <phase>process-classes</phase>
+				            <goals>
+				              <goal>copy-resources</goal>
+				            </goals>
+				            <configuration>
+				              <outputDirectory>${project.build.directory}/generated-documentation-ws-api-userv2/</outputDirectory>
+				              <resources>
+				                <resource>
+				                  <filtering>false</filtering>
+				                  <directory>src/docs/resources/common-assets</directory>
+				                </resource>
+				              </resources>
+				            </configuration>
+				          </execution>
+				          <execution>
+				            <id>documentation-ws-api-delegation</id>
+				            <phase>process-classes</phase>
+				            <goals>
+				              <goal>copy-resources</goal>
+				            </goals>
+				            <configuration>
+				              <outputDirectory>${project.build.directory}/generated-documentation-ws-api-delegation/</outputDirectory>
+				              <resources>
+				                <resource>
+				                  <filtering>false</filtering>
+				                  <directory>src/docs/resources/common-assets</directory>
+				                </resource>
+				              </resources>
+				            </configuration>
+				          </execution>
+				        </executions>
+				    </plugin>
 					<plugin>
 						<groupId>com.github.kongchen</groupId>
 						<artifactId>swagger-maven-plugin</artifactId>
