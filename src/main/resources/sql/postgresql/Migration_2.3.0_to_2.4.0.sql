@@ -517,7 +517,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (310, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(34, false, 'DRIVE_WARN_NEW_MEMBER', 308, 309, 310, 1, true);
+	VALUES(35, false, 'DRIVE_WARN_NEW_MEMBER', 308, 309, 310, 1, true);
 
 	-- MailActivation : DRIVE_WARN_UPDATED_MEMBER
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -527,7 +527,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (313, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(35, false, 'DRIVE_WARN_UPDATED_MEMBER', 311, 312, 313, 1, true);
+	VALUES(36, false, 'DRIVE_WARN_UPDATED_MEMBER', 311, 312, 313, 1, true);
 
 	-- MailActivation : DRIVE_WARN_DELETED_MEMBER
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -537,7 +537,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (316, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(36, false, 'DRIVE_WARN_DELETED_MEMBER', 314, 315, 316, 1, true);
+	VALUES(37, false, 'DRIVE_WARN_DELETED_MEMBER', 314, 315, 316, 1, true);
 
 -- End of your requests
 

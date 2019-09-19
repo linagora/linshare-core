@@ -61,7 +61,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.ldap.service.SharedSpaceNodeService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
@@ -115,7 +115,6 @@ public class LDAPGroupSyncServiceImplTest {
 	LDAPGroupSyncServiceImpl syncServiceImpl;
 
 	@Autowired
-	@Qualifier("sharedSpaceLdapGroupService")
 	SharedSpaceNodeService nodeService;
 
 	@Autowired

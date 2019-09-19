@@ -36,10 +36,12 @@ package org.linagora.linshare.core.service.impl;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.domain.constants.LdapBatchMetaDataType;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -50,11 +52,11 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.ldap.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.LDAPGroupQueryService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.fragment.SharedSpaceFragmentService;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.Role;
@@ -74,7 +76,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 
 	private static final Logger logger = LoggerFactory.getLogger(LDAPGroupSyncServiceImpl.class);
 
-	protected SharedSpaceNodeService groupService;
+	protected final Map<NodeType, SharedSpaceFragmentService> serviceBuilders;
 
 	protected LDAPGroupQueryService ldapGroupQueryService;
 
@@ -86,14 +88,15 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 
 	protected final MongoTemplate mongoTemplate;
 
-	public LDAPGroupSyncServiceImpl(SharedSpaceNodeService groupService,
+	public LDAPGroupSyncServiceImpl(
+			Map<NodeType, SharedSpaceFragmentService> serviceBuilders,
 			LDAPGroupQueryService ldapGroupQueryService,
 			UserService userService,
 			SharedSpaceRoleService ssRoleService,
 			SharedSpaceMemberService memberService,
 			MongoTemplate mongoTemplate) {
 		super();
-		this.groupService = groupService;
+		this.serviceBuilders = serviceBuilders;
 		this.ldapGroupQueryService = ldapGroupQueryService;
 		this.userService = userService;
 		this.ssRoleService = ssRoleService;
@@ -101,11 +104,19 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		this.memberService = memberService;
 	}
 
+	private SharedSpaceFragmentService getService(NodeType type) {
+		Validate.notNull(type, "Node type must be set");
+		SharedSpaceFragmentService nodeService = serviceBuilders.get(type);
+		Validate.notNull(nodeService, "Can not find a service that handle your noteType: " + type);
+		return nodeService;
+	}
+
 	@Override
 	public SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, AbstractDomain domain, LdapGroupObject group,
 			Date syncDate, LdapGroupsBatchResultContext resultContext) {
 		SharedSpaceLDAPGroup node = convertLdapGroup(group, syncDate, domain);
 		SharedSpaceLDAPGroup ldapGroup = findGroupToUpdate(node.getExternalId(), syncDate);
+		SharedSpaceFragmentService nodeService  = getService(node.getNodeType());
 		if (ldapGroup != null) {
 			ldapGroup.setModificationDate(new Date());
 			ldapGroup.setSyncDate(syncDate);
@@ -118,11 +129,11 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 			ldapGroup.setName(node.getName());
 			// Complete update : The member is notified his access has been changed
 			resultContext.add(LdapBatchMetaDataType.UPDATED_GROUPS);
-			return groupService.update(actor, ldapGroup);
+			return (SharedSpaceLDAPGroup) nodeService.update(actor, actor, ldapGroup);
 		}
 		logger.info(String.format("New Ldap group created : NAME : %s", node.getName()));
 		resultContext.add(LdapBatchMetaDataType.CREATED_GROUPS);
-		return groupService.create(actor, node);
+		return (SharedSpaceLDAPGroup) nodeService.create(actor, actor, node);
 	}
 
 	@Override
@@ -232,7 +243,8 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	}
 
 	public void deleteLDAPGroup(Account actor, SharedSpaceLDAPGroup group) {
-		groupService.delete(actor, actor, group);
+		SharedSpaceFragmentService nodeService = getService(group.getNodeType());
+		nodeService.delete(actor, actor, group);
 	}
 
 	private void deleteOutDatedMembers(Account actor, SharedSpaceLDAPGroup group, Date syncDate,

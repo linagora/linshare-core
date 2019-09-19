@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -43,7 +42,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -52,12 +50,8 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
-import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
-import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -91,22 +85,11 @@ public class SharedSpaceNodeServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepo;
 
-	private final static String SHARED_SPACE_NODE_1 = "WORKG_GROUP_NAME_1";
+	private Account authUser;
 
-	private final static String SHARED_SPACE_NODE_2 = "WORKG_GROUP_NAME_2";
-
-	private Account authUser, jane, bart, root;
-
-	private SharedSpaceAccount accountJane, accountBart;
-
-	private SharedSpaceRole adminRole, readerRole, contributorRole;
-
-	private List<SharedSpaceNode> sharedSpaceNodes;
+	private Account root;
 
 	private LoadingServiceTestDatas datas;
-
-	@Autowired
-	private SharedSpaceRoleBusinessService roleBusinessService;
 
 	@Autowired
 	private InitMongoService init;
@@ -114,10 +97,6 @@ public class SharedSpaceNodeServiceImplTest {
 	@Autowired
 	@Qualifier("sharedSpaceNodeService")
 	private SharedSpaceNodeService service;
-
-	@Autowired
-	@Qualifier("sharedSpaceMemberService")
-	private SharedSpaceMemberService memberService;
 
 	private LinShareWiser wiser;
 
@@ -135,14 +114,6 @@ public class SharedSpaceNodeServiceImplTest {
 		init.init();
 		root = datas.getRoot();
 		authUser = datas.getUser1();
-		jane = datas.getUser2();
-		bart = datas.getUser3();
-		sharedSpaceNodes = this.getNodes();
-		adminRole = roleBusinessService.findByName("ADMIN");
-		contributorRole = roleBusinessService.findByName("CONTRIBUTOR");
-		readerRole = roleBusinessService.findByName("READER");
-		accountJane = new SharedSpaceAccount((User) jane);
-		accountBart = new SharedSpaceAccount((User) bart);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -155,21 +126,20 @@ public class SharedSpaceNodeServiceImplTest {
 	@Test
 	public void create() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Assertions.assertNotNull(sharedSpaceNodes, "node not created");
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "node not created");
-		Assertions.assertEquals(expectedNode.getUuid(), node.getUuid());
-		Assertions.assertNotNull(node.getQuotaUuid());
-		Assertions.assertEquals(expectedNode.getUuid(), node.getUuid(), "The created node is different");
-		Assertions.assertNotNull(node.getQuotaUuid(), "No quota has been found");
+		Assertions.assertNotNull(expectedNode.getQuotaUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void find() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode toFindNode = service.find(authUser, authUser, sharedSpaceNodes.get(0).getUuid());
+		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
+		Assertions.assertNotNull(expectedNode, "node not created");
+		SharedSpaceNode toFindNode = service.find(authUser, authUser, expectedNode.getUuid());
 		Assertions.assertNotNull(toFindNode, "Node has not been found.");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -177,9 +147,8 @@ public class SharedSpaceNodeServiceImplTest {
 	@Test
 	public void delete() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode(SharedSpaceNodeServiceImplTest.SHARED_SPACE_NODE_2, null,
-				NodeType.WORK_GROUP);
-		SharedSpaceNode toDelete = service.create(authUser, authUser, node);
+		SharedSpaceNode node = new SharedSpaceNode("WORKG_GROUP_NAME", NodeType.WORK_GROUP);
+		SharedSpaceNode toDelete=service.create(authUser, authUser, node);
 		service.delete(authUser, authUser, toDelete);
 		try {
 			service.find(authUser, authUser, toDelete.getUuid());
@@ -191,42 +160,19 @@ public class SharedSpaceNodeServiceImplTest {
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
+
 	@Test
 	public void update() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode createdNode = getNodes().get(0);
-		SharedSpaceMember janeMemberShip = memberService.createWithoutCheckPermission(authUser, authUser, createdNode,
-				readerRole, accountJane);
-		SharedSpaceMember bartMemberShip = memberService.createWithoutCheckPermission(authUser, authUser, createdNode,
-				contributorRole, accountBart);
-		SharedSpaceNode toUpdate = new SharedSpaceNode();
-		toUpdate.setVersioningParameters(new VersioningParameters(true));
-		toUpdate.setName(SHARED_SPACE_NODE_2);
-		toUpdate.setUuid(createdNode.getUuid());
-		SharedSpaceNode updatedNode = service.update(authUser, authUser, toUpdate);
-		Assertions.assertEquals(SHARED_SPACE_NODE_2, updatedNode.getName(), "The shared space node is not updated.");
-		Assertions.assertEquals(true, updatedNode.getVersioningParameters().getEnable());
-		janeMemberShip = memberService.find(authUser, authUser, janeMemberShip.getUuid());
-		bartMemberShip = memberService.find(authUser, authUser, bartMemberShip.getUuid());
-		Assertions.assertEquals(janeMemberShip.getNode().getName(), SHARED_SPACE_NODE_2);
-		Assertions.assertEquals(bartMemberShip.getNode().getName(), SHARED_SPACE_NODE_2);
+		VersioningParameters param = new VersioningParameters(false);
+		SharedSpaceNode nodeToUpdate = new SharedSpaceNode("nodeName ToUpdate", null, NodeType.WORK_GROUP, param);
+		SharedSpaceNode createdNodeToUpdate = service.create(authUser, authUser, nodeToUpdate);
+		SharedSpaceNode updatedNode = new SharedSpaceNode("nodeName Updated", null, NodeType.WORK_GROUP, param);
+		updatedNode.setUuid(createdNodeToUpdate.getUuid());
+		service.update(authUser, authUser, updatedNode);
+		Assertions.assertEquals(updatedNode.getName(),
+				service.update(authUser, authUser, updatedNode).getName(), "The shared space node is not updated.");
 		logger.info(LinShareTestConstants.END_TEST);
-	}
-
-	/*
-	 * Helpers
-	 */
-	private List<SharedSpaceNode> getNodes() {
-		SharedSpaceNode node1 = new SharedSpaceNode(SharedSpaceNodeServiceImplTest.SHARED_SPACE_NODE_1, null,
-				NodeType.WORK_GROUP, new VersioningParameters(false));
-		SharedSpaceNode node2 = new SharedSpaceNode(SharedSpaceNodeServiceImplTest.SHARED_SPACE_NODE_2, null,
-				NodeType.WORK_GROUP, new VersioningParameters(false));
-		service.create(authUser, authUser, node1);
-		service.create(authUser, authUser, node2);
-		List<SharedSpaceNode> nodes = new ArrayList<SharedSpaceNode>();
-		nodes.add(node1);
-		nodes.add(node2);
-		return nodes;
 	}
 
 	@Test
@@ -235,8 +181,7 @@ public class SharedSpaceNodeServiceImplTest {
 		List<SharedSpaceNode> foundNodes = service.findAll(root, root);
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
 		service.create(authUser, authUser, node);
-		Assertions.assertEquals(foundNodes.size() + 1, service.findAll(root, root).size(),
-				"The number of founded node is different with expeted nodes");
+		Assertions.assertEquals(foundNodes.size() + 1, service.findAll(root, root).size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

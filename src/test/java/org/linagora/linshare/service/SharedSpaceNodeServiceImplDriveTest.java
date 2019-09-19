@@ -113,7 +113,6 @@ public class SharedSpaceNodeServiceImplDriveTest extends AbstractTransactionalJU
 		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.DRIVE);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assert.assertNotNull("Drive not created", expectedNode);
-		Assert.assertEquals(expectedNode.getUuid(), node.getUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -121,10 +120,9 @@ public class SharedSpaceNodeServiceImplDriveTest extends AbstractTransactionalJU
 	public void createDriveAndFind() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.DRIVE);
-		service.create(authUser, authUser, node);
-		SharedSpaceNode expectedNode = service.find(authUser, authUser, node.getUuid());
-		Assert.assertNotNull("Drive not found", expectedNode);
-		Assert.assertEquals(expectedNode.getUuid(), node.getUuid());
+		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
+		Assert.assertNotNull("Drive not created", expectedNode);
+		Assert.assertNotNull(service.find(authUser, authUser, expectedNode.getUuid()));
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -135,11 +133,9 @@ public class SharedSpaceNodeServiceImplDriveTest extends AbstractTransactionalJU
 		SharedSpaceNode drive = new SharedSpaceNode("My Drive", NodeType.DRIVE);
 		SharedSpaceNode expectedDrive = service.create(authUser, authUser, drive);
 		Assert.assertNotNull("Drive not created", expectedDrive);
-		Assert.assertEquals(expectedDrive.getUuid(), drive.getUuid());
 		SharedSpaceNode workgroup = new SharedSpaceNode("My groups", NodeType.WORK_GROUP);
 		SharedSpaceNode expectedWorkgroup = service.create(authUser, authUser, workgroup);
 		Assert.assertNotNull("Workgroup not created", workgroup);
-		Assert.assertEquals(expectedWorkgroup.getUuid(), workgroup.getUuid());
 		List<SharedSpaceNodeNested> ssNested = service.findAllByAccount(authUser, authUser);
 		Assert.assertEquals(before + 2, ssNested.size());
 		logger.info(LinShareTestConstants.END_TEST);
@@ -151,8 +147,10 @@ public class SharedSpaceNodeServiceImplDriveTest extends AbstractTransactionalJU
 		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.DRIVE);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assert.assertNotNull("Drive not created", expectedNode);
-		SharedSpaceNode deleted = service.delete(authUser, authUser, node);
-		Assert.assertEquals(node.getUuid(), deleted.getUuid());
+		int before = service.findAllByAccount(authUser, authUser).size();
+		SharedSpaceNode deleted = service.delete(authUser, authUser, expectedNode);
+		List<SharedSpaceNodeNested> ssNested = service.findAllByAccount(authUser, authUser);
+		Assert.assertEquals(ssNested.size(), before - 1);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

@@ -314,10 +314,6 @@
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceNodeBusinessServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 	</bean>
-	<bean name="sharedSpaceLdapGroupBusinessService"
-		class="org.linagora.linshare.core.ldap.business.service.impl.SharedSpaceNodeBusinessServiceImpl">
-		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
-	</bean>
 	<bean name="driveMemberBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.DriveMemberBusinessServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberMongoRepository" />

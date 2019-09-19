@@ -58,7 +58,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
-public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceFragmentServiceImpl implements SharedSpaceMemberFragmentService {
+public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmentServiceImpl implements SharedSpaceMemberFragmentService {
 
 	public WorkGroupMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,

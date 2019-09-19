@@ -67,7 +67,7 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.collect.Lists;
 
-public class DriveMemberServiceImpl extends AbstractSharedSpaceFragmentServiceImpl
+public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentServiceImpl
 		implements SharedSpaceMemberFragmentService {
 
 	private final DriveMemberBusinessService driveMemberBusinessService;

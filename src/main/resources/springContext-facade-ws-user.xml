@@ -168,7 +168,6 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="sharedSpaceNodeService" />
 		<constructor-arg ref="sharedSpaceMemberService" />
-		<constructor-arg ref="sharedSpaceNodeDriveService" />
 	</bean>
 	<bean id="sharedSpaceRoleFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.SharedSpaceRoleFacadeImpl">
 		<constructor-arg ref="accountService" />

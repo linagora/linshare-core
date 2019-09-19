@@ -35,32 +35,30 @@ package org.linagora.linshare.core.ldap.service.impl;
 
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
-import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.ldap.business.service.SharedSpaceNodeBusinessService;
-import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.ldap.service.SharedSpaceNodeService;
-import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
-import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 
-public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.service.impl.SharedSpaceNodeServiceImpl implements SharedSpaceNodeService {
+public class SharedSpaceWorkGroupServiceImpl extends org.linagora.linshare.core.service.impl.SharedSpaceWorkGroupServiceImpl {
 
-	SharedSpaceNodeBusinessService businessService;
-
-	public SharedSpaceNodeServiceImpl(
+	protected SharedSpaceWorkGroupServiceImpl(
+			AbstractResourceAccessControl<Account, Account, SharedSpaceNode> rac,
 			SharedSpaceNodeBusinessService businessService,
-			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
 			SharedSpaceMemberService memberService,
 			SharedSpaceRoleService ssRoleService,
@@ -70,43 +68,45 @@ public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.servi
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService,
-			DriveMemberBusinessService driveMemberBusinessService) {
-		super(businessService, rac, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
-				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, driveMemberBusinessService);
-		this.businessService = businessService;
+			SharedSpaceMemberBusinessService memberDriveService) {
+		super(rac, businessService, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
+				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService);
 	}
 
 	@Override
-	public SharedSpaceLDAPGroup create(Account actor, SharedSpaceLDAPGroup ldapGroup) {
+	public SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
+		// FIXME: avoid casting
+		SharedSpaceLDAPGroup ldapGroup = (SharedSpaceLDAPGroup) node;
 		Validate.notNull(actor, "The actor must be set");
 		Validate.notNull(ldapGroup, "The group must be set");
 		Validate.notEmpty(ldapGroup.getName(), "The name of the LDAP group must be set");
 		Validate.notEmpty(ldapGroup.getExternalId(), "The external ID must be set");
-		super.checkVersioningParameter(actor.getDomain(), ldapGroup);
+		checkVersioningParameter(actor.getDomain(), ldapGroup);
 		checkCreatePermission(actor, actor, SharedSpaceLDAPGroup.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		return (SharedSpaceLDAPGroup) super.simpleCreate(actor, actor, ldapGroup);
+		return simpleCreate(actor, actor, ldapGroup);
 	}
 
 	@Override
-	public SharedSpaceLDAPGroup update(Account actor, SharedSpaceLDAPGroup ldapGroup) {
+	public SharedSpaceLDAPGroup update(Account authUser, Account actor, SharedSpaceNode node) {
+		// FIXME: avoid casting
+		SharedSpaceLDAPGroup ldapGroup = (SharedSpaceLDAPGroup) node;
 		Validate.notNull(actor, "The actor must be set");
 		Validate.notNull(ldapGroup, "The group must be set");
 		Validate.notEmpty(ldapGroup.getName(), "The name of the LDAP group must be set");
 		Validate.notEmpty(ldapGroup.getExternalId(), "The external ID must be set");
 		checkUpdatePermission(actor, actor, SharedSpaceLDAPGroup.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				ldapGroup);
-		SharedSpaceLDAPGroup updated = businessService.update(ldapGroup);
-		//For compatibility with deprecated Thread API, should be removed when this api taken off
-		if (updated.getNodeType().equals(NodeType.WORK_GROUP)) {
-			WorkGroup wg = threadRepository.findByLsUuid(updated.getUuid());
-			wg.setName(updated.getName());
-			threadRepository.update(wg);
-			WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, actor, wg);
-			rootFolder.setName(updated.getName());
-			workGroupNodeService.update(actor, actor, wg, rootFolder);
-		}
-		saveUpdateLog(actor, actor, ldapGroup, updated);
+		SharedSpaceLDAPGroup ldapGroupToUpdate = (SharedSpaceLDAPGroup) find(actor, actor, ldapGroup.getUuid());
+		ldapGroupToUpdate.setName(ldapGroup.getName());
+		ldapGroupToUpdate.setSyncDate(ldapGroup.getSyncDate());
+		SharedSpaceLDAPGroup updated = (SharedSpaceLDAPGroup) businessService.update(ldapGroupToUpdate, ldapGroup);
+		checkUpdateVersioningParameters(updated.getVersioningParameters(), ldapGroup.getVersioningParameters(),
+				actor.getDomain());
+		simpleUpdate(actor, actor, ldapGroup);
+		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(actor, actor, LogAction.UPDATE,
+				AuditLogEntryType.WORKGROUP, ldapGroup);
+		log.setResourceUpdated(updated);
+		logEntryService.insert(log);
 		return updated;
 	}
-
 }

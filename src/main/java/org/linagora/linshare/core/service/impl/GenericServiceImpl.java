@@ -73,14 +73,14 @@ public class GenericServiceImpl<R, E> {
 		}
 	}
 
-	void checkReadPermission(Account actor, Account targetedAccount,
+	protected void checkReadPermission(Account actor, Account targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException {
 		rac.checkReadPermission(actor, targetedAccount, clazz, errCode, entry,
 				opt);
 	}
 
-	void checkListPermission(Account actor, Account targetedAccount,
+	protected void checkListPermission(Account actor, Account targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException {
 		rac.checkListPermission(actor, targetedAccount, clazz, errCode, entry,

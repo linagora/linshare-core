@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2018 LINAGORA
+ * Copyright (C) 2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,28 +31,23 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.ldap.business.service.impl;
+package org.linagora.linshare.core.service.fragment;
 
-import java.util.Date;
+import java.util.List;
 
-import org.linagora.linshare.core.ldap.business.service.SharedSpaceNodeBusinessService;
-import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
-import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
-public class SharedSpaceNodeBusinessServiceImpl extends org.linagora.linshare.core.business.service.impl.SharedSpaceNodeBusinessServiceImpl
-		implements SharedSpaceNodeBusinessService {
+public interface SharedSpaceFragmentService {
 
-	public SharedSpaceNodeBusinessServiceImpl(SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
-		super(sharedSpaceNodeMongoRepository);
-	}
+	SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
 
-	@Override
-	public SharedSpaceLDAPGroup update(SharedSpaceLDAPGroup ldapGroup) {
-		SharedSpaceLDAPGroup found = (SharedSpaceLDAPGroup) find(ldapGroup.getUuid());
-		found.setName(ldapGroup.getName());
-		found.setSyncDate(ldapGroup.getSyncDate());
-		found.setModificationDate(new Date());
-		return (SharedSpaceLDAPGroup) sharedSpaceNodeMongoRepository.save(found);
-	}
+	SharedSpaceNode update(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
 
+	SharedSpaceNode delete(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+
+	List<SharedSpaceNodeNested> findAllWorkgroupsInNode(Account authUser, Account actor, SharedSpaceNode parent);
 }
+

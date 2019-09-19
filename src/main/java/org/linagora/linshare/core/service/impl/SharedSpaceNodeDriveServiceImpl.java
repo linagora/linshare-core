@@ -37,29 +37,34 @@ import java.util.List;
 
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.service.SharedSpaceNodeDriveService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
+import org.linagora.linshare.core.service.fragment.impl.AbstractSharedSpaceFragmentServiceImpl;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 
-public class SharedSpaceNodeDriveServiceImpl extends SharedSpaceNodeServiceImpl implements SharedSpaceNodeDriveService {
+public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragmentServiceImpl {
 
-	public SharedSpaceNodeDriveServiceImpl(SharedSpaceNodeBusinessService businessService,
-			SharedSpaceNodeResourceAccessControl rac,
+	public SharedSpaceNodeDriveServiceImpl(
+			AbstractResourceAccessControl<Account, Account, SharedSpaceNode> rac,
+			SharedSpaceNodeBusinessService businessService,
 			SharedSpaceMemberBusinessService memberBusinessService,
 			SharedSpaceMemberService memberService,
 			SharedSpaceRoleService ssRoleService,
@@ -69,9 +74,26 @@ public class SharedSpaceNodeDriveServiceImpl extends SharedSpaceNodeServiceImpl 
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService,
-			DriveMemberBusinessService driveMemberBusinessService) {
-		super(businessService, rac, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
-				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, driveMemberBusinessService);
+			SharedSpaceMemberBusinessService memberDriveService) {
+		super(rac, businessService, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
+				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService);
+	}
+
+	@Override
+	public SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
+		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(), node.getNodeType());
+		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.DRIVE_FORBIDDEN, node);
+		if (!(NodeType.DRIVE.equals(node.getNodeType()))) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					"Can not create this kind of sharedSpace with this method.");
+		}
+		SharedSpaceNode created = super.create(authUser, actor, toCreate);
+		SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
+		SharedSpaceRole workGroupRole = ssRoleService.getAdmin(authUser, actor);
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(driveRole, workGroupRole);
+		memberService.create(authUser, actor, created, context, new SharedSpaceAccount((User) actor));
+		new SharedSpaceAccount((User) actor);
+		return created;
 	}
 
 	@Override
@@ -85,7 +107,7 @@ public class SharedSpaceNodeDriveServiceImpl extends SharedSpaceNodeServiceImpl 
 		List<SharedSpaceNodeNested> nodes = findAllWorkgroupsInNode(authUser, actor, foundedNodeToDel);
 		for (SharedSpaceNodeNested nested : nodes) {
 			SharedSpaceNode wg = find(authUser, actor, nested.getUuid());
-			simpleDelete(authUser, actor, wg);
+			memberService.deleteAllMembers(authUser, actor, wg);
 		}
 		memberService.deleteAllMembers(authUser, actor, foundedNodeToDel);
 		businessService.delete(foundedNodeToDel);
