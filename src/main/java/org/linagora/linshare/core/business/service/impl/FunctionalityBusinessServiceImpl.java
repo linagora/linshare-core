@@ -40,8 +40,12 @@ import java.util.Set;
 
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
+import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 
@@ -67,6 +71,22 @@ public class FunctionalityBusinessServiceImpl extends
 				.toString());
 	}
 
+	protected BusinessException getBusinessNotFoundException() {
+		return new BusinessException(BusinessErrorCode.FUNCTIONALITY_NOT_FOUND, "Functionality not found.");
+	}
+
+	@Override
+	public Functionality getFunctionality(AbstractDomain domain, String functionalityId) throws BusinessException {
+		// TODO Auto-generated method stub
+		Functionality functionality = super.getFunctionality(domain, functionalityId);
+		if (domain.isGuestDomain()) {
+			if (exclude.contains(functionality.getIdentifier())) {
+				throw getBusinessNotFoundException();
+			}
+		}
+		return functionality;
+	}
+
 	@Override
 	public Set<Functionality> getAllFunctionalities(AbstractDomain domain,
 			List<String> excludesIn) {
@@ -77,6 +97,18 @@ public class FunctionalityBusinessServiceImpl extends
 		if (domain.isGuestDomain()) {
 			excludesTemp.addAll(exclude);
 		}
-		return super.getAllFunctionalities(domain, excludesTemp);
+		Set<Functionality> functionalities = super.getAllFunctionalities(domain, excludesTemp);
+		if (domain.isGuestDomain()) {
+			// We can't strip it because the user front-end is always expecting the functionality even if it disabled.
+			// For admin frontend
+			Functionality func = new Functionality(FunctionalityNames.GUESTS,
+					false,
+					new Policy(Policies.FORBIDDEN, false),
+					new Policy(Policies.FORBIDDEN, false),
+					domain);
+			func.setDisplayable(false);
+			functionalities.add(func);
+		}
+		return functionalities;
 	}
 }
