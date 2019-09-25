@@ -107,7 +107,7 @@ public class UpgradeDocumentForVersionningImpl extends GenericUpgradeTaskImpl {
 		revision.setPath(null);
 		revision.setSize(wkDocument.getSize());
 		revision.setMimeType(wkDocument.getMimeType());
-		revision.setDocumentUuid(wkDocument.getUuid());
+		revision.setDocumentUuid(wkDocument.getDocumentUuid());
 		revision.setSha256sum(wkDocument.getSha256sum());
 		revision.setHasThumbnail(wkDocument.getHasThumbnail());
 		revision.setNodeType(WorkGroupNodeType.DOCUMENT_REVISION);
