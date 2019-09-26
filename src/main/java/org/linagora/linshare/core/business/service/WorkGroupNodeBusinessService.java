@@ -62,4 +62,7 @@ public interface WorkGroupNodeBusinessService {
 
 	List<WorkGroupNode> findAllSubDocuments(WorkGroup workGroup, String pattern);
 
+	FileAndMetaData downloadArchiveRevision(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode rootNode,
+			List<WorkGroupNode> documentNodes, WorkGroupNodeAuditLogEntry log);
+
 }

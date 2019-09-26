@@ -503,16 +503,32 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
-			throws BusinessException {
+	public FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid,
+			Boolean withRevision) throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
 				node, workGroup);
+		
 		if (isDocument(node)) {
-			WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) revisionService.findMostRecent(workGroup,
-					node.getUuid());
-			return workGroupDocumentService.download(actor, owner, workGroup, (WorkGroupDocument) node, revision);
+			if (withRevision) {
+				List<WorkGroupNode> subRevisions = repository.findByWorkGroupAndParent(workGroup.getLsUuid(),
+						node.getUuid());
+				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
+						AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
+				for (WorkGroupNode revision : subRevisions) {
+					revision.setName(workGroupDocumentService.computeFileName((WorkGroupDocument) node,
+							(WorkGroupDocumentRevision) revision, false));
+				}
+				FileAndMetaData dataFile = workGroupNodeBusinessService.downloadArchiveRevision(actor, owner, workGroup,
+						node, subRevisions, log);
+				logEntryService.insert(log);
+				return dataFile;
+			} else {
+				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) revisionService
+						.findMostRecent(workGroup, node.getUuid());
+				return workGroupDocumentService.download(actor, owner, workGroup, (WorkGroupDocument) node, revision);
+			}
 		} else if (isRevision(node)) {
 			WorkGroupNode documentParent = workGroupDocumentService.find(actor, owner, workGroup, node.getParent());
 			return revisionService.download(actor, owner, workGroup, (WorkGroupDocument) documentParent,
@@ -687,7 +703,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 		String pattern = Strings.isNullOrEmpty(node.getPath()) ? "^," + node.getUuid()
 				: "^" + node.getPath() + node.getUuid();
-		NodeMetadataMto metaData = new NodeMetadataMto();
+		NodeMetadataMto metaData = new NodeMetadataMto(node.getUuid(), node.getNodeType());
 		if (storage) {
 			metaData.setStorageSize(workGroupNodeBusinessService.computeNodeSize(workGroup, pattern,
 					WorkGroupNodeType.DOCUMENT_REVISION));

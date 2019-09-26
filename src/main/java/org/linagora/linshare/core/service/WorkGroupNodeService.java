@@ -84,8 +84,8 @@ public interface WorkGroupNodeService {
 	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid)
 			throws BusinessException;
 
-	FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
-			throws BusinessException;
+	FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid,
+			Boolean withRevision) throws BusinessException;
 
 	FileAndMetaData thumbnail(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid,
 			ThumbnailType kind) throws BusinessException;

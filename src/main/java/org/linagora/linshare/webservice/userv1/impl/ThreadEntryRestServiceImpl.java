@@ -298,7 +298,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return facade.download(null, threadUuid, uuid);
+		return facade.download(null, threadUuid, uuid, false);
 	}
 
 	@Path("/{uuid}/thumbnail")

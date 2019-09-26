@@ -66,7 +66,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 
 	WorkGroupNode delete(String actorUuid, String workGroupUuid, String workGroupNodeUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
-	Response download(String actorUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
+	Response download(String actorUuid, String workGroupUuid, String workGroupNodeUuid, Boolean withRevision) throws BusinessException;
 
 	Response thumbnail(String actorUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64, ThumbnailType thumbnailType) throws BusinessException;
 

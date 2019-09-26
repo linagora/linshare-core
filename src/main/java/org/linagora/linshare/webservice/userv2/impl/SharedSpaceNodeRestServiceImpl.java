@@ -198,7 +198,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 
 	@Path("/{sharedSpaceNodeUuid: .*}")
 	@PUT
-	@ApiOperation(value = "Delete a sharedSpace node (folder, document, revision). Only name, parent or description can be updated.", response = WorkGroupNode.class)
+	@ApiOperation(value = "Update a sharedSpace node (folder, document, revision). Only name, parent or description can be updated.", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 					@ApiResponse(code = 404, message = "SharedSpace or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -375,9 +375,11 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@ApiParam(value = "The sharedSpace uuid.", required = true)
 				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
 			@ApiParam(value = "The sharedSpace node uuid.", required = true)
-				@PathParam("uuid") String uuid)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "If withRevision is TRUE you will download the workGroupDocument with all its revisions (Available just for workGroupDocument).", required = false)
+				@QueryParam("withRevision") @DefaultValue("false") Boolean withRevision)
 					throws BusinessException {
-		return sharedSpaceNodeFacade.download(null, sharedSpaceUuid, uuid);
+		return sharedSpaceNodeFacade.download(null, sharedSpaceUuid, uuid, withRevision);
 	}
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
