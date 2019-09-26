@@ -56,6 +56,8 @@ import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
 
@@ -184,12 +186,10 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public void updateNestedNode(SharedSpaceNode node) throws BusinessException {
-		List<SharedSpaceMember> members = repository.findByNodeUuid(node.getUuid());
-		for (SharedSpaceMember member : members) {
-			member.getNode().setName(node.getName());
-			member.getNode().setModificationDate(node.getModificationDate());
-		}
-		repository.saveAll(members);
+		SharedSpaceNodeNested nested = new SharedSpaceNodeNested(node);
+		Query query = Query.query(Criteria.where("node.uuid").is(node.getUuid()));
+		Update update = new Update().set("node", nested);
+		mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
 	}
 
 	@Override
