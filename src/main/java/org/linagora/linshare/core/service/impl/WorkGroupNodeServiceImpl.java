@@ -516,6 +516,10 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 						node.getUuid());
 				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
 						AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
+				for (WorkGroupNode revision : subRevisions) {
+					revision.setName(workGroupDocumentService.computeFileName((WorkGroupDocument) node,
+							(WorkGroupDocumentRevision) revision, false));
+				}
 				FileAndMetaData dataFile = workGroupNodeBusinessService.downloadArchiveRevision(actor, owner, workGroup,
 						node, subRevisions, log);
 				logEntryService.insert(log);
