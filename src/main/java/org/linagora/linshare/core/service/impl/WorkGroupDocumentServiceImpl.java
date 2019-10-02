@@ -207,8 +207,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 
 	public InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup,
 			WorkGroupDocumentRevision revision, WorkGroupNodeType nodeType) throws BusinessException {
-		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(nodeType);
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, auditType,
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, AuditLogEntryType.WORKGROUP_DOCUMENT,
 				revision, workGroup);
 		addMembersToLog(workGroup.getLsUuid(), log);
 		log.addRelatedResources(revision.getParent());
@@ -229,8 +228,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	@Override
 	public void markAsCopied(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode node, CopyMto copiedTo)
 			throws BusinessException {
-		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(node.getNodeType());
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, auditType,
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, AuditLogEntryType.WORKGROUP_DOCUMENT,
 				node, workGroup);
 		log.setCause(LogActionCause.COPY);
 		addMembersToLog(workGroup.getLsUuid(), log);

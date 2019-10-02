@@ -80,19 +80,4 @@ public enum AuditLogEntryType {
 			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION, StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
 	}
-
-	public static AuditLogEntryType getWorkgroupAuditType(WorkGroupNodeType nodeType) {
-		if (WorkGroupNodeType.ROOT_FOLDER.equals(nodeType)) {
-			return WORKGROUP_FOLDER;
-		}
-		String type = "WORKGROUP_" + nodeType.toString();
-		AuditLogEntryType auditType = fromString(type);
-		return auditType;
-	}
-
-	public static AuditLogEntryType fromNodeType(String nodeType) {
-		nodeType = nodeType.replace("_", "");
-		return fromString(nodeType);
-	}
-
 }

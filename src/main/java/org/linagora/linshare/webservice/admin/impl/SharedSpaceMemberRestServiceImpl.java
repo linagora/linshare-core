@@ -111,7 +111,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiParam(value = "The shared space memnber to update.", required = true) SharedSpaceMemberDrive ssMember,
 			@ApiParam("The shared space member to update.")
 				@PathParam("uuid") String uuid,
-			@ApiParam("Parameter to update all nested roles of a member inside the node")
+			@ApiParam("If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
 				@QueryParam("force") @DefaultValue("false") boolean force)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.update(null, ssMember, uuid, force);

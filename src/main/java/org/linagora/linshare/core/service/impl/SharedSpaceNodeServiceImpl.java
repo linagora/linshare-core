@@ -41,8 +41,6 @@ import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -54,17 +52,16 @@ import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.fragment.SharedSpaceFragmentService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
+import org.linagora.linshare.core.service.fragment.SharedSpaceFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
-import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -253,23 +250,6 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		List<SharedSpaceNode> founds = businessService.searchByName(name);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, null);
 		return founds;
-	}
-
-	protected SharedSpaceNodeAuditLogEntry saveLog(Account authUser, Account actor, LogAction action,
-			SharedSpaceNode resource) {
-		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, action,
-				AuditLogEntryType.fromNodeType(resource.getNodeType().toString()) , resource);
-		logEntryService.insert(log);
-		return log;
-	}
-
-	protected SharedSpaceNodeAuditLogEntry saveUpdateLog(Account authUser, Account actor, SharedSpaceNode resource,
-			SharedSpaceNode resourceUpdated) {
-		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
-				AuditLogEntryType.fromNodeType(resource.getNodeType().toString()), resource);
-		log.setResourceUpdated(resourceUpdated);
-		logEntryService.insert(log);
-		return log;
 	}
 
 	private BusinessErrorCode getBusinessErrorCode(NodeType nodeType) {

@@ -77,7 +77,6 @@ public enum MailContentType {
 
 	DRIVE_WARN_NEW_MEMBER(34),
 	DRIVE_WARN_UPDATED_MEMBER(35),
-
 	DRIVE_WARN_DELETED_MEMBER(36),
 
 	// Old template identifiers - not used

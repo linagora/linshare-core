@@ -433,7 +433,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
 		checkDeletePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
 				node, workGroup);
-		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(node.getNodeType());
+		AuditLogEntryType auditType = getWorkgroupAuditType(node.getNodeType());
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE, auditType, node,
 				workGroup);
 		workGroupDocumentService.addMembersToLog(workGroup.getLsUuid(), log);
@@ -590,7 +590,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, nodeParent, fileName);
 		WorkGroupNode newWGDocument = workGroupDocumentService.createWithoutLogStorage(actor, owner, toWorkGroup, cr.getSize(),
 				cr.getMimeType(), fileName, nodeParent);
-		AuditLogEntryType auditType = AuditLogEntryType.getWorkgroupAuditType(newWGDocument.getNodeType());
+		AuditLogEntryType auditType = getWorkgroupAuditType(newWGDocument.getNodeType());
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 				auditType, newWGDocument, toWorkGroup);
 		log.setCause(LogActionCause.COPY);
@@ -789,4 +789,12 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		return repository.findByUuid(uuid);
 	}
 
+	private static AuditLogEntryType getWorkgroupAuditType(WorkGroupNodeType nodeType) {
+		if (WorkGroupNodeType.ROOT_FOLDER.equals(nodeType)) {
+			return AuditLogEntryType.WORKGROUP_FOLDER;
+		}
+		String type = "WORKGROUP_" + nodeType.toString();
+		AuditLogEntryType auditType = AuditLogEntryType.fromString(type);
+		return auditType;
+	}
 }

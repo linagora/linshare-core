@@ -124,7 +124,7 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 	protected SharedSpaceNodeAuditLogEntry saveLog(Account authUser, Account actor, LogAction action,
 			SharedSpaceNode resource) {
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, action,
-				AuditLogEntryType.fromNodeType(resource.getNodeType().toString()) , resource);
+				fromNodeType(resource.getNodeType().toString()), resource);
 		logEntryService.insert(log);
 		return log;
 	}
@@ -137,7 +137,7 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
 		SharedSpaceNode nodeLog = new SharedSpaceNode(node);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
-				AuditLogEntryType.fromNodeType(nodeToUpdate.getNodeType().toString()), nodeLog);
+				fromNodeType(nodeToUpdate.getNodeType().toString()), nodeLog);
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 				nodeToUpdate);
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
@@ -172,5 +172,10 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 		}
 		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, found);
 		return found;
+	}
+
+	private static AuditLogEntryType fromNodeType(String nodeType) {
+		nodeType = nodeType.replace("_", "");
+		return AuditLogEntryType.fromString(nodeType);
 	}
 }
