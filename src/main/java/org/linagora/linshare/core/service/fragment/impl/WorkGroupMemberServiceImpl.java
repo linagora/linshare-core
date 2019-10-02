@@ -79,7 +79,9 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
 		}
 		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, context.getRole(), account);
-		notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
+		if (!actor.getLsUuid().equals(account.getUuid())) {
+			notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
+		}
 		return member;
 	}
 
