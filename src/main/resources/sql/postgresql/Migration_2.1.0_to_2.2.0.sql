@@ -243,6 +243,115 @@ ALTER TABLE ldap_pattern ADD COLUMN search_all_groups_query text;
 ALTER TABLE ldap_pattern ADD COLUMN search_group_query text;
 ALTER TABLE ldap_pattern ADD COLUMN group_prefix varchar(255);
 
+-- Group ldap pattern
+INSERT INTO ldap_pattern(
+	id,
+	uuid,
+	pattern_type,
+	label,
+	system,
+	description,
+	auth_command,
+	search_user_command,
+	search_page_size,
+	search_size_limit,
+	auto_complete_command_on_first_and_last_name,
+	auto_complete_command_on_all_attributes, completion_page_size,
+	completion_size_limit,
+	creation_date,
+	modification_date,
+	search_all_groups_query,
+	search_group_query,
+	group_prefix)
+	VALUES(
+	4,
+	'dfaa3523-51b0-423f-bb6d-95d6ecbfcd4c',
+	'GROUP_LDAP_PATTERN',
+	'Ldap groups',
+	true,
+	'default-group-pattern',
+	NULL,
+	NULL,
+	100,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NOW(),
+	NOW(),
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-*))");',
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-" + pattern + "))");',
+	'workgroup-');
+
+
+-- ldap attributes
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(13, 'mail', 'member_mail', false, true, true, false, 4);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(14, 'givenName', 'member_firstname', false, true, true, false, 4);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(15, 'cn', 'group_name_attr', false, true, true, true, 4);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(16, 'member', 'extended_group_member_attr', false, true, true, true, 4);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(17, 'sn', 'member_lastname', false, true, true, false, 4);
+
+
+-- Demo ldap pattern.
+INSERT INTO ldap_pattern(
+    id,
+    uuid,
+    pattern_type,
+    label,
+    description,
+    auth_command,
+    search_user_command,
+    system,
+    auto_complete_command_on_first_and_last_name,
+    auto_complete_command_on_all_attributes,
+    search_page_size,
+    search_size_limit,
+    completion_page_size,
+    completion_size_limit,
+    creation_date,
+    modification_date)
+VALUES (
+    5,
+    'a4620dfc-dc46-11e8-a098-2355f9d6585a',
+    'USER_LDAP_PATTERN',
+    'default-pattern-demo',
+    'This is pattern the default pattern for the OpenLdap demo structure.',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(employeeType=Internal)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(employeeType=Internal)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+    true,
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(employeeType=Internal)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(employeeType=Internal)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+    100,
+    100,
+    10,
+    10,
+    now(),
+    now()
+);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (18, 'user_mail', 'mail', false, true, true, 5, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (19, 'user_firstname', 'givenName', false, true, true, 5, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (20, 'user_lastname', 'sn', false, true, true, 5, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (21, 'user_uid', 'uid', false, true, true, 5, false);
+
 -- Update domain_abstract
 ALTER TABLE domain_abstract ADD COLUMN group_provider_id int8;
 
