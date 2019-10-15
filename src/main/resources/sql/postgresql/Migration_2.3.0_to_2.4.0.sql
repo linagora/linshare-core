@@ -110,6 +110,130 @@ UPDATE policy SET system = FALSE WHERE id = 305;
 ALTER TABLE upload_request_entry ALTER COLUMN ls_type DROP NOT NULL;
 ALTER TABLE upload_request_entry ALTER COLUMN document_id DROP NOT NULL;
 
+-- Group ldap pattern
+WITH ldap_pattern_already_exists AS ( UPDATE ldap_pattern SET id=id WHERE id=4 RETURNING *)
+INSERT INTO ldap_pattern(
+	id,
+	uuid,
+	pattern_type,
+	label,
+	system,
+	description,
+	auth_command,
+	search_user_command,
+	search_page_size,
+	search_size_limit,
+	auto_complete_command_on_first_and_last_name,
+	auto_complete_command_on_all_attributes, completion_page_size,
+	completion_size_limit,
+	creation_date,
+	modification_date,
+	search_all_groups_query,
+	search_group_query,
+	group_prefix)
+	SELECT 4,
+	'dfaa3523-51b0-423f-bb6d-95d6ecbfcd4c',
+	'GROUP_LDAP_PATTERN',
+	'Ldap groups',
+	true,
+	'default-group-pattern',
+	NULL,
+	NULL,
+	100,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NOW(),
+	NOW(),
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-*))");',
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-" + pattern + "))");',
+	'workgroup-' WHERE NOT EXISTS ( SELECT * FROM ldap_pattern_already_exists);
+
+-- ldap attributes
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=13 RETURNING *)
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+SELECT 13, 'mail', 'member_mail', false, true, true, false, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=14 RETURNING *)
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+SELECT 14, 'givenName', 'member_firstname', false, true, true, false, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=15 RETURNING *)
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+SELECT 15, 'cn', 'group_name_attr', false, true, true, true, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=16 RETURNING *)
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+SELECT 16, 'member', 'extended_group_member_attr', false, true, true, true, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=17 RETURNING *)
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+SELECT 17, 'sn', 'member_lastname', false, true, true, false, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+-- Demo ldap pattern.
+WITH ldap_pattern_already_exists AS ( UPDATE ldap_pattern SET id=id WHERE id=5 RETURNING *)
+INSERT INTO ldap_pattern(
+    id,
+    uuid,
+    pattern_type,
+    label,
+    description,
+    auth_command,
+    search_user_command,
+    system,
+    auto_complete_command_on_first_and_last_name,
+    auto_complete_command_on_all_attributes,
+    search_page_size,
+    search_size_limit,
+    completion_page_size,
+    completion_size_limit,
+    creation_date,
+    modification_date)
+	SELECT 5,
+    'a4620dfc-dc46-11e8-a098-2355f9d6585a',
+    'USER_LDAP_PATTERN',
+    'default-pattern-demo',
+    'This is pattern the default pattern for the OpenLdap demo structure.',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(employeeType=Internal)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(employeeType=Internal)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+    true,
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(employeeType=Internal)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(employeeType=Internal)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+    100,
+    100,
+    10,
+    10,
+    now(),
+    now() WHERE NOT EXISTS ( SELECT * FROM ldap_pattern_already_exists);
+
+-- ldap_attribute
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=18 RETURNING *)
+INSERT INTO ldap_attribute
+(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+SELECT 18, 'user_mail', 'mail', false, true, true, 5, true WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=19 RETURNING *)
+INSERT INTO ldap_attribute
+(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+SELECT 19, 'user_firstname', 'givenName', false, true, true, 5, true WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=12 RETURNING *)
+INSERT INTO ldap_attribute
+(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+SELECT 20, 'user_lastname', 'sn', false, true, true, 5, true WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=21 RETURNING *)
+INSERT INTO ldap_attribute
+(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+SELECT 21, 'user_uid', 'uid', false, true, true, 5, false WHERE NOT EXISTS (SELECT * FROM already_exists);
+
 -- End of your requests
 
 -- LinShare version

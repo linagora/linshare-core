@@ -101,6 +101,48 @@ DELETE FROM ldap_attribute WHERE id = 1062 AND system = TRUE;
 DELETE FROM ldap_attribute WHERE id = 1063 AND system = TRUE;
 DELETE FROM ldap_attribute WHERE id = 1064 AND system = TRUE;
 
+-- Group ldap pattern
+WITH ldap_pattern_already_exists AS ( UPDATE ldap_pattern SET id=id WHERE id=4 RETURNING *)
+INSERT INTO ldap_pattern(
+	id,
+	uuid,
+	pattern_type,
+	label,
+	system,
+	description,
+	auth_command,
+	search_user_command,
+	search_page_size,
+	search_size_limit,
+	auto_complete_command_on_first_and_last_name,
+	auto_complete_command_on_all_attributes, completion_page_size,
+	completion_size_limit,
+	creation_date,
+	modification_date,
+	search_all_groups_query,
+	search_group_query,
+	group_prefix)
+	
+	SELECT 4,
+	'dfaa3523-51b0-423f-bb6d-95d6ecbfcd4c',
+	'GROUP_LDAP_PATTERN',
+	'Ldap groups',
+	true,
+	'default-group-pattern',
+	NULL,
+	NULL,
+	100,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NOW(),
+	NOW(),
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-*))");',
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-" + pattern + "))");',
+	'workgroup-' WHERE NOT EXISTS (SELECT * FROM ldap_pattern_already_exists);
+
 
 WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=13 RETURNING *)
 INSERT INTO ldap_attribute
