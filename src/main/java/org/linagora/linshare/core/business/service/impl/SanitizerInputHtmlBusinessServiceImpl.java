@@ -35,10 +35,16 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 
+/**
+ * Service to configure HTML Sanitizer which allows include HTML authored
+ * by third-parties in LinShare while protecting against XSS
+ * @see <a href="https://github.com/OWASP/java-html-sanitizer">OWASP</a>
+ */
 public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtmlBusinessService {
 
 	private final PolicyFactory policyFactory;
@@ -47,14 +53,46 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 		this.policyFactory = new HtmlPolicyBuilder().toFactory();
 	}
 
+	/**
+	 * This function clean all inputs that contains untrusted HTML and also check if
+	 * it contains predefined special characters.
+	 * 
+	 * @param String It can contains untrusted HTML elements.
+	 * @return String cleaned from all HTML and trimmed.
+	 * @throws IllegalArgumentException.
+	 */
 	@Override
-	public String clean(String value) throws BusinessException {
-		if (value == null)
-			return null;
-		value = policyFactory.sanitize(value).trim();
-		if (value.isEmpty()) {
-			throw new IllegalArgumentException("fileName is empty after been sanitized");
+	public String strictClean(String entry) throws IllegalArgumentException {
+		entry = policyFactory.sanitize(entry).trim();
+		if (entry.isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after being sanitized");
 		}
-		return value;
+		return entry;
 	}
+
+	/**
+	 * It can be used for control the uploaded or updated file names
+	 * 
+	 * @param String It can contains untrusted HTML elements.
+	 * @return String cleaned from all HTML and trimmed.
+	 * @throws IllegalArgumentException.
+	 */
+	@Override
+	public String sanitizeFileName(String fileName) throws BusinessException {
+		fileName = fileName.replace("\\", "_")
+		.replace(":", "_")
+		.replace("?", "_")
+		.replace("^", "_")
+		.replace(",", "_")
+		.replace("<", "_")
+		.replace(">", "_")
+		.replace("*", "_")
+		.replace("/", "_")
+		.replace("\"", "_")
+		.replace("|", "_");
+		// The OWASP HTMl sanitizer does not allows the "@" character. But on our policy
+		// we need to use "@" on some documents name.
+		return strictClean(fileName).replace("&#64;", "@");
+	}
+
 }

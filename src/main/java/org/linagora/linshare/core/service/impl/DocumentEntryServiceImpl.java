@@ -193,7 +193,7 @@ public class DocumentEntryServiceImpl
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
 		DocumentEntry docEntry = null;
 		try {
-			fileName = sanitizeFileName(fileName);
+			fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName);
 			Long size = tempFile.length();
 			checkSpace(owner, size);
 
@@ -292,7 +292,7 @@ public class DocumentEntryServiceImpl
 		}
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, originalEntry);
-		fileName = sanitizeFileName(fileName); // throws
+		fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName); // throws
 		DocumentEntry documentEntry = null;
 
 		try {
@@ -323,7 +323,7 @@ public class DocumentEntryServiceImpl
 			// We need to set an expiration date in case of file cleaner
 			// activation.
 			documentEntry = documentEntryBusinessService.updateDocumentEntry(
-					owner, originalEntry, tempFile, newDocSize, sanitizeFileName(fileName),
+					owner, originalEntry, tempFile, newDocSize, sanitizerInputHtmlBusinessService.sanitizeFileName(fileName),
 					checkIfIsCiphered, timeStampingUrl, mimeType,
 					getDocumentExpirationDate(owner.getDomain()));
 			// add new resource to the log entry
@@ -518,7 +518,7 @@ public class DocumentEntryServiceImpl
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.UPDATE);
-		DocumentEntry res = documentEntryBusinessService.renameDocumentEntry(entry, sanitizeFileName(newName));
+		DocumentEntry res = documentEntryBusinessService.renameDocumentEntry(entry, sanitizerInputHtmlBusinessService.sanitizeFileName(newName));
 		log.setResourceUpdated(new DocumentMto(res));
 		logEntryService.insert(log);
 	}
@@ -542,7 +542,7 @@ public class DocumentEntryServiceImpl
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.UPDATE);
-		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, sanitizeFileName(newName), fileComment, meta);
+		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, sanitizerInputHtmlBusinessService.sanitizeFileName(newName), fileComment, meta);
 		log.setResourceUpdated(new DocumentMto(res));
 		logEntryService.insert(log);
 		return res;
@@ -560,7 +560,7 @@ public class DocumentEntryServiceImpl
 						"You are not authorized to update this document.");
 			}
 		}
-		newName = sanitizeFileName(newName);
+		newName = sanitizerInputHtmlBusinessService.sanitizeFileName(newName);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, actor, entry, LogAction.UPDATE);
 		if (!isFromCmisSync)
 			entry.setCmisSync(false);
@@ -572,17 +572,6 @@ public class DocumentEntryServiceImpl
 				fileComment, null);
 		log.setResourceUpdated(new DocumentMto(res));
 		logEntryService.insert(log);
-	}
-
-	private String sanitizeFileName(String fileName) throws BusinessException {
-		fileName = fileName.replace("\\", "_");
-		fileName = fileName.replace(":", "_");
-		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
-		if (fileName.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME,
-					"fileName is empty after the xss filter");
-		}
-		return fileName;
 	}
 
 	@Override

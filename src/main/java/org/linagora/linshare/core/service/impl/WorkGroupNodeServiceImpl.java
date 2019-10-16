@@ -519,7 +519,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		fileName = fileName.replace("/", "_");
 		fileName = fileName.replace("\"", "_");
 		fileName = fileName.replace("|", "_");
-		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
+		fileName = sanitizerInputHtmlBusinessService.strictClean(fileName);
 		return fileName;
 	}
 
