@@ -229,7 +229,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	private String sanitizeFileName(String fileName) throws BusinessException {
 		fileName = fileName.replace("\\", "_");
 		fileName = fileName.replace(":", "_");
-		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
+		fileName = sanitizerInputHtmlBusinessService.strictClean(fileName);
 		if (fileName.isEmpty()) {
 			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after the xss filter");
 		}
