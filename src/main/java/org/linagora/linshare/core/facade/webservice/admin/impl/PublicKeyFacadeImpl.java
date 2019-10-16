@@ -50,6 +50,8 @@ import org.linagora.linshare.core.service.PublicKeyService;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 
+import com.google.common.base.Strings;
+
 public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements PublicKeyFacade {
 
 	protected PublicKeyService publicKeyService;
@@ -96,15 +98,14 @@ public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements Publi
 
 	@Override
 	public PublicKeyLs delete(String uuid, PublicKeyLs publicKeyLs) throws BusinessException {
-		Validate.notNull(publicKeyLs, "public key must be set");
-		Validate.notEmpty(publicKeyLs.getUuid(), "public key uuid must be set");
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		if (!uuid.isEmpty()) {
+		if (!Strings.isNullOrEmpty(uuid)) {
 			publicKeyLs = publicKeyService.find(authUser, uuid);
 		} else {
+			Validate.notNull(publicKeyLs, "publicKey object must be set");
+			Validate.notEmpty(publicKeyLs.getUuid(), "publicKey uuid must be set");
 			publicKeyLs = publicKeyService.find(authUser, publicKeyLs.getUuid());
 		}
-		Validate.notNull(publicKeyLs);
 		return publicKeyService.delete(authUser, publicKeyLs);
 	}
 
