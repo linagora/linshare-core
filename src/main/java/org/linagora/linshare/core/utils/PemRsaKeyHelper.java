@@ -71,13 +71,19 @@ public class PemRsaKeyHelper {
 		return privatevKey;
 	}
 
-	public static RSAPublicKey loadSSHPublicKeyFromFile(String pemPublicKeyPath) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+	public static RSAPublicKey loadSSHPublicKeyFromFile(String pemPublicKeyPath)
+			throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 		String pem = loadPemKey(pemPublicKeyPath);
 		if (pem == null) {
 			logger.info("Public key '" + pemPublicKeyPath + "' was not found. (check read access)");
 			return null;
 		}
-		RSAPublicKey publicKey = loadSSHPublicKey(pem);
+		RSAPublicKey publicKey = null;
+		if (pem.startsWith("ssh-rsa")) {
+			publicKey = loadSSHPublicKey(pem);
+		} else {
+			publicKey = loadPEMpublicKey(pem);
+		}
 		logger.info("Public key '" + pemPublicKeyPath + "' was loaded");
 		return publicKey;
 	}
