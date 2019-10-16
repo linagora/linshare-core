@@ -194,7 +194,7 @@ public class DocumentEntryServiceImpl
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
 		DocumentEntry docEntry = null;
 		try {
-			fileName = sanitizeFileName(fileName);
+			fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName);
 			Long size = tempFile.length();
 			checkSpace(owner, size);
 
@@ -293,7 +293,7 @@ public class DocumentEntryServiceImpl
 		}
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, originalEntry);
-		fileName = sanitizeFileName(fileName); // throws
+		fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName); // throws
 		DocumentEntry documentEntry = null;
 
 		try {
@@ -543,7 +543,7 @@ public class DocumentEntryServiceImpl
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.UPDATE);
-		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, sanitizeFileName(newName), fileComment, meta);
+		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, sanitizerInputHtmlBusinessService.sanitizeFileName(newName), fileComment, meta);
 		log.setResourceUpdated(new DocumentMto(res));
 		logEntryService.insert(log);
 		return res;
@@ -565,7 +565,7 @@ public class DocumentEntryServiceImpl
 		if (!isFromCmisSync)
 			entry.setCmisSync(false);
 		else {
-			newName = sanitizeFileName(newName);
+			newName = sanitizerInputHtmlBusinessService.sanitizeFileName(newName);
 			documentEntryBusinessService.syncUniqueDocument(actor, newName);
 			entry.setCmisSync(true);
 		}
@@ -573,17 +573,6 @@ public class DocumentEntryServiceImpl
 				fileComment, null);
 		log.setResourceUpdated(new DocumentMto(res));
 		logEntryService.insert(log);
-	}
-
-	private String sanitizeFileName(String fileName) throws BusinessException {
-		fileName = fileName.replace("\\", "_");
-		fileName = fileName.replace(":", "_");
-		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
-		if (fileName.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME,
-					"fileName is empty after the xss filter");
-		}
-		return fileName;
 	}
 
 	@Override
