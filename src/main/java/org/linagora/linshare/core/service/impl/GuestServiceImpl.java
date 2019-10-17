@@ -199,8 +199,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			List<String> restrictedMails) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(guest);
-		sanitizer.checkSpecialChars(guest.getFirstName());
-		sanitizer.checkSpecialChars(guest.getLastName());
 		if (guest.isRestricted()) {
 			Validate.notNull(restrictedMails,
 					"A restricted guest must have a restricted list of contacts (mails)");
