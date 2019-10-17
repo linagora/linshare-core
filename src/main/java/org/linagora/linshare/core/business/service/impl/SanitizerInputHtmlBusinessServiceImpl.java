@@ -65,7 +65,7 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 	public String strictClean(String entry) throws IllegalArgumentException {
 		entry = policyFactory.sanitize(entry).trim();
 		if (entry.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after been sanitized");
+			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after being sanitized");
 		}
 		return entry;
 	}
