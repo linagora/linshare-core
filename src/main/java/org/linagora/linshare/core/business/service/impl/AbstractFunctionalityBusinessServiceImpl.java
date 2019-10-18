@@ -342,7 +342,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		Assert.notNull(functionalityId);
 		T functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
 		if (functionality == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Functionality not found.");
+			throw getBusinessNotFoundException();
 		}
 		// Never returns the entity when we try to modify the functionality.
 		// The current functionality returned could belong to a parent domain.
@@ -353,6 +353,10 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		clone.setDomain(domain);
 		initUpdateRight(clone, domain);
 		return clone;
+	}
+
+	protected BusinessException getBusinessNotFoundException() {
+		return new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Functionality not found.");
 	}
 
 	@Override
