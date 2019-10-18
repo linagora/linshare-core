@@ -41,7 +41,5 @@ public interface SanitizerInputHtmlBusinessService {
 	String strictClean(String entry) throws IllegalArgumentException;
 
 	String sanitizeFileName(String fileName) throws BusinessException;
-	
-	void checkSpecialChars(String entry) throws IllegalArgumentException;
 
 }

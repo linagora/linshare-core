@@ -103,8 +103,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	protected final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository;
 	
-	protected final SanitizerInputHtmlBusinessService sanitizer;
-
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -115,8 +113,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final GuestResourceAccessControl rac,
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository,
-			final AccountQuotaBusinessService accountQuotaBusinessService,
-			final SanitizerInputHtmlBusinessService sanitier) {
+			final AccountQuotaBusinessService accountQuotaBusinessService) {
 		super(rac);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -128,7 +125,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.resetGuestPasswordMongoRepository = resetGuestPasswordMongoRepository;
-		this.sanitizer = sanitier;
 	}
 
 	@Override
@@ -199,8 +195,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			List<String> restrictedMails) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(guest);
-		sanitizer.checkSpecialChars(guest.getFirstName());
-		sanitizer.checkSpecialChars(guest.getLastName());
 		if (guest.isRestricted()) {
 			Validate.notNull(restrictedMails,
 					"A restricted guest must have a restricted list of contacts (mails)");

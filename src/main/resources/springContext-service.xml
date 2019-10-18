@@ -188,7 +188,6 @@
 		<constructor-arg ref="containerQuotaBusinessService"/>
 		<constructor-arg ref="resetGuestPasswordMongoRepository"/>
 		<constructor-arg ref="accountQuotaBusinessService"/>
-		<constructor-arg ref="sanitizerInputHtmlBusinessService"/>
 	</bean>
 
 	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">
