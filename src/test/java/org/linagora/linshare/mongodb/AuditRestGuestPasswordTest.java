@@ -37,15 +37,18 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
@@ -56,10 +59,14 @@ import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.linagora.linshare.utils.LinShareWiser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -72,15 +79,19 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4SpringContextTests {
+@Transactional
+public class AuditRestGuestPasswordTest {
+
+	private static Logger logger = LoggerFactory.getLogger(AuditRestGuestPasswordTest.class);
 
 	private final static String FIRST_NAME = "givenName";
 	private final static String LAST_NAME = "lastName";
 	private final static String EMAIL = "anakin.skywalker@int4.linshare.dev";
 	private final static String UUID = "uuid";
 	private final static String CMIS_LOCALE = "cmis";
-	private final static String NEW_PASSWORD ="root";
-	
+	private final static String NEW_PASSWORD ="Root2000@linshare";
+	private final static String NEW_INVALID_PASSWORD ="root200Linshare"; // Password is invalide, because there is no special character
+
 	@Autowired
 	private ResetGuestPasswordService resetGuestPasswordService;
 
@@ -114,7 +125,7 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -135,7 +146,7 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 		wiser.start();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		resetGuestPasswordMongoRepository.delete(resetGuestPassword);
@@ -157,21 +168,21 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 		} catch (BusinessException e) {
 			logger.debug("The reset token is expired.");
 		}
-		assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.FAILURE)).size());
+		Assertions.assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.FAILURE)).size());
 	}
 
 	@Test
-	public void testAuditAttemptToResetPowssword() {
+	public void testAuditAttemptToResetPassword() {
 		int initialSize = userMongoRepository.findByAction(String.valueOf(LogAction.CREATE)).size();
 		try {
 			guestService.triggerResetPassword(actor, EMAIL, guestDomain.getUuid());
 		} catch (Exception e) {
 		}
-		assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.CREATE)).size());
+		Assertions.assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.CREATE)).size());
 	}
 
 	@Test
-	public void testAuditPawsswordResetedSuccessfully() {
+	public void testAuditPasswordResetedSuccessfully() {
 		int initialSize = userMongoRepository.findByAction(String.valueOf(LogAction.SUCCESS)).size();
 		Calendar instance = Calendar.getInstance();
 		instance.add(Calendar.HOUR, +1);
@@ -179,7 +190,26 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 		resetGuestPassword.setPassword(NEW_PASSWORD);
 		resetGuestPassword = resetGuestPasswordMongoRepository.save(resetGuestPassword);
 		resetGuestPasswordService.update(actor, actor, resetGuestPassword);
-		assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.SUCCESS)).size());
+		Assertions.assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.SUCCESS)).size());
 		wiser.checkGeneratedMessages();
 	}
+
+	@Test
+	public void testResetWithWeakPassword() {
+		Calendar instance = Calendar.getInstance();
+		instance.add(Calendar.HOUR, +1);
+		resetGuestPassword.setExpirationDate(instance.getTime());
+		resetGuestPassword.setPassword(NEW_INVALID_PASSWORD);
+		resetGuestPassword = resetGuestPasswordMongoRepository.save(resetGuestPassword);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			resetGuestPasswordService.update(actor, actor, resetGuestPassword);
+		});
+		Assertions.assertAll(
+				() -> assertEquals(BusinessErrorCode.RESET_GUEST_PASSWORD_INVALID_PASSWORD, exception.getErrorCode()),
+				() -> assertEquals(
+						"Your password must be at least 8 characters long, contain at least one number,"
+								+ " one special character and have a mixture of uppercase and lowercase letters.",
+						exception.getMessage()));
+	}
+
 }
