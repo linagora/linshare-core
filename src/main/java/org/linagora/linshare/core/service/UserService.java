@@ -71,13 +71,6 @@ public interface UserService {
 	User deleteUser(Account actor, String uuid) throws BusinessException;
 
 	/**
-	 * Delete all users from domain (and all the related data )
-	 */
-	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
-
-	void deleteAllUsersFromDomain(SystemAccount account, String domainIdentifier) throws BusinessException;
-
-	/**
 	 * Update a user locale
 	 * @param mail : the user email
 	 * @param locale : the new local
@@ -202,4 +195,6 @@ public interface UserService {
 	void updateMailingListEmail(Account actor, String currentEmail, String newEmail);
 
 	void updateRecipientFavourite(Account actor, String currentEmail, String newEmail);
+
+	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
 }

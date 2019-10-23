@@ -46,19 +46,15 @@ import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.UserService;
 
 public class PurgeDomainBatchImpl extends GenericBatchImpl {
 
 	protected final AbstractDomainService abstractDomainService;
-	protected final UserService userService;
 
 	public PurgeDomainBatchImpl(final AbstractDomainService abstractDomainService,
-			final UserService userService,
 			final AccountRepository<Account> accountRepository) {
 		super(accountRepository);
 		this.abstractDomainService = abstractDomainService;
-		this.userService = userService;
 		this.operationKind = OperationKind.PURGED;
 	}
 
@@ -78,7 +74,6 @@ public class PurgeDomainBatchImpl extends GenericBatchImpl {
 		try {
 			console.logInfo(batchRunContext, total, position, "processing domain : " + resource.getLabel());
 			abstractDomainService.purge(actor, resource.getUuid());
-			userService.deleteAllUsersFromDomain(actor, resource.getUuid());
 			context.setProcessed(true);
 		} catch (BusinessException businessException) {
 			BatchBusinessException exception = new BatchBusinessException(context,
