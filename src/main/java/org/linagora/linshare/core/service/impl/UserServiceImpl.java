@@ -227,19 +227,6 @@ public class UserServiceImpl implements UserService {
 		}
 		logger.debug("deleteAllUsersFromDomain: end");
 	}
-	
-	@Override
-	public void deleteAllUsersFromDomain(SystemAccount account, String domainIdentifier)
-			throws BusinessException {
-		logger.debug("deleteAllUsersFromDomain: begin");
-		List<User> users = userRepository.findByDomain(domainIdentifier);
-		logger.info("Delete all user from domain " + domainIdentifier
-				+ ", count: " + users.size());
-		for (User user : users) {
-			setUserToDestroy(account, user);
-		}
-		logger.debug("deleteAllUsersFromDomain: end");
-	}
 
 	@Override
 	public boolean isAdminForThisUser(Account actor, User user) {
@@ -254,6 +241,7 @@ public class UserServiceImpl implements UserService {
 			ssMemberService.deleteAllUserMemberships(actor, actor, userToDelete.getLsUuid());
 			userRepository.delete(userToDelete);
 			deleteAllJwtLongTime(actor, userToDelete);
+			userRepository.markToPurge(userToDelete);
 			logEntryService.insert(log);
 		} catch (IllegalArgumentException e) {
 			logger.error(
