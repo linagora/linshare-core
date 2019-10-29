@@ -69,6 +69,7 @@ import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 
 import com.google.common.collect.Sets;
@@ -92,6 +93,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final GroupLdapPatternService groupLdapPatternService;
 
+	private final UserService userService;
+
 	public DomainFacadeImpl(final AccountService accountService,
 			final AbstractDomainService abstractDomainService,
 			final UserProviderService userProviderService,
@@ -100,7 +103,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			final LdapConnectionService ldapConnectionService,
 			final QuotaService quotaService,
 			final GroupProviderService groupProviderService,
-			final GroupLdapPatternService groupLdapPatternService) {
+			final GroupLdapPatternService groupLdapPatternService,
+			UserService userService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
@@ -110,6 +114,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		this.ldapConnectionService = ldapConnectionService;
 		this.groupProviderService = groupProviderService;
 		this.groupLdapPatternService = groupLdapPatternService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -317,6 +322,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	public DomainDto delete(String domainId) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
+		userService.deleteAllUsersFromDomain(authUser, domainId);
 		AbstractDomain domain = abstractDomainService.markToPurge(authUser, domainId);
 		return DomainDto.getFull(domain);
 	}
