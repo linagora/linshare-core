@@ -63,6 +63,7 @@ import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 
 import com.google.common.collect.Sets;
@@ -82,13 +83,16 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final WelcomeMessagesService welcomeMessagesService;
 
+	private final UserService userService;
+
 	public DomainFacadeImpl(final AccountService accountService,
 			final AbstractDomainService abstractDomainService,
 			final UserProviderService userProviderService,
 			final DomainPolicyService domainPolicyService,
 			final WelcomeMessagesService welcomeMessagesService,
 			final LdapConnectionService ldapConnectionService,
-			final QuotaService quotaService) {
+			final QuotaService quotaService,
+			final UserService userService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
@@ -96,6 +100,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		this.welcomeMessagesService = welcomeMessagesService;
 		this.quotaService = quotaService;
 		this.ldapConnectionService = ldapConnectionService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -244,6 +249,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	public DomainDto delete(String domainId) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
+		userService.deleteAllUsersFromDomain(authUser, domainId);
 		AbstractDomain domain = abstractDomainService.markToPurge(authUser, domainId);
 		return DomainDto.getFull(domain);
 	}
