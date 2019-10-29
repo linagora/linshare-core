@@ -150,7 +150,8 @@ linshare.mongo.gridfs.bigfiles.client.uri=mongodb://127.0.0.1:27017/linshare-big
 
 # Batches are launched every days at 0a.m
 # This cron is responsible of :
-#   - deleting expired Guest and Internal Users
+#   - Deleting expired Guest and Internal Users
+#   - Purge all data related to a removed domain.
 # job.users.cron.expression=0 0 0 * * ?
 
 # Batches are launched every days at 6a.m
