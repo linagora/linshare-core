@@ -5,7 +5,7 @@
 	http://www.springframework.org/schema/beans/spring-beans.xsd"
 	profile="batches">
 
-	<bean id="cleanOutdatedUsersJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+	<bean id="cleanOutdatedUsersAndDomainsJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
 		<property name="jobDataAsMap">
@@ -15,6 +15,7 @@
 						<ref bean="deleteGuestBatch" />
 						<ref bean="markUserToPurgeBatch" />
 						<ref bean="purgeUserBatch" />
+						<ref bean="purgeDomainBatch" />
 					</list>
 				</entry>
 				<entry key="batchRunner" value-ref="batchRunner" />
@@ -22,9 +23,9 @@
 		</property>
 	</bean>
 
-	<bean id="cleanOutdatedUsersJobTrigger"
+	<bean id="cleanOutdatedUsersAndDomainsJobTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail" ref="cleanOutdatedUsersJob" />
+		<property name="jobDetail" ref="cleanOutdatedUsersAndDomainsJob" />
 		<property name="cronExpression" value="${job.users.cron.expression}" />
 	</bean>
 
@@ -188,7 +189,7 @@
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
-                <ref bean="cleanOutdatedUsersJobTrigger"/>
+                <ref bean="cleanOutdatedUsersAndDomainsJobTrigger"/>
                 <ref bean="updateUploadRequestJobTrigger"/>
                 <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
                 <ref bean="deleteMissingDocumentsBatchJobTrigger"/>

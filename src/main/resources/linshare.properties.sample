@@ -178,6 +178,13 @@ job.document.cleaner.activation=false
 job.document.cleaner.cron.expression=0 0 0 1 1 ?
 
 
+# Batches are launched every days at 0a.m
+# This cron is responsible of :
+#   - Deleting expired Guest and Internal Users
+#   - Purge all data related to a removed domain.
+#job.users.cron.expression=0 0 0 * * ?
+
+
 #******** Domain
 # If true, we can search an user during authentication process using his uid or his mail (as a login).
 # By default, false, only the mail is used.
