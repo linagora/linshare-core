@@ -1765,7 +1765,7 @@
 		<jclouds.version>2.1.0</jclouds.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
-		<sql.driver.postgresql>42.2.2.jre7</sql.driver.postgresql>
+		<sql.driver.postgresql>42.2.8</sql.driver.postgresql>
 		<sql.driver.mysql>8.0.11</sql.driver.mysql>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
 		<spring.mvc.version>5.0.7.RELEASE</spring.mvc.version>
