@@ -127,4 +127,6 @@ public interface FunctionalityReadOnlyService {
 
 	//Drive Functionnality
 	Functionality getDriveCreationRight(AbstractDomain domain);
+
+	Functionality getDriveFunctionality(AbstractDomain domain);
 }
