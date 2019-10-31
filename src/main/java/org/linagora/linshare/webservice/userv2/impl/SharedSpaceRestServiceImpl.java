@@ -226,7 +226,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember addMember(
-			@ApiParam("The shared space member to add")SharedSpaceMemberDrive member)
+			@ApiParam("The shared space member to add")SharedSpaceMember member)
 					throws BusinessException {
 		return memberFacade.create(null, member);
 	}
