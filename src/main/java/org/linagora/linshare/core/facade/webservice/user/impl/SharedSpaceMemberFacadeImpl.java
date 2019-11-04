@@ -92,14 +92,23 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		SharedSpaceNode foundSharedSpaceNode = nodeService.find(authUser, actor, member.getNode().getUuid());
-		Validate.notNull(foundSharedSpaceNode, "Missing required node");
 		SharedSpaceRole foundSharedSpaceRole = roleService.find(authUser, actor, member.getRole().getUuid());
-		Validate.notNull(foundSharedSpaceRole, "Missing required role");
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(foundSharedSpaceRole);
+		// if current node is a Drive
 		if (NodeType.DRIVE.equals(foundSharedSpaceNode.getNodeType())) {
-			GenericLightEntity nestedRole = new GenericLightEntity(foundSharedSpaceRole);
-			SharedSpaceRole foundDriveRole = roleService.find(authUser, actor, nestedRole.getUuid());
-			context.setNestedRole(foundDriveRole);
+			// if current member is a drive member
+			if (NodeType.DRIVE.equals(member.getType())) {
+				GenericLightEntity nestedRole = ((SharedSpaceMemberDrive) member).getNestedRole();
+				if (nestedRole != null) {
+					context.setNestedRole(roleService.find(authUser, actor, nestedRole.getUuid()));
+				}
+			}
+			/* it is not a drive member or nested role is null,
+			 * but we are in a drive. we force default nested role value (default workgroup value)
+			 */
+			if (context.getNestedRole() == null) {
+				context.setNestedRole(roleService.findByName(authUser, actor, "READER"));
+			}
 		}
 		return memberService.create(authUser, actor, foundSharedSpaceNode, context, member.getAccount());
 	}
