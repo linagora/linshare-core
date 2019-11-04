@@ -46,14 +46,24 @@ import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({ @JsonSubTypes.Type(value = SharedSpaceMemberDrive.class, name = "DRIVE"),
-	@JsonSubTypes.Type(value = SharedSpaceMemberWorkgroup.class, name = "WORK_GROUP")
-		})
+/**
+ * Indication: If the type field is NOT set in the payload at shared space member creation, 
+ * a simple shared space member (workgroup member) is created 
+ * otherwise a shared space member drive (drive member) is created.
+ *
+ */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = SharedSpaceMember.class, property = "type")
+@JsonSubTypes({ 
+	@Type(value = SharedSpaceMemberDrive.class, name = "DRIVE"),
+	@Type(value = SharedSpaceMemberWorkgroup.class, name = "WORK_GROUP")
+	})
 @XmlSeeAlso({ SharedSpaceMemberDrive.class,
 	SharedSpaceMemberWorkgroup.class
 	})

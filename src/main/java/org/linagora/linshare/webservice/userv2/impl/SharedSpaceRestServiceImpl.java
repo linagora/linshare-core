@@ -219,7 +219,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	@Path("/{uuid}/members")
 	@POST
-	@ApiOperation(value = "Add a shared space member.", response = SharedSpaceMember.class)
+	@ApiOperation(value = "Add a shared space member to workgroup or drive.", response = SharedSpaceMember.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
 			@ApiResponse(code = 404, message = "Not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
