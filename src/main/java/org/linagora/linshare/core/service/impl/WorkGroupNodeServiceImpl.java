@@ -50,7 +50,9 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
@@ -534,6 +536,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			return revisionService.download(actor, owner, workGroup, (WorkGroupDocument) documentParent,
 					(WorkGroupDocumentRevision) node);
 		} else if (isFolder(node)) {
+			checkArchiveDownloadRight(workGroup.getDomain());
 			String pattern = "^" + node.getPath() + node.getUuid();
 			if (!workGroupNodeBusinessService.downloadIsAllowed(workGroup, pattern)) {
 				throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_FORBIDDEN,
@@ -551,6 +554,15 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not download this kind of node.");
+		}
+	}
+
+	private void checkArchiveDownloadRight(AbstractDomain domain) {
+		Functionality archiveDownload = functionalityReadOnlyService.getWorkGoupDownloadArchive(domain);
+		if (!archiveDownload.getActivationPolicy().getStatus()) {
+			logger.error("The current domain does not allow you to download an archive for this workgroup node.");
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_FORBIDDEN,
+					"can not download an archive for this workgroup node.");
 		}
 	}
 
