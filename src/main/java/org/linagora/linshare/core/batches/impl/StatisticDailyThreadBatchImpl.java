@@ -52,11 +52,11 @@ import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.repository.ThreadRepository;
 
 public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 
-	private final ThreadService threadService;
+	private final ThreadRepository threadRepository;
 
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
 
@@ -65,14 +65,14 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 	private final ThreadDailyStatBusinessService threadDailyStatBusinessService;
 
 	public StatisticDailyThreadBatchImpl(
-			final ThreadService threadService,
+			final ThreadRepository threadRepository,
 			final OperationHistoryBusinessService operationHistoryBusinessService,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final ThreadDailyStatBusinessService threadDailyStatBusinessService,
 			final AccountRepository<Account> accountRepository,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
 		super(accountRepository, batchHistoryBusinessService);
-		this.threadService = threadService;
+		this.threadRepository = threadRepository;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.threadDailyStatBusinessService = threadDailyStatBusinessService;
@@ -92,7 +92,7 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		Date yesterday = getYesterdayEnd();
-		WorkGroup resource = threadService.findByLsUuidUnprotected(identifier);
+		WorkGroup resource = threadRepository.findActivateAndDestroyedByLsUuid(identifier);
 		if (resource == null) {
 			return null;
 		}

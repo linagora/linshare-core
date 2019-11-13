@@ -27,7 +27,7 @@
 	</bean>
 	<bean id="statisticDailyThreadBatch"
 		class="org.linagora.linshare.core.batches.impl.StatisticDailyThreadBatchImpl">
-		<constructor-arg ref="threadService" />
+		<constructor-arg ref="threadRepository" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="accountQuotaBusinessService" />
 		<constructor-arg ref="threadDailyStatBusinessService" />
