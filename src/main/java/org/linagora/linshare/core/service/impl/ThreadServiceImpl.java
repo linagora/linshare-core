@@ -140,6 +140,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		workGroup.setEntries(null);
 		threadRepository.update(workGroup);
 		threadRepository.delete(workGroup);
+		threadRepository.markToPurge(workGroup);
 	}
 
 	@Override
