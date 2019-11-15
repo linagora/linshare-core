@@ -52,11 +52,11 @@ import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.repository.ThreadRepository;
 
 public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 
-	private final ThreadService threadService;
+	private final ThreadRepository threadRepository;
 
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
 
@@ -65,14 +65,14 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 	private final ThreadDailyStatBusinessService threadDailyStatBusinessService;
 
 	public StatisticDailyThreadBatchImpl(
-			final ThreadService threadService,
+			final ThreadRepository threadRepository,
 			final OperationHistoryBusinessService operationHistoryBusinessService,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final ThreadDailyStatBusinessService threadDailyStatBusinessService,
 			final AccountRepository<Account> accountRepository,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
 		super(accountRepository, batchHistoryBusinessService);
-		this.threadService = threadService;
+		this.threadRepository = threadRepository;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.threadDailyStatBusinessService = threadDailyStatBusinessService;
@@ -92,20 +92,24 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		Date yesterday = getYesterdayEnd();
-		Thread resource = threadService.findByLsUuidUnprotected(identifier);
+		Thread resource = threadRepository.findActivateAndDestroyedByLsUuid(identifier);
+		if (resource == null) {
+			return null;
+		}
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total, position, "processing workgroup : " + resource.getAccountRepresentation());
+			console.logInfo(batchRunContext, total, position, "processing workgroup : " + resource.getAccountRepresentation());
 			AccountQuota quota = accountQuotaBusinessService.createOrUpdate(resource, yesterday);
 			threadDailyStatBusinessService.create(resource, quota.getCurrentValue(), yesterday);
 			operationHistoryBusinessService.deleteBeforeDateByAccount(yesterday, resource);
+			context.setProcessed(true);
 		} catch (BusinessException businessException) {
 			String batchClassName = this.getBatchClassName();
-			logError(total, position, "Error while trying to process batch " + batchClassName + "for an user ", batchRunContext);
 			String msg = "Error occured while running batch : " + batchClassName; 
-			logger.info(msg, businessException);
 			BatchBusinessException exception = new BatchBusinessException(context, msg);
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to process batch " + batchClassName + "for an user ", exception);
 			throw exception;
 		}
 		return context;

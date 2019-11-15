@@ -359,6 +359,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		this.deleteAllMembers(actor, thread);
 		// Deleting the thread
 		threadRepository.delete(thread);
+		threadRepository.markToPurge(thread);
 		logEntryService.insert(threadAuditLog);
 	}
 
