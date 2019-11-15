@@ -234,6 +234,9 @@ INSERT INTO ldap_attribute
 (id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 SELECT 21, 'user_uid', 'uid', false, true, true, 5, false WHERE NOT EXISTS (SELECT * FROM already_exists);
 
+--Update purgeStep for deleted workGroups
+UPDATE account SET purge_step = 'PURGED' where ((account_type = 5) AND (purge_step = 'IN_USE') AND (destroyed > 0));
+
 -- End of your requests
 
 -- LinShare version
