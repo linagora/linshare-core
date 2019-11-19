@@ -1433,6 +1433,8 @@ INSERT INTO mail_footer_lang (id,language,mail_config_id,mail_footer_id,readonly
   PRIMARY KEY (id));
 ALTER TABLE mail_attachment ADD CONSTRAINT FKmail_attachment35169 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 
+--Update purgeStep for deleted workGroups
+UPDATE account SET purge_step = 'PURGED' where ((account_type = 5) AND (purge_step = 'IN_USE') AND (destroyed > 0));
 
 -- LinShare version
 SELECT ls_version();
