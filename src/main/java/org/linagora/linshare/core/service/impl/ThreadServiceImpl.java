@@ -44,7 +44,6 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -140,7 +139,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		workGroup.setEntries(null);
 		threadRepository.update(workGroup);
 		threadRepository.delete(workGroup);
-		threadRepository.markToPurge(workGroup);
+		threadRepository.purge(workGroup);
 	}
 
 	@Override

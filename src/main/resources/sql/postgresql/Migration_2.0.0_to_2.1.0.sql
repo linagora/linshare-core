@@ -1801,6 +1801,9 @@ INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, ma
 
 -- End mail layout
 
+	--Update purgeStep for deleted workGroups
+UPDATE account SET purge_step = 'PURGED' where ((account_type = 5) AND (purge_step = 'IN_USE') AND (destroyed > 0));
+
 -- End of your requests
 
 -- LinShare version
