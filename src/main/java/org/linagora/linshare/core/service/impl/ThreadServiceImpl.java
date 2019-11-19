@@ -381,7 +381,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		this.deleteAllMembers(actor, workGroup);
 		// Deleting the thread
 		threadRepository.delete(workGroup);
-		threadRepository.markToPurge(workGroup);
+		threadRepository.purge(workGroup);
 		logEntryService.insert(threadAuditLog);
 	}
 
