@@ -160,7 +160,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		preChecks(authUser, actor);
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node must be set.");
-		SharedSpaceMember memberWg = new SharedSpaceMember(new SharedSpaceNodeNested(node),
+		SharedSpaceMember memberWg = new SharedSpaceMemberWorkgroup(new SharedSpaceNodeNested(node),
 				new GenericLightEntity(role.getUuid(), role.getName()), account);
 		String parentUuid = node.getParentUuid();
 		boolean isDriveMember = (parentUuid != null) && (!checkMemberNotInNode(account.getUuid(), parentUuid));

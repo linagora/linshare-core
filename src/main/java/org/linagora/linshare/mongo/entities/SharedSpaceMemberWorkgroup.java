@@ -38,23 +38,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @XmlRootElement(name = "SharedSpaceMemberWorkgroup")
 public class SharedSpaceMemberWorkgroup extends SharedSpaceMember {
 
-    public SharedSpaceMemberWorkgroup(
-            SharedSpaceNodeNested node,
-            GenericLightEntity role,
-            SharedSpaceAccount account) {
-        super(node, role, account);
-        this.type = NodeType.WORK_GROUP;
-    }
+	public SharedSpaceMemberWorkgroup() {
+		super();
+		this.type = NodeType.WORK_GROUP;
+	}
 
-    public SharedSpaceMemberWorkgroup() {
-        super();
-    }
-
+	public SharedSpaceMemberWorkgroup(
+			SharedSpaceNodeNested node,
+			GenericLightEntity role,
+			SharedSpaceAccount account
+			) {
+		super(node, role, account);
+		this.type = NodeType.WORK_GROUP;
+	}
 }

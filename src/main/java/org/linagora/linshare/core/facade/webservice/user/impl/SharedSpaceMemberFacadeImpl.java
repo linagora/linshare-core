@@ -135,7 +135,7 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 			Validate.notEmpty(member.getUuid(), "Missing required sharedSpace member uuid");
 			uuid = member.getUuid();
 		}
-		return memberService.delete(authUser, actor, member.getUuid());
+		return memberService.delete(authUser, actor, uuid);
 	}
 
 	@Override

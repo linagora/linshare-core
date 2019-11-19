@@ -53,8 +53,10 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
-import org.linagora.linshare.mongo.entities.*;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmentServiceImpl implements SharedSpaceMemberFragmentService {
 
@@ -81,15 +83,6 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 			notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
 		}
 		return member;
-	}
-
-	@Override
-	protected SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException {
-		SharedSpaceMember memberWg = new SharedSpaceMemberWorkgroup(new SharedSpaceNodeNested(node),
-				new GenericLightEntity(role.getUuid(), role.getName()), account);
-		SharedSpaceMember toAdd = businessService.create(memberWg);
-		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORKGROUP_MEMBER);
-		return toAdd;
 	}
 
 	@Override

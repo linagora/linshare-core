@@ -425,7 +425,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 	@Override
 	public Set<AuditLogEntryUser> findAll(
 			@ApiParam(value = "The workGroupNodeUuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
 			@ApiParam(value = "The workGroup node uuid.", required = true)
 				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
 			@ApiParam(value = "Filter by type of actions..", required = false)
@@ -434,7 +434,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate) {
-		return sharedSpaceNodeFacade.findAll(null, workGroupUuid, workGroupNodeUuid, actions, types, beginDate, endDate);
+		return sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, workGroupNodeUuid, actions, types, beginDate, endDate);
 	}
 
 	@Path("/url")
