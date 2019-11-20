@@ -57,7 +57,6 @@ import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -256,7 +255,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember updateMember(
-			@ApiParam("The shared space member to update.") SharedSpaceMemberDrive member,
+			@ApiParam("The shared space member to update.") SharedSpaceMember member,
 			@ApiParam("The shared space member uuid")
 				@PathParam(value="memberUuid")String memberUuid,
 			@ApiParam("If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")

@@ -222,7 +222,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 			foundMemberToUpdate = findMemberByUuid(authUser, actor, memberToUpdate.getAccount().getUuid(),
 					memberToUpdate.getNode().getUuid());
 		}
-		SharedSpaceMemberFragmentService service = getService(memberToUpdate.getNode().getNodeType());
+		SharedSpaceMemberFragmentService service = getService(foundMemberToUpdate.getNode().getNodeType());
 		return service.update(authUser, actor, memberToUpdate, force);
 	}
 
