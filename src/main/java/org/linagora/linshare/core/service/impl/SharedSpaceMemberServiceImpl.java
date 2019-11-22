@@ -62,6 +62,8 @@ import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -69,6 +71,8 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		implements SharedSpaceMemberService {
 
 	protected final SharedSpaceMemberBusinessService businessService;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SharedSpaceMemberServiceImpl.class);
 
 	private final LogEntryService logEntryService;
 
@@ -225,9 +229,20 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
-		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
-		SharedSpaceMember foundMemberToUpdate = findMemberByUuid(authUser, actor, memberToUpdate.getAccount().getUuid(),
-				memberToUpdate.getNode().getUuid());
+		SharedSpaceMember foundMemberToUpdate = null;
+		/**
+		 * TODO To ensure API compatibility, we fix the current api and we add a
+		 * fallback to ensure old API usage is still working properly. At least ui-user
+		 * 2.3.x is using it..
+		 */
+		try {
+			foundMemberToUpdate = find(authUser, actor, memberToUpdate.getUuid());
+		} catch (BusinessException e) {
+			Validate.notNull(memberToUpdate.getAccount(), "You must set the account.");
+			LOGGER.info("This is just a fallback to ensure old API usage : {}", e.getMessage());
+			foundMemberToUpdate = findMemberByUuid(authUser, actor, memberToUpdate.getAccount().getUuid(),
+					memberToUpdate.getNode().getUuid());
+		}
 		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToUpdate);
 		SharedSpaceMember updated = businessService.update(foundMemberToUpdate, memberToUpdate);
