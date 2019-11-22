@@ -99,7 +99,6 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(member, "Shared space member must be set.");
-		Validate.notNull(member.getAccount(), "Shared space member account must be set.");
 		if (!Strings.isNullOrEmpty(uuid)) {
 			member.setUuid(uuid);
 		} else {
