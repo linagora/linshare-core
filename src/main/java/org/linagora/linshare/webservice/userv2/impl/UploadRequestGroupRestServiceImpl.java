@@ -146,6 +146,7 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 		return uploadRequestGroupFacade.updateStatus(null, uuid, status, copy);
 	}
 
+	@PUT
 	@Path("/{uuid : .*}")
 	@ApiOperation(value = "update an upload request group", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
