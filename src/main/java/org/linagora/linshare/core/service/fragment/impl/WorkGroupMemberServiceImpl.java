@@ -52,13 +52,12 @@ import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
-public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmentServiceImpl implements SharedSpaceMemberFragmentService {
+public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmentServiceImpl{
 
 	public WorkGroupMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,

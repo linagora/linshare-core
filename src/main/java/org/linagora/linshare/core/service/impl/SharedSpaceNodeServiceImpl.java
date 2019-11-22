@@ -238,7 +238,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		if (Strings.isNullOrEmpty(accountUuid)) {
 			members = memberService.findAll(authUser, actor, sharedSpaceNodeUuid);
 		} else {
-			members.add(memberService.findMemberByUuid(authUser, actor, accountUuid, sharedSpaceNodeUuid));
+			members.add(memberService.findMemberByUuid(authUser, actor, accountUuid, find(authUser, actor, sharedSpaceNodeUuid).getUuid()));
 		}
 		return members;
 	}
