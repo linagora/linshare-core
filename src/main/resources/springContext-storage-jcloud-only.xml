@@ -3,19 +3,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation=" http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd"
-	profile="jcloud">
+	profile="jcloud-only">
 
 	<import resource="OPTIONAL-springContext-jcloud.xml" />
 
 	<bean id="fileDataStore"
 		class="org.linagora.linshare.core.dao.impl.DataKindBalancerFileDataStoreImpl">
 		<constructor-arg ref="jcloudFileDataStore" />
-		<constructor-arg>
-			<bean class="org.linagora.linshare.core.dao.impl.MongoFileDataStoreImpl">
-				<constructor-arg ref="gridFsTemplateForSmallFiles" />
-				<constructor-arg ref="mongoDbFactoryForSmallFiles" />
-			</bean>
-		</constructor-arg>
+		<constructor-arg ref="jcloudFileDataStore" />
 	</bean>
 
 </beans>
