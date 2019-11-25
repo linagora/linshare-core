@@ -35,9 +35,10 @@ package org.linagora.linshare.batches;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -48,10 +49,14 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -65,7 +70,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
 public class DeleteDomainBatchTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+		LoggerParent {
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -77,11 +82,7 @@ public class DeleteDomainBatchTest extends
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 	
-	public DeleteDomainBatchTest() {
-		super();
-	}
-	
-	@Before
+	@BeforeEach
 	public void init() {
 		AbstractDomain abstractDomain = abstractDomainRepository.findById("MyDomain");
 		abstractDomain.setPurgeStep(DomainPurgeStepEnum.WAIT_FOR_PURGE);
@@ -92,6 +93,6 @@ public class DeleteDomainBatchTest extends
 	public void testAccountCleaning() throws BusinessException, JobExecutionException {
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(purgeDomainBatch);
-		Assert.assertTrue("At least one batch is failed.", batchRunner.execute(batches));
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch is failed.");
 	}
 }

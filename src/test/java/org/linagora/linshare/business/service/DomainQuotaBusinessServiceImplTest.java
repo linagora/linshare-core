@@ -67,8 +67,9 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-@Sql({"/import-tests-default-domain-quotas.sql",
-"/import-tests-domain-quota-updates.sql"})
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
+	"/import-tests-domain-quota-updates.sql"})
 @Transactional
 public class DomainQuotaBusinessServiceImplTest {
 	@Autowired

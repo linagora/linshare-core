@@ -48,7 +48,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
-@ContextConfiguration(locations={"classpath:springContext-test.xml",
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
 public class ContactRepositoryImplTest {

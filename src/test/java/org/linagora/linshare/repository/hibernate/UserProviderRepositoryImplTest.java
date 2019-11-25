@@ -36,11 +36,14 @@ package org.linagora.linshare.repository.hibernate;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import javax.transaction.Transactional;
+
 import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -50,14 +53,18 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.LdapConnectionRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class UserProviderRepositoryImplTest extends LoggerParent {
 
 	private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_LDAP_DE_TEST3";
@@ -80,7 +87,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 	private UserLdapPattern pattern;
 	
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		
@@ -96,7 +103,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		logger.debug("End setUp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		ldapConnectionRepository.delete(ldapconnexion);
@@ -116,7 +123,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		
 		UserLdapPattern aa = domainPatternRepository.findByUuid(p.getUuid());
 		logger.debug("aa size : " + aa.getAttributes().size());
-		Assert.assertEquals(2, aa.getAttributes().size());
+		Assertions.assertEquals(2, aa.getAttributes().size());
 
 		
 		aa.getAttributes().put("nom", new LdapAttribute("nom" , "sn", true));
@@ -124,14 +131,14 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		
 		aa = domainPatternRepository.findByUuid(p.getUuid());
 		logger.debug("aa size : " + aa.getAttributes().size());
-		Assert.assertEquals(3, aa.getAttributes().size());
+		Assertions.assertEquals(3, aa.getAttributes().size());
 
 		LdapAttribute ldapAttribute = aa.getAttributes().get("ldapUid");
 		
 		logger.debug("ldapUid field: " + ldapAttribute.getField());
 		logger.debug("ldapUid attribute : " + ldapAttribute.getAttribute());
-		Assert.assertEquals("ldapUid", ldapAttribute.getField());
-		Assert.assertEquals("uid", ldapAttribute.getAttribute());
+		Assertions.assertEquals("ldapUid", ldapAttribute.getField());
+		Assertions.assertEquals("uid", ldapAttribute.getAttribute());
 	}
 	
 	@Ignore
@@ -144,21 +151,21 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		
 		LdapUserProvider provider = new LdapUserProvider(baseDn,ldapconnexion,pattern);
 		ldapUserProviderRepository.create(provider);
-		Assert.assertNotNull(provider.getId());
+		Assertions.assertNotNull(provider.getId());
 		
 		logger.debug("Current provider object: " + provider.toString());
 		
-		Assert.assertTrue(ldapUserProviderRepository.findAll() != null);
-		Assert.assertTrue(ldapUserProviderRepository.findAll().size() == actualCount + 1);
+		Assertions.assertTrue(ldapUserProviderRepository.findAll() != null);
+		Assertions.assertTrue(ldapUserProviderRepository.findAll().size() == actualCount + 1);
 		
 		UserProvider newProvider = ldapUserProviderRepository.findByUuid(provider.getUuid());
-		Assert.assertTrue(newProvider != null);
+		Assertions.assertTrue(newProvider != null);
 		
 		LdapUserProvider ldapProvider = (LdapUserProvider) newProvider;
 		
-		Assert.assertTrue(ldapProvider.getBaseDn().equals(baseDn));
-		Assert.assertTrue(ldapProvider.getPattern().getLabel().equals(identifierP));
-		Assert.assertTrue(ldapProvider.getLdapConnection().getLabel().equals(identifier));
+		Assertions.assertTrue(ldapProvider.getBaseDn().equals(baseDn));
+		Assertions.assertTrue(ldapProvider.getPattern().getLabel().equals(identifierP));
+		Assertions.assertTrue(ldapProvider.getLdapConnection().getLabel().equals(identifier));
 		
 		ldapUserProviderRepository.delete(newProvider);
 		logger.debug("End testCreateLdapUserProvider");

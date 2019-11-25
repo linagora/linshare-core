@@ -37,24 +37,32 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
-@ContextConfiguration(locations = { "classpath:springContext-test.xml",
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({ 
+	"/import-tests-share-entry-group-setup.sql" })
+@ContextConfiguration(locations = { 
+		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
-public class ShareEntryGroupRepositoryImplTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class ShareEntryGroupRepositoryImplTest extends LoggerParent {
 
 	private static final String IMPORT_LOCAL_TEST_SEG_UUID_1 = "c96d778e-b09b-4557-b785-ff5124bd2b8d";
 	private static final String IMPORT_LOCAL_TEST_SEG_UUID_2 = "61eae04b-9496-4cb1-900e-eda8caac6703";
@@ -71,30 +79,13 @@ public class ShareEntryGroupRepositoryImplTest extends
 	@Autowired
 	private ShareEntryGroupRepository repository;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		int entries = this.countRowsInTable("entry");
-		int shares = this.countRowsInTable("share_entry");
-		int ashares = this.countRowsInTable("anonymous_share_entry");
-		int docEntries = this.countRowsInTable("document_entry");
-		int docs = this.countRowsInTable("document");
-		this.executeSqlScript("import-tests-share-entry-group-setup.sql", false);
-		Assert.assertEquals(countEntries + entries,
-				this.countRowsInTable("entry"));
-		Assert.assertEquals(countShareEntries + shares,
-				this.countRowsInTable("share_entry"));
-		Assert.assertEquals(countAnonymousShareEntries + ashares,
-				this.countRowsInTable("anonymous_share_entry"));
-		Assert.assertEquals(countdocEntries + docEntries,
-				this.countRowsInTable("document_entry"));
-		Assert.assertEquals(countdocs + docs, this.countRowsInTable("document"));
-		Assert.assertEquals(countShareEntryGroup,
-				this.countRowsInTable("share_entry_group"));
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -110,12 +101,12 @@ public class ShareEntryGroupRepositoryImplTest extends
 			list = repository.findAllShareEntriesAboutToBeNotified(new Date());
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail("Should not happend");
+			Assertions.fail("Should not happend");
 		}
 		logger.debug("findAllShareEntriesAboutToBeNotified : " + list);
-		Assert.assertEquals(2, list.size());
-		Assert.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_1));
-		Assert.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_2));
+		Assertions.assertEquals(2, list.size());
+		Assertions.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_1));
+		Assertions.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_2));
 		logger.debug("End testFindAllShareEntriesAboutToBeNotified");
 	}
 
@@ -129,12 +120,12 @@ public class ShareEntryGroupRepositoryImplTest extends
 					.findAllAnonymousShareEntriesAboutToBeNotified(new Date());
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail("Should not happend");
+			Assertions.fail("Should not happend");
 		}
 		logger.debug("findAllAnonymousShareEntriesAboutToBeNotified : " + list);
-		Assert.assertEquals(2, list.size());
-		Assert.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_1));
-		Assert.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_5));
+		Assertions.assertEquals(2, list.size());
+		Assertions.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_1));
+		Assertions.assertTrue(list.contains(IMPORT_LOCAL_TEST_SEG_UUID_5));
 		logger.debug("End testFindAllAnonymousShareEntriesAboutToBeNotified");
 	}
 
@@ -142,22 +133,22 @@ public class ShareEntryGroupRepositoryImplTest extends
 	public void testFindAllAboutToBeNotified() throws BusinessException {
 		logger.debug("Begin testFindAllAboutToBeNotified");
 		List<ShareEntryGroup> findAll = repository.findAll();
-		Assert.assertEquals(countShareEntryGroup, findAll.size());
+		Assertions.assertEquals(countShareEntryGroup, findAll.size());
 
 		Set<String> findAllToNotify = null;
 		try {
 			findAllToNotify = repository.findAllAboutToBeNotified();
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail("Should not happend");
+			Assertions.fail("Should not happend");
 		}
 		logger.debug("findAllToNotify : " + findAllToNotify);
-		Assert.assertEquals(countShareEntryGroup - 3, findAllToNotify.size());
-		Assert.assertTrue(findAllToNotify
+		Assertions.assertEquals(countShareEntryGroup - 3, findAllToNotify.size());
+		Assertions.assertTrue(findAllToNotify
 				.contains(IMPORT_LOCAL_TEST_SEG_UUID_1));
-		Assert.assertTrue(findAllToNotify
+		Assertions.assertTrue(findAllToNotify
 				.contains(IMPORT_LOCAL_TEST_SEG_UUID_2));
-		Assert.assertTrue(findAllToNotify
+		Assertions.assertTrue(findAllToNotify
 				.contains(IMPORT_LOCAL_TEST_SEG_UUID_5));
 		logger.debug("End testFindAllAboutToBeNotified");
 	}
@@ -172,14 +163,14 @@ public class ShareEntryGroupRepositoryImplTest extends
 			for (String string : findAllToPurge) {
 				logger.debug("ToPurge : " + string);
 			}
-			Assert.assertEquals(2, findAllToPurge.size());
-			Assert.assertTrue(findAllToPurge
+			Assertions.assertEquals(2, findAllToPurge.size());
+			Assertions.assertTrue(findAllToPurge
 					.contains(IMPORT_LOCAL_TEST_SEG_UUID_4));
-			Assert.assertTrue(findAllToPurge
+			Assertions.assertTrue(findAllToPurge
 					.contains(IMPORT_LOCAL_TEST_SEG_UUID_6));
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail("Should not happend");
+			Assertions.fail("Should not happend");
 		}
 		logger.debug("End testFindAllToPurge");
 	}
@@ -188,20 +179,20 @@ public class ShareEntryGroupRepositoryImplTest extends
 	public void testNeedNotification() throws BusinessException,
 			JobExecutionException {
 		Set<String> allUuids = repository.findAllAboutToBeNotified();
-		Assert.assertEquals(3, allUuids.size());
+		Assertions.assertEquals(3, allUuids.size());
 
 		ShareEntryGroup shareEntryGroup = null;
 
 		shareEntryGroup = repository
 				.findByUuid(IMPORT_LOCAL_TEST_SEG_UUID_5);
-		Assert.assertFalse(shareEntryGroup.needNotification());
+		Assertions.assertFalse(shareEntryGroup.needNotification());
 
 		shareEntryGroup = repository
 				.findByUuid(IMPORT_LOCAL_TEST_SEG_UUID_1);
-		Assert.assertTrue(shareEntryGroup.needNotification());
+		Assertions.assertTrue(shareEntryGroup.needNotification());
 
 		shareEntryGroup = repository
 				.findByUuid(IMPORT_LOCAL_TEST_SEG_UUID_2);
-		Assert.assertTrue(shareEntryGroup.needNotification());
+		Assertions.assertTrue(shareEntryGroup.needNotification());
 	}
 }

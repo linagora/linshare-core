@@ -43,11 +43,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -62,15 +63,19 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.linagora.linshare.utils.LoggerParent;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
@@ -85,7 +90,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		})
-public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4SpringContextTests{
+public class ComputeThumbnailBatchTest extends LoggerParent {
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -111,7 +116,7 @@ public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4Spring
 
 	private User jane;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
@@ -120,7 +125,7 @@ public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4Spring
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -130,22 +135,22 @@ public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4Spring
 	public void testBatch() throws BusinessException, JobExecutionException {
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(computeThumbnailBatch);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void testBatchExecution() throws BusinessException, JobExecutionException, IOException {
 		Document document = createDocument();
 		documentRepository.update(document);
-		Assert.assertTrue(document != null);
-		Assert.assertTrue(document.getThmbUuid() != null);
+		Assertions.assertTrue(document != null);
+		Assertions.assertTrue(document.getThmbUuid() != null);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(computeThumbnailBatch);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
-		Assert.assertTrue(document.getThmbUuid() == null);
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
+		Assertions.assertTrue(document.getThmbUuid() == null);
 		FileMetaData thmbMetadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, document);
-		Assert.assertTrue(thmbMetadata.getUuid() == null);
+		Assertions.assertTrue(thmbMetadata.getUuid() == null);
 	}
 
 	private Document createDocument() throws BusinessException, IOException {

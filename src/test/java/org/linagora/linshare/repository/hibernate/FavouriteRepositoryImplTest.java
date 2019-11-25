@@ -35,10 +35,13 @@ package org.linagora.linshare.repository.hibernate;
 
 import java.util.ArrayList;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -49,19 +52,23 @@ import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /** Abstract class that test CRUD methods.
  *
  * @param T entity type.
  */
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class FavouriteRepositoryImplTest extends LoggerParent {
 	
 	// default import.sql
  	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
@@ -77,7 +84,7 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 	
 	private AbstractDomain domain;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
@@ -118,25 +125,25 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 		try {
 			favouriteRepository.incAndCreate(userRepo.findByMail("robert.lechat@linagora.com"), array);
 		} catch (LinShareNotSuchElementException e) {
-			Assert.fail();
+			Assertions.fail();
 		} catch (BusinessException e) {
-			Assert.fail();
+			Assertions.fail();
 		}
 		
 		try {
 			//Check the weight
-			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(1)));
-			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(1)));
+			Assertions.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(1)));
+			Assertions.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(1)));
 			
 			//Check if it's incremented correctly.
 			favouriteRepository.incAndCreate(userRepo.findByMail("robert.lechat@linagora.com"), array);
-			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(2)));
-			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(2)));
+			Assertions.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(2)));
+			Assertions.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(2)));
 			
 			//Check if it's incremented.
 			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"));
-			Assert.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
-			Assert.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
+			Assertions.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
+			Assertions.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
 			
 			//Check the order after retrieving by getElementsOrderByWeightDesc and getElementsOrderByWeight.
 			array.remove(1);
@@ -144,48 +151,48 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"));
 			
 			
-			Assert.assertTrue(favouriteRepository.getElementsOrderByWeightDesc(userRepo.findByMail("robert.lechat@linagora.com")).get(0).equals("jean.lechat@linagora.com"));
-			Assert.assertTrue(favouriteRepository.getElementsOrderByWeightDesc(userRepo.findByMail("robert.lechat@linagora.com")).get(1).equals("pierre.lechat@linagora.com"));
+			Assertions.assertTrue(favouriteRepository.getElementsOrderByWeightDesc(userRepo.findByMail("robert.lechat@linagora.com")).get(0).equals("jean.lechat@linagora.com"));
+			Assertions.assertTrue(favouriteRepository.getElementsOrderByWeightDesc(userRepo.findByMail("robert.lechat@linagora.com")).get(1).equals("pierre.lechat@linagora.com"));
 			
-			Assert.assertTrue(favouriteRepository.getElementsOrderByWeight(userRepo.findByMail("robert.lechat@linagora.com")).get(1).equals("jean.lechat@linagora.com"));
-			Assert.assertTrue(favouriteRepository.getElementsOrderByWeight(userRepo.findByMail("robert.lechat@linagora.com")).get(0).equals("pierre.lechat@linagora.com"));
+			Assertions.assertTrue(favouriteRepository.getElementsOrderByWeight(userRepo.findByMail("robert.lechat@linagora.com")).get(1).equals("jean.lechat@linagora.com"));
+			Assertions.assertTrue(favouriteRepository.getElementsOrderByWeight(userRepo.findByMail("robert.lechat@linagora.com")).get(0).equals("pierre.lechat@linagora.com"));
 			
 			
 			//Check the element with max weight
-			Assert.assertTrue(favouriteRepository.getElementWithMaxWeight(userRepo.findByMail("robert.lechat@linagora.com")).equals("jean.lechat@linagora.com"));
+			Assertions.assertTrue(favouriteRepository.getElementWithMaxWeight(userRepo.findByMail("robert.lechat@linagora.com")).equals("jean.lechat@linagora.com"));
 			
 			//Crazy test just for fun
-			Assert.assertTrue(
+			Assertions.assertTrue(
 					favouriteRepository.reorderElementsByWeightDesc(
 							favouriteRepository.getElementsOrderByWeight(userRepo.findByMail("robert.lechat@linagora.com"))
 							,userRepo.findByMail("robert.lechat@linagora.com")).equals(
 									favouriteRepository.getElementsOrderByWeightDesc(userRepo.findByMail("robert.lechat@linagora.com"))));
 			
 			//Check the existing of a favourite.
-			Assert.assertFalse(favouriteRepository.existFavourite(userRepo.findByMail("robert.lechat@linagora.com"), "pierre.lechien@linagora.com"));
-			Assert.assertTrue(favouriteRepository.existFavourite(userRepo.findByMail("robert.lechat@linagora.com"), "pierre.lechat@linagora.com"));
+			Assertions.assertFalse(favouriteRepository.existFavourite(userRepo.findByMail("robert.lechat@linagora.com"), "pierre.lechien@linagora.com"));
+			Assertions.assertTrue(favouriteRepository.existFavourite(userRepo.findByMail("robert.lechat@linagora.com"), "pierre.lechat@linagora.com"));
 			
 			
 		
 		} catch (LinShareNotSuchElementException e) {
-			Assert.fail();
+			Assertions.fail();
 		} catch (BusinessException e) {
-			Assert.fail();
+			Assertions.fail();
 		}
 		
 	}
 	
 	
 	
-	@After
+	@AfterEach
 	public void after(){
 		for(RecipientFavourite recipientFavourite:favouriteRepository.findAll()){
 			try {
 				favouriteRepository.delete(recipientFavourite);
 			} catch (IllegalArgumentException e) {
-				Assert.fail();
+				Assertions.fail();
 			} catch (BusinessException e) {
-				Assert.fail();
+				Assertions.fail();
 			}
 		}
 		

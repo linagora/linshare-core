@@ -41,10 +41,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -61,10 +62,18 @@ import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -77,7 +86,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class DocumentGarbageCollectorBatchImplTest extends LoggerParent {
 
 	@Autowired
 	@Qualifier("accountRepository")
@@ -111,11 +120,9 @@ public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactional
 
 	private InputStream stream;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		tempFile = File.createTempFile("linshare-test-1", ".tmp");
 		tempFile2 = File.createTempFile("linshare-test-2", ".tmp");
 		stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
@@ -125,7 +132,7 @@ public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactional
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		stream.close();
@@ -146,7 +153,7 @@ public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactional
 				tempFile2.length(), "file2.txt", null, false, null, "text/plain", cal, false, null);
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry);
 		List<DocumentGarbageCollecteur> garbageCollectors = documentGarbageRepository.findAll();
-		Assert.assertEquals(1, garbageCollectors.size());
+		Assertions.assertEquals(1, garbageCollectors.size());
 		for (DocumentGarbageCollecteur documentGarbageCollector : garbageCollectors) {
 			Integer hourInterval = 0 - cal.getMinimum(Calendar.HOUR_OF_DAY);
 			cal.setTime(documentGarbageCollector.getCreationDate());
@@ -155,14 +162,14 @@ public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactional
 			documentGarbageRepository.save(documentGarbageCollector);
 		}
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry2);
-		Assert.assertEquals(2, documentGarbageRepository.findAll().size());
+		Assertions.assertEquals(2, documentGarbageRepository.findAll().size());
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(documentGarbageCollectorBatchImpl);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
-		Assert.assertEquals(0, documentEntryRepository.findAll().size());
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
+		Assertions.assertEquals(0, documentEntryRepository.findAll().size());
 		// The garbage will not pick up this document because it's deleted in the same
 		// day with garbage execution time.
-		Assert.assertEquals(2, documentGarbageRepository.findAll().size());
+		Assertions.assertEquals(2, documentGarbageRepository.findAll().size());
 	}
 
 	@Test
@@ -178,7 +185,7 @@ public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactional
 				tempFile2.length(), "file2.txt", null, false, null, "text/plain", cal, false, null);
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry);
 		List<DocumentGarbageCollecteur> garbageCollectors = documentGarbageRepository.findAll();
-		Assert.assertEquals(1, garbageCollectors.size());
+		Assertions.assertEquals(1, garbageCollectors.size());
 		for (DocumentGarbageCollecteur documentGarbageCollector : garbageCollectors) {
 			Integer hourInterval = 0 - cal.getMaximum(Calendar.HOUR_OF_DAY);
 			cal.setTime(documentGarbageCollector.getCreationDate());
@@ -187,14 +194,14 @@ public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactional
 			documentGarbageRepository.save(documentGarbageCollector);
 		}
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry2);
-		Assert.assertEquals(2, documentGarbageRepository.findAll().size());
+		Assertions.assertEquals(2, documentGarbageRepository.findAll().size());
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(documentGarbageCollectorBatchImpl);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
-		Assert.assertEquals(0, documentEntryRepository.findAll().size());
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
+		Assertions.assertEquals(0, documentEntryRepository.findAll().size());
 		// The garbage will pick up this document because it's deleted at the day before
 		// with garbage execution time.
-		Assert.assertEquals(1, documentGarbageRepository.findAll().size());
+		Assertions.assertEquals(1, documentGarbageRepository.findAll().size());
 	}
 
 }

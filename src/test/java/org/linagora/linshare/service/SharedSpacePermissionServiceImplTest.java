@@ -57,7 +57,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", 
+@ContextConfiguration(locations = { 
+		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",

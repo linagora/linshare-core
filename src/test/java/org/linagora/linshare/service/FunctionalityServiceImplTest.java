@@ -69,7 +69,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.google.common.collect.ImmutableList;
 
 @ExtendWith(SpringExtension.class)
-@Sql({"/import-tests-default-domain-quotas.sql",
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
 	"/import-tests-domain-quota-updates.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -367,7 +368,7 @@ public class FunctionalityServiceImplTest {
 		return count;
 	}
 
-	// FIXME : Now we need AbstractTransactionalJUnit4SpringContextTests because
+	// FIXME : Now we need LoggerParent because
 	// we made some mapping modifications (enable lasy loading)
 	// countFunctionality won't work now. Need another method to test test results.
 	@Disabled
@@ -403,7 +404,7 @@ public class FunctionalityServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	// FIXME : Now we need AbstractTransactionalJUnit4SpringContextTests because
+	// FIXME : Now we need LoggerParent because
 	// we made some mapping modifications (enable lasy loading)
 	// countFunctionality won't work now. Need another method to test test results.
 	@Disabled
@@ -449,7 +450,7 @@ public class FunctionalityServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	// FIXME : Now we need AbstractTransactionalJUnit4SpringContextTests because
+	// FIXME : Now we need LoggerParent because
 	// we made some mapping modifications (enable lasy loading)
 	// countFunctionality won't work now. Need another method to test test results.
 	@Disabled
@@ -502,7 +503,7 @@ public class FunctionalityServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	// FIXME : Now we need AbstractTransactionalJUnit4SpringContextTests because
+	// FIXME : Now we need LoggerParent because
 	// we made some mapping modifications (enable lasy loading)
 	// countFunctionality won't work now. Need another method to test test results.
 	@Disabled

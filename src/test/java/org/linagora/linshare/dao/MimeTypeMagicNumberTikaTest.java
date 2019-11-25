@@ -37,23 +37,28 @@ import java.io.File;
 import java.net.URL;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.utils.LoggerParent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations = { "classpath:springContext-dao.xml", "classpath:springContext-test.xml" })
-public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations = {
+		"classpath:springContext-dao.xml",
+		"classpath:springContext-test.xml" })
+public class MimeTypeMagicNumberTikaTest extends LoggerParent {
 
 	private static Logger logger = LoggerFactory.getLogger(MimeTypeMagicNumberTikaTest.class);
 
@@ -61,13 +66,13 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 	@Autowired
 	private MimeTypeMagicNumberDao mimeTypeService;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -78,7 +83,7 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<MimeType> allSupportedMimeType = mimeTypeService.getAllMimeType();
 		logger.debug("allSupportedMimeType size : " + allSupportedMimeType.size());
-		Assert.assertEquals(1552, allSupportedMimeType.size());
+		Assertions.assertEquals(1552, allSupportedMimeType.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -91,11 +96,11 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 			File f = new File(url.getPath());
 			logger.debug("filename " + f.getName());
 			String mime = mimeTypeService.getMimeType(f);
-			Assert.assertEquals("application/vnd.oasis.opendocument.spreadsheet", mime);
+			Assertions.assertEquals("application/vnd.oasis.opendocument.spreadsheet", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
-			Assert.assertEquals(true, false);
+			Assertions.assertEquals(true, false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -110,11 +115,11 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 			File f = new File(url.getPath());
 			logger.debug("filename " + f.getName());
 			String mime = mimeTypeService.getMimeType(f);
-			Assert.assertEquals("image/png", mime);
+			Assertions.assertEquals("image/png", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
-			Assert.assertEquals(true, false);
+			Assertions.assertEquals(true, false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -128,11 +133,11 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 			File f = new File(url.getPath());
 			logger.debug("filename " + f.getName());
 			String mime = mimeTypeService.getMimeType(f);
-			Assert.assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", mime);
+			Assertions.assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
-			Assert.assertEquals(true, false);
+			Assertions.assertEquals(true, false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -147,11 +152,11 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 			File f = new File(url.getPath());
 			logger.debug("filename " + f.getName());
 			String mime = mimeTypeService.getMimeType(f);
-			Assert.assertEquals("text/x-python", mime);
+			Assertions.assertEquals("text/x-python", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
-			Assert.assertEquals(true, false);
+			Assertions.assertEquals(true, false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -165,11 +170,11 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 			File f = new File(url.getPath());
 			logger.debug("filename " + f.getName());
 			String mime = mimeTypeService.getMimeType(f);
-			Assert.assertEquals("application/pdf", mime);
+			Assertions.assertEquals("application/pdf", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
-			Assert.assertEquals(true, false);
+			Assertions.assertEquals(true, false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -184,11 +189,11 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 			File f = new File(url.getPath());
 			logger.debug("filename " + f.getName());
 			String mime = mimeTypeService.getMimeType(f);
-			Assert.assertEquals("image/jpeg", mime);
+			Assertions.assertEquals("image/jpeg", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
-			Assert.assertEquals(true, false);
+			Assertions.assertEquals(true, false);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

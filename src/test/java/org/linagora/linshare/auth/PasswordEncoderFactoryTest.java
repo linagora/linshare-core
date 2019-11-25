@@ -33,16 +33,19 @@
  */
 package org.linagora.linshare.auth;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.linagora.linshare.utils.LoggerParent;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
@@ -60,21 +63,21 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-security-sso.xml",
 		"classpath:springContext-security-common.xml",
 		"classpath:springContext-security.xml",})
-public class PasswordEncoderFactoryTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class PasswordEncoderFactoryTest extends LoggerParent {
 
 	@Autowired
 	private PasswordEncoderFactory passwordEncoderFactory;
 
 	private PasswordEncoder passwordEncoder;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		passwordEncoder = passwordEncoderFactory.getInstance();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -85,7 +88,7 @@ public class PasswordEncoderFactoryTest extends AbstractTransactionalJUnit4Sprin
 		String encPass = "JYRd2THzjEqTGYq3gjzUh2UBso8=";
 		logger.debug("Encoded password : " + encPass);
 		logger.debug("Encoded Adminlinshare : " + passwordEncoder.encode("adminlinshare"));
-		Assert.assertTrue("The password is not correct", passwordEncoder.matches("adminlinshare", encPass));
+		Assertions.assertTrue(passwordEncoder.matches("adminlinshare", encPass), "The password is not correct");
 	}
 
 }

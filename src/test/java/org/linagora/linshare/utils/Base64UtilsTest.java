@@ -34,8 +34,8 @@
 
 package org.linagora.linshare.utils;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.linagora.linshare.core.utils.LdapHashUtils;
 
 public class Base64UtilsTest {
@@ -51,9 +51,9 @@ public class Base64UtilsTest {
 	@Test
 	public void testGeneratePasswordSalt() {
 		String result = LdapHashUtils.LdapHashwithBase64(password, algoHashLdap, saltResultBase64Utils.getBytes());
-		Assert.assertEquals(resultBase64Utils, result);
-		Assert.assertEquals(saltResultBase64Utils, new String(LdapHashUtils.getSaltFromUserPassword(resultBase64Utils)));
-		Assert.assertEquals(saltResultBase64Utils, new String(LdapHashUtils.getSaltFromUserPassword(result)));
+		Assertions.assertEquals(resultBase64Utils, result);
+		Assertions.assertEquals(saltResultBase64Utils, new String(LdapHashUtils.getSaltFromUserPassword(resultBase64Utils)));
+		Assertions.assertEquals(saltResultBase64Utils, new String(LdapHashUtils.getSaltFromUserPassword(result)));
 	}
 
 }

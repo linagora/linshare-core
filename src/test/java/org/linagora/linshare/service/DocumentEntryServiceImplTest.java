@@ -33,8 +33,8 @@
  */
 package org.linagora.linshare.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +84,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Sql({"/import-tests-default-domain-quotas.sql",
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
 	"/import-tests-quota-other.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -156,8 +157,7 @@ public class DocumentEntryServiceImplTest {
 	}
 
 	@Test
-	public void testCreateDocumentEntry()
-			throws BusinessException, IOException {
+	public void testCreateDocumentEntry() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
@@ -176,39 +176,31 @@ public class DocumentEntryServiceImplTest {
 	}
 
 	/**
-	 * We need this method because all the functionalities are check when we
-	 * create a DocumentEntry
+	 * We need this method because all the functionalities are check when we create
+	 * a DocumentEntry
 	 * 
 	 * @throws IllegalArgumentException
 	 * @throws BusinessException
 	 */
-	private void createFunctionalities()
-			throws IllegalArgumentException, BusinessException {
+	private void createFunctionalities() throws IllegalArgumentException, BusinessException {
 		Integer value = 1;
 		ArrayList<Functionality> functionalities = new ArrayList<Functionality>();
-		functionalities.add(new UnitValueFunctionality("MIME_TYPE", true,
-				new Policy(Policies.ALLOWED, false),
+		functionalities.add(new UnitValueFunctionality("MIME_TYPE", true, new Policy(Policies.ALLOWED, false),
 				new Policy(Policies.ALLOWED, false), jane.getDomain(), value,
 				new FileSizeUnitClass(FileSizeUnit.GIGA)));
 
-		functionalities.add(new UnitValueFunctionality("ANTIVIRUS", true,
-				new Policy(Policies.ALLOWED, false),
+		functionalities.add(new UnitValueFunctionality("ANTIVIRUS", true, new Policy(Policies.ALLOWED, false),
 				new Policy(Policies.ALLOWED, false), jane.getDomain(), value,
 				new FileSizeUnitClass(FileSizeUnit.GIGA)));
 
-		functionalities.add(new UnitValueFunctionality("ENCIPHERMENT", true,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true), jane.getDomain(), value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)));
+		functionalities.add(new UnitValueFunctionality("ENCIPHERMENT", true, new Policy(Policies.ALLOWED, true),
+				new Policy(Policies.ALLOWED, true), jane.getDomain(), value, new FileSizeUnitClass(FileSizeUnit.GIGA)));
 
-		functionalities.add(new StringValueFunctionality("TIME_STAMPING", true,
-				new Policy(Policies.ALLOWED, false),
+		functionalities.add(new StringValueFunctionality("TIME_STAMPING", true, new Policy(Policies.ALLOWED, false),
 				new Policy(Policies.ALLOWED, false), jane.getDomain(), ""));
 
-		functionalities.add(new UnitValueFunctionality("DOCUMENT_EXPIRATION", true,
-				new Policy(Policies.ALLOWED, false),
-				new Policy(Policies.ALLOWED, false), jane.getDomain(), value,
-				new TimeUnitClass(TimeUnit.DAY)));
+		functionalities.add(new UnitValueFunctionality("DOCUMENT_EXPIRATION", true, new Policy(Policies.ALLOWED, false),
+				new Policy(Policies.ALLOWED, false), jane.getDomain(), value, new TimeUnitClass(TimeUnit.DAY)));
 		for (Functionality functionality : functionalities) {
 			functionalityRepository.create(functionality);
 			jane.getDomain().addFunctionality(functionality);
@@ -216,8 +208,7 @@ public class DocumentEntryServiceImplTest {
 	}
 
 	@Test
-	public void testFindAllMyDocumentEntries()
-			throws BusinessException, IOException {
+	public void testFindAllMyDocumentEntries() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		User owner = jane;
@@ -240,17 +231,17 @@ public class DocumentEntryServiceImplTest {
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
 		try {
 			documentEntryService.delete(intruder, intruder, aDocumentEntry.getUuid());
-			assertTrue("The intruder shouldn't have access to this resource. An exception must be thrown", false);
+			assertTrue(false, "The intruder shouldn't have access to this resource. An exception must be thrown");
 		} catch (Exception e) {
-			assertTrue("Wrong exception is thrown : " + e.getMessage(), EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+			assertTrue(EXCEPTION_GET_MESSAGE.equals(e.getMessage()), "Wrong exception is thrown : " + e.getMessage());
 		}
 		try {
 			documentEntryService.delete(actor, actor, aDocumentEntry.getUuid());
 			Assertions.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);
 		} catch (BusinessException e) {
-			assertFalse(
-					"The user should have access to this resource. This exception must not be thrown " + e.getMessage(),
-					EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+			assertFalse(EXCEPTION_GET_MESSAGE.equals(e.getMessage()),
+					"The user should have access to this resource. This exception must not be thrown "
+							+ e.getMessage());
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -265,17 +256,17 @@ public class DocumentEntryServiceImplTest {
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		try {
 			aDocumentEntry = documentEntryService.find(intruder, intruder, aDocumentEntry.getUuid());
-			assertTrue("The intruder shouldn't have access to this resource. An exception must be thrown", false);
+			assertTrue(false, "The intruder shouldn't have access to this resource. An exception must be thrown");
 		} catch (Exception e) {
-			assertTrue("Wrong exception is thrown", EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+			assertTrue(EXCEPTION_GET_MESSAGE.equals(e.getMessage()), "Wrong exception is thrown");
 		}
 		try {
 			aDocumentEntry = documentEntryService.find(actor, actor, aDocumentEntry.getUuid());
-			assertTrue("The actor should have access to this resource.", aDocumentEntry != null);
+			assertTrue(aDocumentEntry != null, "The actor should have access to this resource.");
 		} catch (BusinessException e) {
-			assertFalse(
-					"The user should have access to this resource. This exception must not be thrown " + e.getMessage(),
-					EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+			assertFalse(EXCEPTION_GET_MESSAGE.equals(e.getMessage()),
+					"The user should have access to this resource. This exception must not be thrown "
+							+ e.getMessage());
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -291,18 +282,18 @@ public class DocumentEntryServiceImplTest {
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
 		try {
 			documentEntryService.update(intruder, intruder, aDocumentEntry.getUuid(), tempFile, "new-file-name.txt");
-			assertTrue("The intruder shouldn't have access to this resource. An exception must be thrown", false);
+			assertTrue(false, "The intruder shouldn't have access to this resource. An exception must be thrown");
 		} catch (Exception e) {
-			assertTrue("Wrong exception is thrown : " + e.getMessage(), EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+			assertTrue(EXCEPTION_GET_MESSAGE.equals(e.getMessage()), "Wrong exception is thrown : " + e.getMessage());
 		}
 		try {
 			documentEntryService.update(actor, actor, aDocumentEntry.getUuid(), tempFile, "New file Name");
 			Assertions.assertTrue(
 					"New file Name".equals(documentEntryRepository.findById(aDocumentEntry.getUuid()).getName()));
 		} catch (BusinessException e) {
-			assertFalse(
-					"The user should have access to this resource. This exception must not be thrown " + e.getMessage(),
-					EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+			assertFalse(EXCEPTION_GET_MESSAGE.equals(e.getMessage()),
+					"The user should have access to this resource. This exception must not be thrown "
+							+ e.getMessage());
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

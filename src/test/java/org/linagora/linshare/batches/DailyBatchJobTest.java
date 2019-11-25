@@ -34,16 +34,17 @@
 
 package org.linagora.linshare.batches;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
@@ -63,10 +64,19 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-tests-stat.sql",
+	"/import-tests-operationHistory.sql",
+	"/import-tests-quota.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -81,7 +91,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class DailyBatchJobTest extends LoggerParent {
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -148,11 +158,8 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 	LoadingServiceTestDatas dates;
 	private User jane;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		this.executeSqlScript("import-tests-stat.sql", false);
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
-		this.executeSqlScript("import-tests-quota.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		jane = dates.getUser2();
@@ -183,7 +190,7 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		assertEquals(0, listThreadDailyStat.size());
 
 		// running all batches.
-		assertTrue("At least one batch failed.", batchRunner.execute(batches));
+		assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 
 		listOperationHistory = operationHistoryBusinessService.find(null, null, null, yesterday());
 		assertEquals(0, listOperationHistory.size());

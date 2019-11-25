@@ -71,8 +71,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
-@Sql({ "/import-tests-document-entry-setup.sql" })
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@Sql({
+	"/import-tests-document-entry-setup.sql" })
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-fongo.xml",

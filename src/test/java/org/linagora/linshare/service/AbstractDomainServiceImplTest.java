@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.service;
 
-import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +76,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Sql({"/import-tests-default-domain-quotas.sql",
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
 	"/import-tests-quota-other.sql"})
 @Transactional
 @ContextConfiguration(locations = { 
@@ -277,7 +277,7 @@ public class AbstractDomainServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assertions.assertNotNull(subDomain);
-		assertNotNull(subDomain.getFunctionalities());
+		Assertions.assertNotNull(subDomain.getFunctionalities());
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		int initSize = abstractDomainService.findAll(actor).size();
 		try {

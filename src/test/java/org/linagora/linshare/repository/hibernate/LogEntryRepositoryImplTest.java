@@ -33,18 +33,21 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests {
+public class LogEntryRepositoryImplTest {
 
 	
 	@Autowired
@@ -64,7 +67,7 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 //	private final String targetDomain= "testTargetDomain";
 	
 
-	@Ignore
+	@Disabled
 	@Test
 	public void testExistFileLogEntry() throws BusinessException{
 //		LogEntry testFileLogEntry = new FileLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
@@ -73,20 +76,20 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 //		
 //		logEntryRepository.create(testFileLogEntry);
 //		
-//		Assert.assertTrue(logEntryRepository.findByUser(actorMail) != null);
-//		Assert.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
+//		Assertions.assertTrue(logEntryRepository.findByUser(actorMail) != null);
+//		Assertions.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
 //		
 //		LogEntry tmpLogEntry = logEntryRepository.findByUser(actorMail).get(0);
 //		
-//		Assert.assertTrue(tmpLogEntry instanceof FileLogEntry);
-//		Assert.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
-//		Assert.assertTrue(((FileLogEntry)tmpLogEntry).getLogAction().equals(LogAction.FILE_UPLOAD));
+//		Assertions.assertTrue(tmpLogEntry instanceof FileLogEntry);
+//		Assertions.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
+//		Assertions.assertTrue(((FileLogEntry)tmpLogEntry).getLogAction().equals(LogAction.FILE_UPLOAD));
 //
 //		logEntryRepository.delete(tmpLogEntry);
 	}
 	
 	
-	@Ignore
+	@Disabled
 	@Test
 	public void testExistUserLogEntry() throws BusinessException{
 //		LogEntry testFileLogEntry = new UserLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
@@ -95,17 +98,18 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 //		
 //		logEntryRepository.create(testFileLogEntry);
 //		
-//		Assert.assertTrue(logEntryRepository.findByUser(actorMail) != null);
-//		Assert.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
+//		Assertions.assertTrue(logEntryRepository.findByUser(actorMail) != null);
+//		Assertions.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
 //		
 //		LogEntry tmpLogEntry = logEntryRepository.findByUser(actorMail).get(0);
 //		
-//		Assert.assertTrue(tmpLogEntry instanceof UserLogEntry);
-//		Assert.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
-//		Assert.assertTrue(((UserLogEntry)tmpLogEntry).getLogAction().equals(LogAction.USER_CREATE));
+//		Assertions.assertTrue(tmpLogEntry instanceof UserLogEntry);
+//		Assertions.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
+//		Assertions.assertTrue(((UserLogEntry)tmpLogEntry).getLogAction().equals(LogAction.USER_CREATE));
 //		logEntryRepository.delete(tmpLogEntry);
 	}
 	
+	@Disabled
 	@Test
 	public void testExistShareLogEntry() throws BusinessException{
 //		LogEntry testFileLogEntry = new ShareLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
@@ -114,14 +118,14 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 //		
 //		logEntryRepository.create(testFileLogEntry);
 //		
-//		Assert.assertTrue(logEntryRepository.findByUser(actorMail) != null);
-//		Assert.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
+//		Assertions.assertTrue(logEntryRepository.findByUser(actorMail) != null);
+//		Assertions.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
 //		
 //		LogEntry tmpLogEntry = logEntryRepository.findByUser(actorMail).get(0);
 //		
-//		Assert.assertTrue(tmpLogEntry instanceof ShareLogEntry);
-//		Assert.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
-//		Assert.assertTrue(((ShareLogEntry)tmpLogEntry).getLogAction().equals(LogAction.FILE_SHARE));
+//		Assertions.assertTrue(tmpLogEntry instanceof ShareLogEntry);
+//		Assertions.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
+//		Assertions.assertTrue(((ShareLogEntry)tmpLogEntry).getLogAction().equals(LogAction.FILE_SHARE));
 //		logEntryRepository.delete(tmpLogEntry);
 	}
 }

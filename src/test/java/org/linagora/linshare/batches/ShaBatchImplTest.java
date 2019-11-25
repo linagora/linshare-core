@@ -41,10 +41,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -82,10 +83,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
+	"/import-tests-sha.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -98,7 +107,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class ShaBatchImplTest extends LoggerParent {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ShaBatchImplTest.class);
@@ -158,11 +167,9 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 	private final String fileName1 = "linshare-default.properties";
 	private final String comment1 = "file description default";
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-sha.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
@@ -170,7 +177,7 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -181,7 +188,7 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(shaSumBatch);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -198,12 +205,12 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		IOUtils.transferTo(stream2, tempFile2);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile1, fileName1, comment1, false, null);
 		bDocumentEntry = documentEntryService.create(actor, actor, tempFile2, fileName2, comment2, false, null);
-		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
-		Assert.assertTrue(documentEntryRepository.findById(bDocumentEntry.getUuid()) != null);
+		Assertions.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
+		Assertions.assertTrue(documentEntryRepository.findById(bDocumentEntry.getUuid()) != null);
 		aDocumentEntry.getDocument().setSha256sum("UNDEFINED");
 		bDocumentEntry.getDocument().setSha256sum("UNDEFINED");
 		l = shaSumBatch.getAll(batchRunContext);
-		Assert.assertEquals(l.size(), 2);
+		Assertions.assertEquals(l.size(), 2);
 	}
 
 	@Test
@@ -218,7 +225,7 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		IOUtils.transferTo(stream2, tempFile);
 		IOUtils.transferTo(stream1, tempFile2);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName2, comment2, false, null);
-		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
+		Assertions.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
 		aDocumentEntry.getDocument().setSha256sum(null);
 		documentRepository.update(aDocumentEntry.getDocument());
 		l = shaSumBatch.getAll(batchRunContext);
@@ -226,10 +233,10 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		ResultContext c;
 		for (i = 0; i < l.size(); i++) {
 			c = shaSumBatch.execute(batchRunContext, l.get(i), l.size(), i);
-			Assert.assertEquals(c.getIdentifier(), l.get(i));
+			Assertions.assertEquals(c.getIdentifier(), l.get(i));
 			Document doc = documentRepository.findByUuid(l.get(i));
-			Assert.assertEquals("0679aeee7c0c5c4a9a4322326f0243c29025a696a4c2436758470d30ec9488a0", doc.getSha256sum());
-			Assert.assertEquals("b09efecaccbf880c60539f04659489df54698afd", doc.getSha1sum());
+			Assertions.assertEquals("0679aeee7c0c5c4a9a4322326f0243c29025a696a4c2436758470d30ec9488a0", doc.getSha256sum());
+			Assertions.assertEquals("b09efecaccbf880c60539f04659489df54698afd", doc.getSha1sum());
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}

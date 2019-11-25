@@ -64,7 +64,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
-@ContextConfiguration(locations = { "classpath:springContext-test.xml",
+@ContextConfiguration(locations = {
+		"classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml"
 })
 public class LDAPGroupQueryServiceImplTest {

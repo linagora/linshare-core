@@ -39,10 +39,11 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -57,14 +58,19 @@ import org.linagora.linshare.core.upgrade.v2_1.DocumentGarbageCollectorUpgradeTa
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-fongo.xml",
@@ -77,7 +83,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-upgradeTask.xml" })
-public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class DocumentGarbageCollectorUpgradTaskTest extends LoggerParent {
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -116,7 +122,7 @@ public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactiona
 
 	private User owner;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
@@ -125,7 +131,7 @@ public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactiona
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -137,24 +143,24 @@ public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactiona
 		Calendar documentEntryExpiration = Calendar.getInstance();
 		DocumentEntry documentEntry = documentEntryBusinessService.createDocumentEntry(owner, tempFile,
 				tempFile.length(), "file1", null, false, null, "text/plain", documentEntryExpiration, false, null);
-		Assert.assertEquals(documentRepository.findAll().size(), 1);
-		Assert.assertEquals(documentEntryRepository.getRelatedDocumentEntryCount(documentEntry.getDocument()), 1);
+		Assertions.assertEquals(documentRepository.findAll().size(), 1);
+		Assertions.assertEquals(documentEntryRepository.getRelatedDocumentEntryCount(documentEntry.getDocument()), 1);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(documentGarbageCollectorUpgradeTask);
 		batches.add(documentGarbageCollectorBatchImpl);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 		// Delete related entries
 		documentEntryService.delete(owner, owner, documentEntry.getUuid());
-		Assert.assertEquals(documentRepository.findAll().size(), 1);
-		Assert.assertEquals(documentEntryRepository.getRelatedDocumentEntryCount(documentEntry.getDocument()), 0);
+		Assertions.assertEquals(documentRepository.findAll().size(), 1);
+		Assertions.assertEquals(documentEntryRepository.getRelatedDocumentEntryCount(documentEntry.getDocument()), 0);
 		List<DocumentGarbageCollecteur> documentGarbageCollectors = documentGarbageCollectorMongoRepository.findAll();
 		for (DocumentGarbageCollecteur documentGarbageCollector : documentGarbageCollectors) {
 			documentEntryExpiration.add(Calendar.DATE, -1);
 			documentGarbageCollector.setCreationDate(documentEntryExpiration.getTime());
 			documentGarbageCollectorMongoRepository.save(documentGarbageCollector);
 		}
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
-		Assert.assertEquals(documentRepository.findAll().size(), 0);
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
+		Assertions.assertEquals(documentRepository.findAll().size(), 0);
 	}
 
 }

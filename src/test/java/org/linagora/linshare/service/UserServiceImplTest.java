@@ -91,8 +91,9 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
 @TestMethodOrder(OrderAnnotation.class)
-@Sql({"/import-tests-default-domain-quotas.sql",
-	"/import-tests-quota-other.sql"})
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",

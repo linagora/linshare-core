@@ -33,15 +33,16 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
@@ -56,11 +57,19 @@ import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({ 
+	"/import-tests-stat.sql",
+	"/import-tests-operationHistory.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
-public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class OperationHistoryRepositoryImplTest extends LoggerParent {
 
 	@Autowired
 	@Qualifier("accountRepository")
@@ -77,11 +86,9 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 	private User jane;
 	private User john;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-stat.sql", false);
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		jane = dates.getUser2();

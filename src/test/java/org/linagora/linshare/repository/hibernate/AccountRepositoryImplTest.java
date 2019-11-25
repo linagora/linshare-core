@@ -33,7 +33,8 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -45,13 +46,15 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.linagora.linshare.utils.LoggerParent;
 
-
-@ContextConfiguration(locations={"classpath:springContext-test.xml",
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
-        "classpath:springContext-repository.xml"})
-public class AccountRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+		"classpath:springContext-repository.xml"})
+public class AccountRepositoryImplTest extends LoggerParent {
 	
 	// default import.sql
 	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;

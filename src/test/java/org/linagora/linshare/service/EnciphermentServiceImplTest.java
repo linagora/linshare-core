@@ -39,11 +39,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
@@ -70,14 +70,14 @@ import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.EnciphermentService;
+import org.linagora.linshare.utils.LoggerParent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@Ignore
+@Disabled
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -92,7 +92,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
 		})
-public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
+public class EnciphermentServiceImplTest extends LoggerParent{
 
 	private static Logger logger = LoggerFactory.getLogger(EnciphermentServiceImplTest.class);
 	
@@ -129,7 +129,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	
 	private LoadingServiceTestDatas datas;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
@@ -247,16 +247,16 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 			userRepository.update(jane);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-			Assert.fail();
+			Assertions.fail();
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			Assert.fail();
+			Assertions.fail();
 		}
 		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 	
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
@@ -285,7 +285,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		printDocs(jane);
 		aDocumentEntry = encryptedDocumentEntry;
 		aDocument = encryptedDocumentEntry.getDocument();
-		Assert.assertTrue(encryptedDocumentEntry.getCiphered());
+		Assertions.assertTrue(encryptedDocumentEntry.getCiphered());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -309,7 +309,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		testEncipherDocument();
 		aDocument.setSignatures(new HashSet<Signature>());
 		DocumentEntry decryptedDocumentEntry = enciphermentService.decryptDocument(jane, jane, aDocumentEntry, "password");
-		Assert.assertFalse(decryptedDocumentEntry.getCiphered());
+		Assertions.assertFalse(decryptedDocumentEntry.getCiphered());
 		aDocumentEntry = decryptedDocumentEntry;
 		aDocument = decryptedDocumentEntry.getDocument();
 		logger.debug(LinShareTestConstants.END_TEST);

@@ -62,7 +62,8 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-repository.xml",

@@ -33,16 +33,17 @@
  */
 package org.linagora.linshare.batches;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
@@ -68,9 +69,18 @@ import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
 // TODO: Full refactoring needed ! Tests are not human readable, neither understandable ! :(
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-tests-operationHistory.sql",
+	"/import-tests-quota.sql",
+	"/import-tests-stat.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -85,7 +95,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml"})
-public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class DailyBatchTest extends LoggerParent {
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
@@ -129,11 +139,8 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 	LoadingServiceTestDatas dates;
 	private User jane;
 
-	@Before
+	@BeforeEach
 	public void setUp (){
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
-		this.executeSqlScript("import-tests-quota.sql", false);
-		this.executeSqlScript("import-tests-stat.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		jane = dates.getUser2();

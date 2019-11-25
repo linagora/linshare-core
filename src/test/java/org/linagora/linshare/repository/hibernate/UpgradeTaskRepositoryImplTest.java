@@ -35,33 +35,42 @@ package org.linagora.linshare.repository.hibernate;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UpgradeTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
-@ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-upgrade-task-sample.sql",
+	"/import-upgrade-task-2_1-sample.sql" })
+@ContextConfiguration(locations = {
+		"classpath:springContext-test.xml",
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
-public class UpgradeTaskRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class UpgradeTaskRepositoryImplTest extends LoggerParent {
 
 	@Autowired
 	private UpgradeTaskRepository upgradeTaskRepository;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
-		this.executeSqlScript("import-upgrade-task-sample.sql", false);
-		this.executeSqlScript("import-upgrade-task-2_1-sample.sql", false);
 		logger.debug("End setUp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		logger.debug("End tearDown");
@@ -74,7 +83,7 @@ public class UpgradeTaskRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		for (UpgradeTask upgradeTask : list) {
 			logger.debug(upgradeTask.toString());
 		}
-		Assert.assertEquals(17, list.size());
+		Assertions.assertEquals(17, list.size());
 	}
 
 }

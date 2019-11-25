@@ -33,21 +33,26 @@
  */
 package org.linagora.linshare.mongodb;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -60,7 +65,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SharedSpacePermissionNumberTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class SharedSpacePermissionNumberTest extends LoggerParent {
 	private static Logger logger = LoggerFactory.getLogger(SharedSpacePermissionNumberTest.class);
 	
 	@Autowired
@@ -69,13 +74,13 @@ public class SharedSpacePermissionNumberTest extends AbstractTransactionalJUnit4
 	@Autowired
 	private SharedSpacePermissionMongoRepository permissionRepo;
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -93,6 +98,6 @@ public class SharedSpacePermissionNumberTest extends AbstractTransactionalJUnit4
 		 * we substract 7 wich is the product of this new added perms.
 		 */
 		Long number = permissionRepo.count();
-		Assert.assertEquals(number, actualPermissionNumber);
+		Assertions.assertEquals(number, actualPermissionNumber);
 	}
 }

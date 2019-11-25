@@ -34,20 +34,26 @@
 package org.linagora.linshare.repository.hibernate;
 
 
-import org.junit.Assert;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class DocumentRepositoryImplTest  extends AbstractTransactionalJUnit4SpringContextTests{
+public class DocumentRepositoryImplTest  extends LoggerParent {
     
     private final String identifier = "docId";
     private final String type = "doctype";
@@ -66,8 +72,8 @@ public class DocumentRepositoryImplTest  extends AbstractTransactionalJUnit4Spri
 		Document doc = new Document(identifier, type, fileSize);
 		documentRepository.create(doc);
 
-		Assert.assertTrue(documentRepository.findByUuid(identifier)!=null);
-		Assert.assertFalse(documentRepository.findByUuid(identifier+"dummy")!=null);
+		Assertions.assertTrue(documentRepository.findByUuid(identifier)!=null);
+		Assertions.assertFalse(documentRepository.findByUuid(identifier+"dummy")!=null);
 		documentRepository.delete(doc);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

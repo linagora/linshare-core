@@ -33,10 +33,13 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -47,15 +50,19 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml",
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
-        "classpath:springContext-repository.xml"})
-public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+		"classpath:springContext-repository.xml"})
+public class UserRepositoryImplTest extends LoggerParent {
 
     private static final String FIRST_NAME = "First name";
     private static final String LAST_NAME = "Last name";
@@ -90,7 +97,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	
 	private AbstractDomain domain;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
@@ -125,8 +132,8 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	
 		u = userRepository.create(u);
 
-		Assert.assertTrue(userRepository.exist(u.getLsUuid()));
-		Assert.assertFalse(userRepository.exist("toto"));
+		Assertions.assertTrue(userRepository.exist(u.getLsUuid()));
+		Assertions.assertFalse(userRepository.exist("toto"));
 	}
 	
 	@Test
@@ -139,8 +146,8 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		userRepository.create(u);
 		
 		User userFound = userRepository.findByMailAndDomain(DOMAIN_IDENTIFIER,MAIL4);
-		Assert.assertNotNull(userFound);
-		Assert.assertEquals(FIRST_NAME4,userFound.getFirstName());
+		Assertions.assertNotNull(userFound);
+		Assertions.assertEquals(FIRST_NAME4,userFound.getFirstName());
 	}
 	
 //	@Test
@@ -186,13 +193,13 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 //		
 //		
 //		if(sender.getShares().contains(share) && receiver.getReceivedShares().contains(share)){
-//			Assert.assertTrue(true);
+//			Assertions.assertTrue(true);
 //		}else{
-//			Assert.assertFalse(true);
+//			Assertions.assertFalse(true);
 //		}
 //	}
 //	
-	@After
+	@AfterEach
 	public void destroyUsers(){
 		
 	}

@@ -38,10 +38,13 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -54,17 +57,20 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.linagora.linshare.utils.LoggerParent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit4SpringContextTests{
+public class DocumentEntryRepositoryImplTest  extends LoggerParent {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryRepositoryImplTest.class);
 	
@@ -101,7 +107,7 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 	@Autowired
 	private DocumentEntryRepository documentEntryRepository;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
@@ -118,7 +124,7 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 		logger.debug("End setUp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		documentRepository.delete(document);
@@ -147,7 +153,7 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 		Calendar eDate = Calendar.getInstance();
 		eDate.add(GregorianCalendar.DATE, +7);
 		Map<String, Long> mimetypeValue = documentEntryRepository.countAndGroupByMimeType(rootDomain, bDate, eDate);
-		Assert.assertEquals(1, mimetypeValue.entrySet().size());
+		Assertions.assertEquals(1, mimetypeValue.entrySet().size());
 		documentEntryRepository.delete(d);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

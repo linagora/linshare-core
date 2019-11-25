@@ -33,12 +33,13 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.QuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -58,12 +59,20 @@ import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
+	"/import-tests-domain-quota-updates.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
 
-public class ContainerQuotaRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class ContainerQuotaRepositoryImplTest extends LoggerParent {
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
@@ -91,10 +100,8 @@ public class ContainerQuotaRepositoryImplTest extends AbstractTransactionalJUnit
 	private AbstractDomain guestDomain;
 	private AbstractDomain topDomain;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-domain-quota-updates.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();

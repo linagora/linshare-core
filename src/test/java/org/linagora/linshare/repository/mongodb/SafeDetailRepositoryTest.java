@@ -35,10 +35,13 @@ package org.linagora.linshare.repository.mongodb;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -53,10 +56,13 @@ import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.mongo.entities.SafeDetail;
 import org.linagora.linshare.mongo.repository.SafeDetailMongoRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -69,7 +75,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class SafeDetailRepositoryTest extends LoggerParent {
 
 	private final static String THREAD_NAME = "threadName";
 	private final static String EMAIL1 = "anakin.skywalker@int4.linshare.dev";
@@ -100,7 +106,7 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 
 	private DomainPolicy defaultPolicy;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		defaultPolicy = domainPolicyRepository.findById(DOMAIN_POLICY_UUID);
@@ -123,7 +129,7 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 		workGroup = threadRepository.create(workGroup);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		internalRepository.delete(internal);
@@ -143,7 +149,7 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 	public void testCreateSafeDetail() {
 		SafeDetail safeDetail = new SafeDetail(internal.getLsUuid(), workGroup.getLsUuid(), DESCRIPTION);
 		safeDetail = safeDetailMongoRepository.insert(safeDetail);
-		Assert.assertEquals(safeDetail.getAccountUuid(), internal.getLsUuid());
+		Assertions.assertEquals(safeDetail.getAccountUuid(), internal.getLsUuid());
 		safeDetailMongoRepository.delete(safeDetail);
 	}
 
@@ -151,9 +157,9 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 	public void testDeleteSafeDetail() {
 		SafeDetail safeDetail = new SafeDetail(internal.getLsUuid(), workGroup.getLsUuid(), DESCRIPTION);
 		safeDetail = safeDetailMongoRepository.insert(safeDetail);
-		Assert.assertEquals(safeDetail.getAccountUuid(), internal.getLsUuid());
+		Assertions.assertEquals(safeDetail.getAccountUuid(), internal.getLsUuid());
 		safeDetailMongoRepository.delete(safeDetail);
-		Assert.assertTrue(safeDetailMongoRepository.findByAccountUuid(internal.getLsUuid()).isEmpty());
+		Assertions.assertTrue(safeDetailMongoRepository.findByAccountUuid(internal.getLsUuid()).isEmpty());
 	}
 	
 	@Test
@@ -161,7 +167,7 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 		SafeDetail safeDetail = new SafeDetail(internal.getLsUuid(), workGroup.getLsUuid(), DESCRIPTION);
 		safeDetailMongoRepository.insert(safeDetail);
 		List<SafeDetail> exist = safeDetailMongoRepository.findByAccountUuid(internal.getLsUuid());
-		Assert.assertEquals(exist.iterator().next().getAccountUuid() , internal.getLsUuid());
+		Assertions.assertEquals(exist.iterator().next().getAccountUuid() , internal.getLsUuid());
 		safeDetailMongoRepository.delete(safeDetail);
 	}
 }

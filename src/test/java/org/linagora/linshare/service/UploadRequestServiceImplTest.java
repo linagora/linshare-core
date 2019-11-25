@@ -82,9 +82,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
-@Sql({"/import-tests-default-domain-quotas.sql",
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
 	"/import-tests-quota-other.sql",
-	"/import-tests-upload-request.sql"})
+	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",

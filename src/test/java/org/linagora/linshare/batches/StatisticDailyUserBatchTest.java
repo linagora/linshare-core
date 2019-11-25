@@ -59,7 +59,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
-@Sql({"/import-tests-operationHistory.sql",
+@Sql({
+	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql",
 	"/import-tests-stat.sql"})
 @Transactional

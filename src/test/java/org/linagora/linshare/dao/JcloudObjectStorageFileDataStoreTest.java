@@ -39,26 +39,28 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.impl.JcloudObjectStorageFileDataStoreImpl;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-test.xml",
 		"classpath:OPTIONAL-springContext-jcloud.xml" })
 //@TestPropertySource("/linshare-storage-swift.properties")
-public class JcloudObjectStorageFileDataStoreTest extends AbstractJUnit4SpringContextTests {
+public class JcloudObjectStorageFileDataStoreTest extends LoggerParent {
 
 
 	@Autowired
@@ -70,7 +72,7 @@ public class JcloudObjectStorageFileDataStoreTest extends AbstractJUnit4SpringCo
 	@Value( "${linshare.documents.storage.mode}" )
 	private String provider;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		logger.info("supportedProviders : " + supportedProviders);
@@ -79,7 +81,7 @@ public class JcloudObjectStorageFileDataStoreTest extends AbstractJUnit4SpringCo
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -94,7 +96,7 @@ public class JcloudObjectStorageFileDataStoreTest extends AbstractJUnit4SpringCo
 		FileMetaData metaData = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream", file.length(),
 				fileName);
 		FileMetaData data = jcloudFileDataStore.add(file, metaData);
-		Assert.assertNotNull(data);
+		Assertions.assertNotNull(data);
 		logger.info("FileMetaData : " + data.toString());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

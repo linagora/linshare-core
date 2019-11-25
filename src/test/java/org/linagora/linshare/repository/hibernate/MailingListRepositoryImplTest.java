@@ -34,10 +34,13 @@
 
 package org.linagora.linshare.repository.hibernate;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -48,16 +51,20 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations = { "classpath:springContext-test.xml",
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations = {
+		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
 public class MailingListRepositoryImplTest extends
-		AbstractJUnit4SpringContextTests {
+		LoggerParent {
 
 	// default import.sql
 	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
@@ -83,7 +90,7 @@ public class MailingListRepositoryImplTest extends
 
 	private static String identifier = "TestMailingList0";
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 
@@ -97,7 +104,7 @@ public class MailingListRepositoryImplTest extends
 		logger.debug("End setUp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 
@@ -118,11 +125,11 @@ public class MailingListRepositoryImplTest extends
 
 		mailingListRepository.create(current);
 
-		Assert.assertNotNull(current.getPersistenceId());
+		Assertions.assertNotNull(current.getPersistenceId());
 
 		ContactList myList = mailingListRepository.findByIdentifier(internal,
 				identifier);
-		Assert.assertTrue(myList != null);
+		Assertions.assertTrue(myList != null);
 
 		mailingListRepository.delete(myList);
 	}

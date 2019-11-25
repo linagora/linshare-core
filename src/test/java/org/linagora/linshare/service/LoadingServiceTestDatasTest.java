@@ -54,7 +54,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-test.xml" })
 public class LoadingServiceTestDatasTest {

@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import org.junit.Assert;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
@@ -42,14 +45,18 @@ import org.linagora.linshare.core.domain.entities.TimeUnitClass;
 import org.linagora.linshare.core.domain.entities.Unit;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UnitRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
+public class UnitRepositoryImplTest extends LoggerParent {
 
 	
 	@Autowired
@@ -61,16 +68,16 @@ public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
 		FileSizeUnitClass unit = new FileSizeUnitClass(FileSizeUnit.GIGA);
 
 		unitRepository.create(unit);
-		Assert.assertNotNull(unit.getPersistenceId());
+		Assertions.assertNotNull(unit.getPersistenceId());
 		logger.debug("Current object: " + unit.toString());
 		
-		Assert.assertTrue(unitRepository.findAll() != null);
-		Assert.assertTrue(unitRepository.findById(unit.getPersistenceId()) != null);
+		Assertions.assertTrue(unitRepository.findAll() != null);
+		Assertions.assertTrue(unitRepository.findById(unit.getPersistenceId()) != null);
 		
 		Unit<?> newUnit = unitRepository.findById(unit.getPersistenceId());
 		
-		Assert.assertTrue(newUnit instanceof FileSizeUnitClass);
-		Assert.assertTrue(((FileSizeUnitClass)newUnit).getUnitValue().toInt() == FileSizeUnit.GIGA.toInt());
+		Assertions.assertTrue(newUnit instanceof FileSizeUnitClass);
+		Assertions.assertTrue(((FileSizeUnitClass)newUnit).getUnitValue().toInt() == FileSizeUnit.GIGA.toInt());
 
 		unitRepository.delete(unit);
 	}
@@ -81,16 +88,16 @@ public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
 		TimeUnitClass unit = new TimeUnitClass(TimeUnit.WEEK);
 		
 		unitRepository.create(unit);
-		Assert.assertNotNull(unit.getPersistenceId());
+		Assertions.assertNotNull(unit.getPersistenceId());
 		logger.debug("Current object: " + unit.toString());
 		
-		Assert.assertTrue(unitRepository.findAll() != null);
-		Assert.assertTrue(unitRepository.findById(unit.getPersistenceId()) != null);
+		Assertions.assertTrue(unitRepository.findAll() != null);
+		Assertions.assertTrue(unitRepository.findById(unit.getPersistenceId()) != null);
 		
 		Unit<?> newUnit = unitRepository.findById(unit.getPersistenceId());
 		
-		Assert.assertTrue(newUnit instanceof TimeUnitClass);
-		Assert.assertTrue(((TimeUnitClass)newUnit).getUnitValue().toInt() == TimeUnit.WEEK.toInt());
+		Assertions.assertTrue(newUnit instanceof TimeUnitClass);
+		Assertions.assertTrue(((TimeUnitClass)newUnit).getUnitValue().toInt() == TimeUnit.WEEK.toInt());
 		
 		unitRepository.delete(unit);
 	}
@@ -102,35 +109,35 @@ public class UnitRepositoryImplTest extends AbstractJUnit4SpringContextTests {
 		Unit<?> unit = new FileSizeUnitClass(FileSizeUnit.GIGA);
 
 		unitRepository.create(unit);
-		Assert.assertNotNull(unit.getPersistenceId());
+		Assertions.assertNotNull(unit.getPersistenceId());
 		logger.debug("Current object: " + unit.toString());
 		
-		Assert.assertTrue(unitRepository.findAll() != null);
+		Assertions.assertTrue(unitRepository.findAll() != null);
 		
 		Unit<?> newUnit = unitRepository.findById(unit.getPersistenceId());
 		
-		Assert.assertTrue(newUnit != null);
+		Assertions.assertTrue(newUnit != null);
 		
 		
-		Assert.assertTrue(newUnit instanceof FileSizeUnitClass);
-		Assert.assertTrue(((FileSizeUnitClass)newUnit).getUnitValue().toInt() == FileSizeUnit.GIGA.toInt());
+		Assertions.assertTrue(newUnit instanceof FileSizeUnitClass);
+		Assertions.assertTrue(((FileSizeUnitClass)newUnit).getUnitValue().toInt() == FileSizeUnit.GIGA.toInt());
 
 		
 		Unit<?> unit2 = new TimeUnitClass(TimeUnit.MONTH);
 
 		unitRepository.create(unit2);
-		Assert.assertNotNull(unit2.getPersistenceId());
+		Assertions.assertNotNull(unit2.getPersistenceId());
 		logger.debug("Current object: " + unit2.toString());
 		
-		Assert.assertTrue(unitRepository.findAll() != null);
+		Assertions.assertTrue(unitRepository.findAll() != null);
 		
 		Unit<?> newUnit2 = unitRepository.findById(unit2.getPersistenceId());
 		
-		Assert.assertTrue(newUnit2 != null);
+		Assertions.assertTrue(newUnit2 != null);
 		
-		Assert.assertTrue(newUnit2 instanceof TimeUnitClass);
-		Assert.assertTrue(((TimeUnitClass)newUnit2).getUnitValue().toInt() == TimeUnit.MONTH.toInt());
-		Assert.assertFalse(((TimeUnitClass)newUnit2).getUnitValue().toInt() == TimeUnit.WEEK.toInt());
+		Assertions.assertTrue(newUnit2 instanceof TimeUnitClass);
+		Assertions.assertTrue(((TimeUnitClass)newUnit2).getUnitValue().toInt() == TimeUnit.MONTH.toInt());
+		Assertions.assertFalse(((TimeUnitClass)newUnit2).getUnitValue().toInt() == TimeUnit.WEEK.toInt());
 
 		unitRepository.delete(unit);
 		unitRepository.delete(unit2);

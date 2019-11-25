@@ -38,30 +38,37 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations = { "classpath:springContext-test.xml",
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations = { 
+		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
-public class ConatctListSearchRepositoryImplTest extends AbstractJUnit4SpringContextTests {
+public class ConatctListSearchRepositoryImplTest extends LoggerParent {
 
 	// default import.sql
 	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
@@ -94,7 +101,7 @@ public class ConatctListSearchRepositoryImplTest extends AbstractJUnit4SpringCon
 
 	private ContactListContact contact;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 
@@ -138,7 +145,7 @@ public class ConatctListSearchRepositoryImplTest extends AbstractJUnit4SpringCon
 		logger.debug("End setUp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 
@@ -152,6 +159,7 @@ public class ConatctListSearchRepositoryImplTest extends AbstractJUnit4SpringCon
 	@Test
 	public void testfindMailingList1ByMemberEmail() throws BusinessException {
 		List<ContactList> mailingLists = mailingListRepository.findAllByMemberEmail(internal, CONTACT_MAIL);
-		Assert.assertEquals("just one list contains the member who has the mentioned email", mailingLists.size(), 1);
+		Assertions.assertEquals(mailingLists.size(), 1,
+				"just one list contains the member who has the mentioned email");
 	}
 }

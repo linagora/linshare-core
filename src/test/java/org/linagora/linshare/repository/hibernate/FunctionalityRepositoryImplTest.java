@@ -35,11 +35,14 @@ package org.linagora.linshare.repository.hibernate;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
@@ -60,15 +63,18 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class FunctionalityRepositoryImplTest extends LoggerParent {
 
 
 	@Autowired
@@ -95,7 +101,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		DomainAccessPolicy domainAccessPolicy = new DomainAccessPolicy();
@@ -115,7 +121,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("End setUp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		abstractDomainRepository.delete(currentDomain);
@@ -139,10 +145,10 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current object: " + fonc.toString());
 
 		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_1);
-		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
-		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assert.assertEquals(value,entityFonc.getValue());
+		Assertions.assertTrue(entityFonc.getActivationPolicy().getStatus());
+		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
+		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
+		Assertions.assertEquals(value,entityFonc.getValue());
 		functionalityRepository.delete(fonc);
 	}
 
@@ -168,12 +174,12 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("a.size() : " + a.size());
 
 		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_2);
-		Assert.assertFalse(entityFonc.getActivationPolicy().getStatus());
-		Assert.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assert.assertEquals(value,entityFonc.getValue());
-		Assert.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
-		Assert.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
+		Assertions.assertFalse(entityFonc.getActivationPolicy().getStatus());
+		Assertions.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
+		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
+		Assertions.assertEquals(value,entityFonc.getValue());
+		Assertions.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
+		Assertions.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
 	}
 
 	@Test
@@ -194,12 +200,12 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current object: " + fonc.toString());
 
 		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_2);
-		Assert.assertFalse(entityFonc.getActivationPolicy().getStatus());
-		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assert.assertEquals(value,entityFonc.getValue());
-		Assert.assertEquals(UnitType.TIME, entityFonc.getUnit().getUnitType());
-		Assert.assertEquals(TimeUnit.WEEK, entityFonc.getUnit().getUnitValue());
+		Assertions.assertFalse(entityFonc.getActivationPolicy().getStatus());
+		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
+		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
+		Assertions.assertEquals(value,entityFonc.getValue());
+		Assertions.assertEquals(UnitType.TIME, entityFonc.getUnit().getUnitType());
+		Assertions.assertEquals(TimeUnit.WEEK, entityFonc.getUnit().getUnitValue());
 	}
 
 
@@ -222,12 +228,12 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current object: " + fonc.toString());
 
 		UnitValueFunctionality entityFonc = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_2);
-		Assert.assertFalse(entityFonc.getActivationPolicy().getStatus());
-		Assert.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assert.assertEquals(value,entityFonc.getValue());
-		Assert.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
-		Assert.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
+		Assertions.assertFalse(entityFonc.getActivationPolicy().getStatus());
+		Assertions.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
+		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
+		Assertions.assertEquals(value,entityFonc.getValue());
+		Assertions.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
+		Assertions.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
 
 
 
@@ -246,12 +252,12 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current object: " + fonc2.toString());
 
 		UnitValueFunctionality entityFonc2 = (UnitValueFunctionality)functionalityRepository.findByDomain(currentDomain,ID_FONC_3);
-		Assert.assertFalse(entityFonc2.getActivationPolicy().getStatus());
-		Assert.assertFalse(entityFonc2.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc2.getDomain().getUuid());
-		Assert.assertEquals(value2,entityFonc2.getValue());
-		Assert.assertEquals(UnitType.TIME, entityFonc2.getUnit().getUnitType());
-		Assert.assertEquals(TimeUnit.WEEK, entityFonc2.getUnit().getUnitValue());
+		Assertions.assertFalse(entityFonc2.getActivationPolicy().getStatus());
+		Assertions.assertFalse(entityFonc2.getConfigurationPolicy().getStatus());
+		Assertions.assertEquals(rootDomaineName,entityFonc2.getDomain().getUuid());
+		Assertions.assertEquals(value2,entityFonc2.getValue());
+		Assertions.assertEquals(UnitType.TIME, entityFonc2.getUnit().getUnitType());
+		Assertions.assertEquals(TimeUnit.WEEK, entityFonc2.getUnit().getUnitValue());
 	}
 
 
@@ -274,10 +280,10 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current object: " + fonc.toString());
 
 		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain, ID_FONC_1);
-		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
-		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assert.assertEquals(value,entityFonc.getValue());
+		Assertions.assertTrue(entityFonc.getActivationPolicy().getStatus());
+		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
+		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
+		Assertions.assertEquals(value,entityFonc.getValue());
 
 
 
@@ -312,10 +318,10 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current object: " + fonc2.toString());
 
 		StringValueFunctionality entityFonc2 = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain2, ID_FONC_1);
-		Assert.assertTrue(entityFonc2.getActivationPolicy().getStatus());
-		Assert.assertTrue(entityFonc2.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName2,entityFonc2.getDomain().getUuid());
-		Assert.assertEquals(value2,entityFonc2.getValue());
+		Assertions.assertTrue(entityFonc2.getActivationPolicy().getStatus());
+		Assertions.assertTrue(entityFonc2.getConfigurationPolicy().getStatus());
+		Assertions.assertEquals(rootDomaineName2,entityFonc2.getDomain().getUuid());
+		Assertions.assertEquals(value2,entityFonc2.getValue());
 
 		functionalityRepository.delete(fonc);
 		functionalityRepository.delete(fonc2);
@@ -324,8 +330,9 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 	}
 
 
-	@Ignore
-	@Test(expected=DataIntegrityViolationException.class)
+	@Disabled
+	@Test
+	// (expected=DataIntegrityViolationException.class) replace by assertThat in case test is not ignored 
 	public void testUnicityOfFunctionality() throws BusinessException{
 
 		String value = "http://server/service";
@@ -341,10 +348,10 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current object: " + fonc.toString());
 
 		StringValueFunctionality entityFonc = (StringValueFunctionality)functionalityRepository.findByDomain(currentDomain, ID_FONC_1);
-		Assert.assertTrue(entityFonc.getActivationPolicy().getStatus());
-		Assert.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
-		Assert.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assert.assertEquals(value,entityFonc.getValue());
+		Assertions.assertTrue(entityFonc.getActivationPolicy().getStatus());
+		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
+		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
+		Assertions.assertEquals(value,entityFonc.getValue());
 
 
 
@@ -378,13 +385,13 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 						new Policy(Policies.ALLOWED, true),
 						currentDomain);
 
-		Assert.assertTrue(fonc.businessEquals(fonc2, true));
+		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setSystem(true);
-		Assert.assertFalse(fonc.businessEquals(fonc2, true));
+		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 
 		fonc.setSystem(true);
 		fonc2.setIdentifier(ID_FONC_2);
-		Assert.assertFalse(fonc.businessEquals(fonc2, true));
+		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
 	@Test
@@ -406,10 +413,10 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 				currentDomain,
 				value);
 
-		Assert.assertTrue(fonc.businessEquals(fonc2, true));
+		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		String value2 = "http://server/service2";
 		fonc2.setValue(value2);
-		Assert.assertFalse(fonc.businessEquals(fonc2, true));
+		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
 	@Test
@@ -430,9 +437,9 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 				currentDomain,
 				value);
 
-		Assert.assertTrue(fonc.businessEquals(fonc2, true));
+		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setValue(2);
-		Assert.assertFalse(fonc.businessEquals(fonc2, true));
+		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
 	@Test
@@ -457,9 +464,9 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 				new FileSizeUnitClass(FileSizeUnit.GIGA)
 				);
 
-		Assert.assertTrue(fonc.businessEquals(fonc2, true));
+		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setValue(8);
-		Assert.assertFalse(fonc.businessEquals(fonc2, true));
+		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
 	@Test
@@ -493,8 +500,8 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 				new TimeUnitClass(TimeUnit.DAY)
 				);
 
-		Assert.assertFalse(fonc.businessEquals(fonc2, true));
-		Assert.assertFalse(fonc2.businessEquals(fonc3, true));
+		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
+		Assertions.assertFalse(fonc2.businessEquals(fonc3, true));
 	}
 
 
@@ -508,15 +515,15 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 				currentDomain);
 
 		Functionality newFunc = (Functionality) func.clone();
-		Assert.assertTrue(newFunc.businessEquals(func, true));
+		Assertions.assertTrue(newFunc.businessEquals(func, true));
 
 		func.setSystem(true);
-		Assert.assertFalse(newFunc.businessEquals(func, true));
+		Assertions.assertFalse(newFunc.businessEquals(func, true));
 	}
 
-	// FIXME : Now we need AbstractTransactionalJUnit4SpringContextTests because
+	// FIXME : Now we need LoggerParent because
 	// we made some mapping modifications (enable lasy loading)
-	@Ignore
+	@Disabled
 	@Test
 	public void testCloneStringFunctionality() throws BusinessException{
 		AbstractDomain otherDomain= new RootDomain("My root domain");
@@ -549,19 +556,19 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current object newFunc : " + newFunc.toString());
 
 
-		Assert.assertTrue(newFunc.businessEquals(func, true));
-		Assert.assertNotNull(newFunc.getDomain());
+		Assertions.assertTrue(newFunc.businessEquals(func, true));
+		Assertions.assertNotNull(newFunc.getDomain());
 
 		func.setValue("plop");
-		Assert.assertFalse(newFunc.businessEquals(func, true));
+		Assertions.assertFalse(newFunc.businessEquals(func, true));
 
 		abstractDomainRepository.delete(otherDomain);
 		domainPolicyRepository.delete(policy);
 	}
 
-	// FIXME : Now we need AbstractTransactionalJUnit4SpringContextTests because
+	// FIXME : Now we need LoggerParent because
 	// we made some mapping modifications (enable lasy loading)
-	@Ignore
+	@Disabled
 	@Test
 	public void testCloneUnitValueFunctionality() throws BusinessException{
 		AbstractDomain otherDomain= new RootDomain("My root domain");
@@ -596,12 +603,12 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current object newFunc : " + newFunc.toString());
 
 
-		Assert.assertTrue(newFunc.businessEquals(func, true));
-		Assert.assertNotNull(newFunc.getDomain());
+		Assertions.assertTrue(newFunc.businessEquals(func, true));
+		Assertions.assertNotNull(newFunc.getDomain());
 
 		func.setValue(256);
-		Assert.assertFalse(newFunc.businessEquals(func, true));
-		Assert.assertTrue(newFunc instanceof UnitValueFunctionality);
+		Assertions.assertFalse(newFunc.businessEquals(func, true));
+		Assertions.assertTrue(newFunc instanceof UnitValueFunctionality);
 
 
 		abstractDomainRepository.delete(otherDomain);

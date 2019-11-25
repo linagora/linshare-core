@@ -33,14 +33,15 @@
  */
 package org.linagora.linshare.batches;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DomainMonthlyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessService;
@@ -58,8 +59,15 @@ import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-tests-stat.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -73,7 +81,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class MonthlyBatchTest extends LoggerParent {
 
 	@Autowired
 	private UserMonthlyStatBusinessService userMonthlyStatBusinessService;
@@ -114,9 +122,8 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 
 	private Date currentDate;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-		this.executeSqlScript("import-tests-stat.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		GregorianCalendar calendar = new GregorianCalendar();

@@ -33,9 +33,9 @@
  */
 package org.linagora.linshare.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,18 +46,21 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.utils.PemRsaKeyHelper;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:springContext-test.xml" })
-public class PemRsaKeyHelperTest extends AbstractJUnit4SpringContextTests {
+public class PemRsaKeyHelperTest extends LoggerParent {
 
 	protected String pemPrivateKeyPath = "src/test/resources/sshkeys/id_rsa";
 
@@ -65,7 +68,7 @@ public class PemRsaKeyHelperTest extends AbstractJUnit4SpringContextTests {
 
 	protected String pemPEMPublicKeyPath = "src/test/resources/sshkeys/id_rsa.pub.pem";
 
-	@Before
+	@BeforeEach
 	public void setUp() throws NoSuchAlgorithmException {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		logger.debug(LinShareTestConstants.END_SETUP);

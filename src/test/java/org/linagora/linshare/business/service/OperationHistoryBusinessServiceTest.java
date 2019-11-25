@@ -74,7 +74,8 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-@Sql({"/import-tests-stat.sql"})
+@Sql({
+	"/import-tests-stat.sql"})
 @Transactional
 public class OperationHistoryBusinessServiceTest {
 

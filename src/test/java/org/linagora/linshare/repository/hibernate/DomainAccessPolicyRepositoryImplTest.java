@@ -33,19 +33,26 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import org.junit.Assert;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class DomainAccessPolicyRepositoryImplTest extends AbstractJUnit4SpringContextTests {
+public class DomainAccessPolicyRepositoryImplTest extends LoggerParent {
 
 	@Autowired
 	private DomainAccessPolicyRepository domainAccessPolicyRepository;
@@ -56,11 +63,11 @@ public class DomainAccessPolicyRepositoryImplTest extends AbstractJUnit4SpringCo
 		logger.debug("Current policy : " + policy.toString());
 		
 		domainAccessPolicyRepository.create(policy);
-		Assert.assertNotNull(policy.getPersistenceId());
+		Assertions.assertNotNull(policy.getPersistenceId());
 		
 		DomainAccessPolicy entityPolicy = domainAccessPolicyRepository.findById(policy.getPersistenceId());
 		
-		Assert.assertTrue(entityPolicy != null );
+		Assertions.assertTrue(entityPolicy != null );
 		domainAccessPolicyRepository.delete(entityPolicy);
 	}
 	
@@ -74,7 +81,7 @@ public class DomainAccessPolicyRepositoryImplTest extends AbstractJUnit4SpringCo
 		
 		DomainAccessPolicy entityPolicy = domainAccessPolicyRepository.findById(policy.getPersistenceId());
 		
-		Assert.assertTrue(entityPolicy != null );
+		Assertions.assertTrue(entityPolicy != null );
 		
 		domainAccessPolicyRepository.delete(entityPolicy);
 	}

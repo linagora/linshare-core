@@ -33,10 +33,13 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.AllowDomain;
@@ -51,15 +54,19 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainAccessRuleRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class DomainAccessRuleRepositoryImplTest extends LoggerParent {
 
 	@Autowired
 	private DomainAccessRuleRepository domainAccessRuleRepository;
@@ -83,7 +90,7 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUn
 	private DomainAccessPolicy policy;
 
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		policy = new DomainAccessPolicy();
@@ -92,7 +99,7 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUn
 		logger.debug("End setUp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		domainAccessPolicyRepository.delete(policy);
@@ -133,14 +140,14 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUn
 		DomainAccessRule rule = new AllowAllDomain();
 		policy.addRule(rule);
 		domainAccessPolicyRepository.update(policy);
-		Assert.assertNotNull(rule.getPersistenceId());
+		Assertions.assertNotNull(rule.getPersistenceId());
 
 		logger.debug("Current object: " + rule.toString());
 
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
 
-		Assert.assertTrue(entityRule != null );
-		Assert.assertTrue(entityRule instanceof AllowAllDomain );
+		Assertions.assertTrue(entityRule != null );
+		Assertions.assertTrue(entityRule instanceof AllowAllDomain );
 
 		logger.debug("End testCreateAllowAllDomainRule");
 	}
@@ -152,15 +159,15 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUn
 		DomainAccessRule rule = new DenyAllDomain();
 		policy.addRule(rule);
 		domainAccessPolicyRepository.update(policy);
-		Assert.assertNotNull(rule.getPersistenceId());
+		Assertions.assertNotNull(rule.getPersistenceId());
 
 		logger.debug("Current object: " + rule.toString());
 
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
 
-		Assert.assertTrue(entityRule != null );
-		Assert.assertFalse(entityRule instanceof AllowAllDomain );
-		Assert.assertTrue(entityRule instanceof DenyAllDomain );
+		Assertions.assertTrue(entityRule != null );
+		Assertions.assertFalse(entityRule instanceof AllowAllDomain );
+		Assertions.assertTrue(entityRule instanceof DenyAllDomain );
 		logger.debug("End testCreateDenyAllDomainRule");
 	}
 
@@ -176,14 +183,14 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUn
 
 		domainAccessPolicyRepository.update(policy);
 		currentDomain = abstractDomainRepository.update(currentDomain);
-		Assert.assertNotNull(rule.getPersistenceId());
+		Assertions.assertNotNull(rule.getPersistenceId());
 
 		logger.debug("Current object: " + rule.toString());
 
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
 		logger.debug("Current ENTITY : " + entityRule.toString());
 
-		Assert.assertTrue(entityRule instanceof DenyDomain );
+		Assertions.assertTrue(entityRule instanceof DenyDomain );
 
 		logger.debug("End testCreateDenyDomainRule");
 	}
@@ -201,14 +208,14 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUn
 
 		domainAccessPolicyRepository.update(policy);
 		currentDomain = abstractDomainRepository.update(currentDomain);
-		Assert.assertNotNull(rule.getPersistenceId());
+		Assertions.assertNotNull(rule.getPersistenceId());
 
 		logger.debug("Current object: " + rule.toString());
 
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
 		logger.debug("Current ENTITY : " + entityRule.toString());
 
-		Assert.assertTrue(entityRule instanceof AllowDomain );
+		Assertions.assertTrue(entityRule instanceof AllowDomain );
 
 		logger.debug("currentDomain.getDomainAccessRules().size() : " + currentDomain.getDomainAccessRules().size());
 
@@ -232,17 +239,17 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUn
 
 		domainAccessPolicyRepository.update(policy);
 		currentDomain = abstractDomainRepository.update(currentDomain);
-		Assert.assertNotNull(rule.getPersistenceId());
+		Assertions.assertNotNull(rule.getPersistenceId());
 
 		logger.debug("Current object: " + rule.toString());
 
 		DomainAccessRule entityRule = domainAccessRuleRepository.findById(rule.getPersistenceId());
 		logger.debug("Current ENTITY : " + entityRule.toString());
 
-		Assert.assertTrue(entityRule instanceof AllowDomain );
+		Assertions.assertTrue(entityRule instanceof AllowDomain );
 
 		logger.debug("currentDomain.getDomainAccessRules().size() : " + currentDomain.getDomainAccessRules().size());
-		Assert.assertEquals(2, currentDomain.getDomainAccessRules().size());
+		Assertions.assertEquals(2, currentDomain.getDomainAccessRules().size());
 
 		logger.debug("End testCreateDomainWhiteListRule");
 	}

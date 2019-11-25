@@ -36,9 +36,10 @@ package org.linagora.linshare.batches;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -49,10 +50,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-tests-close-expired-upload-requests-group.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
@@ -66,7 +74,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml", })
-public class CloseExpiredUploadRequestBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class CloseExpiredUploadRequestBatchImplTest extends LoggerParent {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestNewBatchImplTest.class);
 
@@ -77,10 +85,9 @@ public class CloseExpiredUploadRequestBatchImplTest extends AbstractTransactiona
 	@Qualifier("closeExpiredUploadRequestGroupBatch")
 	private GenericBatch closeExpiredUploadRequestGroupBatch;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-close-expired-upload-requests-group.sql", false);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -88,6 +95,6 @@ public class CloseExpiredUploadRequestBatchImplTest extends AbstractTransactiona
 	public void testBatch() throws BusinessException, JobExecutionException {
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(closeExpiredUploadRequestGroupBatch);
-		Assert.assertTrue("At least one batch is failed.", batchRunner.execute(batches));
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch is failed.");
 	}
 }

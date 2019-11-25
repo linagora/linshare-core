@@ -35,10 +35,11 @@ package org.linagora.linshare.batches;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.GroupProviderType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -63,10 +64,15 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
 import com.google.common.collect.Lists;
 
+
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
@@ -81,7 +87,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		})
-public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest extends LoggerParent {
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -118,7 +124,7 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest extends AbstractTran
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		initService.init();
@@ -155,7 +161,7 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest extends AbstractTran
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -166,7 +172,7 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest extends AbstractTran
 	public void testBatch() throws BusinessException, JobExecutionException {
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(synchroLdapGroupsBatch);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 	}
 
 }

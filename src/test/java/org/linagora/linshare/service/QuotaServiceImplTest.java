@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.service;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.GregorianCalendar;
 
@@ -60,9 +60,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Sql({"/import-tests-stat.sql",
-"/import-tests-operationHistory.sql",
-"/import-tests-quota.sql"})
+@Sql({
+	"/import-tests-stat.sql",
+	"/import-tests-operationHistory.sql",
+	"/import-tests-quota.sql" })
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -115,10 +116,10 @@ public class QuotaServiceImplTest {
 		Long domainConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, null);
 		Long ensembleUserConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, ContainerQuotaType.USER);
 		Long platformConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, null, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, null);
-		assertEquals(1100, (long) accountConsumptionOfDay);
-		assertEquals(2101, (long) domainConsumptionOfDay);
-		assertEquals(2101, (long) ensembleUserConsumptionOfDay);
-		assertEquals(3851, (long) platformConsumptionOfDay);
+		Assertions.assertEquals(1100, (long) accountConsumptionOfDay);
+		Assertions.assertEquals(2101, (long) domainConsumptionOfDay);
+		Assertions.assertEquals(2101, (long) ensembleUserConsumptionOfDay);
+		Assertions.assertEquals(3851, (long) platformConsumptionOfDay);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

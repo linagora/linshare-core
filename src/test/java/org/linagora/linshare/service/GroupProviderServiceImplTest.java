@@ -36,11 +36,15 @@ package org.linagora.linshare.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
 import org.hamcrest.CoreMatchers;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
@@ -53,11 +57,15 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-repository.xml",
@@ -66,7 +74,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
-public class GroupProviderServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class GroupProviderServiceImplTest extends LoggerParent {
 
 	@Autowired
 	private GroupProviderService groupProviderService;
@@ -84,7 +92,7 @@ public class GroupProviderServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	private LdapConnection ldapconnexion;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		ldapconnexion  = new LdapConnection("label", "ldap://10.75.113.53:389", "simple");
@@ -96,11 +104,11 @@ public class GroupProviderServiceImplTest extends AbstractTransactionalJUnit4Spr
 				"searchGroupQuery", "groupPrefix", false);
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		groupPattern = groupLdapPatternService.create(actor, groupPattern);
-		Assert.assertNotNull(groupPattern);
+		Assertions.assertNotNull(groupPattern);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -111,7 +119,7 @@ public class GroupProviderServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "dc=nodomain,dc=com", ldapconnexion, false);
 		groupProvider = groupProviderService.create(groupProvider);
-		Assert.assertNotNull(groupProvider);
+		Assertions.assertNotNull(groupProvider);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -120,8 +128,9 @@ public class GroupProviderServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "dc=nodomain,dc=com", ldapconnexion, false);
 		groupProvider = groupProviderService.create(groupProvider);
-		Assert.assertNotNull(groupProvider);
+		Assertions.assertNotNull(groupProvider);
 		groupProviderService.delete(groupProvider);
+		
 		try {
 			groupProviderService.find(groupProvider.getUuid());
 		} catch (BusinessException bEx) {

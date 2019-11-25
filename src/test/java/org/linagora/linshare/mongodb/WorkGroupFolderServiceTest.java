@@ -35,16 +35,19 @@ package org.linagora.linshare.mongodb;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import javax.transaction.Transactional;
+
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.ExpectedException;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -58,12 +61,18 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-tests-default-domain-quotas.sql"})
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -76,7 +85,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class WorkGroupFolderServiceTest extends LoggerParent {
 
 	@Autowired
 	private WorkGroupNodeService service;
@@ -105,17 +114,16 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 
 	private boolean dryRun = false;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
 		init.init();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		repository.deleteAll();
@@ -133,9 +141,9 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		service.create(jane, jane, workGroup, workGroupFolder, false, dryRun);
 		List<WorkGroupNode> findAll = repository.findAll();
 		for (WorkGroupNode w : findAll) {
-			logger.debug(w);
+			logger.debug(w.toString());
 		}
-		Assert.assertEquals(2, findAll.size());
+		Assertions.assertEquals(2, findAll.size());
 	}
 
 	@Test
@@ -148,11 +156,11 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), true, dryRun);
 		try {
 			service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), true, dryRun);
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		} catch (BusinessException e) {
-			Assert.assertEquals(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS, e.getErrorCode());
+			Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS, e.getErrorCode());
 		}
-		Assert.assertEquals(2, repository.findAll().size());
+		Assertions.assertEquals(2, repository.findAll().size());
 	}
 
 	@Test
@@ -168,7 +176,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 
 		List<WorkGroupNode> findAll = repository.findAll();
 		for (WorkGroupNode w : findAll) {
-			logger.debug(w);
+			logger.debug(w.toString());
 		}
 		WorkGroupNode folder2 = new WorkGroupFolder(author, "folder2", null, workGroup.getLsUuid());
 		logger.debug(folder2.toString());
@@ -176,10 +184,10 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 
 		findAll = repository.findAll();
 		for (WorkGroupNode w : findAll) {
-			logger.debug(w);
+			logger.debug(w.toString());
 		}
 
-		Assert.assertEquals(3, findAll.size());
+		Assertions.assertEquals(3, findAll.size());
 	}
 
 	@Test
@@ -191,11 +199,11 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		WorkGroup workGroup = threadService.find(jane, jane, node.getUuid());
 		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), false, dryRun);
 		WorkGroupNode create = service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), false, dryRun);
-		Assert.assertEquals("folder1 (1)", create.getName());
+		Assertions.assertEquals("folder1 (1)", create.getName());
 		WorkGroupNode create2 = service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), false, dryRun);
-		Assert.assertEquals("folder1 (2)", create2.getName());
+		Assertions.assertEquals("folder1 (2)", create2.getName());
 		// three folders plus root folder
-		Assert.assertEquals(4, repository.findAll().size());
+		Assertions.assertEquals(4, repository.findAll().size());
 	}
 
 	@Test
@@ -221,8 +229,8 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		String newName = "my.folder (6)";
 		logger.info(newName);
 		WorkGroupNode create = service.create(jane, jane, workGroup, new WorkGroupFolder(author, currName, null, workGroup.getLsUuid()), false, dryRun);
-		Assert.assertEquals(newName, create.getName());
-		Assert.assertEquals(newName, "my.folder (6)");
+		Assertions.assertEquals(newName, create.getName());
+		Assertions.assertEquals(newName, "my.folder (6)");
 	}
 
 	@Test
@@ -240,10 +248,10 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		update.setUuid(create.getUuid());
 
 		WorkGroupNode updated = service.update(jane, jane, workGroup, update);
-		Assert.assertNotNull(updated);
-		Assert.assertEquals("folder-renamed", updated.getName());
-		Assert.assertEquals("folder-renamed", service.find(jane, jane, workGroup, create.getUuid(), false).getName());
-		Assert.assertEquals(2, repository.findAll().size());
+		Assertions.assertNotNull(updated);
+		Assertions.assertEquals("folder-renamed", updated.getName());
+		Assertions.assertEquals("folder-renamed", service.find(jane, jane, workGroup, create.getUuid(), false).getName());
+		Assertions.assertEquals(2, repository.findAll().size());
 	}
 
 	@Test
@@ -260,11 +268,11 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		update.setParent("fddsfsdf");
 		// exception.expect(BusinessException.class);
 		try {
-			Assert.assertNotNull(service.update(jane, jane, workGroup, update));
-			Assert.assertTrue(false);
+			Assertions.assertNotNull(service.update(jane, jane, workGroup, update));
+			Assertions.assertTrue(false);
 		} catch (BusinessException e) {
 			logger.debug(e.getMessage(), e);
-			Assert.assertEquals(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND, e.getErrorCode());
+			Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND, e.getErrorCode());
 		}
 	}
 
@@ -284,21 +292,21 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 
 		WorkGroupNode rootParent = DataAccessUtils.singleResult(repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid));
 
-		Assert.assertEquals(3, repository.findAll().size());
-		Assert.assertEquals(rootParent.getUuid(), folder1.getParent());
-		Assert.assertEquals(rootParent.getUuid(), folder2.getParent());
+		Assertions.assertEquals(3, repository.findAll().size());
+		Assertions.assertEquals(rootParent.getUuid(), folder1.getParent());
+		Assertions.assertEquals(rootParent.getUuid(), folder2.getParent());
 
 		folder2.setParent(folder1.getUuid());
 		folder2 = service.update(jane, jane, workGroup, folder2);
-		Assert.assertNotNull(folder2);
-		Assert.assertEquals(rootParent.getUuid(), folder1.getParent());
-		Assert.assertNotEquals(rootParent.getUuid(), folder2.getParent());
-		Assert.assertEquals(folder1.getUuid(), folder2.getParent());
+		Assertions.assertNotNull(folder2);
+		Assertions.assertEquals(rootParent.getUuid(), folder1.getParent());
+		Assertions.assertNotEquals(rootParent.getUuid(), folder2.getParent());
+		Assertions.assertEquals(folder1.getUuid(), folder2.getParent());
 
 		folder2 = service.find(jane, jane, workGroup, folder2.getUuid(), false);
-		Assert.assertEquals(rootParent.getUuid(), folder1.getParent());
-		Assert.assertNotEquals(rootParent.getUuid(), folder2.getParent());
-		Assert.assertEquals(folder1.getUuid(), folder2.getParent());
+		Assertions.assertEquals(rootParent.getUuid(), folder1.getParent());
+		Assertions.assertNotEquals(rootParent.getUuid(), folder2.getParent());
+		Assertions.assertEquals(folder1.getUuid(), folder2.getParent());
 
 	}
 
@@ -330,31 +338,31 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		WorkGroupNode nodeabcd1 = createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-b-c-d-1", nodeabc1.getUuid(), workGroup.getLsUuid()), strict);
 		createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-b-c-d-2", nodeabc1.getUuid(), workGroup.getLsUuid()), strict);
 
-		Assert.assertEquals(",thread1," , nodea1.getPath());
-		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,", nodeabc1.getPath());
-		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,my.folder-a-b-c-1,", nodeabcd1.getPath());
+		Assertions.assertEquals(",thread1," , nodea1.getPath());
+		Assertions.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,", nodeabc1.getPath());
+		Assertions.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,my.folder-a-b-c-1,", nodeabcd1.getPath());
 
 		// just update without move.
 		nodea1.setName("coucou");
 		service.update(jane, jane, workGroup, nodea1);
-		Assert.assertEquals(",thread1,", service.find(jane, jane, workGroup, nodea1.getUuid(), tree).getPath());
-		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,", service.find(jane, jane, workGroup, nodeabc1.getUuid(), tree).getPath());
+		Assertions.assertEquals(",thread1,", service.find(jane, jane, workGroup, nodea1.getUuid(), tree).getPath());
+		Assertions.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,", service.find(jane, jane, workGroup, nodeabc1.getUuid(), tree).getPath());
 
 		// Update description
-		Assert.assertNull(nodea1.getDescription());
+		Assertions.assertNull(nodea1.getDescription());
 		nodea1.setDescription("Test description");
 		service.update(jane, jane, workGroup, nodea1);
-		Assert.assertEquals(nodea1.getDescription(), "Test description");
+		Assertions.assertEquals(nodea1.getDescription(), "Test description");
 
 		// updating node moving folder abc1 from ab1 to a1.
 		nodeabc1.setParent(nodea1.getUuid());
 		nodeabc1.setName("coucou");
 		WorkGroupNode updateNodeabc1 = service.update(jane, jane, workGroup, nodeabc1);
 
-		Assert.assertEquals(",thread1,my.folder-a-1,", updateNodeabc1.getPath());
-		Assert.assertEquals(nodea1.getUuid(), updateNodeabc1.getParent());
+		Assertions.assertEquals(",thread1,my.folder-a-1,", updateNodeabc1.getPath());
+		Assertions.assertEquals(nodea1.getUuid(), updateNodeabc1.getParent());
 
-		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-c-1,", service.find(jane, jane, workGroup, nodeabcd1.getUuid(), tree).getPath());
+		Assertions.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-c-1,", service.find(jane, jane, workGroup, nodeabcd1.getUuid(), tree).getPath());
 	}
 
 	public WorkGroupNode createWrapper(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode, Boolean strict)

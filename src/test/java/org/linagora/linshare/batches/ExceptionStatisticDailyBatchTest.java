@@ -39,9 +39,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
@@ -54,10 +55,15 @@ import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.linagora.linshare.utils.LoggerParent;
 
 import com.google.common.collect.Lists;
 
+
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -71,7 +77,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-test.xml" })
-public class ExceptionStatisticDailyBatchTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class ExceptionStatisticDailyBatchTest extends LoggerParent {
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -91,7 +97,7 @@ public class ExceptionStatisticDailyBatchTest extends AbstractTransactionalJUnit
 
 	private AbstractDomain rootDomain;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		Calendar d = Calendar.getInstance();
 		d.add(Calendar.DATE, -1);
@@ -108,7 +114,7 @@ public class ExceptionStatisticDailyBatchTest extends AbstractTransactionalJUnit
 	public void test() {
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(exceptionStatisticDailyBatch);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 	}
 
 	private ExceptionStatistic newExceptionStatistic(AbstractDomain domain, Date time) {

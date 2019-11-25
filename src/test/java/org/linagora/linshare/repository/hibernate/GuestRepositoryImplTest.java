@@ -33,15 +33,18 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -54,18 +57,22 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.utils.LoggerParent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations = { "classpath:springContext-test.xml",
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations = {
+		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
 public class GuestRepositoryImplTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+		LoggerParent {
 
 	private static Logger logger = LoggerFactory.getLogger(GuestRepositoryImplTest.class);
 
@@ -107,7 +114,7 @@ public class GuestRepositoryImplTest extends
 
 	private AbstractDomain domain;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 
@@ -138,9 +145,9 @@ public class GuestRepositoryImplTest extends
 //		Guest u = new Guest(FIRST_NAME, LAST_NAME, MAIL, encpassword,
 //				true,  "comment");
 //		guestRepository.create(u);
-//		Assert.assertTrue(guestRepository.exist(LOGIN, encpassword));
-//		Assert.assertFalse(guestRepository.exist(LOGIN, "pass"));
-//		Assert.assertFalse(guestRepository.exist("login90", encpassword));
+//		Assertions.assertTrue(guestRepository.exist(LOGIN, encpassword));
+//		Assertions.assertFalse(guestRepository.exist(LOGIN, "pass"));
+//		Assertions.assertFalse(guestRepository.exist("login90", encpassword));
 //		logger.debug(LinShareTestConstants.END_TEST);
 //	}
 
@@ -158,14 +165,14 @@ public class GuestRepositoryImplTest extends
 //		Guest userFound = null;
 //
 //		userFound = guestRepository.findByLogin(LOGIN);
-//		Assert.assertNotNull(userFound);
-//		Assert.assertEquals(FIRST_NAME, userFound.getFirstName());
+//		Assertions.assertNotNull(userFound);
+//		Assertions.assertEquals(FIRST_NAME, userFound.getFirstName());
 //		userFound = null;
 //
 //		userFound = guestRepository
 //				.findByMailAndDomain(DOMAIN_IDENTIFIER, MAIL);
-//		Assert.assertNotNull(userFound);
-//		Assert.assertEquals(FIRST_NAME, userFound.getFirstName());
+//		Assertions.assertNotNull(userFound);
+//		Assertions.assertEquals(FIRST_NAME, userFound.getFirstName());
 //		userFound = null;
 //		logger.info(LinShareTestConstants.END_TEST);
 //

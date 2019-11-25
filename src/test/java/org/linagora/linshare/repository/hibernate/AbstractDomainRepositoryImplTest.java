@@ -37,10 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
@@ -59,7 +59,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
 public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
@@ -148,15 +149,15 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 
 		AbstractDomain currentDomain = createATestRootDomain();
 
-		Assert.assertNotNull(abstractDomainRepository.findAll());
+		Assertions.assertNotNull(abstractDomainRepository.findAll());
 		AbstractDomain entityDomain = abstractDomainRepository.findById(rootDomainName);
-		Assert.assertNotNull(entityDomain);
-		Assert.assertNull(entityDomain.getParentDomain());
-		Assert.assertTrue(entityDomain instanceof RootDomain);
-		Assert.assertFalse(entityDomain instanceof TopDomain);
-		Assert.assertFalse(entityDomain instanceof SubDomain);
-		Assert.assertTrue(entityDomain.isEnable());
-		Assert.assertFalse(entityDomain.isTemplate());
+		Assertions.assertNotNull(entityDomain);
+		Assertions.assertNull(entityDomain.getParentDomain());
+		Assertions.assertTrue(entityDomain instanceof RootDomain);
+		Assertions.assertFalse(entityDomain instanceof TopDomain);
+		Assertions.assertFalse(entityDomain instanceof SubDomain);
+		Assertions.assertTrue(entityDomain.isEnable());
+		Assertions.assertFalse(entityDomain.isTemplate());
 
 		abstractDomainRepository.delete(currentDomain);
 		logger.debug("End testRootDomainCreation");
@@ -173,15 +174,15 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 		abstractDomainRepository.update(rootDomain);
 		logger.debug("my parent is  : " + currentTopDomain.getParentDomain().toString());
 
-		Assert.assertNotNull(abstractDomainRepository.findAll());
+		Assertions.assertNotNull(abstractDomainRepository.findAll());
 		logger.debug("abstractDomainRepository.findAll().size():" + abstractDomainRepository.findAll().size());
-		Assert.assertNotNull(abstractDomainRepository.findById(rootDomainName));
+		Assertions.assertNotNull(abstractDomainRepository.findById(rootDomainName));
 		AbstractDomain entityRootDomain = abstractDomainRepository.findById(rootDomainName);
 
 		List<AbstractDomain> subDomainList = new ArrayList<AbstractDomain>();
 		subDomainList.addAll(abstractDomainRepository.getSubDomainsByDomain(entityRootDomain.getUuid()));
 		logger.debug(entityRootDomain.getUuid() + " : my son is : " + subDomainList.get(0).getUuid());
-		Assert.assertEquals(topDomainName, subDomainList.get(0).getUuid());
+		Assertions.assertEquals(topDomainName, subDomainList.get(0).getUuid());
 
 		logger.debug("End testTopDomainCreation");
 	}
@@ -190,19 +191,19 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 	public void testFindAllTopDomain() throws BusinessException{
 		List<AbstractDomain> list = abstractDomainRepository.findAllTopDomain();
 		// one by default + 2 topdomain for tests.
-		Assert.assertEquals(3, list.size());
+		Assertions.assertEquals(3, list.size());
 	}
 
 	@Test
 	public void testFindAllSubDomain() throws BusinessException{
 		List<AbstractDomain> list = abstractDomainRepository.findAllSubDomain();
-		Assert.assertNotNull(list.size());
+		Assertions.assertNotNull(list.size());
 	}
 
 	@Test
 	public void testFindSubDomain() throws BusinessException{
 		List<String> list = abstractDomainRepository.getAllSubDomainIdentifiers("LinShareRootDomain");
-		Assert.assertEquals(1, list.size());
+		Assertions.assertEquals(1, list.size());
 	}
 	
 	@Test
@@ -211,13 +212,13 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 		subDomain.setPurgeStep(DomainPurgeStepEnum.WAIT_FOR_PURGE);
 		abstractDomainRepository.update(subDomain);
 		List<AbstractDomain> list = abstractDomainRepository.getSubDomainsByDomain(existingTopDomain);
-		Assert.assertEquals(1, list.size());
+		Assertions.assertEquals(1, list.size());
 	}
 	
 	@Test
 	public void testFindGuestDomainByDomain() throws BusinessException {
 		AbstractDomain topDomain = abstractDomainRepository.findById(existingTopDomain);
 		AbstractDomain guestDomain = abstractDomainRepository.getGuestSubDomainByDomain(topDomain.getUuid());
-		Assert.assertNotNull(guestDomain);
+		Assertions.assertNotNull(guestDomain);
 	}
 }

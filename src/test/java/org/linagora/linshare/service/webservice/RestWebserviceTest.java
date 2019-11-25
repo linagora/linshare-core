@@ -42,21 +42,22 @@ import java.util.Collections;
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 
-import junit.framework.TestCase;
-
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
 import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
-@Ignore
-public class RestWebserviceTest extends TestCase {
+@ExtendWith(SpringExtension.class)
+@Disabled
+public class RestWebserviceTest {
 
 	public static final String WEBSERVICE_REST_URL = "http://localhost:8080/linshare/webservice/rest/";
 	public static final String USER = "bart.simpson@int1.linshare.dev";
@@ -108,8 +109,8 @@ public class RestWebserviceTest extends TestCase {
 		DocumentDto res = client.post(xop, DocumentDto.class);
 		System.out.println("resultat new Document: " + res);
 
-		assertNotNull(res);
-		assertEquals("fichier.htm", res.getName());
+		Assertions.assertNotNull(res);
+		Assertions.assertEquals("fichier.htm", res.getName());
 		
 		return res.getUuid();
 	}
@@ -157,9 +158,9 @@ public class RestWebserviceTest extends TestCase {
 		clientJson.accept("application/json");
 		String response = clientJson.get(String.class);
 		System.out.println(response);
-        assertTrue(response.startsWith("{"));
-        assertTrue(response.endsWith("}"));
-        assertTrue(response.contains("\"value\":"));
+        Assertions.assertTrue(response.startsWith("{"));
+        Assertions.assertTrue(response.endsWith("}"));
+        Assertions.assertTrue(response.contains("\"value\":"));
 	}
 	
 	@Test

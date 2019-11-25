@@ -67,9 +67,11 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
-@Sql({"/import-tests-inconsistent.sql"})
+@Sql({
+	"/import-tests-inconsistent.sql"})
 @Transactional
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", 
+@ContextConfiguration(locations = { 
+		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml", 
 		"classpath:springContext-fongo.xml",

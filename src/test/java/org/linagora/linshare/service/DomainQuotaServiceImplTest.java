@@ -54,7 +54,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Sql({"/import-tests-default-domain-quotas.sql",
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
 	"/import-tests-domain-quota-updates.sql"})
 @Transactional
 @ContextConfiguration(locations = {

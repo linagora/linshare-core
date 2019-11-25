@@ -35,10 +35,11 @@ package org.linagora.linshare.mongodb;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
@@ -60,10 +61,14 @@ import org.linagora.linshare.core.repository.TechnicalAccountRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.SafeDetailService;
 import org.linagora.linshare.mongo.entities.SafeDetail;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -76,7 +81,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class SafeDetailServiceTest extends LoggerParent {
 
 	private final static String THREAD_NAME = "threadName";
 	private final static String EMAIL = "anakin.skywalker@int4.linshare.dev";
@@ -116,7 +121,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 
 	private DomainPolicy defaultPolicy;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		defaultPolicy = domainPolicyRepository.findById(DOMAIN_POLICY_UUID);
@@ -156,7 +161,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 		workGroup = threadRepository.create(workGroup);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		technicalAccountRepository.delete(technicalAccount);
@@ -178,7 +183,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 		SafeDetail safeDetail = new SafeDetail();
 		safeDetail.setContainerUuid(workGroup.getLsUuid());
 		SafeDetail exist = safeDetailService.create(technicalAccount, actor, safeDetail);
-		Assert.assertEquals(exist.getAccountUuid(), actor.getLsUuid());
+		Assertions.assertEquals(exist.getAccountUuid(), actor.getLsUuid());
 		safeDetailService.delete(technicalAccount, actor, exist.getUuid());
 	}
 	
@@ -188,7 +193,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 		safeDetail.setContainerUuid(workGroup.getLsUuid());
 		SafeDetail exist = safeDetailService.create(technicalAccount, actor, safeDetail);
 		safeDetailService.delete(technicalAccount, actor, exist.getUuid());
-		Assert.assertTrue(safeDetailService.findAll(technicalAccount, actor).isEmpty());
+		Assertions.assertTrue(safeDetailService.findAll(technicalAccount, actor).isEmpty());
 	}
 	
 	@Test
@@ -197,7 +202,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 		safeDetail.setContainerUuid(workGroup.getLsUuid());
 		safeDetailService.create(technicalAccount, actor, safeDetail);
 		List<SafeDetail> exist = safeDetailService.findAll(technicalAccount, actor);
-		Assert.assertEquals(exist.iterator().next().getAccountUuid(), actor.getLsUuid());
+		Assertions.assertEquals(exist.iterator().next().getAccountUuid(), actor.getLsUuid());
 		safeDetailService.delete(technicalAccount, actor, exist.iterator().next().getUuid());
 	}
 }

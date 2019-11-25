@@ -36,21 +36,28 @@ package org.linagora.linshare.repository.hibernate;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.PolicyRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml", 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@ContextConfiguration(locations={
+		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class PolicyRepositoryImplTest  extends AbstractTransactionalJUnit4SpringContextTests{
+public class PolicyRepositoryImplTest  extends LoggerParent {
 
 	
 	@Autowired
@@ -77,20 +84,20 @@ public class PolicyRepositoryImplTest  extends AbstractTransactionalJUnit4Spring
 		
 		showContent();
 		
-		Assert.assertEquals(origSize + 1, policyRepository.findAll().size());
+		Assertions.assertEquals(origSize + 1, policyRepository.findAll().size());
 	}
 	
 	@Test
 	public void testDeletePolicy() throws BusinessException{
 		Policy p = new Policy(Policies.FORBIDDEN);
 		policyRepository.create(p);
-		Assert.assertNotNull(p.getId());
+		Assertions.assertNotNull(p.getId());
 		Integer origSize = policyRepository.findAll().size();
 		
 		showContent();
 		
 		policyRepository.delete(policyRepository.findById(p.getId()));
-		Assert.assertEquals(origSize - 1, policyRepository.findAll().size());
+		Assertions.assertEquals(origSize - 1, policyRepository.findAll().size());
 	}
 	
 	@Test
@@ -107,10 +114,10 @@ public class PolicyRepositoryImplTest  extends AbstractTransactionalJUnit4Spring
 		
 		showContent();
 		
-		Assert.assertTrue( policyRepository.findAll().size() >= 3);
-		Assert.assertEquals(false, policyRepository.findById(p.getId()).getStatus());
-		Assert.assertEquals(p2.getDefaultStatus(), policyRepository.findById(p2.getId()).getStatus());
-		Assert.assertEquals(true, policyRepository.findById(p3.getId()).getStatus());
+		Assertions.assertTrue( policyRepository.findAll().size() >= 3);
+		Assertions.assertEquals(false, policyRepository.findById(p.getId()).getStatus());
+		Assertions.assertEquals(p2.getDefaultStatus(), policyRepository.findById(p2.getId()).getStatus());
+		Assertions.assertEquals(true, policyRepository.findById(p3.getId()).getStatus());
 		
 	}
 	
@@ -120,14 +127,14 @@ public class PolicyRepositoryImplTest  extends AbstractTransactionalJUnit4Spring
 		Policy p2 = new Policy(Policies.FORBIDDEN);
 		p2.setStatus(true);
 		p2.applyConsistency();
-		Assert.assertTrue(p1.businessEquals(p2));
+		Assertions.assertTrue(p1.businessEquals(p2));
 	}
 	@Test
 	public void testEqualPolicy2() throws BusinessException{
 		Policy p1 = new Policy(Policies.MANDATORY);
 		Policy p2 = new Policy(Policies.MANDATORY);
 		p2.setStatus(false);
-		Assert.assertTrue(p1.businessEquals(p2));
+		Assertions.assertTrue(p1.businessEquals(p2));
 	}
 	@Test
 	public void testEqualPolicy3() throws BusinessException{
@@ -135,7 +142,7 @@ public class PolicyRepositoryImplTest  extends AbstractTransactionalJUnit4Spring
 		Policy p2 = new Policy(Policies.ALLOWED);
 		p2.setStatus(true);
 		// Policies.ALLOWED default status is false
-		Assert.assertFalse(p1.businessEquals(p2));
+		Assertions.assertFalse(p1.businessEquals(p2));
 	}
 	@Test
 	public void testEqualPolicy4() throws BusinessException{
@@ -143,20 +150,20 @@ public class PolicyRepositoryImplTest  extends AbstractTransactionalJUnit4Spring
 		Policy p2 = new Policy(Policies.ALLOWED);
 		p2.setStatus(false);
 		// Policies.ALLOWED default status is false
-		Assert.assertTrue(p1.businessEquals(p2));
+		Assertions.assertTrue(p1.businessEquals(p2));
 	}
 	@Test
 	public void testEqualPolicy5() throws BusinessException{
 		Policy p1 = new Policy(Policies.ALLOWED);
 		Policy p2 = new Policy(Policies.ALLOWED);
 		p2.setPolicy(Policies.MANDATORY);
-		Assert.assertFalse(p1.businessEquals(p2));
+		Assertions.assertFalse(p1.businessEquals(p2));
 	}
 	@Test
 	public void testEqualPolicy6() throws BusinessException{
 		Policy p1 = new Policy(Policies.ALLOWED);
 		Policy p2 = new Policy(Policies.ALLOWED);
 		p2.setPolicy(Policies.FORBIDDEN);
-		Assert.assertFalse(p1.businessEquals(p2));
+		Assertions.assertFalse(p1.businessEquals(p2));
 	}
 }

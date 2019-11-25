@@ -35,10 +35,11 @@ package org.linagora.linshare.service;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowAllDomain;
@@ -57,9 +58,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-repository.xml",
@@ -68,7 +71,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
-public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTests{
+public class DomainPolicyServiceImplTest {
 	
 	private static Logger logger = LoggerFactory.getLogger(DomainPolicyServiceImplTest.class);
 	
@@ -89,7 +92,7 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 	private int CST_TOTAL_DOMAIN=9;
 	
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
@@ -163,7 +166,7 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -191,22 +194,22 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 		authorizedSubDomain = domainPolicyService.getAuthorizedSubDomain(t1);
 		printAuthorizedDomain(authorizedSubDomain,t1);
 		// 3 sub domains.
-		Assert.assertEquals(3, authorizedSubDomain.size());
+		Assertions.assertEquals(3, authorizedSubDomain.size());
 		
 		authorizedSubDomain = domainPolicyService.getAuthorizedSubDomain(s1);
 		printAuthorizedDomain(authorizedSubDomain,s1);
 		// no sub domains
-		Assert.assertEquals(0, authorizedSubDomain.size());
+		Assertions.assertEquals(0, authorizedSubDomain.size());
 
 		authorizedSubDomain = domainPolicyService.getAuthorizedSubDomain(t2);
 		printAuthorizedDomain(authorizedSubDomain,t2);
 		// sub domain communication not allowed : 0
-		Assert.assertEquals(0, authorizedSubDomain.size());
+		Assertions.assertEquals(0, authorizedSubDomain.size());
 		
 		authorizedSubDomain = domainPolicyService.getAuthorizedSubDomain(s4);
 		printAuthorizedDomain(authorizedSubDomain,s4);
 		// no sub domains
-		Assert.assertEquals(0, authorizedSubDomain.size());
+		Assertions.assertEquals(0, authorizedSubDomain.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
@@ -215,10 +218,10 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 	public void testIsAuthorizedToCommunicateWithItSelf() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		Assert.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItSelf(t1));
-		Assert.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItSelf(s1));
-		Assert.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItSelf(t2));
-		Assert.assertFalse(domainPolicyService.isAuthorizedToCommunicateWithItSelf(s4));
+		Assertions.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItSelf(t1));
+		Assertions.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItSelf(s1));
+		Assertions.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItSelf(t2));
+		Assertions.assertFalse(domainPolicyService.isAuthorizedToCommunicateWithItSelf(s4));
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
@@ -227,10 +230,10 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 	public void testIsAuthorizedToCommunicateWithItsParent() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		Assert.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItsParent(t1));
-		Assert.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItsParent(s1));
-		Assert.assertFalse(domainPolicyService.isAuthorizedToCommunicateWithItsParent(t2));
-		Assert.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItsParent(s4));
+		Assertions.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItsParent(t1));
+		Assertions.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItsParent(s1));
+		Assertions.assertFalse(domainPolicyService.isAuthorizedToCommunicateWithItsParent(t2));
+		Assertions.assertTrue(domainPolicyService.isAuthorizedToCommunicateWithItsParent(s4));
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
@@ -246,12 +249,12 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 		authorizedSubDomain = domainPolicyService.getAuthorizedSibblingDomain(t1);
 		printAuthorizedDomain(authorizedSubDomain,t1);
 		// 2 siblings.
-		Assert.assertEquals(2, authorizedSubDomain.size());
+		Assertions.assertEquals(2, authorizedSubDomain.size());
 		
 		authorizedSubDomain = domainPolicyService.getAuthorizedSibblingDomain(s1);
 		printAuthorizedDomain(authorizedSubDomain,s1);
 		// 3 siblings
-		Assert.assertEquals(3, authorizedSubDomain.size());
+		Assertions.assertEquals(3, authorizedSubDomain.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 
 
@@ -266,12 +269,12 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 		authorizedSubDomain = domainPolicyService.getAuthorizedSibblingDomain(t2);
 		printAuthorizedDomain(authorizedSubDomain,t2);
 		// 2 siblings, but communication with itself only : 1
-		Assert.assertEquals(1, authorizedSubDomain.size());
+		Assertions.assertEquals(1, authorizedSubDomain.size());
 		
 		authorizedSubDomain = domainPolicyService.getAuthorizedSibblingDomain(s4);
 		printAuthorizedDomain(authorizedSubDomain,s4);
 		// 3 siblings, but communication with only top domain t2: 0
-		Assert.assertEquals(0, authorizedSubDomain.size());
+		Assertions.assertEquals(0, authorizedSubDomain.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
@@ -283,20 +286,20 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 		List<AbstractDomain> authorizedSubDomain;
 		
 		authorizedSubDomain = domainPolicyService.getAllAuthorizedDomain(rootDomain);
-		Assert.assertEquals(CST_TOTAL_DOMAIN, authorizedSubDomain.size());
+		Assertions.assertEquals(CST_TOTAL_DOMAIN, authorizedSubDomain.size());
 		
 		authorizedSubDomain = domainPolicyService.getAllAuthorizedDomain(t1);
-		Assert.assertEquals(CST_TOTAL_DOMAIN, authorizedSubDomain.size());
+		Assertions.assertEquals(CST_TOTAL_DOMAIN, authorizedSubDomain.size());
 		
 
 		authorizedSubDomain = domainPolicyService.getAllAuthorizedDomain(s1);
-		Assert.assertEquals(CST_TOTAL_DOMAIN, authorizedSubDomain.size());
+		Assertions.assertEquals(CST_TOTAL_DOMAIN, authorizedSubDomain.size());
 		
 		authorizedSubDomain = domainPolicyService.getAllAuthorizedDomain(t2);
-		Assert.assertEquals(1, authorizedSubDomain.size());
+		Assertions.assertEquals(1, authorizedSubDomain.size());
 		
 		authorizedSubDomain = domainPolicyService.getAllAuthorizedDomain(s4);
-		Assert.assertEquals(1, authorizedSubDomain.size());
+		Assertions.assertEquals(1, authorizedSubDomain.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}

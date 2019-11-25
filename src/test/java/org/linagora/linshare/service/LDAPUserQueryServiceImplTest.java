@@ -66,7 +66,8 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
 @Transactional
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -158,7 +159,7 @@ public class LDAPUserQueryServiceImplTest {
 				false);
 	}
 
-//	@Before
+//	@BeforeEach
 	public void setUp2() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		

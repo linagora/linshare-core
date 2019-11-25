@@ -55,7 +55,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import com.google.common.collect.Lists;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { 
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-fongo.xml",
@@ -67,8 +68,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class LinShareJobBeanTest extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class LinShareJobBeanTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(LinShareJobBeanTest.class);

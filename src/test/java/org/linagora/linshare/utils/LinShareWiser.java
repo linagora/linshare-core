@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +115,7 @@ public class LinShareWiser extends Wiser {
 					findErrors.addAll(testMailGenerate(null, subject));
 				}
 			} catch (MessagingException e) {
-				Assert.assertTrue(false);
+				Assertions.assertTrue(false);
 			}
 		}
 		if (!findErrors.isEmpty()) {
@@ -124,6 +124,6 @@ public class LinShareWiser extends Wiser {
 				logger.error(result.toString());
 			}
 		}
-		Assert.assertTrue(findErrors.isEmpty());
+		Assertions.assertTrue(findErrors.isEmpty());
 	}
 }

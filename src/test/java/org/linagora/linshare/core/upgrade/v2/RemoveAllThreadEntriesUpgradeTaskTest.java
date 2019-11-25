@@ -34,14 +34,17 @@
 
 package org.linagora.linshare.core.upgrade.v2;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.repository.DocumentRepository;
@@ -51,11 +54,18 @@ import org.linagora.linshare.core.upgrade.v2_1.RemoveAllThreadEntriesUpgradeTask
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.linagora.linshare.utils.LoggerParent;
 
 import com.google.common.collect.Lists;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({
+	"/import-test-thread-entry.sql" })
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-fongo.xml",
@@ -68,7 +78,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-upgradeTask.xml" })
-public class RemoveAllThreadEntriesUpgradeTaskTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class RemoveAllThreadEntriesUpgradeTaskTest extends LoggerParent {
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -85,14 +95,13 @@ public class RemoveAllThreadEntriesUpgradeTaskTest extends AbstractTransactional
 	private RemoveAllThreadEntriesUpgradeTaskImpl removeAllThreadEntriesUpgradeTask;
 
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-test-thread-entry.sql", false);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -100,13 +109,13 @@ public class RemoveAllThreadEntriesUpgradeTaskTest extends AbstractTransactional
 
 	@Test
 	public void removeAllThreadEntriesTest() throws IOException {
-		assertEquals(threadEntryRepository.findAll().size(), 3);
-		assertEquals(documentrepository.findAll().size(), 3);
+		Assertions.assertEquals(threadEntryRepository.findAll().size(), 3);
+		Assertions.assertEquals(documentrepository.findAll().size(), 3);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(removeAllThreadEntriesUpgradeTask);
-		assertTrue("At least one batch failed.", batchRunner.execute(batches));
-		assertEquals(threadEntryRepository.findAll().size(), 0);
-		assertEquals(documentrepository.findAll().size(), 3);
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
+		Assertions.assertEquals(threadEntryRepository.findAll().size(), 0);
+		Assertions.assertEquals(documentrepository.findAll().size(), 3);
 	}
 
 }

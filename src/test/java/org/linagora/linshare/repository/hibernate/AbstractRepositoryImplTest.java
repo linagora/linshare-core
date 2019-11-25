@@ -33,15 +33,16 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.TransientObjectException;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractRepository;
@@ -52,21 +53,21 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
  * @param T entity type.
  */
 public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactionalJUnit4SpringContextTests {
-
+	
     private T entity;
 
     @Test
     public void testCreate() throws Exception {
-        entity = getCompleteEntity();
-        int count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
-        assertEquals("There is already a same entity in database", 0, count);
+		entity = getCompleteEntity();
+		int count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
+		assertEquals(0, count, "There is already a same entity in database");
 
-        T result = getAbstractRepository().create(entity);
-        getSessionFactory().getCurrentSession().flush();
-        assertEquals(entity, result);
+		T result = getAbstractRepository().create(entity);
+		getSessionFactory().getCurrentSession().flush();
+		assertEquals(entity, result);
 
-        count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
-        assertEquals("The entity should now exist in database", 1, count);
+		count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
+		assertEquals(1, count, "The entity should now exist in database");
     }
 
     @Test
@@ -81,9 +82,11 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
         fail("should have thrown an exception");
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void testCreateIllegalArgument() throws Exception {
-        getAbstractRepository().create(null);
+    @Test
+	public void testCreateIllegalArgument() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			getAbstractRepository().create(null);
+		});
     }
 
     @Test
@@ -96,15 +99,19 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
         assertEquals(entity, result);
     }
 
-    @Test(expected=TransientObjectException.class)
-    public void testLoadTransient() throws Exception {
-        getAbstractRepository().load(getCompleteEntity());
+    @Test
+    public void testLoadTransient() {
+		Assertions.assertThrows(TransientObjectException.class, () -> {
+			getAbstractRepository().load(getCompleteEntity());
+		});
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void testLoadIllegalArgument() throws Exception {
-        getAbstractRepository().load(null);
-    }
+	@Test
+	public void testLoadIllegalArgument() throws Exception {
+		Assertions.assertThrows(TransientObjectException.class, () -> {
+			getAbstractRepository().load(null);
+		});
+	}
 
     @Test
     public void testDelete() throws Exception {
@@ -118,9 +125,11 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
         assertEquals(0, count);
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void testDeleteIllegalArgument() throws Exception {
-        getAbstractRepository().delete(null);
+    @Test
+    public void testDeleteIllegalArgument(){
+    	Assertions.assertThrows(IllegalArgumentException.class, () -> {
+    		getAbstractRepository().delete(null);
+		});
     }
 
     @Test
@@ -138,10 +147,12 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
         assertEquals(1, count);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testUpdateIllegalArgument() throws Exception {
-        T nullEntity = null;
-        getAbstractRepository().update(nullEntity);
+    	Assertions.assertThrows(IllegalArgumentException.class, () -> {
+    		T nullEntity = null;
+    		getAbstractRepository().update(nullEntity);
+		});
     }
 
     @Test

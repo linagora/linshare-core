@@ -36,10 +36,11 @@ package org.linagora.linshare.batches;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -48,10 +49,16 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.linagora.linshare.utils.LoggerParent;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-operationHistory.sql",
+	"/import-tests-quota.sql"})
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
@@ -68,7 +75,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-scheduler.xml",
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		})
-public class ComputeSubDomainsQuotaBatchTest extends AbstractTransactionalJUnit4SpringContextTests{
+public class ComputeSubDomainsQuotaBatchTest extends LoggerParent{
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -77,15 +84,13 @@ public class ComputeSubDomainsQuotaBatchTest extends AbstractTransactionalJUnit4
 	@Qualifier("computeSubDomainQuotaBatch")
 	private GenericBatch computeSubDomainQuotaBatch;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-operationHistory.sql", false);
-		this.executeSqlScript("import-tests-quota.sql", false);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -95,6 +100,6 @@ public class ComputeSubDomainsQuotaBatchTest extends AbstractTransactionalJUnit4
 	public void testBatch() throws BusinessException, JobExecutionException {
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(computeSubDomainQuotaBatch);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 	}
 }

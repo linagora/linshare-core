@@ -78,7 +78,7 @@ public class TestSearch extends AbstractJUnit4SpringContextTests{
 	private List<String> documents;
 	
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		documents=new ArrayList<String>();
 		login="root@localhost.localdomain";
@@ -109,7 +109,7 @@ public class TestSearch extends AbstractJUnit4SpringContextTests{
 	public void testSearchByUser(){
 		for(DocumentVo document: searchDocumentFacade.retrieveDocument(userVo) ){
 			if(!documents.contains(document.getFileName())){
-				Assert.fail();
+				Assertions.fail();
 			}
 		}
 	}
@@ -120,14 +120,14 @@ public class TestSearch extends AbstractJUnit4SpringContextTests{
 		SearchDocumentCriterion searchDocumentCriterion=new SearchDocumentCriterion(userVo,documentJack.getName(),null,null,null,null,null,null,null,null,DocumentType.BOTH);
 		for(DocumentVo document: searchDocumentFacade.retrieveDocumentContainsCriterion(searchDocumentCriterion) ){
 			if(!documents.contains(document.getFileName())){
-				Assert.fail();
+				Assertions.fail();
 			}
 		}
-		Assert.assertTrue(true);
+		Assertions.assertTrue(true);
 	}
 	
 	
-	@After
+	@AfterEach
 	public void tearDown() throws Exception{
 			documentRepository.delete(documentLin);
 			fileRepository.removeFileByUUID(documentLin.getIdentifier());
