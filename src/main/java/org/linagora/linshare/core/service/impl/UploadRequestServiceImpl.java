@@ -232,7 +232,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		if (res.getEnableNotification()) {
 			for (UploadRequestUrl urUrl : res.getUploadRequestURLs()) {
-				EmailContext context = new UploadRequestUpdateSettingsEmailContext((User) res.getUploadRequestGroup().getOwner(), urUrl, res, object);
+				EmailContext context = new UploadRequestUpdateSettingsEmailContext((User) res.getUploadRequestGroup().getOwner(), urUrl, res, uploadRequest);
 				mails.add(mailBuildingService.build(context));
 			}
 			notifierService.sendNotification(mails);
