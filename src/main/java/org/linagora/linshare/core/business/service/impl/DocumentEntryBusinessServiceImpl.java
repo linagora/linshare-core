@@ -177,6 +177,10 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 	@Override
 	public InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry, ThumbnailType kind) {
 		Document doc = documentRepository.findByUuid(entry.getDocumentUuid());
+		if (doc == null) {
+			logger.error("can not find document entity with uuid : {}", entry.getDocumentUuid());
+			return null;
+		}
 		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnails();
 		FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
 		if (thumbnailMap.containsKey(kind)) {
@@ -379,8 +383,12 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 	public InputStream getDocumentStream(WorkGroupDocument entry) {
 		String UUID = entry.getDocumentUuid();
 		if (UUID!=null && UUID.length()>0) {
+			logger.debug("retrieving document from fileDataStore : " + UUID);
 			Document document = documentRepository.findByUuid(UUID);
-			logger.debug("retrieve from fileDataStore : " + UUID);
+			if (document == null) {
+				logger.error("Can not retrieve document from fileDataStore : " + UUID);
+				return null;
+			}
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
 			InputStream stream = fileDataStore.get(metadata);
 			return stream;
