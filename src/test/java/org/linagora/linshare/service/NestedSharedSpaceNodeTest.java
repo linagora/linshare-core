@@ -302,7 +302,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 				new SharedSpaceAccount((User) justin));
 		// Check Justin is reader in the workgroup and the sharedSpaceNode
 		Assert.assertThat(justinMember.getRole().getUuid(), CoreMatchers.is(reader.getUuid()));
-		Assert.assertThat(justinMember.isNested(), CoreMatchers.is(false));
+		Assert.assertThat(justinMember.isNested(), CoreMatchers.is(true));
 		Assert.assertThat(expectedNode.getParentUuid(), CoreMatchers.is(drive.getUuid()));
 		List<SharedSpaceNodeNested> justinNodes = ssMemberService.findAllByAccount(justin, justin, justin.getLsUuid(), false);
 		Assert.assertThat("ERROR : Justin can see more nodes that allowed", justinNodes.size(), CoreMatchers.is(1));
