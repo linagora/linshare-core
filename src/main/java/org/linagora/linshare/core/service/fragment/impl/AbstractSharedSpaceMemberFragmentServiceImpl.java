@@ -97,7 +97,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		Validate.notNull(node, "Node uuid must be set.");
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				null, node);
-		if (!memberExistsInNode(account.getUuid(), node.getUuid())) {
+		if (memberExistsInNode(account.getUuid(), node.getUuid())) {
 			String message = String.format(
 					"The account with the UUID : %s is already a member of the node with the uuid : %s",
 					account.getUuid(), node.getUuid());
@@ -106,7 +106,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 	}
 
 	protected boolean memberExistsInNode(String accountUuid, String nodeUuid) {
-		return businessService.findByAccountAndNode(accountUuid, nodeUuid) == null;
+		return businessService.findByAccountAndNode(accountUuid, nodeUuid) != null;
 	}
 
 	protected void notify(EmailContext context) {
