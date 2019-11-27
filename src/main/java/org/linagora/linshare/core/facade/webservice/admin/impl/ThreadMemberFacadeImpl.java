@@ -109,7 +109,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean admin = dto.isAdmin();
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		User user = userService.findByLsUuid(dto.getUserUuid());
-		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser, dto.getUserUuid(),
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByAccountUuid(authUser, authUser, dto.getUserUuid(),
 				dto.getThreadUuid());
 		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
 		SharedSpaceMember updated = ssMemberService.update(authUser, authUser, ssMemberToUpdate);
@@ -123,7 +123,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
 		User user = userService.findByLsUuid(dto.getUserUuid());
-		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authUser, authUser, dto.getUserUuid(),
+		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByAccountUuid(authUser, authUser, dto.getUserUuid(),
 				dto.getThreadUuid());
 		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid());
 		return new WorkGroupMemberDto(deleted, user);

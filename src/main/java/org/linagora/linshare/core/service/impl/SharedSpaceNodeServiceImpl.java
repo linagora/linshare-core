@@ -144,7 +144,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	@Override
 	public SharedSpaceNode findWithRole(Account authUser, Account actor, String uuid) throws BusinessException {
 		SharedSpaceNode node = find(authUser, actor, uuid);
-		SharedSpaceMember member = memberService.findMemberByUuid(authUser, actor, actor.getLsUuid(), uuid);
+		SharedSpaceMember member = memberService.findMemberByAccountUuid(authUser, actor, actor.getLsUuid(), uuid);
 		node.setRole(new GenericLightEntity(member.getRole()));
 		return node;
 	}
@@ -238,7 +238,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		if (Strings.isNullOrEmpty(accountUuid)) {
 			members = memberService.findAll(authUser, actor, sharedSpaceNodeUuid);
 		} else {
-			members.add(memberService.findMemberByUuid(authUser, actor, accountUuid, find(authUser, actor, sharedSpaceNodeUuid).getUuid()));
+			members.add(memberService.findMemberByAccountUuid(authUser, actor, accountUuid, find(authUser, actor, sharedSpaceNodeUuid).getUuid()));
 		}
 		return members;
 	}

@@ -160,7 +160,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
 		Assert.assertNotNull("Drive not created", drive);
-		SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) ssMemberService.findMemberByUuid(john, john,
+		SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) ssMemberService.findMemberByAccountUuid(john, john,
 				john.getLsUuid(), drive.getUuid());
 		// Check John got admin role on the drive
 		Assert.assertThat(driveMember.getRole().getUuid(), CoreMatchers.is(adminDriveRole.getUuid()));
@@ -168,7 +168,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		SharedSpaceNode node = new SharedSpaceNode("workgroup DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
 		SharedSpaceNode expectedNode = ssNodeService.create(john, john, node);
 		Assert.assertNotNull("node not created", expectedNode);
-		SharedSpaceMember workgroupMember = ssMemberService.findMemberByUuid(john, john, john.getLsUuid(),
+		SharedSpaceMember workgroupMember = ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(),
 				expectedNode.getUuid());
 		// Check John got the default role for the workgroups
 		Assert.assertThat(workgroupMember.getRole().getUuid(), CoreMatchers.is(adminWorkgroupRole.getUuid()));
@@ -212,7 +212,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 				NodeType.WORK_GROUP);
 		// Create a workgroup with Jane having the creator role
 		SharedSpaceNode expectedNode = ssNodeService.create(jane, jane, workGroupInsideDrive);
-		SharedSpaceMember workgroupMember = ssMemberService.findMemberByUuid(jane, jane, jane.getLsUuid(),
+		SharedSpaceMember workgroupMember = ssMemberService.findMemberByAccountUuid(jane, jane, jane.getLsUuid(),
 				expectedNode.getUuid());
 		// Check Jane is admin the default role for the workgroups
 		Assert.assertThat(workgroupMember.getRole().getUuid(), CoreMatchers.is(adminWorkgroupRole.getUuid()));
@@ -229,7 +229,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
 		Assert.assertNotNull("Drive not created", drive);
-		SharedSpaceMember driveMember = ssMemberService.findMemberByUuid(john, john, john.getLsUuid(), drive.getUuid());
+		SharedSpaceMember driveMember = ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(), drive.getUuid());
 		// Check John got admin role on the drive
 		Assert.assertThat(adminDriveRole.getUuid(), CoreMatchers.is(driveMember.getRole().getUuid()));
 		// Create 2 workgroups inside a drive as John
@@ -327,7 +327,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 				CoreMatchers.is(contributor.getUuid()));
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
 		for (SharedSpaceNodeNested sharedSpaceNodeNested : workgroupsInsideDrive) {
-			SharedSpaceMember janeWorkGroupMember = ssMemberService.findMemberByUuid(jane, jane, jane.getLsUuid(), sharedSpaceNodeNested.getUuid());
+			SharedSpaceMember janeWorkGroupMember = ssMemberService.findMemberByAccountUuid(jane, jane, jane.getLsUuid(), sharedSpaceNodeNested.getUuid());
 			Assert.assertThat("ERROR : Jane's role should be updated", janeWorkGroupMember.getRole().getUuid(),
 					CoreMatchers.is(reader.getUuid()));
 		}
@@ -352,7 +352,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 				CoreMatchers.is(contributor.getUuid()));
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
 		for (SharedSpaceNodeNested sharedSpaceNodeNested : workgroupsInsideDrive) {
-			SharedSpaceMember janeWorkGroupMember = ssMemberService.findMemberByUuid(jane, jane, jane.getLsUuid(), sharedSpaceNodeNested.getUuid());
+			SharedSpaceMember janeWorkGroupMember = ssMemberService.findMemberByAccountUuid(jane, jane, jane.getLsUuid(), sharedSpaceNodeNested.getUuid());
 			Assert.assertThat("ERROR : Jane's role should be updated", janeWorkGroupMember.getRole().getUuid(),
 					CoreMatchers.is(contributor.getUuid()));
 		}

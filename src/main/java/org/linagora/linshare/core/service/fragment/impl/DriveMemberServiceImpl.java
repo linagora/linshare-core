@@ -89,10 +89,10 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
 			SharedSpaceMemberContext context, SharedSpaceAccount account) throws BusinessException {
 		checkCreateMemberPermission(authUser, actor, node, context, account);
-		return createWithoutCheckPermission(authUser, actor, node, context.getRole(), context.getNestedRole(), account);
+		return create(authUser, actor, node, context.getRole(), context.getNestedRole(), account);
 	}
 
-	protected SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
+	protected SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
 			SharedSpaceRole role, SharedSpaceRole nestedRole, SharedSpaceAccount account) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(role, "Role must be set.");
@@ -108,7 +108,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService.findByParentUuidAndType(node.getUuid());
 		List<SharedSpaceMember> nestedMembers = Lists.newArrayList();
 		for (SharedSpaceNode wgNode : nestedWorkgroups) {
-			if (checkMemberNotInNode(account.getUuid(), wgNode.getUuid())) {
+			if (memberExistsInNode(account.getUuid(), wgNode.getUuid())) {
 				SharedSpaceMember wgMember = createWithoutCheckPermission(authUser, actor, wgNode, nestedRole, account);
 				nestedMembers.add(wgMember);
 			}

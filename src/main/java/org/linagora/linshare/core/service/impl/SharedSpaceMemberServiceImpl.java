@@ -127,7 +127,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
+	public SharedSpaceMember findMemberByAccountUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
 			throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notEmpty(userUuid, "userUuid must be set.");
@@ -219,7 +219,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		} catch (BusinessException e) {
 			Validate.notNull(memberToUpdate.getAccount(), "You must set the account.");
 			LOGGER.info("This is just a fallback to ensure old API usage : {}", e.getMessage());
-			foundMemberToUpdate = findMemberByUuid(authUser, actor, memberToUpdate.getAccount().getUuid(),
+			foundMemberToUpdate = findMemberByAccountUuid(authUser, actor, memberToUpdate.getAccount().getUuid(),
 					memberToUpdate.getNode().getUuid());
 		}
 		SharedSpaceMemberFragmentService service = getService(foundMemberToUpdate.getNode().getNodeType());

@@ -93,7 +93,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(userUuid, "Missing required user uuid");
 		User authUser = checkAuthentication();
-		SharedSpaceMember found = ssMemberService.findMemberByUuid(authUser, authUser, userUuid, threadUuid);
+		SharedSpaceMember found = ssMemberService.findMemberByAccountUuid(authUser, authUser, userUuid, threadUuid);
 		return new WorkGroupMemberDto(found, userService.findByLsUuid(userUuid));
 	}
 
@@ -119,7 +119,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User authUser = checkAuthentication();
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, threadMember.isAdmin());
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
-		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser,
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByAccountUuid(authUser, authUser,
 				threadMember.getUserUuid(), threadUuid);
 		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
 		SharedSpaceMember updated = ssMemberService.update(authUser, authUser, ssMemberToUpdate);
@@ -134,7 +134,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User user = userService.findByLsUuid(userUuid);
 		SharedSpaceNode nodeOfMemberToDelete = new SharedSpaceNode();
 		nodeOfMemberToDelete.setUuid(threadUuid);
-		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authUser, authUser, userUuid, threadUuid);
+		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByAccountUuid(authUser, authUser, userUuid, threadUuid);
 		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid());
 		return new WorkGroupMemberDto(deleted, user);
 	}

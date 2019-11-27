@@ -48,7 +48,7 @@ public interface SharedSpaceMemberService extends SharedSpaceMemberFragmentServi
 
 	SharedSpaceMember find(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
+	SharedSpaceMember findMemberByAccountUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
 			throws BusinessException;
 
 	List<SharedSpaceMember> findAll(Account authUser, Account actor, String shareSpaceNodeUuid)

@@ -153,13 +153,13 @@ public class SharedSpaceMemberDriveServiceTest extends AbstractTransactionalJUni
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
 		Assert.assertNotNull("Drive not created", drive);
-		SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) ssMemberService.findMemberByUuid(john, john,
+		SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) ssMemberService.findMemberByAccountUuid(john, john,
 				john.getLsUuid(), drive.getUuid());
 		// Create 1 workgroup inside a drive as John
-		SharedSpaceNode node = new SharedSpaceNode("workgroup DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
-		SharedSpaceNode expectedNode = ssNodeService.create(john, john, node);
+		SharedSpaceNode nestedWorkgroup = new SharedSpaceNode("workgroup DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
+		SharedSpaceNode expectedNode = ssNodeService.create(john, john, nestedWorkgroup);
 		Assert.assertNotNull("node not created", expectedNode);
-		SharedSpaceMember workgroupMember = ssMemberService.findMemberByUuid(john, john, john.getLsUuid(),
+		SharedSpaceMember workgroupMember = ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(),
 				expectedNode.getUuid());
 		// Check John got the default role for the workgroups
 		Assert.assertThat(workgroupMember.getRole().getUuid(), CoreMatchers.is(adminWorkgroupRole.getUuid()));
@@ -170,7 +170,7 @@ public class SharedSpaceMemberDriveServiceTest extends AbstractTransactionalJUni
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(creatorDriveRole, reader);
 		SharedSpaceMemberDrive addedDriveMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
 				context, new SharedSpaceAccount((User) jane));
-		workgroupMember = ssMemberService.findMemberByUuid(jane, jane, jane.getLsUuid(),
+		workgroupMember = ssMemberService.findMemberByAccountUuid(jane, jane, jane.getLsUuid(),
 				expectedNode.getUuid());
 		Assert.assertNotNull("Member not added to the drive", addedDriveMember);
 		Assert.assertNotNull("Member not added to the workgroup", workgroupMember);
@@ -184,7 +184,7 @@ public class SharedSpaceMemberDriveServiceTest extends AbstractTransactionalJUni
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
 		Assert.assertNotNull("Drive not created", drive);
-		ssMemberService.findMemberByUuid(john, john, john.getLsUuid(), drive.getUuid());
+		ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(), drive.getUuid());
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(adminDriveRole, adminWorkgroupRole);
 		// Create 1 workgroup inside a drive as John
 		SharedSpaceNode node = new SharedSpaceNode("workgroup DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
@@ -214,13 +214,13 @@ public class SharedSpaceMemberDriveServiceTest extends AbstractTransactionalJUni
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
 		Assert.assertNotNull("Drive not created", drive);
-		SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) ssMemberService.findMemberByUuid(john, john,
+		SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) ssMemberService.findMemberByAccountUuid(john, john,
 				john.getLsUuid(), drive.getUuid());
 		// Create 1 workgroup inside a drive as John
 		SharedSpaceNode node = new SharedSpaceNode("workgroup DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
 		SharedSpaceNode expectedNode = ssNodeService.create(john, john, node);
 		Assert.assertNotNull("node not created", expectedNode);
-		SharedSpaceMember workgroupMember = ssMemberService.findMemberByUuid(john, john, john.getLsUuid(),
+		SharedSpaceMember workgroupMember = ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(),
 				expectedNode.getUuid());
 		// Check John got the default role for the workgroups
 		Assert.assertThat(workgroupMember.getRole().getUuid(), CoreMatchers.is(adminWorkgroupRole.getUuid()));
@@ -231,13 +231,12 @@ public class SharedSpaceMemberDriveServiceTest extends AbstractTransactionalJUni
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(adminDriveRole, adminWorkgroupRole);
 		SharedSpaceMemberDrive addedDriveMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
 				context, new SharedSpaceAccount((User) jane));
-		workgroupMember = ssMemberService.findMemberByUuid(jane, jane, jane.getLsUuid(), expectedNode.getUuid());
 		Assert.assertNotNull("Member not added to the drive", addedDriveMember);
 		Assert.assertNotNull("Member not added to the workgroup", workgroupMember);
 		// Delete member on the Drive
 		ssMemberDriveService.delete(john, john, addedDriveMember.getUuid());
 		try {
-			ssMemberService.findMemberByUuid(john, john, jane.getLsUuid(), addedDriveMember.getUuid());
+			ssMemberService.findMemberByAccountUuid(john, john, jane.getLsUuid(), addedDriveMember.getUuid());
 		} catch (BusinessException ex) {
 			Assert.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, ex.getErrorCode());
 		}

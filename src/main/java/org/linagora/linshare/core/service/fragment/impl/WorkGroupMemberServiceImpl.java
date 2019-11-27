@@ -72,14 +72,14 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
 			SharedSpaceMemberContext context, SharedSpaceAccount account) throws BusinessException {
 		checkCreateMemberPermission(authUser, actor, node, context, account);
-		User newMember = userRepository.findByLsUuid(account.getUuid());
-		if (newMember == null) {
+		User user = userRepository.findByLsUuid(account.getUuid());
+		if (user == null) {
 			String message = String.format("The account with the UUID : %s is not existing", account.getUuid());
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, message);
 		}
 		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, context.getRole(), account);
 		if (!actor.getLsUuid().equals(account.getUuid())) {
-			notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
+			notify(new WorkGroupWarnNewMemberEmailContext(member, actor, user));
 		}
 		return member;
 	}

@@ -119,7 +119,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User authActor = checkAuthentication();
 		User actor = getActor(actorUuid);
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
-		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authActor, actor,
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByAccountUuid(authActor, actor,
 				threadMember.getUserUuid(), threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(authActor, threadMember.isAdmin());
 		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
@@ -137,7 +137,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User user = userService.findByLsUuid(userUuid);
 		SharedSpaceNode nodeOfMemberToDelete = new SharedSpaceNode();
 		nodeOfMemberToDelete.setUuid(threadUuid);
-		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authActor, actor, userUuid, threadUuid);
+		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByAccountUuid(authActor, actor, userUuid, threadUuid);
 		SharedSpaceMember deleted = ssMemberService.delete(authActor, actor, ssMemberToDelete.getUuid());
 		return new WorkGroupMemberDto(deleted, user);
 	}

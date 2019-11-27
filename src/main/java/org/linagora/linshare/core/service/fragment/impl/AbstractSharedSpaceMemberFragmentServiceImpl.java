@@ -97,7 +97,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		Validate.notNull(node, "Node uuid must be set.");
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				null, node);
-		if (!checkMemberNotInNode(account.getUuid(), node.getUuid())) {
+		if (!memberExistsInNode(account.getUuid(), node.getUuid())) {
 			String message = String.format(
 					"The account with the UUID : %s is already a member of the node with the uuid : %s",
 					account.getUuid(), node.getUuid());
@@ -105,8 +105,8 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		}
 	}
 
-	protected boolean checkMemberNotInNode(String possibleMemberUuid, String nodeUuid) {
-		return businessService.findByAccountAndNode(possibleMemberUuid, nodeUuid) == null;
+	protected boolean memberExistsInNode(String accountUuid, String nodeUuid) {
+		return businessService.findByAccountAndNode(accountUuid, nodeUuid) == null;
 	}
 
 	protected void notify(EmailContext context) {
@@ -163,8 +163,11 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		SharedSpaceMember memberWg = new SharedSpaceMemberWorkgroup(new SharedSpaceNodeNested(node),
 				new GenericLightEntity(role.getUuid(), role.getName()), account);
 		String parentUuid = node.getParentUuid();
-		boolean isDriveMember = (parentUuid != null) && (!checkMemberNotInNode(account.getUuid(), parentUuid));
-		memberWg.setNested(isDriveMember);
+		/**
+		 * If the member is added to nested workgroup, set the [nested] field to true
+		 */
+		boolean isInNestedWorkgroup = (parentUuid != null) && (!memberExistsInNode(account.getUuid(), node.getUuid()));
+		memberWg.setNested(isInNestedWorkgroup);
 		SharedSpaceMember toAdd = businessService.create(memberWg);
 		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORKGROUP_MEMBER);
 		return toAdd;

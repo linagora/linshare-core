@@ -155,7 +155,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 					User account = userService.findOrCreateUser(user.getMail(), user.getDomainId());
 					SharedSpaceMember member = null;
 					try {
-						member = ssMemberService.findMemberByUuid(authUser, authUser, account.getLsUuid(), threadUuid);
+						member = ssMemberService.findMemberByAccountUuid(authUser, authUser, account.getLsUuid(), threadUuid);
 					} catch (BusinessException e) {
 						logger.debug(String.format("No member found for this account %s and this node %s",
 								account.getAccountRepresentation(), threadUuid), e);
