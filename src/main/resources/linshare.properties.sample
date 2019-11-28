@@ -50,10 +50,6 @@ mail.smtp.starttls.enable=false
 # SSL Mode (If you enable SSL Mode it will override startTls mode)
 mail.smtp.ssl.enable=false
 
-#******************* DATASTORE
-#uncomment this line to encrypt the files
-#linshare.datastore.class=org.linagora.linshare.core.dao.EncDbDataStore
-
 #******************** DATABASE
 ### PostgreSQL
 linshare.db.username=linshare
