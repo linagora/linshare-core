@@ -38,18 +38,13 @@
 			 />
 	</mongo:mongo-client>
 
-	<mongo:mongo-client id="mongobig"
-		host="${linshare.mongo.gridfs.bigfiles.host}"
-		port="${linshare.mongo.gridfs.bigfiles.port}">
-		<mongo:client-options connections-per-host="8"
-			threads-allowed-to-block-for-connection-multiplier="4"
-			connect-timeout="${linshare.mongo.connect.timeout}"
-			max-wait-time="1500"
-			socket-keep-alive="true"
-			socket-timeout="${linshare.mongo.socket.timeout}"
-			write-concern="${linshare.mongo.write.concern}"
-			 />
-	</mongo:mongo-client>
+	<mongo:db-factory id="mongoDbFactory"
+		client-uri="${linshare.mongo.client.uri}"
+		write-concern="${linshare.mongo.write.concern}" />
+
+	<mongo:db-factory id="mongoDbFactoryForFiles"
+		client-uri="${linshare.mongo.gridfs.smallfiles.client.uri}"
+		write-concern="${linshare.mongo.write.concern}" />
 
 	<mongo:repositories base-package="org.linagora.linshare.mongo" />
 
@@ -61,7 +56,7 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
 	</bean>
-	
+
 <!-- 	<bean id="mappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" /> -->
 
 <!-- 	<bean id="mongoEntityInformation" -->
@@ -69,13 +64,7 @@
 <!-- 		<constructor-arg name="mappingContext" ref="mappingContext" /> -->
 <!-- 	</bean> -->
 
-	<mongo:mapping-converter id="converterBigFiles" db-factory-ref="mongoDbFactoryForBigFiles"/>
 	<mongo:mapping-converter id="converterFiles" db-factory-ref="mongoDbFactoryForFiles"/>
-
-	<bean id="gridFsTemplateForBigFiles" class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
-		<constructor-arg ref="mongoDbFactoryForBigFiles" />
-		<constructor-arg ref="converterBigFiles" />
-	</bean>
 	<bean id="gridFsTemplateForSmallFiles" class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
 		<constructor-arg ref="mongoDbFactoryForFiles" />
 		<constructor-arg ref="converterFiles" />

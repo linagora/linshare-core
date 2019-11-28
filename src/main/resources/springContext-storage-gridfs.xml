@@ -1,9 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xsi:schemaLocation=" http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd"
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/data/mongo
+    http://www.springframework.org/schema/data/mongo/spring-mongo-2.0.xsd"
 	profile="gridfs">
+
+	<mongo:mongo-client id="mongobig"
+		host="${linshare.mongo.gridfs.bigfiles.host}"
+		port="${linshare.mongo.gridfs.bigfiles.port}">
+		<mongo:client-options connections-per-host="8"
+			threads-allowed-to-block-for-connection-multiplier="4"
+			connect-timeout="${linshare.mongo.connect.timeout}"
+			max-wait-time="1500"
+			socket-keep-alive="true"
+			socket-timeout="${linshare.mongo.socket.timeout}"
+			write-concern="${linshare.mongo.write.concern}"
+			 />
+	</mongo:mongo-client>
+	<mongo:db-factory id="mongoDbFactoryForBigFiles"
+		client-uri="${linshare.mongo.gridfs.bigfiles.client.uri}"
+		write-concern="${linshare.mongo.write.concern}" />
+
+	<mongo:mapping-converter id="converterBigFiles" db-factory-ref="mongoDbFactoryForBigFiles"/>
+	<bean id="gridFsTemplateForBigFiles" class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
+		<constructor-arg ref="mongoDbFactoryForBigFiles" />
+		<constructor-arg ref="converterBigFiles" />
+	</bean>
 
 	<bean id="fileDataStore"
 		class="org.linagora.linshare.core.dao.impl.DataKindBalancerFileDataStoreImpl">
