@@ -56,7 +56,7 @@ public interface SharedSpaceMemberService extends SharedSpaceMemberFragmentServi
 
 	List<SharedSpaceMember> findByNode(Account authUser, Account actor, String ssnodeUuid);
 
-	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid, boolean withRole);
+	List<SharedSpaceNodeNested> findAllNodesOnTopByAccount(Account authUser, Account actor, String accountUuid, boolean withRole);
 
 	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
 

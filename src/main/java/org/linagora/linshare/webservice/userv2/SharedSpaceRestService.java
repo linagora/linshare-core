@@ -69,7 +69,7 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceMember updateMember(SharedSpaceMember member, String memberUuid, boolean force) throws BusinessException;
 
-	Set<AuditLogEntryUser> findAll(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
+	Set<AuditLogEntryUser> findAllAudits(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate, String nodeUuid);
 
 	List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(String uuid) throws BusinessException;

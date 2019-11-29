@@ -45,7 +45,7 @@ import org.springframework.data.annotation.Transient;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@XmlRootElement(name = "SharedSpaceNodeNested")
+@XmlRootElement(name = "SharedSpace")
 public class SharedSpaceNodeNested {
 
 	protected String uuid;

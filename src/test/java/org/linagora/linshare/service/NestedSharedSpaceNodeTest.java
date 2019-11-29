@@ -290,22 +290,25 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 	public void testAddExternalMemberToWorkgroupsInsideDrive() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// Create a drive as John
-		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
+		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("John Drive", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
-		ssMemberService.create(john, john, drive, new SharedSpaceMemberContext(creatorDriveRole, reader),
-				new SharedSpaceAccount((User) jane));
-		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
-				NodeType.WORK_GROUP);
-		// Create a workgroup with Jane having the creator role
-		SharedSpaceNode expectedNode = ssNodeService.create(jane, jane, workGroupInsideDrive);
-		SharedSpaceMember justinMember = ssMemberService.create(jane, jane, expectedNode, reader,
+		SharedSpaceMemberDrive janeMemberDrive = (SharedSpaceMemberDrive) ssMemberService.create(john, john, drive,
+				new SharedSpaceMemberContext(creatorDriveRole, adminWorkgroupRole), new SharedSpaceAccount((User) jane));
+		Assert.assertEquals("Jane is not added into the drive", janeMemberDrive.getNode().getUuid(), drive.getUuid());
+		SharedSpaceNode nestedWorkgroup = ssNodeService.create(jane, jane,
+				new SharedSpaceNode("Nested_WorkGroup", drive.getUuid(), NodeType.WORK_GROUP));
+		// Add Justin to the nested workgroup [Nested_WorkGroup]
+		SharedSpaceMember justinMemberNestedWg = ssMemberService.create(jane, jane, nestedWorkgroup, reader,
 				new SharedSpaceAccount((User) justin));
-		// Check Justin is reader in the workgroup and the sharedSpaceNode
-		Assert.assertThat(justinMember.getRole().getUuid(), CoreMatchers.is(reader.getUuid()));
-		Assert.assertThat(justinMember.isNested(), CoreMatchers.is(true));
-		Assert.assertThat(expectedNode.getParentUuid(), CoreMatchers.is(drive.getUuid()));
-		List<SharedSpaceNodeNested> justinNodes = ssMemberService.findAllByAccount(justin, justin, justin.getLsUuid(), false);
-		Assert.assertThat("ERROR : Justin can see more nodes that allowed", justinNodes.size(), CoreMatchers.is(1));
+		// Check Justin has reader role in the workgroup
+		Assert.assertThat(justinMemberNestedWg.getRole().getUuid(), CoreMatchers.is(reader.getUuid()));
+		// Check Justin is a member on created NESTED workgroup [Nested_WorkGroup]
+		Assert.assertThat(justinMemberNestedWg.isNested(), CoreMatchers.is(true));
+		Assert.assertThat(nestedWorkgroup.getParentUuid(), CoreMatchers.is(drive.getUuid()));
+		List<SharedSpaceNodeNested> justinNodes = ssMemberService.findAllWorkGroupsInNode(justin, justin,
+				nestedWorkgroup.getParentUuid(), justin.getLsUuid());
+		Assert.assertThat("ERROR : Justin is allowed only to get the node where is added", justinNodes.size(),
+				CoreMatchers.is(1));
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

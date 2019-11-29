@@ -179,19 +179,25 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole) {
-		if (withRole) {
-			List<SharedSpaceMember> members = repository.findByAccountUuidAndNested(accountUuid, false);
-			return members.stream().map(member -> new SharedSpaceNodeNested(member)).collect(Collectors.toList());
-		}
+		List<SharedSpaceNodeNested> nodes = Lists.newArrayList();
 		Aggregation aggregation = Aggregation.newAggregation(
 				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
+				Aggregation.match(Criteria.where("node.parent").is(null)),
 				Aggregation.project("node.uuid",
 						"node.name",
 						"node.nodeType",
 						"node.creationDate",
 						"node.modificationDate"));
-		return mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
-				.getMappedResults();
+		nodes = mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
+		.getMappedResults();
+		if (withRole) {
+			nodes.stream().forEach(n -> n.setRole(
+					/**
+					 * Check for the roles of members in every top shared space node 
+					 */
+					repository.findByAccountAndNode(accountUuid, n.getUuid()).getRole()));
+		}
+		return nodes;
 	}
 
 	@Override

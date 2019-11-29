@@ -92,7 +92,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all shared space nodes.", response = SharedSpaceNodeNested.class)
+	@ApiOperation(value = "Get all shared spaces (Drives and workgroups on the top level).", response = SharedSpaceNodeNested.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
 			@ApiResponse(code = 404, message = "Not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -273,7 +273,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public Set<AuditLogEntryUser> findAll(
+	public Set<AuditLogEntryUser> findAllAudits(
 			@ApiParam(value = "The sharedSpace uuid.", required = true)
 				@PathParam("uuid") String sharedSpaceUuid,
 			@ApiParam(value = "Filter by type of actions..", required = false)

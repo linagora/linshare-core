@@ -160,8 +160,12 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		return businessService.findAllByAccountAndRole(accountUuid, roleUuid);
 	}
 
+	/**
+	 * Get all nested nodes on top level (with no parent) 
+	 * @param withRole boolean if true, return the user role in the node
+	 */
 	@Override
-	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid, boolean withRole) {
+	public List<SharedSpaceNodeNested> findAllNodesOnTopByAccount(Account authUser, Account actor, String accountUuid, boolean withRole) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(accountUuid, "accountUuid must be set.");
 		return businessService.findAllNestedNodeByAccountUuid(accountUuid, withRole);
