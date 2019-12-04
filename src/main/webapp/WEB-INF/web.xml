@@ -69,9 +69,8 @@
 			* gridfs : Using gridfs (mongodb) as file data store.
 			Recommended profile for production is jcloud with Swift.
 			The default profile is jcloud with filesystem for tests purpose.
-		Available mongodb profiles :
-			* mongo : mongo with authentication disable
-			* mongo-auth : mongo with authentication enable
+		Available tests:
+			* tests: this profile is designed to add some extra methods to allow us to do deep API testing from the linshare-core-tests project.
 		Additional profiles :
 			* batches : enable Quartz jobs  (cron tasks).
 		 -->
