@@ -203,7 +203,6 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="uploadRequestEntryService" />
 		<constructor-arg ref="uploadRequestUrlResourceAccessControl" />
-		<constructor-arg ref="logEntryService" />
 	</bean>
 	<bean name="uploadRequestEntryService"
 			class="org.linagora.linshare.core.service.impl.UploadRequestEntryServiceImpl">

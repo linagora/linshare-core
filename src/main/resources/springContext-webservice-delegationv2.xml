@@ -107,10 +107,6 @@
 	<bean id="delegationV2ShareRestService" class="org.linagora.linshare.webservice.delegationv2.impl.ShareRestServiceImpl">
 		<constructor-arg ref="wsDelegationShareFacade" />
 	</bean>
-	<bean id="delegationV2UploadRequestUrlRestService"
-		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestUrlRestServiceImpl">
-		<constructor-arg ref="wsUploadRequestUrlUserFacade" />
-	</bean>
 	<bean id="delegationV2SharedSpaceRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.SharedSpaceRestServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
@@ -145,7 +141,6 @@
 			<ref bean="delegationV2UploadRequestRestService" />	
 			<ref bean="delegationV2UploadRequestEntryRestService" />
 			<ref bean="delegationV2UploadRequestGroupRestService" />
-			<ref bean="delegationV2UploadRequestUrlRestService" />
 			<ref bean="delegationV2SharedSpaceRestService" />
 			<ref bean="delegationV2SharedSpaceNodesLegacyRestService" />
 			<ref bean="delegationV2SharedSpaceRoleRestService" />

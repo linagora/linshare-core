@@ -45,7 +45,4 @@ public interface UploadRequestUrlBusinessService {
 	UploadRequestUrl create(UploadRequest request, Boolean passwordProtected, Contact contact) throws BusinessException;
 
 	UploadRequestUrl update(UploadRequestUrl url) throws BusinessException;
-
-	void delete(UploadRequestUrl url) throws BusinessException;
-
 }

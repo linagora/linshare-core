@@ -57,12 +57,10 @@ import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestCreatedEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileEmailContext;
-import org.linagora.linshare.core.notifications.context.UploadRequestRecipientRemovedEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestUploadedFileEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestUrlResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
@@ -70,7 +68,6 @@ import org.linagora.linshare.core.utils.HashUtils;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestUrlAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.webservice.utils.UploadRequestUtils;
 
 public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, UploadRequestUrl> implements UploadRequestUrlService {
 
@@ -84,23 +81,19 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 
 	private final UploadRequestEntryService uploadRequestEntryService;
 
-	private final LogEntryService logEntryService;
-
 	public UploadRequestUrlServiceImpl(
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
 			final AccountRepository<Account> accountRepository,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestEntryService uploadRequestEntryService,
-			final UploadRequestUrlResourceAccessControl rac,
-			final LogEntryService logEntryService) {
+			final UploadRequestUrlResourceAccessControl rac) {
 		super(rac);
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
 		this.accountRepository = accountRepository;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
-		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -274,30 +267,5 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 					"The current upload request url is in read only mode : "
 							+ requestUrl.getUuid());
 		}
-	}
-
-	@Override
-	public UploadRequestUrl delete(Account authUser, Account actor, String uploadRequestUrlUuid) {
-		Validate.notEmpty(uploadRequestUrlUuid, "uploadRequestUrlUuid is required.");
-		UploadRequestUrl uploadRequestUrl = uploadRequestUrlBusinessService.findByUuid(uploadRequestUrlUuid);
-		Validate.notNull(uploadRequestUrl, "UploadRequestUrl not found.");
-		checkDeletePermission(authUser, actor, UploadRequestUrl.class,
-				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
-		UploadRequestUtils.checkStatusPermission(uploadRequestUrl.getUploadRequest().getStatus(),
-				"You have no rights to delete recipients");
-		Account owner = uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
-		checkDeletePermission(actor, owner, UploadRequestUrl.class,
-				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
-		uploadRequestUrlBusinessService.delete(uploadRequestUrl);
-		if (uploadRequestUrl.getUploadRequest().getEnableNotification()) {
-			EmailContext context = new UploadRequestRecipientRemovedEmailContext((User) owner, uploadRequestUrl,
-					uploadRequestUrl.getUploadRequest());
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail, true);
-		}
-		AuditLogEntryUser log = new UploadRequestUrlAuditLogEntry(new AccountMto(owner), new AccountMto(owner),
-				LogAction.DELETE, AuditLogEntryType.UPLOAD_REQUEST_URL, uploadRequestUrl.getUuid(), uploadRequestUrl);
-		logEntryService.insert(log);
-		return uploadRequestUrl;
 	}
 }

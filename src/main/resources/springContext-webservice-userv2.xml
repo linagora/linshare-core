@@ -145,10 +145,6 @@
 		<constructor-arg ref="wsUploadRequestEntryFacade"/>
 	</bean>
 
-	<bean id="userv2UploadRequestUrlRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestUrlRestServiceImpl">
-		<constructor-arg ref="wsUploadRequestUrlUserFacade" />
-	</bean>
-
 	<bean id="userv2SafeDetailRestService"
 		class="org.linagora.linshare.webservice.userv2.impl.SafeDetailRestServiceImpl">
 		<constructor-arg ref="wsSafeDetailFacade" />
@@ -227,7 +223,6 @@
 			<ref bean="userv2WelcomeMessagesRestService" />
 			<ref bean="userv2UploadRequestGroupRestService" />
 			<ref bean="userv2UploadRequestEntryRestService" />
-			<ref bean="userv2UploadRequestUrlRestService" />
 			<ref bean="userv2SafeDetailRestService" />
 			<ref bean="userv2UploadPropositionExceptionRuleRestService" />
 			<ref bean="userv2UploadPropositionRestService" />
