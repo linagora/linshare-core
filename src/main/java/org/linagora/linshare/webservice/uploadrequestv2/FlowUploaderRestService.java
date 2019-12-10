@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- * 
+ *
  * Copyright (C) 2015-2018 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,38 +19,40 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.uploadrequestv2;
 
-package org.linagora.linshare.webservice.uploadrequest;
+import java.io.InputStream;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
 
-public interface UploadRequestRestService {
+public interface FlowUploaderRestService {
 
-	Response find(String uuid, String password) throws BusinessException;
-
-	UploadRequestDto close(String uuid, String password)
+	Response uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
+			long totalSize, String identifier, String filename,
+			String relativePath, InputStream file, MultipartBody body,
+			String uploadRequestUrlUuid, String password)
 			throws BusinessException;
 
-	void delete(String uuid, String password, String entryUuid)
-			throws BusinessException;
+	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
+			long totalSize, String identifier, String filename,
+			String relativePath);
 
-	void delete(String uuid, String password, EntryDto entry)
+	Response uploadForIe9(InputStream file, MultipartBody body,
+			String uploadRequestUrlUuid, String password)
 			throws BusinessException;
-
 }

@@ -61,7 +61,7 @@
 			<sec:filter-chain pattern="/webservice/rest/admin/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/admin/authentication/logout" filters="logoutFilterAdmin" />
 
-			<sec:filter-chain pattern="/webservice/rest/uploadrequest/**" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/uploadrequest/v2/**" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/external/**" filters="none" />
 
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />

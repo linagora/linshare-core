@@ -14,12 +14,12 @@
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
 
-	<jaxrs:server id="restUploadRequestContainer" address="/rest/uploadrequest">
+	<jaxrs:server id="restUploadRequestContainer" address="/rest/uploadrequest/v2">
 		<jaxrs:serviceBeans>
-			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.FlowUploaderRestServiceImpl">
+			<bean class="org.linagora.linshare.webservice.uploadrequestv2.impl.FlowUploaderRestServiceImpl">
 				<constructor-arg ref="wsUploadRequestUrlFacade" />
 			</bean>
-			<bean class="org.linagora.linshare.webservice.uploadrequest.impl.UploadRequestRestServiceImpl">
+			<bean class="org.linagora.linshare.webservice.uploadrequestv2.impl.UploadRequestRestServiceImpl">
 				<constructor-arg ref="wsUploadRequestUrlFacade" />
 			</bean>
 <!-- 			<ref bean="id"/> -->

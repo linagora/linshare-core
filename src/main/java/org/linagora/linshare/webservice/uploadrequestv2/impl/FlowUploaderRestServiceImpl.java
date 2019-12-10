@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.uploadrequest.impl;
+package org.linagora.linshare.webservice.uploadrequestv2.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +63,7 @@ import org.linagora.linshare.core.domain.objects.ChunkedFile;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.uploadrequest.FlowUploaderRestService;
+import org.linagora.linshare.webservice.uploadrequestv2.FlowUploaderRestService;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
@@ -74,7 +74,7 @@ import com.google.common.collect.Maps;
 import com.wordnik.swagger.annotations.Api;
 
 @Path("/flow/upload")
-@Api(value = "/rest/uploadrequest/flow/upload", description = "upload_requests API")
+@Api(value = "/rest/uploadrequest/v2/flow/upload", description = "upload_requests API")
 @Produces({ "application/json", "application/xml" })
 public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		FlowUploaderRestService {
