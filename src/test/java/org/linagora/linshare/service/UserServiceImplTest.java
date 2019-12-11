@@ -36,10 +36,10 @@ package org.linagora.linshare.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -165,7 +165,7 @@ public class UserServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
-	@Ignore
+	@Disabled //FIXME :  Handle issues and enable the test
 	@Test
 	public void testCreateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);

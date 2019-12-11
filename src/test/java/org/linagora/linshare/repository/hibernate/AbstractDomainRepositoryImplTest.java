@@ -36,11 +36,12 @@ package org.linagora.linshare.repository.hibernate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
@@ -55,15 +56,19 @@ import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.LdapConnectionRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
+import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations={
 		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+@Transactional
+public class AbstractDomainRepositoryImplTest extends LoggerParent {
 
 	private static String rootDomainName = "Domain0";
 	private static String topDomainName = "Domain0.1";
@@ -101,7 +106,7 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 
 
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		DomainAccessPolicy domainAccessPolicy = new DomainAccessPolicy();
@@ -112,7 +117,7 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 		logger.debug("End setUp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		domainPolicyRepository.delete(defaultPolicy);
@@ -142,7 +147,7 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 		return currentTopDomain;
 	}
 
-	@Ignore // FIXME Domains use uuid now, not identifier.
+	@Disabled // FIXME Domains use uuid now, not identifier.
 	@Test
 	public void testRootDomainCreation() throws BusinessException{
 		logger.debug("Begin testRootDomainCreation");
@@ -163,7 +168,7 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 		logger.debug("End testRootDomainCreation");
 	}
 
-	@Ignore // FIXME Domains use uuid now, not identifier.
+	@Disabled // FIXME Domains use uuid now, not identifier.
 	@Test
 	public void testTopDomainCreation() throws BusinessException{
 		logger.debug("Begin testTopDomainCreation");

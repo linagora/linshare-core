@@ -36,25 +36,32 @@ package org.linagora.linshare.batches;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.utils.LinShareWiser;
+import org.linagora.linshare.utils.LoggerParent;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -68,11 +75,11 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class LinShareJobBeanTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class LinShareJobBeanTest extends LoggerParent {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(LinShareJobBeanTest.class);
-
+	@Autowired
+	protected JdbcTemplate jdbcTemplate ;
+	
 	@Autowired
 	private BatchRunner batchRunner;
 
@@ -95,18 +102,20 @@ public class LinShareJobBeanTest extends AbstractTransactionalJUnit4SpringContex
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		int countBefore = this.countRowsInTable("account");
-		this.executeSqlScript("import-tests-batches-accounts.sql", false);
-		int countAfter = this.countRowsInTable("account");
-		Assert.assertEquals(3, countAfter - countBefore);
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		int countBefore = JdbcTestUtils.countRowsInTable(this.jdbcTemplate, "account");
+		populator.addScripts(new ClassPathResource("import-tests-batches-accounts.sql"));
+		populator.execute(jdbcTemplate.getDataSource());
+		int countAfter = JdbcTestUtils.countRowsInTable(this.jdbcTemplate, "account");
+		Assertions.assertEquals(3, countAfter - countBefore);
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -120,7 +129,7 @@ public class LinShareJobBeanTest extends AbstractTransactionalJUnit4SpringContex
 		batches.add(deleteGuestBatch);
 		batches.add(markUserToPurgeBatch);
 		batches.add(purgeUserBatch);
-		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
+		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 		wiser.checkGeneratedMessages();
 	}
 }

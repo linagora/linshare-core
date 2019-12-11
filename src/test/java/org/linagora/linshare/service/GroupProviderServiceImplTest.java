@@ -38,8 +38,6 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -126,16 +124,15 @@ public class GroupProviderServiceImplTest extends LoggerParent {
 	@Test
 	public void testCreateDeleteGroupProvider() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "dc=nodomain,dc=com", ldapconnexion, false);
-		groupProvider = groupProviderService.create(groupProvider);
-		Assertions.assertNotNull(groupProvider);
-		groupProviderService.delete(groupProvider);
-		
-		try {
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "dc=nodomain,dc=com", ldapconnexion,
+					false);
+			groupProvider = groupProviderService.create(groupProvider);
+			Assertions.assertNotNull(groupProvider);
+			groupProviderService.delete(groupProvider);
 			groupProviderService.find(groupProvider.getUuid());
-		} catch (BusinessException bEx) {
-			Assert.assertThat(BusinessErrorCode.GROUP_LDAP_PROVIDER_NOT_FOUND, CoreMatchers.is(bEx.getErrorCode()));
-		}
+		});
+		Assertions.assertEquals(BusinessErrorCode.GROUP_LDAP_PROVIDER_NOT_FOUND, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

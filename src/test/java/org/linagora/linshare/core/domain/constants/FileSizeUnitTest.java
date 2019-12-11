@@ -33,21 +33,24 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-public class FileSizeUnitTest extends TestCase {
+@ExtendWith(SpringExtension.class)
+public class FileSizeUnitTest {
 
 	public void testGetPlainSize() {
-		assertEquals(FileSizeUnit.KILO.getPlainSize(1), 1024L);
-		assertEquals(FileSizeUnit.MEGA.getPlainSize(1), 1048576L);
-		assertEquals(FileSizeUnit.GIGA.getPlainSize(1), 1073741824L);
+		Assertions.assertEquals(FileSizeUnit.KILO.getPlainSize(1), 1024L);
+		Assertions.assertEquals(FileSizeUnit.MEGA.getPlainSize(1), 1048576L);
+		Assertions.assertEquals(FileSizeUnit.GIGA.getPlainSize(1), 1073741824L);
 
 	}
 
 	public void testGetSiSize() {
-		assertEquals(FileSizeUnit.KILO.getSiSize(1), 1000L);
-		assertEquals(FileSizeUnit.MEGA.getSiSize(1), 1000000L);
-		assertEquals(FileSizeUnit.GIGA.getSiSize(1), 1000000000L);
+		Assertions.assertEquals(FileSizeUnit.KILO.getSiSize(1), 1000L);
+		Assertions.assertEquals(FileSizeUnit.MEGA.getSiSize(1), 1000000L);
+		Assertions.assertEquals(FileSizeUnit.GIGA.getSiSize(1), 1000000000L);
 
 	}
 

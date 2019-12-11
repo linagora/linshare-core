@@ -138,7 +138,7 @@ public class ComputeThumbnailBatchTest extends LoggerParent {
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 	}
 
-	@Disabled
+	@Disabled //FIXME : Handle issues (related to thumbnail server) and enable the test
 	@Test
 	public void testBatchExecution() throws BusinessException, JobExecutionException, IOException {
 		Document document = createDocument();

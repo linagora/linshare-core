@@ -208,8 +208,8 @@ public class DocumentEntryBusinessServiceImplTest {
 		Assertions.assertTrue(documentEntryRepository.findById(createDocumentEntry.getUuid()).getType() == "image/png");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-
-	@Disabled
+	
+	@Disabled //FIXME : Handle issues (related to thumbnail server) and enable the test
 	@Test
 	public void testUpdateThumbnail() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);

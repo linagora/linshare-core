@@ -330,9 +330,8 @@ public class FunctionalityRepositoryImplTest extends LoggerParent {
 	}
 
 
-	@Disabled
+	@Disabled //FIXME Should assert throw a DataIntegrityViolationException
 	@Test
-	// (expected=DataIntegrityViolationException.class) replace by assertThat in case test is not ignored 
 	public void testUnicityOfFunctionality() throws BusinessException{
 
 		String value = "http://server/service";

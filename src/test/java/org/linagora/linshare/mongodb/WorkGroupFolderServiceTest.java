@@ -37,13 +37,11 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.ExpectedException;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -105,9 +103,6 @@ public class WorkGroupFolderServiceTest extends LoggerParent {
 
 	@Autowired
 	private InitMongoService init;
-
-	@Rule
-	public final ExpectedException exception = ExpectedException.none();
 
 	private LoadingServiceTestDatas datas;
 	private User jane;
@@ -266,14 +261,10 @@ public class WorkGroupFolderServiceTest extends LoggerParent {
 		update.setName(create.getName());
 		update.setUuid(create.getUuid());
 		update.setParent("fddsfsdf");
-		// exception.expect(BusinessException.class);
-		try {
-			Assertions.assertNotNull(service.update(jane, jane, workGroup, update));
-			Assertions.assertTrue(false);
-		} catch (BusinessException e) {
-			logger.debug(e.getMessage(), e);
-			Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND, e.getErrorCode());
-		}
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.update(jane, jane, workGroup, update);
+		});
+		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND, exception.getErrorCode());
 	}
 
 	@Test

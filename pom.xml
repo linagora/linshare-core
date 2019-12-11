@@ -559,13 +559,6 @@
 			<version>1.0.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Junit Vintage : Used for JUnit 4 compatibility -->
-		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
-			<version>5.3.1</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.subethamail</groupId>
 			<artifactId>subethasmtp</artifactId>

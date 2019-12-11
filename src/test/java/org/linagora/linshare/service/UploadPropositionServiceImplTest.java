@@ -189,7 +189,7 @@ public class UploadPropositionServiceImplTest {
 	}
 
 	@Test
-	@Disabled
+	@Disabled //FIXME :  Handle issues and enable the test
 	public void createUploadPropositionAcceptedBySystem() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadPropositionFilter createdAcceptationFilter = uploadPropositionfilterService.create((User) root,
@@ -309,7 +309,7 @@ public class UploadPropositionServiceImplTest {
 	}
 
 	@Test
-	@Disabled
+	@Disabled //FIXME :  Handle issues and enable the test
 	public void rejectUploadPropositionByUser() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadPropositionFilter createdNoAcceptationFilter = uploadPropositionfilterService.create((User) root,
@@ -376,7 +376,7 @@ public class UploadPropositionServiceImplTest {
 	}
 
 	@Test
-	@Disabled
+	@Disabled //FIXME :  Handle issues and enable the test
 	public void acceptUploadPropositionByWhiteList() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadPropositionFilter createdNoAcceptationFilter = uploadPropositionfilterService.create((User) root,

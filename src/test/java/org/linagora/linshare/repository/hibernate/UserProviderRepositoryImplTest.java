@@ -38,10 +38,10 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
@@ -141,7 +141,6 @@ public class UserProviderRepositoryImplTest extends LoggerParent {
 		Assertions.assertEquals("uid", ldapAttribute.getAttribute());
 	}
 	
-	@Ignore
 	@Test
 	public void testCreateLdapUserProvider() throws BusinessException{
 		logger.debug("Begin testCreateLdapUserProvider");

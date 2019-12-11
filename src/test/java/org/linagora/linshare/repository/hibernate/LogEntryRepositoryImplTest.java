@@ -67,7 +67,7 @@ public class LogEntryRepositoryImplTest {
 //	private final String targetDomain= "testTargetDomain";
 	
 
-	@Disabled
+	@Disabled //FIXME :  Handle issues and enable the test
 	@Test
 	public void testExistFileLogEntry() throws BusinessException{
 //		LogEntry testFileLogEntry = new FileLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
@@ -89,7 +89,7 @@ public class LogEntryRepositoryImplTest {
 	}
 	
 	
-	@Disabled
+	@Disabled //FIXME :  Handle issues and enable the test
 	@Test
 	public void testExistUserLogEntry() throws BusinessException{
 //		LogEntry testFileLogEntry = new UserLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
@@ -109,7 +109,7 @@ public class LogEntryRepositoryImplTest {
 //		logEntryRepository.delete(tmpLogEntry);
 	}
 	
-	@Disabled
+	@Disabled //FIXME :  Handle issues and enable the test
 	@Test
 	public void testExistShareLogEntry() throws BusinessException{
 //		LogEntry testFileLogEntry = new ShareLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
