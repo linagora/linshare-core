@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 
 public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService {
 
-	protected static final String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
+	protected static final String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!?%])(?=\\S+$).{8,}$";
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -136,7 +136,7 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 		reset.setAlreadyUsed(true);
 		if (!dto.getPassword().matches(pattern)) {
 			throw new BusinessException(BusinessErrorCode.RESET_GUEST_PASSWORD_INVALID_PASSWORD,
-					"Your password must be at least 8 characters long, contain at least one number, one special character and have a mixture of uppercase and lowercase letters.");
+					"Your password must be at least 8 characters long, contain at least one number, one special character among this characters [@ # $ % ^ & + = ! ? %] and have a mixture of uppercase and lowercase letters.");
 		}
 		Guest guest = guestService.find(actor, owner, reset.getGuestUuid());
 		guestService.resetPassword(guest, dto.getPassword());
