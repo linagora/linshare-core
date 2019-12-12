@@ -36,7 +36,6 @@ package org.linagora.linshare.webservice.uploadrequestv2.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -49,24 +48,20 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.objects.ChunkedFile;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.uploadrequestv2.FlowUploaderRestService;
-import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
-import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
+import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +87,6 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	private static final String FILE = "file";
 	private static final String PASSWORD = "password";
 	private static final String REQUEST_URL_UUID = "requestUrlUuid";
-	private static final String IEFILENAME = "filename";
 
 	private final UploadRequestUrlFacade uploadRequestUrlFacade;
 
@@ -124,7 +118,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	@POST
 	@Consumes("multipart/form-data")
 	@Override
-	public Response uploadChunk(@Multipart(CHUNK_NUMBER) long chunkNumber,
+	public FlowDto uploadChunk(@Multipart(CHUNK_NUMBER) long chunkNumber,
 			@Multipart(TOTAL_CHUNKS) long totalChunks,
 			@Multipart(CHUNK_SIZE) long chunkSize,
 			@Multipart(TOTAL_SIZE) long totalSize,
@@ -137,39 +131,64 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
-		Validate.isTrue(isValid(chunkNumber, chunkSize, totalSize, identifier,
-				filename));
+		Validate.isTrue(isValid(chunkNumber, chunkSize, totalSize, identifier, filename));
+		FlowDto flow = new FlowDto(chunkNumber);
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = getTempFile(identifier);
-			FileChannel fc = FileChannel.open(tempFile,
-					StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-			byte[] byteArray = IOUtils.toByteArray(file);
-			fc.write(ByteBuffer.wrap(byteArray), (chunkNumber - 1) * chunkSize);
-			fc.close();
-			chunkedFiles.get(identifier).addChunk(chunkNumber);
+			ChunkedFile currentChunkedFile = chunkedFiles.get(identifier);
+			if (!currentChunkedFile.hasChunk(chunkNumber)) {
+				FileChannel fc = FileChannel.open(tempFile, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+				byte[] byteArray = IOUtils.toByteArray(file);
+				fc.write(ByteBuffer.wrap(byteArray), (chunkNumber - 1) * chunkSize);
+				fc.close();
+				currentChunkedFile.addChunk(chunkNumber);
+			} else {
+				logger.error("currentChunkedFile.hasChunk(chunkNumber) !!! {} ", currentChunkedFile);
+				logger.error("chunkedNumber skipped : {} ", chunkNumber);
+			}
+			logger.debug("number of uploading files : {}", chunkedFiles.size());
+			logger.debug("current chuckedfile uuid : {}", identifier);
+			logger.debug("current chuckedfiles {}", chunkedFiles.toString());
 			if (isUploadFinished(identifier, chunkSize, totalSize)) {
 				logger.debug("upload finished ");
-				InputStream inputStream = Files.newInputStream(tempFile,
-						StandardOpenOption.READ);
+				flow.setLastChunk(true);
+				InputStream inputStream = Files.newInputStream(tempFile, StandardOpenOption.READ);
 				File tempFile2 = WebServiceUtils.getTempFile(inputStream, "rest-flowuploader", filename);
 				try {
-					uploadRequestUrlFacade.addUploadRequestEntry(
-							uploadRequestUrlUuid, password, tempFile2, filename);
+					uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid, password, tempFile2, filename);
 				} finally {
 					WebServiceUtils.deleteTempFile(tempFile2);
 				}
 				ChunkedFile remove = chunkedFiles.remove(identifier);
-				Files.deleteIfExists(remove.getPath());
-				return Response.ok("upload success").build();
+				if (remove != null) {
+					Files.deleteIfExists(remove.getPath());
+				} else {
+					logger.error("Should not happen !!!");
+					logger.error("chunk number: {}", chunkNumber);
+					logger.error("chunk identifier: {}", identifier);
+					logger.error("chunk filename: {}", filename);
+				}
+				flow.setChunkUploadSuccess(true);
+				return flow;
 			} else {
 				logger.debug("upload pending ");
+				flow.setChunkUploadSuccess(true);
+
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug("Exception : ", e);
+			flow.setChunkUploadSuccess(false);
+			flow.setErrorMessage(e.getMessage());
+			flow.setErrCode(e.getErrorCode().getCode());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			logger.debug("Exception : ", e);
+			flow.setChunkUploadSuccess(false);
+			flow.setErrorMessage(e.getMessage());
 		}
-		return Response.ok("upload success").build();
+		return flow;
 	}
 
 	private java.nio.file.Path getTempFile(String identifier)
@@ -182,54 +201,6 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			chunkedFile = chunkedFiles.get(identifier);
 		}
 		return chunkedFile.getPath();
-	}
-
-	/**
-	 * UPLOAD FOR IE
-	 */
-
-	@Path("/iexplorer")
-	@POST
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.TEXT_PLAIN)
-	@Override
-	public Response uploadForIe9(@Multipart(value = FILE) InputStream file,
-			MultipartBody body,
-			@Multipart(REQUEST_URL_UUID) String uploadRequestUrlUuid,
-			@Multipart(PASSWORD) String password) throws BusinessException {
-		if (file == null) {
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
-					"Missing file (check parameter file)");
-		}
-		// Ensure fileName and description aren't null
-		String fileName = body.getAttachment(FILE).getContentDisposition()
-				.getParameter(IEFILENAME);
-
-		try {
-			byte[] bytes = fileName.getBytes("ISO-8859-1");
-			fileName = new String(bytes, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			logger.error("Can not encode file name " + e1.getMessage());
-		}
-
-		ErrorDto errorDto;
-		try {
-			File tempFile2 = WebServiceUtils.getTempFile(file, "rest-flowuploader", fileName);
-			try {
-				uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid,
-						password, tempFile2, fileName);
-			} finally {
-				WebServiceUtils.deleteTempFile(tempFile2);
-			}
-			errorDto = new ErrorDto(0, "upload success");
-		} catch (BusinessException exception) {
-			logger.error(exception.getMessage());
-			errorDto = new ErrorDto(exception.getErrorCode().getCode(),
-					exception.getMessage());
-		}
-		ResponseBuilder response = Response.status(Status.OK);
-		response.entity(errorDto);
-		return response.build();
 	}
 
 	/**

@@ -39,10 +39,11 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 
 public interface FlowUploaderRestService {
 
-	Response uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
+	FlowDto uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath, InputStream file, MultipartBody body,
 			String uploadRequestUrlUuid, String password)
@@ -51,8 +52,4 @@ public interface FlowUploaderRestService {
 	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath);
-
-	Response uploadForIe9(InputStream file, MultipartBody body,
-			String uploadRequestUrlUuid, String password)
-			throws BusinessException;
 }
