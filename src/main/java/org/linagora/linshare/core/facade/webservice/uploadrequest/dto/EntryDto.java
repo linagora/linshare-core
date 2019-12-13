@@ -44,6 +44,10 @@ public class EntryDto {
 
 	private long size;
 
+	public EntryDto() {
+		super();
+	}
+
 	public EntryDto(String uuid, String name, long size) {
 		super();
 		this.uuid = uuid;
