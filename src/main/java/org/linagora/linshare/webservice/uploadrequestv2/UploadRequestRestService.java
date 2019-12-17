@@ -47,10 +47,5 @@ public interface UploadRequestRestService {
 	UploadRequestDto close(String uuid, String password)
 			throws BusinessException;
 
-	void delete(String uuid, String password, String entryUuid)
-			throws BusinessException;
-
-	void delete(String uuid, String password, EntryDto entry)
-			throws BusinessException;
-
+	void delete(String uuid, String password, String entryUuid, EntryDto entry) throws BusinessException;
 }

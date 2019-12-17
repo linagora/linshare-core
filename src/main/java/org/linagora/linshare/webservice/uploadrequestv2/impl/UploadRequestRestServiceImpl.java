@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
@@ -117,32 +118,21 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	}
 
 	@DELETE
-	@Path("/{requestUrlUuid}/{entryUuid}")
+	@Path("/{requestUrlUuid}/entries/{entryUuid : .*}")
 	@ApiOperation(value = "Delete an entry in an upload request.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 					@ApiResponse(code = 404, message = "UploadRequest not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 		})
-	public void delete(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
+	public void delete(
+			@ApiParam(value = "UploadRequestUrl uuid that contains the uploadRequestEntry to delete.", required = true)
+				@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password,
-			@PathParam(value = "entryUuid") String entryUuid)
+			@ApiParam(value = "UploadRequestEntry uuid to delete.", required = false)
+				@PathParam(value = "entryUuid") String entryUuid,
+			@ApiParam(value = "UploadRequest entry to delete. ", required = false) EntryDto entry)
 			throws BusinessException {
-		uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entryUuid);
-	}
-
-	@DELETE
-	@Path("/{requestUrlUuid}")
-	@ApiOperation(value = "Delete an entry in an upload request.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-					@ApiResponse(code = 404, message = "UploadRequest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-		})
-	@Override
-	public void delete(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
-			@HeaderParam("linshare-uploadrequest-password") String password, EntryDto entry)
-			throws BusinessException {
-		uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entry);
+		uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entryUuid, entry);
 	}
 }

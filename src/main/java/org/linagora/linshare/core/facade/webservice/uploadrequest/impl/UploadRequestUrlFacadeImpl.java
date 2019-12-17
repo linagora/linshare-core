@@ -53,6 +53,8 @@ import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 
+import com.google.common.base.Strings;
+
 public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements UploadRequestUrlFacade {
 
 	private final UploadRequestService uploadRequestService;
@@ -102,20 +104,16 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 	}
 
 	@Override
-	public void deleteUploadRequestEntry(String uploadRequestUrlUuid,
-			String password, EntryDto entry) throws BusinessException {
+	public void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid, EntryDto entry)
+			throws BusinessException {
 		Validate.notEmpty(uploadRequestUrlUuid, "Upload request url uuid must be set");
-		Validate.notNull(entry, "Upload request entry must be set");
-		Validate.notEmpty(entry.getUuid(), "Upload request entry uuid must be set");
-		uploadRequestUrlService.deleteUploadRequestEntry(uploadRequestUrlUuid, password, entry.getUuid());
-	}
-
-	@Override
-	public void deleteUploadRequestEntry(String uploadRequestUrlUuid,
-			String password, String entryUuid) throws BusinessException {
-		Validate.notEmpty(uploadRequestUrlUuid, "Upload request url uuid must be set");
-		Validate.notEmpty(entryUuid, "Upload request entry uuid must be set");
-		uploadRequestUrlService.deleteUploadRequestEntry(uploadRequestUrlUuid, password, entryUuid);
+		if (!Strings.isNullOrEmpty(entryUuid)) {
+			uploadRequestUrlService.deleteUploadRequestEntry(uploadRequestUrlUuid, password, entryUuid);
+		} else {
+			Validate.notNull(entry, "Entry must be set");
+			Validate.notEmpty(entry.getUuid(), "Entry uuid must be set");
+			uploadRequestUrlService.deleteUploadRequestEntry(uploadRequestUrlUuid, password, entry.getUuid());
+		}
 	}
 
 	/*

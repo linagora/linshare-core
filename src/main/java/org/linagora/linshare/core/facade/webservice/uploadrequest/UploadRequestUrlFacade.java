@@ -49,10 +49,6 @@ public interface UploadRequestUrlFacade {
 
 	void addUploadRequestEntry(String uploadRequestUrlUuid, String password, File tempFile, String fileName) throws BusinessException;
 
-	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password,
+	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid,
 			EntryDto entry) throws BusinessException;
-
-	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password,
-			String entryUuid) throws BusinessException;
-
 }
