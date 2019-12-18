@@ -53,6 +53,6 @@ public interface UploadRequestUrlService {
 	UploadRequestEntry createUploadRequestEntry(String uploadRequestUrlUuid, File file, String fileName,
 			String password) throws BusinessException;
 
-	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid)
+	UploadRequestEntry deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid)
 			throws BusinessException;
 }

@@ -134,7 +134,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	}
 
 	@Override
-	public void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid)
+	public UploadRequestEntry deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid)
 			throws BusinessException {
 		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
 		if (requestUrl.getUploadRequest().getStatus() != UploadRequestStatus.ENABLED) {
@@ -150,6 +150,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}
+		return entry;
 	}
 
 	@Override

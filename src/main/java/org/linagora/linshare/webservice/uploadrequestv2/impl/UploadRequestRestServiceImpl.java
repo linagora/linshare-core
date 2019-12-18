@@ -48,6 +48,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
@@ -125,7 +126,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 		})
-	public void delete(
+	public UploadRequestEntryDto delete(
 			@ApiParam(value = "UploadRequestUrl uuid that contains the uploadRequestEntry to delete.", required = true)
 				@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password,
@@ -133,6 +134,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 				@PathParam(value = "entryUuid") String entryUuid,
 			@ApiParam(value = "UploadRequest entry to delete. ", required = false) EntryDto entry)
 			throws BusinessException {
-		uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entryUuid, entry);
+		return uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entryUuid, entry);
 	}
 }
