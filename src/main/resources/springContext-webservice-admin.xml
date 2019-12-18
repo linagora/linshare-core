@@ -61,6 +61,10 @@
 		<constructor-arg ref="wsAdminAutocompleteFacade" />
 	</bean>
 
+	<bean id="adminGuestRestService" class="org.linagora.linshare.webservice.admin.impl.GuestRestServiceImpl">
+		<constructor-arg ref="wsAdminGuestFacade" />
+	</bean>
+
 	<bean id="adminEnumRestService" class="org.linagora.linshare.webservice.admin.impl.EnumRestServiceImpl">
 	</bean>
 
@@ -179,6 +183,7 @@
 			<ref bean="adminContainerQuotaRestService" />
 			<ref bean="adminAccountQuotaRestService" />
 			<ref bean="adminUpgradeTaskRestService" />
+			<ref bean="adminGuestRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

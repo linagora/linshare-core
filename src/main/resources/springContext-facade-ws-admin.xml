@@ -80,6 +80,11 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="userProviderService" />
 	</bean>
+	<bean id="wsAdminGuestFacade"
+		class="org.linagora.linshare.core.facade.webservice.admin.impl.GuestFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="guestService" />
+	</bean>
 	<bean id="wsAdminMailConfigFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.MailConfigFacadeImpl">
 		<constructor-arg ref="accountService" />
