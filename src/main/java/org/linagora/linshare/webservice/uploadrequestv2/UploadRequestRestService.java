@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.webservice.uploadrequestv2;
 
+import java.util.List;
+
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -49,4 +51,6 @@ public interface UploadRequestRestService {
 			throws BusinessException;
 
 	UploadRequestEntryDto delete(String uuid, String password, String entryUuid, EntryDto entry) throws BusinessException;
+
+	List<UploadRequestEntryDto> findAllEntries(String uuid, String password) throws BusinessException;
 }

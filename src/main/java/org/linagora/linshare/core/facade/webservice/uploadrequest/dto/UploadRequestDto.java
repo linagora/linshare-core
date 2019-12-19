@@ -83,8 +83,6 @@ public class UploadRequestDto {
 
 	private boolean isClosed;
 
-	private Set<EntryDto> entries = Sets.newHashSet();
-
 	private boolean protectedByPassword;
 
 	private long usedSpace = 0;
@@ -118,7 +116,6 @@ public class UploadRequestDto {
 		}
 		for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
 			for (UploadRequestEntry entry : uru.getUploadRequestEntries()) {
-				entries.add(new EntryDto(entry));
 				this.usedSpace += entry.getSize();
 			}
 		}
@@ -240,14 +237,6 @@ public class UploadRequestDto {
 
 	public void setClosed(boolean isClosed) {
 		this.isClosed = isClosed;
-	}
-
-	public Set<EntryDto> getEntries() {
-		return entries;
-	}
-
-	public void setEntries(Set<EntryDto> entries) {
-		this.entries = entries;
 	}
 
 	public boolean isCanDeleteDocument() {

@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.webservice.uploadrequestv2.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -101,6 +103,22 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		cc.setNoCache(true);
 		response.cacheControl(cc);
 		return response.build();
+	}
+
+	@GET
+	@Path("/{uuid}/entries")
+	@ApiOperation(value = "Find all entries of an upload request url.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+					@ApiResponse(code = 404, message = "UploadRequest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
+	public List<UploadRequestEntryDto> findAllEntries(
+			@ApiParam(value = "UploadRequestUrl uuid that you want to retrieve its entries.", required = true)
+				@PathParam(value = "uuid") String uuid,
+			@HeaderParam("linshare-uploadrequest-password") String password)
+			throws BusinessException {
+		return uploadRequestUrlFacade.findAllExtEntries(uuid, password);
 	}
 
 	@PUT

@@ -369,6 +369,16 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
+	public List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl requestUrl) throws BusinessException {
+		UploadRequest uploadRequest = requestUrl.getUploadRequest();
+		List<UploadRequestEntry> uploadRequestEntries = Lists.newArrayList();
+		for (UploadRequestUrl uploadRequestUrl : uploadRequest.getUploadRequestURLs()) {
+			uploadRequestEntries.addAll(uploadRequestEntryService.findAllExtEntries(uploadRequestUrl));
+		}
+		return uploadRequestEntries;
+	}
+
+	@Override
 	public List<UploadRequestEntry> findAllEntries(Account actor, Account owner, String uploadRequestUuid)
 			throws BusinessException {
 		preChecks(actor, owner);

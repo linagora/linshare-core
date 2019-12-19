@@ -87,4 +87,6 @@ public interface UploadRequestService {
 			UploadRequestContainer container);
 
 	List<UploadRequestEntry> findAllEntries(Account actor, Account owner, String uploadRequestUuid) throws BusinessException;
+
+	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl requestUrl);
 }

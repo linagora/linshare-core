@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service.impl;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -317,5 +318,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), - size, OperationHistoryTypeEnum.DELETE,
 				ContainerQuotaType.USER);
 		operationHistoryBusinessService.create(oh);
+	}
+
+	@Override
+	public List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl) {
+		return uploadRequestEntryBusinessService.findAllExtEntries(uploadRequestUrl);
 	}
 }

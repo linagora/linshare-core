@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.facade.webservice.uploadrequest;
 
 import java.io.File;
+import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
@@ -52,4 +53,6 @@ public interface UploadRequestUrlFacade {
 
 	UploadRequestEntryDto deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid,
 			EntryDto entry) throws BusinessException;
+
+	List<UploadRequestEntryDto> findAllExtEntries(String uuid, String password);
 }

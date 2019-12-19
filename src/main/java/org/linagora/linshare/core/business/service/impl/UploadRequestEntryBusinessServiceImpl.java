@@ -335,4 +335,9 @@ public class UploadRequestEntryBusinessServiceImpl implements
 		}
 		return null;
 	}
+
+	@Override
+	public List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl) {
+		return uploadRequestEntryRepository.findAllExtEntries(uploadRequestUrl);
+	}
 }

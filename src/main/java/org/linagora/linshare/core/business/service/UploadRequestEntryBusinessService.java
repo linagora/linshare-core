@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -69,4 +70,6 @@ public interface UploadRequestEntryBusinessService {
 	byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 
 	InputStream download(UploadRequestEntry entry);
+
+	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
 }

@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;

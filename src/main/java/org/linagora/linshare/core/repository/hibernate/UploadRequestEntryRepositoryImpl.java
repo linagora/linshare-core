@@ -46,6 +46,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -114,5 +115,12 @@ public class UploadRequestEntryRepositoryImpl extends
 		List<Object[]> list = listByCriteria(criteria);
 		list.stream().forEach(e -> results.put((String) e[0], (Long) e[1]));
 		return results;
+	}
+
+	@Override
+	public List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("uploadRequestUrl", uploadRequestUrl));
+		return findByCriteria(det);
 	}
 }

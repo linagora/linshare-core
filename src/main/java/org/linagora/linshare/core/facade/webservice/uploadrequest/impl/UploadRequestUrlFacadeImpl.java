@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.uploadrequest.impl;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -56,6 +57,8 @@ import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements UploadRequestUrlFacade {
 
@@ -119,12 +122,20 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 		return new UploadRequestEntryDto(uploadRequestEntry);
 	}
 
+	@Override
+	public List<UploadRequestEntryDto> findAllExtEntries(String uuid, String password) {
+		Validate.notEmpty(uuid, "Upload request url uuid must be set.");
+		UploadRequestUrl requestUrl = uploadRequestUrlService.find(uuid, password);
+		List<UploadRequestEntry> uploadRequestEntries = uploadRequestService.findAllExtEntries(requestUrl);
+		return ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto()));
+	}
+
 	/*
 	 * Helpers
 	 */
 
 	private UploadRequestDto transform(UploadRequestUrl requestUrl) throws BusinessException {
-		if (requestUrl==null) {
+		if (requestUrl == null) {
 			return null;
 		}
 		UploadRequestDto dto = new UploadRequestDto(requestUrl);
