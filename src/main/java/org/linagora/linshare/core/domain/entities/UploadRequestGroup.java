@@ -431,4 +431,15 @@ public class UploadRequestGroup {
 			this.enableNotification = enableNotification;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "UploadRequestGroup [uuid=" + uuid + ", subject=" + subject + ", body=" + body + ", creationDate="
+				+ creationDate + ", modificationDate=" + modificationDate + ", maxFileCount=" + maxFileCount
+				+ ", maxDepositSize=" + maxDepositSize + ", maxFileSize=" + maxFileSize + ", activationDate="
+				+ activationDate + ", notificationDate=" + notificationDate + ", expiryDate=" + expiryDate
+				+ ", canDelete=" + canDelete + ", canClose=" + canClose + ", canEditExpiryDate=" + canEditExpiryDate
+				+ ", locale=" + locale + ", secured=" + secured + ", enableNotification=" + enableNotification
+				+ ", restricted=" + restricted + ", status=" + status + "]";
+	}
 }

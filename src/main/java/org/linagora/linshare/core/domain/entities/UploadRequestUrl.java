@@ -205,4 +205,10 @@ public class UploadRequestUrl {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "UploadRequestUrl [contact=" + contact + ", uuid=" + uuid + ", path=" + path + ", creationDate="
+				+ creationDate + ", modificationDate=" + modificationDate + "]";
+	}
 }
