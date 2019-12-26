@@ -38,8 +38,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;

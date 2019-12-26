@@ -35,7 +35,7 @@ package org.linagora.linshare.core.facade.webservice.external.impl;
 
 import java.io.InputStream;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;

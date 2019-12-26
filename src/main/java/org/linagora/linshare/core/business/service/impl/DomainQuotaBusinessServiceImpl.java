@@ -35,7 +35,7 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;

@@ -35,7 +35,7 @@ package org.linagora.linshare.core.notifications.context;
 
 import java.util.Date;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;

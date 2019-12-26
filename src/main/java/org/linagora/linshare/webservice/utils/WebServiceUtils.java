@@ -40,7 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;

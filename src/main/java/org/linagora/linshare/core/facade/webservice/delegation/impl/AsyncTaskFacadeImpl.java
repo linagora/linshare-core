@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
 import org.linagora.linshare.core.domain.entities.User;

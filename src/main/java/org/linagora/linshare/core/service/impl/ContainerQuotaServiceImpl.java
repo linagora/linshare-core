@@ -35,7 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;

@@ -39,7 +39,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.apache.tika.io.IOUtils;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.PublicKeyFormat;

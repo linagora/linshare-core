@@ -45,7 +45,7 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;

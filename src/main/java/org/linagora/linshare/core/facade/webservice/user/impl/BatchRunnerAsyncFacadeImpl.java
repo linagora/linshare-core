@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskStatus;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;

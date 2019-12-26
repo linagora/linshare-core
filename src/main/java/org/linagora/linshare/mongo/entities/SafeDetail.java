@@ -38,7 +38,7 @@ import java.util.Date;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

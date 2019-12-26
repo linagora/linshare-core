@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.domain.constants;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sis.util.NullArgumentException;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.Thumbnail;

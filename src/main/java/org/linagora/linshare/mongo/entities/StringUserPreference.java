@@ -35,7 +35,7 @@ package org.linagora.linshare.mongo.entities;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 @XmlRootElement(name = "StringUserPreference")
 public class StringUserPreference extends UserPreference {

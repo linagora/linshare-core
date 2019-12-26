@@ -35,7 +35,7 @@
 package org.linagora.linshare.core.utils;
 
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class StringPredicates {
 	

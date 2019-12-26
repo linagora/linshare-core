@@ -35,7 +35,7 @@ package org.linagora.linshare.core.facade.webservice.safe.impl;
 
 import java.io.File;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;

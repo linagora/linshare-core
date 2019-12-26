@@ -42,7 +42,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.linagora.linshare.auth.PasswordEncoderFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

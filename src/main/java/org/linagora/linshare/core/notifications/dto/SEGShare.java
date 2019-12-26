@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.core.notifications.dto;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
 

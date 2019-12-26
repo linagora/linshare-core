@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;

@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;

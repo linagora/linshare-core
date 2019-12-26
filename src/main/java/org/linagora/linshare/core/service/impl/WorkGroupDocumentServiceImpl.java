@@ -36,7 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.io.File;
 import java.io.InputStream;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;

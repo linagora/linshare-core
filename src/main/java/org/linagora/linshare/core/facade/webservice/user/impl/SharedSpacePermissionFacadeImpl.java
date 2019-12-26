@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpacePermissionFacade;

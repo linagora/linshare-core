@@ -44,7 +44,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.facade.webservice.user.AutoCompleteFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
 import org.linagora.linshare.webservice.userv2.AutoCompleteRestService;

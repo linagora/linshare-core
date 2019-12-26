@@ -35,7 +35,7 @@ package org.linagora.linshare.core.utils;
 
 import java.util.Base64;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 
 public class LdapHashUtils {
