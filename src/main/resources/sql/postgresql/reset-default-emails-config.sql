@@ -2531,7 +2531,7 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
   <section id="secondary-content">
     <th:block th:switch="${threadMember.role.name}">
       <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightAdminTitle})"/></p>  
-      <p th:case="''DRIVE_CREATOR''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightWirteTitle})"/></p>  
+      <p th:case="''DRIVE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightWirteTitle})"/></p>  
       <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightReadTitle})"/></p>  
     </th:block>
     <th:block th:switch="${threadMember.nestedRole.name}">

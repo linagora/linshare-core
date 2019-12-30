@@ -121,7 +121,7 @@ public class NestedSharedSpaceNodeTest {
 
 	private SharedSpaceRole adminDriveRole;
 
-	private SharedSpaceRole creatorDriveRole;
+	private SharedSpaceRole writerDriveRole;
 
 	private SharedSpaceRole readerDriveRole;
 
@@ -150,7 +150,7 @@ public class NestedSharedSpaceNodeTest {
 		justin = datas.getUser3();
 		adminWorkgroupRole = ssRoleService.getAdmin(root, root);
 		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
-		creatorDriveRole = ssRoleService.findByName(root, root, "DRIVE_CREATOR");
+		writerDriveRole = ssRoleService.findByName(root, root, "DRIVE_WRITER");
 		readerDriveRole = ssRoleService.findByName(root, root, "DRIVE_READER");
 		contributor = ssRoleService.findByName(root, root, "CONTRIBUTOR");
 		reader = ssRoleService.findByName(root, root, "READER");
@@ -215,7 +215,7 @@ public class NestedSharedSpaceNodeTest {
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
-		ssMemberService.create(john, john, drive, new SharedSpaceMemberContext(creatorDriveRole, reader),
+		ssMemberService.create(john, john, drive, new SharedSpaceMemberContext(writerDriveRole, reader),
 				new SharedSpaceAccount((User) jane));
 		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
 				NodeType.WORK_GROUP);
@@ -301,7 +301,7 @@ public class NestedSharedSpaceNodeTest {
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("John Drive", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
 		SharedSpaceMemberDrive janeMemberDrive = (SharedSpaceMemberDrive) ssMemberService.create(john, john, drive,
-				new SharedSpaceMemberContext(creatorDriveRole, adminWorkgroupRole), new SharedSpaceAccount((User) jane));
+				new SharedSpaceMemberContext(writerDriveRole, adminWorkgroupRole), new SharedSpaceAccount((User) jane));
 		Assertions.assertEquals(drive.getUuid(), janeMemberDrive.getNode().getUuid());
 		SharedSpaceNode nestedWorkgroup = ssNodeService.create(jane, jane,
 				new SharedSpaceNode("Nested_WorkGroup", drive.getUuid(), NodeType.WORK_GROUP));
@@ -326,7 +326,7 @@ public class NestedSharedSpaceNodeTest {
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest8", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
 		SharedSpaceMemberDrive janeMember = (SharedSpaceMemberDrive) ssMemberService.create(john, john, drive,
-				new SharedSpaceMemberContext(creatorDriveRole, reader), new SharedSpaceAccount((User) jane));
+				new SharedSpaceMemberContext(writerDriveRole, reader), new SharedSpaceAccount((User) jane));
 		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
 				NodeType.WORK_GROUP);
 		// Create a workgroup with Jane having the creator role
@@ -349,7 +349,7 @@ public class NestedSharedSpaceNodeTest {
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest8", NodeType.DRIVE));
 		// Add Jane as member to the drive with READER role
 		SharedSpaceMemberDrive janeMember = (SharedSpaceMemberDrive) ssMemberService.create(john, john, drive,
-				new SharedSpaceMemberContext(creatorDriveRole, reader), new SharedSpaceAccount((User) jane));
+				new SharedSpaceMemberContext(writerDriveRole, reader), new SharedSpaceAccount((User) jane));
 		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
 				NodeType.WORK_GROUP);
 		// Create a workgroup with Jane having the creator role

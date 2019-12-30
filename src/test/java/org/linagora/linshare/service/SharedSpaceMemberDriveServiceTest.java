@@ -117,7 +117,7 @@ public class SharedSpaceMemberDriveServiceTest {
 
 	private SharedSpaceRole adminDriveRole;
 
-	private SharedSpaceRole creatorDriveRole;
+	private SharedSpaceRole writerDriveRole;
 
 	private SharedSpaceRole adminWorkgroupRole;
 
@@ -145,7 +145,7 @@ public class SharedSpaceMemberDriveServiceTest {
 		jane = datas.getUser2();
 		adminWorkgroupRole = ssRoleService.getAdmin(root, root);
 		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
-		creatorDriveRole = ssRoleService.findByName(root, root, "DRIVE_CREATOR");
+		writerDriveRole = ssRoleService.findByName(root, root, "DRIVE_WRITER");
 		reader = ssRoleService.findByName(root, root, "READER");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -177,14 +177,14 @@ public class SharedSpaceMemberDriveServiceTest {
 		Assertions.assertEquals(true, workgroupMember.isNested());
 		Assertions.assertEquals(drive.getUuid(), expectedNode.getParentUuid());
 		// Add a member to the Drive
-		SharedSpaceMemberContext context = new SharedSpaceMemberContext(creatorDriveRole, reader);
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(writerDriveRole, reader);
 		SharedSpaceMemberDrive addedDriveMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
 				context, new SharedSpaceAccount((User) jane));
 		workgroupMember = ssMemberService.findMemberByAccountUuid(jane, jane, jane.getLsUuid(),
 				expectedNode.getUuid());
 		Assertions.assertNotNull(addedDriveMember, "Member not added to the drive");
 		Assertions.assertNotNull(workgroupMember, "Member not added to the workgroup");
-		Assertions.assertEquals(creatorDriveRole.getUuid(), addedDriveMember.getRole().getUuid());
+		Assertions.assertEquals(writerDriveRole.getUuid(), addedDriveMember.getRole().getUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -206,10 +206,10 @@ public class SharedSpaceMemberDriveServiceTest {
 		Assertions.assertNotNull(memberToUpdate, "Member not added to the drive");
 		// Update member on the Drive
 		memberToUpdate.setNestedRole(new GenericLightEntity(reader));
-		memberToUpdate.setRole(new GenericLightEntity(creatorDriveRole));
+		memberToUpdate.setRole(new GenericLightEntity(writerDriveRole));
 		SharedSpaceMemberDrive updated = (SharedSpaceMemberDrive) ssMemberDriveService.update(john, john,
 				memberToUpdate, true);
-		Assertions.assertEquals(creatorDriveRole.getUuid(), updated.getRole().getUuid());
+		Assertions.assertEquals(writerDriveRole.getUuid(), updated.getRole().getUuid());
 		try {
 			ssMemberDriveService.create(jane, jane, drive, context, new SharedSpaceAccount((User) john));
 		} catch (BusinessException ex) {
