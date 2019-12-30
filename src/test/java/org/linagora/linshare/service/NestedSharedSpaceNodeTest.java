@@ -35,11 +35,13 @@ package org.linagora.linshare.service;
 
 import java.util.List;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -60,11 +62,19 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.utils.LinShareWiser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql" })
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -76,7 +86,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class NestedSharedSpaceNodeTest {
+
+	private static Logger logger = LoggerFactory.getLogger(NestedSharedSpaceNodeTest.class);
 
 	private LinShareWiser wiser;
 
@@ -125,12 +137,10 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		
 	}
 
-	@Before
+	@BeforeEach
 	public void init() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		initService.init();
@@ -147,7 +157,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}  
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -159,22 +169,22 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
-		Assert.assertNotNull("Drive not created", drive);
+		Assertions.assertNotNull(drive, "Drive not created");
 		SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) ssMemberService.findMemberByAccountUuid(john, john,
 				john.getLsUuid(), drive.getUuid());
 		// Check John got admin role on the drive
-		Assert.assertThat(driveMember.getRole().getUuid(), CoreMatchers.is(adminDriveRole.getUuid()));
+		Assertions.assertEquals(adminDriveRole.getUuid(), driveMember.getRole().getUuid());
 		// Create 1 workgroup inside a drive as John
 		SharedSpaceNode node = new SharedSpaceNode("workgroup DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
 		SharedSpaceNode expectedNode = ssNodeService.create(john, john, node);
-		Assert.assertNotNull("node not created", expectedNode);
+		Assertions.assertNotNull(expectedNode, "node not created");
 		SharedSpaceMember workgroupMember = ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(),
 				expectedNode.getUuid());
 		// Check John got the default role for the workgroups
-		Assert.assertThat(workgroupMember.getRole().getUuid(), CoreMatchers.is(adminWorkgroupRole.getUuid()));
-		Assert.assertThat(driveMember.isNested(), CoreMatchers.is(false));
-		Assert.assertThat(workgroupMember.isNested(), CoreMatchers.is(true));
-		Assert.assertThat(expectedNode.getParentUuid(), CoreMatchers.is(drive.getUuid()));
+		Assertions.assertEquals(adminWorkgroupRole.getUuid(), workgroupMember.getRole().getUuid());
+		Assertions.assertEquals(false, driveMember.isNested());
+		Assertions.assertEquals(true, workgroupMember.isNested());
+		Assertions.assertEquals(drive.getUuid(), expectedNode.getParentUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -191,11 +201,10 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 					NodeType.WORK_GROUP);
 			// Try to create a workgroup with Jane
 			ssNodeService.create(jane, jane, workGroupInsideDrive);
-			Assert.assertFalse("An error should be raised : Jane cannot create workgroups", true);
+			Assertions.assertFalse(true, "An error should be raised : Jane cannot create workgroups");
 		} catch (BusinessException e) {
 			// Fail to create because no good rights
-			Assert.assertThat("Jane should not be able to create workgroups inside this drive", e.getErrorCode(),
-					CoreMatchers.is(BusinessErrorCode.WORK_GROUP_FORBIDDEN));
+			Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_FORBIDDEN, e.getErrorCode());
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -215,11 +224,11 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		SharedSpaceMember workgroupMember = ssMemberService.findMemberByAccountUuid(jane, jane, jane.getLsUuid(),
 				expectedNode.getUuid());
 		// Check Jane is admin the default role for the workgroups
-		Assert.assertThat(workgroupMember.getRole().getUuid(), CoreMatchers.is(adminWorkgroupRole.getUuid()));
-		Assert.assertThat(workgroupMember.isNested(), CoreMatchers.is(true));
-		Assert.assertThat(expectedNode.getParentUuid(), CoreMatchers.is(drive.getUuid()));
+		Assertions.assertEquals(adminWorkgroupRole.getUuid(), workgroupMember.getRole().getUuid());
+		Assertions.assertEquals(true, workgroupMember.isNested());
+		Assertions.assertEquals(drive.getUuid(), expectedNode.getParentUuid());
 		List<SharedSpaceMember> nodeMembers = ssMemberService.findAll(jane, jane, expectedNode.getUuid());
-		Assert.assertThat("ERROR : There are not 2 members in the workgroup", nodeMembers.size(), CoreMatchers.is(2));
+		Assertions.assertEquals(2, nodeMembers.size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -228,10 +237,10 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// Create a drive as John
 		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
-		Assert.assertNotNull("Drive not created", drive);
+		Assertions.assertNotNull(drive, "Drive not created");
 		SharedSpaceMember driveMember = ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(), drive.getUuid());
 		// Check John got admin role on the drive
-		Assert.assertThat(adminDriveRole.getUuid(), CoreMatchers.is(driveMember.getRole().getUuid()));
+		Assertions.assertEquals(adminDriveRole.getUuid(), driveMember.getRole().getUuid());
 		// Create 2 workgroups inside a drive as John
 		SharedSpaceNode node = new SharedSpaceNode("workgroup DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
 		SharedSpaceNode node2 = new SharedSpaceNode("workgroup2 DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
@@ -239,7 +248,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		ssNodeService.create(john, john, node2);
 		List<SharedSpaceNodeNested> workGroupMembers = ssNodeService.findAllWorkgroupsInNode(john, john,
 				drive);
-		Assert.assertThat(workGroupMembers.size(), CoreMatchers.is(2));
+		Assertions.assertEquals(2, workGroupMembers.size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -255,18 +264,17 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		ssNodeService.create(john, john, node2);
 		List<SharedSpaceNodeNested> workGroupMembers = ssNodeService.findAllWorkgroupsInNode(john, john,
 				drive);
-		Assert.assertThat("ERROR : There is not 2 created workgroups", workGroupMembers.size(), CoreMatchers.is(2));
+		Assertions.assertEquals(2, workGroupMembers.size());
 		// Test the delete Method
 		ssNodeService.delete(john, john, node);
 		workGroupMembers = ssNodeService.findAllWorkgroupsInNode(john, john, drive);
-		Assert.assertThat(workGroupMembers.size(), CoreMatchers.is(1));
+		Assertions.assertEquals(1, workGroupMembers.size());
 		try {
 			ssNodeService.find(john, john, node.getUuid());
-			Assert.assertFalse("ERROR : The node should not exist anymore", true);
+			Assertions.assertFalse(true, "ERROR : The node should not exist anymore");
 		} catch (BusinessException e) {
 			// Fail to find the node
-			Assert.assertThat("ERROR : the node should not be found", e.getErrorCode(),
-					CoreMatchers.is(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND));
+			Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, e.getErrorCode());
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -282,7 +290,7 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		node.setName("Updated workgroupName");
 		// Test the update Method
 		node = ssNodeService.update(john, john, node);
-		Assert.assertThat("ERROR : Update failure!", node.getName(), CoreMatchers.is("Updated workgroupName"));
+		Assertions.assertEquals("Updated workgroupName", node.getName());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -294,21 +302,20 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		// Add Jane as member to the drive with READER role
 		SharedSpaceMemberDrive janeMemberDrive = (SharedSpaceMemberDrive) ssMemberService.create(john, john, drive,
 				new SharedSpaceMemberContext(creatorDriveRole, adminWorkgroupRole), new SharedSpaceAccount((User) jane));
-		Assert.assertEquals("Jane is not added into the drive", janeMemberDrive.getNode().getUuid(), drive.getUuid());
+		Assertions.assertEquals(drive.getUuid(), janeMemberDrive.getNode().getUuid());
 		SharedSpaceNode nestedWorkgroup = ssNodeService.create(jane, jane,
 				new SharedSpaceNode("Nested_WorkGroup", drive.getUuid(), NodeType.WORK_GROUP));
 		// Add Justin to the nested workgroup [Nested_WorkGroup]
 		SharedSpaceMember justinMemberNestedWg = ssMemberService.create(jane, jane, nestedWorkgroup, reader,
 				new SharedSpaceAccount((User) justin));
 		// Check Justin has reader role in the workgroup
-		Assert.assertThat(justinMemberNestedWg.getRole().getUuid(), CoreMatchers.is(reader.getUuid()));
+		Assertions.assertEquals(reader.getUuid(), justinMemberNestedWg.getRole().getUuid());
 		// Check Justin is a member on created NESTED workgroup [Nested_WorkGroup]
-		Assert.assertThat(justinMemberNestedWg.isNested(), CoreMatchers.is(true));
-		Assert.assertThat(nestedWorkgroup.getParentUuid(), CoreMatchers.is(drive.getUuid()));
+		Assertions.assertEquals(true, justinMemberNestedWg.isNested());
+		Assertions.assertEquals(drive.getUuid(), nestedWorkgroup.getParentUuid());
 		List<SharedSpaceNodeNested> justinNodes = ssMemberService.findAllWorkGroupsInNode(justin, justin,
 				nestedWorkgroup.getParentUuid(), justin.getLsUuid());
-		Assert.assertThat("ERROR : Justin is allowed only to get the node where is added", justinNodes.size(),
-				CoreMatchers.is(1));
+		Assertions.assertEquals(1, justinNodes.size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -326,13 +333,11 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		ssNodeService.create(john, john, workGroupInsideDrive);
 		janeMember.setNestedRole(new GenericLightEntity(contributor));
 		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, false);
-		Assert.assertThat("ERROR : Jane's role should be updated", janeMember.getNestedRole().getUuid(),
-				CoreMatchers.is(contributor.getUuid()));
+		Assertions.assertEquals(contributor.getUuid(), janeMember.getNestedRole().getUuid());
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
 		for (SharedSpaceNodeNested sharedSpaceNodeNested : workgroupsInsideDrive) {
 			SharedSpaceMember janeWorkGroupMember = ssMemberService.findMemberByAccountUuid(jane, jane, jane.getLsUuid(), sharedSpaceNodeNested.getUuid());
-			Assert.assertThat("ERROR : Jane's role should be updated", janeWorkGroupMember.getRole().getUuid(),
-					CoreMatchers.is(reader.getUuid()));
+			Assertions.assertEquals(reader.getUuid(), janeWorkGroupMember.getRole().getUuid());
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -351,13 +356,11 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		ssNodeService.create(jane, jane, workGroupInsideDrive);
 		janeMember.setNestedRole(new GenericLightEntity(contributor));
 		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, true);
-		Assert.assertThat("ERROR : Jane's role should be updated", janeMember.getNestedRole().getUuid(),
-				CoreMatchers.is(contributor.getUuid()));
+		Assertions.assertEquals(contributor.getUuid(), janeMember.getNestedRole().getUuid());
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
 		for (SharedSpaceNodeNested sharedSpaceNodeNested : workgroupsInsideDrive) {
 			SharedSpaceMember janeWorkGroupMember = ssMemberService.findMemberByAccountUuid(jane, jane, jane.getLsUuid(), sharedSpaceNodeNested.getUuid());
-			Assert.assertThat("ERROR : Jane's role should be updated", janeWorkGroupMember.getRole().getUuid(),
-					CoreMatchers.is(contributor.getUuid()));
+			Assertions.assertEquals(contributor.getUuid(), janeWorkGroupMember.getRole().getUuid());
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}
