@@ -47,7 +47,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.webservice.admin.SharedSpaceMemberRestService;
 
@@ -94,7 +93,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember addMember(
-			@ApiParam(value = "shared space member to create", required = true) SharedSpaceMemberDrive sharedSpaceNodeMember)
+			@ApiParam(value = "shared space member to create", required = true) SharedSpaceMember sharedSpaceNodeMember)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.create(null, sharedSpaceNodeMember);
 	}
@@ -108,7 +107,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember update(
-			@ApiParam(value = "The shared space memnber to update.", required = true) SharedSpaceMemberDrive ssMember,
+			@ApiParam(value = "The shared space memnber to update.", required = true) SharedSpaceMember ssMember,
 			@ApiParam("The shared space member to update.")
 				@PathParam("uuid") String uuid,
 			@ApiParam("If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
