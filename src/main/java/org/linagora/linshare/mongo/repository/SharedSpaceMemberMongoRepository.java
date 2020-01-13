@@ -60,15 +60,15 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{ 'node.uuid' : ?0, 'uuid' : ?1 }")
 	SharedSpaceMember findByNodeUuidAndUuid(String nodeUuid, String uuid);
 
-	@Query("{ 'account.uuid' : ?0, 'node.parent' : ?1,  'nested' : ?2 }")
-	List<SharedSpaceMember> findByAccountUuidAndParentAndNested(String accountUuid, String parentUuid, boolean nested);
+	@Query("{ 'account.uuid' : ?0, 'node.parentUuid' : ?1,  'nested' : ?2 }")
+	List<SharedSpaceMember> findByAccountUuidAndParentUuidAndNested(String accountUuid, String parentUuid, boolean nested);
 
-	@Query("{ 'account.uuid' : ?0, 'node.parent' : ?1, 'nested' : ?2, 'role.uuid' : { $ne: ?3 } }")
+	@Query("{ 'account.uuid' : ?0, 'node.parentUuid' : ?1, 'nested' : ?2, 'role.uuid' : { $ne: ?3 } }")
 	List<SharedSpaceMember> findAllMembersWithConflictRoles(String accountUuid, String parentUuid, boolean nested, String roleUuid);
 
-	@Query("{ 'account.uuid' : ?0, 'node.parent' : ?1, 'nested' : ?2, 'role.uuid' : ?3 }")
+	@Query("{ 'account.uuid' : ?0, 'node.parentUuid' : ?1, 'nested' : ?2, 'role.uuid' : ?3 }")
 	List<SharedSpaceMember> findAllMembersWithNoConflictedRoles(String accountUuid, String parentUuid, boolean nested, String roleUuid);
 
-	@Query("{ 'node.parent' : ?0, 'nested' : ?1 }")
-	List<SharedSpaceMember> findByParentAndNested(String parentUuid, boolean nested);
+	@Query("{ 'node.parentUuid' : ?0, 'nested' : ?1 }")
+	List<SharedSpaceMember> findByParentUuidAndNested(String parentUuid, boolean nested);
 }

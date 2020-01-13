@@ -225,12 +225,12 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid) {
-		return repository.findByAccountUuidAndParentAndNested(accountUuid, parentUuid, true);
+		return repository.findByAccountUuidAndParentUuidAndNested(accountUuid, parentUuid, true);
 	}
 
 	@Override
 	public List<SharedSpaceMember> findAllMembersByParent(String parentUuid) {
-		return repository.findByParentAndNested(parentUuid, true);
+		return repository.findByParentUuidAndNested(parentUuid, true);
 	}
 
 	@Override
