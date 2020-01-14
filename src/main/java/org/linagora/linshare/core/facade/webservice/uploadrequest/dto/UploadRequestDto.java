@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
 import com.google.common.collect.Sets;
@@ -95,39 +94,28 @@ public class UploadRequestDto {
 		super();
 	}
 
-	public UploadRequestDto(UploadRequest entity) {
-		super();
-		this.owner = new ContactDto(entity.getUploadRequestGroup().getOwner());
+	public UploadRequestDto(UploadRequestUrl requestUrl) {
+		this.owner = new ContactDto(requestUrl.getUploadRequest().getUploadRequestGroup().getOwner());
 		this.recipient = null;
-		this.maxFileCount = entity.getMaxFileCount();
-		this.maxDepositSize = entity.getMaxDepositSize();
-		this.maxFileSize = entity.getMaxFileSize();
-		this.activationDate = entity.getActivationDate();
-		this.expiryDate = entity.getExpiryDate();
-		this.canDeleteDocument = entity.isCanDelete();
-		this.canClose = entity.isCanClose();
-		this.subject = entity.getUploadRequestGroup().getSubject();
-		this.body = entity.getUploadRequestGroup().getBody();
+		this.maxFileCount = requestUrl.getUploadRequest().getMaxFileCount();
+		this.maxDepositSize = requestUrl.getUploadRequest().getMaxDepositSize();
+		this.maxFileSize = requestUrl.getUploadRequest().getMaxFileSize();
+		this.activationDate = requestUrl.getUploadRequest().getActivationDate();
+		this.expiryDate = requestUrl.getUploadRequest().getExpiryDate();
+		this.canDeleteDocument = requestUrl.getUploadRequest().isCanDelete();
+		this.canClose = requestUrl.getUploadRequest().isCanClose();
+		this.subject = requestUrl.getUploadRequest().getUploadRequestGroup().getSubject();
+		this.body = requestUrl.getUploadRequest().getUploadRequestGroup().getBody();
 		this.isClosed = false;
-		if (entity.getStatus().equals(UploadRequestStatus.CLOSED)) {
+		if (requestUrl.getUploadRequest().getStatus().equals(UploadRequestStatus.CLOSED)) {
 			this.isClosed = true;
 			this.canDeleteDocument = false;
 			this.canClose = false;
 		}
-		for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
-			for (UploadRequestEntry entry : uru.getUploadRequestEntries()) {
-				this.usedSpace += entry.getSize();
-			}
-		}
-		this.protectedByPassword = false;
-		this.locale = entity.getLocale();
-	}
-
-	public UploadRequestDto(UploadRequestUrl requestUrl) {
-		this(requestUrl.getUploadRequest());
 		this.uuid = requestUrl.getUuid();
 		this.recipient = new ContactDto(requestUrl.getContact());
 		this.protectedByPassword = requestUrl.isProtectedByPassword();
+		this.locale = requestUrl.getUploadRequest().getLocale();
 	}
 
 	public UploadRequest toObject() {

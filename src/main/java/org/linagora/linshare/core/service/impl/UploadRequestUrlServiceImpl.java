@@ -269,4 +269,9 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 							+ requestUrl.getUuid());
 		}
 	}
+
+	@Override
+	public Long computeEntriesSize(UploadRequest request) {
+		return uploadRequestEntryService.computeEntriesSize(request);
+	}
 }

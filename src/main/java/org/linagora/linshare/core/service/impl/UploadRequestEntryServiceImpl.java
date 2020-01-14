@@ -324,4 +324,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	public List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl) {
 		return uploadRequestEntryBusinessService.findAllExtEntries(uploadRequestUrl);
 	}
+
+	@Override
+	public Long computeEntriesSize(UploadRequest request) {
+		return uploadRequestEntryBusinessService.computeEntriesSize(request);
+	}
 }

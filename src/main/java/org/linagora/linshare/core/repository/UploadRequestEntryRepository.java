@@ -58,4 +58,6 @@ public interface UploadRequestEntryRepository extends
 	Map<String, Long> findByDomainsBetweenTwoDates(AbstractDomain domain, Calendar beginDate, Calendar endDate);
 
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
+
+	Long computeEntriesSize(UploadRequestUrl url);
 }

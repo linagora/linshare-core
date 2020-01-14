@@ -39,10 +39,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
@@ -50,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
 import com.google.common.collect.Maps;
@@ -122,5 +126,24 @@ public class UploadRequestEntryRepositoryImpl extends
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("uploadRequestUrl", uploadRequestUrl));
 		return findByCriteria(det);
+	}
+
+	@Override
+	public Long computeEntriesSize(UploadRequestUrl uploadRequestUrl) {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session) throws HibernateException {
+				@SuppressWarnings("unchecked")
+				final Query<Long> query = session.createQuery(
+						"select SUM (size) from UploadRequestEntry u where u.uploadRequestUrl = :uploadRequestUrl");
+				query.setParameter("uploadRequestUrl", uploadRequestUrl);
+				if (query.list() == null || query.list().get(0) == null) {
+					return 0L;
+				} else {
+					return query.list().get(0);
+				}
+			}
+		};
+		Long result = getHibernateTemplate().execute(action);
+		return result;
 	}
 }

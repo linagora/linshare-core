@@ -55,4 +55,6 @@ public interface UploadRequestUrlService {
 
 	UploadRequestEntry deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid)
 			throws BusinessException;
+
+	Long computeEntriesSize(UploadRequest request);
 }
