@@ -35,10 +35,13 @@ package org.linagora.linshare.core.facade.webservice.admin;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
+import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 
 public interface MailAttachmentFacade extends AdminGenericFacade {
 
@@ -52,4 +55,6 @@ public interface MailAttachmentFacade extends AdminGenericFacade {
 	List<MailAttachmentDto> findAll(String domainUuid);
 
 	MailAttachmentDto update(MailAttachmentDto attachment, String uuid) throws BusinessException;
+
+	Set<MailAttachmentAuditLogEntry> findAllAudits(String uuid, List<LogAction> actions);
 }

@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -72,4 +73,8 @@ public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntry
 	@Query("{ 'resource.domainUuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : ?2 }")
 	Set<AuditLogEntryAdmin> findAll(String domainUuid, List<LogAction> action, AuditLogEntryType type,
 			Sort sort);
+
+	@Query("{ 'resource.uuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : ?2 }")
+	Set<MailAttachmentAuditLogEntry> findAllAudits(String uuid, List<LogAction> actions,
+			AuditLogEntryType mailAttachment, Sort sort);
 }

@@ -35,11 +35,14 @@ package org.linagora.linshare.webservice.admin;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
+import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 
 public interface MailAttachmentRestService {
 
@@ -54,4 +57,6 @@ public interface MailAttachmentRestService {
 	List<MailAttachmentDto> findAll(String configUuid) throws BusinessException;
 
 	MailAttachmentDto update(String uuid, MailAttachmentDto attachment) throws BusinessException;
+
+	Set<MailAttachmentAuditLogEntry> findAllAudits(String uuid, List<LogAction> actions);
 }

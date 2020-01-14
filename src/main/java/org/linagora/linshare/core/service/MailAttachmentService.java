@@ -35,11 +35,14 @@ package org.linagora.linshare.core.service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 
 public interface MailAttachmentService {
 
@@ -53,4 +56,6 @@ public interface MailAttachmentService {
 	List<MailAttachment> findAllByMailConfig(Account authUser, MailConfig config);
 
 	MailAttachment update(Account authUser, MailAttachment mailAttach);
+
+	Set<MailAttachmentAuditLogEntry> findAllAudits(Account authUser, MailAttachment attachment, List<LogAction> actions);
 }

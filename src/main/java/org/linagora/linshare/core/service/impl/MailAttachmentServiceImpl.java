@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -49,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MailAttachmentService;
 import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
@@ -67,18 +69,22 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	protected final AuditAdminMongoRepository mongoRepository;
 
+	protected final AuditLogEntryService auditLogEntryService;
+
 	public MailAttachmentServiceImpl(
 			MailAttachmentBusinessService attachmentBusinessService,
 			MailConfigBusinessService configService,
 			DocumentEntryService documentEntryService,
 			DomainPermissionBusinessService domainPermissionService,
-			AuditAdminMongoRepository mongoRepository) {
+			AuditAdminMongoRepository mongoRepository,
+			AuditLogEntryService auditLogEntryService) {
 		super();
 		this.attachmentBusinessService = attachmentBusinessService;
 		this.configService = configService;
 		this.documentEntryService = documentEntryService;
 		this.domainPermissionService = domainPermissionService;
 		this.mongoRepository = mongoRepository;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -161,5 +167,12 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 				AuditLogEntryType.MAIL_ATTACHMENT, resource);
 		mongoRepository.insert(log);
 		return log;
+	}
+
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAudits(Account authUser, MailAttachment attachment,
+			List<LogAction> actions) {
+		checkAdminFor(authUser, authUser.getDomain());
+		return auditLogEntryService.findAllAudits(authUser, attachment.getUuid(), actions);
 	}
 }

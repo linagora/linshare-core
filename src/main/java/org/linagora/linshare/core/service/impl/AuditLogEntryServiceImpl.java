@@ -55,6 +55,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.slf4j.Logger;
@@ -312,6 +313,18 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			action.add(LogAction.DELETE);
 		}
 		return auditMongoRepository.findAll(domainUuid, action, AuditLogEntryType.PUBLIC_KEY,
+				new Sort(Sort.Direction.DESC, CREATION_DATE));
+	}
+
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAudits(Account authUser, String uuid,
+			List<LogAction> actions) {
+		if (actions.isEmpty()) {
+			actions.add(LogAction.CREATE);
+			actions.add(LogAction.DELETE);
+			actions.add(LogAction.UPDATE);
+		}
+		return auditMongoRepository.findAllAudits(uuid, actions, AuditLogEntryType.MAIL_ATTACHMENT,
 				new Sort(Sort.Direction.DESC, CREATION_DATE));
 	}
 

@@ -35,9 +35,11 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
@@ -50,6 +52,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailAttachmentService;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -134,5 +137,13 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 		MailAttachment mailAttach = attachment.toObject();
 		mailAttach = attachmentService.update(authUser, mailAttach);
 		return getMailAttachmentDto(authUser, mailAttach);
+	}
+
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAudits(String uuid, List<LogAction> actions) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(uuid, "Missing required mail attachment uuid");
+		MailAttachment attachment = attachmentService.find(authUser, uuid);
+		return attachmentService.findAllAudits(authUser, attachment, actions);
 	}
 }

@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.admin.impl;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -53,12 +54,14 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailAttachmentFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
 import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailAttachmentRestService;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
@@ -219,5 +222,20 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 			@ApiParam(value = "Mail attachment to update.", required = true)
 				MailAttachmentDto attachment) throws BusinessException {
 		return mailAttachmentFacade.update(attachment, uuid);
+	}
+
+	@Path("/{uuid}/audits")
+	@GET
+	@ApiOperation(value = "Find all mail attachments audits.", response = MailAttachmentDto.class, responseContainer = "List")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAudits(
+		@ApiParam(value = "The mailAttachment uuid.", required = true)
+			@PathParam("uuid") String uuid,
+		@ApiParam(value = "Filter by type of actions..", required = false)
+			@QueryParam("actions") List<LogAction> actions) throws BusinessException {
+		return mailAttachmentFacade.findAllAudits(uuid, actions);
 	}
 }

@@ -44,6 +44,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 
 public interface AuditLogEntryService {
 
@@ -65,4 +66,6 @@ public interface AuditLogEntryService {
 			boolean entriesLogsOnly, List<LogAction> action, List<AuditLogEntryType> type);
 
 	Set<AuditLogEntryAdmin> findAll(Account actor, String domainUuid, List<LogAction> action);
+
+	Set<MailAttachmentAuditLogEntry> findAllAudits(Account authUser, String domainUuid, List<LogAction> actions);
 }
