@@ -126,8 +126,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		NodeMetadataMto result = mongoTemplate.aggregate(aggregation, "work_group_nodes", NodeMetadataMto.class)
 				.getUniqueMappedResult();
 		if (result == null) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND,
-					"We can't compute the size of this node");
+			return 0L;
 		}
 		return result.getSize();
 	}
@@ -181,6 +180,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			Map<String, WorkGroupNode> map, List<WorkGroupNode> documentNodes, WorkGroupNodeAuditLogEntry log) {
 		FileAndMetaData fileAndMetaData = null;
 		File zipFile = new File(rootNode.getName().concat(ARCHIVE_EXTENTION));
+		logger.debug("Zip file path : " + zipFile.getAbsolutePath());
 		try (FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(fos);) {
 			for (WorkGroupNode node : documentNodes) {
