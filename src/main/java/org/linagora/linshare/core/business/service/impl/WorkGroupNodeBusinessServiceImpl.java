@@ -180,9 +180,9 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			Map<String, WorkGroupNode> map, List<WorkGroupNode> documentNodes, WorkGroupNodeAuditLogEntry log) {
 		FileAndMetaData fileAndMetaData = null;
 		File zipFile = new File(rootNode.getName().concat(ARCHIVE_EXTENTION));
-		logger.debug("Zip file path : " + zipFile.getAbsolutePath());
+		logger.debug("Zip file path : {}", zipFile.getAbsolutePath());
 		try (FileOutputStream fos = new FileOutputStream(zipFile);
-			ZipOutputStream zos = new ZipOutputStream(fos);) {
+				ZipOutputStream zos = new ZipOutputStream(fos);) {
 			for (WorkGroupNode node : documentNodes) {
 				String humanPath = getGlobalPath(map, node.getPath(), rootNode);
 				log.addAuditDownloadLightEntity(
@@ -194,16 +194,18 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 					addFileToZip(stream, zos, node.getName(), humanPath, revision.getSize());
 				} catch (IOException ioException) {
 					logger.error("Download folder with UUID {} was failed.", rootNode.getUuid(), ioException);
-					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_INTERNAL_ERROR,
 							"Can not generate the archive for this directory");
 				}
 			}
 			zos.close();
 			InputStream inputStream = new FileInputStream(zipFile);
-			fileAndMetaData = new FileAndMetaData(inputStream, zipFile.length(), zipFile.getName(), ARCHIVE_MIME_TYPE);
+			fileAndMetaData = new FileAndMetaData(inputStream, zipFile.length(),
+					rootNode.getName().concat(ARCHIVE_EXTENTION), ARCHIVE_MIME_TYPE);
 		} catch (IOException ioException) {
 			logger.error("Download folder {} failed.", rootNode.getUuid(), ioException);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not generate the archive for this directory");
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_INTERNAL_ERROR,
+					"Can not generate the archive for this directory");
 		} finally {
 			if (zipFile != null) {
 				zipFile.delete();
@@ -222,20 +224,22 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			for (WorkGroupNode node : documentNodes) {
 				log.addAuditDownloadLightEntity(new AuditDownloadLightEntity(node.getUuid(), node.getName()));
 				log.addRelatedResources(node.getUuid());
-				try (InputStream stream = documentEntryBusinessService.getDocumentStream((WorkGroupDocumentRevision) node);) {
-					addFileToZip(stream, zos, node.getName(), "" , ((WorkGroupDocumentRevision) node).getSize());
+				try (InputStream stream = documentEntryBusinessService
+						.getDocumentStream((WorkGroupDocumentRevision) node);) {
+					addFileToZip(stream, zos, node.getName(), "", ((WorkGroupDocumentRevision) node).getSize());
 				} catch (IOException ioException) {
 					logger.error("Download document {} with its revisions failed.", rootNode.getUuid(), ioException);
-					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_INTERNAL_ERROR,
 							"Can not generate the archive for this directory");
 				}
 			}
 			zos.close();
 			InputStream inputStream = new FileInputStream(zipFile);
-			fileAndMetaData = new FileAndMetaData(inputStream, zipFile.length(), zipFile.getName(), ARCHIVE_MIME_TYPE);
+			fileAndMetaData = new FileAndMetaData(inputStream, zipFile.length(),
+					rootNode.getName().concat(ARCHIVE_EXTENTION), ARCHIVE_MIME_TYPE);
 		} catch (IOException ioException) {
 			logger.error("Download document {} with its revisions failed.", rootNode.getUuid(), ioException);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_INTERNAL_ERROR,
 					"Can not generate the archive for this directory");
 		} finally {
 			if (zipFile != null) {
