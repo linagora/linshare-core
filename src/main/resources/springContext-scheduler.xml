@@ -179,7 +179,7 @@
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
-                <ref bean="cleanOutdatedUsersJobTrigger"/>
+                <ref bean="cleanOutdatedUsersAndDomainsJobTrigger"/>
                 <ref bean="notifyOutdatedSharesJobTrigger"/>
                 <ref bean="updateUploadRequestJobTrigger"/>
                 <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
