@@ -128,13 +128,16 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		if (StringUtils.isBlank(claims.getSubject()) || (claims.getExpiration() == null && !claims.containsKey("uuid"))
 				|| claims.getIssuedAt() == null) {
 			String msg = String.format("Subject and expiration date are mandatory fields for jwt token: %1$s", token);
+			logger.warn(msg);
 			throw new AuthenticationServiceException(msg);
 		}
 
 		Date issuedAt = claims.getIssuedAt();
 		if (issuedAt.after(new Date())) {
-			String msg = String.format("Issued date (iat) can not be in the futur for jwt token: %1$s", token);
-			throw new AuthenticationServiceException(msg);
+			String msg = "Issued date (iat) can not be in the futur for jwt token: %1$s";
+			// do not leak token in logs, too dangerous
+			logger.warn(msg);
+			throw new AuthenticationServiceException(String.format(msg, token));
 		}
 
 		if (claims.getExpiration() == null && claims.containsKey("uuid") && claims.get("uuid") != null) {
@@ -155,9 +158,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 				throw new AuthenticationServiceException("JWT permanent token Functionality is disabled.");
 			}
 		} else if (!jwtService.hasValidLiveTime(claims)) {
-			String msg = String.format("Token live time can not be more than 5 minutes for jwt token: %1$s", token);
-			throw new AuthenticationServiceException(msg);
+			String msg = "Token live time can not be more than 5 minutes for jwt token: %1$s";
+			// do not leak token in logs, too dangerous
+			logger.warn(msg);
+			throw new AuthenticationServiceException(String.format(msg, token));
 		}
+		logger.debug("JWT token seems to be good. Processing authentication...");
 
 		User foundUser = null;
 		String domainUuid = claims.get("domain", String.class);
@@ -173,6 +179,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			// if we can find the user with jwt token, the user may not exist.
 			// Token is still valid but we can't continue, we have to abord authentification process.
 			// We can't return null because there is one and only Provider that can handle JwtAuthenticationToken
+			logger.error("Weird, found user is null, should never happen.");
 			throw new AuthenticationServiceException("Could not find user account : " + claims);
 		}
 		try {
@@ -196,6 +203,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 	}
 
 	private void insertJwtLongTimeFailureLogEntry(Claims claims, String message) {
+		logger.warn(message);
 		User found = userRepository.findByMail(claims.getSubject());
 		String msg = new String();
 		if (claims.containsKey("uuid") && claims.get("uuid") != null) {
