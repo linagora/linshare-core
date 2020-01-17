@@ -225,7 +225,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			WorkGroupNode rootNode, List<WorkGroupNode> documentNodes, WorkGroupNodeAuditLogEntry log) {
 		FileAndMetaData fileAndMetaData = null;
 		try {
-			File zipFile = File.createTempFile("linshare-download-folder-", ARCHIVE_EXTENTION);
+			File zipFile = File.createTempFile("linshare-download-revision-", ARCHIVE_EXTENTION);
 			zipFile.deleteOnExit();
 			try (FileOutputStream fos = new FileOutputStream(zipFile);
 					ZipOutputStream zos = new ZipOutputStream(fos);) {

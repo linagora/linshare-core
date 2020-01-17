@@ -562,7 +562,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		if (!archiveDownload.getActivationPolicy().getStatus()) {
 			logger.error("The current domain does not allow you to download an archive for this workgroup node.");
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_FORBIDDEN,
-					"can not download an archive for this workgroup node.");
+					"You are not allowed to download an archive. Functionality may not be enabled.");
 		}
 	}
 
