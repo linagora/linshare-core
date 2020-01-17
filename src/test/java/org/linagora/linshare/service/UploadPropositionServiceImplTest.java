@@ -82,6 +82,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+@Disabled
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(locations = {
@@ -189,7 +190,6 @@ public class UploadPropositionServiceImplTest {
 	}
 
 	@Test
-	@Disabled //FIXME :  Handle issues and enable the test
 	public void createUploadPropositionAcceptedBySystem() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadPropositionFilter createdAcceptationFilter = uploadPropositionfilterService.create((User) root,
