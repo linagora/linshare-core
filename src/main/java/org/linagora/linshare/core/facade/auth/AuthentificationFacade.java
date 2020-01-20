@@ -71,4 +71,6 @@ public interface AuthentificationFacade {
 	public User updateUser(User user) throws BusinessException;
 
 	public User checkStillInLdap(User user, String login) throws BusinessException;
+
+	public boolean isJwtLongTimeFunctionalityEnabled(String domainUuid);
 }
