@@ -117,7 +117,9 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 	@Override
 	public List<MailAttachmentDto> findAll(String configUuid) {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		Validate.notEmpty(configUuid, "configUuid must be set");
+		if (Strings.isNullOrEmpty(configUuid)) {
+			configUuid = authUser.getDomain().getCurrentMailConfiguration().getUuid();
+		}
 		MailConfig config = configService.findConfigByUuid((User) authUser, configUuid);
 		List<MailAttachment> attachments = attachmentService.findAllByMailConfig(authUser, config);
 		List<MailAttachmentDto> attachmentDtos = Lists.newArrayList();
