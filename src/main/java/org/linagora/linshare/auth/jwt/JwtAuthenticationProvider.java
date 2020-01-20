@@ -41,12 +41,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.auth.dao.LdapUserDetailsProvider;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
@@ -74,8 +72,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private JwtLongTimeMongoRepository jwtLongTimeMongoRepository;
 
-	private FunctionalityReadOnlyService functionalityReadOnlyService;
-
 	private UserRepository<User> userRepository;
 
 	public void setAuthentificationFacade(AuthentificationFacade authentificationFacade) {
@@ -92,10 +88,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	public void setJwtLongTimeMongoRepository(JwtLongTimeMongoRepository jwtLongTimeMongoRepository) {
 		this.jwtLongTimeMongoRepository = jwtLongTimeMongoRepository;
-	}
-
-	public void setFunctionalityReadOnlyService(FunctionalityReadOnlyService functionalityReadOnlyService) {
-		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	public void setUserRepository(UserRepository<User> userRepository) {
@@ -153,8 +145,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 				String msg = String.format(message, token);
 				throw new AuthenticationServiceException(msg);
 			}
-			Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(jwtLongTime.getDomain().getUuid());
-			if (!functionality.getActivationPolicy().getStatus()) {
+			if (!authentificationFacade.isJwtLongTimeFunctionalityEnabled(jwtLongTime.getDomain().getUuid())) {
 				throw new AuthenticationServiceException("JWT permanent token Functionality is disabled.");
 			}
 		} else if (!jwtService.hasValidLiveTime(claims)) {

@@ -39,12 +39,14 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
@@ -66,8 +68,11 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
 	private final InternalRepository internalRepository;
 
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+
 	public AuthentificationFacadeImpl(UserService userService, LogEntryService logEntryService,
 			AbstractDomainService abstractDomainService, UserProviderService userProviderService,
+			FunctionalityReadOnlyService functionalityReadOnlyService,
 			InternalRepository internalRepository) {
 		super();
 		this.userService = userService;
@@ -75,6 +80,7 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
 		this.internalRepository = internalRepository;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -195,4 +201,14 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 		}
 		return user;
 	}
+
+	@Override
+	public boolean isJwtLongTimeFunctionalityEnabled(String domainUuid) {
+		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(domainUuid);
+		if (!functionality.getActivationPolicy().getStatus()) {
+			return false;
+		}
+		return true;
+	}
+
 }

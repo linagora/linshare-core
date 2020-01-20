@@ -13,5 +13,6 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="userProviderService" />
 		<constructor-arg ref="internalRepository" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 </beans>
