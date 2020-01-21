@@ -86,16 +86,12 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 
 	protected final MongoTemplate mongoTemplate;
 
-	protected final Long archiveMaximumSize;
-
 	public WorkGroupNodeBusinessServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
 			DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService,
-			MongoTemplate mongoTemplate,
-			Long archiveMaximumSize) {
+			MongoTemplate mongoTemplate) {
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.documentEntryRevisionBusinessService = documentEntryRevisionBusinessService;
 		this.mongoTemplate = mongoTemplate;
-		this.archiveMaximumSize = archiveMaximumSize;
 	}
 
 	@Override
@@ -148,11 +144,6 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		}
 		Long result = mongoTemplate.count(query, WorkGroupNode.class);
 		return result;
-	}
-
-	@Override
-	public Boolean downloadIsAllowed(WorkGroup workGroup, String pattern) {
-		return this.archiveMaximumSize > computeNodeSize(workGroup, pattern, WorkGroupNodeType.DOCUMENT);
 	}
 
 	@Override

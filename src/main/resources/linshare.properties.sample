@@ -252,6 +252,3 @@ linshare.warn.owner.about.guest.expiration.days.before=7
 #******** Production Mode
 linshare.mode.production=true
 
-#******** Maximum size for download Folder (Unit: Byte)
-linshare.download.archive.maximum.size=900000000
-

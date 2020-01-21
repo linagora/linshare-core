@@ -52,10 +52,10 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
+import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.impl.WorkGroupNodeResourceAccessControlImpl;
@@ -536,12 +536,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			return revisionService.download(actor, owner, workGroup, (WorkGroupDocument) documentParent,
 					(WorkGroupDocumentRevision) node);
 		} else if (isFolder(node)) {
-			checkArchiveDownloadRight(workGroup.getDomain());
 			String pattern = "^" + node.getPath() + node.getUuid();
-			if (!workGroupNodeBusinessService.downloadIsAllowed(workGroup, pattern)) {
-				throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_FORBIDDEN,
-						"Can not download this folder, The Folder size is too large. ");
-			}
+			checkArchiveDownloadRight(workGroup, pattern);
 			Map<String, WorkGroupNode> nodes = workGroupNodeBusinessService.findAllSubNodes(workGroup, pattern);
 			List<WorkGroupNode> documentNodes = workGroupNodeBusinessService.findAllSubDocuments(workGroup, pattern);
 			WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
@@ -557,15 +553,29 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 	}
 
-	private void checkArchiveDownloadRight(AbstractDomain domain) {
-		Functionality archiveDownload = functionalityReadOnlyService.getWorkGoupDownloadArchive(domain);
+	/**
+	 * 
+	 * @param workGroup 
+	 * @param pattern 
+	 * This function throw an exception if the functionality is disabled 
+	 * and if the size of folder is larger than allowed size in the current domain
+	 */
+	private void checkArchiveDownloadRight(WorkGroup workGroup, String pattern) {
+		SizeUnitValueFunctionality archiveDownload = functionalityReadOnlyService.getWorkGoupDownloadArchive(workGroup.getDomain());
 		if (!archiveDownload.getActivationPolicy().getStatus()) {
-			logger.error("The current domain does not allow you to download an archive for this workgroup node.");
+			logger.error("Can not download this folder, Functionality is disabled.");
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_FORBIDDEN,
-					"You are not allowed to download an archive. Functionality may not be enabled.");
+					"Can not download this folder, Functionality is disabled. ");
+		}
+		Long computedArchiveSize = workGroupNodeBusinessService.computeNodeSize(workGroup, pattern, WorkGroupNodeType.DOCUMENT);
+		if (computedArchiveSize > archiveDownload.getPlainSize()) {
+			logger.error("Can not download this folder, The Folder size is too large.",
+					archiveDownload.getPlainSize());
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_ARCHIVE_SIZE_TOO_LARGE,
+					"Can not download this folder, The Folder size is too large.");
 		}
 	}
-
+		
 	@Override
 	public WorkGroupNode copy(Account actor, User owner, WorkGroup toWorkGroup, String toNodeUuid, CopyResource cr)
 			throws BusinessException {
