@@ -53,8 +53,6 @@ public interface WorkGroupNodeBusinessService {
 
 	Long computeNodeCount(WorkGroup workGroup, String pattern, WorkGroupNode node);
 
-	Boolean downloadIsAllowed(WorkGroup workGroup, String pattern);
-
 	Map<String, WorkGroupNode> findAllSubNodes(WorkGroup workGroup, String pattern);
 
 	FileAndMetaData downloadFolder(Account actor, User owner, WorkGroup workGroup, WorkGroupNode rootNode,
