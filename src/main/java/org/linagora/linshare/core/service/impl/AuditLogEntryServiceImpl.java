@@ -328,4 +328,16 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 				new Sort(Sort.Direction.DESC, CREATION_DATE));
 	}
 
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(Account authUser, List<String> domains,
+			List<LogAction> actions) {
+		if (actions.isEmpty()) {
+			actions.add(LogAction.CREATE);
+			actions.add(LogAction.DELETE);
+			actions.add(LogAction.UPDATE);
+		}
+		return auditMongoRepository.findAllAuditsByDomain(domains, actions, AuditLogEntryType.MAIL_ATTACHMENT,
+				new Sort(Sort.Direction.DESC, CREATION_DATE));
+	}
+
 }

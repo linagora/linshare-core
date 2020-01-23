@@ -238,4 +238,21 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 			@QueryParam("actions") List<LogAction> actions) throws BusinessException {
 		return mailAttachmentFacade.findAllAudits(uuid, actions);
 	}
+
+	@Path("/audits/{domainUuid}")
+	@GET
+	@ApiOperation(value = "Find all mail attachments audits by a choosen domain.", response = MailAttachmentAuditLogEntry.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(
+			@ApiParam(value = "The domain uuid.", required = true)
+				@PathParam("domainUuid") String domainUuid,
+			@ApiParam(value = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<LogAction> actions) {
+		return mailAttachmentFacade.findAllAuditsByDomain(domainUuid, actions);
+	}
+
 }

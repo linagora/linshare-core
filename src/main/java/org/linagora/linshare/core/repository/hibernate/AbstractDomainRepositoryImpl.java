@@ -225,6 +225,16 @@ public class AbstractDomainRepositoryImpl extends
 	}
 
 	@Override
+	public List<String> getSubDomainsByDomainIdentifiers(String domain) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
+				.setProjection(Projections.property("uuid"));
+		det.createAlias("parentDomain", "parent");
+		det.add(Restrictions.eq("parent.uuid", domain));
+		det.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
+		return listByCriteria(det);
+	}
+
+	@Override
 	public AbstractDomain getGuestSubDomainByDomain(String uuid) {
 		DetachedCriteria det = DetachedCriteria.forClass(GuestDomain.class);
 		det.createAlias("parentDomain", "parent");

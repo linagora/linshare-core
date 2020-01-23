@@ -70,4 +70,6 @@ public interface DomainBusinessService {
 	List<AbstractDomain> getSubDomainsByDomain(String uuid) throws BusinessException;
 
 	Set<AbstractDomain> getSubDomainsByDomainAsASet(String uuid) throws BusinessException;
+
+	List<String> getSubDomainsByDomainIdentifiers(String uuid) throws BusinessException;
 }

@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MailAttachmentService;
@@ -71,13 +72,16 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	protected final AuditLogEntryService auditLogEntryService;
 
+	protected final AbstractDomainService domainService;
+
 	public MailAttachmentServiceImpl(
 			MailAttachmentBusinessService attachmentBusinessService,
 			MailConfigBusinessService configService,
 			DocumentEntryService documentEntryService,
 			DomainPermissionBusinessService domainPermissionService,
 			AuditAdminMongoRepository mongoRepository,
-			AuditLogEntryService auditLogEntryService) {
+			AuditLogEntryService auditLogEntryService,
+			AbstractDomainService domainService) {
 		super();
 		this.attachmentBusinessService = attachmentBusinessService;
 		this.configService = configService;
@@ -85,6 +89,7 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 		this.domainPermissionService = domainPermissionService;
 		this.mongoRepository = mongoRepository;
 		this.auditLogEntryService = auditLogEntryService;
+		this.domainService = domainService;
 	}
 
 	@Override
@@ -174,5 +179,22 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 			List<LogAction> actions) {
 		checkAdminFor(authUser, authUser.getDomain());
 		return auditLogEntryService.findAllAudits(authUser, attachment.getUuid(), actions);
+	}
+
+	/**
+	 * 
+	 * @param authUser 
+	 * @param domainUuid 
+	 * @param List<LogAction>
+	 * This method will retrieve the list of MailAttachmentAuditLogEntry related to a chosen domain
+	 */
+
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(Account authUser, String domainUuid,
+			List<LogAction> actions) {
+		AbstractDomain domain = domainService.findById(domainUuid);
+		checkAdminFor(authUser, domain);
+		List<String> domains = domainPermissionService.getAdministredDomainsIdentifiers(authUser, domainUuid);
+		return auditLogEntryService.findAllAuditsByDomain(authUser, domains, actions);
 	}
 }

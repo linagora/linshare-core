@@ -77,4 +77,8 @@ public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntry
 	@Query("{ 'resource.uuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : ?2 }")
 	Set<MailAttachmentAuditLogEntry> findAllAudits(String uuid, List<LogAction> actions,
 			AuditLogEntryType mailAttachment, Sort sort);
+
+	@Query("{'targetDomainUuid' : {'$in' : ?0 }, 'action' : {'$in' : ?1 }, 'type' : ?2 }")
+	Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(List<String> domains, List<LogAction> actions,
+			AuditLogEntryType mailAttachment, Sort sort);
 }

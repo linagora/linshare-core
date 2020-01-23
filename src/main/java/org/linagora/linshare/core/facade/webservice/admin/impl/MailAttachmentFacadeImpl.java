@@ -148,4 +148,11 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 		MailAttachment attachment = attachmentService.find(authUser, uuid);
 		return attachmentService.findAllAudits(authUser, attachment, actions);
 	}
+
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(String domainUuid, List<LogAction> actions) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Domain uuid must be set");
+		return attachmentService.findAllAuditsByDomain(authUser, domainUuid, actions);
+	}
 }

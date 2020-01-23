@@ -57,4 +57,6 @@ public interface MailAttachmentFacade extends AdminGenericFacade {
 	MailAttachmentDto update(MailAttachmentDto attachment, String uuid) throws BusinessException;
 
 	Set<MailAttachmentAuditLogEntry> findAllAudits(String uuid, List<LogAction> actions);
+
+	Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(String domainUuid, List<LogAction> actions);
 }

@@ -43,7 +43,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +87,24 @@ public class DomainPermissionBusinessServiceImpl implements
 	@Override
 	public boolean isAdminToCreateUploadProposition(Account actor) {
 		return actor.hasSuperAdminRole() || actor.hasUploadPropositionRole();
+	}
+
+	@Override
+	public List<String> getAdministredDomainsIdentifiers(Account actor, String domainUuid) {
+		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
+			return Lists.newArrayList();
+		}
+		return findRecursivelyDomainsIdentifiers(domainUuid);
+	}
+
+	private List<String> findRecursivelyDomainsIdentifiers(String uuid) {
+		List<String> list = Lists.newArrayList();
+		list.add(uuid);
+		List<String> identifiers = domainBusinessService.getSubDomainsByDomainIdentifiers(uuid);
+		for (String identifier : identifiers) {
+			list.addAll(findRecursivelyDomainsIdentifiers(identifier));
+		}
+		return list;
 	}
 
 	@Override

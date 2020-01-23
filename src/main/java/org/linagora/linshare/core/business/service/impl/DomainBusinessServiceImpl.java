@@ -132,10 +132,15 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 	}
 
 	@Override
+	public List<String> getSubDomainsByDomainIdentifiers(String uuid) throws BusinessException {
+		return repository.getSubDomainsByDomainIdentifiers(uuid);
+	}
+
+	@Override
 	public List<AbstractDomain> getSubDomainsByDomain(String uuid) throws BusinessException {
 		return repository.getSubDomainsByDomain(uuid);
 	}
-	
+
 	@Override
 	public Set<AbstractDomain> getSubDomainsByDomainAsASet(String uuid) throws BusinessException {
 		return new HashSet<AbstractDomain>(repository.getSubDomainsByDomain(uuid));

@@ -59,4 +59,6 @@ public interface MailAttachmentRestService {
 	MailAttachmentDto update(String uuid, MailAttachmentDto attachment) throws BusinessException;
 
 	Set<MailAttachmentAuditLogEntry> findAllAudits(String uuid, List<LogAction> actions);
+
+	Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(String domainUuid, List<LogAction> actions);
 }
