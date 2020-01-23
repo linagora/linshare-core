@@ -40,6 +40,7 @@ import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -72,6 +73,8 @@ public class SharedSpaceRole {
 	protected Date creationDate;
 
 	protected Date modificationDate;
+	
+	protected NodeType type;
 
 	public SharedSpaceRole() {
 	}
@@ -82,17 +85,19 @@ public class SharedSpaceRole {
 		this.enabled = role.isEnabled();
 		this.author = role.getAuthor();
 		this.domain = role.getDomain();
+		this.type = role.getType();
 		this.creationDate = role.getCreationDate();
 		this.modificationDate = role.getModificationDate();
 	}
 
-	public SharedSpaceRole(String name, Boolean enabled, GenericLightEntity domain, SharedSpaceAuthor author) {
+	public SharedSpaceRole(String name, Boolean enabled, GenericLightEntity domain, SharedSpaceAuthor author, NodeType type) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
 		this.enabled = enabled;
 		this.author = author;
 		this.domain = domain;
+		this.type = type;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
@@ -160,13 +165,29 @@ public class SharedSpaceRole {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public NodeType getType() {
+		return type;
+	}
+
+	public void setType(NodeType type) {
+		this.type = type;
+	}
 
 	@Override
 	public String toString() {
-		return "SharedSpaceRoles [id=" + id + ", uuid=" + uuid + ", name=" + name + ", enable=" + enabled
-				+ ", sharedSpaceAccount=" + author + ", creationDate=" + creationDate + ", modificationDate="
-				+ modificationDate + ", sharedSpaceDomain=" + domain + "]";
-
+		return "SharedSpaceRole [id=" + id + ", uuid=" + uuid + ", name=" + name + ", enabled=" + enabled + ", author="
+				+ author + ", domain=" + domain + ", creationDate=" + creationDate + ", modificationDate="
+				+ modificationDate + ", type=" + type + "]";
 	}
 
 }
