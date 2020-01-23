@@ -96,6 +96,9 @@ public class InitMongoServiceImpl implements InitMongoService {
 			role.setModificationDate(new Date());
 			role.setCreationDate(new Date());
 			roleMongoRepository.insert(role);
+		} else if (role.getType() == null ){
+			role.setType(type);
+			roleMongoRepository.save(role);
 		}
 		return role;
 	}
@@ -139,7 +142,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 
 	@Override
 	public void init() {
-		logger.info("Initialization with default shared space roles");
+		logger.info("BEGIN -- Initialization with default shared space roles and permissions.");
 		User root = userService.findByLsUuid(LinShareConstants.defaultRootMailAddress);
 		GenericLightEntity rootDomain = new GenericLightEntity(LinShareConstants.rootDomainIdentifier,
 				LinShareConstants.rootDomainIdentifier);
@@ -211,6 +214,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 				SharedSpaceResourceType.WORKGROUP, admin);
 		createInitPermission("efd0d533-cb5b-4bf6-a717-81f28ae0a1fe", "Delete a workgroup", SharedSpaceActionType.DELETE,
 				SharedSpaceResourceType.WORKGROUP, admin);
+		logger.info("END -- Initialization with default shared space roles and permissions.");
 	}
 
 }
