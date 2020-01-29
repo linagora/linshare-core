@@ -237,6 +237,37 @@ SELECT 21, 'user_uid', 'uid', false, true, true, 5, false WHERE NOT EXISTS (SELE
 --Update purgeStep for deleted workGroups
 UPDATE account SET purge_step = 'PURGED' where ((account_type = 5) AND (purge_step = 'IN_USE') AND (destroyed > 0));
 
+-- Upgrade Task
+-- TASK: UPGRADE_2_4_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT
+  INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (31,
+ 'UNDEFINED',
+ 'UPGRADE_2_4_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT',
+ 'UPGRADE_2_4',
+  null,
+  null,
+  31,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);
+ 
+  -- End Upgrade Task
+
 -- End of your requests
 
 -- LinShare version

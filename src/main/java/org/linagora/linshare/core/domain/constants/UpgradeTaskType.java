@@ -188,7 +188,13 @@ public enum UpgradeTaskType {
 	 * 	Upgrade SharedSpaceNode structure for versioning
 	 * 
 	 */
-	UPGRADE_2_3_UPDATE_SHARED_SPACE_NODE_STRUCTURE_FOR_VERSIONING;
+	UPGRADE_2_3_UPDATE_SHARED_SPACE_NODE_STRUCTURE_FOR_VERSIONING,
+
+	/* 
+	 * 	Update tagetDomainUuid for mail attachment audit
+	 * 
+	 */
+	UPGRADE_2_4_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

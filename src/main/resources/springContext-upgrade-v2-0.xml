@@ -232,6 +232,12 @@
 					<constructor-arg ref="threadService" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_4.UpdateTargetDomainUuidMailAttachmentAuditUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="mongoTemplate" />
+					<constructor-arg ref="auditAdminMongoRepository" />
+					<constructor-arg ref="mailAttachmentRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
