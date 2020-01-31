@@ -316,27 +316,39 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 				new Sort(Sort.Direction.DESC, CREATION_DATE));
 	}
 
-	@Override
-	public Set<MailAttachmentAuditLogEntry> findAllAudits(Account authUser, String uuid,
-			List<LogAction> actions) {
-		if (actions.isEmpty()) {
+	private List<LogAction> getMailAttachmentActions(List<LogAction> actions) {
+		if (actions == null || actions.isEmpty()) {
 			actions.add(LogAction.CREATE);
 			actions.add(LogAction.DELETE);
 			actions.add(LogAction.UPDATE);
 		}
-		return auditMongoRepository.findAllAudits(uuid, actions, AuditLogEntryType.MAIL_ATTACHMENT,
+		return actions;
+	}
+
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAudits(Account authUser, String uuid,
+			List<LogAction> actions) {
+		List<LogAction> actionsList = getMailAttachmentActions(actions);
+		return auditMongoRepository.findAllAudits(uuid, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
 				new Sort(Sort.Direction.DESC, CREATION_DATE));
 	}
 
 	@Override
 	public Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(Account authUser, List<String> domains,
 			List<LogAction> actions) {
-		if (actions.isEmpty()) {
-			actions.add(LogAction.CREATE);
-			actions.add(LogAction.DELETE);
-			actions.add(LogAction.UPDATE);
+		List<LogAction> actionsList = getMailAttachmentActions(actions);
+		return auditMongoRepository.findAllAuditsByDomain(domains, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
+				new Sort(Sort.Direction.DESC, CREATION_DATE));
+	}
+
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAuditsByRoot(Account authUser, List<LogAction> actions) {
+		Validate.notNull(authUser);
+		if (!authUser.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not allowed to use this api.");
 		}
-		return auditMongoRepository.findAllAuditsByDomain(domains, actions, AuditLogEntryType.MAIL_ATTACHMENT,
+		List<LogAction> actionsList = getMailAttachmentActions(actions);
+		return auditMongoRepository.findAllAuditsByRoot(actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
 				new Sort(Sort.Direction.DESC, CREATION_DATE));
 	}
 

@@ -70,4 +70,6 @@ public interface AuditLogEntryService {
 	Set<MailAttachmentAuditLogEntry> findAllAudits(Account authUser, String domainUuid, List<LogAction> actions);
 
 	Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(Account authUser, List<String> domains, List<LogAction> actions);
+
+	Set<MailAttachmentAuditLogEntry> findAllAuditsByRoot(Account authUser, List<LogAction> actions);
 }

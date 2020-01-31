@@ -197,4 +197,16 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 		List<String> domains = domainPermissionService.getAdministredDomainsIdentifiers(authUser, domainUuid);
 		return auditLogEntryService.findAllAuditsByDomain(authUser, domains, actions);
 	}
+
+	/**
+	 * 
+	 * @param authUser 
+	 * @param List<LogAction>
+	 * This method will retrieve the list of MailAttachmentAuditLogEntry of all domains and it is used only by a root user
+	 */
+
+	@Override
+	public Set<MailAttachmentAuditLogEntry> findAllAuditsByRoot(Account authUser, List<LogAction> actions) {
+		return auditLogEntryService.findAllAuditsByRoot(authUser, actions);
+	}
 }

@@ -83,4 +83,8 @@ public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntry
 			AuditLogEntryType mailAttachment, Sort sort);
 
 	MailAttachmentAuditLogEntry findByUuid (String uuid);
+
+	@Query("{ 'action' : {'$in' : ?0 }, 'type' : ?1 }")
+	Set<MailAttachmentAuditLogEntry> findAllAuditsByRoot(List<LogAction> actions, AuditLogEntryType mailAttachment,
+			Sort sort);
 }

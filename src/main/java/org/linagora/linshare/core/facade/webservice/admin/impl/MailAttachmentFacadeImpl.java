@@ -152,7 +152,12 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 	@Override
 	public Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(String domainUuid, List<LogAction> actions) {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		Validate.notEmpty(domainUuid, "Domain uuid must be set");
-		return attachmentService.findAllAuditsByDomain(authUser, domainUuid, actions);
+		if ((authUser.isRoot()) && (Strings.isNullOrEmpty(domainUuid))) {
+			return attachmentService.findAllAuditsByRoot(authUser, actions);
+		} else if (Strings.isNullOrEmpty(domainUuid)) {
+			return attachmentService.findAllAuditsByDomain(authUser, authUser.getDomain().getUuid(), actions);
+		} else {
+			return attachmentService.findAllAuditsByDomain(authUser, domainUuid, actions);
+		}
 	}
 }

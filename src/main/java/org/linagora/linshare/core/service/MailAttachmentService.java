@@ -61,4 +61,6 @@ public interface MailAttachmentService {
 
 	Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(Account authUser, String domain,
 			List<LogAction> actions);
+
+	Set<MailAttachmentAuditLogEntry> findAllAuditsByRoot(Account authUser, List<LogAction> actions);
 }
