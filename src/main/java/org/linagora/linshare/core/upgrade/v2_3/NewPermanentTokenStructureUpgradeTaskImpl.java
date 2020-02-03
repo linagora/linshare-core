@@ -53,13 +53,10 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Lists;
 import com.mongodb.client.DistinctIterable;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Projections;
 
 public class NewPermanentTokenStructureUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 

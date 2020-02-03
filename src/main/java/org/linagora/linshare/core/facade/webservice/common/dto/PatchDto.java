@@ -35,8 +35,6 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.mongo.entities.VersioningParameters;
-
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement

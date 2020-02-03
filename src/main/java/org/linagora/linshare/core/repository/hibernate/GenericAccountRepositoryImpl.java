@@ -63,7 +63,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public U findByLsUuid(String lsUuid) {
-		Assert.notNull(lsUuid);
+		Assert.notNull(lsUuid, "lsUuid must not be null");
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
 		criteria.add(Restrictions.eq("destroyed", 0L));
@@ -79,7 +79,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public U findActivateAndDestroyedByLsUuid(String lsUuid) {
-		Assert.notNull(lsUuid);
+		Assert.notNull(lsUuid, "lsUuid must not be null");
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
 		List<U> users = findByCriteria(criteria);
@@ -94,7 +94,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public List<U> findByDomain(String domain) {
-		Assert.notNull(domain);
+		Assert.notNull(domain, "domain must not be null");
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.uuid",domain));
@@ -121,7 +121,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public boolean exist(String lsUuid) {
-		Assert.notNull(lsUuid);
+		Assert.notNull(lsUuid, "lsUuid must not be null");
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid));
 		criteria.add(Restrictions.eq("destroyed", 0L));
@@ -186,7 +186,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public U findDeleted(String lsUuid) {
-		Assert.notNull(lsUuid);
+		Assert.notNull(lsUuid, "lsUuid must not be null");
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
@@ -196,7 +196,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public U findAccountsReadyToPurge(String lsUuid) {
-		Assert.notNull(lsUuid);
+		Assert.notNull(lsUuid, "lsUuid must not be null");
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.WAIT_FOR_PURGE));

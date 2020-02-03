@@ -160,6 +160,7 @@ public class HashUtils {
 	  	
 	  	try {
 			MessageDigest md = MessageDigest.getInstance("SHA1");
+					@SuppressWarnings("resource")
 					FileInputStream fis = new FileInputStream(file);
 					byte[] dataBytes = new byte[1024];
 					int nread = fis.read(dataBytes);

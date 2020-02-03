@@ -38,7 +38,6 @@ import java.util.Date;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;

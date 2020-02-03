@@ -52,10 +52,7 @@ import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
-import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
-import org.linagora.linshare.core.repository.LdapConnectionRepository;
-import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.utils.LoggerParent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -72,23 +69,13 @@ public class AbstractDomainRepositoryImplTest extends LoggerParent {
 
 	private static String rootDomainName = "Domain0";
 	private static String topDomainName = "Domain0.1";
-	private static String subDomainName = "Domain0.1.1";
 	private static String domainePolicyName0 = "TestAccessPolicy0";
 	private static String existingSubDomain = "MySubDomain";
 	private static String existingTopDomain = "MyDomain";
 	
-	//private static String baseDn = "dc=nodomain,dc=com";
-	private static String identifier= "ID_LDAP_DE_TEST";
-	private static String identifierP= "ID_PARAM_DE_TEST";
-	private static String providerUrl= "ldap://10.75.113.53:389";
-	private static String securityAuth= "simple";
-
-
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
-	@Autowired
-	private UserProviderRepository userProviderRepository;
 
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
@@ -96,15 +83,7 @@ public class AbstractDomainRepositoryImplTest extends LoggerParent {
 	@Autowired
 	private DomainAccessPolicyRepository domainAccessRepository;
 
-	@Autowired
-	private LdapConnectionRepository ldapConnectionRepository;
-
-	@Autowired
-	private DomainPatternRepository domainPatternRepository;
-
 	private DomainPolicy defaultPolicy;
-
-
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -124,14 +103,9 @@ public class AbstractDomainRepositoryImplTest extends LoggerParent {
 		logger.debug("End tearDown");
 	}
 
-
-
-
 	private AbstractDomain createATestRootDomain() throws BusinessException {
 		AbstractDomain currentDomain= new RootDomain("My root domain");
-
 		currentDomain.setPolicy(defaultPolicy);
-
 		abstractDomainRepository.create(currentDomain);
 		logger.debug("Current AbstractDomain object: " + currentDomain.toString());
 		return currentDomain;

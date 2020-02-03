@@ -901,7 +901,7 @@ public class UserServiceImpl implements UserService {
 			throws BusinessException {
 		User user = find(updatedUser, domainId);
 		UserAuditLogEntry log = new UserAuditLogEntry(actor, actor, LogAction.UPDATE, AuditLogEntryType.USER, user);
-		Assert.notNull(updatedUser.getRole());
+		Assert.notNull(updatedUser.getRole(), "The role of user must be set");
 
 		user.setFirstName(updatedUser.getFirstName());
 		user.setLastName(updatedUser.getLastName());
@@ -914,9 +914,9 @@ public class UserServiceImpl implements UserService {
 		user.setExternalMailLocale(updatedUser.getExternalMailLocale());
 		if (user.isGuest()) {
 			Guest updatedGuest = (Guest) updatedUser;
-			Assert.notNull(updatedUser.getOwner());
-			Assert.notNull(updatedGuest.getExpirationDate());
-			Assert.isTrue(updatedUser.getCanCreateGuest() == false);
+			Assert.notNull(updatedUser.getOwner(), "The owner must not be null");
+			Assert.notNull(updatedGuest.getExpirationDate(), "Expiration date must not be null");
+			Assert.isTrue(updatedUser.getCanCreateGuest() == false, "Guest can not create a guest user");
 			Guest guest = (Guest) user;
 			guest.setExpirationDate(updatedGuest.getExpirationDate());
 			guest.setComment(updatedGuest.getComment());

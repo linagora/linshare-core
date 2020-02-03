@@ -116,7 +116,7 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	 *         and a functionality.
 	 */
 	private Set<InnerFunctionality> getAllInnerFunctionalities(AbstractDomain domain) {
-		Assert.notNull(domain);
+		Assert.notNull(domain, "Domain must not be null");
 
 		Set<InnerFunctionality> res = new HashSet<InnerFunctionality>();
 
@@ -136,8 +136,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	private T getParentFunctionality(AbstractDomain domain, String functionalityIdentifier) {
-		Assert.notNull(domain);
-		Assert.notNull(functionalityIdentifier);
+		Assert.notNull(domain, "Domain must not be null");
+		Assert.notNull(functionalityIdentifier, "functionalityIdentifier must not be null");
 
 		T res = null;
 		AbstractDomain parentDomain = domain.getParentDomain();
@@ -204,8 +204,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	protected boolean activationPolicyIsMutable(T functionality, AbstractDomain domain, T ancestorFunc) throws BusinessException {
-		Assert.notNull(functionality);
-		Assert.notNull(domain);
+		Assert.notNull(functionality, "functionality must not be null");
+		Assert.notNull(domain, "domain must not be null");
 
 		// Check if the current functionality belong to the current domain.
 		if (functionality.getDomain().getUuid().equals(domain.getUuid())) {
@@ -230,8 +230,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	protected boolean configurationPolicyIsMutable(T functionality, AbstractDomain domain, T ancestorFunc) throws BusinessException {
-		Assert.notNull(functionality);
-		Assert.notNull(domain);
+		Assert.notNull(functionality, "functionality must not be null");
+		Assert.notNull(domain, "domain must not be null");
 
 		// Check if the current functionality belong to the current domain.
 		if (functionality.getDomain().getUuid().equals(domain.getUuid())) {
@@ -256,8 +256,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	protected boolean parametersAreMutable(T functionality, AbstractDomain domain, T ancestorFunc) throws BusinessException {
-		Assert.notNull(functionality);
-		Assert.notNull(domain);
+		Assert.notNull(functionality, "functionality must not be null");
+		Assert.notNull(domain, "domain must not be null");
 
 		// No need to check every conditions if there is no parameters to manage
 		if (!functionality.hasSomeParam()) {
@@ -299,8 +299,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	protected boolean delegationPolicyIsMutable(T functionality, AbstractDomain domain, T ancestorFunc) {
-		Assert.notNull(functionality);
-		Assert.notNull(domain);
+		Assert.notNull(functionality, "functionality must not be null");
+		Assert.notNull(domain, "domain must not be null");
 
 		// Check if the current functionality belong to the current domain.
 		if (functionality.getDomain().getUuid().equals(domain.getUuid())) {
@@ -327,8 +327,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	protected  T getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityId) {
-		Assert.notNull(domain);
-		Assert.notNull(functionalityId);
+		Assert.notNull(domain, "domain must not be null");
+		Assert.notNull(functionalityId, "functionalityId must not be null");
 		T fonc = repository.findByDomain(domain, functionalityId);
 		if (fonc == null && domain.getParentDomain() != null) {
 			fonc = getFunctionalityEntityByIdentifiers(domain.getParentDomain(), functionalityId);
@@ -338,8 +338,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 
 	@Override
 	public T getFunctionality(AbstractDomain domain, String functionalityId) throws BusinessException {
-		Assert.notNull(domain);
-		Assert.notNull(functionalityId);
+		Assert.notNull(domain, "domain must not be null");
+		Assert.notNull(functionalityId, "functionalityId must not be null");
 		T functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
 		if (functionality == null) {
 			throw getBusinessNotFoundException();
@@ -398,8 +398,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 
 	@Override
 	public void delete(String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
-		Assert.notNull(domainId);
-		Assert.notNull(functionalityId);
+		Assert.notNull(domainId, "domainId must not be null");
+		Assert.notNull(functionalityId, "functionalityId must not be null");
 
 		AbstractDomain domain = findDomain(domainId);
 		T functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);

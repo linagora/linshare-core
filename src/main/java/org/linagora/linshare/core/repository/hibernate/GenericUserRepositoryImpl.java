@@ -99,7 +99,6 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<U> findByDomain(String domainId) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());

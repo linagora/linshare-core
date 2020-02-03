@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.Unit;
 import org.linagora.linshare.core.repository.UnitRepository;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
+@SuppressWarnings("rawtypes")
 public class UnitRepositoryImpl extends AbstractRepositoryImpl<Unit> implements UnitRepository {
 
 	public UnitRepositoryImpl(HibernateTemplate hibernateTemplate) {

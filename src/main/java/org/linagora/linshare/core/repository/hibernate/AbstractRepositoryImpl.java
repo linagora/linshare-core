@@ -52,6 +52,7 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
  *
  * @param T : entity type.
  */
+@SuppressWarnings("unchecked")
 public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T> {
 
     /** Logger. */
@@ -66,7 +67,6 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
     /** Constructor.
      * @param hibernateTemplate the hibernate template.
      */
-    @SuppressWarnings("unchecked")
 	public AbstractRepositoryImpl(HibernateTemplate hibernateTemplate) {
         this.hibernateTemplate = hibernateTemplate;
         this.persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())

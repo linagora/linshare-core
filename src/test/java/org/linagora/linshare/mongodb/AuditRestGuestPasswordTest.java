@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.mongodb;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Calendar;
 
 import org.junit.jupiter.api.AfterEach;

@@ -43,16 +43,12 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import com.google.common.collect.Lists;
 
 public class DomainPermissionBusinessServiceImpl implements
 		DomainPermissionBusinessService {
-
-	private final Logger logger = LoggerFactory
-			.getLogger(DomainPermissionBusinessServiceImpl.class);
 
 	private final DomainBusinessService domainBusinessService;
 

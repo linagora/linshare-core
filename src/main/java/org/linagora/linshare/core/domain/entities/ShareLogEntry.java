@@ -35,8 +35,6 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Calendar;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
-
 public class ShareLogEntry extends FileLogEntry {
 
 	private static final long serialVersionUID = -2189443188392440017L;

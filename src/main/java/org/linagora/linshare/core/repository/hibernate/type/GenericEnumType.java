@@ -101,6 +101,7 @@ import org.hibernate.usertype.UserType;
  * </code>
  *
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class GenericEnumType implements UserType, ParameterizedType {
 
     private static final String DEFAULT_IDENTIFIER_METHOD_NAME = "name";
