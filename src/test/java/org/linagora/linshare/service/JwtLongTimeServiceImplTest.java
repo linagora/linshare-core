@@ -65,7 +65,7 @@ import io.jsonwebtoken.Claims;
 @ExtendWith(SpringExtension.class)
 @Sql({
 	"/import-tests-default-domain-quotas.sql",
-	"/import-tests-jwt-long-time-functionnality.sql"})
+	})
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
