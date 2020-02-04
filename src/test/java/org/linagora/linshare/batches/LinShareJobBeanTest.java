@@ -51,18 +51,19 @@ import org.slf4j.LoggerFactory;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
+@Sql({
+	"/import-tests-batches-accounts.sql",
+	})
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -108,12 +109,6 @@ public class LinShareJobBeanTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-		int countBefore = JdbcTestUtils.countRowsInTable(this.jdbcTemplate, "account");
-		populator.addScripts(new ClassPathResource("import-tests-batches-accounts.sql"));
-		populator.execute(jdbcTemplate.getDataSource());
-		int countAfter = JdbcTestUtils.countRowsInTable(this.jdbcTemplate, "account");
-		Assertions.assertEquals(3, countAfter - countBefore);
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

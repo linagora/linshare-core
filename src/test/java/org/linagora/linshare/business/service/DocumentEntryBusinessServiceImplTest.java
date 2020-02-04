@@ -84,8 +84,7 @@ import com.beust.jcommander.internal.Sets;
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
-@Sql({"/import-tests-default-domain-quotas.sql",
-"/import-tests-quota-other.sql"})
+@Sql({"/import-tests-quota-other.sql"})
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",

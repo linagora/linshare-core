@@ -63,9 +63,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import io.jsonwebtoken.Claims;
 
 @ExtendWith(SpringExtension.class)
-@Sql({
-	"/import-tests-default-domain-quotas.sql",
-	})
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",

@@ -68,7 +68,6 @@ import org.slf4j.LoggerFactory;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
-	"/import-tests-default-domain-quotas.sql",
 	"/import-tests-domain-quota-updates.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })

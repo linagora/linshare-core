@@ -87,7 +87,6 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-default-domain-quotas.sql",
 	"/import-tests-quota-other.sql",
 	"/import-tests-upload-request.sql" })
 @Transactional

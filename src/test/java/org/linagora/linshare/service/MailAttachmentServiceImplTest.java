@@ -75,7 +75,6 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-		"/import-tests-default-domain-quotas.sql",
 		"/import-tests-domain-quota-updates.sql" })
 @Transactional
 @ContextConfiguration(locations = { 

@@ -72,9 +72,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
-@Sql({
-	"/import-tests-default-domain-quotas.sql",
-	"/import-tests-quota-other.sql"})
+@Sql({"/import-tests-quota-other.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
