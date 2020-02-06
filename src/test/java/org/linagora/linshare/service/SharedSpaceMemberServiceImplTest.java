@@ -43,14 +43,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
@@ -133,7 +137,14 @@ public class SharedSpaceMemberServiceImplTest {
 	@Qualifier("sharedSpaceMemberService")
 	private SharedSpaceMemberService service;
 
+	@Autowired
+	@Qualifier("sharedSpaceMemberBusinessService")
+	SharedSpaceMemberBusinessService memberBusinessService;
+
 	private LinShareWiser wiser;
+
+	@Autowired
+	private MailBuildingService buildingService;
 
 	public SharedSpaceMemberServiceImplTest() {
 		super();
@@ -213,6 +224,26 @@ public class SharedSpaceMemberServiceImplTest {
 			Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e.getErrorCode(),
 					"The member is found in the database. It has not been deleted");
 		}
+	}
+
+	/**
+	 * This Test shows the field replyTo in MailContainerWithRecipient is null in case the root user who did the action 
+	 */
+	@Test
+	public void testDeleteNoReplyToMail() {
+		SharedSpaceMember memberToCreate = service.create(john, john, node, adminRole, accountJane);
+		Assertions.assertEquals(memberToCreate.getAccount().getUuid(), jane.getLsUuid(),
+				"The account referenced in this member is not john's");
+		memberBusinessService.delete(memberToCreate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(john, john, memberToCreate.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, exception.getErrorCode(),
+				"The member is found in the database. It has not been deleted");
+		User user = userRepository.findByLsUuid(jane.getLsUuid());
+		MailContainerWithRecipient mail = buildingService
+				.build(new WorkGroupWarnDeletedMemberEmailContext(memberToCreate, root, user));
+		Assertions.assertNull(mail.getReplyTo());
 	}
 
 	@Test
