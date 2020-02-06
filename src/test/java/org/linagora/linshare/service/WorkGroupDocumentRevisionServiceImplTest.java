@@ -70,6 +70,7 @@ import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -103,7 +104,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 
 	@Autowired
 	protected WorkGroupNodeService workGroupNodeService;
-
+	
 	@Autowired
 	protected WorkGroupDocumentService workGroupDocumentService;
 	
@@ -133,6 +134,8 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	private WorkGroup workGroup;
 
 	private WorkGroupNode rootFolder;
+	
+	private WorkGroupNode folder;
 
 	@BeforeEach
 	public void setUp() {
@@ -419,6 +422,29 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		});
 		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, exception.getErrorCode());
 	}
+	
+	/**
+	 * Test that the tree in Workgroup node is correct from a revision to the root folder
+	 * @throws IOException
+	 */
+	@Test
+	public void treePathTest() throws IOException {
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(),
+				"text/plain", tempFile1.getName(), folder);
+		WorkGroupDocumentRevision revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1,
+				tempFile1.getName(), document);
+		Assertions.assertAll("The revision creation has fails", () -> {
+			assertEquals(folder.getUuid(), document.getParent());
+			assertEquals(document.getUuid(), revision.getParent());
+			assertEquals(document.getName(), revision.getName());
+		});
+		String treePath = document.getPath() + document.getUuid() + ",";
+		Assertions.assertEquals(treePath, revision.getPath(), "The tree path is not correct");
+	}
 
 	/*
 	 * Helpers
@@ -429,6 +455,10 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		ssNode = sharedSpaceNodeService.create(john, john, ssNode);
 		workGroup = threadService.find(john, john, ssNode.getUuid());
 		rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		WorkGroupNode wgFolder = new WorkGroupNode(new AccountMto(john), "folderName", rootFolder.getUuid(),
+				workGroup.getLsUuid());
+		wgFolder.setNodeType(WorkGroupNodeType.FOLDER);
+		folder = workGroupNodeService.create(john, john, workGroup, wgFolder, false, false);
 	}
 
 	private InputStream getStream(String resourceName) {

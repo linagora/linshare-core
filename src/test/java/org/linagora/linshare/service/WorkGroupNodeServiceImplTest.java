@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,11 +49,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -62,8 +65,8 @@ import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
-import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.mongo.entities.VersioningParameters;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
@@ -119,6 +122,9 @@ public class WorkGroupNodeServiceImplTest {
 	@Autowired
 	private InitMongoService initMongoService;
 
+	@Autowired
+	private FunctionalityReadOnlyService functionalityService;
+
 	LoadingServiceTestDatas datas;
 
 	private User john;
@@ -128,7 +134,7 @@ public class WorkGroupNodeServiceImplTest {
 	private WorkGroup workGroup;
 
 	private WorkGroupNode rootFolder;
-
+	
 	private WorkGroupNode folder;
 
 	@BeforeEach
@@ -138,7 +144,14 @@ public class WorkGroupNodeServiceImplTest {
 		datas.loadUsers();
 		john = datas.getUser1();
 		initMongoService.init();
-		this.createNeed();
+		ssnode = sharedSpaceNodeService.create(john, john,
+				new SharedSpaceNode("Workgroup_test", "My parent nodeUuid", NodeType.WORK_GROUP));
+		workGroup = threadService.find(john, john, ssnode.getUuid());
+		rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		WorkGroupNode wgn = new WorkGroupNode(new AccountMto(john), "MY_FOLDER", rootFolder.getUuid(),
+				workGroup.getLsUuid());
+		wgn.setNodeType(WorkGroupNodeType.FOLDER);
+		folder = workGroupNodeService.create(john, john, workGroup, wgn, false, false);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -148,66 +161,65 @@ public class WorkGroupNodeServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
+	/**
+	 * On a workgroup, test a sub-folder creation (Create a folder in another).
+	 */
 	@Test
-	public void treePathTest() throws IOException {
-		InputStream stream1 = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
-		IOUtils.transferTo(stream1, tempFile1);
-		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(),
-				"text/plain", tempFile1.getName(), folder);
-		WorkGroupDocumentRevision revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1,
-				tempFile1.getName(), document);
-		Assertions.assertAll("The revision creation has fails", () -> {
-			assertEquals(folder.getUuid(), document.getParent());
-			assertEquals(document.getUuid(), revision.getParent());
-			assertEquals(document.getName(), revision.getName());
+	public void createFolderTest() {
+		WorkGroupNode embeddedFolder = workGroupNodeService.create(john, john, workGroup, folder, false, false);
+		assertAll("The folder creation has failed", () -> {
+			Assertions.assertNotNull(embeddedFolder, "Folder is null");
+			Assertions.assertEquals(embeddedFolder.getUuid(), folder.getUuid(), "expected node is different.");
 		});
-		String treePath = document.getPath() + document.getUuid() + ",";
-		Assertions.assertEquals(treePath, revision.getPath(), "The tree path is not correct");
 	}
 
+	/**
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void countAndSizeNodeTest() throws IOException {
+		// File and streams
 		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		InputStream stream2 = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
 		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream1, tempFile1);
-		Long size = tempFile1.length();
-		WorkGroupNode document1 = workGroupDocumentService.create(john, john, workGroup, size,
-				"text/plain", tempFile1.getName(), folder);
-		workGroupDocumentService.create(john, john, workGroup, size,
-				"text/plain", tempFile1.getName() + "test", folder);
-		WorkGroupDocumentRevision revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1,
-				tempFile1.getName(), document1);
-
-		NodeMetadataMto folderDetails = workGroupNodeService.findMetadata(john, john, workGroup, rootFolder, false);
-		NodeMetadataMto documentDetails = workGroupNodeService.findMetadata(john, john, workGroup, document1, true);
-		Long folderSize = size + size;
-		Assertions.assertAll("Details informations doesn't match", () -> {
-			assertEquals(folderSize, folderDetails.getSize(), "Size doesn't match");
-			assertEquals(Long.valueOf(3), folderDetails.getCount(), "Count doesn't match");
-
-			assertEquals(revision.getSize(), documentDetails.getStorageSize(), "Size doesn't match");
-			assertEquals(Long.valueOf(1), documentDetails.getCount(), "Count doesn't match");
-		});
-
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream2, tempFile2);
+		// store the size of uploaded files
+		Long documentsSize = tempFile1.length() + tempFile2.length();
+		// upload the first document in the folder "MY_FOLDER" inside the workgroup
+		// "Workgoupt_test"
+		WorkGroupDocument document1 = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile1,
+				tempFile1.getName(), folder.getUuid(), false);
+		// activate versioning functionality
+		Functionality versioningFunctionality = functionalityService.getWorkGroupFileVersioning(john.getDomain());
+		versioningFunctionality.getActivationPolicy().setStatus(true);
+		ssnode.setVersioningParameters(new VersioningParameters(true));
+		// upload a document with same name on same folder
+		// revision will be created
+		WorkGroupDocument revision = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile2,
+				document1.getName(), folder.getUuid(), false);
+		// assertions
+		Assertions.assertEquals(revision.getParent(), document1.getUuid(), "The revision parent is wrong");
+		Assertions.assertEquals(revision.getNodeType(), WorkGroupNodeType.DOCUMENT_REVISION,
+				"The node type is not a revision");
+		// recover document node metadata integrating revisions
+		NodeMetadataMto folderDetailsWithRev = workGroupNodeService.findMetadata(john, john, workGroup, folder, true);
+		// assertions
+		Assertions.assertEquals(Long.valueOf(1), folderDetailsWithRev.getCount(), "folder contains more than one document");
+		Assertions.assertEquals(documentsSize, folderDetailsWithRev.getStorageSize(),
+				"The size should be the sum of the original document and its revision");
+		// recover document node metadata without revisions
+		NodeMetadataMto folderDetails = workGroupNodeService.findMetadata(john, john, workGroup, folder, false);
+		Assertions.assertEquals(document1.getSize(), folderDetails.getSize(),
+				"The size should be only the size of the document without the revision");
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			workGroupNodeService.findMetadata(john, john, workGroup, revision, false);
 		});
 		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, exception.getErrorCode());
 	}
 
-	/*
-	 * Helpers
-	 */
-	private void createNeed() {
-		ssnode = sharedSpaceNodeService.create(john, john,
-				new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP));
-		workGroup = threadService.find(john, john, ssnode.getUuid());
-		rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
-		WorkGroupFolder folder0 = new WorkGroupFolder(new AccountMto(john), "folderName", rootFolder.getUuid(),
-				workGroup.getLsUuid());
-		folder = workGroupFolderService.create(john, john, workGroup, folder0, rootFolder, false, false);
-	}
 }
