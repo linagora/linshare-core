@@ -67,7 +67,6 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
-import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
@@ -94,7 +93,6 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
-	"/import-tests-quota-other.sql",
 	"/import-tests-document-entry-setup.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
@@ -124,9 +122,6 @@ public class AdvancedStatisticBatchTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
-
-	@Autowired
-	private WorkGroupDocumentService workGroupDocumentService;
 
 	@Autowired
 	private WorkGroupNodeService workGroupNodeService;

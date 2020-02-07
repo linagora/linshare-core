@@ -82,8 +82,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +92,6 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
-@Sql({"/import-tests-sha.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -104,6 +104,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class ShaBatchImplTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());

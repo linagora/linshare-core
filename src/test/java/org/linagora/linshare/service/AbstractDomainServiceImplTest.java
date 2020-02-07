@@ -72,12 +72,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Sql({
-	"/import-tests-quota-other.sql"})
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",

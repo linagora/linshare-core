@@ -165,7 +165,7 @@ public class StatisticRepositoryImplTest {
 
 	@Test
 	public void testThreadDailyAndWeeklyStat() {
-		Account thread = accountRepository.findByLsUuid("aebe1b64-39c0-11e5-9fa8-080027b8274e");
+		Account thread = accountRepository.findByLsUuid("da79e852-4f44-11ea-90a3-238dff97526d");
 		List<ThreadDailyStat> listDaily = threadDailyStatRepository.findAll();
 		assertEquals(7, listDaily.size());
 		List<ThreadDailyStat> listDailyForThreadTest = threadDailyStatRepository.findBetweenTwoDates(thread, null, null,
@@ -173,7 +173,7 @@ public class StatisticRepositoryImplTest {
 		assertEquals(3, listDailyForThreadTest.size());
 		List<ThreadWeeklyStat> result = threadWeeklyStatRepository.findAll();
 		assertEquals(3, result.size());
-		WorkGroup t = threadRepo.findByLsUuid("aebe1b64-39c0-11e5-9fa8-080027b8274e");
+		WorkGroup t = threadRepo.findByLsUuid("da79e852-4f44-11ea-90a3-238dff97526d");
 		threadWeeklyStatBusinessService.create(t, new GregorianCalendar(2042, 9, 30, 00, 00).getTime(),
 				new GregorianCalendar(2042, 10, 9, 00, 00).getTime());
 		result = threadWeeklyStatRepository.findBetweenTwoDates(thread, null, null, null, null, null);

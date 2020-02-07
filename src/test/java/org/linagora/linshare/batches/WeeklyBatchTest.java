@@ -130,7 +130,7 @@ public class WeeklyBatchTest {
 
 	@Test
 	public void test() {
-		WorkGroup workGroup = threadRepository.findByLsUuid("aebe1b64-39c0-11e5-9fa8-080027b8274f");
+		WorkGroup workGroup = threadRepository.findByLsUuid("dabb0364-4f44-11ea-9fe7-eb275404c745");
 		threadWeeklyStatBusinessService.create(workGroup, new GregorianCalendar(2042, 10, 1, 00, 00).getTime(),
 				new GregorianCalendar(2042, 10, 8, 00, 00).getTime());
 		userWeeklyStatBusinessService.create(jane, new GregorianCalendar(2042, 10, 9, 00, 00).getTime(), new GregorianCalendar(2042, 10, 17, 00, 00).getTime());

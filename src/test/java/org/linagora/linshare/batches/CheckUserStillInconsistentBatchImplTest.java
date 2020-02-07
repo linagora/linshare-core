@@ -101,24 +101,35 @@ public class CheckUserStillInconsistentBatchImplTest {
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
+	/**
+	 * Test that checkIfUserStillInconsistentBatch is executed 
+	 * @throws BusinessException
+	 * @throws JobExecutionException
+	 */
 	@Test
 	public void testBatch() throws BusinessException, JobExecutionException {
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(checkIfUserStillInconsistentBatch);
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 	}
-
+	
+	/**
+	 * Test that after batch execution only one 
+	 * account (Clark  refer to /import-tests-check-inconsistent.sql) still inconsistent 
+	 * @throws BusinessException
+	 * @throws JobExecutionException
+	 */
 	@Test
 	public void testBatchExecution() throws BusinessException, JobExecutionException {
 		BatchRunContext batchRunContext = new BatchRunContext();
-		List<String> l = checkIfUserStillInconsistentBatch.getAll(batchRunContext);
-		Assertions.assertEquals(l.size(), 4);
+		List<String> inconsistentUuids = checkIfUserStillInconsistentBatch.getAll(batchRunContext);
+		Assertions.assertEquals(inconsistentUuids.size(), 4);
 		ResultContext c;
-		for (int i = 0; i < l.size(); i++) {
-			c = checkIfUserStillInconsistentBatch.execute(batchRunContext, l.get(i), l.size(), i);
-			Assertions.assertEquals(c.getIdentifier(), l.get(i));
+		for (int i = 0; i < inconsistentUuids.size(); i++) {
+			c = checkIfUserStillInconsistentBatch.execute(batchRunContext, inconsistentUuids.get(i), inconsistentUuids.size(), i);
+			Assertions.assertEquals(c.getIdentifier(), inconsistentUuids.get(i));
 		}
-		l = checkIfUserStillInconsistentBatch.getAll(batchRunContext);
-		Assertions.assertEquals(l.size(), 1);
+		inconsistentUuids = checkIfUserStillInconsistentBatch.getAll(batchRunContext);
+		Assertions.assertEquals(inconsistentUuids.size(), 1);
 	}
 }
