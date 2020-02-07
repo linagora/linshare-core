@@ -52,6 +52,7 @@ import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
@@ -64,8 +65,9 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 			MailBuildingService mailBuildingService,
 			SharedSpaceMemberResourceAccessControl rac,
 			LogEntryService logEntryService,
-			UserRepository<User> userRepository) {
-		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository);
+			UserRepository<User> userRepository,
+			SharedSpaceRoleService roleService) {
+		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, roleService);
 	}
 
 	@Override

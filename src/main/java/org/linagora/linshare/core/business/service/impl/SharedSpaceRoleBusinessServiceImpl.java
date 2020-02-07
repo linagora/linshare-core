@@ -35,6 +35,7 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
@@ -61,6 +62,11 @@ public class SharedSpaceRoleBusinessServiceImpl implements SharedSpaceRoleBusine
 	@Override
 	public List<SharedSpaceRole> findAll() throws BusinessException {
 		return sharedSpaceRoleMongoRepository.findAll();
+	}
+
+	@Override
+	public List<SharedSpaceRole> findRolesByNodeType(NodeType type) {
+		return sharedSpaceRoleMongoRepository.findByType(type);
 	}
 
 }

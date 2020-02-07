@@ -55,6 +55,7 @@ import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
@@ -79,8 +80,9 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			LogEntryService logEntryService,
 			UserRepository<User> userRepository,
 			DriveMemberBusinessService driveMemberBusinessService,
-			SharedSpaceNodeBusinessService nodeBusinessService) {
-		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository);
+			SharedSpaceNodeBusinessService nodeBusinessService,
+			SharedSpaceRoleService roleService) {
+		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, roleService);
 		this.driveMemberBusinessService = driveMemberBusinessService;
 		this.nodeBusinessService = nodeBusinessService;
 	}
@@ -91,9 +93,21 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		checkCreateMemberPermission(authUser, actor, node, context, account);
 		return create(authUser, actor, node, context.getRole(), context.getNestedRole(), account);
 	}
-
-	protected SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, SharedSpaceRole nestedRole, SharedSpaceAccount account) throws BusinessException {
+	
+	/**
+	 * @param authUser   {@link Account} the authenticated user
+	 * @param actor      {@link Account} the actor of the action
+	 * @param node       {@link SharedSpaceNode} Drive
+	 * @param role       {@link SharedSpaceRole} The role of the Drive member,
+	 *                   should be DRIVE
+	 * @param nestedRole {@link SharedSpaceRole} The role of the member in the
+	 *                   workgroups inside the DRIVE, should be WORKGROUP
+	 * @param account {@link SharedSpaceAccount} the account of the added member
+	 * @return {@link SharedSpaceMemberDrive}
+	 * @throws BusinessException
+	 */
+	protected SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role,
+			SharedSpaceRole nestedRole, SharedSpaceAccount account) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node must be set.");
@@ -103,6 +117,8 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			String message = String.format("The account with the UUID : %s is not existing", account.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
 		}
+		checkRoleOnCreate(authUser, actor, role, node.getNodeType());
+		checkRoleOnCreate(authUser, actor, nestedRole, NodeType.WORK_GROUP);
 		SharedSpaceMemberDrive toAdd = driveMemberBusinessService.create(account, node, role, nestedRole);
 		// Add the new member to all workgroups inside the drive
 		List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService.findByParentUuidAndType(node.getUuid());
@@ -125,6 +141,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			SharedSpaceMember foundMemberToUpdate, boolean force) {
 		GenericLightEntity wgRole = ((SharedSpaceMemberDrive) memberToUpdate).getNestedRole();
 		Validate.notNull(wgRole, "The nested role must be set");
+		checkRoleOnUpdate(authUser, actor, wgRole.getUuid(), NodeType.WORK_GROUP);
 		SharedSpaceMember updated = driveMemberBusinessService.update((SharedSpaceMemberDrive) foundMemberToUpdate,
 				(SharedSpaceMemberDrive) memberToUpdate);
 		List<SharedSpaceMember> nestedMembers = Lists.newArrayList();

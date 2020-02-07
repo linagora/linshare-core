@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -102,5 +103,12 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		SharedSpaceRole roleAdmin = findByName(authUser, actor, "DRIVE_ADMIN");
 		return roleAdmin;
+	}
+
+	@Override
+	public List<SharedSpaceRole> findRolesByNodeType(Account authUser, Account actor, NodeType type) {
+		preChecks(authUser, actor);
+		Validate.notNull(type, "Missing required shared space role.");
+		return sharedSpaceRoleBusinessService.findRolesByNodeType(type);
 	}
 }

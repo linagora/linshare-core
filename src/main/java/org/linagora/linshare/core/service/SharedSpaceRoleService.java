@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -50,5 +51,13 @@ public interface SharedSpaceRoleService {
 	SharedSpaceRole getAdmin(Account authUser, Account actor) throws BusinessException;
 
 	SharedSpaceRole getDriveAdmin(Account authUser, Account actor) throws BusinessException;
+
+	/**
+	 * This method will retrieve a list of roles filtered by NodeType
+	 * @param authUser: The authenticated account
+	 * @param actor: The account on which the processing will be applied
+	 * @param NodeType
+	 */
+	List<SharedSpaceRole> findRolesByNodeType(Account authUser, Account actor, NodeType type);
 }
 
