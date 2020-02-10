@@ -35,19 +35,26 @@ package org.linagora.linshare.service;
 
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang3.Validate;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
@@ -63,8 +70,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-default-domain-quotas.sql",
+	"/import-tests-quota-other.sql" })
+@Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -76,7 +89,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class SharedSpaceMemberServiceImplTest {
+
 	private static Logger logger = LoggerFactory.getLogger(RecipientFavouriteRepositoryImplTest.class);
 
 	@Autowired
@@ -123,19 +137,24 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	@Qualifier("sharedSpaceMemberService")
 	private SharedSpaceMemberService service;
 
+	@Autowired
+	@Qualifier("sharedSpaceMemberBusinessService")
+	SharedSpaceMemberBusinessService memberBusinessService;
+
 	private LinShareWiser wiser;
+
+	@Autowired
+	private MailBuildingService buildingService;
 
 	public SharedSpaceMemberServiceImplTest() {
 		super();
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		root = datas.getRoot();
@@ -153,11 +172,11 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		accountJane = new SharedSpaceAccount(jane);
 		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, node, adminRole,
 				accountJhon);
-		Assert.assertNotNull("John has not been added as a member of his shared space", johnMemberShip);
+		Assertions.assertNotNull(johnMemberShip, "John has not been added as a member of his shared space");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -167,82 +186,100 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	public void testFind() {
 		SharedSpaceMember toCreate = service.create(john, john, node, adminRole, accountJane);
 		SharedSpaceMember tofound = service.find(john, john, toCreate.getUuid());
-		Assert.assertEquals(toCreate.getUuid(), tofound.getUuid());
+		Assertions.assertEquals(toCreate.getUuid(), tofound.getUuid());
 	}
 
 	@Test
 	public void testCreate() {
 		// John add Jane as an admin of the shared space node
 		SharedSpaceMember janeMembership = service.create(john, john, node, adminRole, accountJane);
-		Assert.assertNotNull("Jane has not been added as a member of John's shared space", janeMembership);
+		Assertions.assertNotNull(janeMembership, "Jane has not been added as a member of John's shared space");
 	}
 
 	@Test
 	public void testAvoidDuplicatesMembers() {
 		SharedSpaceMember memberToCreate = service.create(john, john, node, adminRole, accountJane);
-		Assert.assertEquals("The account referenced in this member is not john's",
-				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
+		Assertions.assertEquals(memberToCreate.getAccount().getUuid(), jane.getLsUuid(), 
+				"The account referenced in this member is not john's");
 		try {
 			service.create(john, john, node, adminRole, accountJane);
-			Assert.assertTrue(
-					"An exception should be thrown to prevent the creation of a member with same accountuuid and nodeuuid",
-					false);
+			Assertions.assertTrue(false, "An exception should be thrown to prevent the creation of a member with same accountuuid and nodeuuid");
 		} catch (BusinessException e) {
-			Assert.assertEquals("The thrown error code is not the one of an already exist ShareSpaceMember",
-					BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, e.getErrorCode());
+			Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, e.getErrorCode(),
+					"The thrown error code is not the one of an already exist ShareSpaceMember");
 		}
 	}
 
 	@Test
 	public void testDelete() {
 		SharedSpaceMember memberToCreate = service.create(john, john, node, adminRole, accountJane);
-		Assert.assertEquals("The account referenced in this member is not john's",
-				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
+		Assertions.assertEquals(memberToCreate.getAccount().getUuid(), jane.getLsUuid(), 
+				"The account referenced in this member is not john's");
 		SharedSpaceMember deletedMember = service.delete(john, john, memberToCreate.getUuid());
-		Assert.assertNotNull("No member deleted", deletedMember);
+		Assertions.assertNotNull(deletedMember, "No member deleted");
 		try {
 			service.find(john, john, memberToCreate.getUuid());
-			Assert.assertTrue("An exception should be thrown because the member should not be found", false);
+			Assertions.assertTrue(false, "An exception should be thrown because the member should not be found");
 		} catch (BusinessException e) {
-			Assert.assertEquals("The member is found in the database. It has not been deleted",
-					BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e.getErrorCode());
+			Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e.getErrorCode(),
+					"The member is found in the database. It has not been deleted");
 		}
+	}
+
+	/**
+	 * This Test shows the field replyTo in MailContainerWithRecipient is null in case the root user who did the action 
+	 */
+	@Test
+	public void testDeleteNoReplyToMail() {
+		SharedSpaceMember memberToCreate = service.create(john, john, node, adminRole, accountJane);
+		Assertions.assertEquals(memberToCreate.getAccount().getUuid(), jane.getLsUuid(),
+				"The account referenced in this member is not john's");
+		memberBusinessService.delete(memberToCreate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(john, john, memberToCreate.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, exception.getErrorCode(),
+				"The member is found in the database. It has not been deleted");
+		User user = userRepository.findByLsUuid(jane.getLsUuid());
+		MailContainerWithRecipient mail = buildingService
+				.build(new WorkGroupWarnDeletedMemberEmailContext(memberToCreate, root, user));
+		Assertions.assertNull(mail.getReplyTo());
 	}
 
 	@Test
 	public void testDeleteAll() {
 		service.create(john, john, node, adminRole, accountJane);
 		List<SharedSpaceMember> foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
-		Assert.assertTrue("No members have been created", foundMembers.size() > 0);
+		Assertions.assertTrue(foundMembers.size() > 0, "No members have been created");
 		service.deleteAllMembers(john, john, lightNodePersisted.getUuid());
 		foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
-		Assert.assertEquals("There are members left in the shared space node", 0, foundMembers.size());
+		Assertions.assertEquals(0, foundMembers.size(), "There are members left in the shared space node");
 	}
 
 	@Test
 	public void testUpdate() {
 		SharedSpaceMember createdMember = service.create(john, john, node, adminRole, accountJane);
-		Assert.assertEquals("The account referenced in this shared space member is not jane",
-				createdMember.getAccount().getUuid(), jane.getLsUuid());
+		Assertions.assertEquals(createdMember.getAccount().getUuid(), jane.getLsUuid(),
+				"The account referenced in this shared space member is not jane");
 		SharedSpaceMember memberToSendToUpdate = new SharedSpaceMember(createdMember);
 		memberToSendToUpdate.setRole(lightReaderRoleToPersist);
 		SharedSpaceMember updatedMember = service.update(john, john, memberToSendToUpdate);
-		Assert.assertNotEquals("The member has not been updated", createdMember.getRole(), updatedMember.getRole());
-		Assert.assertNotEquals("The member has not been updated", createdMember.getModificationDate(),
-				updatedMember.getModificationDate());
+		Assertions.assertNotEquals(createdMember.getRole(), updatedMember.getRole(),"The member has not been updated");
+		Assertions.assertNotEquals(createdMember.getModificationDate(),
+				updatedMember.getModificationDate(), "The member has not been updated");
 	}
 	
 	@Test
 	public void testUpdateWithWrongRole() {
 		SharedSpaceMember createdMember = service.create(john, john, node, adminRole, accountJane);
-		Assert.assertEquals("The account referenced in this shared space member is not jane",
-				createdMember.getAccount().getUuid(), jane.getLsUuid());
+		Assertions.assertEquals(createdMember.getAccount().getUuid(), jane.getLsUuid(), 
+				"The account referenced in this shared space member is not jane");
 		SharedSpaceMember memberToSendToUpdate = new SharedSpaceMember(createdMember);
 		try {
 			memberToSendToUpdate.setRole(new GenericLightEntity("wrongUuid", "READER"));
 			service.update(john, john, memberToSendToUpdate);
 		} catch (BusinessException e) {
-			Assert.assertEquals(e.getErrorCode(), BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND);
+			Assertions.assertEquals(e.getErrorCode(), BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND);
 		}
 	}
 
