@@ -1067,7 +1067,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 			<name>bintray-plugins</name>
-			<url>http://dl.bintray.com/kongchen/maven</url>
+			<url>https://dl.bintray.com/kongchen/maven</url>
 		</pluginRepository>
 	</pluginRepositories>
 
