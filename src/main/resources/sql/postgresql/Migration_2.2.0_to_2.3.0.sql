@@ -216,7 +216,7 @@ INSERT INTO ldap_attribute
 (id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 SELECT 19, 'user_firstname', 'givenName', false, true, true, 5, true WHERE NOT EXISTS (SELECT * FROM already_exists);
 
-WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=12 RETURNING *)
+WITH already_exists AS (SELECT * FROM ldap_attribute WHERE id=20)
 INSERT INTO ldap_attribute
 (id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 SELECT 20, 'user_lastname', 'sn', false, true, true, 5, true WHERE NOT EXISTS (SELECT * FROM already_exists);
