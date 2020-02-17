@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd"
+	profile="adminv4">
+	
+	<!-- cxf -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+
+	<!-- REST -->
+	<bean id="adminv4AuthenticationRestService" class="org.linagora.linshare.webservice.adminv4.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="wsAdminGenericFacade" />
+		<constructor-arg ref="wsAdminUserFacade" />
+	</bean>
+
+	<!-- CXF OpenApiFeature -->
+	<bean id="openApiFeature" class="org.apache.cxf.jaxrs.openapi.OpenApiFeature">
+		<!-- customize some of the properties -->
+	</bean>
+
+
+	<jaxrs:server id="restAdminV4Container" address="/rest/admin/v4">
+		<jaxrs:serviceBeans>
+			<ref bean="adminv4AuthenticationRestService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+			<entry key="xml" value="application/xml" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<!--  ExceptionMappers. -->
+			<ref bean="illegalArgumentExceptionMapper" />
+			<ref bean="businessExceptionMapper" />
+			<ref bean="genericExceptionMapper" />
+			<ref bean="webApplicationExceptionMapper" />
+			<ref bean="jsonParseExceptionMapper" />
+			<ref bean="unrecognizedPropertyExceptionMapper" />
+			<ref bean="dataIntegrityViolationExceptionMapper" />
+			<ref bean="mismatchedInputExceptionMapper" />
+			<!-- Json provider for serialisation -->
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:features>
+			<ref bean="openApiFeature" />
+<!-- 			<cxf:logging /> -->
+		</jaxrs:features>
+		<jaxrs:inInterceptors>
+			<!-- For debug only : print input message -->
+<!-- 			<ref bean="logInbound" /> -->
+			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
+			<ref bean="timingInInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<!-- For debug only : print output  message -->
+<!--             	<ref bean="logOutbound" /> -->
+			<!-- This interceptor is designed compute request execution time.-->
+			<ref bean="timingOutInterceptor" />
+		</jaxrs:outInterceptors>
+		<jaxrs:inFaultInterceptors>
+		</jaxrs:inFaultInterceptors>
+		<jaxrs:outFaultInterceptors>
+		</jaxrs:outFaultInterceptors>
+	</jaxrs:server>
+</beans>

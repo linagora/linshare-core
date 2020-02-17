@@ -1,0 +1,23 @@
+{
+	"resourcePackages": [
+		"org.linagora.linshare.webservice.adminv4"
+	],
+	"prettyPrint": true,
+	"cacheTTL": 0,
+	"openAPI": {
+		"info": {
+			"version": "4.0.0",
+			"title": "Admin v4 API",
+			"description": "Admin v4 API"
+		},
+		"servers": [
+			{
+				"url": "/linshare/webservice/rest/admin/v4/",
+				"description": "The ADMIN API server"
+			}
+		]
+	},
+	"userDefinedOptions": {
+		"support.swagger.ui": true
+	}
+}
