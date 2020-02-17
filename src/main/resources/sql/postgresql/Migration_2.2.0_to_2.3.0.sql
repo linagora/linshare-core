@@ -888,7 +888,7 @@ UPDATE mail_content SET body='<!DOCTYPE html>
                 link </a>
           </span>
           <span data-th-utext="#{mainMsgNext}"></span>
-          <span th:if="${owner.firstName} != null AND ${owner.firstName} != null" data-th-utext="#{mainMsgNextBy(${owner.firstName},${owner.lastName})}"></span>
+            <span th:if="${owner.firstName} !=null AND ${owner.lastName} !=null" data-th-utext="#{mainMsgNextBy(${owner.firstName},${owner.lastName})}"></span>
 
              </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
@@ -1283,6 +1283,31 @@ tokenCreationDate = Дата создания
 tokenLabel = Имя
 tokenDescription = Описание'
 WHERE id=33;
+
+--Update the mail content by adding the mainMsgNextBy for English and French which was used just by Russian
+
+UPDATE mail_content
+SET messages_english='
+workGroupUpdatedDateTitle = Updated date
+mainMsg = Your rights on the workgroup
+mainMsgNext= have been updated 
+mainMsgNextBy= by  <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Your rights on the workgroup {0} was updated.
+workGroupRight = Current right
+workGroupNameTitle = Workgroup Name'
+WHERE id = 29;
+
+UPDATE mail_content
+SET messages_french='
+workGroupUpdatedDateTitle = Date de la mise à jour
+mainMsg = Vos droits sur le groupe de travail
+mainMsgNext = ont été mis à jour 
+mainMsgNextBy= par <b> {0} <span style="text-transform:uppercase">{1}</span> </b>.
+subject =  Vos droits sur le groupe de travail {0} ont été mis à jour
+workGroupRight =  Nouveau droit
+workGroupNameTitle = Nom du groupe de travail'
+WHERE id = 29;
+
 --End 
 
 --Update the mail footer with the russian message
