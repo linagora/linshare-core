@@ -29,7 +29,6 @@ check_author:
     - check_author.py check "$GITLAB_USER_EMAIL" "$GITLAB_USER_NAME" --no-accents
   except:
     refs:
-      - master@linagora/lgs/linshare/products/linshare-core
       - tags@linagora/lgs/linshare/products/linshare-core
       - /^release-.*/@linagora/lgs/linshare/products/linshare-core
 
