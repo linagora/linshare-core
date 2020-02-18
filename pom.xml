@@ -763,6 +763,48 @@
 			<plugins>
 			<!-- maven-compiler-plugin -->
 			<plugin>
+				<!-- https://github.com/openapi-tools/swagger-maven-plugin -->
+				<groupId>io.openapitools.swagger</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>admin v4</id>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.adminv4</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.adminv4.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputFilename>swagger-admin-v4</outputFilename>
+							<outputFormats>JSON,YAML</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Admin v4 API</title>
+									<version>4.0.0</version>
+		<!-- 							<termsOfService>Terms</termsOfService> -->
+		<!-- 							<contact> -->
+		<!-- 								<email>e@mail.com</email> -->
+		<!-- 								<name>My Name</name> -->
+		<!-- 								<url>https://google.com</url> -->
+		<!-- 							</contact> -->
+		<!-- 							<license> -->
+		<!-- 								<url>https://license</url> -->
+		<!-- 								<name>MIT</name> -->
+		<!-- 							</license> -->
+								</info>
+		<!-- 						<descriptionFile>src/test/resources/descriptions.md</descriptionFile> -->
+							</swaggerConfig>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
