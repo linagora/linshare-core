@@ -57,14 +57,15 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/upload_request_entries")
-@Api(value = "/rest/user/v2/upload_request_entry", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRestService {
@@ -80,14 +81,15 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 
 	@Path("/{uuid}/download")
 	@GET
-	@ApiOperation(value = "Download a file.", response = Response.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Download a file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Response download(
-			@ApiParam(value = "Upload request entry uuid.", required = true)
+			@Parameter(description = "Upload request entry uuid.", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		UploadRequestEntryDto uploadRequestEntryDto = uploadRequestEntryFacade.find(null, uuid);
 		InputStream documentStream = uploadRequestEntryFacade.download(null, uuid);
@@ -98,25 +100,27 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a file.", response = Response.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
-	@Override	public UploadRequestEntryDto delete(@ApiParam(value = "Upload request entry uuid.", required = true)  @PathParam("uuid") String uuid) throws BusinessException {
+	@Operation(summary = "Delete a file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
+	@Override	public UploadRequestEntryDto delete(@Parameter(description = "Upload request entry uuid.", required = true)  @PathParam("uuid") String uuid) throws BusinessException {
 		return uploadRequestEntryFacade.delete(null, uuid);
 	}
 
 	@Path("/{uuid}/copy")
 	@POST
-	@ApiOperation(value = "Copy a document from an existing upload resquest.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Copy a document from an existing upload resquest.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<DocumentDto> copy(
-			@ApiParam(value = "Copy document.", required = true)
+			@Parameter(description = "Copy document.", required = true)
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return uploadRequestEntryFacade.copy(null, uuid);

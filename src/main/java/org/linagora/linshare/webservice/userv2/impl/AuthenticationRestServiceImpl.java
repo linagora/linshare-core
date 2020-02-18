@@ -47,13 +47,16 @@ import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.AuthenticationRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 //Class created to generate the swagger documentation of v1 RestServices
 @Path("/authentication")
-@Api(value = "/rest/user/v2/authentication", basePath = "/rest/user/v2/", description = "Authentication API",
-produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
@@ -66,7 +69,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "No operation.")
+	@Operation(summary = "No operation.")
 	@Override
 	public void noop() {
 		return; // do nothing
@@ -74,7 +77,12 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/authorized")
 	@GET
-	@ApiOperation(value = "Check if user is authorized.", response = UserDto.class)
+	@Operation(summary = "Check if user is authorized.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
 		return userFacade.isAuthorized();
@@ -82,7 +90,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/logout")
 	@GET
-	@ApiOperation(value = "Logout the current user.")
+	@Operation(summary = "Logout the current user.")
 	@Override
 	public void logout() {
 // This code is never reach because the URL will be catch by spring

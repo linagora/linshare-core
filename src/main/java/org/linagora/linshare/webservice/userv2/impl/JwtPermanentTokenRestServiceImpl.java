@@ -56,17 +56,15 @@ import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.JwtPermanentTokenRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/jwt")
-@Api(value = "/rest/user/v2/jwt", basePath = "/rest/user/v2/",
-	description = "JWT permanent token service",
-	produces = "application/json,application/xml",
-	consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestService {
@@ -81,12 +79,14 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 	@Path("/{uuid}")
 	@GET
 	@Override
-	@ApiOperation(value = "Find JWT permanent tokens owned by uuid.", response = PermanentToken.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Find JWT permanent tokens owned by uuid.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PermanentToken.class))),
+			responseCode = "200"
+		)
+	})
 	public PermanentToken find(
-			@ApiParam(value = "token uuid", required = true)
+			@Parameter(description = "token uuid", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return jwtLongTimeFacade.find(uuid);
 	}
@@ -94,12 +94,14 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 	@Path("/")
 	@POST
 	@Override
-	@ApiOperation(value = "Create a JWT permanent token designing a mandatory label and an optional description.", response = PermanentToken.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Create a JWT permanent token designing a mandatory label and an optional description.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PermanentToken.class))),
+			responseCode = "200"
+		)
+	})
 	public PermanentToken create(
-			@ApiParam(value = "Permanent token to create from two fields : label (mandatory) and description (optional)", required = true)
+			@Parameter(description = "Permanent token to create from two fields : label (mandatory) and description (optional)", required = true)
 					PermanentToken permanentToken)
 			throws BusinessException {
 		return jwtLongTimeFacade.create(permanentToken);
@@ -108,12 +110,9 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 	@Path("/{uuid}")
 	@HEAD
 	@Override
-	@ApiOperation(value = "Check if JWT permanent tokens exists.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Check if JWT permanent tokens exists.")
 	public void head(
-			@ApiParam(value = "token uuid", required = true)
+			@Parameter(description = "token uuid", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		jwtLongTimeFacade.find(uuid);
 	}
@@ -121,10 +120,12 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 	@Path("/")
 	@GET
 	@Override
-	@ApiOperation(value = "Find all JWT permanent tokens owned by user.", response = PermanentToken.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Find all JWT permanent tokens owned by user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PermanentToken.class))),
+			responseCode = "200"
+		)
+	})
 	public List<PermanentToken> findAll() throws BusinessException {
 		return jwtLongTimeFacade.findAll();
 	}
@@ -132,15 +133,16 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 	@Path("/{uuid: .*}")
 	@DELETE
 	@Override
-	@ApiOperation(value = "Delete a JWT permanent token by its uuid.", response = PermanentToken.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 404, message = "The requested token has not been found."),
-					@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Delete a JWT permanent token by its uuid.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PermanentToken.class))),
+			responseCode = "200"
+		)
+	})
 	public PermanentToken delete(
-			@ApiParam(value = "Permanent token to delete.", required = true)
+			@Parameter(description = "Permanent token to delete.", required = true)
 					PermanentToken permanentToken,
-			@ApiParam(value = "token uuid, if null object is used", required = false)
+			@Parameter(description = "token uuid, if null object is used", required = false)
 					@PathParam("uuid") String uuid) throws BusinessException {
 		return jwtLongTimeFacade.delete(permanentToken, uuid);
 	}
@@ -148,30 +150,31 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 	@Path("/{uuid: .*}")
 	@PUT
 	@Override
-	@ApiOperation(value = "Update a JWT permanent token by its uuid.", response = PermanentToken.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 404, message = "The requested token has not been found."),
-					@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Update a JWT permanent token by its uuid.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PermanentToken.class))),
+			responseCode = "200"
+		)
+	})
 	public PermanentToken update(
-			@ApiParam(value = "Permanent token to update.", required = true)
+			@Parameter(description = "Permanent token to update.", required = true)
 					PermanentToken permanentToken,
-			@ApiParam(value = "token uuid, if null object is used", required = false)
+			@Parameter(description = "token uuid, if null object is used", required = false)
 					@PathParam("uuid") String uuid) throws BusinessException {
 		return jwtLongTimeFacade.update(permanentToken, uuid);
 	}
 
 	@Path("/audit")
 	@GET
-	@ApiOperation(value = "Get all traces for a JWT permanent token.", response = AuditLogEntryUser.class, responseContainer="Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-		@ApiResponse(code = 404, message = "The requested token has not been found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-		})
+	@Operation(summary = "Get all traces for a JWT permanent token.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<AuditLogEntryUser> findAllAudit(
-			@ApiParam(value = "Filter by type of actions..", required = false)
+			@Parameter(description = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions) {
 		return jwtLongTimeFacade.findAllAudit(actions);
 	}

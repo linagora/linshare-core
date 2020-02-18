@@ -49,13 +49,16 @@ import org.linagora.linshare.core.facade.webservice.user.LogEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.LogRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 //Class created to generate the swagger documentation of v1 RestServices
 @Path("/logs")
-@Api(value = "/rest/user/v2/logs", description = "User history service.")
 public class LogRestServiceImpl extends WebserviceBase implements LogRestService{
 
 	private LogEntryFacade logEntryFacade;
@@ -65,13 +68,18 @@ public class LogRestServiceImpl extends WebserviceBase implements LogRestService
 	}
 
 	@Path("/")
-	@ApiOperation(value = "Search the user history with specified criteria.", response = LogDto.class, responseContainer = "List")
+	@Operation(summary = "Search the user history with specified criteria.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = LogDto.class))),
+			responseCode = "200"
+		)
+	})
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<LogDto> query(
-			@ApiParam(value = "Criteria to search for.", required = true) LogCriteriaDto criteria)
+			@Parameter(description = "Criteria to search for.", required = true) LogCriteriaDto criteria)
 			throws BusinessException {
 		return logEntryFacade.query(criteria);
 	}

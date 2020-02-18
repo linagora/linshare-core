@@ -85,17 +85,16 @@ import org.linagora.linshare.webservice.userv2.WorkGroupNodeRestService;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Deprecated
 @Path("/work_groups/{workGroupUuid}/nodes")
-@Api(value = "/rest/user/v2/work_groups/{workGroupUuid}/nodes", basePath = "/rest/user/v2/work_groups/{workGroupUuid}/nodes",
-	description = "work group nodes service. Deprecated see sharedspace nodes service",
-	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
@@ -127,20 +126,20 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a folder into a workGroup.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Create a folder into a workGroup.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupNode create(
-			@ApiParam(value = "The workgroup uuid.", required = true) 
+			@Parameter(description = "The workgroup uuid.", required = true) 
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "Only the name and the parent of the new folder are required.", required = true) WorkGroupNode workGroupFolder,
-			@ApiParam(value = "Strict mode: Raise error if a folder with same name already exists (default=false).", required = false)
+			@Parameter(description = "Only the name and the parent of the new folder are required.", required = true) WorkGroupNode workGroupFolder,
+			@Parameter(description = "Strict mode: Raise error if a folder with same name already exists (default=false).", required = false)
 				@QueryParam("strict") @DefaultValue("false") Boolean strict,
-			@ApiParam(value = "Dry run mode . (default=false).", required = false)
+			@Parameter(description = "Dry run mode . (default=false).", required = false)
 				@QueryParam("dryRun") @DefaultValue("false") Boolean dryRun)
 				throws BusinessException {
 		return workGroupNodeFacade.create(null, workGroupUuid, workGroupFolder, strict, dryRun);
@@ -148,21 +147,21 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all workgroup folders.", response = WorkGroupNode.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get all workgroup folders.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<WorkGroupNode> findAll(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The parent uuid.", required = false)
+			@Parameter(description = "The parent uuid.", required = false)
 				@QueryParam("parent") String parent,
-			@ApiParam(value = "True to enable flat document mode (DOCUMENT AND FOLDER only)", required = false)
+			@Parameter(description = "True to enable flat document mode (DOCUMENT AND FOLDER only)", required = false)
 				@QueryParam("flat") @DefaultValue("false") Boolean flat,
-			@ApiParam(value = "Filter by node type.", required = false)
+			@Parameter(description = "Filter by node type.", required = false)
 				@QueryParam("type") List<WorkGroupNodeType> nodeTypes
 			)
 				throws BusinessException {
@@ -171,17 +170,17 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{workGroupNodeUuid}")
 	@GET
-	@ApiOperation(value = "Get a workgroup folder.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get a workgroup folder.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupNode find(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup node uuid.", required = true)
+			@Parameter(description = "The workgroup node uuid.", required = true)
 				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
 			@QueryParam("tree") @DefaultValue("false") Boolean withTree)
 			throws BusinessException {
@@ -190,38 +189,38 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{workGroupNodeUuid: .*}")
 	@PUT
-	@ApiOperation(value = "Update a workgroup folder (name or parent).", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Update a workgroup folder (name or parent).", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupNode update(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup node uuid.", required = true)
+			@Parameter(description = "The workgroup node uuid.", required = true)
 				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
-			@ApiParam(value = "The workgroup folder to update. Only name or parent can be updated, Uuid is required, others fields are useless.", required = true) WorkGroupNode workGroupFolder)
+			@Parameter(description = "The workgroup folder to update. Only name or parent can be updated, Uuid is required, others fields are useless.", required = true) WorkGroupNode workGroupFolder)
 					throws BusinessException {
 		return workGroupNodeFacade.update(null, workGroupUuid, workGroupFolder, workGroupNodeUuid);
 	}
 
 	@Path("/{workGroupNodeUuid: .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup node.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or workgroup folder not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Delete a workgroup node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupNode delete(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workGroup node uuid.", required = false)
+			@Parameter(description = "The workGroup node uuid.", required = false)
 				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
-			@ApiParam(value = "The workgroup node to delete. Only uuid is required", required = false) WorkGroupNode workGroupNode)
+			@Parameter(description = "The workgroup node to delete. Only uuid is required", required = false) WorkGroupNode workGroupNode)
 					throws BusinessException {
 		return workGroupNodeFacade.delete(null, workGroupUuid, workGroupNodeUuid, workGroupNode);
 	}
@@ -229,31 +228,31 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@ApiOperation(value = "Create a workgroup document which will contain the uploaded file, if versionning is enabled and another workgroup document already exists with same name, it will be automatically a revision of the old one.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup document not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Create a workgroup document which will contain the uploaded file, if versionning is enabled and another workgroup document already exists with same name, it will be automatically a revision of the old one.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupEntryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupNode create(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The parent node uuid.", required = false)
+			@Parameter(description = "The parent node uuid.", required = false)
 				@QueryParam("parent") String parentNodeUuid,
-			@ApiParam(value = "File stream.", required = true)
+			@Parameter(description = "File stream.", required = true)
 				@Multipart(value = "file", required = true) InputStream file,
-			@ApiParam(value = "An optional description of a workgroup document.")
+			@Parameter(description = "An optional description of a workgroup document.")
 				@Multipart(value = "description", required = false) String description,
-			@ApiParam(value = "The given file name of the file to upload.", required = true)
+			@Parameter(description = "The given file name of the file to upload.", required = true)
 				@Multipart(value = "filename", required = false) String givenFileName,
-			@ApiParam(value = "True to enable asynchronous upload process.", required = false)
+			@Parameter(description = "True to enable asynchronous upload process.", required = false)
 				@QueryParam("async") Boolean async,
 			@HeaderParam("Content-Length") Long contentLength,
-			@ApiParam(value = "file size (size validation purpose).", required = false)
+			@Parameter(description = "file size (size validation purpose).", required = false)
 				@Multipart(value = "filesize", required = false)  Long fileSize,
 			MultipartBody body,
-			@ApiParam(value = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false)
+			@Parameter(description = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false)
 				@QueryParam("strict") @DefaultValue("false") Boolean strict)
 					throws BusinessException {
 		checkMaintenanceMode();
@@ -291,18 +290,18 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/copy")
 	@POST
-	@ApiOperation(value = "Create a workgroup document from an existing document or received share.", response = DocumentDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a workgroup document from an existing document or received share.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<WorkGroupNode> copy(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
 			CopyDto  copy,
-			@ApiParam(value = "Delete the share at the end of the copy.", required = false)
+			@Parameter(description = "Delete the share at the end of the copy.", required = false)
 				@QueryParam("deleteShare") @DefaultValue("false") boolean deleteShare
 			) throws BusinessException {
 		return workGroupNodeFacade.copy(null, workGroupUuid, null, copy, deleteShare);
@@ -310,20 +309,20 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}/copy")
 	@POST
-	@ApiOperation(value = "Copy the workGroup document to another folder or to another workgroup, duplicate a workgroup document, or to restore a revision ", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup node not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Copy the workGroup document to another folder or to another workgroup, duplicate a workgroup document, or to restore a revision ", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupEntryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<WorkGroupNode> copy(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The parent node uuid, which is the uuid of the node destination", required = true)
+			@Parameter(description = "The parent node uuid, which is the uuid of the node destination", required = true)
 				@PathParam("uuid")  String parentNodeUuid,
-			@ApiParam(value = "The object which contains the target kind and the uuid of the node to copy.", required = true) CopyDto copy,
-			@ApiParam(value = "Delete the share at the end of the copy.", required = false)
+			@Parameter(description = "The object which contains the target kind and the uuid of the node to copy.", required = true) CopyDto copy,
+			@Parameter(description = "Delete the share at the end of the copy.", required = false)
 				@QueryParam("deleteShare") @DefaultValue("false") boolean deleteShare)
 			throws BusinessException {
 		return workGroupNodeFacade.copy(null, workGroupUuid, parentNodeUuid, copy, deleteShare);
@@ -331,17 +330,12 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Get a workgroup node.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup node not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get a workgroup node.")
 	@Override
 	public void head(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup node uuid.", required = true)
+			@Parameter(description = "The workgroup node uuid.", required = true)
 				@PathParam("uuid") String uuid)
 					throws BusinessException {
 		workGroupNodeFacade.find(null, workGroupUuid, uuid, false);
@@ -350,19 +344,14 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}/download")
 	@GET
-	@ApiOperation(value = "Download a file.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup node not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Download a file.")
 	@Override
 	public Response download(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup node uuid.", required = true)
+			@Parameter(description = "The workgroup node uuid.", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "If withRevision is TRUE you will download the workGroupDocument with all its revisions (Available just for workGroupDocument).", required = false)
+			@Parameter(description = "If withRevision is TRUE you will download the workGroupDocument with all its revisions (Available just for workGroupDocument).", required = false)
 				@QueryParam("withRevision") @DefaultValue("false") Boolean withRevision)
 						throws BusinessException {
 		return workGroupNodeFacade.download(null, workGroupUuid, uuid, withRevision);
@@ -370,21 +359,16 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
-	@ApiOperation(value = "Download the thumbnail of a file.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup node not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Download the thumbnail of a file.")
 	@Override
 	public Response thumbnail(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The document uuid.", required = true)
+			@Parameter(description = "The document uuid.", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false)
+			@Parameter(description = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false)
 				@PathParam("kind") ThumbnailType thumbnailType,
-			@ApiParam(value = "True to get an encoded base 64 response", required = false)
+			@Parameter(description = "True to get an encoded base 64 response", required = false)
 				@QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
 		return workGroupNodeFacade.thumbnail(null, workGroupUuid, uuid, base64, thumbnailType);
@@ -402,21 +386,21 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{workGroupNodeUuid}/audit")
 	@GET
-	@ApiOperation(value = "Get all traces for a workgroup node.", response = AuditLogEntryUser.class, responseContainer="Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get all traces for a workgroup node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<AuditLogEntryUser> findAll(
-			@ApiParam(value = "The workGroupNodeUuid.", required = true)
+			@Parameter(description = "The workGroupNodeUuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workGroup node uuid.", required = true)
+			@Parameter(description = "The workGroup node uuid.", required = true)
 				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
-			@ApiParam(value = "Filter by type of actions..", required = false)
+			@Parameter(description = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions,
-			@ApiParam(value = "Filter by type of resource's types.", required = false)
+			@Parameter(description = "Filter by type of resource's types.", required = false)
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate) {
@@ -427,21 +411,22 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Create a workgroup document which will contain the uploaded file.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-			@ApiResponse(code = 404, message = "Workgroup document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a workgroup document which will contain the uploaded file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupNode createFromURL(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The parent workgroup node uuid.", required = false)
+			@Parameter(description = "The parent workgroup node uuid.", required = false)
 				@QueryParam("parent") String parentNodeUuid,
-			@ApiParam(value = "The document URL object.", required = true) DocumentURLDto documentURLDto,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false")
+			@Parameter(description = "The document URL object.", required = true) DocumentURLDto documentURLDto,
+			@Parameter(description = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false")
 				@QueryParam("async") Boolean async,
-			@ApiParam(value = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false)
+			@Parameter(description = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false)
 				@QueryParam("strict") @DefaultValue("false") Boolean strict)
 			throws BusinessException {
 		checkMaintenanceMode();

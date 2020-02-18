@@ -59,15 +59,16 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.WorkGroupRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Deprecated(since = "2.0", forRemoval = true)
 @Path("/work_groups")
-@Api(value = "/rest/user/work_groups", description = "workgroups service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGroupRestService {
@@ -80,29 +81,31 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a workgroup.", response = WorkGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Workgroup not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a workgroup.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
-	public WorkGroupDto create(@ApiParam(value = "Workgroup to create.", required = true) WorkGroupDto workgroup)
+	public WorkGroupDto create(@Parameter(description = "Workgroup to create.", required = true) WorkGroupDto workgroup)
 			throws BusinessException {
 		return workGroupFacade.create(workgroup);
 	}
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Get a workgroup.", response = WorkGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Workgroup not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get a workgroup.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupDto find(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "Return also all workgroup members if true.", required = false)
+			@Parameter(description = "Return also all workgroup members if true.", required = false)
 				@QueryParam("members") @DefaultValue("false") Boolean members)
 			throws BusinessException {
 		return workGroupFacade.find(uuid, members);
@@ -110,24 +113,21 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Get a workgroup.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Workgroup not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get a workgroup.")
 	@Override
-	public void head(@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String uuid)
+	public void head(@Parameter(description = "The workgroup uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		workGroupFacade.find(uuid, false);
 	}
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all workgroups.", response = WorkGroupDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Workgroup not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get all workgroups.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<WorkGroupDto> findAll() throws BusinessException {
 		return workGroupFacade.findAll();
@@ -135,62 +135,58 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup.", response = WorkGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Actor or workgroup not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Delete a workgroup.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupDto delete(
-			@ApiParam(value = "Workgroup to delete.", required = true) WorkGroupDto workgroup)
+			@Parameter(description = "Workgroup to delete.", required = true) WorkGroupDto workgroup)
 					throws BusinessException {
 		return workGroupFacade.delete(workgroup);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup.", response = WorkGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Actor or workgroup not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Delete a workgroup.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupDto delete(
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return workGroupFacade.delete(uuid);
 	}
 
 	@Path("/{uuid}")
 	@PUT
-	@ApiOperation(value = "Update a workgroup.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Workgroup not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update a workgroup.")
 	@Override
-	public WorkGroupDto update(@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String workGroupUuid,
-			@ApiParam(value = "Workgroup to create.", required = true) WorkGroupDto workGroupDto) throws BusinessException {
+	public WorkGroupDto update(@Parameter(description = "The workgroup uuid.", required = true) @PathParam("uuid") String workGroupUuid,
+			@Parameter(description = "Workgroup to create.", required = true) WorkGroupDto workGroupDto) throws BusinessException {
 		return workGroupFacade.update(workGroupUuid, workGroupDto);
 	}
 
 	@Path("/{uuid}/audit")
 	@GET
-	@ApiOperation(value = "Get all traces for a workgroup.", response = AuditLogEntryUser.class, responseContainer="Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Workgroup not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get all traces for a workgroup.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<AuditLogEntryUser> findAll(
-			@ApiParam(value = "The workgroup uuid.", required = true)
+			@Parameter(description = "The workgroup uuid.", required = true)
 				@PathParam("uuid") String workGroupUuid,
-			@ApiParam(value = "Filter by type of actions..", required = false)
+			@Parameter(description = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions,
-			@ApiParam(value = "Filter by type of resource's types.", required = false)
+			@Parameter(description = "Filter by type of resource's types.", required = false)
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate) {

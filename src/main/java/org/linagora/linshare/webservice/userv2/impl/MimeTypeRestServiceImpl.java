@@ -48,12 +48,16 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.user.MimeTypeFacade;
 import org.linagora.linshare.webservice.userv2.MimeTypeRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 //Class created to generate the swagger documentation of v1 RestServices
 @Path("/mime_types")
-@Api(value = "/rest/user/v2/mime_types", description = "Mime types service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MimeTypeRestServiceImpl implements MimeTypeRestService {
@@ -66,7 +70,12 @@ public class MimeTypeRestServiceImpl implements MimeTypeRestService {
 
 	@GET
 	@Path("/")
-	@ApiOperation(value = "Find all Mime types.", response = MimeTypeDto.class)
+	@Operation(summary = "Find all Mime types.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimeTypeDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<MimeTypeDto> find(@QueryParam("disabled") @DefaultValue("false") boolean disabled) {
 		return facade.find(null, disabled);

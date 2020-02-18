@@ -48,12 +48,16 @@ import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.FunctionalityRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 //Class created to generate the swagger documentation of v1 RestServices
 @Path("/functionalities")
-@Api(value = "/rest/user/v2/functionalities", description = "functionality service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class FunctionalityRestServiceImpl extends WebserviceBase implements FunctionalityRestService {
 
@@ -66,7 +70,12 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements Func
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityDto.class, responseContainer = "Set")
+	@Operation(summary = "Find all domain's functionalities.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = FunctionalityDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<FunctionalityDto> findAll() throws BusinessException {
 		return functionalityFacade.findAll();
@@ -74,7 +83,12 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements Func
 
 	@Path("/{funcId}")
 	@GET
-	@ApiOperation(value = "Find a functionality.", response = FunctionalityDto.class)
+	@Operation(summary = "Find a functionality.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = FunctionalityDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public FunctionalityDto find(@PathParam(value = "funcId") String funcId) throws BusinessException {
 		return functionalityFacade.find(funcId);
@@ -82,7 +96,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements Func
 
 	@Path("/{funcId}")
 	@HEAD
-	@ApiOperation(value = "Find a functionality.")
+	@Operation(summary = "Find a functionality.")
 	@Override
 	public void head(@PathParam(value = "funcId") String identifier) throws BusinessException {
 		functionalityFacade.find(identifier);

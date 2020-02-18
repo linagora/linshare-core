@@ -802,6 +802,40 @@
 							<goal>generate</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>user v2</id>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.userv2</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv2.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputFilename>swagger-user-v2</outputFilename>
+							<outputFormats>JSON,YAML</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>User v2 API</title>
+									<version>2.3.0</version>
+		<!-- 							<termsOfService>Terms</termsOfService> -->
+		<!-- 							<contact> -->
+		<!-- 								<email>e@mail.com</email> -->
+		<!-- 								<name>My Name</name> -->
+		<!-- 								<url>https://google.com</url> -->
+		<!-- 							</contact> -->
+		<!-- 							<license> -->
+		<!-- 								<url>https://license</url> -->
+		<!-- 								<name>MIT</name> -->
+		<!-- 							</license> -->
+								</info>
+		<!-- 						<descriptionFile>src/test/resources/descriptions.md</descriptionFile> -->
+							</swaggerConfig>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

@@ -47,13 +47,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.WelcomeMessagesFacade;
 import org.linagora.linshare.webservice.userv2.WelcomeMessagesRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/welcome_messages")
-@Api(value = "/rest/user/v2/welcome_messages", description = "Welcome messages user service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class WelcomeMessagesRestServiceImpl implements WelcomeMessagesRestService {
@@ -67,9 +69,12 @@ public class WelcomeMessagesRestServiceImpl implements WelcomeMessagesRestServic
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all welcome message entries.", response = List.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 400, message = "Bad request.") })
+	@Operation(summary = "Find all welcome message entries.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = List.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<Map<SupportedLanguage, String>>  findAll() throws BusinessException {
 		return welcomeMessagesFacade.findAll(null);

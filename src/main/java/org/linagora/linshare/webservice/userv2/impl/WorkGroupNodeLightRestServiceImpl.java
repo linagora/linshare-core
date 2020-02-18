@@ -48,16 +48,15 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.WorkGroupNodeLightRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/work_groups_nodes")
-@Api(value = "/rest/user/work_groups_nodes", basePath = "/rest/work_groups_nodes",
-	description = "work group nodes service.",
-	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class WorkGroupNodeLightRestServiceImpl extends WebserviceBase implements WorkGroupNodeLightRestService{
@@ -71,15 +70,15 @@ public class WorkGroupNodeLightRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Get a workgroup node.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get a workgroup node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupNode find(
-			@ApiParam(value = "The workgroup node uuid.", required = true)
+			@Parameter(description = "The workgroup node uuid.", required = true)
 				@PathParam("uuid") String uuid,
 			@QueryParam("tree") @DefaultValue("false") Boolean withTree)
 			throws BusinessException {

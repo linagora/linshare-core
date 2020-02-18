@@ -85,14 +85,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/documents")
-@Api(value = "/rest/user/documents", basePath = "/rest/user/", description = "Documents service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
@@ -125,22 +126,23 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Create a document which will contain the uploaded file.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a document which will contain the uploaded file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DocumentDto create(
-			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
-			@ApiParam(value = "An optional description of a document.") @Multipart(value = "description", required = false) String description,
-			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
-			@ApiParam(value = "Signature file stream.", required = false) @Multipart(value = "signaturefile", required = false) InputStream theSignatureFile,
-			@ApiParam(value = "The given file name of the signature uploaded file.", required = false) @Multipart(value = "signatureFileName", required = false) String signatureFileName,
-			@ApiParam(value = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
-			@ApiParam(value = "The given metadata of the uploaded file.", required = false) @Multipart(value = "metadata", required = false) String metaData,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") boolean async,
-			@ApiParam(value = "file size (size validation purpose).", required = true) @Multipart(value = "filesize", required = true) Long fileSize,
+			@Parameter(description = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
+			@Parameter(description = "An optional description of a document.") @Multipart(value = "description", required = false) String description,
+			@Parameter(description = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
+			@Parameter(description = "Signature file stream.", required = false) @Multipart(value = "signaturefile", required = false) InputStream theSignatureFile,
+			@Parameter(description = "The given file name of the signature uploaded file.", required = false) @Multipart(value = "signatureFileName", required = false) String signatureFileName,
+			@Parameter(description = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
+			@Parameter(description = "The given metadata of the uploaded file.", required = false) @Multipart(value = "metadata", required = false) String metaData,
+			@Parameter(description = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") boolean async,
+			@Parameter(description = "file size (size validation purpose).", required = true) @Multipart(value = "filesize", required = true) Long fileSize,
 			MultipartBody body) throws BusinessException {
 		checkMaintenanceMode();
 		Long transfertDuration = WebServiceUtils.getTransfertDuration();
@@ -176,14 +178,15 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 
 	@Path("/copy")
 	@POST
-	@ApiOperation(value = "Create a document from an existing workgroup document or a received share.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a document from an existing workgroup document or a received share.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<DocumentDto> copy(CopyDto copy,
-			@ApiParam(value = "Delete the share at the end of the copy.", required = false) @QueryParam("deleteShare") @DefaultValue("false") boolean deleteShare)
+			@Parameter(description = "Delete the share at the end of the copy.", required = false) @QueryParam("deleteShare") @DefaultValue("false") boolean deleteShare)
 			throws BusinessException {
 		return documentFacade.copy(null, copy, deleteShare);
 	}
@@ -191,28 +194,25 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Path("/{uuid}")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Get a document.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get a document.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 
-	public DocumentDto find(@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "If you want document shares too.", required = false) @QueryParam("withShares") @DefaultValue("false") boolean withShares)
+	public DocumentDto find(@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "If you want document shares too.", required = false) @QueryParam("withShares") @DefaultValue("false") boolean withShares)
 			throws BusinessException {
 		return documentFacade.find(uuid, withShares);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Get a document.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get a document.")
 	@Override
-	public void head(@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
+	public void head(@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		documentFacade.find(uuid, false);
 	}
@@ -221,11 +221,12 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Get all documents.", response = DocumentDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get all documents.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<DocumentDto> findAll() throws BusinessException {
 		return documentFacade.findAll();
@@ -234,13 +235,14 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@DELETE
 	@Path("/{uuid}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Delete a document.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a document.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
-	public DocumentDto delete(@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
+	public DocumentDto delete(@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return documentFacade.delete(uuid);
 	}
@@ -248,13 +250,14 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@DELETE
 	@Path("/")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Delete a document.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a document.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
-	public DocumentDto delete(@ApiParam(value = "The document.", required = true) DocumentDto documentDto)
+	public DocumentDto delete(@Parameter(description = "The document.", required = true) DocumentDto documentDto)
 			throws BusinessException {
 		Validate.notNull(documentDto, "Document dto must be set.");
 		return documentFacade.delete(documentDto.getUuid());
@@ -264,24 +267,26 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Update a document.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update a document.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
-	public DocumentDto update(@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "The document dto.", required = true) DocumentDto documentDto) throws BusinessException {
+	public DocumentDto update(@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "The document dto.", required = true) DocumentDto documentDto) throws BusinessException {
 		return documentFacade.update(uuid, documentDto);
 	}
 
 	@Path("/{uuid}/download")
 	@GET
-	@ApiOperation(value = "Download a file.", response = Response.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Download a file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Response download(@PathParam("uuid") String uuid) throws BusinessException {
 		DocumentDto documentDto = documentFacade.find(uuid, false);
@@ -293,15 +298,16 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
-	@ApiOperation(value = "Download the thumbnail of a file.", response = Response.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Download the thumbnail of a file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Response thumbnail(@PathParam("uuid") String documentUuid,
-			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType,
-			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
+			@Parameter(description = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType,
+			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 			throws BusinessException {
 		DocumentDto documentDto = documentFacade.find(documentUuid, false);
 		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid, thumbnailType);
@@ -321,16 +327,17 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 
 	@Path("/{uuid}/audit")
 	@GET
-	@ApiOperation(value = "Get all traces for a document.", response = AuditLogEntryUser.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get all traces for a document.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<AuditLogEntryUser> findAll(
-			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Filter by type of actions..", required = false) @QueryParam("actions") List<LogAction> actions,
-			@ApiParam(value = "Filter by type of resource's types.", required = false) @QueryParam("types") List<AuditLogEntryType> types,
+			@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "Filter by type of actions..", required = false) @QueryParam("actions") List<LogAction> actions,
+			@Parameter(description = "Filter by type of resource's types.", required = false) @QueryParam("types") List<AuditLogEntryType> types,
 			@QueryParam("beginDate") String beginDate, @QueryParam("endDate") String endDate) {
 		return documentFacade.findAll(null, uuid, actions, types, beginDate, endDate);
 	}
@@ -339,15 +346,16 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Create a document from an URL.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a document from an URL.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DocumentDto createFromURL(
-			@ApiParam(value = "The document URL object.", required = true) DocumentURLDto documentURLDto,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") boolean async)
+			@Parameter(description = "The document URL object.", required = true) DocumentURLDto documentURLDto,
+			@Parameter(description = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") boolean async)
 			throws BusinessException {
 		Long transfertDuration = WebServiceUtils.getTransfertDuration();
 		Validate.notNull(documentURLDto, "DocumentURLDto must be set.");

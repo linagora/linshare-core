@@ -62,14 +62,15 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.ShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 //Class created to generate the swagger documentation of v1 RestServices
-@Api(value = "/rest/user/v2/shares", description = "Shares service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
@@ -86,27 +87,37 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Find all shares for an user.", response = ShareDto.class, responseContainer = "Set")
+	@Operation(summary = "Find all shares for an user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<ShareDto> getShares() throws BusinessException {
 		return webServiceShareFacade.getShares();
 	}
 
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a share.", response = ShareDto.class)
+	@Operation(summary = "Find a share.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareDto.class))),
+			responseCode = "200"
+		)
+	})
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public ShareDto getShare(
-			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid) {
+			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid) {
 		return webServiceShareFacade.getShare(shareUuid);
 	}
 
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find a share.")
+	@Operation(summary = "Find a share.")
 	@HEAD
 	@Override
-	public void head(@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid)
+	public void head(@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid)
 			throws BusinessException {
 		webServiceShareFacade.getShare(shareUuid);
 	}
@@ -126,7 +137,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@GET
 	@Override
 	public Response getThumbnailStream(@PathParam("uuid") String shareUuid,
-			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
+			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
 		ShareDto shareDto = webServiceShareFacade.getShare(shareUuid);
 		InputStream documentStream = webServiceShareFacade.getThumbnailStream(shareUuid, ThumbnailType.MEDIUM);
@@ -137,11 +148,12 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a share.", response = ShareDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Actor not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a share.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<ShareDto> create(ShareCreationDto createDto) throws BusinessException {
 		return webServiceShareFacade.create(createDto);
@@ -149,28 +161,30 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a share document.", response = ShareDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Share not found."),
-			@ApiResponse(code = 400, message = "Bad request: missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a share document.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ShareDto delete(
-			@ApiParam(value = "Share's to delete uuid.", required = true) @PathParam("uuid") String shareUuid)
+			@Parameter(description = "Share's to delete uuid.", required = true) @PathParam("uuid") String shareUuid)
 					throws BusinessException {
 		return webServiceShareFacade.delete(shareUuid, false);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a share document.", response = ShareDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Share not found."),
-			@ApiResponse(code = 400, message = "Bad request: missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a share document.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ShareDto delete(
-			@ApiParam(value = "Share's to delete.", required = true) ShareDto shareDto)
+			@Parameter(description = "Share's to delete.", required = true) ShareDto shareDto)
 					throws BusinessException {
 		Validate.notNull(shareDto, "Share dto must be set.");
 		return webServiceShareFacade.delete(shareDto.getUuid(), false);

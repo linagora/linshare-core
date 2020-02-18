@@ -61,15 +61,16 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.ReceivedShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 
 @Path("/received_shares")
-@Api(value = "/rest/user/received_shares", description = "received shares rest service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
@@ -82,10 +83,12 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all connected user received shares.", response = ShareDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Received shares not found."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find all connected user received shares.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
@@ -94,43 +97,40 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	@Path("/{uuid}")
 	@GET
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Received share not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
-	@ApiOperation(value = "Find a received share entry.", response = ShareDto.class)
+	@Operation(summary = "Find a received share entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public ShareDto getReceivedShare(
-			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
+			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
 					throws BusinessException {
 		return shareFacade.getReceivedShare(receivedShareUuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Received share not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
-	@ApiOperation(value = "Find a received share entry.")
+	@Operation(summary = "Find a received share entry.")
 	@Override
-	public void head(@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid) throws BusinessException {
+	public void head(@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid) throws BusinessException {
 		shareFacade.getReceivedShare(receivedShareUuid);
 	}
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
-	@ApiOperation(value = "Download the thumbnail of a file.", response = Response.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Received share not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Download the thumbnail of a file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Response thumbnail(@PathParam("uuid") String receivedShareUuid,
-			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64,
-			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType
+			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64,
+			@Parameter(description = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType
 			) throws BusinessException {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(receivedShareUuid);
 		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid, thumbnailType);
@@ -141,27 +141,29 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a received share.", response = ShareDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Received share not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a received share.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ShareDto delete(
-			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
+			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
 					throws BusinessException {
 		return shareFacade.delete(receivedShareUuid, true);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a received share.", response = ShareDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Received share not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a received share.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
-	public ShareDto delete(@ApiParam(value = "The received share to delete.", required = true) ShareDto shareDto)
+	public ShareDto delete(@Parameter(description = "The received share to delete.", required = true) ShareDto shareDto)
 			throws BusinessException {
 		Validate.notNull(shareDto, "Share dto must be set.");
 		return shareFacade.delete(shareDto.getUuid(), true);
@@ -169,14 +171,15 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	@Path("/{uuid}/download")
 	@GET
-	@ApiOperation(value = "Download a received share.", response = Response.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Received share not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Download a received share.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Response download(
-			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(uuid);
 		InputStream receivedShareStream = shareFacade.getDocumentStream(uuid);
@@ -187,19 +190,19 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	@Path("/{uuid}/audit")
 	@GET
-	@ApiOperation(value = "Get all traces for a received share.", response = AuditLogEntryUser.class, responseContainer="Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Share not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get all traces for a received share.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<AuditLogEntryUser> findAll(
-			@ApiParam(value = "The received share uuid.", required = true)
+			@Parameter(description = "The received share uuid.", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "Filter by type of actions..", required = false)
+			@Parameter(description = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions,
-			@ApiParam(value = "Filter by type of resource's types.", required = false)
+			@Parameter(description = "Filter by type of resource's types.", required = false)
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate) {

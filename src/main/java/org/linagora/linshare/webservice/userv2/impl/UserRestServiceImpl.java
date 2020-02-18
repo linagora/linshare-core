@@ -50,12 +50,15 @@ import org.linagora.linshare.core.facade.webservice.user.AutoCompleteFacade;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.webservice.userv2.UserRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/users")
-@Api(value = "/rest/user/v2/users", description = "Users service")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class UserRestServiceImpl implements UserRestService {
@@ -78,10 +81,15 @@ public class UserRestServiceImpl implements UserRestService {
 
 	@Path("/autocomplete/{pattern}")
 	@GET
-	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
+	@Operation(summary = "Provide user autocompletion.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<UserDto> autocomplete(
-			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
+			@Parameter(description = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
 					throws BusinessException {
 		return autocompleteFacade.findUser(pattern);
 	}

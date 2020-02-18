@@ -83,11 +83,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/flow")
-@Api(value = "/rest/user/v2/flow", basePath = "/rest/user/v2/", description = "Flow Upload Documents service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 		implements FlowDocumentUploaderRestService {
 
@@ -307,7 +311,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public AsyncTaskDto findAsync(
-			@ApiParam(value = "Get the async task created at the end of an upload.", required = true) @PathParam("uuid") String uuid) throws BusinessException {
+			@Parameter(description = "Get the async task created at the end of an upload.", required = true) @PathParam("uuid") String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing uuid");
 		return asyncTaskFacade.find(uuid);
 	}

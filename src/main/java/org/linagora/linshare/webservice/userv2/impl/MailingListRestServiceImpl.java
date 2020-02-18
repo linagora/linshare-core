@@ -54,14 +54,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.core.facade.webservice.user.MailingListFacade;
 import org.linagora.linshare.webservice.userv2.MailingListRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/lists")
-@Api(value = "/rest/user/v2/lists", description = "Mailing lists user api.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailingListRestServiceImpl implements MailingListRestService {
@@ -74,10 +75,12 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all an user mailing lists.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find all an user mailing lists.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<MailingListDto> findAll() throws BusinessException {
 		return mailingListFacade.findAll(null, null);
@@ -85,25 +88,22 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find an user mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Mailing list not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find an user mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto find(
-			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return mailingListFacade.find(null, uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find an user mailing list.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Mailing list not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find an user mailing list.")
 	@Override
 	public void head(String uuid) throws BusinessException {
 		mailingListFacade.find(null, uuid);
@@ -111,13 +111,15 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto create(
-			@ApiParam(value = "The mailing list to create. Only identifier is required.", required = true) MailingListDto dto)
+			@Parameter(description = "The mailing list to create. Only identifier is required.", required = true) MailingListDto dto)
 					throws BusinessException {
 		return mailingListFacade.create(null, dto);
 
@@ -125,27 +127,30 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 
 	@Path("/{uuid}")
 	@PUT
-	@ApiOperation(value = "Update a mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update a mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto update(
-			@ApiParam(value = "The mailing list to update.", required = true) MailingListDto dto)
+			@Parameter(description = "The mailing list to update.", required = true) MailingListDto dto)
 					throws BusinessException {
 		return mailingListFacade.update(null, dto, null);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 404, message = "Mailing list not found."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto delete(
-			@ApiParam(value = "The mailing list to delete.", required = true) MailingListDto dto)
+			@Parameter(description = "The mailing list to delete.", required = true) MailingListDto dto)
 					throws BusinessException {
 		Validate.notNull(dto,  "Mailing list dto must be set.");
 		return mailingListFacade.delete(null, dto.getUuid());
@@ -153,14 +158,15 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Find an user mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Mailing list not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find an user mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto delete(
-			@ApiParam(value = "The mailing list to delete uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The mailing list to delete uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return mailingListFacade.delete(null, uuid);
 
@@ -168,65 +174,58 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 
 	@Path("/{uuid}/contacts")
 	@GET
-	@ApiOperation(value = "Find an user mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Mailing list not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find an user mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<MailingListContactDto> findAllContacts(
-			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return mailingListFacade.findAllContacts(null, uuid);
 	}
 
 	@Path("/{uuid}/contacts")
 	@POST
-	@ApiOperation(value = "Create a contact in a mailing list.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
+	@Operation(summary = "Create a contact in a mailing list.")
 	@Override
-	public MailingListContactDto createContact(@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
+	public MailingListContactDto createContact(@Parameter(description = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "Contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
 		return mailingListFacade.addContact(null, uuid, dto);
 	}
 
 	@Path("/{uuid}/contacts")
 	@PUT
-	@ApiOperation(value = "Delete a contact from a mailing list.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
+	@Operation(summary = "Delete a contact from a mailing list.")
 	@Override
 	public void updateContact(
-			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
+			@Parameter(description = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "Contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
 		mailingListFacade.updateContact(null, dto);
 	}
 
 	@Path("/{uuid}/contacts")
 	@DELETE
-	@ApiOperation(value = "Delete a contact from a mailing list.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
+	@Operation(summary = "Delete a contact from a mailing list.")
 	@Override
 	public void deleteContact(
-			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
+			@Parameter(description = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "Contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
 		mailingListFacade.deleteContact(null, dto.getUuid());
 	}
 
 	@Path("/{uuid}/contacts/{contactUuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a contact from a mailing list.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
+	@Operation(summary = "Delete a contact from a mailing list.")
 	@Override
 	public void deleteContact(
-			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("contactUuid") String contactUuid)
+			@Parameter(description = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "Mailing list contact uuid.", required = true) @PathParam("contactUuid") String contactUuid)
 					throws BusinessException {
 		mailingListFacade.deleteContact(null, contactUuid);
 	}

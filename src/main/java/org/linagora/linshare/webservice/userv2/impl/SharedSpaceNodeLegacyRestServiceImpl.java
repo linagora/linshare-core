@@ -42,10 +42,15 @@ import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 
-import com.wordnik.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/shared_space_nodes")
-@Api(value = "/rest/user/v2/shared_space_nodes", description = "sharedspacenodes service.deprecated see sharedspaces service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceNodeLegacyRestServiceImpl extends SharedSpaceRestServiceImpl {

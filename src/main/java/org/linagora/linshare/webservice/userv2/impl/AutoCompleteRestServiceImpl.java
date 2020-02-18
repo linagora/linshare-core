@@ -49,15 +49,16 @@ import org.linagora.linshare.core.facade.webservice.user.AutoCompleteFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
 import org.linagora.linshare.webservice.userv2.AutoCompleteRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 //Class created to generate the swagger documentation of v1 RestServices
 @Path("/autocomplete")
-@Api(value = "/rest/user/v2/autocomplete", basePath = "/rest/user/v2/", description = "Auto complete service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AutoCompleteRestServiceImpl implements AutoCompleteRestService {
@@ -71,16 +72,19 @@ public class AutoCompleteRestServiceImpl implements AutoCompleteRestService {
 
 	@Path("/{pattern}")
 	@GET
-	@ApiOperation(value = "Perform search.", response = AutoCompleteResultDto.class)
-	@ApiResponses({ @ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Perform search.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AutoCompleteResultDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<AutoCompleteResultDto> autoComplete(
-			@ApiParam(value = "The pattern.", required = true)
+			@Parameter(description = "The pattern.", required = true)
 				@PathParam("pattern") String pattern,
-			@ApiParam(value = "The search type.", required = true)
+			@Parameter(description = "The search type.", required = true)
 				@QueryParam("type") String type,
-			@ApiParam(value = "If your are looking for thread members, you must fill this parameter.", required = false)
+			@Parameter(description = "If your are looking for thread members, you must fill this parameter.", required = false)
 				@QueryParam("threadUuid") String threadUuid) {
 		Validate.notEmpty(type, "Type must be set.");
 		Validate.notEmpty(pattern, "Pattern must be set.");

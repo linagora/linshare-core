@@ -62,14 +62,15 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.SharedSpaceRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/shared_spaces")
-@Api(value = "/rest/user/v2/shared_spaces", description = "sharedspaces service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
@@ -92,30 +93,32 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all shared spaces (Drives and workgroups on the top level).", response = SharedSpaceNodeNested.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get all shared spaces (Drives and workgroups on the top level).", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNodeNested.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<SharedSpaceNodeNested> findAll(
-			@ApiParam(value = "Return also the role of the member", required = false)
+			@Parameter(description = "Return also the role of the member", required = false)
 				@QueryParam("withRole") @DefaultValue("false") boolean withRole) throws BusinessException {
 		return nodeFacade.findAllMyNodes(null, withRole);
 	}
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a shared space node.", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find a shared space node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceNode find(
-			@ApiParam(value = "shared space node's uuid.", required = true)
+			@Parameter(description = "shared space node's uuid.", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "Return also the role of the current user", required = false)
+			@Parameter(description = "Return also the role of the current user", required = false)
 				@QueryParam("withRole") @DefaultValue("false") boolean withRole)
 			throws BusinessException {
 		return nodeFacade.find(null, uuid, withRole);
@@ -123,29 +126,31 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a shared space node.", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a shared space node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceNode create(
-			@ApiParam(value = "shared space node to create", required = true) SharedSpaceNode node)
+			@Parameter(description = "shared space node to create", required = true) SharedSpaceNode node)
 			throws BusinessException {
 		return nodeFacade.create(null, node);
 	}
 	
 	@Path("/{uuid : .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a shared space node.", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a shared space node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceNode delete(
-			@ApiParam(value = "sharedSpaceNode to delete. ", required = true)SharedSpaceNode node,
-			@ApiParam(value = "shared space node's uuid.", required = false)
+			@Parameter(description = "sharedSpaceNode to delete. ", required = true)SharedSpaceNode node,
+			@Parameter(description = "shared space node's uuid.", required = false)
 				@PathParam(value = "uuid") String uuid) 
 			throws BusinessException {
 		return nodeFacade.delete(null, node, uuid);
@@ -153,15 +158,16 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	
 	@Path("/{uuid : .*}")
 	@PUT
-	@ApiOperation(value = "Update a shared space node. If versionning delegation functionality is enabled, the user will be able to update the versionning parameter into a workgroup", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update a shared space node. If versionning delegation functionality is enabled, the user will be able to update the versionning parameter into a workgroup", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceNode update(
-			@ApiParam(value="The shared space node to update.")SharedSpaceNode node,
-			@ApiParam(value="Ths shared space node uuid to update.")
+			@Parameter(description = "The shared space node to update.")SharedSpaceNode node,
+			@Parameter(description = "Ths shared space node uuid to update.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return nodeFacade.update(null, node, uuid);
@@ -169,31 +175,33 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	
 	@Path("/{uuid}")
 	@PATCH
-	@ApiOperation(value = "Update a shared space node. If versionning delegation functionality is enabled, the user will be able to update the versionning parameter into a workgroup", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update a shared space node. If versionning delegation functionality is enabled, the user will be able to update the versionning parameter into a workgroup", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceNode update(
-			@ApiParam(value = "The Patch that contains the feilds that'll be updated in the node")PatchDto patchNode,
-			@ApiParam(value = "The uuid of the node that'll be updated.")
+			@Parameter(description = "The Patch that contains the feilds that'll be updated in the node")PatchDto patchNode,
+			@Parameter(description = "The uuid of the node that'll be updated.")
 				@PathParam("uuid")String uuid) throws BusinessException {
 		return nodeFacade.updatePartial(null, patchNode, uuid);
 	}
 
 	@Path("/{uuid}/members")
 	@GET
-	@ApiOperation(value = "Get all members for the shared space node.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all members for this shared space node."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get all members for the shared space node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceMember.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<SharedSpaceMember> members(
-			@ApiParam("The members node uuid.")
+			@Parameter(description = "The members node uuid.")
 				@PathParam("uuid")String uuid,
-			@ApiParam("It allows to filter the list of SSM by an account uuid")
+			@Parameter(description = "It allows to filter the list of SSM by an account uuid")
 				@QueryParam("accountUuid")String accountUuid)
 			throws BusinessException {
 		return nodeFacade.members(null, uuid, accountUuid);
@@ -201,16 +209,17 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	@Path("/{uuid}/members/{memberUuid}")
 	@GET
-	@ApiOperation(value = "Get member for the shared space node.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list the member for this shared space node."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get member for the shared space node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceMember.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceMember findMemberByNodeAndUuid(
-			@ApiParam("The members node uuid.")
+			@Parameter(description = "The members node uuid.")
 				@PathParam("uuid")String uuid,
-			@ApiParam("The uuid of a member within a node")
+			@Parameter(description = "The uuid of a member within a node")
 				@PathParam("memberUuid")String memberUuid)
 			throws BusinessException {
 		return memberFacade.findByNodeAndMemberUuid(null, uuid, memberUuid);
@@ -218,29 +227,31 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	@Path("/{uuid}/members")
 	@POST
-	@ApiOperation(value = "Add a shared space member to workgroup or drive.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Add a shared space member to workgroup or drive.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceMember.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceMember addMember(
-			@ApiParam("The shared space member to add")SharedSpaceMember member)
+			@Parameter(description = "The shared space member to add")SharedSpaceMember member)
 					throws BusinessException {
 		return memberFacade.create(null, member);
 	}
 
 	@Path("{uuid}/members/{memberUuid : .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a shared space member.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a shared space member.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceMember.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceMember deleteMember(
-			@ApiParam("The shared space member to delete.")SharedSpaceMember member,
-			@ApiParam("The shared space member uuid")
+			@Parameter(description = "The shared space member to delete.")SharedSpaceMember member,
+			@Parameter(description = "The shared space member uuid")
 				@PathParam(value="memberUuid")String memberUuid)
 			throws BusinessException {
 		return memberFacade.delete(null, member, memberUuid);
@@ -248,17 +259,18 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	@Path("{uuid}/members/{memberUuid : .*}")
 	@PUT
-	@ApiOperation(value = "Update a shared space member.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update a shared space member.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceMember.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceMember updateMember(
-			@ApiParam("The shared space member to update.") SharedSpaceMember member,
-			@ApiParam("The shared space member uuid")
+			@Parameter(description = "The shared space member to update.") SharedSpaceMember member,
+			@Parameter(description = "The shared space member uuid")
 				@PathParam(value="memberUuid")String memberUuid,
-			@ApiParam("If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
+			@Parameter(description = "If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
 				@QueryParam("force") @DefaultValue("false") boolean force)
 			throws BusinessException {
 		return memberFacade.update(null, member, memberUuid, force);
@@ -266,37 +278,38 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	@Path("/{uuid}/audit")
 	@GET
-	@ApiOperation(value = "Get all traces for a sharedSpace.", response = AuditLogEntryUser.class, responseContainer="Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Workgroup not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get all traces for a sharedSpace.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<AuditLogEntryUser> findAllAudits(
-			@ApiParam(value = "The sharedSpace uuid.", required = true)
+			@Parameter(description = "The sharedSpace uuid.", required = true)
 				@PathParam("uuid") String sharedSpaceUuid,
-			@ApiParam(value = "Filter by type of actions..", required = false)
+			@Parameter(description = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions,
-			@ApiParam(value = "Filter by type of resource's types.", required = false)
+			@Parameter(description = "Filter by type of resource's types.", required = false)
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate,
-			@ApiParam(value = "Choose the specific node which you like to list the audits ", required = true)
+			@Parameter(description = "Choose the specific node which you like to list the audits ", required = true)
 				@QueryParam("nodeUuid") String nodeUuid) {
 		return workGroupFacade.findAll(sharedSpaceUuid, actions, types, beginDate, endDate, nodeUuid);
 	}
 
 	@Path("/{uuid}/workgroups")
 	@GET
-	@ApiOperation(value = "Get workgroups inside this node.", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all workgroups inside a shared space node."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get workgroups inside this node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(
-			@ApiParam("The node uuid.")
+			@Parameter(description = "The node uuid.")
 				@PathParam("uuid")String uuid) 
 			throws BusinessException {
 		return nodeFacade.findAllWorkGroupsInsideNode(null, uuid);
