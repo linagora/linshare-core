@@ -35,8 +35,6 @@ package org.linagora.linshare.core.domain.constants;
 
 import java.util.Calendar;
 
-import scala.Int;
-
 /**
  * Defines a unit of time.
  */
@@ -81,7 +79,7 @@ public enum TimeUnit {
 	}
 
 	public static TimeUnit fromInt(long value) {
-		if (value > Int.MaxValue()) {
+		if (value > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException(
 					"Doesn't match an existing TimeUnit");
 		}
