@@ -45,11 +45,15 @@ import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.AccountQuotaDto;
 import org.linagora.linshare.webservice.delegationv2.QuotaRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{actorUuid}/quota")
-@Api(value = "/rest/delegation/v2/actorUuid/quota/", description = "Quota service.")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class QuotaRestServiceImpl implements QuotaRestService {
@@ -65,9 +69,9 @@ public class QuotaRestServiceImpl implements QuotaRestService {
 	@GET
 	@Override
 	public AccountQuotaDto find(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Quota Uuid.", required = true)
+			@Parameter(description = "Quota Uuid.", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return facade.find(actorUuid, uuid);
 	}

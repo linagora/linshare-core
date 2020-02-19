@@ -55,15 +55,15 @@ import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.GuestRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("{actorUuid}/guests")
-@Api(value = "/rest/delegation/v2/{actorUuid}/guests", basePath = "/rest/delegation/v2/", description = "Guests service.",
-	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class GuestRestServiceImpl extends WebserviceBase implements GuestRestService {
@@ -77,35 +77,35 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a guest.", response = GuestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Guest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Create a guest.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GuestDto create(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Guest to create.", required = true) GuestDto guest)
+			@Parameter(description = "Guest to create.", required = true) GuestDto guest)
 					throws BusinessException {
 		return guestFacade.create(actorUuid, guest);
 	}
 
 	@Path("/{identifier}")
 	@GET
-	@ApiOperation(value = "Get a guest.", response = GuestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Guest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get a guest.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GuestDto get(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
-			@ApiParam(value = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
-			@ApiParam(value = "Domain identifier.") @QueryParam("domain") String domain)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
+			@Parameter(description = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
+			@Parameter(description = "Domain identifier.") @QueryParam("domain") String domain)
 			throws BusinessException {
 		if (isMail) {
 			return guestFacade.find(actorUuid, domain, identifier);
@@ -115,18 +115,18 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 
 	@Path("/{identifier}")
 	@HEAD
-	@ApiOperation(value = "Get a guest.", response = GuestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Guest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get a guest.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public void head(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
-			@ApiParam(value = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
-			@ApiParam(value = "Domain identifier.") @QueryParam("domain") String domain)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
+			@Parameter(description = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
+			@Parameter(description = "Domain identifier.") @QueryParam("domain") String domain)
 			throws BusinessException {
 		if (isMail) {
 			guestFacade.find(actorUuid, domain, identifier);
@@ -138,33 +138,33 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all guests.", response = GuestDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Guest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get all guests.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<GuestDto> getAll(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid) throws BusinessException {
 		return guestFacade.findAll(actorUuid);
 	}
 
 	@Path("/{uuid: .*}")
 	@PUT
-	@ApiOperation(value = "Update a guest.", response = GuestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Guest or guest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Update a guest.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GuestDto update(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Guest to update.", required = true) GuestDto guest,
-			@ApiParam(value = "The guest uuid.", required = true)
+			@Parameter(description = "Guest to update.", required = true) GuestDto guest,
+			@Parameter(description = "The guest uuid.", required = true)
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return guestFacade.update(actorUuid, guest, uuid);
@@ -172,18 +172,18 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 
 	@Path("/{uuid: .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a guest.", response = GuestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Guest or guest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Delete a guest.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GuestDto delete(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest,
-			@ApiParam(value = "The guest uuid.", required = true)
+			@Parameter(description = "Guest to delete.", required = true) GuestDto guest,
+			@Parameter(description = "The guest uuid.", required = true)
 				@PathParam("uuid") String uuid)
 					throws BusinessException {
 		return guestFacade.delete(actorUuid, guest, uuid);

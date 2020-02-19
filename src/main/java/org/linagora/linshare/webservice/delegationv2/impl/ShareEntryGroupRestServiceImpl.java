@@ -54,14 +54,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ShareEntryGroupDt
 import org.linagora.linshare.core.facade.webservice.delegation.ShareEntryGroupFacade;
 import org.linagora.linshare.webservice.delegationv2.ShareEntryGroupRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("{actorUuid}/share_entry_group")
-@Api(value = "/rest/delegation/{actorUuid}/share_entry_group", basePath = "/rest/share_entry_group", description = "share entries group delegation service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestService {
@@ -74,87 +75,95 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all share entries group for an user.", response = ShareEntryGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find all share entries group for an user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareEntryGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<ShareEntryGroupDto> findAll(
-			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@QueryParam("full") @DefaultValue("false") boolean full) throws BusinessException {
 		return shareEntryGroupFacade.findAll(actorUuid, full);
 	}
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a share entry group.", response = ShareEntryGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Share entry group not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find a share entry group.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareEntryGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ShareEntryGroupDto find(
-			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid,
 			@QueryParam("full") @DefaultValue("false") boolean full) throws BusinessException {
 		return shareEntryGroupFacade.find(actorUuid, uuid, full);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a share entry group.", response = ShareEntryGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Share entry group not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find a share entry group.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareEntryGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public void head(
-			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		shareEntryGroupFacade.find(actorUuid, uuid, false);
 	}
 
 	@Path("/{uuid}")
 	@PUT
-	@ApiOperation(value = "Update a share entry group.", response = ShareEntryGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Share entry group not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update a share entry group.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareEntryGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ShareEntryGroupDto update(
-			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Share entry group to update.", required = true) @PathParam("shareEntryGroupDto") ShareEntryGroupDto shareEntryGroupDto)
+			@Parameter(description = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "Share entry group to update.", required = true) @PathParam("shareEntryGroupDto") ShareEntryGroupDto shareEntryGroupDto)
 					throws BusinessException {
 		return shareEntryGroupFacade.update(actorUuid, shareEntryGroupDto);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a share entry group.", response = ShareEntryGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Share entry group not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a share entry group.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareEntryGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ShareEntryGroupDto delete(
-			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Share entry group's uuid to delete.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "Share entry group's uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return shareEntryGroupFacade.delete(actorUuid, uuid);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a share entry group.", response = ShareEntryGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Share entry group not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a share entry group.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareEntryGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ShareEntryGroupDto delete(
-			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Share entry group to delete.", required = true) @PathParam("uuid") ShareEntryGroupDto shareEntryGroupDto)
+			@Parameter(description = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "Share entry group to delete.", required = true) @PathParam("uuid") ShareEntryGroupDto shareEntryGroupDto)
 					throws BusinessException {
 		Validate.notNull(shareEntryGroupDto);
 		return shareEntryGroupFacade.delete(actorUuid, shareEntryGroupDto.getUuid());

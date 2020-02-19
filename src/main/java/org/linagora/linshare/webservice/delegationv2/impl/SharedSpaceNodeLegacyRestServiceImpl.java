@@ -40,10 +40,15 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 
-import com.wordnik.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{actorUuid}/shared_space_nodes")
-@Api(value = "/rest/delegation/v2/{actorUuid}/shared_space_nodes", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceNodeLegacyRestServiceImpl extends SharedSpaceRestServiceImpl {

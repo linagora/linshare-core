@@ -49,14 +49,15 @@ import org.linagora.linshare.core.facade.webservice.user.StatisticFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.StatisticRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{actorUuid}/statistic")
-@Api(value = "/rest/delegation/v2/{actorUuid}/statistic", description = "Statistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class StatisticRestServiceImpl extends WebserviceBase implements StatisticRestService {
 
 	private final StatisticFacade statisticFacade;
@@ -68,21 +69,21 @@ public class StatisticRestServiceImpl extends WebserviceBase implements Statisti
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Get Statistic Between two dates.", response = StatisticDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role"),
-			@ApiResponse(code = 404, message = "Actor not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Get Statistic Between two dates.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = StatisticDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<StatisticDto> findBetweenTwoDates(
-			@ApiParam(value = "actor uuid") 
+			@Parameter(description = "actor uuid") 
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "begin statistic creation date") 
+			@Parameter(description = "begin statistic creation date") 
 				@QueryParam("beginDate") String beginDate,
-			@ApiParam(value = "end statistic creation date") 
+			@Parameter(description = "end statistic creation date") 
 				@QueryParam("endDate") String endDate,
-			@ApiParam(value = "statistic type") 
+			@Parameter(description = "statistic type") 
 				@QueryParam("statisticType") StatisticType statisticType)
 			throws BusinessException {
 		return statisticFacade.findBetweenTwoDates(actorUuid, beginDate,

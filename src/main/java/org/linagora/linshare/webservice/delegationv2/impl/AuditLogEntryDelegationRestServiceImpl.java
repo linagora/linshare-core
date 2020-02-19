@@ -51,11 +51,15 @@ import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.delegationv2.AuditLogEntryDelegationRestService;
 
-import com.wordnik.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/audit")
-@Api(value = "/rest/delegation/v2/audits/{actorUuid}", basePath = "/rest/delegation/v2/", description = "Audit log entry services",
-	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class AuditLogEntryDelegationRestServiceImpl implements AuditLogEntryDelegationRestService {

@@ -47,14 +47,15 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.webservice.delegationv2.SharedSpaceRoleRestService;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{actorUuid}/shared_space_roles")
-@Api(value = "/rest/delegation/v2/{actorUuid}/shared_space_roles", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestService {
@@ -68,16 +69,17 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a shared space role.", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find a shared space role.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceRole find(
-			@ApiParam(value = "The actor uuid.", required = true) 
+			@Parameter(description = "The actor uuid.", required = true) 
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The shared space role uuid", required = true)
+			@Parameter(description = "The shared space role uuid", required = true)
 				@PathParam("uuid") String uuid)
 					throws BusinessException {
 		return roleFacade.find(actorUuid, uuid);
@@ -85,16 +87,17 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 
 	@Path("role/{name}")
 	@GET
-	@ApiOperation(value = "Find a shared space node.", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find a shared space node.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceRole findByName(
-			@ApiParam(value = "The actor uuid.", required = true) 
+			@Parameter(description = "The actor uuid.", required = true) 
 				@PathParam(value="actorUuid")String actorUuid,
-			@ApiParam(value="The shared space role name")
+			@Parameter(description = "The shared space role name")
 				@PathParam(value="name")String name) 
 					throws BusinessException {
 		return roleFacade.findByName(actorUuid, name);
@@ -102,14 +105,15 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all a shared space roles.", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find all a shared space roles.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<SharedSpaceRole> findAll(
-			@ApiParam(value="the actor uuid")
+			@Parameter(description = "the actor uuid")
 				@PathParam(value="actorUuid")String actorUuid)
 						throws BusinessException {
 		return roleFacade.findAll(actorUuid);
@@ -117,16 +121,17 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	
 	@Path("{uuid}/permissions")
 	@GET
-	@ApiOperation(value = "Get all shared space permissions of current role.", response = SharedSpacePermission.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get all shared space permissions of current role.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpacePermission.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<SharedSpacePermission> findAllPermissions(
-			@ApiParam(value="the actor uuid")
+			@Parameter(description = "the actor uuid")
 				@PathParam(value="actorUuid")String actorUuuid,
-			@ApiParam("The role uuid")
+			@Parameter(description = "The role uuid")
 				@PathParam(value="uuid")String roleUuid)
 			throws BusinessException {
 		return roleFacade.findAll(actorUuuid, roleUuid);

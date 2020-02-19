@@ -50,14 +50,15 @@ import org.linagora.linshare.core.facade.webservice.user.UploadPropositionExcept
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 import org.linagora.linshare.webservice.delegationv2.UploadPropositionExceptionRuleRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{actorUuid}/upload_proposition_exception_rules")
-@Api(value = "/rest/delegation/v2/{actorUuid}/upload_proposition_exception_rules", description = "Upload Proposition Exception Rules service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadPropositionExceptionRuleRestServiceImpl implements UploadPropositionExceptionRuleRestService {
@@ -71,78 +72,61 @@ public class UploadPropositionExceptionRuleRestServiceImpl implements UploadProp
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Get an upload proposition exception rule")
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to create a Exception rule."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get an upload proposition exception rule")
 	@Override
 	public UploadPropositionExceptionRule find(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Uploadproposition exception rule uuid", required = true)
+			@Parameter(description = "Uploadproposition exception rule uuid", required = true)
 				@PathParam("uuid") String uuid){
 		return exceptionRuleFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/list/{exceptionRuleType}")
 	@GET
-	@ApiOperation(value = "Get white/black list of a user")
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to create a Exception rule."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get white/black list of a user")
 	@Override
 	public List<UploadPropositionExceptionRule> findByExceptionRuleType(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Uploadproposition exception rule type", required = true)
+			@Parameter(description = "Uploadproposition exception rule type", required = true)
 				@PathParam("exceptionRuleType") UploadPropositionExceptionRuleType exceptionRuleType){
 		return exceptionRuleFacade.findByExceptionRuleType(actorUuid, exceptionRuleType);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Add a contact to the white/black list of the upload proposition")
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to create a Exception rule."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Add a contact to the white/black list of the upload proposition")
 	@Override
 	public UploadPropositionExceptionRule create(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Payload to create an exception rule", required = true) UploadPropositionExceptionRule exceptionRule) {
+			@Parameter(description = "Payload to create an exception rule", required = true) UploadPropositionExceptionRule exceptionRule) {
 		return exceptionRuleFacade.create(actorUuid, exceptionRule);
 	}
 
 	@Path("/{uuid : .*}")
 	@DELETE
-	@ApiOperation(value = "Delete an exceptionRule")
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to delete a Exception rule."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 404, message = "UploadPropositionExceptionRule not found."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete an exceptionRule")
 	@Override
 	public UploadPropositionExceptionRule delete(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Payload of the exception rule to delete") UploadPropositionExceptionRule exceptionRule,
-			@ApiParam(value = "optionnal uuid of the exceptionRule to delete")
+			@Parameter(description = "Payload of the exception rule to delete") UploadPropositionExceptionRule exceptionRule,
+			@Parameter(description = "optionnal uuid of the exceptionRule to delete")
 				@PathParam("uuid") String uuid) {
 		return exceptionRuleFacade.delete(actorUuid, uuid, exceptionRule);
 	}
 
 	@Path("/{uuid : .*}")
 	@PUT
-	@ApiOperation(value = "Update an exceptionRule")
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to update a Exception rule."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 404, message = "UploadPropositionExceptionRule not found."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update an exceptionRule")
 	@Override
 	public UploadPropositionExceptionRule update(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Payload of the exception rule to update", required = true) UploadPropositionExceptionRule exceptionRule,
-			@ApiParam(value = "optionnal uuid of the exceptionRule to update")
+			@Parameter(description = "Payload of the exception rule to update", required = true) UploadPropositionExceptionRule exceptionRule,
+			@Parameter(description = "optionnal uuid of the exceptionRule to update")
 				@PathParam("uuid") String uuid) {
 		return exceptionRuleFacade.update(actorUuid, uuid, exceptionRule);
 	}

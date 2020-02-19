@@ -49,11 +49,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.user.MimeTypeFacade;
 import org.linagora.linshare.webservice.delegationv2.MimeTypeRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{actorUuid}/mime_types")
-@Api(value = "/rest/delegation/v2/actorUuid/mime_types", description = "Mime types service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MimeTypeRestServiceImpl implements MimeTypeRestService {
@@ -68,7 +72,7 @@ public class MimeTypeRestServiceImpl implements MimeTypeRestService {
 	@Path("/")
 	@Override
 	public List<MimeTypeDto> find(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@QueryParam("disabled") @DefaultValue("false") boolean disabled) {
 		return facade.find(actorUuid, disabled);
 	}

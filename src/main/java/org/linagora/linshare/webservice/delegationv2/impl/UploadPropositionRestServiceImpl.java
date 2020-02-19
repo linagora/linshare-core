@@ -46,14 +46,15 @@ import org.linagora.linshare.core.facade.webservice.user.UploadPropositionFacade
 import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.linagora.linshare.webservice.delegationv2.UploadPropositionRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{actorUuid}/upload_propositions")
-@Api(value = "/rest/delegation/v2/upload_propositions", description = "Upload Propositions API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadPropositionRestServiceImpl implements UploadPropositionRestService {
@@ -67,32 +68,32 @@ public class UploadPropositionRestServiceImpl implements UploadPropositionRestSe
 
 	@GET
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find an upload proposition.", response = UploadProposition.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
-			@ApiResponse(code = 404, message = "UploadProposition not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find an upload proposition.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadProposition.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UploadProposition find(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Upload proposition uuid", required = true)
+			@Parameter(description = "Upload proposition uuid", required = true)
 				@PathParam(value = "uuid") String uuid) {
 		return uploadPropositionFacade.find(actorUuid, uuid);
 	}
 
 	@GET
 	@Path("/")
-	@ApiOperation(value = "Find all upload propositions.", response = UploadProposition.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
-			@ApiResponse(code = 404, message = "UploadProposition not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find all upload propositions.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadProposition.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<UploadProposition> findAll(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid) {
 		return uploadPropositionFacade.findAllByAccountUuid(actorUuid);
 	}

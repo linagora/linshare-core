@@ -52,11 +52,13 @@ import org.linagora.linshare.mongo.entities.SafeDetail;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.SafeDetailRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 /**
  * @author Mehdi Attia
@@ -64,9 +66,6 @@ import com.wordnik.swagger.annotations.ApiResponses;
  */
 
 @Path("/{actorUuid}/safe_details")
-@Api(value = "/rest/delegation/v2/{actorUuid}/safe_details", basePath = "/rest/delegation/v2/",
-		description = "SafeDetail service.", produces = "application/json,application/xml",
-		consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SafeDetailRestServiceImpl extends WebserviceBase implements
@@ -93,16 +92,17 @@ public class SafeDetailRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST 
-	@ApiOperation(value = "Create a safeDetail", response = SafeDetail.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a safeDetail", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SafeDetail.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SafeDetail create(
-			@ApiParam(value = "The actor (user) uuid.", required = true) 
+			@Parameter(description = "The actor (user) uuid.", required = true) 
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The safeDetail to Delete.", required = true) SafeDetail safeDetail)
+			@Parameter(description = "The safeDetail to Delete.", required = true) SafeDetail safeDetail)
 			throws BusinessException {
 		Validate.notEmpty(actorUuid, "actor uuid must be set.");
 		Validate.notNull(safeDetail);
@@ -114,35 +114,35 @@ public class SafeDetailRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid : .*}")
 	@DELETE
-	@ApiOperation(value = "EXPERIMENTAL - Delete a safeDetail.", response = SafeDetail.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "SafeDetail not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "EXPERIMENTAL - Delete a safeDetail.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SafeDetail.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SafeDetail delete(
-			@ApiParam(value = "The actor (user) uuid.", required = true) 
+			@Parameter(description = "The actor (user) uuid.", required = true) 
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The safeDetail uuid.", required = false) 
+			@Parameter(description = "The safeDetail uuid.", required = false) 
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "The safeDetail to delete.", required = false) SafeDetail safeDetail) throws BusinessException {
+			@Parameter(description = "The safeDetail to delete.", required = false) SafeDetail safeDetail) throws BusinessException {
 		return safeDetailFacade.delete(actorUuid, uuid, safeDetail);
 	}
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Get a SafeDetail.", response = SafeDetail.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "SafeDetail not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get a SafeDetail.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SafeDetail.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SafeDetail find(
-			@ApiParam(value = "The actor (user) uuid.", required = true) 
+			@Parameter(description = "The actor (user) uuid.", required = true) 
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The safeDetail uuid.", required = true) 
+			@Parameter(description = "The safeDetail uuid.", required = true) 
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return safeDetailFacade.find(actorUuid, uuid);
@@ -150,14 +150,15 @@ public class SafeDetailRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "EXPERIMENTAL - Get all safeDetails.", response = SafeDetail.class, responseContainer = "Set")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "EXPERIMENTAL - Get all safeDetails.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SafeDetail.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<SafeDetail> findAll(
-			@ApiParam(value = "The actor (user) uuid.", required = true) 
+			@Parameter(description = "The actor (user) uuid.", required = true) 
 				@PathParam("actorUuid") String actorUuid)
 			throws BusinessException {
 		return safeDetailFacade.findAll(actorUuid);

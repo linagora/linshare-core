@@ -50,15 +50,15 @@ import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.UserRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.annotations.ApiResponse;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/users")
-@Api(value = "/rest/delegation/v2/users", basePath = "/rest/delegation/v2/users", description = "Users service.",
-	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UserRestServiceImpl extends WebserviceBase implements
@@ -74,16 +74,17 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{mail}")
 	@GET
-	@ApiOperation(value = "Find a user.", response = GenericUserDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Find a user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GenericUserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GenericUserDto getUser(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("mail") String mail,
-			@ApiParam(value = "The actor (user) uuid.", required = false)
+			@Parameter(description = "The actor (user) uuid.", required = false)
 				@QueryParam("domainId") String domainId)
 			throws BusinessException {
 		return userFacade.getUser(mail, domainId);
@@ -91,14 +92,15 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/details/{uuid}")
 	@GET
-	@ApiOperation(value = "Find all the user's informations from the given uuid.", response = UserDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Find all the user's informations from the given uuid.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UserDto findUser(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
+			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return userFacade.findUser(uuid);
@@ -106,14 +108,15 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/details")
 	@POST
-	@ApiOperation(value = "Looking for user LinShare account, if it does not exists it will be created from ldap directories.", response = UserDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Looking for user LinShare account, if it does not exists it will be created from ldap directories.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UserDto findUser(
-			@ApiParam(value = "User details (mail and domain) to send to recover the whole informations about user", required = true) UserDetailsDto userDetailsDto)
+			@Parameter(description = "User details (mail and domain) to send to recover the whole informations about user", required = true) UserDetailsDto userDetailsDto)
 			throws BusinessException {
 		return userFacade.findUser(userDetailsDto);
 	}

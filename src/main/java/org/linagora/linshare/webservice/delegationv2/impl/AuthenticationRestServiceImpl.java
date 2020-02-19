@@ -49,15 +49,15 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.AccountDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.AuthenticationRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 
 @Path("/authentication")
-@Api(value = "/rest/delegation/v2/authentication", basePath = "/rest/delegation/v2/", description = "Authentication delegation/v2 API",
-produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
@@ -75,7 +75,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "No operation.")
+	@Operation(summary = "No operation.")
 	@Override
 	public void noop() {
 		return; // do nothing
@@ -83,7 +83,13 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/authorized")
 	@GET
-	@ApiOperation(value = "Check if user is authorized.", response = AccountDto.class)
+	@Operation(summary = "Check if user is authorized.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountDto.class))),
+			responseCode = "200"
+		)
+	})
+
 	@Override
 	public AccountDto isAuthorized() throws BusinessException {
 		return delegationGenericFacade.isAuthorized();
@@ -91,16 +97,15 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/change_password")
 	@POST
-	@ApiOperation(value = "Change the password of the current user.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Change the password of the current user.")
 	@Override
-	public void changePassword(@ApiParam(value = "New password.", required = true) PasswordDto password) throws BusinessException {
+	public void changePassword(@Parameter(description = "New password.", required = true) PasswordDto password) throws BusinessException {
 		userFacade.changePassword(password);
 	}
 
 	@Path("/logout")
 	@GET
-	@ApiOperation(value = "Logout the current user.")
+	@Operation(summary = "Logout the current user.")
 	@Override
 	public void logout() {
 		// This code is never reach because the URL will be catch by spring security before.

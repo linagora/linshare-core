@@ -50,15 +50,15 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.ShareRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{actorUuid}/shares")
-@Api(value = "/rest/v2/delegation/{actorUuid}/shares", basePath = "/rest/shares", description = "shares service.",
-	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
@@ -72,15 +72,10 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a share.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Actor not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Create a share.")
 	@Override
 	public Set<ShareDto> create(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			ShareCreationDto createDto)
 					throws BusinessException {
 		return shareFacade.create(actorUuid, createDto);

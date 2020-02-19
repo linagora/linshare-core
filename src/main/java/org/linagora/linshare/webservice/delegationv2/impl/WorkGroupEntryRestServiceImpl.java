@@ -77,16 +77,15 @@ import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskCo
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{actorUuid}/workgroups/{workgroupUuid}/entries")
-@Api(value = "/rest/delegation/v2/{actorUuid}/workgroups/{workgroupUuid}/entries", basePath = "/rest/workgroups/{workgroupUuid}/entries",
-	description = "workgroup entries service.",
-	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
@@ -118,30 +117,30 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@ApiOperation(value = "Create a workgroup entry which will contain the uploaded file.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Workgroup entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Create a workgroup entry which will contain the uploaded file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupEntryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupEntryDto create(
-			@ApiParam(value = "The actor (user) uuid.", required = true) 
+			@Parameter(description = "The actor (user) uuid.", required = true) 
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) 
+			@Parameter(description = "The workgroup uuid.", required = true) 
 				@PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "File stream.", required = true) 
+			@Parameter(description = "File stream.", required = true) 
 				@Multipart(value = "file", required = true) InputStream file,
-			@ApiParam(value = "An optional description of a document.") 
+			@Parameter(description = "An optional description of a document.") 
 				@Multipart(value = "description", required = false) String description,
-			@ApiParam(value = "The given file name of the uploaded file.", required = false) 
+			@Parameter(description = "The given file name of the uploaded file.", required = false) 
 				@Multipart(value = "filename", required = false) String givenFileName,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) 
+			@Parameter(description = "True to enable asynchronous upload processing.", required = false) 
 				@DefaultValue("false") @QueryParam("async") Boolean async,
 			@HeaderParam("Content-Length") Long contentLength,
-			@ApiParam(value = "file size (size validation purpose).", required = true) 
+			@Parameter(description = "file size (size validation purpose).", required = true) 
 				@Multipart(value = "filesize", required = true)  Long fileSize,
-			@ApiParam(value = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false) 
+			@Parameter(description = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false) 
 				@DefaultValue("false") @QueryParam("strict") Boolean strict,
 			MultipartBody body)
 					throws BusinessException {
@@ -180,18 +179,18 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	@Path("/copy")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@ApiOperation(value = "Create a workgroup entry which will contain the uploaded file.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "workgroup entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Create a workgroup entry which will contain the uploaded file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupEntryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupEntryDto copy(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@Parameter(description = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid,
+			@Parameter(description = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async)
 					throws BusinessException {
 		// Default mode. No user input.
 		if (async == null) {
@@ -219,136 +218,121 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Get a workgroup entry.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Workgroup entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get a workgroup entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupEntryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupEntryDto find(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@Parameter(description = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return workGroupEntryFacade.find(actorUuid, workgroupUuid, uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Get a workgroup entry.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-		@ApiResponse(code = 404, message = "Workgroup entry not found."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."),
+	@Operation(summary = "Get a workgroup entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupEntryDto.class))),
+			responseCode = "200"
+		)
 	})
 	@Override
 	public void head(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@Parameter(description = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		workGroupEntryFacade.find(actorUuid, workgroupUuid, uuid);
 	}
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all workgroup entries.", response = WorkGroupEntryDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Workgroup entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Get all workgroup entries.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupEntryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<WorkGroupEntryDto> findAll(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid)
 					throws BusinessException {
 		return workGroupEntryFacade.findAll(actorUuid, workgroupUuid);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup entry.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Workgroup entry or workgroup entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Delete a workgroup entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupEntryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupEntryDto delete(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "The workgroup entry to delete.", required = true) WorkGroupEntryDto workgroupEntry)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@Parameter(description = "The workgroup entry to delete.", required = true) WorkGroupEntryDto workgroupEntry)
 					throws BusinessException {
 		return workGroupEntryFacade.delete(actorUuid, workgroupUuid, workgroupEntry);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup entry.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Workgroup entry or Workgroup entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Delete a workgroup entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupEntryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupEntryDto delete(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "The workgroup entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@Parameter(description = "The workgroup entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return workGroupEntryFacade.delete(actorUuid, workgroupUuid, uuid);
 	}
 
 	@Path("/{actorUuid}/documents/{uuid}/download")
 	@GET
-	@ApiOperation(value = "Download a file.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Workgroup entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Download a file.")
 	@Override
 	public Response download(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@Parameter(description = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return workGroupEntryFacade.download(actorUuid, workgroupUuid, uuid);
 	}
 
 	@Path("/{actorUuid}/documents/{uuid}/thumbnail")
 	@GET
-	@ApiOperation(value = "Download the thumbnail of a file.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Workgroup entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Download the thumbnail of a file.")
 	@Override
 	public Response thumbnail(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 			return workGroupEntryFacade.thumbnail(actorUuid, workgroupUuid, uuid, ThumbnailType.MEDIUM);
 	}
 
 	@Path("/{actorUuid}/documents/{uuid}")
 	@PUT
-	@ApiOperation(value = "Update the workgroup entry properties.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Workgroup entry not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+	@Operation(summary = "Update the workgroup entry properties.")
 	@Override
 	public WorkGroupEntryDto update(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String workgroupEntryuuid,
-			@ApiParam(value = "The workgroup Entry.", required = true) WorkGroupEntryDto workgroupEntryDto)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String workgroupEntryuuid,
+			@Parameter(description = "The workgroup Entry.", required = true) WorkGroupEntryDto workgroupEntryDto)
 			throws BusinessException {
 		return workGroupEntryFacade.update(actorUuid, workgroupUuid, workgroupEntryuuid, workgroupEntryDto);
 	}
@@ -358,8 +342,8 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public AsyncTaskDto findAsync(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The async task uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The async task uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		Validate.notEmpty(uuid, "Missing uuid");
 		return asyncTaskFacade.find(actorUuid, uuid);
@@ -369,18 +353,19 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Create a document from an URL.", response = DocumentDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a document from an URL.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupEntryDto createFromURL(
-			@ApiParam(value = "The document URL object.", required = true) DocumentURLDto documentURLDto,
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") Boolean async,
-			@ApiParam(value = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false) @QueryParam("strict") @DefaultValue("false") Boolean strict)
+			@Parameter(description = "The document URL object.", required = true) DocumentURLDto documentURLDto,
+			@Parameter(description = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@Parameter(description = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@Parameter(description = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") Boolean async,
+			@Parameter(description = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false) @QueryParam("strict") @DefaultValue("false") Boolean strict)
 			throws BusinessException {
 		Long transfertDuration = WebServiceUtils.getTransfertDuration();
 		Validate.notNull(documentURLDto, "DocumentURLDto must be set.");
