@@ -58,13 +58,15 @@ import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
 import org.linagora.linshare.webservice.external.AnonymousUrlRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/anonymousurl")
-@Api(value = "/rest/external/anonymousurl/", description = "anonymous url API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
@@ -78,8 +80,12 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 
 	@GET
 	@Path("/{urlUuid}")
-	@ApiOperation(value = "Find an anonymous Url", response = AnonymousUrlDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Operation(summary = "Find an anonymous Url", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AnonymousUrlDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Response getAnonymousUrl(
 			@PathParam(value = "urlUuid") String urlUuid,
@@ -94,9 +100,7 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 
 	@GET
 	@Path("/{urlUuid}/{shareEntryUuid}")
-	@ApiOperation(value = "Get an AnonymousShareEntry")
-	@ApiResponses({
-		@ApiResponse(code = 403, message = "Authentication failed.") })
+	@Operation(summary = "Get an AnonymousShareEntry")
 	@Override
 	public ShareEntryDto getAnonymousShareEntry(
 			@PathParam(value = "urlUuid") String anonymousUrlUuid,
@@ -111,9 +115,7 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 
 	@GET
 	@Path("/{urlUuid}/{shareEntryUuid}/download")
-	@ApiOperation(value = "Download a document")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Authentication failed.") })
+	@Operation(summary = "Download a document")
 	@Override
 	public Response download(@PathParam(value = "urlUuid") String urlUuid,
 			@PathParam(value = "shareEntryUuid") String shareEntryUuid,
@@ -133,8 +135,7 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 
 	@GET
 	@Path("/{urlUuid}/{shareEntryUuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
-	@ApiOperation(value = "Get document thumbnail")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Operation(summary = "Get document thumbnail")
 	@Override
 	public Response getAnonymousShareEntryThumbnail(
 			@PathParam(value = "urlUuid") String anonymousUrlUuid,

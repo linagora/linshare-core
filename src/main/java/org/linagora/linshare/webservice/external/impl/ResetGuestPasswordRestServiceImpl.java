@@ -50,14 +50,15 @@ import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.webservice.external.ResetGuestPasswordRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/reset_password")
-@Api(value = "/rest/external/reset_password", description = "reset guest password url API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ResetGuestPasswordRestServiceImpl implements ResetGuestPasswordRestService {
@@ -71,11 +72,15 @@ public class ResetGuestPasswordRestServiceImpl implements ResetGuestPasswordRest
 
 	@GET
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find an anonymous Url", response = AnonymousUrlDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Operation(summary = "Find an anonymous Url", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AnonymousUrlDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ResetGuestPassword find(
-			@ApiParam(value = "uuid", required = true) @PathParam(value = "uuid") String uuid) throws BusinessException {
+			@Parameter(description = "uuid", required = true) @PathParam(value = "uuid") String uuid) throws BusinessException {
 		return facade.find(uuid);
 	}
 
@@ -83,7 +88,7 @@ public class ResetGuestPasswordRestServiceImpl implements ResetGuestPasswordRest
 	@Path("/{uuid}")
 	@Override
 	public ResetGuestPassword update(
-			@ApiParam(value = "uuid", required = true) @PathParam(value = "uuid") String uuid,
+			@Parameter(description = "uuid", required = true) @PathParam(value = "uuid") String uuid,
 			ResetGuestPassword reset) throws BusinessException {
 		return facade.update(uuid, reset);
 	}
