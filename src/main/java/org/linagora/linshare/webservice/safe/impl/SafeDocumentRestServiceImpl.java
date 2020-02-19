@@ -70,17 +70,15 @@ import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskCo
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/{ric}/documents")
-@Api(value = "/rest/safe/{ric}/documents", basePath = "/rest/safe/{ric}/documents",
-		description = "Safe documents service.",
-		produces = "application/json,application/xml", 
-		consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SafeDocumentRestServiceImpl extends WebserviceBase implements 
@@ -117,26 +115,26 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Create a document which will contain the uploaded file.", response = DocumentDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a document which will contain the uploaded file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupEntryDto create(
-			@ApiParam(value = "The safeUuid uuid.", required = true) 
+			@Parameter(description = "The safeUuid uuid.", required = true) 
 				@PathParam("ric") String ric,
-			@ApiParam(value = "File stream.", required = true) 
+			@Parameter(description = "File stream.", required = true) 
 				@Multipart(value = "file", required = true) InputStream file,
-			@ApiParam(value = "An optional description of a document.") 
+			@Parameter(description = "An optional description of a document.") 
 				@Multipart(value = "description", required = false) String description,
-			@ApiParam(value = "The given file name of the uploaded file.", required = false) 
+			@Parameter(description = "The given file name of the uploaded file.", required = false) 
 				@Multipart(value = "filename", required = false) String givenFileName,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) 
+			@Parameter(description = "True to enable asynchronous upload processing.", required = false) 
 				@DefaultValue("false") @QueryParam("async") Boolean async,
 			@HeaderParam("Content-Length") Long contentLength,
-			@ApiParam(value = "file size (size validation purpose).", required = true) 
+			@Parameter(description = "file size (size validation purpose).", required = true) 
 				@Multipart(value = "filesize", required = true) Long fileSize,
 			MultipartBody body) throws BusinessException {
 
