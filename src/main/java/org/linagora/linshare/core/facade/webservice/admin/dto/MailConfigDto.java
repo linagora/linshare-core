@@ -47,41 +47,41 @@ import org.linagora.linshare.core.domain.entities.MailFooterLang;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailConfig")
-@ApiModel(value = "MailConfig", description = "")
+@Schema(name = "MailConfig", description = "")
 public class MailConfigDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Domain")
+	@Schema(description = "Domain")
 	private String domain;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "Visible")
+	@Schema(description = "Visible")
 	private boolean visible;
 
-	@ApiModelProperty(value = "Readonly")
+	@Schema(description = "Readonly")
 	private boolean readonly;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	private Date modificationDate;
 
-	@ApiModelProperty(value = "MailLayout")
+	@Schema(description = "MailLayout")
 	private String mailLayout;
 
-	@ApiModelProperty(value = "MailFooters")
+	@Schema(description = "MailFooters")
 	private Map<Language, MailFooterLangDto> mailFooterLangs = Maps.newHashMap();
 
-	@ApiModelProperty(value = "MailContentLangs")
+	@Schema(description = "MailContentLangs")
 	private Set<MailContentLangDto> mailContentLangs = Sets.newHashSet();
 
 	public MailConfigDto() {

@@ -38,17 +38,17 @@ import java.util.Date;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class WorkGroupLightDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	protected String name;
 
 	public WorkGroupLightDto() {

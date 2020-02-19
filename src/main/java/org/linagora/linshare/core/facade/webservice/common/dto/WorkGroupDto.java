@@ -45,22 +45,22 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Thread")
-@ApiModel(value = "Thread", description = "A thread is a shared space for users to deposit files.")
+@Schema(name = "Thread", description = "A thread is a shared space for users to deposit files.")
 public class WorkGroupDto extends AccountDto {
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	protected String name;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@ApiModelProperty(value = "Workgroup's quota uuid, only available in v2.")
+	@Schema(description = "Workgroup's quota uuid, only available in v2.")
 	protected String quotaUuid;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@ApiModelProperty(value = "Members")
+	@Schema(description = "Members")
 	protected Set<WorkGroupMemberDto> members;
 
 	public WorkGroupDto(WorkGroup workGroup, SharedSpaceNode sharedSpaceNode) {

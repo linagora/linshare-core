@@ -39,38 +39,38 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name="ContainerQuota")
-@ApiModel(value = "ContainerQuota", description = "A container quota instance for accounts like users in a domain.")
+@Schema(name = "ContainerQuota", description = "A container quota instance for accounts like users in a domain.")
 public class ContainerQuotaDto extends QuotaDto {
 
-	@ApiModelProperty(value = "type (ContainerQuotaType)")
+	@Schema(description = "type (ContainerQuotaType)")
 	protected ContainerQuotaType type;
 
-	@ApiModelProperty(value = "The maximum file size accepted, default value sub containers")
+	@Schema(description = "The maximum file size accepted, default value sub containers")
 	protected Long defaultMaxFileSize;
 
-	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
+	@Schema(description = "If true, it is unlinked from its parent.")
 	protected Boolean defaultMaxFileSizeOverride;
 
-	@ApiModelProperty(value = "The default quota value for defaultAccountQuota inside sub containers.")
+	@Schema(description = "The default quota value for defaultAccountQuota inside sub containers.")
 	protected Long defaultAccountQuota;
 
-	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
+	@Schema(description = "If true, it is unlinked from its parent.")
 	protected Boolean defaultAccountQuotaOverride;
 
-	@ApiModelProperty(value = "The maximum file size accepted, default value sub containers")
+	@Schema(description = "The maximum file size accepted, default value sub containers")
 	protected Long maxFileSize;
 
-	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
+	@Schema(description = "If true, it is unlinked from its parent.")
 	protected Boolean maxFileSizeOverride;
 
-	@ApiModelProperty(value = "The default quota value for an account created inside the current container.")
+	@Schema(description = "The default quota value for an account created inside the current container.")
 	protected Long accountQuota;
 
-	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
+	@Schema(description = "If true, it is unlinked from its parent.")
 	protected Boolean accountQuotaOverride;
 
 	public ContainerQuotaDto() {

@@ -40,56 +40,56 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DomainPattern")
-@ApiModel(value = "DomainPattern", description = "A domain pattern is used by domains to search users in an LDAP directory")
+@Schema(name = "DomainPattern", description = "A domain pattern is used by domains to search users in an LDAP directory")
 public class DomainPatternDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Label")
+	@Schema(description = "Label")
 	private String label;
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	private String description;
 
-	@ApiModelProperty(value = "AuthCommand")
+	@Schema(description = "AuthCommand")
 	private String authCommand;
 
-	@ApiModelProperty(value = "SearchUserCommand")
+	@Schema(description = "SearchUserCommand")
 	private String searchUserCommand;
 
-	@ApiModelProperty(value = "UserMail")
+	@Schema(description = "UserMail")
 	private String userMail;
 
-	@ApiModelProperty(value = "UserFirstName")
+	@Schema(description = "UserFirstName")
 	private String userFirstName;
 
-	@ApiModelProperty(value = "UserLastName")
+	@Schema(description = "UserLastName")
 	private String userLastName;
 
-	@ApiModelProperty(value = "LdapUid")
+	@Schema(description = "LdapUid")
 	private String ldapUid;
 
-	@ApiModelProperty(value = "AutoCompleteCommandOnAllAttributes")
+	@Schema(description = "AutoCompleteCommandOnAllAttributes")
 	private String autoCompleteCommandOnAllAttributes;
 
-	@ApiModelProperty(value = "AutoCompleteCommandOnFirstAndLastName")
+	@Schema(description = "AutoCompleteCommandOnFirstAndLastName")
 	private String autoCompleteCommandOnFirstAndLastName;
 
-	@ApiModelProperty(value = "SearchPageSize")
+	@Schema(description = "SearchPageSize")
 	private Integer searchPageSize;
 
-	@ApiModelProperty(value = "SearchSizeLimit")
+	@Schema(description = "SearchSizeLimit")
 	private Integer searchSizeLimit;
 
-	@ApiModelProperty(value = "CompletionPageSize")
+	@Schema(description = "CompletionPageSize")
 	private Integer completionPageSize;
 
-	@ApiModelProperty(value = "CompletionSizeLimit")
+	@Schema(description = "CompletionSizeLimit")
 	private Integer completionSizeLimit;
 
 	public DomainPatternDto(UserLdapPattern domainPattern) {

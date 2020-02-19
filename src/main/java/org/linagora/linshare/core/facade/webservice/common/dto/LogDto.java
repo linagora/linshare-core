@@ -46,50 +46,50 @@ import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
 
 import com.google.common.base.Strings;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Log")
-@ApiModel(value = "Log", description = "Criteria used to search the history")
+@Schema(name = "Log", description = "Criteria used to search the history")
 public class LogDto {
 
-	@ApiModelProperty(value = "Date of the action")
+	@Schema(description = "Date of the action")
 	private Date actionDate;
 
-	@ApiModelProperty(value = "Mail of the actor")
+	@Schema(description = "Mail of the actor")
 	private String actorMail;
 
-	@ApiModelProperty(value = "First name of the actor")
+	@Schema(description = "First name of the actor")
 	private String actorFirstname;
 
-	@ApiModelProperty(value = "Last name of the actor")
+	@Schema(description = "Last name of the actor")
 	private String actorLastname;
 
-	@ApiModelProperty(value = "The action")
+	@Schema(description = "The action")
 	private LogActionV1 logAction;
 
-	@ApiModelProperty(value = "A description of the action")
+	@Schema(description = "A description of the action")
 	private String description;
 
-	@ApiModelProperty(value = "Mail of the target")
+	@Schema(description = "Mail of the target")
 	private String targetMail;
 
-	@ApiModelProperty(value = "First name of the target")
+	@Schema(description = "First name of the target")
 	private String targetFirstname;
 
-	@ApiModelProperty(value = "Last name of the target")
+	@Schema(description = "Last name of the target")
 	private String targetLastname;
 
-	@ApiModelProperty(value = "The file name")
+	@Schema(description = "The file name")
 	private String fileName;
 
-	@ApiModelProperty(value = "The file size")
+	@Schema(description = "The file size")
 	private Long fileSize;
 
-	@ApiModelProperty(value = "The file MIME type")
+	@Schema(description = "The file MIME type")
 	private String fileType;
 
-	@ApiModelProperty(value = "The expiration date")
+	@Schema(description = "The expiration date")
 	private Date expirationDate;
 
 	public LogDto() {

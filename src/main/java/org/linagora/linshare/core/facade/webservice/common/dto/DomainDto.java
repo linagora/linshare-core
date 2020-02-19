@@ -49,66 +49,66 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 // we need to ignore route property. It was added my Restangular (Javascript IHM)
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties({"route"})
 @XmlRootElement(name = "Domain")
-@ApiModel(value = "Domain", description = "A domain contains ")
+@Schema(name = "Domain", description = "A domain contains ")
 public class DomainDto {
 
-	@ApiModelProperty(value = "Identifier")
+	@Schema(description = "Identifier")
 	private String identifier;
 
-	@ApiModelProperty(value = "Label")
+	@Schema(description = "Label")
 	private String label;
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	private String description;
 
-	@ApiModelProperty(value = "Type")
+	@Schema(description = "Type")
 	private String type;
 
-	@ApiModelProperty(value = "UserRole")
+	@Schema(description = "UserRole")
 	private String userRole;
 
-	@ApiModelProperty(value = "Language")
+	@Schema(description = "Language")
 	private SupportedLanguage language;
 
-	@ApiModelProperty(value = "Language")
+	@Schema(description = "Language")
 	private Language externalMailLocale;
 
-	@ApiModelProperty(value = "Policy")
+	@Schema(description = "Policy")
 	private DomainPolicyDto policy;
 
-	@ApiModelProperty(value = "Providers")
+	@Schema(description = "Providers")
 	private List<LDAPUserProviderDto> providers = new ArrayList<LDAPUserProviderDto>();
 
-	@ApiModelProperty(value = "groupProviders")
+	@Schema(description = "groupProviders")
 	private List<LDAPGroupProviderDto> groupProviders = new ArrayList<LDAPGroupProviderDto>();
 
-	@ApiModelProperty(value = "Children")
+	@Schema(description = "Children")
 	private List<DomainDto> children = new ArrayList<DomainDto>();
 
-	@ApiModelProperty(value = "Parent")
+	@Schema(description = "Parent")
 	private String parent;
 
-	@ApiModelProperty(value = "AuthShowOrder")
+	@Schema(description = "AuthShowOrder")
 	private Long authShowOrder;
 
-	@ApiModelProperty(value = "MimePolicyUuid")
+	@Schema(description = "MimePolicyUuid")
 	private String mimePolicyUuid;
 
-	@ApiModelProperty(value = "MailConfigUuid")
+	@Schema(description = "MailConfigUuid")
 	private String mailConfigUuid;
 
-	@ApiModelProperty(value = "currentWelcomeMessage")
+	@Schema(description = "currentWelcomeMessage")
 	private WelcomeMessagesDto currentWelcomeMessage;
 
-	@ApiModelProperty(value = "Quota uuid")
+	@Schema(description = "Quota uuid")
 	private String quota;
 
 	protected DomainDto(final AbstractDomain domain, boolean light) {

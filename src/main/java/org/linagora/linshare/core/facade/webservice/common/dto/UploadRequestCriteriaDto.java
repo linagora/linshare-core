@@ -42,19 +42,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UploadRequestHistoryCriteria")
-@ApiModel(value = "UploadRequestHistoryCriteria", description = "Criteria of an upload request history")
+@Schema(name = "UploadRequestHistoryCriteria", description = "Criteria of an upload request history")
 public class UploadRequestCriteriaDto {
-	@ApiModelProperty(value = "Status")
+	@Schema(description = "Status")
 	private List<UploadRequestStatus> status = new ArrayList<UploadRequestStatus>();
 
-	@ApiModelProperty(value = "Min date limit")
+	@Schema(description = "Min date limit")
 	private Date afterDate;
 
-	@ApiModelProperty(value = "Max date limit")
+	@Schema(description = "Max date limit")
 	private Date beforeDate;
 
 	public UploadRequestCriteriaDto() {

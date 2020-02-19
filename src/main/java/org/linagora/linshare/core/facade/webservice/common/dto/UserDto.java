@@ -48,47 +48,47 @@ import org.linagora.linshare.core.domain.entities.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "User")
 public class UserDto extends AccountDto {
 
-	@ApiModelProperty(value = "FirstName")
+	@Schema(description = "FirstName")
 	private String firstName;
 
-	@ApiModelProperty(value = "LastName")
+	@Schema(description = "LastName")
 	private String lastName;
 
-	@ApiModelProperty(value = "Mail")
+	@Schema(description = "Mail")
 	private String mail;
 
-	@ApiModelProperty(value = "Role")
+	@Schema(description = "Role")
 	private String role;
 
-	@ApiModelProperty(value = "CanUpload")
+	@Schema(description = "CanUpload")
 	private Boolean canUpload;
 
-	@ApiModelProperty(value = "CanCreateGuest")
+	@Schema(description = "CanCreateGuest")
 	private Boolean canCreateGuest;
 
-	@ApiModelProperty(value = "AccountType")
+	@Schema(description = "AccountType")
 	private String accountType;
 
-	@ApiModelProperty(value = "Restricted")
+	@Schema(description = "Restricted")
 	private Boolean restricted;
 
-	@ApiModelProperty(value = "Comment")
+	@Schema(description = "Comment")
 	private String comment;
 
-	@ApiModelProperty(value = "Expiration date")
+	@Schema(description = "Expiration date")
 	private Date expirationDate;
 
-	@ApiModelProperty(value = "RestrictedContacts")
+	@Schema(description = "RestrictedContacts")
 	private List<UserDto> restrictedContacts;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@ApiModelProperty(value = "user's quota uuid, only available in v2.")
+	@Schema(description = "user's quota uuid, only available in v2.")
 	private String quotaUuid;
 
 	public UserDto() {

@@ -44,76 +44,76 @@ import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "UploadRequestGroup")
 public class UploadRequestGroupDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Label")
+	@Schema(description = "Label")
 	private String label;
 
-	@ApiModelProperty(value = "Body")
+	@Schema(description = "Body")
 	private String body;
 
-	@ApiModelProperty(value = "Creation date")
+	@Schema(description = "Creation date")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "Modification date")
+	@Schema(description = "Modification date")
 	private Date modificationDate;
 
-	@ApiModelProperty(value = "Max file count")
+	@Schema(description = "Max file count")
 	private Integer maxFileCount;
 
-	@ApiModelProperty(value = "Max deposit size")
+	@Schema(description = "Max deposit size")
 	private Long maxDepositSize;
 
-	@ApiModelProperty(value = "Max file size")
+	@Schema(description = "Max file size")
 	private Long maxFileSize;
 
-	@ApiModelProperty(value = "Activation date")
+	@Schema(description = "Activation date")
 	private Date activationDate;
 
-	@ApiModelProperty(value = "Notification date")
+	@Schema(description = "Notification date")
 	private Date notificationDate;
 
-	@ApiModelProperty(value = "Expiry date")
+	@Schema(description = "Expiry date")
 	private Date expiryDate;
 
-	@ApiModelProperty(value = "Can Delete")
+	@Schema(description = "Can Delete")
 	private Boolean canDelete;
 
-	@ApiModelProperty(value = "Can Close")
+	@Schema(description = "Can Close")
 	private Boolean canClose;
 
-	@ApiModelProperty(value = "Can Edit Expiry Date")
+	@Schema(description = "Can Edit Expiry Date")
 	private Boolean canEditExpiryDate;
 
-	@ApiModelProperty(value = "Locale")
+	@Schema(description = "Locale")
 	private String locale;
 
-	@ApiModelProperty(value = "Is secured with password")
+	@Schema(description = "Is secured with password")
 	private boolean secured;
 
-	@ApiModelProperty(value = "Mail message id")
+	@Schema(description = "Mail message id")
 	private String mailMessageId;
 
-	@ApiModelProperty(value = "Enable Notification")
+	@Schema(description = "Enable Notification")
 	private Boolean enableNotification;
 
-	@ApiModelProperty(value = "Is restricted")
+	@Schema(description = "Is restricted")
 	private Boolean restricted;
 
-	@ApiModelProperty(value = "Owner")
+	@Schema(description = "Owner")
 	private ContactDto owner;
 
-	@ApiModelProperty(value = "Abstract Domain")
+	@Schema(description = "Abstract Domain")
 	private DomainDto domainDto;
 
-	@ApiModelProperty(value = "Status")
+	@Schema(description = "Status")
 	private UploadRequestStatus status;
 
 	public UploadRequestGroupDto() {

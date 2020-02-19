@@ -40,10 +40,10 @@ import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wordnik.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Domain")
-@ApiModel(value = "Domain", description = "")
+@Schema(name = "Domain", description = "")
 public class DomainLightDto {
 
 	private String label;

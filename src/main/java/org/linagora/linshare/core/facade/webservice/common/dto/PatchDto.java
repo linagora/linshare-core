@@ -35,18 +35,18 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement
 public class PatchDto {
 	
-	@ApiModelProperty(value="Uuid of the resource that will be updated")
+	@Schema(description="Uuid of the resource that will be updated")
 	protected String uuid;
 	
-	@ApiModelProperty(value = "Name of the attribute that will be updated")
+	@Schema(description = "Name of the attribute that will be updated")
 	protected String name;
 	
-	@ApiModelProperty(value = "Value of the attribute that will be updated")
+	@Schema(description = "Value of the attribute that will be updated")
 	protected String value;
 
 	public PatchDto() {

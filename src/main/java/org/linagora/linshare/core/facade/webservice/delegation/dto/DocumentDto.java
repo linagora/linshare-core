@@ -44,8 +44,8 @@ import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /*
  * The objects document DTO and delegation document DTO has the same outside name.
@@ -54,11 +54,11 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  */
 @XmlType(namespace = "Delegation")
 @XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
+@Schema(name = "Document", description = "A Document")
 public class DocumentDto extends
 		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
 
-	@ApiModelProperty(value = "Owner")
+	@Schema(description = "Owner")
 	protected GenericUserDto owner;
 
 	public DocumentDto() {

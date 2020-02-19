@@ -35,12 +35,12 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "JwtToken")
 public class JwtToken {
 
-	@ApiModelProperty(value = "Jwt Token")
+	@Schema(description = "Jwt Token")
 	protected String token;
 
 	public JwtToken() {

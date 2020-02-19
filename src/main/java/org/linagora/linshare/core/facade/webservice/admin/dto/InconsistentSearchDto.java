@@ -43,37 +43,37 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties({"route"})
 @XmlRootElement(name = "InconsistentSearchDto")
 @XmlType(name="InconsistentSearchDto")
-@ApiModel(value = "InconsistentSearchDto", description = "InconsistentSearchDto")
+@Schema(name = "InconsistentSearchDto", description = "InconsistentSearchDto")
 public class InconsistentSearchDto {
 
 	protected String uuid;
 
-	@ApiModelProperty(value = "Email")
+	@Schema(description = "Email")
 	protected String userMail;
 
-	@ApiModelProperty(value = "Account is in ldap")
+	@Schema(description = "Account is in ldap")
 	protected Boolean ldap = false;
 
-	@ApiModelProperty(value = "Account is in database")
+	@Schema(description = "Account is in database")
 	protected Boolean database  = false;
 
-	@ApiModelProperty(value = "Account is guest")
+	@Schema(description = "Account is guest")
 	protected Boolean guest = false;
 
-	@ApiModelProperty(value = "Domain identifier")
+	@Schema(description = "Domain identifier")
 	private String identifier;
 
-	@ApiModelProperty(value = "Domain label")
+	@Schema(description = "Domain label")
 	protected String label;
 
-	@ApiModelProperty(value = "Domain type")
+	@Schema(description = "Domain type")
 	protected String domainType;
 
 	public InconsistentSearchDto() {

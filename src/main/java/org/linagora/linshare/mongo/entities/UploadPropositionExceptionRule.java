@@ -44,7 +44,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UploadPropositionExceptionRule")
 @Document(collection = "upload_proposition_exception_rule")
@@ -55,25 +55,25 @@ public class UploadPropositionExceptionRule {
 	@GeneratedValue
 	protected String id;
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "DomainUuid")
+	@Schema(description = "DomainUuid")
 	protected String domainUuid;
 
-	@ApiModelProperty(value = "Mail")
+	@Schema(description = "Mail")
 	protected String mail;
 
-	@ApiModelProperty(value = "AccountUuid")
+	@Schema(description = "AccountUuid")
 	protected String accountUuid;
 
-	@ApiModelProperty(value = "ExceptionRule")
+	@Schema(description = "ExceptionRule")
 	protected UploadPropositionExceptionRuleType exceptionRuleType;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	protected Date modificationDate;
 
 	public UploadPropositionExceptionRule() {

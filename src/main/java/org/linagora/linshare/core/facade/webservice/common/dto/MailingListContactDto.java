@@ -38,26 +38,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
 
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailingListContact")
-@ApiModel(value = "MailingListContact", description = "Mailing list contact")
+@Schema(name = "MailingListContact", description = "Mailing list contact")
 public class MailingListContactDto {
 
-	@ApiModelProperty(value = "Mail")
+	@Schema(description = "Mail")
 	private String mail;
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "FirstName")
+	@Schema(description = "FirstName")
 	private String firstName;
 
-	@ApiModelProperty(value = "LastName")
+	@Schema(description = "LastName")
 	private String lastName;
 
-	@ApiModelProperty(value = "MailingListUuid")
+	@Schema(description = "MailingListUuid")
 	private String mailingListUuid;
 
 	public MailingListContactDto() {

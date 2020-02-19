@@ -42,37 +42,37 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PolicyDto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonIgnoreProperties({"name"})
 @XmlRootElement(name = "Functionality")
-@ApiModel(value = "Functionality", description = "Functionalities are used to configure the application")
+@Schema(name = "Functionality", description = "Functionalities are used to configure the application")
 public class MailActivationAdminDto  implements Comparable<MailActivationAdminDto> {
 
-	@ApiModelProperty(value = "Identifier")
+	@Schema(description = "Identifier")
 	protected String identifier;
 
 	@XmlTransient
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	protected String name;
 
-	@ApiModelProperty(value = "Domain")
+	@Schema(description = "Domain")
 	protected String domain;
 
-	@ApiModelProperty(value = "ActivationPolicy")
+	@Schema(description = "ActivationPolicy")
 	protected PolicyDto activationPolicy;
 
-	@ApiModelProperty(value = "ConfigurationPolicy")
+	@Schema(description = "ConfigurationPolicy")
 	protected PolicyDto configurationPolicy;
 
-	@ApiModelProperty(value = "DelegationPolicy")
+	@Schema(description = "DelegationPolicy")
 	protected PolicyDto delegationPolicy;
 	
-	@ApiModelProperty(value = "enable")
+	@Schema(description = "enable")
 	protected Boolean enable;
 
-	@ApiModelProperty(value = "displayable")
+	@Schema(description = "displayable")
 	protected boolean displayable;
 
 	public MailActivationAdminDto(MailActivation m) {

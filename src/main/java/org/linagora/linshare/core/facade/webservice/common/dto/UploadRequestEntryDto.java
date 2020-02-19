@@ -41,55 +41,55 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "UploadRequestEntry")
 public class UploadRequestEntryDto {
 
-	@ApiModelProperty(value = "Owner")
+	@Schema(description = "Owner")
 	protected AccountDto entryOwner;
 
-	@ApiModelProperty(value = "Recipient")
+	@Schema(description = "Recipient")
 	private ContactDto recipient;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Calendar creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	protected Calendar modificationDate;
 
-	@ApiModelProperty(value = "ExpirationDate")
+	@Schema(description = "ExpirationDate")
 	protected Calendar expirationDate;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	protected String name;
 
-	@ApiModelProperty(value = "Comment")
+	@Schema(description = "Comment")
 	protected String comment;
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "MetaData")
+	@Schema(description = "MetaData")
 	protected String metaData;
 
-	@ApiModelProperty(value = "CmisSync")
+	@Schema(description = "CmisSync")
 	protected boolean cmisSync;
 
-	@ApiModelProperty(value = "Size")
+	@Schema(description = "Size")
 	protected Long size;
 
-	@ApiModelProperty(value = "Type")
+	@Schema(description = "Type")
 	protected String type;
 
-	@ApiModelProperty(value = "Sha256sum")
+	@Schema(description = "Sha256sum")
 	protected String sha256sum;
 
-	@ApiModelProperty(value = "Copied")
+	@Schema(description = "Copied")
 	protected Boolean copied;
 
-	@ApiModelProperty(value = "Ciphered")
+	@Schema(description = "Ciphered")
 	protected Boolean ciphered;
 
 	public UploadRequestEntryDto() {

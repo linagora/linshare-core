@@ -36,20 +36,20 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import java.util.List;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class LogCriteriaDto extends org.linagora.linshare.core.facade.webservice.common.dto.LogCriteriaDto{
 
-	@ApiModelProperty(value = "List of actor's mail")
+	@Schema(description = "List of actor's mail")
 	private List<String> actorMails; // The selected user
 
-	@ApiModelProperty(value = "First name of the actor")
+	@Schema(description = "First name of the actor")
 	private String actorFirstName;
 
-	@ApiModelProperty(value = "Last name of the actor")
+	@Schema(description = "Last name of the actor")
 	private String actorLastName;
 
-	@ApiModelProperty(value = "Domain of the actor")
+	@Schema(description = "Domain of the actor")
 	private String actorDomain;
 
 	public LogCriteriaDto() {

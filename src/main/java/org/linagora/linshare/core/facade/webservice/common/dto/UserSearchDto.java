@@ -35,20 +35,20 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Search")
-@ApiModel(value = "Search", description = "Theses are patterns to search a user.")
+@Schema(name = "Search", description = "Theses are patterns to search a user.")
 public class UserSearchDto {
 
-	@ApiModelProperty(value = "FirstName")
+	@Schema(description = "FirstName")
 	protected String firstName;
 
-	@ApiModelProperty(value = "LastName")
+	@Schema(description = "LastName")
 	protected String lastName;
 
-	@ApiModelProperty(value = "Mail")
+	@Schema(description = "Mail")
 	protected String mail;
 
 	public UserSearchDto() {

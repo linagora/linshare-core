@@ -37,29 +37,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "LdapConnection")
-@ApiModel(value = "LdapConnection", description = "An LDAP directory connection descriptor")
+@Schema(name = "LdapConnection", description = "An LDAP directory connection descriptor")
 public class LdapConnectionDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Label")
+	@Schema(description = "Label")
 	private String label;
 
-	@ApiModelProperty(value = "ProviderUrl")
+	@Schema(description = "ProviderUrl")
 	private String providerUrl;
 
-	@ApiModelProperty(value = "SecurityAuth")
+	@Schema(description = "SecurityAuth")
 	private String securityAuth;
 
-	@ApiModelProperty(value = "SecurityPrincipal")
+	@Schema(description = "SecurityPrincipal")
 	private String securityPrincipal;
 
-	@ApiModelProperty(value = "SecurityCredentials")
+	@Schema(description = "SecurityCredentials")
 	private String securityCredentials;
 
 	public LdapConnectionDto(LdapConnection ldapConnection) {

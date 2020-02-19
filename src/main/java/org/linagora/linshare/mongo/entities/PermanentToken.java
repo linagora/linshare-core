@@ -45,7 +45,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "PermanentToken")
@@ -57,31 +57,31 @@ public class PermanentToken {
 	@GeneratedValue
 	protected String id;
 
-	@ApiModelProperty(value = "uuid")
+	@Schema(description = "uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "Light entity that contains only the name and uuid of the domain.", required = true)
+	@Schema(description = "Light entity that contains only the name and uuid of the domain.", required = true)
 	protected GenericLightEntity domain;
 
-	@ApiModelProperty(value = "Light entity that contains only the name and uuid of the actor.", required = true)
+	@Schema(description = "Light entity that contains only the name and uuid of the actor.", required = true)
 	protected GenericLightEntity actor;
 
-	@ApiModelProperty(value = "issuer", required = true)
+	@Schema(description = "issuer", required = true)
 	protected String issuer;
 
-	@ApiModelProperty(value = "creation Date")
+	@Schema(description = "creation Date")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "token name", required = true)
+	@Schema(description = "token name", required = true)
 	protected String label;
 
-	@ApiModelProperty(value = "description of the token")
+	@Schema(description = "description of the token")
 	protected String description;
 
-	@ApiModelProperty(value = "owner email", required = true)
+	@Schema(description = "owner email", required = true)
 	protected String subject;
 
-	@ApiModelProperty(value = "jwt token, not persisted")
+	@Schema(description = "jwt token, not persisted")
 	@Transient
 	protected String token;
 

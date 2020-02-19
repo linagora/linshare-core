@@ -46,29 +46,29 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContactDto;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "AnonymousUrl")
-@ApiModel(value = "AnonymousUrl", description = "An AnonymousUrl")
+@Schema(name = "AnonymousUrl", description = "An AnonymousUrl")
 public class AnonymousUrlDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Actor")
+	@Schema(description = "Actor")
 	private ContactDto actor;
 
-	@ApiModelProperty(value = "documents")
+	@Schema(description = "documents")
 	private List<ShareEntryDto> documents;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "ExpirationDate")
+	@Schema(description = "ExpirationDate")
 	private Date expirationDate;
 
-	@ApiModelProperty(value = "Recipient")
+	@Schema(description = "Recipient")
 	private ContactDto recipient;
 
 	public AnonymousUrlDto() {

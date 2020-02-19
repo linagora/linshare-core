@@ -42,26 +42,26 @@ import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class TechnicalAccountDto extends AccountDto {
 
-	@ApiModelProperty(value = "Password, only set at creation")
+	@Schema(description = "Password, only set at creation")
 	private String password = "";
 
-	@ApiModelProperty(value = "Enable")
+	@Schema(description = "Enable")
 	private boolean enable;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "Mail")
+	@Schema(description = "Mail")
 	private String mail;
 
-	@ApiModelProperty(value = "Permissions")
+	@Schema(description = "Permissions")
 	private List<String> permissions = Lists.newArrayList();
 
-	@ApiModelProperty(value = "Role")
+	@Schema(description = "Role")
 	private Role role;
 
 	public TechnicalAccountDto() {

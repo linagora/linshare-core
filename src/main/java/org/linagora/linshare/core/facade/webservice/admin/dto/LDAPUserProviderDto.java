@@ -35,23 +35,23 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "LDAPUserProvider")
-@ApiModel(value = "LDAPUserProvider", description = "Used to provide users from an LDAP directory")
+@Schema(name = "LDAPUserProvider", description = "Used to provide users from an LDAP directory")
 public class LDAPUserProviderDto {
 
-	@ApiModelProperty(value = "uuid")
+	@Schema(description = "uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "LdapConnectionUuid")
+	@Schema(description = "LdapConnectionUuid")
 	private String ldapConnectionUuid = "";
 
-	@ApiModelProperty(value = "UserLdapPatternUuid")
+	@Schema(description = "UserLdapPatternUuid")
 	private String userLdapPatternUuid = "";
 
-	@ApiModelProperty(value = "BaseDn")
+	@Schema(description = "BaseDn")
 	private String baseDn = "";
 
 	public LDAPUserProviderDto() {

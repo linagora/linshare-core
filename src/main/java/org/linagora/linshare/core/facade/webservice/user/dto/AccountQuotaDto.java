@@ -36,26 +36,26 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name="Quota")
-@ApiModel
+@Schema
 public class AccountQuotaDto {
 
-	@ApiModelProperty(value = "The limit (quota)")
+	@Schema(description = "The limit (quota)")
 	protected Long quota;
 
-	@ApiModelProperty(value = "The used space")
+	@Schema(description = "The used space")
 	protected Long usedSpace;
 
-	@ApiModelProperty(value = "The maximum file size accepted.")
+	@Schema(description = "The maximum file size accepted.")
 	protected Long maxFileSize;
 
-	@ApiModelProperty(value = "If true, uploads are disable due to server maintenance.")
+	@Schema(description = "If true, uploads are disable due to server maintenance.")
 	protected Boolean maintenance;
 
-	@ApiModelProperty(value = "The domain used space")
+	@Schema(description = "The domain used space")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected Long domainUsedSpace;
 

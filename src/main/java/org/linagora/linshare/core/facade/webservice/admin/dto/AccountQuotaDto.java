@@ -40,21 +40,21 @@ import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name="AccountQuota")
-@ApiModel(value = "AccountQuota", description = "A quota instance for accounts like users or workgroups.")
+@Schema(name = "AccountQuota", description = "A quota instance for accounts like users or workgroups.")
 public class AccountQuotaDto extends QuotaDto {
 
-	@ApiModelProperty(value = "The maximum file size accepted.")
+	@Schema(description = "The maximum file size accepted.")
 	protected Long maxFileSize;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@ApiModelProperty(value = "The default maximum file size accepted.")
+	@Schema(description = "The default maximum file size accepted.")
 	protected Long defaultMaxFileSize;
 
-	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
+	@Schema(description = "If true, it is unlinked from its parent.")
 	protected Boolean maxFileSizeOverride;
 
 	protected AccountDto account;

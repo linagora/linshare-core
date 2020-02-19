@@ -47,7 +47,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "PublicKeyLs")
 @Document(collection = "public_keys")
@@ -58,10 +58,10 @@ public class PublicKeyLs {
 	@GeneratedValue
 	protected String id;
 
-	@ApiModelProperty(value = "uuid")
+	@Schema(description = "uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "domainUuid")
+	@Schema(description = "domainUuid")
 	protected String domainUuid;
 
 	@JsonIgnore
@@ -70,17 +70,17 @@ public class PublicKeyLs {
 	@JsonIgnore
 	protected boolean destroyed;
 
-	@ApiModelProperty(value = "issuer")
+	@Schema(description = "issuer")
 	@Indexed(unique = true)
 	protected String issuer;
 
-	@ApiModelProperty(value = "publicKey")
+	@Schema(description = "publicKey")
 	protected String publicKey;
 
-	@ApiModelProperty(value = "creationDate")
+	@Schema(description = "creationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "format")
+	@Schema(description = "format")
 	protected PublicKeyFormat format;
 
 	public PublicKeyLs() {

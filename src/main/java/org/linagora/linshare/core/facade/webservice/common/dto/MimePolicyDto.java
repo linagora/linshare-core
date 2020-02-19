@@ -42,29 +42,29 @@ import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.MimeType;
 
 import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MimePolicy")
-@ApiModel(value = "MimePolicy", description = "MimePolicy")
+@Schema(name = "MimePolicy", description = "MimePolicy")
 public class MimePolicyDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "DomainId")
+	@Schema(description = "DomainId")
 	private String domainId;
 
-	@ApiModelProperty(value = "Creation date")
+	@Schema(description = "Creation date")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "Modification date")
+	@Schema(description = "Modification date")
 	private Date modificationDate;
 
-	@ApiModelProperty(value = "Mime types")
+	@Schema(description = "Mime types")
 	private Set<MimeTypeDto> mimeTypes;
 
 	public MimePolicyDto(final MimePolicy m, boolean full) {

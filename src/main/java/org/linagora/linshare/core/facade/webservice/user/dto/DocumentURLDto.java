@@ -36,20 +36,20 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DocumentURL")
-@ApiModel(value = "DocumentURL", description = "An URL of a document")
+@Schema(name = "DocumentURL", description = "An URL of a document")
 public class DocumentURLDto {
 
-	@ApiModelProperty(value = "url")
+	@Schema(description = "url")
 	protected String url;
 
-	@ApiModelProperty(value = "fileName")
+	@Schema(description = "fileName")
 	protected String fileName;
 
-	@ApiModelProperty(value = "size")
+	@Schema(description = "size")
 	protected Long size;
 
 	public DocumentURLDto() {

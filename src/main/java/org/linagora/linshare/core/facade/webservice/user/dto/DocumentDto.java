@@ -48,44 +48,44 @@ import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
+@Schema(name = "Document", description = "A Document")
 public class DocumentDto extends EntryDto {
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	protected String description;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	protected Date modificationDate;
 
-	@ApiModelProperty(value = "ExpirationDate")
+	@Schema(description = "ExpirationDate")
 	protected Date expirationDate;
 
-	@ApiModelProperty(value = "Ciphered")
+	@Schema(description = "Ciphered")
 	protected Boolean ciphered;
 
-	@ApiModelProperty(value = "Type")
+	@Schema(description = "Type")
 	protected String type;
 
-	@ApiModelProperty(value = "Size")
+	@Schema(description = "Size")
 	protected Long size;
 
-	@ApiModelProperty(value = "MetaData")
+	@Schema(description = "MetaData")
 	protected String metaData;
 
-	@ApiModelProperty(value = "Sha256sum")
+	@Schema(description = "Sha256sum")
 	protected String sha256sum;
 
-	@ApiModelProperty(value = "hasThumbnail")
+	@Schema(description = "hasThumbnail")
 	protected boolean hasThumbnail;
 
-	@ApiModelProperty(value = "Shared")
+	@Schema(description = "Shared")
 	protected Long shared;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)

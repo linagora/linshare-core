@@ -39,35 +39,35 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "GenericUser")
-@ApiModel(value = "GenericUser", description = "This class is a container to display or identify a user."
+@Schema(name = "GenericUser", description = "This class is a container to display or identify a user."
 		+ "If the uuid is set, it will be used as the key for retrieve the user profile from the database."
 		+ "If not, we will use the mail. The domain could be use to restrict the search to a particular domain."
 		+ "This is usefull for a multi-domain LinShare instance.")
 public class GenericUserDto {
 
-	@ApiModelProperty(value = "User uuid")
+	@Schema(description = "User uuid")
 	protected String uuid = null;
 
-	@ApiModelProperty(value = "Domain")
+	@Schema(description = "Domain")
 	protected String domain = null;
 
-	@ApiModelProperty(value = "FirstName")
+	@Schema(description = "FirstName")
 	private String firstName;
 
-	@ApiModelProperty(value = "LastName")
+	@Schema(description = "LastName")
 	private String lastName;
 
-	@ApiModelProperty(value = "Mail")
+	@Schema(description = "Mail")
 	private String mail = null;
 
-	@ApiModelProperty(value = "AccountType")
+	@Schema(description = "AccountType")
 	private AccountType accountType = null;
 
-	@ApiModelProperty(value = "External")
+	@Schema(description = "External")
 	private Boolean external = null;
 
 	public GenericUserDto() {

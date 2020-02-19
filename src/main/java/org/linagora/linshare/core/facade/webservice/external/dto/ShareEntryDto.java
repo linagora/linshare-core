@@ -37,23 +37,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "AnonymousShareEntry")
-@ApiModel(value = "AnonymousShareEntry", description = "An AnonymousShareEntry")
+@Schema(name = "AnonymousShareEntry", description = "An AnonymousShareEntry")
 public class ShareEntryDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "Size")
+	@Schema(description = "Size")
 	private Long size;
 
-	@ApiModelProperty(value = "Type")
+	@Schema(description = "Type")
 	private String type;
 
 	public ShareEntryDto() {

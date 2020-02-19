@@ -38,29 +38,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailFooterLang")
-@ApiModel(value = "MailFooterLang", description = "")
+@Schema(name = "MailFooterLang", description = "")
 public class MailFooterLangDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Language")
+	@Schema(description = "Language")
 	private Language language;
 
-	@ApiModelProperty(value = "Readonly")
+	@Schema(description = "Readonly")
 	private boolean readonly;
 
-	@ApiModelProperty(value = "MailFooter")
+	@Schema(description = "MailFooter")
 	private String mailFooter;
 
-	@ApiModelProperty(value = "MailConfig")
+	@Schema(description = "MailConfig")
 	private String mailConfig;
 
-	@ApiModelProperty(value = "MailFooterName")
+	@Schema(description = "MailFooterName")
 	private String mailFooterName;
 
 	public MailFooterLangDto() {

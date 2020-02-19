@@ -49,36 +49,36 @@ import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "WelcomeMessages")
-@ApiModel(value = "WelcomeMessages", description = "")
+@Schema(name = "WelcomeMessages", description = "")
 public class WelcomeMessagesDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	private String description;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	private Date modificationDate;
 
-	@ApiModelProperty(value = "MyDomain")
+	@Schema(description = "MyDomain")
 	private DomainLightDto myDomain;
 
-	@ApiModelProperty(value = "Domains")
+	@Schema(description = "Domains")
 	private Set<DomainLightDto> domains;
 
-	@ApiModelProperty(value = "WelcomeMessagesEntries")
+	@Schema(description = "WelcomeMessagesEntries")
 	private Map<SupportedLanguage, String> welcomeMessagesEntries;
 
 	public WelcomeMessagesDto() {

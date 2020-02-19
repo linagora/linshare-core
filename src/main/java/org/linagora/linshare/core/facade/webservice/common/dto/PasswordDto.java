@@ -35,17 +35,17 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Password")
-@ApiModel(value = "Password", description = "")
+@Schema(name = "Password", description = "")
 public class PasswordDto {
 
-	@ApiModelProperty(value = "Old")
+	@Schema(description = "Old")
 	protected String oldPwd;
 
-	@ApiModelProperty(value = "new")
+	@Schema(description = "new")
 	protected String newPwd;
 
 	public PasswordDto() {

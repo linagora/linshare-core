@@ -44,7 +44,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
@@ -57,7 +57,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 @XmlSeeAlso({ UserAutoCompleteResultDto.class,
 		ThreadMemberAutoCompleteResultDto.class,
 		ListAutoCompleteResultDto.class })
-@ApiModel(value = "AutoCompleteResult", description = "Auto complete result object")
+@Schema(name = "AutoCompleteResult", description = "Auto complete result object")
 public class AutoCompleteResultDto {
 
 	private String identifier;

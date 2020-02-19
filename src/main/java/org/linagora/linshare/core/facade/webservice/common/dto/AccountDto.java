@@ -41,29 +41,29 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Account")
-@ApiModel(value = "Account", description = "")
+@Schema(name = "Account", description = "")
 public class AccountDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	protected Date modificationDate;
 
-	@ApiModelProperty(value = "Locale")
+	@Schema(description = "Locale")
 	protected SupportedLanguage locale;
 
-	@ApiModelProperty(value = "ExternalMailLocale")
+	@Schema(description = "ExternalMailLocale")
 	protected Language externalMailLocale;
 
-	@ApiModelProperty(value = "Domain")
+	@Schema(description = "Domain")
 	protected String domain;
 
 	public AccountDto() {

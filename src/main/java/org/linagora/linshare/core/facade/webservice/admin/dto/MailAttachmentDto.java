@@ -40,35 +40,35 @@ import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailAttachment")
-@ApiModel(value = "MailAttachment", description = "")
+@Schema(name = "MailAttachment", description = "")
 public class MailAttachmentDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Enable")
+	@Schema(description = "Enable")
 	private Boolean enable;
 
-	@ApiModelProperty(value = "The enableForAll gives the choice to apply this attachment for all languages or not")
+	@Schema(description = "The enableForAll gives the choice to apply this attachment for all languages or not")
 	private Boolean enableForAll;
 
-	@ApiModelProperty(value = "The choosen language for which the mail attachment will be applied")
+	@Schema(description = "The choosen language for which the mail attachment will be applied")
 	private Language language;
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	private String description;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "The choosen mailConfig")
+	@Schema(description = "The choosen mailConfig")
 	private GenericLightEntity mailConfig;
 
-	@ApiModelProperty(value = "Content id of the mail attachment")
+	@Schema(description = "Content id of the mail attachment")
 	private String cid;
 
 	public MailAttachmentDto() {

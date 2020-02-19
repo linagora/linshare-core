@@ -48,51 +48,51 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 // This field is added to the JSON object by the angular interface for internationalization. 
 @JsonIgnoreProperties({"name"})
 @XmlRootElement(name = "Functionality")
-@ApiModel(value = "Functionality", description = "Functionalities are used to configure the application")
+@Schema(name = "Functionality", description = "Functionalities are used to configure the application")
 public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> {
 
-	@ApiModelProperty(value = "Identifier")
+	@Schema(description = "Identifier")
 	protected String identifier;
 
 	@XmlTransient
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "Domain")
+	@Schema(description = "Domain")
 	protected String domain;
 
-	@ApiModelProperty(value = "Type")
+	@Schema(description = "Type")
 	protected String type;
 
-	@ApiModelProperty(value = "ActivationPolicy")
+	@Schema(description = "ActivationPolicy")
 	protected PolicyDto activationPolicy;
 
-	@ApiModelProperty(value = "ConfigurationPolicy")
+	@Schema(description = "ConfigurationPolicy")
 	protected PolicyDto configurationPolicy;
 
-	@ApiModelProperty(value = "DelegationPolicy")
+	@Schema(description = "DelegationPolicy")
 	protected PolicyDto delegationPolicy;
 
 	// This field is designed to indicate if the parent functionality allow you to update the parameters.
-	@ApiModelProperty(value = "ParentAllowParametersUpdate")
+	@Schema(description = "ParentAllowParametersUpdate")
 	protected boolean parentAllowParametersUpdate;
 
-	@ApiModelProperty(value = "Parameters")
+	@Schema(description = "Parameters")
 	protected List<ParameterDto> parameters;
 
-	@ApiModelProperty(value = "parentIdentifier")
+	@Schema(description = "parentIdentifier")
 	protected String parentIdentifier;
 
-	@ApiModelProperty(value = "functionalities")
+	@Schema(description = "functionalities")
 	protected List<FunctionalityAdminDto> functionalities;
 
-	@ApiModelProperty(value = "displayable")
+	@Schema(description = "displayable")
 	protected boolean displayable;
 
 	protected Boolean system;

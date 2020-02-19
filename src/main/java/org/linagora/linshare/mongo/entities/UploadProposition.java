@@ -47,7 +47,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UploadProposition")
 @Document(collection = "upload_proposition")
@@ -58,31 +58,31 @@ public class UploadProposition {
 	@GeneratedValue
 	protected String id;
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "DomainUuid")
+	@Schema(description = "DomainUuid")
 	protected String domainUuid;
 
-	@ApiModelProperty(value = "Status")
+	@Schema(description = "Status")
 	protected UploadPropositionStatus status;
 
-	@ApiModelProperty(value = "Label")
+	@Schema(description = "Label")
 	protected String label;
 
-	@ApiModelProperty(value = "Body")
+	@Schema(description = "Body")
 	protected String body;
 
-	@ApiModelProperty(value = "Contact")
+	@Schema(description = "Contact")
 	protected UploadPropositionContact contact;
 
-	@ApiModelProperty(value = "AccountUuid")
+	@Schema(description = "AccountUuid")
 	protected String accountUuid;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	protected Date modificationDate;
 
 	public UploadProposition() {

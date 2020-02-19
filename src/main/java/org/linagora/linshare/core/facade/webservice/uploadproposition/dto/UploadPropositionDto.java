@@ -38,32 +38,32 @@ import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UploadPropositionDto {
 
-	@ApiModelProperty(value = "FirstName")
+	@Schema(description = "FirstName")
 	protected String firstName;
 
-	@ApiModelProperty(value = "LastName")
+	@Schema(description = "LastName")
 	protected String lastName;
 
-	@ApiModelProperty(value = "Mail")
+	@Schema(description = "Mail")
 	protected String mail;
 
-	@ApiModelProperty(value = "Subject")
+	@Schema(description = "Subject")
 	protected String subject;
 
-	@ApiModelProperty(value = "Body")
+	@Schema(description = "Body")
 	protected String body;
 
-	@ApiModelProperty(value = "recipientMail")
+	@Schema(description = "recipientMail")
 	protected String recipientMail;
 
-	@ApiModelProperty(value = "recipientDomain")
+	@Schema(description = "recipientDomain")
 	protected String recipientDomain;
 
-	@ApiModelProperty(value = "action")
+	@Schema(description = "action")
 	protected String action;
 
 	public UploadPropositionDto() {

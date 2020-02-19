@@ -38,26 +38,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
 import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "LDAPGroupProvider")
-@ApiModel(value = "LDAPGroupProvider", description = "Used to provide groups from an LDAP directory")
+@Schema(name = "LDAPGroupProvider", description = "Used to provide groups from an LDAP directory")
 public class LDAPGroupProviderDto {
 
-	@ApiModelProperty(value = "uuid")
+	@Schema(description = "uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "LdapConnection")
+	@Schema(description = "LdapConnection")
 	private LightCommonDto connection;
 
-	@ApiModelProperty(value = "GroupLdapPattern")
+	@Schema(description = "GroupLdapPattern")
 	private LightCommonDto pattern;
 
-	@ApiModelProperty(value = "BaseDn")
+	@Schema(description = "BaseDn")
 	private String baseDn = "";
 
-	@ApiModelProperty(value = "SearchInOtherDomains")
+	@Schema(description = "SearchInOtherDomains")
 	private Boolean searchInOtherDomains;
 
 	public LDAPGroupProviderDto() {

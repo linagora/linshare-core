@@ -39,12 +39,12 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wordnik.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "MailContainer")
-@ApiModel(value = "MailContainer", description = "")
+@Schema(name = "MailContainer", description = "")
 public class MailContainerDto {
 
 	protected String subject;

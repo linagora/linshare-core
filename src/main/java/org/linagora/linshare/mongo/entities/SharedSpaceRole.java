@@ -47,7 +47,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "SharedSpaceRole")
@@ -59,7 +59,7 @@ public class SharedSpaceRole {
 	@GeneratedValue
 	protected String id;
 
-	@ApiModelProperty(value = "uuid")
+	@Schema(description = "uuid")
 	protected String uuid;
 
 	protected String name;

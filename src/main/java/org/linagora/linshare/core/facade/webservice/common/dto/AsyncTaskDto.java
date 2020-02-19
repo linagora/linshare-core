@@ -40,10 +40,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.AsyncTask;
 
-import com.wordnik.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "AsyncTask")
-@ApiModel(value = "AsyncTask", description = "An async task")
+@Schema(name = "AsyncTask", description = "An async task")
 public class AsyncTaskDto {
 
 	protected String uuid;

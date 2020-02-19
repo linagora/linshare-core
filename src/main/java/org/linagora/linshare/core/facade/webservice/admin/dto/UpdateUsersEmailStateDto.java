@@ -35,23 +35,23 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UpdateUsersEmailState")
-@ApiModel(value = "UpdateUsersEmailState", description = "")
+@Schema(name = "UpdateUsersEmailState", description = "")
 public class UpdateUsersEmailStateDto {
 
-	@ApiModelProperty(value = "Total")
+	@Schema(description = "Total")
 	private long total;
 
-	@ApiModelProperty(value = "Updated")
+	@Schema(description = "Updated")
 	private long updated;
 
-	@ApiModelProperty(value = "NotUpdated")
+	@Schema(description = "NotUpdated")
 	private long notUpdated;
 
-	@ApiModelProperty(value = "Skipped")
+	@Schema(description = "Skipped")
 	private long skipped;
 
 	public UpdateUsersEmailStateDto() {

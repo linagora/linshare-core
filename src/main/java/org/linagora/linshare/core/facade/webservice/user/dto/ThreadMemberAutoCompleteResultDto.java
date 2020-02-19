@@ -40,32 +40,32 @@ import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.core.domain.entities.User;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(value = "ThreadMemberAutoCompleteResult", description = "This DTO will contains members or autocomplete user")
+@Schema(name = "ThreadMemberAutoCompleteResult", description = "This DTO will contains members or autocomplete user")
 @XmlRootElement(name = "ThreadMemberAutoCompleteResult")
 public class ThreadMemberAutoCompleteResultDto extends AutoCompleteResultDto {
 
-	@ApiModelProperty(value = "user uuid")
+	@Schema(description = "user uuid")
 	protected String userUuid;
 
-	@ApiModelProperty(value = "thread uuid")
+	@Schema(description = "thread uuid")
 	protected String threadUuid;
 
-	@ApiModelProperty(value = "firstName")
+	@Schema(description = "firstName")
 	protected String firstName;
 
-	@ApiModelProperty(value = "lastName")
+	@Schema(description = "lastName")
 	protected String lastName;
 
-	@ApiModelProperty(value = "domain")
+	@Schema(description = "domain")
 	protected String domain;
 
-	@ApiModelProperty(value = "mail")
+	@Schema(description = "mail")
 	protected String mail;
 
-	@ApiModelProperty(value = "true it is a thread member")
+	@Schema(description = "true it is a thread member")
 	protected boolean isMember;
 
 	public ThreadMemberAutoCompleteResultDto() {

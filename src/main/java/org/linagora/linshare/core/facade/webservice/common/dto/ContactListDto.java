@@ -40,35 +40,35 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.ContactList;
 
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "ContactList")
-@ApiModel(value = "ContactList", description = "Contact list")
+@Schema(name = "ContactList", description = "Contact list")
 public class ContactListDto {
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	private String description;
 
-	@ApiModelProperty(value = "IsPublic")
+	@Schema(description = "IsPublic")
 	private boolean isPublic;
 
-	@ApiModelProperty(value = "Owner")
+	@Schema(description = "Owner")
 	private GenericUserDto owner;
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Domain")
+	@Schema(description = "Domain")
 	private DomainLightDto domain;
 
-	@ApiModelProperty(value = "Creation Date")
+	@Schema(description = "Creation Date")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "Modification Date")
+	@Schema(description = "Modification Date")
 	protected Date modificationDate;
 
 	public ContactListDto() {

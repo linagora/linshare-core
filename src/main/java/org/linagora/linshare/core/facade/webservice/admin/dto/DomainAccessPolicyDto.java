@@ -41,14 +41,14 @@ import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DomainAccessPolicy")
-@ApiModel(value = "DomainAccessPolicy", description = "Access policy of a domain, defining it's communication rules")
+@Schema(name = "DomainAccessPolicy", description = "Access policy of a domain, defining it's communication rules")
 public class DomainAccessPolicyDto {
 
-	@ApiModelProperty(value = "Communication rules")
+	@Schema(description = "Communication rules")
 	private List<DomainAccessRuleDto> rules;
 
 	public DomainAccessPolicyDto() {

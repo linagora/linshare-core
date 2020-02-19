@@ -40,38 +40,38 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "ThreadMember")
-@ApiModel(value = "ThreadMember", description = "A thread member")
+@Schema(name = "ThreadMember", description = "A thread member")
 public class WorkGroupMemberDto {
 
-    @ApiModelProperty(value = "Admin")
+    @Schema(description = "Admin")
 	private boolean admin;
 
-    @ApiModelProperty(value = "Readonly")
+    @Schema(description = "Readonly")
 	private boolean readonly;
 
-    @ApiModelProperty(value = "Role")
+    @Schema(description = "Role")
 	private String role;
 
-    @ApiModelProperty(value = "FirstName")
+    @Schema(description = "FirstName")
 	private String firstName;
 
-    @ApiModelProperty(value = "LastName")
+    @Schema(description = "LastName")
 	private String lastName;
 
-    @ApiModelProperty(value = "UserUuid")
+    @Schema(description = "UserUuid")
 	private String userUuid;
 
-    @ApiModelProperty(value = "UserMail")
+    @Schema(description = "UserMail")
 	private String userMail;
 
-    @ApiModelProperty(value = "UserDomainId")
+    @Schema(description = "UserDomainId")
 	private String userDomainId;
 
-    @ApiModelProperty(value = "ThreadUuid")
+    @Schema(description = "ThreadUuid")
 	private String threadUuid;
 
 	public WorkGroupMemberDto(WorkgroupMember member) {

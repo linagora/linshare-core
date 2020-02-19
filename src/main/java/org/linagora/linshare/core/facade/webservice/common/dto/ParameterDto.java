@@ -40,26 +40,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.Language;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Parameter")
-@ApiModel(value = "Parameter", description = "Parameters used by functionalities")
+@Schema(name = "Parameter", description = "Parameters used by functionalities")
 public class ParameterDto {
 
-    @ApiModelProperty(value = "Integer")
+    @Schema(description = "Integer")
 	private int integer;
 
-    @ApiModelProperty(value = "String")
+    @Schema(description = "String")
 	private String string;
 
-    @ApiModelProperty(value = "Type")
+    @Schema(description = "Type")
 	private String type;
 
-    @ApiModelProperty(value = "Bool")
+    @Schema(description = "Bool")
 	private boolean bool;
 
-    @ApiModelProperty(value = "Select")
+    @Schema(description = "Select")
 	private List<String> select;
 
 

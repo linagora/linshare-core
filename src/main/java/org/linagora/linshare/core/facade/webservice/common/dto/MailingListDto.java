@@ -42,32 +42,32 @@ import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
 
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailingList")
-@ApiModel(value = "MailingList", description = "Mailing list")
+@Schema(name = "MailingList", description = "Mailing list")
 public class MailingListDto {
 
-	@ApiModelProperty(value = "Identifier")
+	@Schema(description = "Identifier")
 	private String identifier;
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	private String description;
 
-	@ApiModelProperty(value = "IsPublic")
+	@Schema(description = "IsPublic")
 	private boolean isPublic;
 
-	@ApiModelProperty(value = "Owner")
+	@Schema(description = "Owner")
 	private UserDto owner;
 
-	@ApiModelProperty(value = "Contacts")
+	@Schema(description = "Contacts")
 	private List<MailingListContactDto> contacts = new ArrayList<MailingListContactDto>();
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Domain id/uuid")
+	@Schema(description = "Domain id/uuid")
 	private String domainId;
 
 	public MailingListDto() {

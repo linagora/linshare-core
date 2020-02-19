@@ -43,7 +43,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author Mehdi Attia
@@ -58,36 +58,36 @@ public class SafeDetail {
 	@GeneratedValue
 	protected String id;
 
-	@ApiModelProperty(value = "AccountUuid")
+	@Schema(description = "AccountUuid")
 	protected String accountUuid;
 
 	// FIXME: workaround
 //	@JsonIgnore
-	@ApiModelProperty(value = "ContainerUuid")
+	@Schema(description = "ContainerUuid")
 	protected String containerUuid;
 
-	@ApiModelProperty(value = "Country Code, on 2 characters")
+	@Schema(description = "Country Code, on 2 characters")
 	protected String countryCode;
 
-	@ApiModelProperty(value = "ControlKey, on 2 characters")
+	@Schema(description = "ControlKey, on 2 characters")
 	protected String controlKey;
 
-	@ApiModelProperty(value = "Role, on 4 characters fixed on \"SAFE\"")
+	@Schema(description = "Role, on 4 characters fixed on \"SAFE\"")
 	protected String role;
 
-	@ApiModelProperty(value = "IUFSC describes the provider of the safe detail, on 8 characters")
+	@Schema(description = "IUFSC describes the provider of the safe detail, on 8 characters")
 	protected String iufsc;
 
-	@ApiModelProperty(value = "Reserve for futur extension, on 8 characters")
+	@Schema(description = "Reserve for futur extension, on 8 characters")
 	protected String reserve;
 
-	@ApiModelProperty(value = "Number identifier, on 30 characters")
+	@Schema(description = "Number identifier, on 30 characters")
 	protected String uuid;
 
-	@ApiModelProperty(value = "CreationDate of this safeDetail")
+	@Schema(description = "CreationDate of this safeDetail")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	protected String description;
 
 	public SafeDetail(String accountUuid, String containerUuid, String description) {

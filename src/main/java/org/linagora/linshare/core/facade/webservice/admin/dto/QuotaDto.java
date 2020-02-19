@@ -40,56 +40,56 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name="Quota")
-@ApiModel
+@Schema
 public class QuotaDto {
 
-	@ApiModelProperty(value = "uuid")
+	@Schema(description = "uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "The domain which this quota belongs to.")
+	@Schema(description = "The domain which this quota belongs to.")
 	protected DomainLightDto domain;
 
-	@ApiModelProperty(value = "The parent domain which this quota belongs to.")
+	@Schema(description = "The parent domain which this quota belongs to.")
 	protected DomainLightDto parentDomain;
 
-	@ApiModelProperty(value = "The limit (quota)")
+	@Schema(description = "The limit (quota)")
 	protected Long quota;
 
-	@ApiModelProperty(value = "If true, allow to override quota field for the current object (domain, container or account)"
+	@Schema(description = "If true, allow to override quota field for the current object (domain, container or account)"
 			+ "Othervise the quota value can/will be updated by cascade by the defaultQuota field of your parent."
 			+ "Useless for root domain quota")
 	protected Boolean quotaOverride;
 
-	@ApiModelProperty(value = "The limit (quota) for each child quota")
+	@Schema(description = "The limit (quota) for each child quota")
 	protected Long defaultQuota;
 
-	@ApiModelProperty(value = "By default, defaultQuota equal quota, every modification of the quota field will be apply to defaultQuota too."
+	@Schema(description = "By default, defaultQuota equal quota, every modification of the quota field will be apply to defaultQuota too."
 			+ "If true, the defaultQuota value is unlinked from quota field.")
 	protected Boolean defaultQuotaOverride;
 
-	// @ApiModelProperty(value = "")
+	// @Schema(description = "")
 	// protected Long quotaWarning;
 
-	@ApiModelProperty(value = "The used space. Read only.")
+	@Schema(description = "The used space. Read only.")
 	protected Long usedSpace;
 
-	@ApiModelProperty(value = "Yesterday used space. Read only.")
+	@Schema(description = "Yesterday used space. Read only.")
 	protected Long yersterdayUsedSpace;
 
-	@ApiModelProperty(value = "If set to true, uploads are disable due to server maintenance.")
+	@Schema(description = "If set to true, uploads are disable due to server maintenance.")
 	protected Boolean maintenance;
 
-	@ApiModelProperty(value = "Quota creation date. Read only.")
+	@Schema(description = "Quota creation date. Read only.")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "Quota last modification date. Read only.")
+	@Schema(description = "Quota last modification date. Read only.")
 	protected Date modificationDate;
 
-	@ApiModelProperty(value = "Quota last modification date by a batch. Read only.")
+	@Schema(description = "Quota last modification date by a batch. Read only.")
 	protected Date batchModificationDate;
 
 	public QuotaDto() {

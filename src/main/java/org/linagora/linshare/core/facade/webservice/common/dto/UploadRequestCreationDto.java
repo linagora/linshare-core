@@ -43,23 +43,23 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "UploadRequestCreation")
 public class UploadRequestCreationDto {
 
-	@ApiModelProperty(value = "Activation date")
+	@Schema(description = "Activation date")
 	private Date activationDate;
 
 	// could be null
-	@ApiModelProperty(value = "Expiry date")
+	@Schema(description = "Expiry date")
 	private Date expiryDate;
 
-	@ApiModelProperty(value = "Notification date")
+	@Schema(description = "Notification date")
 	private Date notificationDate;
 
-	@ApiModelProperty(value = "Label")
+	@Schema(description = "Label")
 	private String label;
 
 	private List<String> contactList = Lists.newArrayList();

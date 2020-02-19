@@ -39,32 +39,32 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailContentLang")
-@ApiModel(value = "MailContentLang", description = "")
+@Schema(name = "MailContentLang", description = "")
 public class MailContentLangDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Language")
+	@Schema(description = "Language")
 	private Language language;
 
-	@ApiModelProperty(value = "Readonly")
+	@Schema(description = "Readonly")
 	private boolean readonly;
 
-	@ApiModelProperty(value = "MailContent")
+	@Schema(description = "MailContent")
 	private String mailContent;
 
-	@ApiModelProperty(value = "MailConfig")
+	@Schema(description = "MailConfig")
 	private String mailConfig;
 
-	@ApiModelProperty(value = "MailContentType")
+	@Schema(description = "MailContentType")
 	private String mailContentType;
 
-	@ApiModelProperty(value = "MailContentName")
+	@Schema(description = "MailContentName")
 	private String mailContentName;
 
 	public MailContentLangDto() {

@@ -46,7 +46,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UploadPropositionFilter")
 @Document(collection = "upload_proposition_filter")
@@ -57,34 +57,34 @@ public class UploadPropositionFilter {
 	@GeneratedValue
 	protected String id;
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "DomainUuid")
+	@Schema(description = "DomainUuid")
 	protected String domainUuid;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	protected String name;
 
-	@ApiModelProperty(value = "MatchType")
+	@Schema(description = "MatchType")
 	protected UploadPropositionMatchType matchType;
 
-	@ApiModelProperty(value = "UploadPropositionAction")
+	@Schema(description = "UploadPropositionAction")
 	protected UploadPropositionActionType uploadPropositionAction;
 
-	@ApiModelProperty(value = "Enabled")
+	@Schema(description = "Enabled")
 	protected Boolean enabled;
 
-	@ApiModelProperty(value = "Order")
+	@Schema(description = "Order")
 	protected Integer order;
 
-	@ApiModelProperty(value = "UploadPropositionRules")
+	@Schema(description = "UploadPropositionRules")
 	protected List<UploadPropositionRule> uploadPropositionRules;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	protected Date modificationDate;
 
 	public UploadPropositionFilter() {

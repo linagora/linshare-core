@@ -41,17 +41,17 @@ import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DomainAccessRule")
-@ApiModel(value = "DomainAccessRule", description = "Access rule of a domain")
+@Schema(name = "DomainAccessRule", description = "Access rule of a domain")
 public class DomainAccessRuleDto {
 
-	@ApiModelProperty(value = "Access rule type")
+	@Schema(description = "Access rule type")
 	private DomainAccessRuleType type;
 
-	@ApiModelProperty(value = "Domain being allowed / denied")
+	@Schema(description = "Domain being allowed / denied")
 	private DomainDto domain;
 
 	public DomainAccessRuleDto() {

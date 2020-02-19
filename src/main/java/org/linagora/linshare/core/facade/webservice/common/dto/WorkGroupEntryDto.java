@@ -44,49 +44,49 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "ThreadEntry")
-@ApiModel(value = "ThreadEntry", description = "A file in a thread.")
+@Schema(name = "ThreadEntry", description = "A file in a thread.")
 public class WorkGroupEntryDto extends EntryDto {
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	protected String description;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	protected Date modificationDate;
 
-	@ApiModelProperty(value = "Ciphered")
+	@Schema(description = "Ciphered")
 	protected Boolean ciphered;
 
-	@ApiModelProperty(value = "Type")
+	@Schema(description = "Type")
 	protected String type;
 
-	@ApiModelProperty(value = "Size")
+	@Schema(description = "Size")
 	protected Long size;
 
-	@ApiModelProperty(value = "MetaData")
+	@Schema(description = "MetaData")
 	protected String metaData;
 
-	@ApiModelProperty(value = "Sha256sum")
+	@Schema(description = "Sha256sum")
 	protected String sha256sum;
 
-	@ApiModelProperty(value = "hasThumbnail")
+	@Schema(description = "hasThumbnail")
 	protected boolean hasThumbnail;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected AsyncTaskDto async;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@ApiModelProperty(value = "workGroup")
+	@Schema(description = "workGroup")
 	protected WorkGroupLightDto workGroup;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@ApiModelProperty(value = "workGroupFolder")
+	@Schema(description = "workGroupFolder")
 	protected WorkGroupNode workGroupFolder;
 
 	public WorkGroupEntryDto(ThreadEntry te) {

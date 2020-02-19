@@ -41,50 +41,50 @@ import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.Statistic;
 
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name="Statistic")
-@ApiModel(value = "Statistic", description = "Statistic object for users, workgroups or domains.")
+@Schema(name = "Statistic", description = "Statistic object for users, workgroups or domains.")
 public class StatisticDto {
 
-	@ApiModelProperty(value = "Domain")
+	@Schema(description = "Domain")
 	private DomainLightDto domain;
 
-	@ApiModelProperty(value = "ParentDomain")
+	@Schema(description = "ParentDomain")
 	private DomainLightDto parentDomain;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "OperationCount")
+	@Schema(description = "OperationCount")
 	private Long OperationCount;
 
-	@ApiModelProperty(value = "DeleteOperaionCount")
+	@Schema(description = "DeleteOperaionCount")
 	private Long deleteOperationCount;
 
-	@ApiModelProperty(value = "AddOperationCount")
+	@Schema(description = "AddOperationCount")
 	private Long addOperationCount;
 
-	@ApiModelProperty(value = "AddOperationSum")
+	@Schema(description = "AddOperationSum")
 	private Long addOperationSum;
 
-	@ApiModelProperty(value = "DeleteOperaitionSum")
+	@Schema(description = "DeleteOperaitionSum")
 	private Long deleteOperaionSum;
 
-	@ApiModelProperty(value = "DiffOperationSum")
+	@Schema(description = "DiffOperationSum")
 	private Long diffOperationSum;
 
-	@ApiModelProperty(value = "ActualOperaionSum")
+	@Schema(description = "ActualOperaionSum")
 	private Long actualOperationSum;
 
-	@ApiModelProperty(value = "Account")
+	@Schema(description = "Account")
 	private AccountDto account;
 
-	@ApiModelProperty(value = "StatisticType")
+	@Schema(description = "StatisticType")
 	private StatisticType statisticType;
 
-	@ApiModelProperty(value = "StatisticDate")
+	@Schema(description = "StatisticDate")
 	private Date statisticDate;
 
 	public StatisticDto() {

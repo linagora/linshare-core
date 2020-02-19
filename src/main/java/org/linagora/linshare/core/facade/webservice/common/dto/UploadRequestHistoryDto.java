@@ -39,68 +39,68 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UploadRequestHistory")
-@ApiModel(value = "UploadRequestHistory", description = "History of an upload request")
+@Schema(name = "UploadRequestHistory", description = "History of an upload request")
 public class UploadRequestHistoryDto {
 
-	@ApiModelProperty(value = "Status")
+	@Schema(description = "Status")
 	private String status;
 
-	@ApiModelProperty(value = "Status updated")
+	@Schema(description = "Status updated")
 	private boolean statusUpdated;
 
-	@ApiModelProperty(value = "Even type")
+	@Schema(description = "Even type")
 	private String eventType;
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Activation date")
+	@Schema(description = "Activation date")
 	private Date activationDate;
 
-	@ApiModelProperty(value = "Expiry date")
+	@Schema(description = "Expiry date")
 	private Date expiryDate;
 
-	@ApiModelProperty(value = "Notification date")
+	@Schema(description = "Notification date")
 	private Date notificationDate;
 
-	@ApiModelProperty(value = "Max deposit size")
+	@Schema(description = "Max deposit size")
 	private Long maxDepositSize;
 
-	@ApiModelProperty(value = "Max file count")
+	@Schema(description = "Max file count")
 	private Integer maxFileCount;
 
-	@ApiModelProperty(value = "Max file size")
+	@Schema(description = "Max file size")
 	private Long maxFileSize;
 
-	@ApiModelProperty(value = "Upload proposition request uuid")
+	@Schema(description = "Upload proposition request uuid")
 	private String uploadPropositionRequestUuid;
 
-	@ApiModelProperty(value = "Can delete")
+	@Schema(description = "Can delete")
 	private Boolean canDelete;
 
-	@ApiModelProperty(value = "Can close")
+	@Schema(description = "Can close")
 	private Boolean canClose;
 
-	@ApiModelProperty(value = "Can expiry date")
+	@Schema(description = "Can expiry date")
 	private Boolean canEditExpiryDate;
 
-	@ApiModelProperty(value = "Locale")
+	@Schema(description = "Locale")
 	private String locale;
 
-	@ApiModelProperty(value = "Secured")
+	@Schema(description = "Secured")
 	private boolean secured;
 
-	@ApiModelProperty(value = "Creation date")
+	@Schema(description = "Creation date")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "Modification date")
+	@Schema(description = "Modification date")
 	private Date modificationDate;
 
-	@ApiModelProperty(value = "Date of the action")
+	@Schema(description = "Date of the action")
 	private String mailMessageID;
 
 	public UploadRequestHistoryDto() {

@@ -40,44 +40,44 @@ import java.util.Set;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ShareCreationDto {
 
-	@ApiModelProperty(value = "Recipients")
+	@Schema(description = "Recipients")
 	protected List<GenericUserDto> recipients;
 
-	@ApiModelProperty(value = "Document uuids")
+	@Schema(description = "Document uuids")
 	protected List<String> documents;
 
-	@ApiModelProperty(value = "Secured")
+	@Schema(description = "Secured")
 	protected Boolean secured;
 
-	@ApiModelProperty(value = "Share acknowledgement, this boolean allows to choose whether or not the creator of the share wants to receive an acknowledgement.")
+	@Schema(description = "Share acknowledgement, this boolean allows to choose whether or not the creator of the share wants to receive an acknowledgement.")
 	protected Boolean creationAcknowledgement;
 
-	@ApiModelProperty(value = "Force anonymous sharing even for internal or guest users.")
+	@Schema(description = "Force anonymous sharing even for internal or guest users.")
 	protected Boolean forceAnonymousSharing;
 
-	@ApiModelProperty(value = "ExpirationDate")
+	@Schema(description = "ExpirationDate")
 	protected Date expirationDate;
 
-	@ApiModelProperty(value = "Subject")
+	@Schema(description = "Subject")
 	protected String subject;
 
-	@ApiModelProperty(value = "Message")
+	@Schema(description = "Message")
 	protected String message;
 
-	@ApiModelProperty(value = "notificationDateForUSDA")
+	@Schema(description = "notificationDateForUSDA")
 	protected Date notificationDateForUSDA;
 
-	@ApiModelProperty(value = "enableUSDA")
+	@Schema(description = "enableUSDA")
 	protected Boolean enableUSDA;
 
-	@ApiModelProperty(value = "sharingNote")
+	@Schema(description = "sharingNote")
 	protected String sharingNote;
 
-	@ApiModelProperty(value= "mailingListUuid")
+	@Schema(description= "mailingListUuid")
 	private Set<String> mailingListUuid;
 
 	public ShareCreationDto() {

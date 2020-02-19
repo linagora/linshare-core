@@ -42,15 +42,15 @@ import org.linagora.linshare.core.domain.entities.DomainQuota;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DomainQuota")
-@ApiModel(value = "DomainQuota", description = "A domain quota instance for a domain.")
+@Schema(name = "DomainQuota", description = "A domain quota instance for a domain.")
 public class DomainQuotaDto extends QuotaDto {
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@ApiModelProperty(value = "List of all quota containers.")
+	@Schema(description = "List of all quota containers.")
 	List<String> containerUuids;
 
 	protected Long currentValueForSubdomains;

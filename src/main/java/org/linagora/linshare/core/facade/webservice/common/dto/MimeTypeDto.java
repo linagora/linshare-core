@@ -42,30 +42,30 @@ import org.linagora.linshare.core.domain.entities.MimeType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "MimeType")
-@ApiModel(value = "MimeType", description = "MimeType")
+@Schema(name = "MimeType", description = "MimeType")
 public class MimeTypeDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "mimeType")
+	@Schema(description = "mimeType")
 	private String mimeType;
 
-	@ApiModelProperty(value = "Extensions")
+	@Schema(description = "Extensions")
 	private String extensions;
 
-	@ApiModelProperty(value = "Enable")
+	@Schema(description = "Enable")
 	private boolean enable;
 
-	@ApiModelProperty(value = "Creation date")
+	@Schema(description = "Creation date")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "Modification date")
+	@Schema(description = "Modification date")
 	private Date modificationDate;
 
 	public MimeTypeDto(final MimeType m) {

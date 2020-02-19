@@ -45,38 +45,38 @@ import org.linagora.linshare.core.domain.entities.User;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Guest")
-@ApiModel(value = "Guest", description = "")
+@Schema(name = "Guest", description = "")
 public class GuestDto extends AccountDto {
 
-	@ApiModelProperty(value = "FirstName")
+	@Schema(description = "FirstName")
 	protected String firstName;
 
-	@ApiModelProperty(value = "LastName")
+	@Schema(description = "LastName")
 	protected String lastName;
 
-	@ApiModelProperty(value = "Mail")
+	@Schema(description = "Mail")
 	protected String mail;
 
-	@ApiModelProperty(value = "CanUpload")
+	@Schema(description = "CanUpload")
 	protected boolean canUpload;
 
-	@ApiModelProperty(value = "Restricted")
+	@Schema(description = "Restricted")
 	protected boolean restricted;
 
-	@ApiModelProperty(value = "Comment")
+	@Schema(description = "Comment")
 	protected String comment;
 
-	@ApiModelProperty(value = "Expiration date")
+	@Schema(description = "Expiration date")
 	protected Date expirationDate;
 
-	@ApiModelProperty(value = "RestrictedContacts")
+	@Schema(description = "RestrictedContacts")
 	protected List<GenericUserDto> restrictedContacts = Lists.newArrayList();
 
-	@ApiModelProperty(value = "Owner")
+	@Schema(description = "Owner")
 	protected GenericUserDto owner;
 
 	public GuestDto() {

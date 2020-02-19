@@ -39,44 +39,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.MailLayout;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailLayout")
-@ApiModel(value = "MailLayout", description = "")
+@Schema(name = "MailLayout", description = "")
 public class MailLayoutDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Domain")
+	@Schema(description = "Domain")
 	private String domain;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	private String description;
 
-	@ApiModelProperty(value = "Layout")
+	@Schema(description = "Layout")
 	private String layout;
 
-	@ApiModelProperty(value = "Visible")
+	@Schema(description = "Visible")
 	private boolean visible;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	private Date modificationDate;
 
-	@ApiModelProperty(value = "readonly")
+	@Schema(description = "readonly")
 	private boolean readonly;
 
-	@ApiModelProperty(value = "messagesFrench")
+	@Schema(description = "messagesFrench")
 	private String messagesFrench;
 
-	@ApiModelProperty(value = "messagesEnglish")
+	@Schema(description = "messagesEnglish")
 	private String messagesEnglish;
 
-	@ApiModelProperty(value = "messagesRussian")
+	@Schema(description = "messagesRussian")
 	private String messagesRussian;
 
 	public MailLayoutDto() {

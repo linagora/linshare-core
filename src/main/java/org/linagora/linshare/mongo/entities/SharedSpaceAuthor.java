@@ -37,18 +37,18 @@ import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Author")
 public class SharedSpaceAuthor {
 	
-	@ApiModelProperty(value = "uuid")
+	@Schema(description = "uuid")
 	protected String uuid;
 	
-	@ApiModelProperty(value = "name")
+	@Schema(description = "name")
 	protected String name;
 	
-	@ApiModelProperty(value = "mail")
+	@Schema(description = "mail")
 	protected String mail;
 
 	public SharedSpaceAuthor() {

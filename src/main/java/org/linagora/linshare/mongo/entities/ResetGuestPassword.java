@@ -47,7 +47,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author FMartin
@@ -61,31 +61,31 @@ public class ResetGuestPassword {
 	@Id @GeneratedValue
 	protected String id;
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "Mail")
+	@Schema(description = "Mail")
 	protected String mail;
 
-	@ApiModelProperty(value = "FirstName")
+	@Schema(description = "FirstName")
 	protected String firstName;
 
-	@ApiModelProperty(value = "LastName")
+	@Schema(description = "LastName")
 	protected String lastName;
 
-	@ApiModelProperty(value = "CreationDate of this token")
+	@Schema(description = "CreationDate of this token")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "Expiration date for this token")
+	@Schema(description = "Expiration date for this token")
 	protected Date expirationDate;
 
 	@JsonIgnore
 	protected Boolean alreadyUsed;
 
-	@ApiModelProperty(value = "New password.")
+	@Schema(description = "New password.")
 	protected String password;
 
-	@ApiModelProperty(value = "Reset password or new password.")
+	@Schema(description = "Reset password or new password.")
 	protected ResetTokenKind kind;
 
 	@JsonIgnore

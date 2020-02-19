@@ -41,27 +41,27 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CopyMto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	protected String name;
 
-	@ApiModelProperty(value = "Kind")
+	@Schema(description = "Kind")
 	protected TargetKind kind;
 
-	@ApiModelProperty(value = "contextUuid")
+	@Schema(description = "contextUuid")
 	protected String contextUuid;
 
-	@ApiModelProperty(value = "contextName")
+	@Schema(description = "contextName")
 	protected String contextName;
 
-	@ApiModelProperty(value = "nodeType")
+	@Schema(description = "nodeType")
 	protected WorkGroupNodeType nodeType;
 
 	public CopyMto() {

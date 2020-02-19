@@ -44,17 +44,17 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
 import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UploadRequest")
 public class UploadRequestDto {
 
 	private String uuid;
 
-	@ApiModelProperty(value = "Owner")
+	@Schema(description = "Owner")
 	private ContactDto owner;
 
-	@ApiModelProperty(value = "Recipient")
+	@Schema(description = "Recipient")
 	private ContactDto recipient;
 
 	// could be null

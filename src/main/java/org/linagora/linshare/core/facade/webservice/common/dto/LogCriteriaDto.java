@@ -41,38 +41,38 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.LogActionV1;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "LogCriteria")
-@ApiModel(value = "LogCriteria", description = "Criteria used to search the history")
+@Schema(name = "LogCriteria", description = "Criteria used to search the history")
 public class LogCriteriaDto {
 
-	@ApiModelProperty(value = "List of target's mail")
+	@Schema(description = "List of target's mail")
 	private List<String> targetMails; // The list of the selected users
 
-	@ApiModelProperty(value = "First name of the target")
+	@Schema(description = "First name of the target")
 	private String targetFirstName;
 
-	@ApiModelProperty(value = "Last name of the target")
+	@Schema(description = "Last name of the target")
 	private String targetLastName;
 
-	@ApiModelProperty(value = "Domain of the target")
+	@Schema(description = "Domain of the target")
 	private String targetDomain;
 
-	@ApiModelProperty(value = "The starting date")
+	@Schema(description = "The starting date")
 	private Date beforeDate; // The begin date for the search
 
-	@ApiModelProperty(value = "The ending date")
+	@Schema(description = "The ending date")
 	private Date afterDate; // The end date for the search
 
-	@ApiModelProperty(value = "A list of actions")
+	@Schema(description = "A list of actions")
 	private List<LogActionV1> logActions; // The list of Actions to retrieve
 
-	@ApiModelProperty(value = "The file name")
+	@Schema(description = "The file name")
 	private String fileName; // file name to find
 
-	@ApiModelProperty(value = "The file extension")
+	@Schema(description = "The file extension")
 	private String fileExtension;
 
 	public LogCriteriaDto() {

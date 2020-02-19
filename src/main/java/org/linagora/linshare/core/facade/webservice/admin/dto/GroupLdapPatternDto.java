@@ -40,47 +40,47 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "GroupLdapPattern")
-@ApiModel(value = "GroupLdapPattern", description = "A group ldap pattern is used by domains to search WorkGroup in an LDAP directory")
+@Schema(name = "GroupLdapPattern", description = "A group ldap pattern is used by domains to search WorkGroup in an LDAP directory")
 public class GroupLdapPatternDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Label")
+	@Schema(description = "Label")
 	private String label;
 
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	private String description;
 
-	@ApiModelProperty(value = "SearchPageSize")
+	@Schema(description = "SearchPageSize")
 	private Integer searchPageSize;
 
-	@ApiModelProperty(value = "searchAllGroupsQuery")
+	@Schema(description = "searchAllGroupsQuery")
 	private String searchAllGroupsQuery;
 
-	@ApiModelProperty(value = "searchGroupQuery")
+	@Schema(description = "searchGroupQuery")
 	private String searchGroupQuery;
 
-	@ApiModelProperty(value = "groupPrefix")
+	@Schema(description = "groupPrefix")
 	private String groupPrefix;
 
-	@ApiModelProperty(value = "groupName")
+	@Schema(description = "groupName")
 	private String groupName;
 
-	@ApiModelProperty(value = "groupMember")
+	@Schema(description = "groupMember")
 	private String groupMember;
 
-	@ApiModelProperty(value = "memberMail")
+	@Schema(description = "memberMail")
 	private String memberMail;
 
-	@ApiModelProperty(value = "memberFirstName")
+	@Schema(description = "memberFirstName")
 	private String memberFirstName;
 
-	@ApiModelProperty(value = "memberLastName")
+	@Schema(description = "memberLastName")
 	private String memberLastName;
 
 	public GroupLdapPatternDto(GroupLdapPattern groupLdapPattern) {

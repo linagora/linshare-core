@@ -45,41 +45,41 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Share entry group")
-@ApiModel(value = "Share entry group", description = "A Share entry group")
+@Schema(name = "Share entry group", description = "A Share entry group")
 public class ShareEntryGroupDto {
 
-	@ApiModelProperty(value = "Owner")
+	@Schema(description = "Owner")
 	private AccountDto owner;
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Subject")
+	@Schema(description = "Subject")
 	private String subject;
 
-	@ApiModelProperty(value = "Notification date")
+	@Schema(description = "Notification date")
 	private Date notificationDate;
 
-	@ApiModelProperty(value = "Creation date")
+	@Schema(description = "Creation date")
 	private Date creationDate;
 
-	@ApiModelProperty(value = "Modification date")
+	@Schema(description = "Modification date")
 	private Date modificationDate;
 
-	@ApiModelProperty(value = "Notified")
+	@Schema(description = "Notified")
 	private Boolean notified = false;
 
-	@ApiModelProperty(value = "Processed")
+	@Schema(description = "Processed")
 	private Boolean processed = false;
 
-	@ApiModelProperty(value = "Expiration date")
+	@Schema(description = "Expiration date")
 	private Date expirationDate;
 
-	@ApiModelProperty(value = "List of share and anonymous share entries")
+	@Schema(description = "List of share and anonymous share entries")
 	private List<ShareDto> shareEntriesDto;
 
 	public ShareEntryGroupDto() {

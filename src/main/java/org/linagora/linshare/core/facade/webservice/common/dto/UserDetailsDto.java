@@ -36,16 +36,16 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "UserDetails")
 public class UserDetailsDto {
 
-	@ApiModelProperty(value = "User mail is required")
+	@Schema(description = "User mail is required")
 	private String mail;
 
-	@ApiModelProperty(value = "Domain uuid is optional")
+	@Schema(description = "Domain uuid is optional")
 	private String domain;
 
 	public String getMail() {

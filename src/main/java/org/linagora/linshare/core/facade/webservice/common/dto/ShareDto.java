@@ -47,11 +47,11 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Share")
-@ApiModel(value = "Share", description = "A document can be shared between users.")
+@Schema(name = "Share", description = "A document can be shared between users.")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ShareDto implements Serializable, Comparable<ShareDto> {
 
@@ -60,55 +60,55 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 	/**
 	 * Share
 	 */
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "Name")
+	@Schema(description = "Name")
 	protected String name;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	protected Date modificationDate;
 
-	@ApiModelProperty(value = "ExpirationDate")
+	@Schema(description = "ExpirationDate")
 	protected Date expirationDate;
 
-	@ApiModelProperty(value = "Downloaded")
+	@Schema(description = "Downloaded")
 	protected Long downloaded;
 
 	/**
 	 * SentShare
 	 */
-	@ApiModelProperty(value = "Document")
+	@Schema(description = "Document")
 	protected DocumentDto document;
 
-	@ApiModelProperty(value = "Recipient")
+	@Schema(description = "Recipient")
 	protected GenericUserDto recipient;
 
 	/**
 	 * Received Share.
 	 */
-	@ApiModelProperty(value = "Description")
+	@Schema(description = "Description")
 	protected String description;
 
-	@ApiModelProperty(value = "Sender")
+	@Schema(description = "Sender")
 	protected UserDto sender;
 
-	@ApiModelProperty(value = "Size")
+	@Schema(description = "Size")
 	protected Long size;
 
-	@ApiModelProperty(value = "Type")
+	@Schema(description = "Type")
 	protected String type;
 
-	@ApiModelProperty(value = "Ciphered")
+	@Schema(description = "Ciphered")
 	protected Boolean ciphered;
 
-	@ApiModelProperty(value = "hasThumbnail")
+	@Schema(description = "hasThumbnail")
 	protected Boolean hasThumbnail;
 
-	@ApiModelProperty(value = "Message")
+	@Schema(description = "Message")
 	protected String message;
 
 	/**

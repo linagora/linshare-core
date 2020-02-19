@@ -47,38 +47,38 @@ import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "UploadRequest")
 public class UploadRequestDto {
 
-	@ApiModelProperty(value = "Uuid")
+	@Schema(description = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "Owner")
+	@Schema(description = "Owner")
 	private ContactDto owner;
 
-	@ApiModelProperty(value = "Recipient")
+	@Schema(description = "Recipient")
 	private ContactDto recipient;
 
-	@ApiModelProperty(value = "Activation date")
+	@Schema(description = "Activation date")
 	private Date activationDate;
 
-	@ApiModelProperty(value = "Creation date")
+	@Schema(description = "Creation date")
 	private Date creationDate;
 
 	// could be null
-	@ApiModelProperty(value = "Expiry date")
+	@Schema(description = "Expiry date")
 	private Date expiryDate;
 
-	@ApiModelProperty(value = "Notification date")
+	@Schema(description = "Notification date")
 	private Date notificationDate;
 
-	@ApiModelProperty(value = "Label")
+	@Schema(description = "Label")
 	private String label;
 
-	@ApiModelProperty(value = "Status")
+	@Schema(description = "Status")
 	private UploadRequestStatus status;
 
 	private Integer maxFileCount;

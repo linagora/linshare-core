@@ -43,38 +43,38 @@ import org.linagora.linshare.core.domain.constants.UpgradeTaskStatus;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UpgradeTask")
-@ApiModel(value = "UpgradeTask", description = "each object represents a task to accomplish in order to complete the upgrade process.")
+@Schema(name = "UpgradeTask", description = "each object represents a task to accomplish in order to complete the upgrade process.")
 public class UpgradeTaskDto {
 
-	@ApiModelProperty(value = "Identifier")
+	@Schema(description = "Identifier")
 	protected UpgradeTaskType identifier;
 
-	@ApiModelProperty(value = "TaskGroup")
+	@Schema(description = "TaskGroup")
 	protected UpgradeTaskGroup taskGroup;
 
-	@ApiModelProperty(value = "ParentIdentifier")
+	@Schema(description = "ParentIdentifier")
 	protected UpgradeTaskType parentIdentifier;
 
-	@ApiModelProperty(value = "TaskOrder")
+	@Schema(description = "TaskOrder")
 	protected Integer taskOrder;
 
-	@ApiModelProperty(value = "Status")
+	@Schema(description = "Status")
 	protected UpgradeTaskStatus status;
 
-	@ApiModelProperty(value = "Priority")
+	@Schema(description = "Priority")
 	protected UpgradeTaskPriority priority;
 
-	@ApiModelProperty(value = "CreationDate")
+	@Schema(description = "CreationDate")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "ModificationDate")
+	@Schema(description = "ModificationDate")
 	protected Date modificationDate;
 
-	@ApiModelProperty(value = "Asynchronous task created to manage upgrade task long time processing. (return by the serveur.")
+	@Schema(description = "Asynchronous task created to manage upgrade task long time processing. (return by the serveur.")
 	protected String asyncTaskUuid;
 
 	public UpgradeTaskDto() {
