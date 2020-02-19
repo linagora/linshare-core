@@ -188,7 +188,7 @@
 		<constructor-arg ref="wsAdminGroupPatternFacade" />
 	</bean>
 
-	<bean id="mailAttachmentRestService" class="org.linagora.linshare.webservice.admin.impl.MailAttachmentRestServiceImpl">
+	<bean id="adminMailAttachmentRestService" class="org.linagora.linshare.webservice.admin.impl.MailAttachmentRestServiceImpl">
 		<constructor-arg ref="wsAdminMailAttachmentFacade" />
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 		<constructor-arg ref="wsAccountQuotaFacade" />
@@ -240,7 +240,7 @@
 			<ref bean="adminExceptionStatisticRestService" />
 			<ref bean="adminAdvancedStatisticRestService" />
 			<ref bean="adminGroupPatternRestService"/>
-			<ref bean="mailAttachmentRestService" />
+			<ref bean="adminMailAttachmentRestService" />
 			<ref bean="adminGuestRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
