@@ -38,7 +38,9 @@ class Table:
 										] \
 									) \
 								)
-		return Table.get_sql(insert_query)
+		# WORKAROUND: H2 database does not support quoting for table names or column names.
+		# Table.get_sql do not let us disabling quoting, we must use query.get_sql to do it (for now).
+		return insert_query.get_sql(quote_char="") + ";"
 
 	def create_update_query(self, columns, row, updates_location, mail_types):
 		table_to_update = pypika.Table(self.name)
@@ -48,7 +50,9 @@ class Table:
 		for key in columns:
 			if key in row:
 				update_query = update_query.set(key, Table.format_exit_string(row[key]))
-		result_query = Table.get_sql(update_query)
+		# WORKAROUND: H2 database does not support quoting for table names or column names.
+		# Table.get_sql do not let us disabling quoting, we must use query.get_sql to do it (for now).
+		result_query = update_query.get_sql(quote_char="") + ";"
 		file_name = mail_types[row["id"]] if self.name=="mail_content" else self.name + '_' + str(row["id"])
 		update_file = open(updates_location + file_name + ".sql", 'w')
 		update_file.write(result_query)
