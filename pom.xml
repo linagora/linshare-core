@@ -774,20 +774,48 @@
 							<prettyPrint>true</prettyPrint>
 							<swaggerConfig>
 								<info>
-									<title>Admin v4 API</title>
-									<version>4.0.0</version>
-		<!-- 							<termsOfService>Terms</termsOfService> -->
-		<!-- 							<contact> -->
-		<!-- 								<email>e@mail.com</email> -->
-		<!-- 								<name>My Name</name> -->
-		<!-- 								<url>https://google.com</url> -->
-		<!-- 							</contact> -->
-		<!-- 							<license> -->
-		<!-- 								<url>https://license</url> -->
-		<!-- 								<name>MIT</name> -->
-		<!-- 							</license> -->
+									<title>Admin v4 API (Alpha)</title>
+									<version>${projet.version}-alpha</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
 								</info>
-		<!-- 						<descriptionFile>src/test/resources/descriptions.md</descriptionFile> -->
+							</swaggerConfig>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>admin v1</id>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.admin</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.admin.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputFilename>swagger-admin-v1</outputFilename>
+							<outputFormats>JSON,YAML</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Admin v1 API</title>
+									<version>${projet.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
 							</swaggerConfig>
 						</configuration>
 						<goals>
@@ -809,19 +837,109 @@
 							<swaggerConfig>
 								<info>
 									<title>User v2 API</title>
-									<version>2.3.0</version>
-		<!-- 							<termsOfService>Terms</termsOfService> -->
-		<!-- 							<contact> -->
-		<!-- 								<email>e@mail.com</email> -->
-		<!-- 								<name>My Name</name> -->
-		<!-- 								<url>https://google.com</url> -->
-		<!-- 							</contact> -->
-		<!-- 							<license> -->
-		<!-- 								<url>https://license</url> -->
-		<!-- 								<name>MIT</name> -->
-		<!-- 							</license> -->
+									<version>${projet.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
 								</info>
-		<!-- 						<descriptionFile>src/test/resources/descriptions.md</descriptionFile> -->
+							</swaggerConfig>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delegation v2</id>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.delegationv2</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.delegationv2.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputFilename>swagger-delegation-v2</outputFilename>
+							<outputFormats>JSON,YAML</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Delegation v2 API</title>
+									<version>${projet.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>external</id>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.external</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.external.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputFilename>swagger-user-v2</outputFilename>
+							<outputFormats>JSON,YAML</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>External (anonymous) API</title>
+									<version>${projet.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				<execution>
+						<id>upload request v2</id>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv2</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv2.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputFilename>swagger-upload-request-v2</outputFilename>
+							<outputFormats>JSON,YAML</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Upload Request v2 API</title>
+									<version>${projet.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
 							</swaggerConfig>
 						</configuration>
 						<goals>
