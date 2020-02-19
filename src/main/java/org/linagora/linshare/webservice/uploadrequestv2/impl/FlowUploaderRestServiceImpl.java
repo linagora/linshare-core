@@ -66,10 +66,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
-import com.wordnik.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/flow/upload")
-@Api(value = "/rest/uploadrequest/v2/flow/upload", description = "upload_requests API")
 @Produces({ "application/json", "application/xml" })
 public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		FlowUploaderRestService {

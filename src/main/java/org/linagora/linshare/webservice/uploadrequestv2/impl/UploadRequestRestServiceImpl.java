@@ -58,14 +58,15 @@ import org.linagora.linshare.webservice.uploadrequestv2.UploadRequestRestService
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/requests")
-@Api(value = "/rest/uploadrequest/v2/requests", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestRestServiceImpl implements UploadRequestRestService {
@@ -83,12 +84,12 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 
 	@GET
 	@Path("/{uuid}")
-	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-					@ApiResponse(code = 404, message = "UploadRequest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-		})
+	@Operation(summary = "Find an upload request.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadRequestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Response find(@PathParam(value = "uuid") String uuid,
 			@HeaderParam("linshare-uploadrequest-password") String password)
@@ -107,14 +108,9 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 
 	@GET
 	@Path("/{uuid}/entries")
-	@ApiOperation(value = "Find all entries of an upload request url.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-					@ApiResponse(code = 404, message = "UploadRequest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-		})
+	@Operation(summary = "Find all entries of an upload request url.")
 	public List<UploadRequestEntryDto> findAllEntries(
-			@ApiParam(value = "UploadRequestUrl uuid that you want to retrieve its entries.", required = true)
+			@Parameter(description = "UploadRequestUrl uuid that you want to retrieve its entries.", required = true)
 				@PathParam(value = "uuid") String uuid,
 			@HeaderParam("linshare-uploadrequest-password") String password)
 			throws BusinessException {
@@ -123,12 +119,12 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 
 	@PUT
 	@Path("/{requestUrlUuid}")
-	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-					@ApiResponse(code = 404, message = "UploadRequest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-		})
+	@Operation(summary = "Update an upload request.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadRequestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UploadRequestDto close(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password)
@@ -138,19 +134,14 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 
 	@DELETE
 	@Path("/{requestUrlUuid}/entries/{entryUuid : .*}")
-	@ApiOperation(value = "Delete an entry in an upload request.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-					@ApiResponse(code = 404, message = "UploadRequest not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-		})
+	@Operation(summary = "Delete an entry in an upload request.")
 	public UploadRequestEntryDto delete(
-			@ApiParam(value = "UploadRequestUrl uuid that contains the uploadRequestEntry to delete.", required = true)
+			@Parameter(description = "UploadRequestUrl uuid that contains the uploadRequestEntry to delete.", required = true)
 				@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password,
-			@ApiParam(value = "UploadRequestEntry uuid to delete.", required = false)
+			@Parameter(description = "UploadRequestEntry uuid to delete.", required = false)
 				@PathParam(value = "entryUuid") String entryUuid,
-			@ApiParam(value = "UploadRequest entry to delete. ", required = false) EntryDto entry)
+			@Parameter(description = "UploadRequest entry to delete. ", required = false) EntryDto entry)
 			throws BusinessException {
 		return uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entryUuid, entry);
 	}
