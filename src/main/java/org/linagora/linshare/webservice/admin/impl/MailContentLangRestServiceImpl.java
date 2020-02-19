@@ -48,14 +48,15 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentLangDto
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailContentLangRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/mail_content_langs")
-@Api(value = "/rest/admin/mail_content_langs", description = "Mail content langs used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailContentLangRestServiceImpl extends WebserviceBase implements
@@ -71,33 +72,35 @@ public class MailContentLangRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a mail content lang.", response = MailContentLangDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mail content lang.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailContentLangDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailContentLangDto find(
-			@ApiParam(value = "Mail content lang's uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mail content lang's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailContentLangFacade.find(uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a mail content lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mail content lang.")
 	@Override
 	public void head(
-			@ApiParam(value = "Mail content lang's uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mail content lang's uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		mailContentLangFacade.find(uuid);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mail content lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update a mail content lang.")
 	@Override
 	public MailContentLangDto update(
-			@ApiParam(value = "Mail content lang to update.", required = true) MailContentLangDto dto)
+			@Parameter(description = "Mail content lang to update.", required = true) MailContentLangDto dto)
 			throws BusinessException {
 		return mailContentLangFacade.update(dto);
 	}

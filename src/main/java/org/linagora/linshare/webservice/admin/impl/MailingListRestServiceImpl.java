@@ -54,14 +54,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailingListRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/lists")
-@Api(value = "/rest/admin/lists", description = "Mailing lists administration")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailingListRestServiceImpl extends WebserviceBase implements
@@ -76,8 +77,12 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all mailing lists.", response = MailingListDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find all mailing lists.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<MailingListDto> findAll() throws BusinessException {
 		return mailingListFacade.findAll();
@@ -85,52 +90,67 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto find(
-			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailingListFacade.find(uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a mailing list.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mailing list.")
 	@Override
 	public void head(
-			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		mailingListFacade.find(uuid);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Create a mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto create(
-			@ApiParam(value = "Mailing list to create.", required = true) MailingListDto dto)
+			@Parameter(description = "Mailing list to create.", required = true) MailingListDto dto)
 			throws BusinessException {
 		return mailingListFacade.create(dto);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update a mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto update(
-			@ApiParam(value = "Mailing list to update.", required = true) MailingListDto dto)
+			@Parameter(description = "Mailing list to update.", required = true) MailingListDto dto)
 			throws BusinessException {
 		return mailingListFacade.update(dto);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Delete a mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto delete(@PathParam(value = "Mailing list to delete.") String uuid)
 			throws BusinessException {
@@ -139,35 +159,37 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a mailing list.", response = MailingListDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Delete a mailing list.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailingListDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailingListDto delete(
-			@ApiParam(value = "Mailing list to delete.", required = true) MailingListDto dto)
+			@Parameter(description = "Mailing list to delete.", required = true) MailingListDto dto)
 			throws BusinessException {
 		return mailingListFacade.delete(dto.getUuid());
 	}
 
 	@Path("/{uuid}/contacts")
 	@POST
-	@ApiOperation(value = "Create a contact in a mailing list.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Create a contact in a mailing list.")
 	@Override
 	public void createContact(
-			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
+			@Parameter(description = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "Contact to create.", required = true) MailingListContactDto dto)
 			throws BusinessException {
 		mailingListFacade.addContact(uuid, dto);
 	}
 
 	@Path("/{uuid}/contacts")
 	@DELETE
-	@ApiOperation(value = "Delete a contact from a mailing list.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Delete a contact from a mailing list.")
 	@Override
 	public void deleteContact(
-			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Contact uuid.", required = true) MailingListContactDto dto)
+			@Parameter(description = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "Contact uuid.", required = true) MailingListContactDto dto)
 			throws BusinessException {
 		mailingListFacade.deleteContact(dto.getUuid());
 	}

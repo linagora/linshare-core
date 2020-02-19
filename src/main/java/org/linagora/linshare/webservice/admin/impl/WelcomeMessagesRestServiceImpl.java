@@ -54,14 +54,15 @@ import org.linagora.linshare.core.facade.webservice.admin.WelcomeMessagesFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto;
 import org.linagora.linshare.webservice.admin.WelcomeMessagesRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/welcome_messages")
-@Api(value = "/rest/admin/welcome_messages", description = "Welcome messages administration")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class WelcomeMessagesRestServiceImpl implements
@@ -75,12 +76,15 @@ public class WelcomeMessagesRestServiceImpl implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all welcome message entries.", response = WelcomeMessagesDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 400, message = "Bad request.") })
+	@Operation(summary = "Find all welcome message entries.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WelcomeMessagesDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<WelcomeMessagesDto> findAll(
-			@ApiParam(value = "If not set, actor domain will be use.", required = true) @QueryParam("domainId") String domainId,
+			@Parameter(description = "If not set, actor domain will be use.", required = true) @QueryParam("domainId") String domainId,
 			@QueryParam("parent") @DefaultValue("false") Boolean parent)
 			throws BusinessException {
 		return welcomeMessagesFacade.findAll(domainId, parent);
@@ -88,57 +92,57 @@ public class WelcomeMessagesRestServiceImpl implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a welcome message entry.", response = WelcomeMessagesDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 404, message = "Welcome message not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
+	@Operation(summary = "Find a welcome message entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WelcomeMessagesDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WelcomeMessagesDto find(
-			@ApiParam(value = "Welcome message uuid", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Welcome message uuid", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return welcomeMessagesFacade.find(uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a welcome message entry.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 404, message = "Welcome message not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
+	@Operation(summary = "Find a welcome message entry.")
 	@Override
 	public void head(
-			@ApiParam(value = "Welcome message uuid", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Welcome message uuid", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		welcomeMessagesFacade.find(uuid);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a welcome message entry.", response = WelcomeMessagesDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
+	@Operation(summary = "Create a welcome message entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WelcomeMessagesDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WelcomeMessagesDto create(
-			@ApiParam(value = "Welcome message to create (uuid is required because we will duplicate an existing WelcomeMessage", required = true) WelcomeMessagesDto customDto)
+			@Parameter(description = "Welcome message to create (uuid is required because we will duplicate an existing WelcomeMessage", required = true) WelcomeMessagesDto customDto)
 			throws BusinessException {
 		return welcomeMessagesFacade.create(customDto);
 	}
 
 	@Path("/{uuid : .*}")
 	@PUT
-	@ApiOperation(value = "Update a welcome message entry.", response = WelcomeMessagesDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 404, message = "Welcome message not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
+	@Operation(summary = "Update a welcome message entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WelcomeMessagesDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WelcomeMessagesDto update(
-			@ApiParam(value = "Welcome message updated", required = true)
+			@Parameter(description = "Welcome message updated", required = true)
 				WelcomeMessagesDto customDto,
-			@ApiParam(value = "Welcome messages uuid", required = false)
+			@Parameter(description = "Welcome messages uuid", required = false)
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return welcomeMessagesFacade.update(customDto, uuid);
@@ -146,28 +150,30 @@ public class WelcomeMessagesRestServiceImpl implements
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a welcome message entry.", response = WelcomeMessagesDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 404, message = "Welcome message not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
+	@Operation(summary = "Delete a welcome message entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WelcomeMessagesDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WelcomeMessagesDto delete(
-			@ApiParam(value = "Welcome message uuid", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Welcome message uuid", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return welcomeMessagesFacade.delete(uuid);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a welcome message entry.", response = WelcomeMessagesDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 404, message = "Welcome message not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
+	@Operation(summary = "Delete a welcome message entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WelcomeMessagesDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WelcomeMessagesDto delete(
-			@ApiParam(value = "Welcome message to delete", required = true) WelcomeMessagesDto customDto)
+			@Parameter(description = "Welcome message to delete", required = true) WelcomeMessagesDto customDto)
 			throws BusinessException {
 		return welcomeMessagesFacade.delete(customDto);
 	}

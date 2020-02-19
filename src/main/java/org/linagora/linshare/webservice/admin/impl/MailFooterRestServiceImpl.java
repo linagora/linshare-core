@@ -54,14 +54,15 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailFooterRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/mail_footers")
-@Api(value = "/rest/admin/mail_footers", description = "Mail footers used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailFooterRestServiceImpl extends WebserviceBase implements
@@ -76,7 +77,12 @@ public class MailFooterRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all mail footers.", response = MailFooterDto.class, responseContainer = "Set")
+	@Operation(summary = "Find all mail footers.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailFooterDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<MailFooterDto> findAll(
 			@QueryParam(value = "domainId") String domainId,
@@ -87,55 +93,70 @@ public class MailFooterRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a mail footer.", response = MailFooterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mail footer.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailFooterDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailFooterDto find(
-			@ApiParam(value = "Mail footer's uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mail footer's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailFooterFacade.find(uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a mail footer.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mail footer.")
 	@Override
 	public void head(
-			@ApiParam(value = "Mail footer's uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mail footer's uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		mailFooterFacade.find(uuid);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mail footer.", response = MailFooterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Create a mail footer.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailFooterDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailFooterDto create(
-			@ApiParam(value = "Mail footer to create.", required = true) MailFooterDto dto)
+			@Parameter(description = "Mail footer to create.", required = true) MailFooterDto dto)
 			throws BusinessException {
 		return mailFooterFacade.create(dto);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mail footer.", response = MailFooterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update a mail footer.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailFooterDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailFooterDto update(
-			@ApiParam(value = "Mail footer to update.", required = true) MailFooterDto dto)
+			@Parameter(description = "Mail footer to update.", required = true) MailFooterDto dto)
 			throws BusinessException {
 		return mailFooterFacade.update(dto);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete an unused mail footer.", response = MailFooterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Delete an unused mail footer.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailFooterDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailFooterDto delete(
-			@ApiParam(value = "Mail footer to delete.", required = true) MailFooterDto dto)
+			@Parameter(description = "Mail footer to delete.", required = true) MailFooterDto dto)
 			throws BusinessException {
 		return mailFooterFacade.delete(dto.getUuid());
 	}

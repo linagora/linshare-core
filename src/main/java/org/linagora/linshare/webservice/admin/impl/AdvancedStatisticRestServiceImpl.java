@@ -47,14 +47,15 @@ import org.linagora.linshare.core.facade.webservice.admin.AdvancedStatisticsFaca
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 import org.linagora.linshare.webservice.admin.AdvancedStatisticRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/advanced_statistic")
-@Api(value = "/rest/admin/advanced_statistic", description = "advancedStatistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class AdvancedStatisticRestServiceImpl implements AdvancedStatisticRestService {
@@ -68,19 +69,20 @@ public class AdvancedStatisticRestServiceImpl implements AdvancedStatisticRestSe
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get a Advanced statistic (MimeType) Between two dates.", response = MimeTypeStatistic.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User has not Admin role"),
-			@ApiResponse(code = 404, message = "Statistic not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Get a Advanced statistic (MimeType) Between two dates.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimeTypeStatistic.class))),
+			responseCode = "200"
+		)
+	})
 	public Set<MimeTypeStatistic> findBetweenTwoDates(
-			@ApiParam(value = "domain's uuid")
+			@Parameter(description = "domain's uuid")
 				@QueryParam("domainUuid") String domainUuid,
-			@ApiParam(value = "statistic's  begin date")
+			@Parameter(description = "statistic's  begin date")
 				@QueryParam("beginDate") String beginDate,
-			@ApiParam(value = "statistic's end date")
+			@Parameter(description = "statistic's end date")
 				@QueryParam("endDate") String endDate, 
-			@ApiParam(value = "MimeType")
+			@Parameter(description = "MimeType")
 				@QueryParam("mimeType") String mimeType)
 						throws BusinessException {
 		return advancedStatisticFacade.findBetweenTwoDates(domainUuid, beginDate, endDate, mimeType);

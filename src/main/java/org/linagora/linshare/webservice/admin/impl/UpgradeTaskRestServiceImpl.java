@@ -73,14 +73,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.google.common.collect.Maps;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 
 
 
 
-@Api(value = "upgrade_tasks", description = "UpgradeTask administration service.")
+
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Path("/upgrade_tasks")
@@ -125,17 +128,27 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 
 	@Path("/{identifier}")
 	@GET
-	@ApiOperation(value = "find upgrade task", response = UpgradeTaskDto.class)
+	@Operation(summary = "find upgrade task", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UpgradeTaskDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UpgradeTaskDto find(
-			@ApiParam(value = "upgrade task Uuid", required = true)
+			@Parameter(description = "upgrade task Uuid", required = true)
 				@PathParam("identifier") UpgradeTaskType identifier) throws BusinessException {
 		return facade.find(identifier);
 	}
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "find all upgrade tasks", response = UpgradeTaskDto.class, responseContainer = "List")
+	@Operation(summary = "find all upgrade tasks", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UpgradeTaskDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<UpgradeTaskDto> findAll() throws BusinessException {
 		return facade.findAll();
@@ -143,13 +156,18 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 
 	@Path("/{identifier}")
 	@PUT
-	@ApiOperation(value = "update an upgrade task", response = UpgradeTaskDto.class)
+	@Operation(summary = "update an upgrade task", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UpgradeTaskDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UpgradeTaskDto trigger(
-			@ApiParam(value = "upgrade task to update.", required = true) UpgradeTaskDto upgradeTaskDto,
-			@ApiParam(value = "upgrade task uuid", required = true)
+			@Parameter(description = "upgrade task to update.", required = true) UpgradeTaskDto upgradeTaskDto,
+			@Parameter(description = "upgrade task uuid", required = true)
 				@PathParam("identifier") UpgradeTaskType identifier,
-			@ApiParam(value = "Force running the task even it may be alreadys running. Be careful.")
+			@Parameter(description = "Force running the task even it may be alreadys running. Be careful.")
 				@DefaultValue(value="false") @QueryParam("force") Boolean force
 			) throws BusinessException {
 		AccountDto authUserDto = facade.getAuthenticatedAccountDto();
@@ -219,10 +237,15 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 
 	@Path("/{upgradeTaskUuid}/async_tasks")
 	@GET
-	@ApiOperation(value = "Get all async tasks created by an upgrade task.", response = AsyncTaskDto.class, responseContainer = "List")
+	@Operation(summary = "Get all async tasks created by an upgrade task.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AsyncTaskDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<AsyncTaskDto> findAllAsyncTask(
-			@ApiParam(value = "The upgrade tasks uuid.", required = true)
+			@Parameter(description = "The upgrade tasks uuid.", required = true)
 				@PathParam("upgradeTaskUuid") UpgradeTaskType upgradeTaskIdentifier) throws BusinessException {
 		Validate.notNull(upgradeTaskIdentifier, "Missing upgradeTaskIdentifier");
 		return asyncTaskFacade.findAll(upgradeTaskIdentifier);
@@ -230,12 +253,17 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 
 	@Path("/{upgradeTaskIdentifier}/async_tasks/{uuid}")
 	@GET
-	@ApiOperation(value = "Get one async task created by an upgrade task.", response = AsyncTaskDto.class)
+	@Operation(summary = "Get one async task created by an upgrade task.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AsyncTaskDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public AsyncTaskDto findAsyncTask(
-			@ApiParam(value = "The upgrade task identifier.", required = true)
+			@Parameter(description = "The upgrade task identifier.", required = true)
 				@PathParam("upgradeTaskIdentifier") UpgradeTaskType upgradeTaskIdentifier,
-			@ApiParam(value = "The async task uuid.", required = true)
+			@Parameter(description = "The async task uuid.", required = true)
 				@PathParam("uuid") String  uuid) throws BusinessException {
 		Validate.notNull(upgradeTaskIdentifier, "Missing upgradeTaskUuid");
 		Validate.notEmpty(uuid, "Missing async task uuid");
@@ -246,12 +274,17 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 
 	@Path("/{upgradeTaskIdentifier}/async_tasks/{uuid}/console")
 	@GET
-	@ApiOperation(value = "Get one async task created by an upgrade task.", response = UpgradeTaskLog.class, responseContainer = "List")
+	@Operation(summary = "Get one async task created by an upgrade task.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UpgradeTaskLog.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<UpgradeTaskLog> console(
-			@ApiParam(value = "The upgrade task identifier.", required = true)
+			@Parameter(description = "The upgrade task identifier.", required = true)
 				@PathParam("upgradeTaskIdentifier") UpgradeTaskType upgradeTaskIdentifier,
-				@ApiParam(value = "The async task uuid.", required = true)
+				@Parameter(description = "The async task uuid.", required = true)
 				@PathParam("uuid") String  asyncTaskUuid,
 				@QueryParam("fromDate") String fromDate
 			) throws BusinessException {

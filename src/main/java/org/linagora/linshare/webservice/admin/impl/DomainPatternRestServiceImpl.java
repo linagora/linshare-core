@@ -52,13 +52,15 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainPatternRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/domain_patterns")
-@Api(value = "/rest/admin/domain_patterns", description = "Domain patterns service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DomainPatternRestServiceImpl extends WebserviceBase implements
@@ -73,8 +75,12 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all domain patterns.", response = DomainPatternDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find all domain patterns.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<DomainPatternDto> findAll() throws BusinessException {
 		return domainPatternFacade.findAll();
@@ -82,8 +88,12 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a domain pattern.", response = DomainPatternDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a domain pattern.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainPatternDto find(@PathParam(value = "uuid") String uuid) throws BusinessException {
 		return domainPatternFacade.find(uuid);
@@ -91,8 +101,12 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a domain pattern.", response = DomainPatternDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a domain pattern.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public void head(@PathParam(value = "uuid") String uuid) throws BusinessException {
 		domainPatternFacade.find(uuid);
@@ -100,8 +114,12 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/models")
 	@GET
-	@ApiOperation(value = "Find all domain pattern's models.", response = DomainPatternDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find all domain pattern's models.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<DomainPatternDto> findAllModels() throws BusinessException {
 		return domainPatternFacade.findAllModels();
@@ -109,8 +127,12 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a domain pattern.", response = DomainPatternDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Create a domain pattern.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainPatternDto create(DomainPatternDto domainPattern)
 			throws BusinessException {
@@ -119,8 +141,12 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a domain pattern.", response = DomainPatternDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update a domain pattern.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainPatternDto update(DomainPatternDto domainPattern)
 			throws BusinessException {
@@ -129,8 +155,12 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a domain pattern.", response = DomainPatternDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Delete a domain pattern.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainPatternDto delete(DomainPatternDto domainPattern)
 			throws BusinessException {

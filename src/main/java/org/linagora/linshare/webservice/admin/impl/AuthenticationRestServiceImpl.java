@@ -49,13 +49,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.AuthenticationRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/authentication")
-@Api(value = "/rest/admin/authentication", description = "Authentication administration")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
@@ -71,7 +73,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "No operation.")
+	@Operation(summary = "No operation.")
 	@Override
 	public void noop() {
 		return; // do nothing
@@ -79,7 +81,12 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/authorized")
 	@GET
-	@ApiOperation(value = "Check if user is authorized.", response = UserDto.class)
+	@Operation(summary = "Check if user is authorized.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
 		return adminFacade.isAuthorized(Role.ADMIN);
@@ -87,8 +94,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/change_password")
 	@POST
-	@ApiOperation(value = "Change the password of the current user.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Change the password of the current user.")
 	@Override
 	public void changePassword(PasswordDto password) throws BusinessException {
 		userFacade.changePassword(password);
@@ -96,7 +102,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	@Path("/logout")
 	@GET
-	@ApiOperation(value = "Logout the current user.")
+	@Operation(summary = "Logout the current user.")
 	@Override
 	public void logout() {
 		// This code is never reach because the URL will be catch by spring security before.

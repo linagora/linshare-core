@@ -73,14 +73,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 
 
-@Api(value = "/rest/admin/users", description = "User administration service.")
+
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Path("/users")
@@ -101,10 +102,15 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/search")
 	@POST
-	@ApiOperation(value = "Search all users who match with patterns.", response = UserDto.class, responseContainer = "Set")
+	@Operation(summary = "Search all users who match with patterns.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<UserDto> search(
-			@ApiParam(value = "Patterns to search.", required = true) UserSearchDto userSearchDto)
+			@Parameter(description = "Patterns to search.", required = true) UserSearchDto userSearchDto)
 			throws BusinessException {
 		if (lessThan3Char(userSearchDto.getFirstName()) && lessThan3Char(userSearchDto.getLastName()) && lessThan3Char(userSearchDto.getMail())) {
 			logger.info("Search request less than 3 char");
@@ -115,10 +121,15 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/search/internals/{pattern}")
 	@GET
-	@ApiOperation(value = "Search among internal users.", response = UserDto.class, responseContainer = "Set")
+	@Operation(summary = "Search among internal users.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<UserDto> searchInternals(
-			@ApiParam(value = "Internal users to search for.", required = true) @PathParam("pattern") String pattern)
+			@Parameter(description = "Internal users to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
 		if (pattern.length() < 3) {
 			logger.info("Search request less than 3 char");
@@ -129,10 +140,15 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/search/guests/{pattern}")
 	@GET
-	@ApiOperation(value = "Search among guests.", response = UserDto.class, responseContainer = "Set")
+	@Operation(summary = "Search among guests.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<UserDto> searchGuests(
-			@ApiParam(value = "Guests to search for.", required = true) @PathParam("pattern") String pattern)
+			@Parameter(description = "Guests to search for.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
 		if (pattern.length() < 3) {
 			logger.info("Search request less than 3 char");
@@ -143,39 +159,49 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/autocomplete/{pattern}")
 	@GET
-	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
+	@Operation(summary = "Provide user autocompletion.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<UserDto> autocomplete(
-			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
+			@Parameter(description = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
 			throws BusinessException {
 		return autocompleteFacade.findUser(pattern);
 	}
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a user.", response = UserDto.class)
+	@Operation(summary = "Find a user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UserDto find(
-			@ApiParam(value = "User uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return userFacade.findUser(uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a user.")
+	@Operation(summary = "Find a user.")
 	@Override
 	public void head(
-			@ApiParam(value = "User uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		userFacade.findUser(uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Test if an user exists.")
+	@Operation(summary = "Test if an user exists.")
 	@Override
-	public void exist(@ApiParam(value = "User uuid.", required = true) @PathParam("uuid") String uuid) throws BusinessException {
+	public void exist(@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid) throws BusinessException {
 		if (!userFacade.exist(uuid)) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The current uuid does not refer to an existing user profile.");
 		}
@@ -183,46 +209,60 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create an user if he exists in some ldap directories.")
+	@Operation(summary = "Create an user if he exists in some ldap directories.")
 	@Override
-	public UserDto create(@ApiParam(value = "User to update", required = true) UserDto user) throws BusinessException {
+	public UserDto create(@Parameter(description = "User to update", required = true) UserDto user) throws BusinessException {
 		return userFacade.create(user);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update an user.")
+	@Operation(summary = "Update an user.")
 	@Override
 	public UserDto update(
-			@ApiParam(value = "User to update", required = true) UserDto userDto)
+			@Parameter(description = "User to update", required = true) UserDto userDto)
 			throws BusinessException {
 		return userFacade.update(userDto);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete an user.", response = UserDto.class)
+	@Operation(summary = "Delete an user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UserDto delete(
-			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
+			@Parameter(description = "User to delete.", required = true) UserDto userDto)
 			throws BusinessException {
 		return userFacade.delete(userDto);
 	}
 
 	@Path("/inconsistent")
 	@DELETE
-	@ApiOperation(value = "Delete an inconsistent user.", response = UserDto.class)
+	@Operation(summary = "Delete an inconsistent user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UserDto deleteInconsistent(
-			@ApiParam(value = "User to delete.", required = true) UserDto userDto)
+			@Parameter(description = "User to delete.", required = true) UserDto userDto)
 			throws BusinessException {
 		return userFacade.delete(userDto);
 	}
 
 	@Path("/inconsistent")
 	@GET
-	@ApiOperation(value = "Find all inconsistent users.", response = UserDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find all inconsistent users.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<UserDto> findAllInconsistent() throws BusinessException {
 		return userFacade.findAllInconsistent();
@@ -230,19 +270,22 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@Path("/inconsistent")
 	@PUT
-	@ApiOperation(value = "Update an inconsistent user's domain.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update an inconsistent user's domain.")
 	@Override
 	public void updateInconsistent(
-			@ApiParam(value = "Inconsistent user to update.", required = true) UserDto userDto)
+			@Parameter(description = "Inconsistent user to update.", required = true) UserDto userDto)
 			throws BusinessException {
 		userFacade.updateInconsistent(userDto);
 	}
 
 	@POST
 	@Path("/inconsistent/check")
-	@ApiOperation(value = "Generate a report on the adress userMail.", response = InconsistentSearchDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Generate a report on the adress userMail.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = InconsistentSearchDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<InconsistentSearchDto> check(UserSearchDto dto) {
 		return userFacade.checkInconsistentUserStatus(dto);
@@ -250,8 +293,12 @@ public class UserRestServiceImpl extends WebserviceBase implements
 
 	@POST
 	@Path("/inconsistent/autocomplete")
-	@ApiOperation(value = "Autocomplete email on every possible and available data.", response = InconsistentSearchDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Autocomplete email on every possible and available data.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = InconsistentSearchDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<String> autocompleteInconsistent(UserSearchDto dto) throws BusinessException {
 		return userFacade.autocompleteInconsistent(dto);
@@ -265,16 +312,12 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Update users email address.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't admin"),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Update users email address.")
 	@Override
 	public UpdateUsersEmailStateDto updateUsersEmail(
-			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
-			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
-			@ApiParam(value = "The given field delimiter of the csv file.", required = false) @Multipart(value = "csvFieldDelimiter", required = false) String csvFieldDelimiter,
+			@Parameter(description = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
+			@Parameter(description = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
+			@Parameter(description = "The given field delimiter of the csv file.", required = false) @Multipart(value = "csvFieldDelimiter", required = false) String csvFieldDelimiter,
 			MultipartBody body) throws BusinessException {
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");

@@ -49,14 +49,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.LogDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.LogRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/logs")
-@Api(value = "/rest/admin/logs", description = "Admin application audit service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class LogRestServiceImpl extends WebserviceBase implements
@@ -70,11 +71,15 @@ public class LogRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Search the user history with specified criteria.", response = LogDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Search the user history with specified criteria.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = LogDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<LogDto> query(
-			@ApiParam(value = "Criteria to search for.", required = true) LogCriteriaDto criteria)
+			@Parameter(description = "Criteria to search for.", required = true) LogCriteriaDto criteria)
 			throws BusinessException {
 		return logEntryFacade.query(criteria);
 	}

@@ -53,14 +53,16 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.webservice.admin.ThreadRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Deprecated(since = "2.0", forRemoval = true)
 @Path("/threads")
-@Api(value = "/rest/admin/threads", description = "Threads service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ThreadRestServiceImpl implements ThreadRestService {
@@ -74,8 +76,12 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all threads.", response = WorkGroupDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find all threads.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<WorkGroupDto> findAll(
 			@QueryParam("pattern") String pattern,
@@ -87,8 +93,12 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a thread", response = WorkGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a thread", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupDto find(@PathParam("uuid") String uuid)
 			throws BusinessException {
@@ -97,8 +107,7 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a thread")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a thread")
 	@Override
 	public void head(@PathParam("uuid") String uuid)
 			throws BusinessException {
@@ -107,8 +116,12 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/{uuid}/members")
 	@GET
-	@ApiOperation(value = "Find all thread members.", response = WorkGroupDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find all thread members.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<WorkGroupMemberDto> members(@PathParam("uuid") String uuid)
 			throws BusinessException {
@@ -117,8 +130,12 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a thread.", response = WorkGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update a thread.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupDto update(WorkGroupDto thread) throws BusinessException {
 		return threadFacade.update(thread);
@@ -126,8 +143,12 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.", response = WorkGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Delete a thread.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public WorkGroupDto delete(WorkGroupDto thread) throws BusinessException {
 		return threadFacade.delete(thread.getUuid());

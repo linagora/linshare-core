@@ -53,13 +53,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountD
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.TechnicalAccountRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/technical_accounts")
-@Api(value = "/rest/admin/technical_accounts", description = "Technical accounts service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
@@ -75,8 +77,12 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all technical accounts.", response = TechnicalAccountDto.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
+	@Operation(summary = "Find all technical accounts.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = TechnicalAccountDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<TechnicalAccountDto> findAll() throws BusinessException {
 		return technicalAccountFacade.findAll();
@@ -84,8 +90,12 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a technical account.", response = TechnicalAccountDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Find a technical account.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = TechnicalAccountDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public TechnicalAccountDto find(@PathParam(value = "uuid") String uuid) throws BusinessException {
 		return technicalAccountFacade.find(uuid);
@@ -93,8 +103,7 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a technical account.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Find a technical account.")
 	@Override
 	public void head(@PathParam(value = "uuid") String uuid) throws BusinessException {
 		technicalAccountFacade.find(uuid);
@@ -102,8 +111,12 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a technical account.", response = TechnicalAccountDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Update a technical account.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = TechnicalAccountDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public TechnicalAccountDto update(TechnicalAccountDto account)
 			throws BusinessException {
@@ -112,8 +125,12 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a technical account.", response = TechnicalAccountDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Create a technical account.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = TechnicalAccountDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public TechnicalAccountDto create(TechnicalAccountDto account)
 			throws BusinessException {
@@ -122,8 +139,12 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}/change_password")
 	@POST
-	@ApiOperation(value = "Change the password of a technical account.", response = TechnicalAccountDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Change the password of a technical account.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = TechnicalAccountDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public void changePassword(@PathParam(value = "uuid") String uuid, PasswordDto password) throws BusinessException {
 		technicalAccountFacade.changePassword(uuid, password);
@@ -131,8 +152,12 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a technical account.", response = TechnicalAccountDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Delete a technical account.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = TechnicalAccountDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public TechnicalAccountDto delete(TechnicalAccountDto account) throws BusinessException {
 		return technicalAccountFacade.delete(account);
@@ -140,8 +165,12 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a technical account.", response = TechnicalAccountDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Delete a technical account.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = TechnicalAccountDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public TechnicalAccountDto delete(@PathParam(value = "uuid") String uuid) throws BusinessException {
 		return technicalAccountFacade.delete(uuid);

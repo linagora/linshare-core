@@ -52,11 +52,14 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.ContainerQuotaDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.ContainerQuotaRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 
-@Api(value = "/rest/admin/quotas", description = "Quota administration service.")
+
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Path("/quotas")
@@ -78,13 +81,18 @@ public class ContainerQuotaRestServiceImpl extends WebserviceBase implements Con
 
 	@Path("/containers/{uuid}")
 	@GET
-	@ApiOperation(value = "find container quota", response = AccountQuotaDto.class)
+	@Operation(summary = "find container quota", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountQuotaDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ContainerQuotaDto find(
-			@ApiParam(value = "Container quota Uuid", required = true)
+			@Parameter(description = "Container quota Uuid", required = true)
 				@PathParam("uuid")
 					String uuid,
-			@ApiParam(value = "Compute real time quota value. Carefull it could be time consuming.", required = false)
+			@Parameter(description = "Compute real time quota value. Carefull it could be time consuming.", required = false)
 				@QueryParam("realtime") @DefaultValue("false")
 					boolean realTime
 				) throws BusinessException {
@@ -93,11 +101,16 @@ public class ContainerQuotaRestServiceImpl extends WebserviceBase implements Con
 
 	@Path("/containers/{uuid : .* }")
 	@PUT
-	@ApiOperation(value = "Update a container quota", response = ContainerQuotaDto.class)
+	@Operation(summary = "Update a container quota", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ContainerQuotaDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public ContainerQuotaDto update(
-			@ApiParam(value = "Container quota to update. Only quota, maxFileSize, override and maintenance fields can be updated. If null they will be ignored.", required = true) ContainerQuotaDto dto,
-			@ApiParam(value = "Container quota Uuid, if null dto.uuid is used.", required = false)
+			@Parameter(description = "Container quota to update. Only quota, maxFileSize, override and maintenance fields can be updated. If null they will be ignored.", required = true) ContainerQuotaDto dto,
+			@Parameter(description = "Container quota Uuid, if null dto.uuid is used.", required = false)
 				@PathParam("uuid") String  uuid) throws BusinessException {
 		return facade.update(dto, uuid);
 	}

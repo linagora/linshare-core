@@ -54,14 +54,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MimePolicyDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MimePolicyRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/mime_policies")
-@Api(value = "/rest/admin/mime_policies", description = "Mime policies service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MimePolicyRestServiceImpl extends WebserviceBase implements
@@ -75,12 +76,16 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all the mime policies by domain.", response = MimePolicyDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find all the mime policies by domain.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimePolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<MimePolicyDto> findAll(
-			@ApiParam(value = "Identifier of the domain which you are looking into.", required = true) @QueryParam("domainId") String domainId,
-			@ApiParam(value = "Return current and parent domain's mime policies,"
+			@Parameter(description = "Identifier of the domain which you are looking into.", required = true) @QueryParam("domainId") String domainId,
+			@Parameter(description = "Return current and parent domain's mime policies,"
 					+ " or only current domain's if onlyCurrentDomain is true.") @QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain)
 			throws BusinessException {
 		return mimePolicyFacade.findAll(domainId, onlyCurrentDomain);
@@ -88,12 +93,16 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a mime policy.", response = MimePolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mime policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimePolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MimePolicyDto find(
-			@ApiParam(value = "Uuid of the mime policy to search for.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Return mime policy with mime types.") @QueryParam("full") @DefaultValue("false") boolean full)
+			@Parameter(description = "Uuid of the mime policy to search for.", required = true) @PathParam("uuid") String uuid,
+			@Parameter(description = "Return mime policy with mime types.") @QueryParam("full") @DefaultValue("false") boolean full)
 			throws BusinessException {
 		MimePolicyDto find = mimePolicyFacade.find(uuid, full);
 		return find;
@@ -101,78 +110,100 @@ public class MimePolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a mime policy.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mime policy.")
 	@Override
 	public void head(
-			@ApiParam(value = "Uuid of the mime policy to search for.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Uuid of the mime policy to search for.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		mimePolicyFacade.find(uuid, false);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mime policy.", response = MimePolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin."),
-			@ApiResponse(code = 400, message = "Invalid mime policy.") })
+	@Operation(summary = "Create a mime policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimePolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MimePolicyDto create(
-			@ApiParam(value = "Policy to create.", required = true) MimePolicyDto policy)
+			@Parameter(description = "Policy to create.", required = true) MimePolicyDto policy)
 			throws BusinessException {
 		return mimePolicyFacade.create(policy);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mime policy.", response = MimePolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update a mime policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimePolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MimePolicyDto update(
-			@ApiParam(value = "Policy to update.", required = true) MimePolicyDto policy)
+			@Parameter(description = "Policy to update.", required = true) MimePolicyDto policy)
 			throws BusinessException {
 		return mimePolicyFacade.update(policy);
 	}
 
 	@Path("/{uuid}/enable_all")
 	@PUT
-	@ApiOperation(value = "Set all mime types to enable for the current mime policy.", response = MimePolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Set all mime types to enable for the current mime policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimePolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MimePolicyDto enableAllMimeTypes(
-			@ApiParam(value = "Uuid of the mime policy.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Uuid of the mime policy.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mimePolicyFacade.enableAllMimeTypes(uuid);
 	}
 
 	@Path("/{uuid}/disable_all")
 	@PUT
-	@ApiOperation(value = "Set all mime types to disable for the current mime policy.", response = MimePolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Set all mime types to disable for the current mime policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimePolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MimePolicyDto disableAllMimeTypes(
-			@ApiParam(value = "Uuid of the mime policy.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Uuid of the mime policy.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mimePolicyFacade.disableAllMimeTypes(uuid);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a mime policy.", response = MimePolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Delete a mime policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimePolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MimePolicyDto delete(
-			@ApiParam(value = "Identifier of the mime policy to delete.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Identifier of the mime policy to delete.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mimePolicyFacade.delete(uuid);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a mime policy.", response = MimePolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Delete a mime policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimePolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MimePolicyDto delete(
-			@ApiParam(value = "Policy to delete.", required = true) MimePolicyDto policy)
+			@Parameter(description = "Policy to delete.", required = true) MimePolicyDto policy)
 			throws BusinessException {
 		return mimePolicyFacade.delete(policy.getUuid());
 	}

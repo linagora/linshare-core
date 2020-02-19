@@ -47,14 +47,15 @@ import org.linagora.linshare.core.facade.webservice.admin.StatisticFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.StatisticDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/statistic")
-@Api(value = "/rest/admin/statistic", description = "Statistic service.", produces = "application/json, application/xml", consumes = "application/json,aaplication/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class StatisticRestServiceImpl extends WebserviceBase
 		implements org.linagora.linshare.webservice.admin.StatisticRestService {
@@ -67,23 +68,23 @@ public class StatisticRestServiceImpl extends WebserviceBase
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get Statistic Between two dates.", response = StatisticDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User has not admin role."),
-			@ApiResponse(code = 404, message = "Statistic not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Get Statistic Between two dates.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = StatisticDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<StatisticDto> findBetweenTwoDates(
-			@ApiParam(value = "account's uuid") 
+			@Parameter(description = "account's uuid") 
 				@QueryParam("accountUuid") String accountUuid,
-			@ApiParam(value = "domain's uuid")
+			@Parameter(description = "domain's uuid")
 				@QueryParam("domainUuid") String domainUuid,
-			@ApiParam(value = "begin statistic creation date")
+			@Parameter(description = "begin statistic creation date")
 				@QueryParam("beginDate") String beginDate,
-			@ApiParam(value = "end statistic creation date") 
+			@Parameter(description = "end statistic creation date") 
 				@QueryParam("endDate") String endDate,
-			@ApiParam(value = "statistic type")   
+			@Parameter(description = "statistic type")   
 				@QueryParam("statisticType") StatisticType statisticType)
 			throws BusinessException {
 		return statisticFacade.findBetweenTwoDates(accountUuid, domainUuid,

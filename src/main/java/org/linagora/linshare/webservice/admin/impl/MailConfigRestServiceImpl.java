@@ -59,14 +59,15 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailConfigRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/mail_configs")
-@Api(value = "/rest/admin/mail_configs", description = "Mail configurations used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailConfigRestServiceImpl extends WebserviceBase implements
@@ -85,8 +86,12 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all mail configurations.", response = MailConfigDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find all mail configurations.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailConfigDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<MailConfigDto> findAll(@QueryParam(value = "domainId") String domainId,
 			@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain) throws BusinessException {
@@ -95,11 +100,15 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}/mail_attachments")
 	@GET
-	@ApiOperation(value = "Find a mail configuration.", response = MailConfigDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mail configuration.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailConfigDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<MailAttachmentDto> findAllMailAttachments(
-			@ApiParam(value = "Mail configuration's uuid.", required = true)
+			@Parameter(description = "Mail configuration's uuid.", required = true)
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailAttachmentFacade.findAll(uuid);
@@ -107,76 +116,101 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a mail configuration.", response = MailConfigDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mail configuration.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailConfigDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailConfigDto find(
-			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mail configuration's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailConfigFacade.find(uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a mail configuration.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mail configuration.")
 	@Override
 	public void head(
-			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mail configuration's uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		mailConfigFacade.find(uuid);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a mail configuration.", response = MailConfigDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Create a mail configuration.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailConfigDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailConfigDto create(
-			@ApiParam(value = "Mail configuration to create.", required = true) MailConfigDto dto)
+			@Parameter(description = "Mail configuration to create.", required = true) MailConfigDto dto)
 			throws BusinessException {
 		return mailConfigFacade.create(dto);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mail configuration.", response = MailConfigDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update a mail configuration.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailConfigDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailConfigDto update(
-			@ApiParam(value = "Mail configuration to update.", required = true) MailConfigDto dto)
+			@Parameter(description = "Mail configuration to update.", required = true) MailConfigDto dto)
 			throws BusinessException {
 		return mailConfigFacade.update(dto);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete an unused mail configuration.", response = MailConfigDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Delete an unused mail configuration.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailConfigDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailConfigDto delete(
-			@ApiParam(value = "Mail configuration to delete.", required = true) MailConfigDto dto)
+			@Parameter(description = "Mail configuration to delete.", required = true) MailConfigDto dto)
 			throws BusinessException {
 		return mailConfigFacade.delete(dto.getUuid());
 	}
 
 	@Path("/{mailConfigUuid}/mail_contents")
 	@GET
-	@ApiOperation(value = "Find all mail contents.", response = MailContentDto.class, responseContainer = "Set")
+	@Operation(summary = "Find all mail contents.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailContentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<MailContentDto> findAllContents(
-			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid,
-			@ApiParam(value = "Mail content type.", required = true) @QueryParam("mailContentType") String mailContentType)
+			@Parameter(description = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid,
+			@Parameter(description = "Mail content type.", required = true) @QueryParam("mailContentType") String mailContentType)
 			throws BusinessException {
 		return mailConfigFacade.findAllContents(mailConfigUuid, mailContentType);
 	}
 
 	@Path("/{mailConfigUuid}/mail_footers")
 	@GET
-	@ApiOperation(value = "Find all mail footers.", response = MailContentDto.class, responseContainer = "Set")
+	@Operation(summary = "Find all mail footers.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailContentDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<MailFooterDto> findAllFooters(
-			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid)
+			@Parameter(description = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid)
 			throws BusinessException {
 		return mailConfigFacade.findAllFooters(mailConfigUuid);
 	}

@@ -51,14 +51,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestHist
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UploadRequestRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/upload_requests")
-@Api(value = "/rest/admin/upload_requests", description = "History requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestRestServiceImpl extends WebserviceBase implements
@@ -73,8 +74,12 @@ public class UploadRequestRestServiceImpl extends WebserviceBase implements
 
 	@Path("/history/{requestUuid}")
 	@GET
-	@ApiOperation(value = "Search all history entries for an upload request.", response = UploadRequestHistoryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Search all history entries for an upload request.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadRequestHistoryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<UploadRequestHistoryDto> findAll(
 			@PathParam(value = "requestUuid") String requestUuid)
@@ -84,11 +89,15 @@ public class UploadRequestRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Search all upload request by criteria.", response = UploadRequestHistoryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Search all upload request by criteria.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadRequestHistoryDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<UploadRequestDto> findAllByCriteria(
-			@ApiParam(value = "Criteria to search for.", required = true) UploadRequestCriteriaDto dto)
+			@Parameter(description = "Criteria to search for.", required = true) UploadRequestCriteriaDto dto)
 			throws BusinessException {
 		return uploadRequestFacade.findAll(dto.getStatus(), dto.getAfterDate(),
 				dto.getBeforeDate());

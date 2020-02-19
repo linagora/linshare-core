@@ -53,11 +53,15 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdmin
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.FunctionalityRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/functionalities")
-@Api(value = "/rest/admin/functionalities", description = "Functionalities service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class FunctionalityRestServiceImpl extends WebserviceBase implements
@@ -72,7 +76,12 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityAdminDto.class, responseContainer = "Set")
+	@Operation(summary = "Find all domain's functionalities.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = FunctionalityAdminDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<FunctionalityAdminDto> findAll(
 			@QueryParam(value = "domainId") String domainId,
@@ -85,7 +94,12 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{funcId}")
 	@GET
-	@ApiOperation(value = "Find a domain's functionality.", response = FunctionalityAdminDto.class)
+	@Operation(summary = "Find a domain's functionality.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = FunctionalityAdminDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public FunctionalityAdminDto find(
 			@QueryParam(value = "domainId") String domainId,
@@ -97,7 +111,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a domain's functionality.")
+	@Operation(summary = "Update a domain's functionality.")
 	@Override
 	public FunctionalityAdminDto update(FunctionalityAdminDto func)
 			throws BusinessException {
@@ -106,7 +120,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a domain's functionality.")
+	@Operation(summary = "Delete a domain's functionality.")
 	@Override
 	public void delete(FunctionalityAdminDto func) throws BusinessException {
 		functionalityFacade.delete(func);

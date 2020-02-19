@@ -59,14 +59,15 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.PublicKeyRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/public_keys")
-@Api(value = "/rest/admin/public_keys", description = "Public keys API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKeyRestService {
@@ -80,28 +81,30 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find public key by uuid.", response = PublicKeyLs.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-			@ApiResponse(code = 404, message = "PublicKeys not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find public key by uuid.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PublicKeyLs.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public PublicKeyLs find(
-			@ApiParam(value = "public key uuid", required = true)
+			@Parameter(description = "public key uuid", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return publicKeyFacade.find(uuid);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Store a new public key.", response = PublicKeyLs.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-			@ApiResponse(code = 404, message = "PublicKeys not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Store a new public key.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PublicKeyLs.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public PublicKeyLs create(
-			@ApiParam(value = "New public key", required = true)
+			@Parameter(description = "New public key", required = true)
 				PublicKeyLs publicKeyLs) throws BusinessException {
 		return publicKeyFacade.create(publicKeyLs);
 	}
@@ -109,23 +112,24 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 	@Path("/")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@ApiOperation(value = "Store a new public key from file.", response = PublicKeyLs.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-			@ApiResponse(code = 404, message = "PublicKeys not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Store a new public key from file.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PublicKeyLs.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public PublicKeyLs create(
-			@ApiParam(value = "New temp file containing public key", required = true)
+			@Parameter(description = "New temp file containing public key", required = true)
 			@Multipart(value = "file", required = true)
 				InputStream publicKeyInputS,
-			@ApiParam(value = "The name for Domain Uuid ", required = true)
+			@Parameter(description = "The name for Domain Uuid ", required = true)
 			@Multipart(value = "domainUuid", required = true)
 				String domainUuid,
-			@ApiParam(value = "The name of issuer", required = true)
+			@Parameter(description = "The name of issuer", required = true)
 			@Multipart(value = "issuer", required = true)
 				String issuer,
-			@ApiParam(value = "Type of Format", required = true)
+			@Parameter(description = "Type of Format", required = true)
 			@Multipart(value = "formatType", required = true)
 				PublicKeyFormat format) throws BusinessException {
 		return publicKeyFacade.create(publicKeyInputS, domainUuid, issuer, format);
@@ -133,48 +137,49 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find a list of public keys by Domain uuid.", response = PublicKeyLs.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission.") ,
-					@ApiResponse(code = 404, message = "PublicKeys not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-		})
+	@Operation(summary = "Find a list of public keys by Domain uuid.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PublicKeyLs.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<PublicKeyLs> findAll(
-			@ApiParam(value = "Domain uuid", required = true)
+			@Parameter(description = "Domain uuid", required = true)
 				@QueryParam("domainUuid") String domainUuid) throws BusinessException {
 		return publicKeyFacade.findAll(domainUuid);
 	}
 
 	@Path("/{uuid : .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a public keys.", response = PublicKeyLs.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-			@ApiResponse(code = 404, message = "PublicKeys not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a public keys.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = PublicKeyLs.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public PublicKeyLs delete(
-			@ApiParam(value = "public key to delete", required = true)
+			@Parameter(description = "public key to delete", required = true)
 				PublicKeyLs publicKeyLs,
-			@ApiParam(value = "public key uuid to delete", required = false)
+			@Parameter(description = "public key uuid to delete", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return publicKeyFacade.delete(uuid, publicKeyLs);
 	}
 
 	@Path("/audit/{domainUuid}")
 	@GET
-	@ApiOperation(value = "Get all traces for a public keys.", response = AuditLogEntryUser.class, responseContainer="Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-					@ApiResponse(code = 404, message = "PublicKeyLs not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-		})
+	@Operation(summary = "Get all traces for a public keys.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<AuditLogEntryAdmin> findAll(
-			@ApiParam(value = "The domain uuid.", required = true)
+			@Parameter(description = "The domain uuid.", required = true)
 				@PathParam("domainUuid") String domainUuid,
-			@ApiParam(value = "Filter by type of actions..", required = false)
+			@Parameter(description = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions) {
 		return publicKeyFacade.findAll(domainUuid, actions);
 	}

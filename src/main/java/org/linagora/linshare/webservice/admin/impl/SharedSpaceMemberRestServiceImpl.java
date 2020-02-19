@@ -50,14 +50,15 @@ import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.webservice.admin.SharedSpaceMemberRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/shared_space_members")
-@Api(value = "/rest/admin/shared_space_members", description = "Shared space member service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestService {
@@ -71,14 +72,15 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a shared space member.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find a shared space member.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceMember.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceMember find(
-			@ApiParam(value = "Shared space member uuid", required = true)
+			@Parameter(description = "Shared space member uuid", required = true)
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.find(null, uuid);
@@ -86,31 +88,33 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "create a shared space member.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "create a shared space member.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceMember.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceMember addMember(
-			@ApiParam(value = "shared space member to create", required = true) SharedSpaceMember sharedSpaceNodeMember)
+			@Parameter(description = "shared space member to create", required = true) SharedSpaceMember sharedSpaceNodeMember)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.create(null, sharedSpaceNodeMember);
 	}
 
 	@Path("/{uuid : .*}")
 	@PUT
-	@ApiOperation(value = "Update a shared space member.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update a shared space member.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceMember.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceMember update(
-			@ApiParam(value = "The shared space memnber to update.", required = true) SharedSpaceMember ssMember,
-			@ApiParam("The shared space member to update.")
+			@Parameter(description = "The shared space memnber to update.", required = true) SharedSpaceMember ssMember,
+			@Parameter(description = "The shared space member to update.")
 				@PathParam("uuid") String uuid,
-			@ApiParam("If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
+			@Parameter(description = "If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
 				@QueryParam("force") @DefaultValue("false") boolean force)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.update(null, ssMember, uuid, force);
@@ -118,15 +122,16 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 
 	@Path("/{uuid : .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a shared space member.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a shared space member.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceMember.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceMember delete(
-			@ApiParam(value = "The shared space member to delete.", required = true) SharedSpaceMember ssMember,
-			@ApiParam("The shared space member to delete.")
+			@Parameter(description = "The shared space member to delete.", required = true) SharedSpaceMember ssMember,
+			@Parameter(description = "The shared space member to delete.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.delete(null, ssMember, uuid);

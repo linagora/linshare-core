@@ -48,14 +48,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MimeTypeRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/mime_types")
-@Api(value = "/rest/admin/mime_types", description = "Mime types service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MimeTypeRestServiceImpl extends WebserviceBase implements
@@ -70,33 +71,35 @@ public class MimeTypeRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a mime type.", response = MimeTypeDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mime type.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimeTypeDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MimeTypeDto find(
-			@ApiParam(value = "Uuid of the mime type to search for.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Uuid of the mime type to search for.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mimeTypeFacade.find(uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a mime type.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mime type.")
 	@Override
 	public void head(
-			@ApiParam(value = "Uuid of the mime type to search for.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Uuid of the mime type to search for.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		mimeTypeFacade.find(uuid);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mime type.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update a mime type.")
 	@Override
 	public MimeTypeDto update(
-			@ApiParam(value = "Policy to update.", required = true) MimeTypeDto policy)
+			@Parameter(description = "Policy to update.", required = true) MimeTypeDto policy)
 			throws BusinessException {
 		return mimeTypeFacade.update(policy);
 	}

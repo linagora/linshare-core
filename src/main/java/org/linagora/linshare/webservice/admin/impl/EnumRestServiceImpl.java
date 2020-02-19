@@ -55,18 +55,22 @@ import org.linagora.linshare.webservice.admin.EnumRestService;
 import org.linagora.linshare.webservice.utils.EnumResourceUtils;
 
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/enums")
-@Api(value = "/rest/admin/enums", description = "Enums service.")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class EnumRestServiceImpl extends WebserviceBase implements EnumRestService {
 
 	@Path("/")
 	@HEAD
-	@ApiOperation(value = "Find all enums available.")
+	@Operation(summary = "Find all enums available.")
 	@Override
 	public Response findAll(@Context UriInfo info) throws BusinessException {
 		List<Link> res = Lists.newArrayList();
@@ -82,7 +86,7 @@ public class EnumRestServiceImpl extends WebserviceBase implements EnumRestServi
 
 	@Path("/{enum}")
 	@OPTIONS
-	@ApiOperation(value = "Find all values for an enum.")
+	@Operation(summary = "Find all values for an enum.")
 	@Override
 	public Response options(@PathParam("enum") String enumName)
 			throws BusinessException {

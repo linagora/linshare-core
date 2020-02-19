@@ -52,14 +52,15 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.GroupLdapPatternDt
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.GroupPatternRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/group_patterns")
-@Api(value = "/rest/admin/group_patterns", description = "Group patterns service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class GroupPatternRestServiceImpl extends WebserviceBase implements GroupPatternRestService {
@@ -73,11 +74,12 @@ public class GroupPatternRestServiceImpl extends WebserviceBase implements Group
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all group patterns.", response = DomainPatternDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-		@ApiResponse(code = 404, message = "GroupPattern not found."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find all group patterns.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<GroupLdapPatternDto> findAll() throws BusinessException {
 		return groupPatternFacade.findAllPublicGroupPatterns();
@@ -85,11 +87,12 @@ public class GroupPatternRestServiceImpl extends WebserviceBase implements Group
 
 	@Path("/models")
 	@GET
-	@ApiOperation(value = "Find all groups pattern's  models.", response = DomainPatternDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-		@ApiResponse(code = 404, message = "GroupPattern not found."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find all groups pattern's  models.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<GroupLdapPatternDto> findAllGroupPattern() throws BusinessException {
 		return groupPatternFacade.findAll();
@@ -97,41 +100,44 @@ public class GroupPatternRestServiceImpl extends WebserviceBase implements Group
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a group pattern.", response = DomainPatternDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-		@ApiResponse(code = 404, message = "GroupPattern not found."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find a group pattern.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GroupLdapPatternDto find(
-			@ApiParam(value = "group pattern uuid", required = true)
+			@Parameter(description = "group pattern uuid", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return groupPatternFacade.find(uuid);
 	}
 
 	@Path("/{uuid : .*}")
 	@PUT
-	@ApiOperation(value = "Update a group pattern.", response = DomainPatternDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-		@ApiResponse(code = 404, message = "GroupPattern not found."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Update a group pattern.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GroupLdapPatternDto update(
-			@ApiParam(value = "group pattern to update", required = true)
+			@Parameter(description = "group pattern to update", required = true)
 				GroupLdapPatternDto groupPattern,
-			@ApiParam(value = "group pattern uuid", required = false)
+			@Parameter(description = "group pattern uuid", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return groupPatternFacade.update(groupPattern, uuid);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a group pattern.", response = DomainPatternDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-		@ApiResponse(code = 404, message = "GroupPattern not found."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Create a group pattern.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GroupLdapPatternDto create(GroupLdapPatternDto groupPattern) throws BusinessException {
 		return groupPatternFacade.create(groupPattern);
@@ -139,16 +145,17 @@ public class GroupPatternRestServiceImpl extends WebserviceBase implements Group
 
 	@Path("/{uuid : .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a group pattern.", response = DomainPatternDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
-		@ApiResponse(code = 404, message = "GroupPattern not found."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Delete a group pattern.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPatternDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GroupLdapPatternDto delete(
-			@ApiParam(value = "group pattern to delete", required = false)
+			@Parameter(description = "group pattern to delete", required = false)
 			GroupLdapPatternDto groupPattern,
-			@ApiParam(value = "group pattern uuid to delete (required if groupPattern is null)", required = false)
+			@Parameter(description = "group pattern uuid to delete (required if groupPattern is null)", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return groupPatternFacade.delete(groupPattern, uuid);
 	}

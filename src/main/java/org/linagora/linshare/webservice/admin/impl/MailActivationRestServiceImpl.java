@@ -54,12 +54,15 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.MailActivationAdmi
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailActivationRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/mail_activations")
-@Api(value = "/rest/admin/mail_activations", description = "Mail activations service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailActivationRestServiceImpl extends WebserviceBase implements
@@ -75,39 +78,59 @@ public class MailActivationRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all domain's mail activations.", response = FunctionalityAdminDto.class, responseContainer = "List")
+	@Operation(summary = "Find all domain's mail activations.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = FunctionalityAdminDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<MailActivationAdminDto> findAll(
-			@ApiParam(value = "Domain identifier.", required = false) @QueryParam(value = "domainId") String domainId)
+			@Parameter(description = "Domain identifier.", required = false) @QueryParam(value = "domainId") String domainId)
 			throws BusinessException {
 		return facade.findAll(domainId);
 	}
 
 	@Path("/{mailActivationId}")
 	@GET
-	@ApiOperation(value = "Find a domain's mail activations.", response = FunctionalityAdminDto.class)
+	@Operation(summary = "Find a domain's mail activations.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = FunctionalityAdminDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailActivationAdminDto find(
-			@ApiParam(value = "Domain identifier.", required = false) @QueryParam(value = "domainId") String domainId,
-			@ApiParam(value = "Mail activation identifier.", required = true) @PathParam(value = "mailActivationId") String mailActivationId)
+			@Parameter(description = "Domain identifier.", required = false) @QueryParam(value = "domainId") String domainId,
+			@Parameter(description = "Mail activation identifier.", required = true) @PathParam(value = "mailActivationId") String mailActivationId)
 			throws BusinessException {
 		return facade.find(domainId, mailActivationId);
 	}
 
 	@Path("/{mailActivationId}")
 	@HEAD
-	@ApiOperation(value = "Find a domain's mail activations.", response = FunctionalityAdminDto.class)
+	@Operation(summary = "Find a domain's mail activations.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = FunctionalityAdminDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public void head(
-			@ApiParam(value = "Domain identifier.", required = false) @QueryParam(value = "domainId") String domainId,
-			@ApiParam(value = "Mail activation identifier.", required = true) @PathParam(value = "mailActivationId") String mailActivationId)
+			@Parameter(description = "Domain identifier.", required = false) @QueryParam(value = "domainId") String domainId,
+			@Parameter(description = "Mail activation identifier.", required = true) @PathParam(value = "mailActivationId") String mailActivationId)
 					throws BusinessException {
 		facade.find(domainId, mailActivationId);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a domain's mail activations.", response = FunctionalityAdminDto.class)
+	@Operation(summary = "Update a domain's mail activations.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = FunctionalityAdminDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailActivationAdminDto update(MailActivationAdminDto mailActivation)
 			throws BusinessException {
@@ -116,7 +139,7 @@ public class MailActivationRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a domain's mail activations.")
+	@Operation(summary = "Delete a domain's mail activations.")
 	@Override
 	public void delete(MailActivationAdminDto mailActivation)
 			throws BusinessException {

@@ -48,14 +48,15 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterLangDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailFooterLangRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/mail_footer_langs")
-@Api(value = "/rest/admin/mail_footer_langs", description = "Mail footer langs used by domains")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailFooterLangRestServiceImpl extends WebserviceBase implements
@@ -71,33 +72,35 @@ public class MailFooterLangRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a mail footer lang.", response = MailFooterLangDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mail footer lang.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailFooterLangDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public MailFooterLangDto find(
-			@ApiParam(value = "Mail footer lang's uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mail footer lang's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return mailFooterLangFacade.find(uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a mail footer lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Find a mail footer lang.")
 	@Override
 	public void head(
-			@ApiParam(value = "Mail footer lang's uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Mail footer lang's uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		mailFooterLangFacade.find(uuid);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a mail footer lang.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Operation(summary = "Update a mail footer lang.")
 	@Override
 	public MailFooterLangDto update(
-			@ApiParam(value = "Mail footer lang to update.", required = true) MailFooterLangDto dto)
+			@Parameter(description = "Mail footer lang to update.", required = true) MailFooterLangDto dto)
 			throws BusinessException {
 		return mailFooterLangFacade.update(dto);
 	}

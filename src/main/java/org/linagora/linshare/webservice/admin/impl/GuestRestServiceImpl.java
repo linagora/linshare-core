@@ -46,12 +46,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.GuestRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 
 
-@Api(value = "/rest/admin/guests", description = "Guests administration service.")
+
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Path("/guests")
@@ -66,10 +69,15 @@ public class GuestRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a guest.", response = GuestDto.class)
+	@Operation(summary = "Find a guest.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public GuestDto find(
-			@ApiParam(value = "Guest uuid.", required = true) @PathParam("uuid") String uuid)
+			@Parameter(description = "Guest uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		return guestFacade.find(uuid);
 	}

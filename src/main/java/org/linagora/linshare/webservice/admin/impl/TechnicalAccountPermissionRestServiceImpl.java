@@ -48,13 +48,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountD
 import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountPermissionDto;
 import org.linagora.linshare.webservice.admin.TechnicalAccountPermissionRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/technical_account_permissions")
-@Api(value = "/rest/admin/technical_account_permissions", description = "Technical account permissions service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class TechnicalAccountPermissionRestServiceImpl implements
@@ -70,8 +72,7 @@ public class TechnicalAccountPermissionRestServiceImpl implements
 	
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a technical account permission.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Update a technical account permission.")
 	@Override
 	public TechnicalAccountPermissionDto update(TechnicalAccountPermissionDto permission)
 			throws BusinessException {
@@ -80,8 +81,12 @@ public class TechnicalAccountPermissionRestServiceImpl implements
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a technical account permission.", response = TechnicalAccountDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Find a technical account permission.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = TechnicalAccountDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public TechnicalAccountPermissionDto find(@PathParam(value = "uuid") String uuid) throws BusinessException {
 		return technicalAccountFacade.find(uuid);
@@ -89,8 +94,7 @@ public class TechnicalAccountPermissionRestServiceImpl implements
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find a technical account permission.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
+	@Operation(summary = "Find a technical account permission.")
 	@Override
 	public void head(@PathParam(value = "uuid") String uuid) throws BusinessException {
 		technicalAccountFacade.find(uuid);

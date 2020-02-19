@@ -54,18 +54,19 @@ import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UploadPropositionFilterRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 /*
  * TODO:
  * - swagger documentation
  */
 @Path("/upload_proposition_filters")
-@Api(value = "/rest/admin/upload_proposition_filters", description = "Upload proposition filters API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
@@ -81,13 +82,15 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/domains/{domainUuid}")
 	@GET
-	@ApiOperation(value = "Find all filters.", response = UploadPropositionFilter.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Find all filters.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadPropositionFilter.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<UploadPropositionFilter> findAll(
-			@ApiParam(value = "Domain uuid", required = true)
+			@Parameter(description = "Domain uuid", required = true)
 				@PathParam("domainUuid") String domainUuid)
 			throws BusinessException {
 		return uploadPropositionFilterFacade.findAll(domainUuid);
@@ -95,15 +98,17 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/{uuid}/domains/{domainUuid}")
 	@GET
-	@ApiOperation(value = "Find a filter", response = UploadPropositionFilterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Find a filter", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadPropositionFilterDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UploadPropositionFilter find(
-			@ApiParam(value = "Filter uuid", required = true)
+			@Parameter(description = "Filter uuid", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "Domain uuid", required = true)
+			@Parameter(description = "Domain uuid", required = true)
 				@PathParam("domainUuid") String domainUuid)
 			throws BusinessException {
 		return uploadPropositionFilterFacade.find(uuid, domainUuid);
@@ -111,15 +116,12 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/{uuid}/domains/{domainUuid}")
 	@HEAD
-	@ApiOperation(value = "Find a filter")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Find a filter")
 	@Override
 	public void head(
-			@ApiParam(value = "Filter uuid", required = true)
+			@Parameter(description = "Filter uuid", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "Domain uuid", required = true)
+			@Parameter(description = "Domain uuid", required = true)
 				@PathParam("domainUuid") String domainUuid)
 			throws BusinessException {
 		uploadPropositionFilterFacade.find(uuid, domainUuid);
@@ -127,27 +129,31 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a filter.", response = UploadPropositionFilter.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Create a filter.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadPropositionFilter.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UploadPropositionFilter create(
-			@ApiParam(value = "Payload to create a upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter)
+			@Parameter(description = "Payload to create a upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter)
 			throws BusinessException {
 		return uploadPropositionFilterFacade.create(uploadPropositionFilter);
 	}
 
 	@Path("/{uuid : .*}")
 	@PUT
-	@ApiOperation(value = "Update a filter.", response = UploadPropositionFilter.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Update a filter.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadPropositionFilter.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UploadPropositionFilter update(
-			@ApiParam(value = "Payload to update an upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter,
-			@ApiParam(value = "Filter uuid, if null uploadPropositionFilter.uuid is used.", required = false)
+			@Parameter(description = "Payload to update an upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter,
+			@Parameter(description = "Filter uuid, if null uploadPropositionFilter.uuid is used.", required = false)
 					@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return uploadPropositionFilterFacade.update(uploadPropositionFilter, uuid);
@@ -155,14 +161,16 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/{uuid : .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a filter.", response = UploadPropositionFilterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Delete a filter.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadPropositionFilterDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public UploadPropositionFilter delete(
-			@ApiParam(value = "Payload to delete an upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter,
-			@ApiParam(value = "Filter uuid, if null uploadPropositionFilter.uuid is used.", required = false)
+			@Parameter(description = "Payload to delete an upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter,
+			@Parameter(description = "Filter uuid, if null uploadPropositionFilter.uuid is used.", required = false)
 					@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return uploadPropositionFilterFacade.delete(uploadPropositionFilter, uuid);

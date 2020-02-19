@@ -53,14 +53,15 @@ import org.linagora.linshare.mongo.entities.BasicStatistic;
 import org.linagora.linshare.mongo.entities.ExceptionStatistic;
 import org.linagora.linshare.webservice.admin.ExceptionStatisticRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/exception_statistic")
-@Api(value = "/rest/admin/exception_statistic", description = "exceptionStatistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class ExceptionStatisticRestServiceImpl implements ExceptionStatisticRestService {
@@ -74,21 +75,22 @@ public class ExceptionStatisticRestServiceImpl implements ExceptionStatisticRest
 
 	@Path("/{domainUuid}")
 	@GET
-	@ApiOperation(value = "Get a Exception statistic Between two dates.", response = BasicStatistic.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User has not Admin role"),
-			@ApiResponse(code = 404, message = "Statistic not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Operation(summary = "Get a Exception statistic Between two dates.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = BasicStatistic.class))),
+			responseCode = "200"
+		)
+	})
 	public Set<ExceptionStatistic> findBetweenTwoDates(
-			@ApiParam(value = "domain's uuid")
+			@Parameter(description = "domain's uuid")
 				@PathParam("domainUuid") String domainUuid,
-			@ApiParam(value = "statistic's  begin date")
+			@Parameter(description = "statistic's  begin date")
 				@QueryParam("beginDate") String beginDate,
-			@ApiParam(value = "statistic's end date")
+			@Parameter(description = "statistic's end date")
 				@QueryParam("endDate") String endDate, 
-			@ApiParam(value = "Exception types")
+			@Parameter(description = "Exception types")
 				@QueryParam("exceptionTypes") List<ExceptionType> exceptionTypes,
-			@ApiParam(value = "exception statistic's type")
+			@Parameter(description = "exception statistic's type")
 				@QueryParam("type") ExceptionStatisticType type)
 			throws BusinessException {
 		return exceptionStatisticFacade.findBetweenTwoDates(domainUuid, beginDate, endDate, exceptionTypes, type);

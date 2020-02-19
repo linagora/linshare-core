@@ -51,11 +51,14 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.DomainQuotaDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainQuotaRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 
-@Api(value = "/rest/admin/quotas", description = "Quota administration service.")
+
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Path("/quotas")
@@ -69,23 +72,33 @@ public class DomainQuotaRestServiceImpl extends WebserviceBase implements Domain
 
 	@Path("/domains")
 	@GET
-	@ApiOperation(value = "Return domain quotas.", response = DomainQuotaDto.class, responseContainer="List")
+	@Operation(summary = "Return domain quotas.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainQuotaDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<DomainQuotaDto> findAll(
-			@ApiParam(value = "Filter domain quotas by its parent uuid.", required = false) 
+			@Parameter(description = "Filter domain quotas by its parent uuid.", required = false) 
 				@QueryParam("parent") String parentUuid) throws BusinessException {
 		return facade.findAll(parentUuid);
 	}
 
 	@Path("/domains/{uuid}")
 	@GET
-	@ApiOperation(value = "find domain quota", response = DomainQuotaDto.class)
+	@Operation(summary = "find domain quota", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainQuotaDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainQuotaDto find(
-			@ApiParam(value = "Domain quota Uuid", required = true)
+			@Parameter(description = "Domain quota Uuid", required = true)
 				@PathParam("uuid")
 					String uuid,
-			@ApiParam(value = "Compute real time quota value. Carefull it could be time consuming.", required = false)
+			@Parameter(description = "Compute real time quota value. Carefull it could be time consuming.", required = false)
 				@QueryParam("realtime") @DefaultValue("false")
 					boolean realTime
 					) throws BusinessException {
@@ -94,11 +107,16 @@ public class DomainQuotaRestServiceImpl extends WebserviceBase implements Domain
 
 	@Path("/domains/{uuid : .*}")
 	@PUT
-	@ApiOperation(value = "Update a domain quota", response = DomainQuotaDto.class)
+	@Operation(summary = "Update a domain quota", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainQuotaDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainQuotaDto update(
-			@ApiParam(value = "Domain quota to update. Only quota, override and maintenance field can be updated. If null they will be ignored.", required = true) DomainQuotaDto dto,
-			@ApiParam(value = "Domain quota Uuid, if null dto.uuid is used.", required = false)
+			@Parameter(description = "Domain quota to update. Only quota, override and maintenance field can be updated. If null they will be ignored.", required = true) DomainQuotaDto dto,
+			@Parameter(description = "Domain quota Uuid, if null dto.uuid is used.", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return facade.update(dto, uuid);
 	}

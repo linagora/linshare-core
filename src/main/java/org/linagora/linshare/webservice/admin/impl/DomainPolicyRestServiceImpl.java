@@ -52,14 +52,15 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainPolicyRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/domain_policies")
-@Api(value = "/rest/admin/domain_policies", description = "Domain policies service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DomainPolicyRestServiceImpl extends WebserviceBase implements
@@ -74,8 +75,12 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all the domain policies.", response = DomainPolicyDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
+	@Operation(summary = "Find all the domain policies.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public Set<DomainPolicyDto> findAll() throws BusinessException {
 		return domainPolicyFacade.findAll();
@@ -83,72 +88,90 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{policyId}")
 	@GET
-	@ApiOperation(value = "Find a domain policy.", response = DomainPolicyDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't superadmin."),
-			@ApiResponse(code = 404, message = "Domain policy not found.") })
+	@Operation(summary = "Find a domain policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainPolicyDto find(
-			@ApiParam(value = "Identifier of the domain policy to search for.", required = true) @PathParam("policyId") String policyId)
+			@Parameter(description = "Identifier of the domain policy to search for.", required = true) @PathParam("policyId") String policyId)
 			throws BusinessException {
 		return domainPolicyFacade.find(policyId);
 	}
 
 	@Path("/{policyId}")
 	@HEAD
-	@ApiOperation(value = "Check if a domain policy exists.", response = DomainPolicyDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't superadmin."),
-			@ApiResponse(code = 404, message = "Domain policy not found.") })
+	@Operation(summary = "Check if a domain policy exists.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public void head(
-			@ApiParam(value = "Identifier of the domain policy to search for.", required = true) @PathParam("policyId") String policyId)
+			@Parameter(description = "Identifier of the domain policy to search for.", required = true) @PathParam("policyId") String policyId)
 			throws BusinessException {
 		domainPolicyFacade.find(policyId);
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a domain policy.", response = DomainPolicyDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "User isn't superadmin."),
-			@ApiResponse(code = 400, message = "Invalid domain policy.") })
+	@Operation(summary = "Create a domain policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainPolicyDto create(
-			@ApiParam(value = "Policy to create.", required = true) DomainPolicyDto policy)
+			@Parameter(description = "Policy to create.", required = true) DomainPolicyDto policy)
 			throws BusinessException {
 		return domainPolicyFacade.create(policy);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a domain policy.", response = DomainPolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
+	@Operation(summary = "Update a domain policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainPolicyDto update(
-			@ApiParam(value = "Policy to update.", required = true) DomainPolicyDto policy)
+			@Parameter(description = "Policy to update.", required = true) DomainPolicyDto policy)
 			throws BusinessException {
 		return domainPolicyFacade.update(policy);
 	}
 
 	@Path("/{policyId}")
 	@DELETE
-	@ApiOperation(value = "Delete a domain policy.", response = DomainPolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
+	@Operation(summary = "Delete a domain policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainPolicyDto delete(
-			@ApiParam(value = "Identifier of the domain policy to delete.", required = true) @PathParam("policyId") String policyId)
+			@Parameter(description = "Identifier of the domain policy to delete.", required = true) @PathParam("policyId") String policyId)
 			throws BusinessException {
 		return domainPolicyFacade.delete(policyId);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a domain policy.", response = DomainPolicyDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't superadmin.") })
+	@Operation(summary = "Delete a domain policy.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainPolicyDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public DomainPolicyDto delete(
-			@ApiParam(value = "Policy to delete.", required = true) DomainPolicyDto policy)
+			@Parameter(description = "Policy to delete.", required = true) DomainPolicyDto policy)
 			throws BusinessException {
 		return domainPolicyFacade.delete(policy.getIdentifier());
 	}

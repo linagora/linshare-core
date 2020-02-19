@@ -48,14 +48,15 @@ import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.webservice.admin.SharedSpaceRoleRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/shared_space_roles")
-@Api(value = "/rest/admin/shared_space_roles", description = "Shared space role service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestService {
@@ -69,14 +70,15 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	
 	@Path("{uuid}")
 	@GET
-	@ApiOperation(value = "Find a shared space role.", response = SharedSpacePermission.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Find a shared space role.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpacePermission.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public SharedSpaceRole find(
-			@ApiParam(value = "The shared space role uuid.")
+			@Parameter(description = "The shared space role uuid.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return ssRoleFacade.find(null, uuid);
@@ -84,11 +86,12 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all shared space roles.", response = SharedSpacePermission.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get all shared space roles.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpacePermission.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<SharedSpaceRole> findAll() throws BusinessException {
 		return ssRoleFacade.findAll(null);
@@ -96,14 +99,15 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	
 	@Path("{uuid}/permissions")
 	@GET
-	@ApiOperation(value = "Get all shared space permissions of current role.", response = SharedSpacePermission.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required role."),
-			@ApiResponse(code = 404, message = "Not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Operation(summary = "Get all shared space permissions of current role.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpacePermission.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<SharedSpacePermission> findAllPermissions(
-			@ApiParam("The role uuid")
+			@Parameter(description = "The role uuid")
 				@PathParam(value="uuid")String roleUuid)
 			throws BusinessException {
 		return ssRoleFacade.findAll(null, roleUuid);
