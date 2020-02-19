@@ -51,13 +51,15 @@ import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.Upload
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.webservice.uploadproposition.UploadPropositionRestService;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/")
-@Api(value = "/rest/uploadproposition", description = "Upload proposition API for linshare-uploadproposition.jar")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadPropositionRestServiceImpl implements
@@ -73,8 +75,12 @@ public class UploadPropositionRestServiceImpl implements
 
 	@GET
 	@Path("/filters")
-	@ApiOperation(value = "Find all upload proposition filters.", response = UploadPropositionFilterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Operation(summary = "Find all upload proposition filters.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadPropositionFilterDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<UploadPropositionFilterDto> findAllFilters()
 			throws BusinessException {
@@ -83,8 +89,12 @@ public class UploadPropositionRestServiceImpl implements
 
 	@GET
 	@Path("/recipients/{userMail}")
-	@ApiOperation(value = "Check if it is a valid user.", response = Boolean.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Operation(summary = "Check if it is a valid user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Boolean.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public void checkIfValidRecipient(
 			@PathParam(value = "userMail") String userMail,
@@ -95,8 +105,7 @@ public class UploadPropositionRestServiceImpl implements
 
 	@POST
 	@Path("/propositions")
-	@ApiOperation(value = "Create a new upload proposition.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Operation(summary = "Create a new upload proposition.")
 	@Override
 	public void create(UploadPropositionDto dto) throws BusinessException {
 		uploadPropositionFacade.create(dto);
