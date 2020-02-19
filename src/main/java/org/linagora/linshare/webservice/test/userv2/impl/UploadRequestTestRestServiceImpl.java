@@ -49,14 +49,15 @@ import org.linagora.linshare.webservice.test.userv2.UploadRequestTestRestService
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @Path("/upload_requests_groups")
-@Api(value = "/rest/test/user/v2/upload_requests_groups", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestTestRestServiceImpl implements UploadRequestTestRestService {
@@ -72,15 +73,15 @@ public class UploadRequestTestRestServiceImpl implements UploadRequestTestRestSe
 
 	@GET
 	@Path("/{uuid}/upload_requests")
-	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
-					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-		})
+	@Operation(summary = "Find a list of upload request.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadRequestDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
 	public List<UploadRequestDto> findAllUploadRequestsURl(
-			@ApiParam(value = "Upload request group uuid.", required = true)
+			@Parameter(description = "Upload request group uuid.", required = true)
 				@PathParam(value = "uuid") String uuid) {
 		return uploadRequestFacade.findAllUploadRequestsURl(null, uuid);
 	}
