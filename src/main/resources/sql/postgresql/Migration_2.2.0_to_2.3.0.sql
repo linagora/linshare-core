@@ -889,7 +889,7 @@ UPDATE mail_content SET body='<!DOCTYPE html>
                 link </a>
           </span>
           <span data-th-utext="#{mainMsgNext}"></span>
-          <span th:if="${owner.firstName} != null AND ${owner.firstName} != null" data-th-utext="#{mainMsgNextBy(${owner.firstName},${owner.lastName})}"></span>
+          <span th:if="${owner.firstName} != null AND ${owner.lastName} != null" data-th-utext="#{mainMsgNextBy(${owner.firstName},${owner.lastName})}"></span>
 
              </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
@@ -1284,6 +1284,31 @@ tokenCreationDate = Дата создания
 tokenLabel = Имя
 tokenDescription = Описание'
 WHERE id=33;
+
+-- Update the mail content by adding the mainMsgNextBy for English and French which was used just by Russian
+
+UPDATE mail_content
+SET messages_english='
+workGroupUpdatedDateTitle = Updated date
+mainMsg = Your rights on the workgroup
+mainMsgNext= have been updated 
+mainMsgNextBy= by  <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Your rights on the workgroup {0} was updated.
+workGroupRight = Current right
+workGroupNameTitle = Workgroup Name'
+WHERE id = 29;
+
+UPDATE mail_content
+SET messages_french='
+workGroupUpdatedDateTitle = Date de la mise à jour
+mainMsg = Vos droits sur le groupe de travail
+mainMsgNext = ont été mis à jour 
+mainMsgNextBy= par <b> {0} <span style="text-transform:uppercase">{1}</span> </b>.
+subject =  Vos droits sur le groupe de travail {0} ont été mis à jour
+workGroupRight =  Nouveau droit
+workGroupNameTitle = Nom du groupe de travail'
+WHERE id = 29;
+
 --End 
 
 --Update the mail footer with the russian message
@@ -1433,127 +1458,8 @@ INSERT INTO mail_footer_lang (id,language,mail_config_id,mail_footer_id,readonly
   PRIMARY KEY (id));
 ALTER TABLE mail_attachment ADD CONSTRAINT FKmail_attachment35169 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 
-<<<<<<< HEAD
 --Update purgeStep for deleted workGroups
 UPDATE account SET purge_step = 'PURGED' where ((account_type = 5) AND (purge_step = 'IN_USE') AND (destroyed > 0));
-</html>',messages_french='workGroupUpdatedDateTitle = Date de la mise à jour
-mainMsg = Vos droits sur le DRIVE
-mainMsgNext = et dans ses WorkGroups contenus ont été mis à jour
-mainMsgNextBy= par <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Vos droits sur le DRIVE {0} ont été mis à jour
-driveRight = Droit sur le DRIVE
-workGroupRight =  Droit sur le groupe de travail
-workGroupNameTitle = Nom du DRIVE
-nestedWorkGroupsList = Liste des workgoups
-nbrWorkgoups = Nombre de groupe de travail mis à jours',messages_english='workGroupUpdatedDateTitle = Updated date
-mainMsg = Your rights on the DRIVE 
-mainMsgNext= and workgroups inside it, have been updated
-mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Your rights on the DRIVE {0} was updated.
-driveRight = Drive right
-workGroupRight = Workgroup right
-workGroupNameTitle = Drive Name
-nestedWorkGroupsList = Workgroups list
-nbrWorkgoups = Number of updated workGroups' WHERE id=35;
-
-	-- MailActivation : DRIVE_WARN_UPDATED_MEMBER
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (309, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (310, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (311, false, false, 2, true);
-INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(36, false, 'DRIVE_WARN_UPDATED_MEMBER', 309, 310, 311, 1, true);
-
-
--- DRIVE_WARN_DELETED_MEMBER
-
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,36,36,'','',NOW(),true,'','a9983e78-ffa9-11e8-b920-7b238822b4bb',true);
-
-INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (36,0,1,36,36,true,'a9992e32-ffa9-11e8-bbfe-b32f26c4955b');
-
-INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (136,1,1,36,36,true,'a99a4650-ffa9-11e8-b09e-83360a30f184');
-
-UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head  data-th-replace="layout :: header"></head>
-<body>
-<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <!--/* Upper main-content*/-->
-  <section id="main-content">
-    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings */-->
-        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
-        <!--/* End of Greetings  */-->
-        <!--/* Main email  message content*/-->
-        <p>
-          <span th:if="${owner.firstName} !=null AND ${owner.lastName} !=null" data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
-          <span th:if="${owner.firstName} ==null OR ${owner.lastName} ==null" data-th-utext="#{simpleMsg(${workGroupName})}"></span>
-            
-          <!--/* Activation link for initialisation of the guest account */-->
-             </p> <!--/* End of Main email  message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container*/-->
-  </section> <!--/* End of upper main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
-</div>
-</body>
-</html>',messages_french='subject = Les accès au drive {0} et à ses workgroups contenus vous ont été retirés.
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a retiré du drive <b>{2}</b>
-simpleMsg = Les accès au drive <b>{0}</b> vous ont été retirés.
-workGroupNameTitle = Nom du Drive',messages_english='subject = Your access to the drive {0}  and it''s workgroups was withdrawn
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the drive  <b>{2}</b>
-simpleMsg =  Your access to the drive <b>{0}</b> was withdrawn.     
-workGroupNameTitle = Drive Name' WHERE id=36;
-
-	-- MailActivation : DRIVE_WARN_DELETED_MEMBER
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (312, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (313, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (314, false, false, 2, true);
-INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(37, false, 'DRIVE_WARN_DELETED_MEMBER', 312, 313, 314, 1, true);
--- end drive notification
->>>>>>> Issue #454 : Create new mail for new drive member
-<<<<<<< HEAD
->>>>>>> Issue #454 : Create new mail for new drive member
-=======
-=======
-</html>' WHERE id = 29;
---end mail content
-
--- Add russian mail content
-ALTER TABLE mail_content ADD COLUMN messages_russian text;
---To be deleted once we have russian translation
-UPDATE mail_content SET messages_russian = messages_english;
-ALTER TABLE mail_content ALTER COLUMN messages_russian SET NOT NULL;
-ALTER TABLE mail_content ALTER COLUMN messages_english SET NOT NULL;
-ALTER TABLE mail_content ALTER COLUMN messages_french SET NOT NULL;
-
-ALTER TABLE mail_footer ADD COLUMN messages_russian text;
---To be deleted once we have russian translation
-UPDATE mail_footer SET messages_russian = messages_english;
-ALTER TABLE mail_footer ALTER COLUMN messages_russian SET NOT NULL;
-ALTER TABLE mail_footer ALTER COLUMN messages_english SET NOT NULL;
-ALTER TABLE mail_footer ALTER COLUMN messages_french SET NOT NULL;
-
-ALTER TABLE mail_layout ADD COLUMN messages_russian text;
---To be deleted once we have russian translation
-UPDATE mail_layout SET messages_russian = messages_english;
-ALTER TABLE mail_layout ALTER COLUMN messages_russian SET NOT NULL;
-ALTER TABLE mail_layout ALTER COLUMN messages_english SET NOT NULL;
-ALTER TABLE mail_layout ALTER COLUMN messages_french SET NOT NULL;
->>>>>>> Warn drive member when his role is updated
->>>>>>> Warn drive member when his role is updated
-=======
->>>>>>> Fix find workGroup inside of Drive for the admin api
 
 -- LinShare version
 SELECT ls_version();
