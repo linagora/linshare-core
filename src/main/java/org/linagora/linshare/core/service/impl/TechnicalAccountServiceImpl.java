@@ -38,6 +38,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
@@ -113,15 +114,19 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 			throws BusinessException {
 		// TODO : check rights, log actions.
 		TechnicalAccount entity = find(actor, dto.getLsUuid());
-		TechnicalAccountPermission permissionDto = dto.getPermission();
-		permissionDto.setUuid(entity.getPermission().getUuid());
-		if (permissionDto != null) {
-			technicalAccountPermissionService.update(actor, permissionDto);
-		}
+		checkAccountPermission(actor, entity, dto);
 		entity.setLastName(dto.getLastName());
 		entity.setMail(dto.getMail());
 		entity.setEnable(dto.isEnable());
 		return technicalAccountBusinessService.update(entity);
+	}
+
+	private void checkAccountPermission(Account actor, TechnicalAccount foundAccount, TechnicalAccount account) {
+		if (Role.DELEGATION.equals(foundAccount.getRole())) {
+			TechnicalAccountPermission permissionDto = account.getPermission();
+			permissionDto.setUuid(foundAccount.getPermission().getUuid());
+			technicalAccountPermissionService.update(actor, permissionDto);
+		}
 	}
 
 	@Override
