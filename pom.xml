@@ -770,7 +770,10 @@
 							</resourcePackages>
 							<outputDirectory>${basedir}/target</outputDirectory>
 							<outputFilename>swagger-admin-v4</outputFilename>
-							<outputFormats>JSON,YAML</outputFormats>
+							<outputFormats>
+								<outputFormats>JSON</outputFormats>
+								<outputFormats>YAML</outputFormats>
+							</outputFormats>
 							<prettyPrint>true</prettyPrint>
 							<swaggerConfig>
 								<info>
@@ -801,7 +804,10 @@
 							</resourcePackages>
 							<outputDirectory>${basedir}/target</outputDirectory>
 							<outputFilename>swagger-admin-v1</outputFilename>
-							<outputFormats>JSON,YAML</outputFormats>
+							<outputFormats>
+								<outputFormats>JSON</outputFormats>
+								<outputFormats>YAML</outputFormats>
+							</outputFormats>
 							<prettyPrint>true</prettyPrint>
 							<swaggerConfig>
 								<info>
@@ -832,7 +838,10 @@
 							</resourcePackages>
 							<outputDirectory>${basedir}/target</outputDirectory>
 							<outputFilename>swagger-user-v2</outputFilename>
-							<outputFormats>JSON,YAML</outputFormats>
+							<outputFormats>
+								<outputFormats>JSON</outputFormats>
+								<outputFormats>YAML</outputFormats>
+							</outputFormats>
 							<prettyPrint>true</prettyPrint>
 							<swaggerConfig>
 								<info>
@@ -863,7 +872,10 @@
 							</resourcePackages>
 							<outputDirectory>${basedir}/target</outputDirectory>
 							<outputFilename>swagger-delegation-v2</outputFilename>
-							<outputFormats>JSON,YAML</outputFormats>
+							<outputFormats>
+								<outputFormats>JSON</outputFormats>
+								<outputFormats>YAML</outputFormats>
+							</outputFormats>
 							<prettyPrint>true</prettyPrint>
 							<swaggerConfig>
 								<info>
@@ -894,7 +906,10 @@
 							</resourcePackages>
 							<outputDirectory>${basedir}/target</outputDirectory>
 							<outputFilename>swagger-user-v2</outputFilename>
-							<outputFormats>JSON,YAML</outputFormats>
+							<outputFormats>
+								<outputFormats>JSON</outputFormats>
+								<outputFormats>YAML</outputFormats>
+							</outputFormats>
 							<prettyPrint>true</prettyPrint>
 							<swaggerConfig>
 								<info>
@@ -925,7 +940,10 @@
 							</resourcePackages>
 							<outputDirectory>${basedir}/target</outputDirectory>
 							<outputFilename>swagger-upload-request-v2</outputFilename>
-							<outputFormats>JSON,YAML</outputFormats>
+							<outputFormats>
+								<outputFormats>JSON</outputFormats>
+								<outputFormats>YAML</outputFormats>
+							</outputFormats>
 							<prettyPrint>true</prettyPrint>
 							<swaggerConfig>
 								<info>
