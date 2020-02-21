@@ -1579,26 +1579,26 @@
 	</distributionManagement>
 
 	<properties>
+		<apache-directory-server.version>1.5.5</apache-directory-server.version>
+		<cxf.version>3.3.5</cxf.version>
+		<fakemongo.version>2.1.1</fakemongo.version>
+		<guava.version>27.0-jre</guava.version>
+		<h2.version>1.4.199</h2.version>
+		<hibernate.version>5.4.2.Final</hibernate.version>
+		<jackson.version>2.9.8</jackson.version>
+		<jclouds.version>2.1.0</jclouds.version>
+		<jjwt.version>0.9.0</jjwt.version>
+		<linid.authorization.version>2.1.2</linid.authorization.version>
+		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
+		<mozilla.rhino.version>1.7.10</mozilla.rhino.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<servlet.context.version>3.0.1</servlet.context.version>
+		<slf4j-release-version>1.7.25</slf4j-release-version>
+		<spring-data.version>Kay-SR12</spring-data.version>
+		<spring.mvc.version>5.0.7.RELEASE</spring.mvc.version>
 		<spring-release-version>5.1.2.RELEASE</spring-release-version>
 		<spring-security-release-version>5.1.2.RELEASE</spring-security-release-version>
-		<spring-data.version>Kay-SR12</spring-data.version>
-		<hibernate.version>5.4.2.Final</hibernate.version>
-		<h2.version>1.4.199</h2.version>
-		<guava.version>27.0-jre</guava.version>
-		<linid.authorization.version>2.1.2</linid.authorization.version>
-		<mozilla.rhino.version>1.7.10</mozilla.rhino.version>
-		<apache-directory-server.version>1.5.5</apache-directory-server.version>
-		<slf4j-release-version>1.7.25</slf4j-release-version>
-		<cxf.version>3.3.5</cxf.version>
-		<jclouds.version>2.1.0</jclouds.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
 		<sql.driver.postgresql>42.2.8</sql.driver.postgresql>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-		<spring.mvc.version>5.0.7.RELEASE</spring.mvc.version>
-		<jjwt.version>0.9.0</jjwt.version>
-		<servlet.context.version>3.0.1</servlet.context.version>
-		<fakemongo.version>2.1.1</fakemongo.version>
-		<jackson.version>2.9.8</jackson.version>
 	</properties>
 </project>
