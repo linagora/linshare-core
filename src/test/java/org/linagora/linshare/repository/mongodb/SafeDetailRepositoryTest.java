@@ -56,7 +56,8 @@ import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.mongo.entities.SafeDetail;
 import org.linagora.linshare.mongo.repository.SafeDetailMongoRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -75,7 +76,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SafeDetailRepositoryTest extends LoggerParent {
+public class SafeDetailRepositoryTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final static String THREAD_NAME = "threadName";
 	private final static String EMAIL1 = "anakin.skywalker@int4.linshare.dev";

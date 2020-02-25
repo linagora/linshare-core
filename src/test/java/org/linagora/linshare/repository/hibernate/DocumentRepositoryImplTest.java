@@ -43,7 +43,8 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -53,7 +54,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class DocumentRepositoryImplTest  extends LoggerParent {
+public class DocumentRepositoryImplTest  {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private final String identifier = "docId";
     private final String type = "doctype";

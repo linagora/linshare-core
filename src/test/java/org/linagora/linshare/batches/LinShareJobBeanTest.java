@@ -46,7 +46,8 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.utils.LinShareWiser;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -75,7 +76,9 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class LinShareJobBeanTest extends LoggerParent {
+public class LinShareJobBeanTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	protected JdbcTemplate jdbcTemplate ;

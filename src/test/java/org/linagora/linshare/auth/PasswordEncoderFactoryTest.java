@@ -43,7 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
@@ -63,7 +64,9 @@ import org.linagora.linshare.utils.LoggerParent;
 		"classpath:springContext-security-sso.xml",
 		"classpath:springContext-security-common.xml",
 		"classpath:springContext-security.xml",})
-public class PasswordEncoderFactoryTest extends LoggerParent {
+public class PasswordEncoderFactoryTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private PasswordEncoderFactory passwordEncoderFactory;

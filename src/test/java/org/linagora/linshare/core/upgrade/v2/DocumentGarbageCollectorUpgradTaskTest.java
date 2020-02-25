@@ -58,7 +58,8 @@ import org.linagora.linshare.core.upgrade.v2_1.DocumentGarbageCollectorUpgradeTa
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -83,7 +84,9 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-upgradeTask.xml" })
-public class DocumentGarbageCollectorUpgradTaskTest extends LoggerParent {
+public class DocumentGarbageCollectorUpgradTaskTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private BatchRunner batchRunner;

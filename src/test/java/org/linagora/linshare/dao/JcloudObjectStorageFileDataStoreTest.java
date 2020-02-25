@@ -49,7 +49,8 @@ import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -60,7 +61,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml",
 		"classpath:OPTIONAL-springContext-jcloud.xml" })
 //@TestPropertySource("/linshare-storage-swift.properties")
-public class JcloudObjectStorageFileDataStoreTest extends LoggerParent {
+public class JcloudObjectStorageFileDataStoreTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
 	@Autowired

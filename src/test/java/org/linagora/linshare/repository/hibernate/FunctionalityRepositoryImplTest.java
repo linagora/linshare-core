@@ -63,7 +63,8 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -74,7 +75,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class FunctionalityRepositoryImplTest extends LoggerParent {
+public class FunctionalityRepositoryImplTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
 	@Autowired

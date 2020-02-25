@@ -55,7 +55,8 @@ import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.repository.hibernate.DomainQuotaRepositoryImpl;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -71,7 +72,9 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
 
-public class DomainQuotaRepositoryImplTest extends LoggerParent {
+public class DomainQuotaRepositoryImplTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;

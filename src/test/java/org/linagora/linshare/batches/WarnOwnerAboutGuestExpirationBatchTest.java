@@ -62,7 +62,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -81,7 +82,9 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class WarnOwnerAboutGuestExpirationBatchTest extends LoggerParent {
+public class WarnOwnerAboutGuestExpirationBatchTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private static Logger logger = LoggerFactory.getLogger(WarnOwnerAboutGuestExpirationBatchTest.class);
 

@@ -57,7 +57,8 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class DocumentEntryRepositoryImplTest  extends LoggerParent {
+public class DocumentEntryRepositoryImplTest  {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryRepositoryImplTest.class);
 	

@@ -59,7 +59,8 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
@@ -83,7 +84,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class WorkGroupFolderServiceTest extends LoggerParent {
+public class WorkGroupFolderServiceTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private WorkGroupNodeService service;

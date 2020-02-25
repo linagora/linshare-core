@@ -60,7 +60,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
@@ -69,7 +70,9 @@ import org.linagora.linshare.utils.LoggerParent;
 	"/import-tests-operationHistory.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
-public class OperationHistoryRepositoryImplTest extends LoggerParent {
+public class OperationHistoryRepositoryImplTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	@Qualifier("accountRepository")

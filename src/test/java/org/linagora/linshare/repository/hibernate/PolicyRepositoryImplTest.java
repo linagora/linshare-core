@@ -45,7 +45,8 @@ import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.PolicyRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -57,7 +58,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class PolicyRepositoryImplTest  extends LoggerParent {
+public class PolicyRepositoryImplTest  {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	
 	@Autowired

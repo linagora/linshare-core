@@ -46,7 +46,8 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,7 +63,9 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
-public class ShareEntryGroupRepositoryImplTest extends LoggerParent {
+public class ShareEntryGroupRepositoryImplTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private static final String IMPORT_LOCAL_TEST_SEG_UUID_1 = "c96d778e-b09b-4557-b785-ff5124bd2b8d";
 	private static final String IMPORT_LOCAL_TEST_SEG_UUID_2 = "61eae04b-9496-4cb1-900e-eda8caac6703";

@@ -51,7 +51,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.utils.PemRsaKeyHelper;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -60,7 +61,9 @@ import com.google.common.io.Files;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:springContext-test.xml" })
-public class PemRsaKeyHelperTest extends LoggerParent {
+public class PemRsaKeyHelperTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	protected String pemPrivateKeyPath = "src/test/resources/sshkeys/id_rsa";
 

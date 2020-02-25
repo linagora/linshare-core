@@ -55,7 +55,8 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.LdapConnectionService;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -72,7 +73,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
-public class GroupProviderServiceImplTest extends LoggerParent {
+public class GroupProviderServiceImplTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private GroupProviderService groupProviderService;

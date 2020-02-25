@@ -53,7 +53,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -65,7 +66,9 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
 @Transactional
-public class AbstractDomainRepositoryImplTest extends LoggerParent {
+public class AbstractDomainRepositoryImplTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private static String rootDomainName = "Domain0";
 	private static String topDomainName = "Domain0.1";

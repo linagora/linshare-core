@@ -43,7 +43,8 @@ import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,9 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SharedSpacePermissionNumberTest extends LoggerParent {
+public class SharedSpacePermissionNumberTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private static Logger logger = LoggerFactory.getLogger(SharedSpacePermissionNumberTest.class);
 	
 	@Autowired

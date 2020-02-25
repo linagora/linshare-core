@@ -63,7 +63,8 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -90,7 +91,9 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		})
-public class ComputeThumbnailBatchTest extends LoggerParent {
+public class ComputeThumbnailBatchTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private BatchRunner batchRunner;

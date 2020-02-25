@@ -41,7 +41,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -52,7 +53,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class DomainAccessPolicyRepositoryImplTest extends LoggerParent {
+public class DomainAccessPolicyRepositoryImplTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private DomainAccessPolicyRepository domainAccessPolicyRepository;

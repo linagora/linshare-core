@@ -45,7 +45,8 @@ import org.linagora.linshare.core.domain.entities.TimeUnitClass;
 import org.linagora.linshare.core.domain.entities.Unit;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UnitRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -56,7 +57,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class UnitRepositoryImplTest extends LoggerParent {
+public class UnitRepositoryImplTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	
 	@Autowired

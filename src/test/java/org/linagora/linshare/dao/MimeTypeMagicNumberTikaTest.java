@@ -46,7 +46,8 @@ import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(locations = {
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-test.xml" })
-public class MimeTypeMagicNumberTikaTest extends LoggerParent {
+public class MimeTypeMagicNumberTikaTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private static Logger logger = LoggerFactory.getLogger(MimeTypeMagicNumberTikaTest.class);
 

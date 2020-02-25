@@ -52,7 +52,8 @@ import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -68,7 +69,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class FavouriteRepositoryImplTest extends LoggerParent {
+public class FavouriteRepositoryImplTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	// default import.sql
  	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;

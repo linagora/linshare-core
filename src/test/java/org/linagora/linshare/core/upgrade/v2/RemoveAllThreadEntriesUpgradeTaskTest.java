@@ -56,7 +56,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -78,7 +79,9 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-upgradeTask.xml" })
-public class RemoveAllThreadEntriesUpgradeTaskTest extends LoggerParent {
+public class RemoveAllThreadEntriesUpgradeTaskTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private BatchRunner batchRunner;

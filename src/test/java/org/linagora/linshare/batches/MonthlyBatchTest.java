@@ -62,7 +62,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.linagora.linshare.utils.LoggerParent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
@@ -81,7 +82,9 @@ import org.linagora.linshare.utils.LoggerParent;
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class MonthlyBatchTest extends LoggerParent {
+public class MonthlyBatchTest {
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private UserMonthlyStatBusinessService userMonthlyStatBusinessService;
