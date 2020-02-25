@@ -54,11 +54,11 @@
 
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
-		<param-value>default,jcloud,mongo,batches</param-value>
+		<param-value>default,jcloud,batches</param-value>
 		<!-- You can override this parameter using -Dspring.profiles.active=xxx -->
 		<!-- Or you can use environment variable : SPRING_PROFILES_ACTIVE -->
-		<!-- You must enable at least one authentication profile among authentication profiles,
-			 one profile among file data store profiles and one among mongodb profiles described below.
+		<!-- You must enable at least one authentication profile among authentication profiles and
+			 one profile among file data store profiles described below.
 
 		Available authentication profiles :
 			* default : default authentication process.
@@ -69,9 +69,6 @@
 			* gridfs : Using gridfs (mongodb) as file data store.
 			Recommended profile for production is jcloud with Swift.
 			The default profile is jcloud with filesystem for tests purpose.
-		Available mongodb profiles :
-			* mongo : mongo with authentication disable
-			* mongo-auth : mongo with authentication enable
 		Additional profiles :
 			* batches : enable Quartz jobs  (cron tasks).
 		 -->
