@@ -79,7 +79,6 @@ public class FunctionalityRepositoryImplTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
 
@@ -568,7 +567,6 @@ public class FunctionalityRepositoryImplTest {
 		domainPolicyRepository.delete(policy);
 	}
 
-	// FIXME : Now we need LoggerParent because
 	// we made some mapping modifications (enable lasy loading)
 	@Disabled
 	@Test

@@ -55,8 +55,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -76,8 +74,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class UndownloadedSharedDocumentsBatchImplTest extends
-		LoggerParent {
+public class UndownloadedSharedDocumentsBatchImplTest {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(UndownloadedSharedDocumentsBatchImplTest.class);

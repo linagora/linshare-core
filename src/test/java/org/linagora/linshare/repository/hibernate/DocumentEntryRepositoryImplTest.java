@@ -59,8 +59,6 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -74,9 +72,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class DocumentEntryRepositoryImplTest  {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryRepositoryImplTest.class);
-	
 	
     private static final String FIRST_NAME = "first name";
     private static final String LAST_NAME = "last name";

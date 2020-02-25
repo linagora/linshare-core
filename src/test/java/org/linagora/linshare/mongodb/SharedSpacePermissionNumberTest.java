@@ -45,8 +45,6 @@ import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -69,7 +67,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class SharedSpacePermissionNumberTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
-	private static Logger logger = LoggerFactory.getLogger(SharedSpacePermissionNumberTest.class);
 	
 	@Autowired
 	private InitMongoService initMongo;

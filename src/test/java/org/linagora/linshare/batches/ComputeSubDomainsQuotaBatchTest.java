@@ -76,8 +76,10 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-scheduler.xml",
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		})
-public class ComputeSubDomainsQuotaBatchTest extends LoggerParent{
-
+public class ComputeSubDomainsQuotaBatchTest {
+	
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
+	
 	@Autowired
 	private BatchRunner batchRunner;
 

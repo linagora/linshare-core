@@ -48,8 +48,6 @@ import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,8 +60,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class MimeTypeMagicNumberTikaTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-	private static Logger logger = LoggerFactory.getLogger(MimeTypeMagicNumberTikaTest.class);
 
 	@Qualifier("mimeTypeMagicNumberDao")
 	@Autowired

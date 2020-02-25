@@ -73,8 +73,6 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.EnciphermentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -96,7 +94,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
 		})
-public class EnciphermentServiceImplTest extends LoggerParent{
+public class EnciphermentServiceImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(EnciphermentServiceImplTest.class);
 	

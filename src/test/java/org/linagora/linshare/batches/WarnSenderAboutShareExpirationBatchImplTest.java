@@ -91,8 +91,6 @@ public class WarnSenderAboutShareExpirationBatchImplTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private static Logger logger = LoggerFactory.getLogger(WarnSenderAboutShareExpirationBatchImplTest.class);
-
 	@Autowired
 	private BatchRunner batchRunner;
 

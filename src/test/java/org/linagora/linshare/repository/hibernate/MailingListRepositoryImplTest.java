@@ -64,9 +64,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
-public class MailingListRepositoryImplTest extends
-		LoggerParent {
-
+public class MailingListRepositoryImplTest {
+	
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	// default import.sql
 	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
 

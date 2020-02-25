@@ -70,8 +70,9 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class DeleteDomainBatchTest extends
-		LoggerParent {
+public class DeleteDomainBatchTest{
+	
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private BatchRunner batchRunner;
