@@ -55,13 +55,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-stat.sql",
 	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql" })
 @Transactional
@@ -77,6 +78,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml" })
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class QuotaServiceImplTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(GroupPatternServiceImplTest.class);

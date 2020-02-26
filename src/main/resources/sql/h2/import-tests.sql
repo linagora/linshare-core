@@ -121,7 +121,7 @@ VALUES
 	'en', 'en', true, null, 
 	0, @my_domain_id, 'IN_USE');
 	
-INSERT INTO thread (account_id, name) VALUES (20, 'Ministère de l''intérieur');
+INSERT INTO thread (account_id, name) VALUES (20, 'Linagora');
 INSERT INTO thread (account_id, name) VALUES (21, 'RATP');
 INSERT INTO thread (account_id, name) VALUES (22, 'THREAD_TEST_A');
 INSERT INTO thread (account_id, name) VALUES (23, 'THREAD_TEST_B');
@@ -278,6 +278,8 @@ VALUES
 	@quota_my_domain_id , @quota_on_my_domain_container_workgroup_id, 500, 200,
 	@my_domain_id , @workgroup_21_id , null, 1300,
 	1000, 6, null, 'ACCOUNT_QUOTA');
+SET @quota_workgroup_20_id = SELECT 103;
+SET @quota_workgroup_21_id = SELECT 104;
 
 -- MySubDomain QUOTA
 INSERT INTO quota(id, uuid, creation_date, modification_date,

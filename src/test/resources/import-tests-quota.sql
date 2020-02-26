@@ -28,7 +28,7 @@ update quota set
 	batch_modification_date=now()
 	where id=@quota_on_my_domain_container_user_id;
 
--- topdomain 2, CONTAINER_QUOTA - THREAD
+-- topdomain 2, CONTAINER_QUOTA - WORKGROUP (20)
 update quota set
 	current_value=900,
 	last_value=200,
@@ -39,4 +39,4 @@ update quota set
 	default_account_quota=2000,
 	account_quota=2000,
 	batch_modification_date=now()
-	where id=@quota_on_my_domain_container_workgroup_id;
+	where id=@quota_workgroup_20_id;
