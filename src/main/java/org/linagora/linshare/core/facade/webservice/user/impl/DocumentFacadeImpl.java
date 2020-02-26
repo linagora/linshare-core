@@ -339,6 +339,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 				WorkGroupDocumentRevision mostRecent = (WorkGroupDocumentRevision) revisionService
 						.findMostRecent(workGroup, node.getUuid());
 				CopyResource cr = new CopyResource(resourceKind, workGroup, mostRecent);
+				cr.setName(wgDocument.getName());
 				DocumentEntry newDocumentEntry = documentEntryService.copy(authUser, actor, cr);
 				workGroupNodeService.markAsCopied(authUser, actor, workGroup, wgDocument,
 						new CopyMto(newDocumentEntry));
