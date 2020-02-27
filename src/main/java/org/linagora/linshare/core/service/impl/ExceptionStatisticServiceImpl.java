@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.jsoup.helper.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;

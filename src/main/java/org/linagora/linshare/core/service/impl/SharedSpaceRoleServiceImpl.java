@@ -35,7 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
-import org.jsoup.helper.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
