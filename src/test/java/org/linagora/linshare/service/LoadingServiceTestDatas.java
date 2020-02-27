@@ -89,9 +89,9 @@ public class LoadingServiceTestDatas {
 
 	public  void loadUsers() throws BusinessException {
 		root = userRepository.findByMail("root@localhost.localdomain");
-		user1 = userRepository.findByMail("user1@linshare.org");
-		user2 = userRepository.findByMail("user2@linshare.org");
-		user3 = userRepository.findByMail("user3@linshare.org");
+		user1 = userRepository.findByMail("user1@linshare.org"); // John Do
+		user2 = userRepository.findByMail("user2@linshare.org"); // Jane Smith
+		user3 = userRepository.findByMail("user3@linshare.org"); // Foo Bar
 	}
 
 	public User getUser1() {

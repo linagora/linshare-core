@@ -34,6 +34,8 @@
 package org.linagora.linshare.batches;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -54,12 +56,16 @@ import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserDailyStat;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -75,6 +81,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @ExtendWith(SpringExtension.class)
 @Transactional
@@ -93,6 +100,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-batches-quota-and-statistics.xml",
+		"classpath:springContext-batches.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml"})
 // Use dirties context to reset the H2 database because of quota alteration 
@@ -100,6 +108,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class DailyBatchTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
+	
+
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
@@ -126,7 +136,7 @@ public class DailyBatchTest {
 	private DomainQuotaBusinessService domainQuotaBusinessService;
 
 	@Autowired
-	private ContainerQuotaBusinessService ensembleQuotaBusinessService;
+	private ContainerQuotaBusinessService containerQuotaBusinessService;
 
 	@Autowired
 	private ThreadDailyStatBusinessService threadDailyStatBusinessService;
@@ -137,9 +147,6 @@ public class DailyBatchTest {
 
 	@Autowired
 	private OperationHistoryBusinessService operationHistoryBusinessService;
-
-	@Autowired
-	private BatchHistoryBusinessService batchHistoryBusinessService;
 
 	LoadingServiceTestDatas dates;
 	private User jane;
@@ -159,11 +166,16 @@ public class DailyBatchTest {
 	}
 
 	/**
-	 * Test batches : {@link StatisticDailyThreadBatchImpl}
-	 * {@link StatisticDailyUserBatchImpl} {@link StatisticDailyDomainBatchImpl}
+	 * Test batches : 
+	 * {@link StatisticDailyThreadBatchImpl}
+	 * {@link StatisticDailyUserBatchImpl}
+	 * {@link StatisticDailyDomainBatchImpl}
 	 */
 	@Test
 	public void testStatisticDailyBatchs() {
+		/**
+		 *  *************** Statistic Daily Thread Batch ***************
+		 */
 		BatchRunContext batchRunContext = new BatchRunContext();
 		List<String> listThreadIdentifier = dailyThreadBatch.getAll(batchRunContext);
 		// expected 2 workgroups
@@ -173,145 +185,172 @@ public class DailyBatchTest {
 		WorkGroup workGroup_2 = (WorkGroup) accountRepository.findByLsUuid(listThreadIdentifier.get(1));
 		List<OperationHistory> listOperationHistory = operationHistoryBusinessService.find(workGroup_1, null, null,
 				new Date());
-		// expected 3 operations done for workgroup1 (@workgroup_id_20: "Linagora" from
+		// expected 3 operations done for workgroup1 (@workgroup_id_20: "LINAGORA" from
 		// import-tests-operationHistory.sql)
 		assertEquals(3, listOperationHistory.size());
 		// expected 2 operations done for workgroup2 (@workgroup_id_21 "RATP" from
 		// import-tests-operationHistory.sql)
 		listOperationHistory = operationHistoryBusinessService.find(workGroup_2, null, null, new Date());
 		assertEquals(2, listOperationHistory.size());
-		
+
 		AccountQuota workgroup_1_quota = accountQuotaBusinessService.find(workGroup_1);
+		AccountQuota workgroup_2_quota = accountQuotaBusinessService.find(workGroup_2);
+		
 		// assert database insertions from (import-tests-quota.sql)
-		assertEquals(Long.valueOf(900), workgroup_1_quota.getCurrentValue(), "Expected wg quota currentValue = 900 ");
-		assertEquals(Long.valueOf(200), workgroup_1_quota.getLastValue(), "Expected wg quota lastValue  = 200 ");
-		assertEquals(Long.valueOf(2000), workgroup_1_quota.getQuota(), "Expected wg quota = 2000");
-		assertEquals(Long.valueOf(1500), workgroup_1_quota.getQuotaWarning(), "Expected wg quota warning  = 200 ");
+		assertEquals(Long.valueOf(900), workgroup_1_quota.getCurrentValue());
+		assertEquals(Long.valueOf(200), workgroup_1_quota.getLastValue());
+		assertEquals(Long.valueOf(2000), workgroup_1_quota.getQuota());
+		assertEquals(Long.valueOf(1500), workgroup_1_quota.getQuotaWarning());
 		assertEquals(Long.valueOf(5), workgroup_1_quota.getMaxFileSize());
 		// After batch execution , Daily thread statistics are created.
+		// Batch for workGroup_1
 		dailyThreadBatch.execute(batchRunContext, workGroup_1.getLsUuid(), listThreadIdentifier.size(), 0);
-		assertEquals(Long.valueOf(1200), workgroup_1_quota.getCurrentValue(), "Expected 1200 (900 + 300)");
-		assertEquals(Long.valueOf(900), workgroup_1_quota.getLastValue(), "Expected last value  = 900 got from currentValue before batch");
+		// Assertions after batch execution workgroup_1 (20)
+		assertEquals(Long.valueOf(1200), workgroup_1_quota.getCurrentValue());
+		assertEquals(Long.valueOf(900), workgroup_1_quota.getLastValue());
 		assertEquals(Long.valueOf(2000), workgroup_1_quota.getQuota());
 		assertEquals(Long.valueOf(1500), workgroup_1_quota.getQuotaWarning());
 		assertEquals(Long.valueOf(5), workgroup_1_quota.getMaxFileSize());
 
+		// Date to request statistics from yesterday
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DATE, -1);
 		Date yesterday = calendar.getTime();
-		// Get daily thread statistics generated by the batch.
-		List<ThreadDailyStat> listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(workGroup_1,
+		
+		// Get daily thread statistics generated by the batch. workgrou_1 (20)
+		List<ThreadDailyStat> listThreaddailyStat_1 = threadDailyStatBusinessService.findBetweenTwoDates(workGroup_1,
 				yesterday, new Date());
-		logger.debug(listThreaddailyStat.toString());
-		// expected 1 statistic daily thread are created
-		assertEquals(1, listThreaddailyStat.size());
-		ThreadDailyStat threadDailyStat = listThreaddailyStat.get(0);
-		assertEquals(workGroup_1, threadDailyStat.getAccount());
-		assertEquals(Long.valueOf(3), threadDailyStat.getOperationCount(),
-				"Expected 3 operations (1 delete + 2 create) for workgroup1");
-		assertEquals(Long.valueOf(1200), threadDailyStat.getActualOperationSum(),
-				"Expected actualOperationSum = 1200 (used space)");
-		assertEquals(Long.valueOf(2), threadDailyStat.getCreateOperationCount(),
-				"Expected 2 creation History type for workgroup1");
-		assertEquals(Long.valueOf(600), threadDailyStat.getCreateOperationSum(),
-				"Expected value 600 (200 + 400) for workgroup1");
-		assertEquals(Long.valueOf(1), threadDailyStat.getDeleteOperationCount(),
-				"Expected 1 deletion Operation history type for workgroup1");
-		assertEquals(Long.valueOf(-300), threadDailyStat.getDeleteOperationSum(),
-				"Expected value -300 for delete operation type");
-		assertEquals(Long.valueOf(300), threadDailyStat.getDiffOperationSum(), "Expected 300 (600 + -300)");
+		// expected 1 statistic daily thread created
+		assertEquals(1, listThreaddailyStat_1.size());
+		ThreadDailyStat threadDailyStat_1 = listThreaddailyStat_1.get(0);
+		assertEquals(workGroup_1, threadDailyStat_1.getAccount());
+		assertEquals(Long.valueOf(3), threadDailyStat_1.getOperationCount());
+		assertEquals(Long.valueOf(1200), threadDailyStat_1.getActualOperationSum());
+		assertEquals(Long.valueOf(2), threadDailyStat_1.getCreateOperationCount());
+		assertEquals(Long.valueOf(600), threadDailyStat_1.getCreateOperationSum());
+		assertEquals(Long.valueOf(1), threadDailyStat_1.getDeleteOperationCount());
+		assertEquals(Long.valueOf(-300), threadDailyStat_1.getDeleteOperationSum());
+		assertEquals(Long.valueOf(300), threadDailyStat_1.getDiffOperationSum());
 
-//
-//		dailyThreadBatch.execute(batchRunContext, workGroup2.getLsUuid(), listThreadIdentifier.size(), 1);
-//
-//		batchHistoryBusinessService.findByUuid(workGroup2.getLsUuid());
-//
-//		listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(workGroup2, d.getTime(), new Date());
-//
-//		assertEquals(1, listThreaddailyStat.size());
-//		threadDailyStat = listThreaddailyStat.get(0);
-//		assertEquals(workGroup2, threadDailyStat.getAccount());
-//		assertEquals(2, (long) threadDailyStat.getOperationCount());
-//		assertEquals(900, (long) threadDailyStat.getActualOperationSum());
-//		assertEquals(2, (long) threadDailyStat.getCreateOperationCount());
-//		assertEquals(400, (long) threadDailyStat.getCreateOperationSum());
-//		assertEquals(0, (long) threadDailyStat.getDeleteOperationCount());
-//		assertEquals(0, (long) threadDailyStat.getDeleteOperationSum());
-//		assertEquals(400, (long) threadDailyStat.getDiffOperationSum());
-//
-//		quota = accountQuotaBusinessService.find(workGroup2);
-//		assertNotNull(quota);
-//		assertEquals(900, (long) quota.getCurrentValue());
-//		assertEquals(500, (long) quota.getLastValue());
-//		assertEquals(1300, (long) quota.getQuota());
-//		assertEquals(1000, (long) quota.getQuotaWarning());
-//		assertEquals(6, (long) quota.getMaxFileSize());
-//
-//		listOperationHistory = operationHistoryBusinessService.find(jane, null, null, new Date());
-//		assertNotEquals(0, listOperationHistory.size());
-//
-//		dailyUserBatch.execute(batchRunContext, jane.getLsUuid(), 10, 1);
-//
-//		List<UserDailyStat> listUserdailyStat = userdailyStatBusinessService.findBetweenTwoDates(jane, d.getTime(), new Date());
-//
-//		assertEquals(1, listUserdailyStat.size());
-//		UserDailyStat userDailyStat = listUserdailyStat.get(0);
-//		assertEquals(jane, userDailyStat.getAccount());
-//		assertEquals(3, (long) userDailyStat.getOperationCount());
-//		assertEquals(1100, (long) userDailyStat.getActualOperationSum());
-//		assertEquals(2, (long) userDailyStat.getCreateOperationCount());
-//		assertEquals(600, (long) userDailyStat.getCreateOperationSum());
-//		assertEquals(1, (long) userDailyStat.getDeleteOperationCount());
-//		assertEquals(-300, (long) userDailyStat.getDeleteOperationSum());
-//		assertEquals(300, (long) userDailyStat.getDiffOperationSum());
-//
-//		quota = accountQuotaBusinessService.find(jane);
-//		assertNotNull(quota);
-//		assertEquals(1100, (long) quota.getCurrentValue());
-//		assertEquals(800, (long) quota.getLastValue());
-//		assertEquals(1600, (long) quota.getQuota());
-//		assertEquals(1480, (long) quota.getQuotaWarning());
-//		assertEquals(5, (long) quota.getMaxFileSize());
-//
-//		listOperationHistory = operationHistoryBusinessService.find(jane, null, null, new Date());
-//		assertEquals(0, listOperationHistory.size());
-//
-//		dailyDomainBatch.execute(batchRunContext, jane.getDomain().getUuid(), 20, 1);
-//
-//		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.USER);
-//		quota = accountQuotaBusinessService.find(jane);
-//		assertNotNull(ensembleQuota);
-//		assertEquals(496, (long) ensembleQuota.getLastValue());
-//		// sum of all users : jane : 1100 + john 900 = 2000
-//		assertEquals(2000, (long) ensembleQuota.getCurrentValue());
-//		assertEquals(1900, (long) ensembleQuota.getQuota());
-//		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
-//		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
-//
-//		ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.WORK_GROUP);
-//		assertNotNull(ensembleQuota);
-//
-//		assertEquals(900, (long) ensembleQuota.getLastValue());
-//		// sum of all workgroups : 1900 ? is it right ?
-//		assertEquals(1900, (long) ensembleQuota.getCurrentValue());
-//		assertEquals(2000, (long) ensembleQuota.getQuota());
-//		assertEquals(1500, (long) ensembleQuota.getQuotaWarning());
-//		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
-//
-//		DomainQuota quotaD = domainQuotaBusinessService.find(jane.getDomain());
-//		assertNotNull(quotaD);
-//		assertEquals(1096, (long) quotaD.getLastValue());
-//		// container user 2000  + container workgroup 1900 = 3900
-//		assertEquals(3900, (long) quotaD.getCurrentValue());
-//		assertEquals(1900, (long) quotaD.getQuota());
-//		assertEquals(1800, (long) quotaD.getQuotaWarning());
-//
-//		quotaD = domainQuotaBusinessService.findRootQuota();
-//		assertNotNull(quotaD);
-//		// cf sql import-tests-quota.sql
-//		assertEquals(1096, (long) quotaD.getCurrentValue());
-//		assertEquals(100, (long) quotaD.getLastValue());
-//		assertEquals(2300, (long) quotaD.getQuota());
-//		assertEquals(2000, (long) quotaD.getQuotaWarning());
+		// assert DB values for workgroup_2 (21)
+		assertNotNull(workgroup_2_quota);
+		assertEquals(500, workgroup_2_quota.getCurrentValue());
+		assertEquals(200, workgroup_2_quota.getLastValue());
+		assertEquals(1300, workgroup_2_quota.getQuota());
+		assertEquals(1500, workgroup_2_quota.getQuotaWarning());
+		assertEquals(6, workgroup_2_quota.getMaxFileSize());
+		
+		// Batch for workGroup_2 (21)
+		dailyThreadBatch.execute(batchRunContext, workGroup_2.getLsUuid(), listThreadIdentifier.size(), 1);
+		
+		assertNotNull(workgroup_2_quota);
+		assertEquals(900, workgroup_2_quota.getCurrentValue());
+		assertEquals(500, workgroup_2_quota.getLastValue());
+		assertEquals(1300, workgroup_2_quota.getQuota());
+		assertEquals(1500, workgroup_2_quota.getQuotaWarning());
+		assertEquals(6, workgroup_2_quota.getMaxFileSize());
+		
+		// generated statistics for workgroup_2
+		List<ThreadDailyStat> listThreaddailyStat_2 = threadDailyStatBusinessService.findBetweenTwoDates(workGroup_2, yesterday, new Date());
+		// Assertion about statistics generated for workroup_2
+		assertEquals(1, listThreaddailyStat_2.size());
+		ThreadDailyStat threadDailyStat_2 = listThreaddailyStat_2.get(0);
+		assertEquals(workGroup_2, threadDailyStat_2.getAccount());
+		assertEquals(2, threadDailyStat_2.getOperationCount());
+		assertEquals(900, threadDailyStat_2.getActualOperationSum());
+		assertEquals(2, threadDailyStat_2.getCreateOperationCount());
+		assertEquals(400, threadDailyStat_2.getCreateOperationSum());
+		assertEquals(0, threadDailyStat_2.getDeleteOperationCount());
+		assertEquals(0, threadDailyStat_2.getDeleteOperationSum());
+		assertEquals(400, threadDailyStat_2.getDiffOperationSum());
+
+		/**
+		 *  *************** Statistic Daily User Batch ***************
+		 */
+		// assert operationHistory insertion for Jane Smith (11) (import-tests-operationHistory.sql)
+		listOperationHistory = operationHistoryBusinessService.find(jane, null, null, new Date());
+		assertNotEquals(8, listOperationHistory.size());
+		// assert DB insertions see import-tests-quota.sql
+		AccountQuota janeQuota = accountQuotaBusinessService.find(jane);
+		assertNotNull(janeQuota);
+		assertEquals(496, janeQuota.getCurrentValue());
+		assertEquals(0, janeQuota.getLastValue());
+		assertEquals(1900, janeQuota.getQuota());
+		assertEquals(1300, janeQuota.getQuotaWarning());
+		assertEquals(5, janeQuota.getMaxFileSize());
+		// After batch user daily statistics are generated
+		dailyUserBatch.execute(batchRunContext, jane.getLsUuid(), 10, 1);
+		// assert quota after batch execution
+		assertEquals(796, janeQuota.getCurrentValue());
+		assertEquals(496, janeQuota.getLastValue());
+		assertEquals(1900, janeQuota.getQuota());
+		assertEquals(1300, janeQuota.getQuotaWarning());
+		assertEquals(5, janeQuota.getMaxFileSize());
+		
+		List<UserDailyStat> listJanedailyStat = userdailyStatBusinessService.findBetweenTwoDates(jane, yesterday,
+				new Date());
+		assertEquals(1, listJanedailyStat.size());
+		UserDailyStat userJaneDailyStat = listJanedailyStat.get(0);
+		assertEquals(jane, userJaneDailyStat.getAccount());
+		assertEquals(3, userJaneDailyStat.getOperationCount());
+		assertEquals(796, userJaneDailyStat.getActualOperationSum());
+		assertEquals(2, userJaneDailyStat.getCreateOperationCount());
+		assertEquals(600, userJaneDailyStat.getCreateOperationSum());
+		assertEquals(1, userJaneDailyStat.getDeleteOperationCount());
+		assertEquals(-300, userJaneDailyStat.getDeleteOperationSum());
+		assertEquals(300, userJaneDailyStat.getDiffOperationSum());
+
+		// assert that after batch execution there is no operation History 
+		listOperationHistory = operationHistoryBusinessService.find(jane, null, null, new Date());
+		assertEquals(0, listOperationHistory.size());
+		
+		/**
+		 *  *************** Statistic Daily Domain Batch ***************
+		 */
+		
+		// Assert DB insertions Quota for MyDomain (2)
+		DomainQuota quotaDomain = domainQuotaBusinessService.find(jane.getDomain());
+		assertNotNull(quotaDomain);
+		assertEquals(500, quotaDomain.getLastValue());
+		assertEquals(1096, quotaDomain.getCurrentValue());
+		assertEquals(1900, quotaDomain.getQuota());
+		assertEquals(1800, quotaDomain.getQuotaWarning());
+		
+		dailyDomainBatch.execute(batchRunContext, jane.getDomain().getUuid(), 20, 1);
+
+		ContainerQuota containerUserQuota = containerQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.USER);
+		assertNotNull(containerUserQuota);
+		assertEquals(496, containerUserQuota.getLastValue());
+		// sum of all users : jane : 796 (from getActualOperationSum after batach) + john 900 = 1696
+		assertEquals(1696, containerUserQuota.getCurrentValue());
+		assertEquals(Long.valueOf(1900), containerUserQuota.getQuota());
+		assertEquals(1300, containerUserQuota.getQuotaWarning());
+		assertEquals(5, containerUserQuota.getDefaultMaxFileSize());
+
+
+		ContainerQuota containerWorkGroupQuota= containerQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.WORK_GROUP);
+		assertNotNull(containerWorkGroupQuota);
+
+		assertEquals(900, containerWorkGroupQuota.getLastValue());
+		// sum of all workgroups : 900 + 1200 (from getActualOperationSum after batch)= 2100
+		assertEquals(2100, containerWorkGroupQuota.getCurrentValue());
+		assertEquals(2000, containerWorkGroupQuota.getQuota());
+		assertEquals(1500, containerWorkGroupQuota.getQuotaWarning());
+		assertEquals(5, containerWorkGroupQuota.getDefaultMaxFileSize());
+		
+		assertNotNull(quotaDomain);
+		assertEquals(1096, quotaDomain.getLastValue());
+		// container user 1696 + container workgroup 2100 = 3796
+		assertEquals(3796, quotaDomain.getCurrentValue());
+		assertEquals(1900, quotaDomain.getQuota());
+		assertEquals(1800, quotaDomain.getQuotaWarning());
+
+		quotaDomain = domainQuotaBusinessService.findRootQuota();
+		assertNotNull(quotaDomain);
+		// cf sql import-tests-quota.sql
+		assertEquals(1096, quotaDomain.getCurrentValue());
+		assertEquals(100, quotaDomain.getLastValue());
+		assertEquals(2300, quotaDomain.getQuota());
+		assertEquals(2000, quotaDomain.getQuotaWarning());
 	}
 }

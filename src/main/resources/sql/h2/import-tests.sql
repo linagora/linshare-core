@@ -59,7 +59,7 @@ INSERT INTO account(
 	last_name, can_upload, comment, restricted, 
 	CAN_CREATE_GUEST, inconsistent) 
 VALUES
--- Jane Do  (10)
+-- John Do  (10)
 	(10, 'user1@linshare.org', 2, 'aebe1b64-39c0-11e5-9fa8-080027b8274b', 
 	now(), now(), 0, 'en', 
 	'en', 'en', true, null, 
