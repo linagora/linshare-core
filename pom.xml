@@ -1758,7 +1758,7 @@
 		<h2.version>1.4.196</h2.version>
 		<hibernate.version>5.3.7.Final</hibernate.version>
 		<jackson.version>2.9.8</jackson.version>
-		<jclouds.version>2.1.0</jclouds.version>
+		<jclouds.version>2.1.3</jclouds.version>
 		<jjwt.version>0.9.0</jjwt.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>

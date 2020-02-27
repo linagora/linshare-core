@@ -4,11 +4,10 @@
 	xsi:schemaLocation=" http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="jcloudFileDataStore"
-		class="org.linagora.linshare.core.dao.impl.JcloudObjectStorageFileDataStoreImpl"
-		init-method="afterPropertiesSet" destroy-method="destroy">
-		<constructor-arg value="${linshare.documents.storage.mode}" />
-		<constructor-arg value="${linshare.documents.storage.providers}" />
+	<bean id="jcloudFileDataStoreFactory"
+		class="org.linagora.linshare.core.dao.impl.JcloudObjectStorageFileDataStoreFactory">
+		<property name="provider" value="${linshare.documents.storage.mode}" />
+		<property name="supportedProviders" value="${linshare.documents.storage.providers}" />
 		<property name="baseDirectory" value="${linshare.documents.storage.filesystem.directory}" />
 		<property name="identity" value="${linshare.documents.storage.identity}" />
 		<property name="credential" value="${linshare.documents.storage.credential}" />
@@ -17,4 +16,9 @@
 		<property name="bucketIdentifier" value="${linshare.documents.storage.bucket}" />
 	</bean>
 
+	<bean
+		id="jcloudFileDataStore"
+		factory-bean="jcloudFileDataStoreFactory"
+		factory-method="getDefault"
+		/>
 </beans>

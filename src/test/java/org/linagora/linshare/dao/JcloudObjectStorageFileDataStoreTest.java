@@ -43,7 +43,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linshare.core.dao.impl.JcloudObjectStorageFileDataStoreImpl;
+import org.linagora.linshare.core.dao.JcloudObjectStorageFileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
@@ -51,7 +51,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = {
@@ -62,7 +61,7 @@ public class JcloudObjectStorageFileDataStoreTest extends AbstractJUnit4SpringCo
 
 
 	@Autowired
-	protected JcloudObjectStorageFileDataStoreImpl jcloudFileDataStore;
+	protected JcloudObjectStorageFileDataStore jcloudFileDataStore;
 
 	@Value( "${linshare.documents.storage.providers}" )
 	private String supportedProviders;
