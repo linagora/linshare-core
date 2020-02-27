@@ -35,7 +35,7 @@ package org.linagora.linshare.core.service.fragment.impl;
 
 import java.util.List;
 
-import org.jsoup.helper.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;

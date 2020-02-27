@@ -42,7 +42,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.openstack.swift.v1.blobstore.RegionScopedBlobStoreContext;
-import org.jsoup.helper.Validate;
+import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
