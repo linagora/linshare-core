@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.linagora.linshare.core.dao.impl.JcloudObjectStorageFileDataStoreImpl;
+import org.linagora.linshare.core.dao.JcloudObjectStorageFileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
@@ -67,7 +67,7 @@ public class JcloudObjectStorageFileDataStoreTest {
 
 
 	@Autowired
-	protected JcloudObjectStorageFileDataStoreImpl jcloudFileDataStore;
+	protected JcloudObjectStorageFileDataStore jcloudFileDataStore;
 
 	@Value( "${linshare.documents.storage.providers}" )
 	private String supportedProviders;
