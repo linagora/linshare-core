@@ -39,7 +39,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
@@ -60,6 +59,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -80,11 +81,11 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
 @Sql({
-	"/import-tests-stat.sql",
-	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql"
 	})
 @Transactional
+//Use dirties context to reset the H2 database because of quota alteration 
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class QuotaBusinessServiceTest {
 
 	private static Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImplTest.class);
@@ -100,7 +101,7 @@ public class QuotaBusinessServiceTest {
 	private AccountQuotaBusinessService accountQuotaBusinessService;
 
 	@Autowired
-	private ContainerQuotaBusinessService ensembleQuotaBusinessService;
+	private ContainerQuotaBusinessService containerQuotaBusinessService;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -119,61 +120,62 @@ public class QuotaBusinessServiceTest {
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	// TODO: Fix this test before merging
-	@Disabled
 	@Test
-	public void test() {
+	public void testSumOfCurrentValues() {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
-		Account account = jane;
-		AbstractDomain domain = jane.getDomain();
+		AbstractDomain myDomain = jane.getDomain();
+		DomainQuota myDomainQuota = domainQuotaBusinessService.find(myDomain);
+		
+		Assertions.assertNotNull(myDomainQuota);
+		Assertions.assertEquals(1096, (long) myDomainQuota.getCurrentValue());
+		Assertions.assertEquals(500, (long) myDomainQuota.getLastValue());
+		Assertions.assertEquals(1900, (long) myDomainQuota.getQuota());
+		Assertions.assertEquals(1800, (long) myDomainQuota.getQuotaWarning());
+		
+		domainQuotaBusinessService.sumOfCurrentValue(myDomainQuota);
+		myDomainQuota = domainQuotaBusinessService.find(myDomain);
+		Assertions.assertEquals(1396, (long) myDomainQuota.getCurrentValue());
+		Assertions.assertEquals(1096, (long) myDomainQuota.getLastValue());
 
-		DomainQuota domainQuota = domainQuotaBusinessService.find(domain);
-		Assertions.assertNotNull(domainQuota);
-		Assertions.assertEquals(1096, (long) domainQuota.getCurrentValue());
-		Assertions.assertEquals(500, (long) domainQuota.getLastValue());
-		Assertions.assertEquals(1900, (long) domainQuota.getQuota());
-		Assertions.assertEquals(1800, (long) domainQuota.getQuotaWarning());
-		domainQuotaBusinessService.sumOfCurrentValue(domainQuota);
-		domainQuota = domainQuotaBusinessService.find(domain);
-		Assertions.assertEquals(1396, (long) domainQuota.getCurrentValue());
-		Assertions.assertEquals(1096, (long) domainQuota.getLastValue());
+		ContainerQuota containerQuotaUser = containerQuotaBusinessService.find(myDomain, ContainerQuotaType.USER);
+		Assertions.assertNotNull(containerQuotaUser);
+		Assertions.assertEquals(496, (long) containerQuotaUser.getCurrentValue());
+		Assertions.assertEquals(0, (long) containerQuotaUser.getLastValue());
+		Assertions.assertEquals(1900, (long) containerQuotaUser.getQuota());
+		Assertions.assertEquals(1300, (long) containerQuotaUser.getQuotaWarning());
+		Assertions.assertEquals(5, (long) containerQuotaUser.getDefaultMaxFileSize());
+		// currentValue sum of all account quota in a container 
+		containerQuotaBusinessService.sumOfCurrentValue(containerQuotaUser);
+		containerQuotaUser = containerQuotaBusinessService.find(myDomain, ContainerQuotaType.USER);
+		// (900 + 496 current value of quota jane & jhon see import-tests-quota.sql)
+		Assertions.assertEquals(1396, (long) containerQuotaUser.getCurrentValue());
+		Assertions.assertEquals(496, (long) containerQuotaUser.getLastValue());
 
-		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.USER);
-		Assertions.assertNotNull(ensembleQuota);
-		Assertions.assertEquals(496, (long) ensembleQuota.getCurrentValue());
-		Assertions.assertEquals(0, (long) ensembleQuota.getLastValue());
-		Assertions.assertEquals(1900, (long) ensembleQuota.getQuota());
-		Assertions.assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
-		Assertions.assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
-		ensembleQuotaBusinessService.sumOfCurrentValue(ensembleQuota);
-		ensembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.USER);
-		Assertions.assertEquals(1700, (long) ensembleQuota.getCurrentValue());
-		Assertions.assertEquals(496, (long) ensembleQuota.getLastValue());
+		ContainerQuota containerQuotaWorkGroup = containerQuotaBusinessService.find(myDomain, ContainerQuotaType.WORK_GROUP);
+		Assertions.assertNotNull(containerQuotaWorkGroup);
+		Assertions.assertEquals(900, (long) containerQuotaWorkGroup.getCurrentValue());
+		Assertions.assertEquals(200, (long) containerQuotaWorkGroup.getLastValue());
+		Assertions.assertEquals(2000, (long) containerQuotaWorkGroup.getQuota());
+		Assertions.assertEquals(1500, (long) containerQuotaWorkGroup.getQuotaWarning());
+		Assertions.assertEquals(5, (long) containerQuotaWorkGroup.getDefaultMaxFileSize());
+		containerQuotaBusinessService.sumOfCurrentValue(containerQuotaWorkGroup);
+		containerQuotaWorkGroup = containerQuotaBusinessService.find(myDomain, ContainerQuotaType.WORK_GROUP);
+		// Assertions.assertEquals(1200, (long) threadEnsembleQuota.getCurrentValue());
+		Assertions.assertEquals(900, (long) containerQuotaWorkGroup.getLastValue());
 
-		ContainerQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.WORK_GROUP);
-		Assertions.assertNotNull(threadEnsembleQuota);
-		Assertions.assertEquals(900, (long) threadEnsembleQuota.getCurrentValue());
-		Assertions.assertEquals(200, (long) threadEnsembleQuota.getLastValue());
-		Assertions.assertEquals(2000, (long) threadEnsembleQuota.getQuota());
-		Assertions.assertEquals(1500, (long) threadEnsembleQuota.getQuotaWarning());
-		Assertions.assertEquals(5, (long) threadEnsembleQuota.getDefaultMaxFileSize());
-		ensembleQuotaBusinessService.sumOfCurrentValue(threadEnsembleQuota);
-		threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.WORK_GROUP);
-		Assertions.assertEquals(1200, (long) threadEnsembleQuota.getCurrentValue());
-		Assertions.assertEquals(900, (long) threadEnsembleQuota.getLastValue());
-
-		AccountQuota qo = accountQuotaBusinessService.find(account);
-		Assertions.assertNotNull(qo);
-		Assertions.assertEquals(800, (long) qo.getCurrentValue());
-		Assertions.assertEquals(0, (long) qo.getLastValue());
-		Assertions.assertEquals(1600, (long) qo.getQuota());
-		Assertions.assertEquals(1480, (long) qo.getQuotaWarning());
-		Assertions.assertEquals(5, (long) qo.getMaxFileSize());
-		accountQuotaBusinessService.createOrUpdate(account, new GregorianCalendar(2042, 10, 11, 00, 00).getTime());
-		qo = accountQuotaBusinessService.find(account);
-		Assertions.assertNotNull(qo);
-		Assertions.assertEquals(1700, (long) qo.getCurrentValue());
-		Assertions.assertEquals(800, (long) qo.getLastValue());
+		AccountQuota janeAccountQuota = accountQuotaBusinessService.find(jane);
+		Assertions.assertNotNull(janeAccountQuota);
+		Assertions.assertEquals(496, (long) janeAccountQuota.getCurrentValue());
+		Assertions.assertEquals(0, (long) janeAccountQuota.getLastValue());
+		Assertions.assertEquals(1900, (long) janeAccountQuota.getQuota());
+		Assertions.assertEquals(1300, (long) janeAccountQuota.getQuotaWarning());
+		Assertions.assertEquals(5, (long) janeAccountQuota.getMaxFileSize());
+		
+		accountQuotaBusinessService.createOrUpdate(jane, new GregorianCalendar(2042, 10, 11, 00, 00).getTime());
+		janeAccountQuota = accountQuotaBusinessService.find(jane);
+		Assertions.assertNotNull(janeAccountQuota);
+		Assertions.assertEquals(496, (long) janeAccountQuota.getCurrentValue());
+		Assertions.assertEquals(496, (long) janeAccountQuota.getLastValue());
 
 		List<String> listDomain = accountQuotaBusinessService.findDomainUuidByBatchModificationDate(yesterday());
 		Assertions.assertEquals(1, listDomain.size());

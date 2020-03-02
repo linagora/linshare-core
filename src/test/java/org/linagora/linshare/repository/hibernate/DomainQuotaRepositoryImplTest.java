@@ -126,10 +126,9 @@ public class DomainQuotaRepositoryImplTest {
 	public void testCascadeMaintenanceToSubdomains() {
 		AbstractDomain myDomain = jane.getDomain();
 		Long count = domainQuotaRepository.cascadeMaintenanceMode(myDomain, true);
-		// MyDomain : 1 domain, 2 containers, 4 accounts ( 2 users & 2 workgroups)
-		// subdomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2
-		// containers, 1 account)
-		assertEquals(Long.valueOf(14), count);
+		// MyDomain : 1 domain, 2 containers, 5 accounts ( 3 users & 2 workgroups)
+		// subdomains: GuestDomain 1 domain and 2 containers, MySubDomain 1 domain, 2 containers, 1 account)
+		assertEquals(Long.valueOf(15), count);
 		Quota quota = accountQuotaRepository.find(jane);
 		assertEquals(true, quota.getMaintenance());
 		quota = accountQuotaRepository.find(root);

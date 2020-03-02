@@ -215,14 +215,15 @@ INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
 	quota_domain_id, quota_container_id, current_value, last_value,
 	domain_id, account_id, domain_parent_id, quota,
-	quota_warning, max_file_size, container_type, quota_type,
-	domain_shared_override, domain_shared)
+	quota_override, max_file_size_override, maintenance,
+	quota_warning, max_file_size, container_type, quota_type)
 VALUES (
-	111, '1fadebd2-4cdc-11ea-a153-b3bffa7a6089', NOW(), NOW(), NOW(),
-	@quota_my_domain_id , @quota_on_my_domain_container_user_id , 0, 0,
-	@my_domain_id , @john_do_id , 1, 100000000000,
-	100000000000, 1000000, null, 'ACCOUNT_QUOTA',
-	false, false);
+	111, 'a2b4ed6e-4039-4f45-9a33-d906a3fd3ae8', NOW(), NOW(), NOW(),
+	@quota_my_domain_id, @quota_on_my_domain_container_user_id , 0, 0,
+	@my_domain_id , @john_do_id , 1, 1000000000,
+	false, false, false,
+	1000000000, 1000000000, null, 'ACCOUNT_QUOTA');
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 111;
 SET @quota_account_jhon_id = SELECT 111;	
 -- quota : 100 Go
 -- max_file_size : 10 Go
@@ -232,14 +233,15 @@ INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
 	quota_domain_id, quota_container_id, current_value, last_value,
 	domain_id, account_id, domain_parent_id, quota,
-	quota_warning, max_file_size, container_type, quota_type,
-	domain_shared_override, domain_shared)
+	quota_override, max_file_size_override, maintenance,
+	quota_warning, max_file_size, container_type, quota_type)
 VALUES (
-	122, '0f3771b0-4cdc-11ea-9b45-7fefda9e3980', NOW(), NOW(), NOW(),
+	122, '072b06d3-8f05-48fa-8aed-bf86fce7170a', NOW(), NOW(), NOW(),
 	@quota_my_domain_id, @quota_on_my_domain_container_user_id, 0, 0,
-	@my_domain_id , @jane_simth_id , 1, 100000000000,
-	100000000000, 1000000, null, 'ACCOUNT_QUOTA',
-	false, false);
+	@my_domain_id, @jane_simth_id , 1, 1000000000,
+	false, false, false,
+	1000000000, 1000000000, null, 'ACCOUNT_QUOTA');
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 122;
 SET @quota_account_jane_id = SELECT 122;	
 -- quota : 100 Go
 -- max_file_size : 10 Go	
@@ -249,14 +251,15 @@ INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
 	quota_domain_id, quota_container_id, current_value, last_value,
 	domain_id, account_id, domain_parent_id, quota,
-	quota_warning, max_file_size, container_type, quota_type,
-	domain_shared_override, domain_shared)
+	quota_override, max_file_size_override, maintenance,
+	quota_warning, max_file_size, container_type, quota_type)
 VALUES (
-	133, '17dfa008-4cdc-11ea-9db9-d7476f882ea8', NOW(), NOW(), NOW(),
+	133, '123b06d3-8f05-48fa-8aed-bf86fce7170a', NOW(), NOW(), NOW(),
 	@quota_my_domain_id, @quota_on_my_domain_container_user_id, 0, 0,
-	@my_domain_id , @foo_bar_id , 1, 100000000000,
-	100000000000, 1000000, null, 'ACCOUNT_QUOTA',
-	false, false);
+	@my_domain_id , @foo_bar_id , 1, 1000000000,
+	false, false, false,
+	1000000000, 1000000000, null, 'ACCOUNT_QUOTA');
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 133;
 SET @quota_account_foo_id = SELECT 133;
 -- quota : 100 Go
 -- max_file_size : 10 Go
@@ -377,20 +380,26 @@ SET @quota_guest_domain_id = SELECT 8;
 
 
 -- 'CONTAINER_QUOTA', 'USER' for GuestDomain
-INSERT INTO quota(id, uuid, creation_date, modification_date, 
-	batch_modification_date, quota_domain_id, current_value, last_value, 
-	domain_id, domain_parent_id, quota, quota_override, 
-	quota_warning, default_quota, default_quota_override, default_max_file_size, 
-	default_max_file_size_override, default_account_quota, default_account_quota_override, 
-	max_file_size, max_file_size_override, account_quota, account_quota_override, quota_type, 
-	container_type, shared)
-VALUES ( 9, '1515e6e2-b9d4-11e5-997e-0b5792ea886a', NOW(), NOW(), 
-	null, 8, 0, 0, 
-	@guest_domain_id , @my_sub_domain_id , 400000000000, false, 
-	400000000000, 400000000000, false, 10000000000, 
-	false, 100000000000, false, 10000000000, 
-	false, 100000000000, false, 'CONTAINER_QUOTA', 
-	'USER', false);
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	quota_domain_id, current_value, last_value, domain_id, 
+	domain_parent_id, quota, quota_override, quota_warning, 
+	default_quota, default_quota_override, default_max_file_size, default_max_file_size_override,
+	default_account_quota, default_account_quota_override, max_file_size, max_file_size_override,
+	account_quota, account_quota_override, quota_type, container_type, shared)
+VALUES 
+	( 9, '1515e6e2-b9d4-11e5-997e-0b5792ea886a', NOW(), NOW(), null,
+	8, 0, 0, 4,
+	2, 400000000000, false, 400000000000, 
+	400000000000, false, 10000000000, false,
+	100000000000, false, 10000000000, false,
+	100000000000, false, 'CONTAINER_QUOTA', 'USER', false);
+-- quota : 400000000000 : 400 Go for all users
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 100000000000 : 100 Go
+-- max_file_size : 10000000000  : 10 Go
+-- account_quota : 100000000000 : 100 Go
 SET @quota_on_guest_domain_container_user_id = SELECT 9;	
 -- quota : 400000000000 : 400 Go for all users
 -- quota_warning : 400000000000 : 400 Go
