@@ -36,7 +36,6 @@ package org.linagora.linshare.business.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
@@ -53,12 +52,13 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-@Disabled //TODO WORKAROUND: fix quota issues
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -75,6 +75,8 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-ldap.xml" })
 @Sql({"/import-tests-domain-quota-updates.sql"})
 @Transactional
+//Use dirties context to reset the H2 database because of quota alteration 
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class ContainerQuotaBusinessServiceImplTest {
 	@Autowired
 	@Qualifier("accountRepository")
@@ -207,23 +209,23 @@ public class ContainerQuotaBusinessServiceImplTest {
 
 	@Test
 	public void testCascadeAccountQuota() {
-		Long quotaValue = 698L;
+		Long expectedQuotaValue = Long.valueOf(698);
 
-		ContainerQuota quota = businessService.find(topDomain, ContainerQuotaType.USER);
-		ContainerQuota dto = new ContainerQuota(quota);
+		ContainerQuota containerQuota = businessService.find(topDomain, ContainerQuotaType.USER);
+		ContainerQuota containerQuotaDto = new ContainerQuota(containerQuota);
 
-		dto.setAccountQuotaOverride(true);
-		dto.setAccountQuota(quotaValue);
+		containerQuotaDto.setAccountQuotaOverride(true);
+		containerQuotaDto.setAccountQuota(expectedQuotaValue);
 
-		businessService.update(quota, dto);
+		businessService.update(containerQuota, containerQuotaDto);
 
-		quota = businessService.find(topDomain, ContainerQuotaType.USER);
-		Assertions.assertEquals(quotaValue, quota.getAccountQuota());
-		Assertions.assertEquals(true, quota.getAccountQuotaOverride());
+		containerQuota = businessService.find(topDomain, ContainerQuotaType.USER);
+		Assertions.assertEquals(expectedQuotaValue, containerQuota.getAccountQuota());
+		Assertions.assertEquals(true, containerQuota.getAccountQuotaOverride());
 
-		AccountQuota aq = accountBusinessService.find(jane);
-		Assertions.assertEquals(quotaValue, aq.getQuota());
-		Assertions.assertEquals(false, aq.getQuotaOverride());
+		AccountQuota accountQuotaJane = accountBusinessService.find(jane);
+		Assertions.assertEquals(expectedQuotaValue, accountQuotaJane.getQuota());
+		Assertions.assertEquals(false, accountQuotaJane.getQuotaOverride());
 
 	}
 
