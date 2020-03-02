@@ -38,21 +38,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.QuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.repository.hibernate.DomainQuotaRepositoryImpl;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
@@ -60,19 +55,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-@Disabled //TODO WORKAROUND: fix quota issues
 @ExtendWith(SpringExtension.class)
 @Sql({
 	"/import-tests-domain-quota-updates.sql" })
 @Transactional
-@ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-test.xml", 
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
-
+//Use dirties context to reset the H2 database because of quota alteration 
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DomainQuotaRepositoryImplTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -83,9 +81,6 @@ public class DomainQuotaRepositoryImplTest {
 
 	@Autowired
 	private AccountQuotaRepository accountQuotaRepository;
-
-	@Autowired
-	private ContainerQuotaRepository containerQuotaRepository;
 
 	@Autowired
 	private DomainQuotaRepositoryImpl domainQuotaRepository;
@@ -115,12 +110,12 @@ public class DomainQuotaRepositoryImplTest {
 
 	@Test
 	public void testCascadeMaintenanceMode() {
-		initialChecks();
 		Long count = domainQuotaRepository.cascadeMaintenanceMode(root.getDomain(), true);
 		// LinShareRootDomain : 1 domain, 2 containers, 1 account
-		// MyDomain : 1 domain, 2 containers, 2 accounts
-		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2 containers, 1 account)
-		assertEquals(Long.valueOf(16), count);
+		// MyDomain : 1 domain, 2 containers, 5 accounts (3 users (1 inconsistent from import-tests-domain-quota-updates.sql) & 2 workgroups)
+		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2
+		// containers, 1 account)
+		assertEquals(Long.valueOf(19), count);
 		Quota quota = accountQuotaRepository.find(jane);
 		assertEquals(true, quota.getMaintenance());
 		quota = accountQuotaRepository.find(root);
@@ -129,34 +124,20 @@ public class DomainQuotaRepositoryImplTest {
 
 	@Test
 	public void testCascadeMaintenanceToSubdomains() {
-		initialChecks();
 		AbstractDomain myDomain = jane.getDomain();
 		Long count = domainQuotaRepository.cascadeMaintenanceMode(myDomain, true);
-		// MyDomain : 1 domain, 2 containers, 2 accounts
-		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2 containers, 1 account)
-		assertEquals(Long.valueOf(12), count);
+		// MyDomain : 1 domain, 2 containers, 4 accounts ( 2 users & 2 workgroups)
+		// subdomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2
+		// containers, 1 account)
+		assertEquals(Long.valueOf(14), count);
 		Quota quota = accountQuotaRepository.find(jane);
 		assertEquals(true, quota.getMaintenance());
 		quota = accountQuotaRepository.find(root);
 		assertEquals(false, quota.getMaintenance());
 	}
 
-	private void initialChecks() {
-		List<DomainQuota> domains = domainQuotaRepository.findAll();
-		List<ContainerQuota> containers = containerQuotaRepository.findAll();
-		List<AccountQuota> accounts = accountQuotaRepository.findAll();
-		// check initial conditions
-		/// LinShareRootDomain, MyDomain, MySubDomain and GuestDomain
-		assertEquals(4, domains.size());
-		// 2 containers by domain
-		assertEquals(8, containers.size());
-		// root , jane and john
-		assertEquals(4, accounts.size());
-	}
-
 	@Test
 	public void testCascadeDefaultQuotaToSubDomainsDefaultQuota() {
-		initialChecks();
 		Quota quota = null;
 		Long count = null;
 
@@ -183,7 +164,6 @@ public class DomainQuotaRepositoryImplTest {
 
 	@Test
 	public void testCascadeDefaultQuotaToSubDomainsQuota() {
-		initialChecks();
 		Quota quota = null;
 		Long count = null;
 
@@ -210,7 +190,6 @@ public class DomainQuotaRepositoryImplTest {
 
 	@Test
 	public void testCascadeDefaultQuotaToDefaultQuotaOfChildrenDomains() {
-		initialChecks();
 		Quota quota = null;
 		Long count = null;
 
@@ -239,7 +218,6 @@ public class DomainQuotaRepositoryImplTest {
 
 	@Test
 	public void testCascadeDefaultQuotaToQuotaOfChildrenDomains() {
-		initialChecks();
 		Quota quota = null;
 		Long count = null;
 
@@ -267,7 +245,6 @@ public class DomainQuotaRepositoryImplTest {
 
 	@Test
 	public void testCascadeDefaultQuotaToQuotaOfChildrenDomains2() {
-		initialChecks();
 		Quota quota = null;
 		Long count = null;
 
@@ -290,7 +267,6 @@ public class DomainQuotaRepositoryImplTest {
 
 	@Test
 	public void testCascadeDefaultQuotaToDefaultQuotaOfChildrenDomains2() {
-		initialChecks();
 		Quota quota = null;
 		Long count = null;
 
@@ -319,7 +295,6 @@ public class DomainQuotaRepositoryImplTest {
 
 	@Test
 	public void testCascadeDefaultQuota() {
-		initialChecks();
 		Quota quota = null;
 		Long count = null;
 

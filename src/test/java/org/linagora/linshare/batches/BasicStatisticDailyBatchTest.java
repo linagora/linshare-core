@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
@@ -55,14 +54,16 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
 import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -83,6 +84,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class BasicStatisticDailyBatchTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -122,7 +124,7 @@ public class BasicStatisticDailyBatchTest {
 				LogAction.CREATE, d.getTime(), AuditLogEntryType.CONTACTS_LISTS_CONTACTS, BasicStatisticType.ONESHOT));
 	}
 
-	@Disabled
+	
 	@Test
 	public void test() {
 		BatchRunContext batchRunContext = new BatchRunContext();
