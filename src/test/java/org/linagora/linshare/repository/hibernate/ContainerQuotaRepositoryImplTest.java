@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -57,21 +56,21 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.repository.hibernate.ContainerQuotaRepositoryImpl;
 import org.linagora.linshare.core.repository.hibernate.DomainQuotaRepositoryImpl;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@Disabled //TODO WORKAROUND: fix quota issues
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
 	"/import-tests-domain-quota-updates.sql"})
-@ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-test.xml",
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
 
 public class ContainerQuotaRepositoryImplTest {
@@ -117,16 +116,16 @@ public class ContainerQuotaRepositoryImplTest {
 	}
 
 	private void initialChecks() {
-		List<DomainQuota> domains = domainQuotaRepository.findAll();
+		List<DomainQuota> domainsQuotas = domainQuotaRepository.findAll();
 		List<ContainerQuota> containers = containerQuotaRepository.findAll();
 		List<AccountQuota> accounts = accountQuotaRepository.findAll();
 		// check initial conditions
-		/// LinShareRootDomain, MyDomain, MySubDomain and GuestDomain
-		assertEquals(4, domains.size());
+		/// LinShareRootDomain, MyDomain, MySubDomain and GuestDomain, 
+		assertEquals(4, domainsQuotas.size());
 		// 2 containers by domain
 		assertEquals(8, containers.size());
-		// root , jane and john
-		assertEquals(4, accounts.size());
+		// root , jane, john, foo , workgroup_id_20, workgroup_id_21  ,inconsistent (see script import-tests-domain-quota-updates.sql) &  
+		assertEquals(7, accounts.size());
 	}
 
 	@Test
