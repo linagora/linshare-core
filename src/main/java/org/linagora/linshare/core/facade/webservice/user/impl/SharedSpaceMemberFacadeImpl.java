@@ -36,8 +36,6 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import javax.ws.rs.NotSupportedException;
-
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -118,6 +116,9 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(member, "Shared space member must be set.");
+		Validate.notNull(member.getAccount().getUuid(), "account UUID of the member must be set.");
+		Validate.notNull(member.getNode().getUuid(), "node UUID of the member must be set.");
+		Validate.notNull(member.getRole().getUuid(), "role UUID of the member must be set.");
 		if (!Strings.isNullOrEmpty(uuid)) {
 			member.setUuid(uuid);
 		} else {

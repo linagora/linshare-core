@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
@@ -66,8 +67,9 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 			SharedSpaceMemberResourceAccessControl rac,
 			LogEntryService logEntryService,
 			UserRepository<User> userRepository,
-			SharedSpaceRoleService roleService) {
-		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, roleService);
+			SharedSpaceRoleService roleService,
+			SharedSpaceNodeBusinessService nodeService) {
+		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, roleService, nodeService);
 	}
 
 	@Override

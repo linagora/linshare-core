@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
@@ -80,6 +81,8 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 	protected final MailBuildingService mailBuildingService;
 
 	protected final SharedSpaceRoleService roleService;
+	
+	protected final SharedSpaceNodeBusinessService nodeBusinessService;
 
 	public AbstractSharedSpaceMemberFragmentServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,
@@ -87,7 +90,8 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 			SharedSpaceMemberResourceAccessControl rac,
 			LogEntryService logEntryService,
 			UserRepository<User> userRepository,
-			SharedSpaceRoleService roleService) {
+			SharedSpaceRoleService roleService,
+			SharedSpaceNodeBusinessService nodeBusinessService) {
 		super(rac);
 		this.businessService = businessService;
 		this.logEntryService = logEntryService;
@@ -95,6 +99,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.roleService = roleService;
+		this.nodeBusinessService = nodeBusinessService;
 	}
 
 	protected void checkCreateMemberPermission(Account authUser, Account actor, SharedSpaceNode node,
@@ -179,7 +184,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		SharedSpaceMember memberWg = new SharedSpaceMemberWorkgroup(new SharedSpaceNodeNested(node),
 				new GenericLightEntity(role.getUuid(), role.getName()), account);
 		String parentUuid = node.getParentUuid();
-		checkRoleOnCreate(authUser, actor, role, node.getNodeType());
+		checkRoleTypeIntegrity(authUser, actor, role.getUuid(), node.getNodeType());
 		/**
 		 * If the member is added to nested workgroup, set the [nested] field to true
 		 */
@@ -189,18 +194,21 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORKGROUP_MEMBER);
 		return toAdd;
 	}
-
-	protected void checkRoleOnCreate(Account authUser, Account actor, SharedSpaceRole role, NodeType type) {
+	
+	/**
+	 * Check that the updated role type corresponds to the right node type of the member
+	 * @param authUser
+	 * @param actor
+	 * @param roleUuid
+	 * @param type {@link NodeType} 
+	 */
+	protected void checkRoleTypeIntegrity(Account authUser, Account actor, String roleUuid, NodeType type) {
 		List<SharedSpaceRole> roles = roleService.findRolesByNodeType(authUser, actor, type);
+		SharedSpaceRole role = roleService.find(authUser, actor, roleUuid);
 		if (!roles.toString().contains(role.toString())) {
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
 					"Please verify the shared space member's role");
 		}
-	}
-
-	protected void checkRoleOnUpdate(Account authUser, Account actor, String roleUuid, NodeType type) {
-		SharedSpaceRole foundRole = roleService.find(authUser, actor, roleUuid);
-		checkRoleOnCreate(authUser, actor, foundRole, type);
 	}
 
 	@Override
@@ -208,7 +216,8 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
-		checkRoleOnUpdate(authUser, actor, memberToUpdate.getRole().getUuid(), memberToUpdate.getNode().getNodeType());
+		SharedSpaceNode foundSharedSpaceNode = nodeBusinessService.find(memberToUpdate.getNode().getUuid());
+		checkRoleTypeIntegrity(authUser, actor, memberToUpdate.getRole().getUuid(), foundSharedSpaceNode.getNodeType());
 		SharedSpaceMember foundMemberToUpdate = businessService.findByAccountAndNode(memberToUpdate.getAccount().getUuid(),
 				memberToUpdate.getNode().getUuid());
 		if (foundMemberToUpdate == null) {

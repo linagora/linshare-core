@@ -71,8 +71,6 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 
 	private final DriveMemberBusinessService driveMemberBusinessService;
 
-	private final SharedSpaceNodeBusinessService nodeBusinessService;
-
 	public DriveMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
@@ -82,9 +80,8 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			DriveMemberBusinessService driveMemberBusinessService,
 			SharedSpaceNodeBusinessService nodeBusinessService,
 			SharedSpaceRoleService roleService) {
-		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, roleService);
+		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, roleService, nodeBusinessService);
 		this.driveMemberBusinessService = driveMemberBusinessService;
-		this.nodeBusinessService = nodeBusinessService;
 	}
 
 	@Override
@@ -117,8 +114,8 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			String message = String.format("The account with the UUID : %s is not existing", account.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
 		}
-		checkRoleOnCreate(authUser, actor, role, node.getNodeType());
-		checkRoleOnCreate(authUser, actor, nestedRole, NodeType.WORK_GROUP);
+		checkRoleTypeIntegrity(authUser, actor, role.getUuid(), node.getNodeType());
+		checkRoleTypeIntegrity(authUser, actor, nestedRole.getUuid(), NodeType.WORK_GROUP);
 		SharedSpaceMemberDrive toAdd = driveMemberBusinessService.create(account, node, role, nestedRole);
 		// Add the new member to all workgroups inside the drive
 		List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService.findByParentUuidAndType(node.getUuid());
@@ -141,7 +138,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			SharedSpaceMember foundMemberToUpdate, boolean force) {
 		GenericLightEntity wgRole = ((SharedSpaceMemberDrive) memberToUpdate).getNestedRole();
 		Validate.notNull(wgRole, "The nested role must be set");
-		checkRoleOnUpdate(authUser, actor, wgRole.getUuid(), NodeType.WORK_GROUP);
+		checkRoleTypeIntegrity(authUser, actor, wgRole.getUuid(), NodeType.WORK_GROUP);
 		SharedSpaceMember updated = driveMemberBusinessService.update((SharedSpaceMemberDrive) foundMemberToUpdate,
 				(SharedSpaceMemberDrive) memberToUpdate);
 		List<SharedSpaceMember> nestedMembers = Lists.newArrayList();
