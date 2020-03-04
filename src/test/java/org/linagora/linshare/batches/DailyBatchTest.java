@@ -50,7 +50,6 @@ import org.linagora.linshare.core.batches.impl.StatisticDailyDomainBatchImpl;
 import org.linagora.linshare.core.batches.impl.StatisticDailyThreadBatchImpl;
 import org.linagora.linshare.core.batches.impl.StatisticDailyUserBatchImpl;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
@@ -109,7 +108,6 @@ public class DailyBatchTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
-
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;

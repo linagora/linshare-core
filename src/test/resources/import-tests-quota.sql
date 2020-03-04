@@ -64,7 +64,6 @@ update quota set
 	where id=@quota_on_my_domain_container_workgroup_id;
 
 
-	
 
 -- MyDomain, CONTAINER_QUOTA - WORKGROUP (20)
 update quota set

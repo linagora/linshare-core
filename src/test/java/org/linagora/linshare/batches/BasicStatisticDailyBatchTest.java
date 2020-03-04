@@ -124,7 +124,6 @@ public class BasicStatisticDailyBatchTest {
 				LogAction.CREATE, d.getTime(), AuditLogEntryType.CONTACTS_LISTS_CONTACTS, BasicStatisticType.ONESHOT));
 	}
 
-	
 	@Test
 	public void test() {
 		BatchRunContext batchRunContext = new BatchRunContext();

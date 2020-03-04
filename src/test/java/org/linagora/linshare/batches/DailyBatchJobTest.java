@@ -43,7 +43,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
@@ -62,18 +61,19 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-@Disabled //TODO WORKAROUND: fix quota issues
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
@@ -94,6 +94,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class DailyBatchJobTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -214,10 +215,11 @@ public class DailyBatchJobTest {
 		assertEquals(50, (long) userDailyStat.getDiffOperationSum());
 		AccountQuota quota = accountQuotaBusinessService.find(jane);
 		assertNotNull(quota);
-		assertEquals(1100, (long) quota.getCurrentValue());
-		assertEquals(800, (long) quota.getLastValue());
-		assertEquals(1600, (long) quota.getQuota());
-		assertEquals(1480, (long) quota.getQuotaWarning());
+		// user quota 496 + 300 from delete operation (see import-tests-operationHistory.sql)
+		assertEquals(796, (long) quota.getCurrentValue());
+		assertEquals(496, (long) quota.getLastValue());
+		assertEquals(1900, (long) quota.getQuota());
+		assertEquals(1300, (long) quota.getQuotaWarning());
 		assertEquals(5, (long) quota.getMaxFileSize());
 		listThreadDailyStat = threadDailyStatBusinessService.findBetweenTwoDates(null,
 				new GregorianCalendar(2042, 10, 01, 00, 00).getTime(),
