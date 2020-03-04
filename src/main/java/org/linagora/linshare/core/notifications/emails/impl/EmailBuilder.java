@@ -88,7 +88,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
@@ -712,7 +712,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		User user = new Guest("Peter", "Wilson", "peter.wilson@linshare.org");
 		SharedSpaceNode node = new SharedSpaceNode(name, null, NodeType.WORK_GROUP);
 		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
-				new GenericLightEntity(UUID.randomUUID().toString(), "ADMIN"),
+				new LightSharedSpaceRole(UUID.randomUUID().toString(), "ADMIN", node.getNodeType()),
 				new SharedSpaceAccount(user));
 		return member;
 	}
@@ -721,9 +721,9 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		User user = new Guest("Peter", "Wilson", "peter.wilson@linshare.org");
 		SharedSpaceNode node = new SharedSpaceNode(name, null, NodeType.DRIVE);
 		SharedSpaceMemberDrive member = new SharedSpaceMemberDrive(new SharedSpaceNodeNested(node),
-				new GenericLightEntity(UUID.randomUUID().toString(), "DRIVE_ADMIN"),
+				new LightSharedSpaceRole(UUID.randomUUID().toString(), "DRIVE_ADMIN", node.getNodeType()),
 				new SharedSpaceAccount(user),
-				new GenericLightEntity(UUID.randomUUID().toString(), "ADMIN"));
+				new LightSharedSpaceRole(UUID.randomUUID().toString(), "ADMIN", node.getNodeType()));
 		return member;
 	}
 

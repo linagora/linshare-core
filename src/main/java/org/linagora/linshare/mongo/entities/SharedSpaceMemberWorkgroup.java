@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 
 @XmlRootElement(name = "SharedSpaceMemberWorkgroup")
 public class SharedSpaceMemberWorkgroup extends SharedSpaceMember {
@@ -48,7 +49,7 @@ public class SharedSpaceMemberWorkgroup extends SharedSpaceMember {
 
 	public SharedSpaceMemberWorkgroup(
 			SharedSpaceNodeNested node,
-			GenericLightEntity role,
+			LightSharedSpaceRole role,
 			SharedSpaceAccount account
 			) {
 		super(node, role, account);

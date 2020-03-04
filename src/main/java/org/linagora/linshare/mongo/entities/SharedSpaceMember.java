@@ -43,7 +43,10 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.upgrade.v2_2.MigrateThreadToMongoUpgradeTaskImpl;
+import org.linagora.linshare.core.upgrade.v2_2.MigrateWorkGroupMemberAuditToSharedSpaceMemberAuditUpgradeTaskImpl;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -78,7 +81,9 @@ public class SharedSpaceMember {
 
 	protected SharedSpaceNodeNested node;
 
-	protected GenericLightEntity role;
+	protected LightSharedSpaceRole role;
+	
+	protected GenericLightEntity oldRole;
 
 	protected SharedSpaceAccount account;
 
@@ -99,11 +104,29 @@ public class SharedSpaceMember {
 		super();
 	}
 
-	public SharedSpaceMember(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account) {
+	public SharedSpaceMember(SharedSpaceNodeNested node, LightSharedSpaceRole role, SharedSpaceAccount account) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.node = node;
 		this.role = role;
+		this.account = account;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+	}
+	
+	/**
+	 * used by old upgrade {@link MigrateThreadToMongoUpgradeTaskImpl}
+	 * & {@link MigrateWorkGroupMemberAuditToSharedSpaceMemberAuditUpgradeTaskImpl}
+	 * @param node
+	 * @param oldRole
+	 * @param account
+	 */
+	@Deprecated(since = "2.3", forRemoval = true)
+	public SharedSpaceMember(SharedSpaceNodeNested node, GenericLightEntity oldRole, SharedSpaceAccount account) {
+		super();
+		this.uuid = UUID.randomUUID().toString();
+		this.node = node;
+		this.oldRole = oldRole;
 		this.account = account;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
@@ -160,11 +183,11 @@ public class SharedSpaceMember {
 		this.node = node;
 	}
 
-	public GenericLightEntity getRole() {
+	public LightSharedSpaceRole getRole() {
 		return role;
 	}
 
-	public void setRole(GenericLightEntity role) {
+	public void setRole(LightSharedSpaceRole role) {
 		this.role = role;
 	}
 

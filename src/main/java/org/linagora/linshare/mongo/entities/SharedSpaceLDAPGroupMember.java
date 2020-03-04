@@ -35,7 +35,7 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
 
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 
 public class SharedSpaceLDAPGroupMember extends SharedSpaceMember {
 
@@ -43,7 +43,7 @@ public class SharedSpaceLDAPGroupMember extends SharedSpaceMember {
 
 	protected Date syncDate;
 
-	public SharedSpaceLDAPGroupMember(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account,
+	public SharedSpaceLDAPGroupMember(SharedSpaceNodeNested node, LightSharedSpaceRole role, SharedSpaceAccount account,
 			String externalId, Date syncDate) {
 		super(node, role, account);
 		this.externalId = externalId;

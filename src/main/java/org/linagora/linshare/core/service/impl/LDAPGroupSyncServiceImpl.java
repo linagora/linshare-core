@@ -66,6 +66,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -163,7 +164,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 				mongoTemplate.save(member);
 				return member;
 			}
-			member.setRole(new GenericLightEntity(role.getUuid(), role.getName()));
+			member.setRole(new LightSharedSpaceRole(role));
 			// Complete update : The member is notified his access has been changed
 			resultContext.add(LdapBatchMetaDataType.UPDATED_MEMBERS);
 			return memberService.update(actor, member);
@@ -187,7 +188,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	private SharedSpaceLDAPGroupMember convertLdapGroupMember(SharedSpaceLDAPGroup group, SharedSpaceRole role,
 			User user, String externalId, Date syncDate) {
 		SharedSpaceNodeNested node = new SharedSpaceNodeNested(group);
-		GenericLightEntity lightRole = new GenericLightEntity(role.getUuid(), role.getName());
+		LightSharedSpaceRole lightRole = new LightSharedSpaceRole(role);
 		return new SharedSpaceLDAPGroupMember(node, lightRole, new SharedSpaceAccount(user), externalId, syncDate);
 	}
 

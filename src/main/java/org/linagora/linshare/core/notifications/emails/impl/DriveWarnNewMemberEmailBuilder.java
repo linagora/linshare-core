@@ -50,7 +50,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.thymeleaf.context.Context;
 
 import com.beust.jcommander.internal.Maps;
@@ -80,17 +80,17 @@ public class DriveWarnNewMemberEmailBuilder extends WorkGroupWarnNewMemberEmailB
 		childMembers.add(new SharedSpaceMember(
 				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_1", driveMember.getNode().getUuid(),
 						NodeType.WORK_GROUP, new Date(), new Date()),
-				new GenericLightEntity(UUID.randomUUID().toString(), "ADMIN"), new SharedSpaceAccount(
+				new LightSharedSpaceRole(UUID.randomUUID().toString(), "ADMIN", NodeType.WORK_GROUP), new SharedSpaceAccount(
 						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
 		childMembers.add(new SharedSpaceMember(
 				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_2", driveMember.getNode().getUuid(),
 						NodeType.WORK_GROUP, new Date(), new Date()),
-				new GenericLightEntity(UUID.randomUUID().toString(), "CONTRIBUTOR"), new SharedSpaceAccount(
+				new LightSharedSpaceRole(UUID.randomUUID().toString(), "CONTRIBUTOR", NodeType.WORK_GROUP), new SharedSpaceAccount(
 						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
 		childMembers.add(new SharedSpaceMember(
 				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_3", driveMember.getNode().getUuid(),
 						NodeType.WORK_GROUP, new Date(), new Date()),
-				new GenericLightEntity(UUID.randomUUID().toString(), "READER"), new SharedSpaceAccount(
+				new LightSharedSpaceRole(UUID.randomUUID().toString(), "READER", NodeType.WORK_GROUP), new SharedSpaceAccount(
 						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
 		ctx.setVariable("childMembers", childMembers);
 		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));

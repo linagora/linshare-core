@@ -64,6 +64,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +102,7 @@ public class SharedSpaceMemberServiceImplTest {
 
 	private SharedSpaceRole readerRole;
 
-	private GenericLightEntity lightReaderRoleToPersist;
+	private LightSharedSpaceRole lightReaderRoleToPersist;
 
 	private Account root;
 
@@ -159,7 +160,7 @@ public class SharedSpaceMemberServiceImplTest {
 		initService.init();
 		adminRole = roleBusinessService.findByName("ADMIN");
 		readerRole = roleBusinessService.findByName("READER");
-		lightReaderRoleToPersist = new GenericLightEntity(readerRole.getUuid(), readerRole.getName());
+		lightReaderRoleToPersist = new LightSharedSpaceRole(readerRole);
 		Validate.notNull(adminRole, "adminRole must be set");
 		node = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.WORK_GROUP);
 		nodeBusinessService.create(node);
@@ -274,7 +275,7 @@ public class SharedSpaceMemberServiceImplTest {
 				"The account referenced in this shared space member is not jane");
 		SharedSpaceMember memberToSendToUpdate = new SharedSpaceMember(createdMember);
 		try {
-			memberToSendToUpdate.setRole(new GenericLightEntity("wrongUuid", "READER"));
+			memberToSendToUpdate.setRole(new LightSharedSpaceRole("wrongUuid", "READER", node.getNodeType()));
 			service.update(john, john, memberToSendToUpdate);
 		} catch (BusinessException e) {
 			Assertions.assertEquals(e.getErrorCode(), BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND);

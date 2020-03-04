@@ -37,7 +37,6 @@ package org.linagora.linshare.core.facade.webservice.delegation.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
@@ -51,7 +50,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 
 import com.google.common.collect.Lists;
 
@@ -122,7 +121,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByAccountUuid(authActor, actor,
 				threadMember.getUserUuid(), threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(authActor, threadMember.isAdmin());
-		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
+		ssMemberToUpdate.setRole(new LightSharedSpaceRole(defaultRole));
 		SharedSpaceMember updated = ssMemberService.update(authActor, actor, ssMemberToUpdate);
 		return new WorkGroupMemberDto(updated, user);
 	}

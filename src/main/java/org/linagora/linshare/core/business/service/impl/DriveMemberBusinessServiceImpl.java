@@ -42,7 +42,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
@@ -64,16 +64,16 @@ public class DriveMemberBusinessServiceImpl extends SharedSpaceMemberBusinessSer
 			SharedSpaceRole nestedRole) {
 		checkRole(nestedRole.getUuid());
 		SharedSpaceMemberDrive member = new SharedSpaceMemberDrive(new SharedSpaceNodeNested(node),
-				new GenericLightEntity(role.getUuid(), role.getName()), account,
-				new GenericLightEntity(nestedRole.getUuid(), nestedRole.getName()));
-		member.setNestedRole(new GenericLightEntity(nestedRole.getUuid(), nestedRole.getName()));
+				new LightSharedSpaceRole(role), account,
+				new LightSharedSpaceRole(nestedRole));
+		member.setNestedRole(new LightSharedSpaceRole(nestedRole));
 		return (SharedSpaceMemberDrive) super.create(member);
 	}
 
 	@Override
 	public SharedSpaceMemberDrive update(SharedSpaceMemberDrive foundMemberToUpdate, SharedSpaceMemberDrive memberToUpdate) {
 		Validate.notNull(memberToUpdate.getNestedRole(), "The drive role must be set.");
-		GenericLightEntity nestedRole = new GenericLightEntity(checkRole(memberToUpdate.getNestedRole().getUuid()));
+		LightSharedSpaceRole nestedRole = new LightSharedSpaceRole(checkRole(memberToUpdate.getNestedRole().getUuid()));
 		foundMemberToUpdate.setNestedRole(nestedRole);
 		return (SharedSpaceMemberDrive) super.update(foundMemberToUpdate, memberToUpdate);
 	}

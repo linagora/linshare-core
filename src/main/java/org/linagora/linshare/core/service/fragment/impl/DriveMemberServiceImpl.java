@@ -63,7 +63,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 
 import com.google.common.collect.Lists;
 
@@ -136,7 +136,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 	@Override
 	protected SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate,
 			SharedSpaceMember foundMemberToUpdate, boolean force) {
-		GenericLightEntity wgRole = ((SharedSpaceMemberDrive) memberToUpdate).getNestedRole();
+		LightSharedSpaceRole wgRole = ((SharedSpaceMemberDrive) memberToUpdate).getNestedRole();
 		Validate.notNull(wgRole, "The nested role must be set");
 		checkRoleTypeIntegrity(authUser, actor, wgRole.getUuid(), NodeType.WORK_GROUP);
 		SharedSpaceMember updated = driveMemberBusinessService.update((SharedSpaceMemberDrive) foundMemberToUpdate,

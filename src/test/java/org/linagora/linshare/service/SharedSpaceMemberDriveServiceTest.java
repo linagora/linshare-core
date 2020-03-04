@@ -59,6 +59,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,8 +202,8 @@ public class SharedSpaceMemberDriveServiceTest {
 				context, new SharedSpaceAccount((User) jane));
 		Assertions.assertNotNull(memberToUpdate, "Member not added to the drive");
 		// Update member on the Drive
-		memberToUpdate.setNestedRole(new GenericLightEntity(reader));
-		memberToUpdate.setRole(new GenericLightEntity(writerDriveRole));
+		memberToUpdate.setNestedRole(new LightSharedSpaceRole(reader));
+		memberToUpdate.setRole(new LightSharedSpaceRole(writerDriveRole));
 		SharedSpaceMemberDrive updated = (SharedSpaceMemberDrive) ssMemberDriveService.update(john, john,
 				memberToUpdate, true);
 		Assertions.assertEquals(writerDriveRole.getUuid(), updated.getRole().getUuid());

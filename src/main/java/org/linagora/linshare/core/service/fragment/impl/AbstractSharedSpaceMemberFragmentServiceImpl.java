@@ -62,7 +62,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMemberWorkgroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 
 public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
@@ -181,10 +181,10 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		preChecks(authUser, actor);
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node must be set.");
-		SharedSpaceMember memberWg = new SharedSpaceMemberWorkgroup(new SharedSpaceNodeNested(node),
-				new GenericLightEntity(role.getUuid(), role.getName()), account);
-		String parentUuid = node.getParentUuid();
 		checkRoleTypeIntegrity(authUser, actor, role.getUuid(), node.getNodeType());
+		SharedSpaceMember memberWg = new SharedSpaceMemberWorkgroup(new SharedSpaceNodeNested(node),
+				new LightSharedSpaceRole(role), account);
+		String parentUuid = node.getParentUuid();
 		/**
 		 * If the member is added to nested workgroup, set the [nested] field to true
 		 */

@@ -61,6 +61,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -327,7 +328,7 @@ public class NestedSharedSpaceNodeTest {
 				NodeType.WORK_GROUP);
 		// Create a workgroup with Jane having the creator role
 		ssNodeService.create(john, john, workGroupInsideDrive);
-		janeMember.setNestedRole(new GenericLightEntity(contributor));
+		janeMember.setNestedRole(new LightSharedSpaceRole(contributor));
 		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, false);
 		Assertions.assertEquals(contributor.getUuid(), janeMember.getNestedRole().getUuid());
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
@@ -350,7 +351,7 @@ public class NestedSharedSpaceNodeTest {
 				NodeType.WORK_GROUP);
 		// Create a workgroup with Jane having the creator role
 		ssNodeService.create(jane, jane, workGroupInsideDrive);
-		janeMember.setNestedRole(new GenericLightEntity(contributor));
+		janeMember.setNestedRole(new LightSharedSpaceRole(contributor));
 		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, true);
 		Assertions.assertEquals(contributor.getUuid(), janeMember.getNestedRole().getUuid());
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());

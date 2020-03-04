@@ -50,6 +50,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
@@ -101,7 +102,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public SharedSpaceMember create(SharedSpaceMember member) throws BusinessException {
-		member.setRole(new GenericLightEntity(checkRole(member.getRole().getUuid())));
+		member.setRole(new LightSharedSpaceRole(checkRole(member.getRole().getUuid())));
 		member.setNode(new SharedSpaceNodeNested(checkNode(member.getNode().getUuid())));
 		member.setAccount(new SharedSpaceAccount(checkUser(member.getAccount().getUuid())));
 		return repository.insert(member);
@@ -150,7 +151,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate) {
 		Validate.notNull(memberToUpdate.getRole(), "The role must be set.");
-		foundMemberToUpdate.setRole(new GenericLightEntity(checkRole(memberToUpdate.getRole().getUuid())));
+		foundMemberToUpdate.setRole(new LightSharedSpaceRole(checkRole(memberToUpdate.getRole().getUuid())));
 		foundMemberToUpdate.setModificationDate(new Date());
 		return repository.save(foundMemberToUpdate);
 	}

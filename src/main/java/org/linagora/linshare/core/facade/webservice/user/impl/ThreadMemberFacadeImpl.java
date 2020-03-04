@@ -49,7 +49,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 
 import com.google.common.collect.Lists;
 
@@ -120,7 +120,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
 		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByAccountUuid(authUser, authUser,
 				threadMember.getUserUuid(), threadUuid);
-		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
+		ssMemberToUpdate.setRole(new LightSharedSpaceRole(defaultRole));
 		SharedSpaceMember updated = ssMemberService.update(authUser, authUser, ssMemberToUpdate);
 		return new WorkGroupMemberDto(updated, user);
 	}
