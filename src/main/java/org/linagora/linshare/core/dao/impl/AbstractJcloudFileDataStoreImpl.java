@@ -40,11 +40,14 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.UUID;
 
+import org.apache.tika.mime.MediaType;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
 import org.linagora.linshare.core.dao.JcloudObjectStorageFileDataStore;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -61,6 +64,7 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 	protected String bucketIdentifier;
 	protected String regionId = null;
 	protected BlobStoreContext context;
+	protected boolean multipartUpload = false;
 
 	@Override
 	public BlobStore getBlobStore(String containerName) {
@@ -131,20 +135,28 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 		stats(start, "Payload");
 
 		start = new Date();
-		Blob blob;
 		if (metadata.getUuid() == null) {
 			metadata.setUuid(UUID.randomUUID().toString());
 		}
 		metadata.setBucketUuid(bucketIdentifier);
-		blob = blobStore.blobBuilder(metadata.getUuid()).payload(payload)
-				.contentLength(metadata.getSize())
-				.build();
+		PayloadBlobBuilder pbb = blobStore.blobBuilder(metadata.getUuid())
+				.payload(payload)
+				.contentLength(metadata.getSize());
+		if (multipartUpload) {
+			pbb.contentDisposition(metadata.getUuid());
+			pbb.contentType(MediaType.OCTET_STREAM.toString());
+		}
+		Blob blob = pbb.build();
 		stats(start, "blob");
 
 		// Upload the Blob
 		start = new Date();
-
-		String eTag = blobStore.putBlob(bucketIdentifier, blob);
+		String eTag = "";
+		if (multipartUpload) {
+			eTag = blobStore.putBlob(bucketIdentifier, blob, multipart());
+		} else {
+			eTag = blobStore.putBlob(bucketIdentifier, blob);
+		}
 		logger.debug("etag : {}", eTag);
 		stats(start, "putBlob");
 		return metadata;

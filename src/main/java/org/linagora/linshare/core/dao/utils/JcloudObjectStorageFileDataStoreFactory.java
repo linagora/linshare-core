@@ -70,6 +70,7 @@ public class JcloudObjectStorageFileDataStoreFactory {
 	protected String endpoint;
 	protected String regionId;
 	protected String bucketIdentifier;
+	protected boolean multipartUpload;
 
 	protected IdentityBuilder identityBuilder = IdentityBuilder.New();
 	protected String projectName;
@@ -90,10 +91,11 @@ public class JcloudObjectStorageFileDataStoreFactory {
 			return new FileSystemJcloudFileDataStoreImpl(modules, properties, bucketIdentifier, baseDirectory);
 		} else if (provider.equals(OPENSTACK_SWIFT)) {
 			ContextBuilder contextBuilder = getContextBuilder();
-			return new OpenStackSwiftJcloudFileDataStoreImpl(contextBuilder, properties, bucketIdentifier, regionId, keystoneVersion, projectName);
+			return new OpenStackSwiftJcloudFileDataStoreImpl(contextBuilder, properties, bucketIdentifier, regionId,
+					keystoneVersion, projectName, multipartUpload);
 		} else {
 			ContextBuilder contextBuilder = getContextBuilder();
-			return new DefaultJcloudFileDataStoreImpl(contextBuilder, properties, bucketIdentifier);
+			return new DefaultJcloudFileDataStoreImpl(contextBuilder, properties, bucketIdentifier, multipartUpload);
 		}
 	}
 
@@ -157,5 +159,9 @@ public class JcloudObjectStorageFileDataStoreFactory {
 
 	public void setKeystoneVersion(String keystoneVersion) {
 		this.keystoneVersion = keystoneVersion;
+	}
+
+	public void setMultipartUpload(boolean multipartUpload) {
+		this.multipartUpload = multipartUpload;
 	}
 }
