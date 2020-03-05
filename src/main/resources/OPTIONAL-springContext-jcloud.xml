@@ -5,14 +5,18 @@
 	http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="jcloudFileDataStoreFactory"
-		class="org.linagora.linshare.core.dao.impl.JcloudObjectStorageFileDataStoreFactory">
+		class="org.linagora.linshare.core.dao.utils.JcloudObjectStorageFileDataStoreFactory">
 		<property name="provider" value="${linshare.documents.storage.mode}" />
 		<property name="supportedProviders" value="${linshare.documents.storage.providers}" />
 		<property name="baseDirectory" value="${linshare.documents.storage.filesystem.directory}" />
-		<property name="identity" value="${linshare.documents.storage.identity}" />
 		<property name="credential" value="${linshare.documents.storage.credential}" />
 		<property name="endpoint" value="${linshare.documents.storage.endpoint}" />
 		<property name="regionId" value="${linshare.documents.storage.regionId}" />
+		<property name="identity" value="${linshare.documents.storage.identity}" />
+		<property name="domainName" value="${linshare.documents.storage.user.domain}" />
+		<property name="userName" value="${linshare.documents.storage.user.name}" />
+		<property name="projectName" value="${linshare.documents.storage.project.name}" />
+		<property name="keystoneVersion" value="${linshare.documents.storage.keystone.version}" />
 		<property name="bucketIdentifier" value="${linshare.documents.storage.bucket}" />
 	</bean>
 

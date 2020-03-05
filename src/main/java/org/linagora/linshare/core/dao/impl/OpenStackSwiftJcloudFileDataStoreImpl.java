@@ -37,36 +37,36 @@ package org.linagora.linshare.core.dao.impl;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.domain.Location;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
+import org.jclouds.openstack.keystone.config.KeystoneProperties;
 import org.jclouds.openstack.swift.v1.blobstore.RegionScopedBlobStoreContext;
-import org.jsoup.helper.Validate;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 public class OpenStackSwiftJcloudFileDataStoreImpl extends AbstractJcloudFileDataStoreImpl {
 
-	public OpenStackSwiftJcloudFileDataStoreImpl(String provider, String bucketIdentifier, String identity, String credential,
-			String endpoint, String regionId) {
-		super(bucketIdentifier, identity, credential, endpoint);
+	protected String apiVersion;
+	protected String projectName;
+
+	public OpenStackSwiftJcloudFileDataStoreImpl(ContextBuilder contextBuilder, Properties properties, String bucketIdentifier, String regionId, String apiVersion, String projectName) {
+		Validate.notNull(contextBuilder, "Missing contextBuilder");
+		Validate.notNull(properties, "Missing properties");
+		Validate.notEmpty(bucketIdentifier, "Missing bucket identifier");
 		Validate.notEmpty(regionId, "Missing regionId");
-		Validate.notEmpty(provider, "Missing provider");
+		Validate.notEmpty(apiVersion, "Missing apiVersion");
+		this.bucketIdentifier = bucketIdentifier;
 		this.regionId = regionId;
-		Iterable<Module> modules = ImmutableSet.<Module> of(new SLF4JLoggingModule());
-		Properties properties = new Properties();
-		properties.setProperty(org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-		properties.setProperty(org.jclouds.Constants.PROPERTY_LOGGER_WIRE_LOG_SENSITIVE_INFO, "true");
-		ContextBuilder contextBuilder = ContextBuilder.newBuilder(provider);
-		contextBuilder.endpoint(endpoint)
-						.credentials(identity, credential)
-						.modules(modules)
-						.overrides(properties);
-		BlobStore blobStore = null;
+		this.apiVersion = apiVersion;
+		this.projectName = projectName;
+		if (Integer.valueOf(apiVersion) != 2) {
+			properties.put(KeystoneProperties.KEYSTONE_VERSION, apiVersion);
+			Validate.notEmpty(projectName, "Missing project name");
+			properties.put(KeystoneProperties.SCOPE, "project:" + projectName);
+		}
+		contextBuilder.overrides(properties);
 		context = contextBuilder.buildView(RegionScopedBlobStoreContext.class);
-		blobStore = ((RegionScopedBlobStoreContext) context).getBlobStore(regionId);
+		BlobStore blobStore = ((RegionScopedBlobStoreContext) context).getBlobStore(regionId);
 		createContainerIfNotExist(blobStore);
 	}
 

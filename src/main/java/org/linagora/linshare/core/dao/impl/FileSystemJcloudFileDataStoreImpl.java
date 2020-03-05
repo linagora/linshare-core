@@ -39,46 +39,33 @@ import org.apache.commons.lang3.Validate;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 public class FileSystemJcloudFileDataStoreImpl extends AbstractJcloudFileDataStoreImpl {
 
+	protected static String PROVIDER = "filesystem";
+
 	protected String baseDirectory;
 
-	public FileSystemJcloudFileDataStoreImpl(String provider, String baseDirectory, String bucketIdentifier) {
-		super(bucketIdentifier);
+	public FileSystemJcloudFileDataStoreImpl(Iterable<Module> modules, Properties properties,
+			String bucketIdentifier, String baseDirectory) {
+		Validate.notEmpty(bucketIdentifier, "Missing bucket identifier");
 		Validate.notEmpty(baseDirectory, "Missing base directory");
+		Validate.notNull(properties, "Missing properties");
+		this.bucketIdentifier = bucketIdentifier;
 		this.baseDirectory = baseDirectory;
-		Properties properties = new Properties();
-		ContextBuilder contextBuilder = null;
-		BlobStore blobStore = null;
-		Iterable<Module> modules = ImmutableSet.<Module> of(new SLF4JLoggingModule());
-		properties.setProperty(org.jclouds.filesystem.reference.FilesystemConstants.PROPERTY_BASEDIR,
-				baseDirectory);
-		contextBuilder = ContextBuilder.newBuilder(provider);
-		contextBuilder.overrides(properties).modules(modules);
+		properties.setProperty(org.jclouds.filesystem.reference.FilesystemConstants.PROPERTY_BASEDIR, baseDirectory);
+		ContextBuilder contextBuilder = ContextBuilder.newBuilder(PROVIDER)
+			.modules(modules)
+			.overrides(properties);
 		context = contextBuilder.buildView(BlobStoreContext.class);
-		blobStore = context.getBlobStore();
+		BlobStore blobStore = context.getBlobStore();
 		createContainerIfNotExist(blobStore);
 	}
 
 	public String getBaseDirectory() {
 		return baseDirectory;
-	}
-
-	public void setBaseDirectory(String baseDirectory) {
-		this.baseDirectory = baseDirectory;
-	}
-
-	public String getBucketIdentifier() {
-		return bucketIdentifier;
-	}
-
-	public void setBucketIdentifier(String bucketIdentifier) {
-		this.bucketIdentifier = bucketIdentifier;
 	}
 
 	@Override
