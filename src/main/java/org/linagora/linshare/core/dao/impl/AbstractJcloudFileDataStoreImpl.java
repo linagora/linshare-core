@@ -40,7 +40,6 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.UUID;
 
-import org.apache.commons.lang3.Validate;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
@@ -57,33 +56,11 @@ import com.mchange.v1.util.ClosableResource;
 
 public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectStorageFileDataStore, ClosableResource {
 
-	protected static final Logger logger = LoggerFactory.getLogger(FileSystemJcloudFileDataStoreImpl.class);
+	protected static final Logger logger = LoggerFactory.getLogger(AbstractJcloudFileDataStoreImpl.class);
 
-	protected String identity;
-	protected String credential;
-	protected String endpoint;
-	protected String regionId;
 	protected String bucketIdentifier;
+	protected String regionId = null;
 	protected BlobStoreContext context;
-
-	public AbstractJcloudFileDataStoreImpl(String bucketIdentifier, String identity, String credential,
-			String endpoint) {
-		super();
-		this.identity = identity;
-		this.credential = credential;
-		this.endpoint = endpoint;
-		this.bucketIdentifier = bucketIdentifier;
-		Validate.notEmpty(bucketIdentifier, "Missing bucket identifier");
-		Validate.notEmpty(identity, "Missing identity");
-		Validate.notEmpty(credential, "Missing credential");
-		Validate.notEmpty(endpoint, "Missing endpoint");
-	}
-
-	public AbstractJcloudFileDataStoreImpl(String bucketIdentifier) {
-		super();
-		Validate.notEmpty(bucketIdentifier, "Missing bucket identifier");
-		this.bucketIdentifier = bucketIdentifier;
-	}
 
 	@Override
 	public BlobStore getBlobStore(String containerName) {
@@ -200,5 +177,13 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 		}
 		BlobStore blobStore = getBlobStore(containerName);
 		return blobStore.blobExists(containerName, metadata.getUuid());
+	}
+
+	public String getBucketIdentifier() {
+		return bucketIdentifier;
+	}
+
+	public String getRegionId() {
+		return regionId;
 	}
 }

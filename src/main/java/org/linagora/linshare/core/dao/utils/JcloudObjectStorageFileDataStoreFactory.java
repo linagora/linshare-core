@@ -32,15 +32,25 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.dao.impl;
+package org.linagora.linshare.core.dao.utils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
+import org.apache.commons.lang3.Validate;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.linagora.linshare.core.dao.JcloudObjectStorageFileDataStore;
+import org.linagora.linshare.core.dao.impl.DefaultJcloudFileDataStoreImpl;
+import org.linagora.linshare.core.dao.impl.FileSystemJcloudFileDataStoreImpl;
+import org.linagora.linshare.core.dao.impl.OpenStackSwiftJcloudFileDataStoreImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 public class JcloudObjectStorageFileDataStoreFactory {
 
@@ -56,88 +66,96 @@ public class JcloudObjectStorageFileDataStoreFactory {
 	protected List<String> supportedProvidersList;
 	protected BlobStoreContext context;
 	protected String baseDirectory;
-	protected String identity;
 	protected String credential;
 	protected String endpoint;
 	protected String regionId;
 	protected String bucketIdentifier;
 
+	protected IdentityBuilder identityBuilder = IdentityBuilder.New();
+	protected String projectName;
+	protected String keystoneVersion;
+	protected Iterable<Module> modules = ImmutableSet.<Module> of(new SLF4JLoggingModule());
+
 	public JcloudObjectStorageFileDataStore getDefault() {
 		this.supportedProvidersList = Arrays.asList(supportedProviders.split(","));
+		Validate.notEmpty(provider, "Missing provider");
 		logger.debug("Defined provider: {}", provider);
 		if (!this.supportedProviders.contains(provider)) {
 			throw new IllegalArgumentException("Supported providers: " + this.supportedProviders.toString());
 		}
+		Properties properties = new Properties();
+		properties.setProperty(org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+		properties.setProperty(org.jclouds.Constants.PROPERTY_LOGGER_WIRE_LOG_SENSITIVE_INFO, "true");
 		if (provider.equals(FILESYSTEM)) {
-			return new FileSystemJcloudFileDataStoreImpl(provider, baseDirectory, bucketIdentifier);
+			return new FileSystemJcloudFileDataStoreImpl(modules, properties, bucketIdentifier, baseDirectory);
 		} else if (provider.equals(OPENSTACK_SWIFT)) {
-			return new OpenStackSwiftJcloudFileDataStoreImpl(provider, bucketIdentifier, identity, credential, endpoint, regionId);
+			ContextBuilder contextBuilder = getContextBuilder();
+			return new OpenStackSwiftJcloudFileDataStoreImpl(contextBuilder, properties, bucketIdentifier, regionId, keystoneVersion, projectName);
 		} else {
-			return new DefaultJcloudFileDataStoreImpl(provider, bucketIdentifier, identity, credential, endpoint);
+			ContextBuilder contextBuilder = getContextBuilder();
+			return new DefaultJcloudFileDataStoreImpl(contextBuilder, properties, bucketIdentifier);
 		}
 	}
 
-	public String getProvider() {
-		return provider;
+	public ContextBuilder getContextBuilder() {
+		Validate.notEmpty(credential, "Missing credential");
+		Validate.notEmpty(endpoint, "Missing endpoint");
+		ContextBuilder contextBuilder = ContextBuilder.newBuilder(provider);
+		contextBuilder.endpoint(endpoint)
+			.credentials(identityBuilder.build(), credential)
+			.modules(modules);
+		return contextBuilder;
 	}
 
 	public void setProvider(String provider) {
 		this.provider = provider;
 	}
 
-	public String getSupportedProviders() {
-		return supportedProviders;
-	}
-
 	public void setSupportedProviders(String supportedProviders) {
 		this.supportedProviders = supportedProviders;
-	}
-
-	public String getBaseDirectory() {
-		return baseDirectory;
 	}
 
 	public void setBaseDirectory(String baseDirectory) {
 		this.baseDirectory = baseDirectory;
 	}
 
-	public String getIdentity() {
-		return identity;
-	}
-
 	public void setIdentity(String identity) {
-		this.identity = identity;
+		identityBuilder.identity(identity);
 	}
 
-	public String getCredential() {
-		return credential;
+	public void setUserName(String userName) {
+		identityBuilder.userName(userName);
+	}
+
+	public void setDomainName(String userDomainName) {
+		identityBuilder.userDomainName(userDomainName);
+	}
+
+	public void setTenantName(String tenantName) {
+		identityBuilder.tenantName(tenantName);
 	}
 
 	public void setCredential(String credential) {
 		this.credential = credential;
 	}
 
-	public String getEndpoint() {
-		return endpoint;
-	}
-
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
-	}
-
-	public String getRegionId() {
-		return regionId;
 	}
 
 	public void setRegionId(String regionId) {
 		this.regionId = regionId;
 	}
 
-	public String getBucketIdentifier() {
-		return bucketIdentifier;
-	}
-
 	public void setBucketIdentifier(String bucketIdentifier) {
 		this.bucketIdentifier = bucketIdentifier;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public void setKeystoneVersion(String keystoneVersion) {
+		this.keystoneVersion = keystoneVersion;
 	}
 }

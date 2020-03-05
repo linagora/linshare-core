@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2020 LINAGORA
+ * Copyright (C) 2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,30 +32,76 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.dao.impl;
+package org.linagora.linshare.core.dao.utils;
 
-import java.util.Properties;
+import java.util.Optional;
 
-import org.apache.commons.lang3.Validate;
-import org.jclouds.ContextBuilder;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
+import com.google.common.base.MoreObjects;
 
-public class DefaultJcloudFileDataStoreImpl extends AbstractJcloudFileDataStoreImpl {
+public class IdentityBuilder {
 
-	public DefaultJcloudFileDataStoreImpl(ContextBuilder contextBuilder, Properties properties, String bucketIdentifier) {
-		Validate.notEmpty(bucketIdentifier, "Missing bucket identifier");
-		Validate.notNull(properties, "Missing properties");
-		this.bucketIdentifier = bucketIdentifier;
-		contextBuilder.overrides(properties);
-		context = contextBuilder.buildView(BlobStoreContext.class);
-		BlobStore blobStore = context.getBlobStore();
-		createContainerIfNotExist(blobStore);
+	private Optional<String> identity = Optional.empty();
+	private Optional<String> userName = Optional.empty();
+	private Optional<String> userDomain = Optional.empty();
+	private Optional<String> tenantIdentifier = Optional.empty();
+
+	private IdentityBuilder() {
+		super();
+	}
+
+	public static IdentityBuilder New( ) {
+		return new IdentityBuilder();
+	}
+
+	public IdentityBuilder identity(String identity) {
+		this.identity = Optional.ofNullable(identity).filter(s -> !s.isEmpty());
+		return this;
+	}
+
+	public IdentityBuilder userName(String userName) {
+		this.userName = Optional.ofNullable(userName).filter(s -> !s.isEmpty());
+		return this;
+	}
+
+	public IdentityBuilder userDomainName(String userDomain) {
+		this.userDomain = Optional.ofNullable(userDomain).filter(s -> !s.isEmpty());
+		return this;
+	}
+
+	public IdentityBuilder tenantName(String tenantIdentifier) {
+		this.tenantIdentifier = Optional.ofNullable(tenantIdentifier).filter(s -> !s.isEmpty());
+		return this;
+	}
+
+	/**
+	 * This method will return the expected formated identity string for jcloud.
+	 * @return
+	 */
+	public String build() {
+		if (identity.isPresent()) {
+			return identity.get();
+		}
+		StringBuilder sb = new StringBuilder();
+		if (userDomain.isPresent() || tenantIdentifier.isPresent()) {
+			if (userDomain.isPresent()) {
+				sb.append(userDomain.get());
+			} else {
+				sb.append(tenantIdentifier.get());
+			}
+			sb.append(":");
+		}
+		sb.append(userName.get());
+		return sb.toString();
 	}
 
 	@Override
 	public String toString() {
-		return "DefaultJcloudFileDataStoreImpl []";
+		return MoreObjects.toStringHelper(this)
+				.add("identity", identity)
+				.add("userName", userName)
+				.add("userDomain", userDomain)
+				.add("tenantIdentifier", tenantIdentifier)
+				.toString();
 	}
 
 }
