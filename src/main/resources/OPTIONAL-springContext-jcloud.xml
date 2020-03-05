@@ -18,6 +18,7 @@
 		<property name="projectName" value="${linshare.documents.storage.project.name}" />
 		<property name="keystoneVersion" value="${linshare.documents.storage.keystone.version}" />
 		<property name="bucketIdentifier" value="${linshare.documents.storage.bucket}" />
+		<property name="multipartUpload" value="${linshare.documents.storage.multipartupload}" />
 	</bean>
 
 	<bean

@@ -43,10 +43,11 @@ import org.jclouds.blobstore.BlobStoreContext;
 
 public class DefaultJcloudFileDataStoreImpl extends AbstractJcloudFileDataStoreImpl {
 
-	public DefaultJcloudFileDataStoreImpl(ContextBuilder contextBuilder, Properties properties, String bucketIdentifier) {
+	public DefaultJcloudFileDataStoreImpl(ContextBuilder contextBuilder, Properties properties, String bucketIdentifier, boolean multipartUpload) {
 		Validate.notEmpty(bucketIdentifier, "Missing bucket identifier");
 		Validate.notNull(properties, "Missing properties");
 		this.bucketIdentifier = bucketIdentifier;
+		this.multipartUpload = multipartUpload;
 		contextBuilder.overrides(properties);
 		context = contextBuilder.buildView(BlobStoreContext.class);
 		BlobStore blobStore = context.getBlobStore();
