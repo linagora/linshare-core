@@ -37,7 +37,6 @@
 	<bean id="statisticWeeklyUserBatch"
 		class="org.linagora.linshare.core.batches.impl.StatisticWeeklyUserBatchImpl">
 		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="userService" />
 		<constructor-arg ref="userWeeklyStatBusinessService" />
 		<constructor-arg ref="userDailyStatBusinessService" />
 		<constructor-arg ref="batchHistoryBusinessService" />

@@ -52,7 +52,7 @@ import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.repository.UserRepository;
 
 public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 
@@ -60,20 +60,20 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 
 	private final UserWeeklyStatBusinessService userWeeklyStatBusinessService;
 
-	private final UserService userService;
+	private final UserRepository<User> userRepository;
 
 	private final BatchHistoryBusinessService batchHistoryBusinessService;
 
 	public StatisticWeeklyUserBatchImpl(
 			final UserDailyStatBusinessService userDailyStatBusinessService,
 			final UserWeeklyStatBusinessService userWeeklyStatBusinessService,
-			final UserService userService,
+			final UserRepository<User> userRepository,
 			final AccountRepository<Account> accountRepository,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
 		super(accountRepository);
 		this.userDailyStatBusinessService = userDailyStatBusinessService;
 		this.userWeeklyStatBusinessService = userWeeklyStatBusinessService;
-		this.userService = userService;
+		this.userRepository = userRepository;
 		this.batchHistoryBusinessService = batchHistoryBusinessService;
 	}
 
@@ -89,11 +89,17 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		User resource = userService.findByLsUuid(identifier);
+		User resource = userRepository.findActivateAndDestroyedByLsUuid(identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
+		context.setProcessed(false);
+		if (resource == null) {
+			context.setIdentifier(identifier);
+			return context;
+		}
 		try {
 			console.logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			userWeeklyStatBusinessService.create(resource, getFirstDayOfLastWeek(), getLastDayOfLastWeek());
+			context.setProcessed(true);
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.add(GregorianCalendar.DATE, -7);
@@ -113,8 +119,14 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext userContext = (AccountBatchResultContext) context;
 		Account user = userContext.getResource();
-		console.logInfo(batchRunContext, total,
-				position, "the WeeklyUserStat for " + user.getAccountRepresentation() + " has been successfully created.");
+		if (userContext.getProcessed()) {
+			console.logInfo(batchRunContext, total, position,
+					"the WeeklyUserStat for {} has been successfully created.", user.getAccountRepresentation());
+		} else {
+			console.logInfo(batchRunContext, total, position,
+					"the WeeklyUserStat for {} was skipped because the user does not exist",
+					userContext.getIdentifier());
+		}
 	}
 
 	@Override
