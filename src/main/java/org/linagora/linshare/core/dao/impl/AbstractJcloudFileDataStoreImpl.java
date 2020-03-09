@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.core.dao.impl;
 
+import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
+
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -52,9 +55,8 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mchange.v1.util.ClosableResource;
 
-public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectStorageFileDataStore, ClosableResource {
+public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectStorageFileDataStore, Closeable {
 
 	protected static final Logger logger = LoggerFactory.getLogger(AbstractJcloudFileDataStoreImpl.class);
 
@@ -78,7 +80,7 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() throws IOException {
 		logger.debug("Closing current context.");
 		if (context != null)
 			context.close();
