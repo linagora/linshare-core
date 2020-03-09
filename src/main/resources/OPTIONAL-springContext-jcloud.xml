@@ -19,6 +19,15 @@
 		<property name="keystoneVersion" value="${linshare.documents.storage.keystone.version}" />
 		<property name="bucketIdentifier" value="${linshare.documents.storage.bucket}" />
 		<property name="multipartUpload" value="${linshare.documents.storage.multipartupload}" />
+		<property name="jcloudProperties">
+			<map>
+				<entry key="jclouds.trust-all-certs" value="${linshare.jclouds.trust-all-certs}" />
+				<entry key="jclouds.wire.log.sensitive" value="${linshare.jclouds.wire.log.sensitive}" />
+				<entry key="jclouds.headers" value="${linshare.jclouds.headers}" />
+				<entry key="jclouds.wire" value="${linshare.jclouds.wire}" />
+				<entry key="jclouds.user-threads" value="${linshare.jclouds.user-threads}" />
+			</map>
+		</property>
 	</bean>
 
 	<bean

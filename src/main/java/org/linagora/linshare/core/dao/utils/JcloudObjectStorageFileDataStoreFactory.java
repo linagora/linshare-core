@@ -36,6 +36,7 @@ package org.linagora.linshare.core.dao.utils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang3.Validate;
@@ -50,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.inject.Module;
 
 public class JcloudObjectStorageFileDataStoreFactory {
@@ -76,6 +78,7 @@ public class JcloudObjectStorageFileDataStoreFactory {
 	protected String projectName;
 	protected String keystoneVersion;
 	protected Iterable<Module> modules = ImmutableSet.<Module> of(new SLF4JLoggingModule());
+	protected Map<String, String> jcloudProperties = Maps.newHashMap();
 
 	public JcloudObjectStorageFileDataStore getDefault() {
 		this.supportedProvidersList = Arrays.asList(supportedProviders.split(","));
@@ -85,8 +88,7 @@ public class JcloudObjectStorageFileDataStoreFactory {
 			throw new IllegalArgumentException("Supported providers: " + this.supportedProviders.toString());
 		}
 		Properties properties = new Properties();
-		properties.setProperty(org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-		properties.setProperty(org.jclouds.Constants.PROPERTY_LOGGER_WIRE_LOG_SENSITIVE_INFO, "true");
+		jcloudProperties.forEach((k, v) ->  { logger.debug("jcloudProperties: {}={}", k, v);properties.setProperty(k, v);});
 		if (provider.equals(FILESYSTEM)) {
 			return new FileSystemJcloudFileDataStoreImpl(modules, properties, bucketIdentifier, baseDirectory);
 		} else if (provider.equals(OPENSTACK_SWIFT)) {
@@ -163,5 +165,9 @@ public class JcloudObjectStorageFileDataStoreFactory {
 
 	public void setMultipartUpload(boolean multipartUpload) {
 		this.multipartUpload = multipartUpload;
+	}
+
+	public void setJcloudProperties(Map<String, String> jcloudProperties) {
+		this.jcloudProperties = jcloudProperties;
 	}
 }

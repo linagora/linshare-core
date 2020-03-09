@@ -126,6 +126,8 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 
 	@Override
 	public FileMetaData add(InputStream file, FileMetaData metadata) {
+		String seq = "sequence-" + UUID.randomUUID().toString();
+		logger.info("{}:uploading file using jcloud ...", seq);
 		BlobStore blobStore = getBlobStore(bucketIdentifier);
 		Date start = null;
 
@@ -139,6 +141,7 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 			metadata.setUuid(UUID.randomUUID().toString());
 		}
 		metadata.setBucketUuid(bucketIdentifier);
+		logger.debug("{}:metadata: {}", seq, metadata);
 		PayloadBlobBuilder pbb = blobStore.blobBuilder(metadata.getUuid())
 				.payload(payload)
 				.contentLength(metadata.getSize());
@@ -147,6 +150,7 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 			pbb.contentType(MediaType.OCTET_STREAM.toString());
 		}
 		Blob blob = pbb.build();
+		logger.debug("{}:blob: {}", seq, blob);
 		stats(start, "blob");
 
 		// Upload the Blob
@@ -157,8 +161,9 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 		} else {
 			eTag = blobStore.putBlob(bucketIdentifier, blob);
 		}
-		logger.debug("etag : {}", eTag);
+		logger.debug("{}:etag : {}", seq, eTag);
 		stats(start, "putBlob");
+		logger.info("{}:file uploaded using jcloud.", seq);
 		return metadata;
 	}
 
