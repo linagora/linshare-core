@@ -109,7 +109,6 @@ linshare.documents.storage.project.name=
 linshare.documents.storage.endpoint=
 # required if you are using Swift with region (openstack-swift)
 linshare.documents.storage.regionId=
-linshare.documents.storage.multipartupload=true
 
 #### Mongo storage options ####
 

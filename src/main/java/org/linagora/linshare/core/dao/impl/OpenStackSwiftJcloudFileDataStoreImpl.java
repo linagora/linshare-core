@@ -49,15 +49,13 @@ public class OpenStackSwiftJcloudFileDataStoreImpl extends AbstractJcloudFileDat
 	protected String apiVersion;
 	protected String projectName;
 
-	public OpenStackSwiftJcloudFileDataStoreImpl(ContextBuilder contextBuilder, Properties properties,
-			String bucketIdentifier, String regionId, String apiVersion, String projectName, boolean multipartUpload) {
+	public OpenStackSwiftJcloudFileDataStoreImpl(ContextBuilder contextBuilder, Properties properties, String bucketIdentifier, String regionId, String apiVersion, String projectName) {
 		Validate.notNull(contextBuilder, "Missing contextBuilder");
 		Validate.notNull(properties, "Missing properties");
 		Validate.notEmpty(bucketIdentifier, "Missing bucket identifier");
 		Validate.notEmpty(regionId, "Missing regionId");
 		Validate.notEmpty(apiVersion, "Missing apiVersion");
 		this.bucketIdentifier = bucketIdentifier;
-		this.multipartUpload = multipartUpload;
 		this.regionId = regionId;
 		this.apiVersion = apiVersion;
 		this.projectName = projectName;
