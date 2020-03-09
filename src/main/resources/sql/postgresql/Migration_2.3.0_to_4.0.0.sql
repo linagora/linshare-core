@@ -1338,6 +1338,27 @@ DELETE FROM account WHERE id=4;
 
 ALTER TABLE password_history ADD CONSTRAINT FKpass_hist220240 FOREIGN KEY (account_id) REFERENCES account (id);
 
+-- Update domain_abstract by adding the column of drive provider
+ALTER TABLE domain_abstract ADD COLUMN drive_provider_id int8;
+
+-- Create the Drive provider
+	CREATE TABLE drive_provider (
+  id                  int8 NOT NULL,
+  uuid               varchar(255) NOT NULL UNIQUE,
+  provider_type      varchar(255) NOT NULL,
+  base_dn            varchar(255),
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
+  ldap_connection_id int8 NOT NULL,
+  ldap_pattern_id    int8 NOT NULL,
+  search_in_other_domains bool DEFAULT 'true',
+  PRIMARY KEY (id));
+
+-- Add the foreign keys constraints related to drive provider
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs303989 FOREIGN KEY (drive_provider_id) REFERENCES group_provider (id);
+ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi820203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
+ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi1670 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+
 -- End of your requests
 
 -- LinShare version

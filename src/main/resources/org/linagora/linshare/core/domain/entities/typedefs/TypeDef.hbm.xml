@@ -71,6 +71,12 @@
 			<param name="identifierMethod">name</param>
 			<param name="valueOfMethod">fromString</param>
 		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="driveProviderType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.DriveProviderType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
 		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="LogActionV1">
 			<param name="enumClass">org.linagora.linshare.core.domain.constants.LogActionV1</param>
 			<param name="identifierMethod">name</param>
