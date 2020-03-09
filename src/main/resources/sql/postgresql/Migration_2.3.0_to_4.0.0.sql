@@ -1422,6 +1422,8 @@ INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
 VALUES(26, 'sn', 'member_lastname', false, true, true, false, 6);
 
+=======
+>>>>>>> Add drive provider
 -- End of your requests
 
 -- LinShare version
