@@ -1,0 +1,20 @@
+{
+	"resourcePackages": [
+		"org.linagora.linshare.webservice.delegationv2"
+	],
+	"prettyPrint": true,
+	"cacheTTL": 0,
+	"openAPI": {
+		"info": {
+			"version": "${project.version}",
+			"title": "Delegationv2 v2 API",
+			"description": "Delegationv2 v2 API"
+		},
+		"servers": [
+			{
+				"url": "/linshare/webservice/rest/delegation/v2/",
+				"description": "The delegation API server"
+			}
+		]
+	}
+}

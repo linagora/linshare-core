@@ -1,0 +1,20 @@
+{
+	"resourcePackages": [
+		"org.linagora.linshare.webservice.userv2"
+	],
+	"prettyPrint": true,
+	"cacheTTL": 0,
+	"openAPI": {
+		"info": {
+			"version": "${project.version}",
+			"title": "User v2 API",
+			"description": "User v2 API"
+		},
+		"servers": [
+			{
+				"url": "/linshare/webservice/rest/user/v2/",
+				"description": "The USER API server"
+			}
+		]
+	}
+}

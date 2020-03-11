@@ -42,6 +42,13 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:features>
+			<bean class="org.apache.cxf.jaxrs.openapi.OpenApiFeature">
+				<property name="useContextBasedConfig" value="true"/>
+				<property name="scan" value="false"/>
+				<property name="scanKnownConfigLocations" value="false"/>
+				<property name="configLocation" value="openapi-configuration-uploadrequestv2.json"/>
+				<property name="supportSwaggerUi" value="true"/>
+			</bean>
 <!-- 			<cxf:logging /> -->
 		</jaxrs:features>
 		<jaxrs:inInterceptors>

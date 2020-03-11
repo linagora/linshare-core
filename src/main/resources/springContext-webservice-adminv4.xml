@@ -24,11 +24,6 @@
 		<constructor-arg ref="wsAdminUserFacade" />
 	</bean>
 
-	<!-- CXF OpenApiFeature -->
-	<bean id="openApiFeature" class="org.apache.cxf.jaxrs.openapi.OpenApiFeature">
-		<!-- customize some of the properties -->
-	</bean>
-
 
 	<jaxrs:server id="restAdminV4Container" address="/rest/admin/v4">
 		<jaxrs:serviceBeans>
@@ -52,7 +47,13 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:features>
-			<ref bean="openApiFeature" />
+			<bean class="org.apache.cxf.jaxrs.openapi.OpenApiFeature">
+				<property name="useContextBasedConfig" value="true"/>
+				<property name="scan" value="false"/>
+				<property name="scanKnownConfigLocations" value="false"/>
+				<property name="configLocation" value="openapi-configuration-adminv4.json"/>
+				<property name="supportSwaggerUi" value="true"/>
+			</bean>
 <!-- 			<cxf:logging /> -->
 		</jaxrs:features>
 		<jaxrs:inInterceptors>

@@ -6,7 +6,7 @@
 	"cacheTTL": 0,
 	"openAPI": {
 		"info": {
-			"version": "4.0.0",
+			"version": "${project.version}",
 			"title": "Admin v4 API",
 			"description": "Admin v4 API"
 		},
@@ -16,8 +16,5 @@
 				"description": "The ADMIN API server"
 			}
 		]
-	},
-	"userDefinedOptions": {
-		"support.swagger.ui": true
 	}
 }
