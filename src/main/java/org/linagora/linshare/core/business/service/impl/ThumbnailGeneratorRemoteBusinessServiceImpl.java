@@ -62,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 
 public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGeneratorBusinessService {
 
@@ -160,7 +161,7 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 				}
 				metadataThumb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png", tempThumbFile.length(),
 						metadata.getFileName());
-				metadataThumb = fileDataStore.add(tempThumbFile, metadataThumb);
+				metadataThumb = fileDataStore.add(Files.asByteSource(tempThumbFile), metadataThumb);
 				ThumbnailType thumbnailType = ThumbnailType.getThumbnailType(fileName);
 				if (thumbnailType != null && metadataThumb != null) {
 					thumbnailMap.put(thumbnailType, metadataThumb);

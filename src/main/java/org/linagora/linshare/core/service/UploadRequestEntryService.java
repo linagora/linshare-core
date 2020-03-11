@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.service;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
@@ -46,6 +45,8 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import com.google.common.io.ByteSource;
+
 public interface UploadRequestEntryService {
 
 	UploadRequestEntry create(Account actor, Account owner, File tempFile, String fileName, String comment,
@@ -55,7 +56,7 @@ public interface UploadRequestEntryService {
 
 	UploadRequestEntry find (Account authUser, Account actor, String uuid);
 
-	InputStream download(Account actor, Account owner, String uuid) throws BusinessException;
+	ByteSource download(Account actor, Account owner, String uuid) throws BusinessException;
 
 	UploadRequestEntry delete(User authUser, User actor, String uuid);
 

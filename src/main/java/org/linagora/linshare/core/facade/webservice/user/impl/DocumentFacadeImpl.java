@@ -87,6 +87,7 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 
 public class DocumentFacadeImpl extends UserGenericFacadeImp implements DocumentFacade {
 
@@ -204,15 +205,15 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 	}
 
 	@Override
-	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
+	public ByteSource getByteSource(String docEntryUuid) throws BusinessException {
 		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
 		logger.debug("downloading for document : " + docEntryUuid);
 		User authUser = checkAuthentication();
-		return documentEntryService.getDocumentStream(authUser, authUser, docEntryUuid);
+		return documentEntryService.getByteSource(authUser, authUser, docEntryUuid);
 	}
 
 	@Override
-	public InputStream getThumbnailStream(String docEntryUuid, ThumbnailType kind)
+	public ByteSource getThumbnailByteSource(String docEntryUuid, ThumbnailType kind)
 			throws BusinessException {
 		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
 		logger.debug("downloading thumbnail for document : " + docEntryUuid);
@@ -220,7 +221,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		if (kind == null) {
 			kind = ThumbnailType.MEDIUM;
 		}
-		return documentEntryService.getDocumentThumbnailStream(authUser, authUser, docEntryUuid, kind);
+		return documentEntryService.getThumbnailByteSource(authUser, authUser, docEntryUuid, kind);
 	}
 
 	@Override

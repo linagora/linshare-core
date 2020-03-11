@@ -33,13 +33,13 @@
  */
 package org.linagora.linshare.core.utils;
 
-import java.io.InputStream;
-
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+
+import com.google.common.io.ByteSource;
 
 public class FileAndMetaData {
 
-	protected InputStream stream;
+	protected ByteSource byteSource;
 
 	protected Long size;
 
@@ -47,28 +47,28 @@ public class FileAndMetaData {
 
 	protected String mimeType;
 
-	public FileAndMetaData(WorkGroupDocument document, InputStream stream) {
+	public FileAndMetaData(WorkGroupDocument document, ByteSource byteSource) {
 		super();
 		this.size = document.getSize();
 		this.name = document.getName();
 		this.mimeType = document.getMimeType();
-		this.stream = stream;
+		this.byteSource = byteSource;
 	}
 
-	public FileAndMetaData(InputStream stream, Long size, String name, String mimeType) {
+	public FileAndMetaData(ByteSource byteSource, Long size, String name, String mimeType) {
 		super();
-		this.stream = stream;
+		this.byteSource = byteSource;
 		this.size = size;
 		this.name = name;
 		this.mimeType = mimeType;
 	}
 
-	public InputStream getStream() {
-		return stream;
+	public ByteSource getByteSource() {
+		return byteSource;
 	}
 
-	public void setStream(InputStream stream) {
-		this.stream = stream;
+	public void setByteSource(ByteSource byteSource) {
+		this.byteSource = byteSource;
 	}
 
 	public Long getSize() {

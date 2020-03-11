@@ -34,12 +34,13 @@
 
 package org.linagora.linshare.core.dao.impl;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
+
+import com.google.common.io.ByteSource;
 
 public class DataKindBalancerFileDataStoreImpl implements FileDataStore {
 
@@ -63,25 +64,16 @@ public class DataKindBalancerFileDataStoreImpl implements FileDataStore {
 	}
 
 	@Override
-	public FileMetaData add(File file, FileMetaData metadata) {
+	public FileMetaData add(ByteSource byteSource, FileMetaData metadata) throws IOException {
 		if (metadata.getKind().equals(FileMetaDataKind.DATA)) {
-			return bigFilesDataStore.add(file, metadata);
+			return bigFilesDataStore.add(byteSource, metadata);
 		} else {
-			return smallFilesDataStore.add(file, metadata);
+			return smallFilesDataStore.add(byteSource, metadata);
 		}
 	}
 
 	@Override
-	public FileMetaData add(InputStream inputStream, FileMetaData metadata) {
-		if (metadata.getKind().equals(FileMetaDataKind.DATA)) {
-			return bigFilesDataStore.add(inputStream, metadata);
-		} else {
-			return smallFilesDataStore.add(inputStream, metadata);
-		}
-	}
-
-	@Override
-	public InputStream get(FileMetaData metadata) {
+	public ByteSource get(FileMetaData metadata) {
 		if (metadata.getKind().equals(FileMetaDataKind.DATA)) {
 			return bigFilesDataStore.get(metadata);
 		} else {

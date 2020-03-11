@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.io.InputStream;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
@@ -50,6 +49,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 
 public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements UploadRequestEntryFacade {
 
@@ -71,7 +71,7 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public InputStream download(String actorUuid, String uuid) throws BusinessException {
+	public ByteSource download(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required document uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);

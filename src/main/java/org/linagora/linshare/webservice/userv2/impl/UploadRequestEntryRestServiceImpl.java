@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.webservice.userv2.impl;
 
-import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -57,12 +56,14 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteSource;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/upload_request_entries")
@@ -92,7 +93,7 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 			@Parameter(description = "Upload request entry uuid.", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		UploadRequestEntryDto uploadRequestEntryDto = uploadRequestEntryFacade.find(null, uuid);
-		InputStream documentStream = uploadRequestEntryFacade.download(null, uuid);
+		ByteSource documentStream = uploadRequestEntryFacade.download(null, uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
 				uploadRequestEntryDto.getName(), uploadRequestEntryDto.getType(), uploadRequestEntryDto.getSize());
 		return response.build();

@@ -85,6 +85,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import com.google.common.io.ByteSource;
+
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -290,8 +292,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Override
 	public Response download(@PathParam("uuid") String uuid) throws BusinessException {
 		DocumentDto documentDto = documentFacade.find(uuid, false);
-		InputStream documentStream = documentFacade.getDocumentStream(uuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
+		ByteSource byteSource = documentFacade.getByteSource(uuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(byteSource,
 				documentDto.getName(), documentDto.getType(), documentDto.getSize());
 		return response.build();
 	}
@@ -310,8 +312,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 			throws BusinessException {
 		DocumentDto documentDto = documentFacade.find(documentUuid, false);
-		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid, thumbnailType);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
+		ByteSource byteSource = documentFacade.getThumbnailByteSource(documentUuid, thumbnailType);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(byteSource,
 				documentDto.getName() + ThumbnailType.getFileType(thumbnailType), base64, thumbnailType);
 		return response.build();
 	}

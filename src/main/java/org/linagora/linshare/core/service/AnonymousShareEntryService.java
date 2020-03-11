@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +43,8 @@ import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
+
+import com.google.common.io.ByteSource;
 
 public interface AnonymousShareEntryService {
 
@@ -56,10 +57,10 @@ public interface AnonymousShareEntryService {
 	void delete(Account actor, Account targetedAccount, String shareUuid)
 			throws BusinessException;
 
-	InputStream getAnonymousShareEntryStream(Account actor, String shareUuid)
+	ByteSource getAnonymousShareEntryByteSource(Account actor, String shareUuid)
 			throws BusinessException;
 
-	InputStream getAnonymousShareEntryThumbnailStream(Account actor, String shareUuid, ThumbnailType kind)
+	ByteSource getAnonymousShareEntryThumbnailByteSource(Account actor, String shareUuid, ThumbnailType kind)
 			throws BusinessException;
 
 	List<String> findAllExpiredEntries(Account actor, Account owner);

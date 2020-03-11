@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.webservice.external.impl;
 
-import java.io.InputStream;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -58,12 +56,13 @@ import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
 import org.linagora.linshare.webservice.external.AnonymousUrlRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
-import io.swagger.v3.oas.annotations.Parameter;
+import com.google.common.io.ByteSource;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/anonymousurl")
@@ -124,7 +123,7 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 		password = loadPasswordFromCookie(urlUuid, password, headers);
 		ShareEntryDto shareEntry = anonymousUrlFacade.getShareEntry(urlUuid,
 				shareEntryUuid, password);
-		InputStream documentStream = anonymousUrlFacade.download(urlUuid,
+		ByteSource documentStream = anonymousUrlFacade.download(urlUuid,
 				shareEntryUuid, password);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(documentStream,
@@ -146,9 +145,9 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 			@Context HttpHeaders headers) {
 		password = loadPasswordFromCookie(anonymousUrlUuid, password, headers);
 		ShareEntryDto shareEntry = anonymousUrlFacade.getShareEntry(anonymousUrlUuid, shareEntryUuid, password);
-		InputStream documentStream = anonymousUrlFacade.getThumbnail(anonymousUrlUuid, shareEntryUuid, password,
+		ByteSource byteSource = anonymousUrlFacade.getThumbnail(anonymousUrlUuid, shareEntryUuid, password,
 				thumbnailType);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
+		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(byteSource,
 				shareEntry.getName(), base64, thumbnailType);
 		return response.build();
 	}

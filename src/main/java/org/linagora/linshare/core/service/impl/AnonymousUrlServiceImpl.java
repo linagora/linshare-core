@@ -54,6 +54,8 @@ import org.linagora.linshare.core.utils.ArchiveZipStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteSource;
+
 public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnonymousUrlService.class);
@@ -86,13 +88,13 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 	}
 
 	@Override
-	public InputStream downloadDocument(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException {
+	public ByteSource downloadDocument(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException {
 		AnonymousUrl anonymousUrl = find(actor, owner, anonymousUrlUuid, password);
 		if(isValid(anonymousUrl, password)) {
 			// anonymous share are not made with a thousand contacts, performance will not be poor most of the time.
 			for (AnonymousShareEntry anonymousShareEntry : anonymousUrl.getAnonymousShareEntries()) {
 				if(anonymousShareEntry.getUuid().equals(anonymousShareEntryUuid)) {
-					return anonymousShareEntryService.getAnonymousShareEntryStream(actor, anonymousShareEntry.getUuid());
+					return anonymousShareEntryService.getAnonymousShareEntryByteSource(actor, anonymousShareEntry.getUuid());
 				}
 			}
 			String msg = "anonymousShareEntryUuid not found : " + anonymousShareEntryUuid;
@@ -110,9 +112,9 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 		AnonymousUrl anonymousUrl = find(actor, owner, anonymousUrlUuid, password);
 		if(isValid(anonymousUrl, password)) {
 			
-			Map<String,InputStream> map = new HashMap<String, InputStream>();
+			Map<String, ByteSource> map = new HashMap<String, ByteSource>();
 			for (AnonymousShareEntry anonymousShareEntry : anonymousUrl.getAnonymousShareEntries()) {
-				map.put(anonymousShareEntry.getName(), anonymousShareEntryService.getAnonymousShareEntryStream(actor, anonymousShareEntry.getUuid()));
+				map.put(anonymousShareEntry.getName(), anonymousShareEntryService.getAnonymousShareEntryByteSource(actor, anonymousShareEntry.getUuid()));
 				// TODO : NEW FUNCTIONNALITY : just send one mail for all files, not one by by file.
 			}
 			
@@ -180,13 +182,13 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 	}
 
 	@Override
-	public InputStream downloadThumbnail(Account actor,
+	public ByteSource downloadThumbnail(Account actor,
 			Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password, ThumbnailType kind)
 			throws BusinessException {
 		AnonymousUrl anonymousUrl = find(actor, owner, anonymousUrlUuid, password);
 		for(AnonymousShareEntry ase : anonymousUrl.getAnonymousShareEntries()) {
 			if(ase.getUuid().equals(anonymousShareEntryUuid)) {
-				return anonymousShareEntryService.getAnonymousShareEntryThumbnailStream(
+				return anonymousShareEntryService.getAnonymousShareEntryThumbnailByteSource(
 						actor, anonymousShareEntryUuid, kind);
 			}
 		}

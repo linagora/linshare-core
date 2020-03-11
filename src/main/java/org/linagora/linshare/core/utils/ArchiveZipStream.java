@@ -48,6 +48,8 @@ import java.util.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteSource;
+
 public class ArchiveZipStream extends InputStream {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ArchiveZipStream.class);
@@ -55,7 +57,7 @@ public class ArchiveZipStream extends InputStream {
 	public static final String ARCHIVE_ZIP_DOWNLOAD_NAME = "allFiles.zip";
 	
 	private final int BUFFERSIZE = 40 *1024;
-	private Map<String,InputStream> allFilesTozip; 
+	private Map<String, ByteSource> allFilesTozip; 
 	
 	private BufferedOutputStream bzfout;
 	private ZipOutputStream zout;
@@ -68,14 +70,13 @@ public class ArchiveZipStream extends InputStream {
 	 * 
 	 * @param allFilesTozip is a map with filename as a key and inputstream associated to this file
 	 */
-	public ArchiveZipStream(Map<String,InputStream> allFilesTozip) {
+	public ArchiveZipStream(Map<String, ByteSource> allFilesTozip) {
 			try {
 				this.allFilesTozip =  allFilesTozip;
 				tempFile = File.createTempFile("linshareZip", null);
-				
+				tempFile.deleteOnExit();
 				zout = new ZipOutputStream(new FileOutputStream(tempFile));
 				bzfout= new BufferedOutputStream(zout);
-				
 				writeprocess();
 				fi = new FileInputStream(tempFile);
 			} catch (FileNotFoundException e) {
@@ -121,7 +122,7 @@ public class ArchiveZipStream extends InputStream {
 			buffer = new byte[BUFFERSIZE];
 			zout.putNextEntry(new ZipEntry(filename));
 			
-			InputStream is = allFilesTozip.get(filename);
+			InputStream is = allFilesTozip.get(filename).openBufferedStream();
 			BufferedInputStream bif = new BufferedInputStream(is);
 			
 			int readed;

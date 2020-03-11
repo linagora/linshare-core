@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -61,12 +60,14 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.ReceivedShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
+import com.google.common.io.ByteSource;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 
@@ -133,7 +134,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 			@Parameter(description = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType
 			) throws BusinessException {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(receivedShareUuid);
-		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid, thumbnailType);
+		ByteSource receivedShareStream = shareFacade.getThumbnailByteSource(receivedShareUuid, thumbnailType);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(receivedShareStream,
 				receivedShareDto.getName() + ThumbnailType.getFileType(thumbnailType), base64, thumbnailType);
 		return response.build();
@@ -182,7 +183,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(uuid);
-		InputStream receivedShareStream = shareFacade.getDocumentStream(uuid);
+		ByteSource receivedShareStream = shareFacade.getDocumentByteSource(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(receivedShareStream,
 				receivedShareDto.getName(), receivedShareDto.getType(), receivedShareDto.getSize());
 		return response.build();

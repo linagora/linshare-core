@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,6 +70,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 
 public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessService {
 
@@ -183,7 +183,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 					log.addRelatedResources(node.getUuid());
 					WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) documentEntryRevisionBusinessService
 							.findMostRecent(workGroup, node.getUuid());
-					try (InputStream stream = documentEntryBusinessService.getDocumentStream(revision);) {
+					try (InputStream stream = documentEntryBusinessService.getByteSource(revision).openBufferedStream();) {
 						addFileToZip(stream, zos, node.getName(), humanPath, revision.getSize());
 					} catch (IOException ioException) {
 						logger.error("Download folder with UUID {} was failed.", rootNode.getUuid(), ioException);
@@ -192,8 +192,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 					}
 				}
 				zos.close();
-				InputStream inputStream = new FileInputStream(zipFile);
-				fileAndMetaData = new FileAndMetaData(inputStream, zipFile.length(),
+				fileAndMetaData = new FileAndMetaData(Files.asByteSource(zipFile), zipFile.length(),
 						rootNode.getName().concat(ARCHIVE_EXTENTION), ARCHIVE_MIME_TYPE);
 			} catch (IOException ioException) {
 				logger.error("Download folder {} failed.", rootNode.getUuid(), ioException);
@@ -224,7 +223,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 					log.addAuditDownloadLightEntity(new AuditDownloadLightEntity(node.getUuid(), node.getName()));
 					log.addRelatedResources(node.getUuid());
 					try (InputStream stream = documentEntryBusinessService
-							.getDocumentStream((WorkGroupDocumentRevision) node);) {
+							.getByteSource((WorkGroupDocumentRevision) node).openBufferedStream();) {
 						addFileToZip(stream, zos, node.getName(), "", ((WorkGroupDocumentRevision) node).getSize());
 					} catch (IOException ioException) {
 						logger.error("Download document {} with its revisions failed.", rootNode.getUuid(),
@@ -234,8 +233,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 					}
 				}
 				zos.close();
-				InputStream inputStream = new FileInputStream(zipFile);
-				fileAndMetaData = new FileAndMetaData(inputStream, zipFile.length(),
+				fileAndMetaData = new FileAndMetaData(Files.asByteSource(zipFile), zipFile.length(),
 						rootNode.getName().concat(ARCHIVE_EXTENTION), ARCHIVE_MIME_TYPE);
 			} catch (IOException ioException) {
 				logger.error("Download document {} with its revisions failed.", rootNode.getUuid(), ioException);

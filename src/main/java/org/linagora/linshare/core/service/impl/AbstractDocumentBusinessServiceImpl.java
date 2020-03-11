@@ -60,6 +60,7 @@ import org.linagora.linshare.core.domain.entities.Thumbnail;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.AbstractDocumentBusinessService;
@@ -72,6 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 
 public class AbstractDocumentBusinessServiceImpl implements AbstractDocumentBusinessService {
 
@@ -110,7 +112,12 @@ public class AbstractDocumentBusinessServiceImpl implements AbstractDocumentBusi
 		if (documents.isEmpty() || !deduplication) {
 			// Storing file
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, mimeType, size, fileName);
-			metadata = fileDataStore.add(myFile, metadata);
+			try {
+				metadata = fileDataStore.add(Files.asByteSource(myFile), metadata);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+				throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "Can not store file when creating document entry.");
+			}
 
 			// Computing and storing thumbnail
 			if (thumbnailGeneratorBusinessService.isSupportedMimetype(mimeType)) {

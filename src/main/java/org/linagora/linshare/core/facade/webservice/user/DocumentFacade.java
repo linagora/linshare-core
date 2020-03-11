@@ -48,6 +48,8 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
+import com.google.common.io.ByteSource;
+
 public interface DocumentFacade extends GenericFacade {
 
 	List<DocumentDto> findAll() throws BusinessException;
@@ -63,10 +65,10 @@ public interface DocumentFacade extends GenericFacade {
 	DocumentDto createWithSignature(File tempFile, String fileName,
 			String description, InputStream signatureFile, String signatureFileName, InputStream x509certificate) throws BusinessException;
 
-	InputStream getDocumentStream(String docEntryUuid)
+	ByteSource getByteSource(String docEntryUuid)
 			throws BusinessException;
 
-	InputStream getThumbnailStream(String docEntryUuid, ThumbnailType kind)
+	ByteSource getThumbnailByteSource(String docEntryUuid, ThumbnailType kind)
 			throws BusinessException;
 
 	DocumentDto delete(String uuid) throws BusinessException;

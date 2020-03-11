@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -46,6 +45,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
+
+import com.google.common.io.ByteSource;
 
 public interface ShareEntryService {
 
@@ -67,9 +68,9 @@ public interface ShareEntryService {
 
 	ShareEntry update(Account actor, Account owner, ShareEntry shareEntry) throws BusinessException;
 
-	InputStream getThumbnailStream(Account actor, Account owner, String shareEntryUuid, ThumbnailType kind) throws BusinessException;
+	ByteSource getThumbnailByteSource(Account actor, Account owner, String shareEntryUuid, ThumbnailType kind) throws BusinessException;
 
-	InputStream getStream(Account actor, Account owner, String shareEntryUuid) throws BusinessException;
+	ByteSource getByteSource(Account actor, Account owner, String shareEntryUuid) throws BusinessException;
 
 	List<ShareEntry> findAllMyRecievedShareEntries(Account actor, Account owner);
 

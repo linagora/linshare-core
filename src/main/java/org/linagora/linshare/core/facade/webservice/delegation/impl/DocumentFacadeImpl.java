@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -55,6 +54,7 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 
 public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		DocumentFacade {
@@ -142,7 +142,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		DocumentEntry doc = documentEntryService.find(authUser, actor,
 				documentUuid);
 
-		InputStream file = documentEntryService.getDocumentStream(authUser, actor,
+		ByteSource file = documentEntryService.getByteSource(authUser, actor,
 				documentUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(file, doc.getName(), doc.getType(),
@@ -164,9 +164,9 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 
 		DocumentEntry doc = documentEntryService.find(authUser, actor,
 				documentUuid);
-		InputStream file = documentEntryService.getDocumentThumbnailStream(authUser, actor, documentUuid, kind);
+		ByteSource byteSource = documentEntryService.getThumbnailByteSource(authUser, actor, documentUuid, kind);
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(file, doc.getName() + "_thumb.png",
+				.getDocumentResponseBuilder(byteSource, doc.getName() + "_thumb.png",
 						"image/png");
 		return response.build();
 	}

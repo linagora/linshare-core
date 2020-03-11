@@ -43,12 +43,14 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import com.google.common.io.ByteSource;
+
 
 public interface AnonymousUrlService {
 
 	public boolean isProtectedByPassword(Account actor, AnonymousUrl anonymousUrl) throws BusinessException;
 
-	public InputStream downloadDocument(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException;
+	public ByteSource downloadDocument(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException;
 
 	List<String> findAllExpiredEntries(Account actor, Account owner);
 
@@ -60,7 +62,7 @@ public interface AnonymousUrlService {
 
 	InputStream retrieveArchiveZipStream(Account actor, Account owner, String anonymousUrlUuid, String password) throws BusinessException ;
 
-	InputStream downloadThumbnail(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password, ThumbnailType kind) throws BusinessException;
+	ByteSource downloadThumbnail(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password, ThumbnailType kind) throws BusinessException;
 
 	SystemAccount getAnonymousURLAccount();
 

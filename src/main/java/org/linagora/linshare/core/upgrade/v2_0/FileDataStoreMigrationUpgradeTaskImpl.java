@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.upgrade.v2_0;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -153,11 +152,10 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
 			FileMetaData metadataTmb = new FileMetaData(fileMetaDataKind, document);
 			if (thmbUuid != null) {
-				try (InputStream stream = fileDataStore.get(metadata);
-						InputStream streamTmb = fileDataStore.get(metadataTmb)) {
-					metadata = fileDataStore.add(stream, metadata);
+				try {
+					metadata = fileDataStore.add(fileDataStore.get(metadata), metadata);
 					if (!fileDataStore.exists(metadataTmb)) {
-						metadataTmb = fileDataStore.add(streamTmb, metadataTmb);
+						metadataTmb = fileDataStore.add(fileDataStore.get(metadataTmb), metadataTmb);
 					}
 					document.setBucketUuid(metadata.getBucketUuid());
 					document.setToUpgrade(false);
@@ -171,8 +169,8 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 					throw new BatchBusinessException(res, msg);
 				}
 			} else {
-				try (InputStream stream = fileDataStore.get(metadata)) {
-					metadata = fileDataStore.add(stream, metadata);
+				try {
+					metadata = fileDataStore.add(fileDataStore.get(metadata), metadata);
 					document.setBucketUuid(metadata.getBucketUuid());
 					document.setToUpgrade(false);
 					repository.update(document);

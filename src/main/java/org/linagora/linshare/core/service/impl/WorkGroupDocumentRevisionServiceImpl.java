@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -75,6 +74,8 @@ import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepos
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import com.google.common.io.ByteSource;
 
 public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServiceImpl
 		implements WorkGroupDocumentRevisionService {
@@ -211,9 +212,9 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			WorkGroupDocumentRevision revision) {
 		String fileName = computeFileName(node, revision, false);
 		revision.setName(fileName);
-		InputStream stream = getDocumentStream(actor, owner, workGroup, revision,
+		ByteSource byteSource = getDocumentStream(actor, owner, workGroup, revision,
 				WorkGroupNodeType.DOCUMENT_REVISION);
-		return new FileAndMetaData(stream, revision.getSize(), fileName, revision.getMimeType());
+		return new FileAndMetaData(byteSource, revision.getSize(), fileName, revision.getMimeType());
 	}
 
 	@Override

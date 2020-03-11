@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.user;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +43,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+
+import com.google.common.io.ByteSource;
 
 
 public interface ShareFacade extends GenericFacade {
@@ -64,9 +65,9 @@ public interface ShareFacade extends GenericFacade {
 
 	public ShareDto getShare(String shareUuid) throws BusinessException;
 
-	public InputStream getDocumentStream(String shareEntryUuid) throws BusinessException;
+	public ByteSource getDocumentByteSource(String shareEntryUuid) throws BusinessException;
 
-	public InputStream getThumbnailStream(String shareEntryUuid, ThumbnailType kind) throws BusinessException;
+	public ByteSource getThumbnailByteSource(String shareEntryUuid, ThumbnailType kind) throws BusinessException;
 
 	Set<ShareDto> create(ShareCreationDto createDto);
 

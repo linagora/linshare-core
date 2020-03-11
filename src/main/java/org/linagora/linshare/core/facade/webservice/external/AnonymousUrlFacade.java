@@ -33,11 +33,11 @@
  */
 package org.linagora.linshare.core.facade.webservice.external;
 
-import java.io.InputStream;
-
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto;
 import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
+
+import com.google.common.io.ByteSource;
 
 public interface AnonymousUrlFacade {
 
@@ -45,7 +45,7 @@ public interface AnonymousUrlFacade {
 
 	ShareEntryDto getShareEntry(String anonymousUrlUuid, String anonymousShareEntryUuid, String password);
 
-	InputStream download(String anonymousUrlUuid, String anonymousShareEntryUuid, String password);
+	ByteSource download(String anonymousUrlUuid, String anonymousShareEntryUuid, String password);
 
-	InputStream getThumbnail(String anonymousUrlUuid, String anonymousShareEntryUuid, String password, ThumbnailType kind);
+	ByteSource getThumbnail(String anonymousUrlUuid, String anonymousShareEntryUuid, String password, ThumbnailType kind);
 }

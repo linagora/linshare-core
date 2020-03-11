@@ -101,7 +101,7 @@ public class Sha256SumUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 		logInfo(batchRunContext, total, position, "processing document : " + doc.getUuid());
 		ResultContext context = new DocumentBatchResultContext(doc);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, doc);
-		try (InputStream fileContentByUUID = fileDataStore.get(metadata)) {
+		try (InputStream fileContentByUUID = fileDataStore.get(metadata).openBufferedStream()) {
 			String sha256sum = documentEntryBusinessService.SHA256CheckSumFileStream(fileContentByUUID);
 			doc.setSha256sum(sha256sum);
 			documentRepository.update(doc);

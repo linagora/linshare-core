@@ -48,8 +48,4 @@ public interface SignatureService {
 	public Signature createSignature(Account actor, Document document, InputStream stream, String fileName, X509Certificate signerCertificate) throws BusinessException ;
 	
 	public void deleteSignature(Signature signature) throws BusinessException;
-	
-	public InputStream getDocumentStream(Signature signature);
-	
-	
 }

@@ -56,6 +56,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.google.common.io.Files;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-test.xml",
@@ -98,7 +100,7 @@ public class JcloudObjectStorageFileDataStoreTest {
 		File file = path.toFile();
 		FileMetaData metaData = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream", file.length(),
 				fileName);
-		FileMetaData data = jcloudFileDataStore.add(file, metaData);
+		FileMetaData data = jcloudFileDataStore.add(Files.asByteSource(file), metaData);
 		Assertions.assertNotNull(data);
 		logger.info("FileMetaData : " + data.toString());
 		logger.debug(LinShareTestConstants.END_TEST);

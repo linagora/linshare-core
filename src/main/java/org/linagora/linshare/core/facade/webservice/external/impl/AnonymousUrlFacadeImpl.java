@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.external.impl;
 
-import java.io.InputStream;
-
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -47,6 +45,8 @@ import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
 import org.linagora.linshare.core.service.AnonymousUrlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteSource;
 
 public class AnonymousUrlFacadeImpl implements AnonymousUrlFacade{
 
@@ -79,7 +79,7 @@ public class AnonymousUrlFacadeImpl implements AnonymousUrlFacade{
 	}
 
 	@Override
-	public InputStream download(String anonymousUrlUuid,
+	public ByteSource download(String anonymousUrlUuid,
 			String anonymousShareEntryUuid, String password) {
 		logger.debug("Downloading a file with anonymousShareEntryUuid :"
 				+ anonymousShareEntryUuid + "from anonymousUrl : "
@@ -90,7 +90,7 @@ public class AnonymousUrlFacadeImpl implements AnonymousUrlFacade{
 	}
 
 	@Override
-	public InputStream getThumbnail(String anonymousUrlUuid,
+	public ByteSource getThumbnail(String anonymousUrlUuid,
 			String anonymousShareEntryUuid, String password, ThumbnailType kind) {
 		Validate.notEmpty(anonymousUrlUuid,
 				"Missing required anonymousUrl uuid");

@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +83,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 
 public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl implements WorkGroupNodeService {
 
@@ -490,13 +490,13 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
 		if (isDocument(node)) {
 			node = revisionService.findMostRecent(workGroup, node.getUuid());
-			InputStream stream = workGroupDocumentService.getThumbnailStream(actor, owner, workGroup,
+			ByteSource byteSource = workGroupDocumentService.getThumbnailByteSource(actor, owner, workGroup,
 					(WorkGroupDocument) node, kind);
-			return new FileAndMetaData((WorkGroupDocument) node, stream);
+			return new FileAndMetaData((WorkGroupDocument) node, byteSource);
 		} else if (isRevision(node)) {
-			InputStream stream = workGroupDocumentService.getThumbnailStream(actor, owner, workGroup,
+			ByteSource byteSource = workGroupDocumentService.getThumbnailByteSource(actor, owner, workGroup,
 					(WorkGroupDocument) node, kind);
-			return new FileAndMetaData((WorkGroupDocument) node, stream);
+			return new FileAndMetaData((WorkGroupDocument) node, byteSource);
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not get thumbnail for this kind of node.");

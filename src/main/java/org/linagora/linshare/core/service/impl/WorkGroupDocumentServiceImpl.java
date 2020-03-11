@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
-import java.io.InputStream;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -75,6 +74,8 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import com.google.common.io.ByteSource;
 
 public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceImpl
 		implements WorkGroupDocumentService {
@@ -205,14 +206,14 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		return workGroupNode;
 	}
 
-	public InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup,
+	public ByteSource getDocumentStream(Account actor, Account owner, WorkGroup workGroup,
 			WorkGroupDocumentRevision revision, WorkGroupNodeType nodeType) throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, AuditLogEntryType.WORKGROUP_DOCUMENT,
 				revision, workGroup);
 		addMembersToLog(workGroup.getLsUuid(), log);
 		log.addRelatedResources(revision.getParent());
 		logEntryService.insert(log);
-		return documentEntryBusinessService.getDocumentStream(revision);
+		return documentEntryBusinessService.getByteSource(revision);
 	}
 
 	@Override
@@ -220,9 +221,9 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			WorkGroupDocumentRevision revision) {
 		String documentName = computeFileName(node, revision, true);
 		revision.setName(documentName);
-		InputStream stream = getDocumentStream(actor, owner, workGroup, revision,
+		ByteSource byteSource = getDocumentStream(actor, owner, workGroup, revision,
 				WorkGroupNodeType.DOCUMENT);
-		return new FileAndMetaData(stream, revision.getSize(), documentName, revision.getMimeType());
+		return new FileAndMetaData(byteSource, revision.getSize(), documentName, revision.getMimeType());
 	}
 
 	@Override
@@ -237,8 +238,8 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public InputStream getThumbnailStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node, ThumbnailType thumbnailType) throws BusinessException {
-		return documentEntryBusinessService.getThreadEntryThumbnailStream(node, thumbnailType);
+	public ByteSource getThumbnailByteSource(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node, ThumbnailType thumbnailType) throws BusinessException {
+		return documentEntryBusinessService.getThumbnailByteSource(node, thumbnailType);
 	}
 
 	protected void checkSpace(WorkGroup workGroup, long size) throws BusinessException {

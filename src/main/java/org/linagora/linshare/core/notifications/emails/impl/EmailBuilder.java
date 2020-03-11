@@ -427,7 +427,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 			@Override
 			public InputStream getInputStream() throws IOException {
-				return fileDataStore.get(metadata);
+				return fileDataStore.get(metadata).openBufferedStream();
 			}
 
 			@Override

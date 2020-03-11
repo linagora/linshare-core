@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.business.service;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
@@ -48,6 +47,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDocumentBusinessService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+
+import com.google.common.io.ByteSource;
 
 public interface DocumentEntryBusinessService extends AbstractDocumentBusinessService {
 
@@ -64,9 +65,9 @@ public interface DocumentEntryBusinessService extends AbstractDocumentBusinessSe
 
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException ;
 
-	public InputStream getDocumentThumbnailStream(DocumentEntry entry, ThumbnailType kind) ;
+	ByteSource getThumbnailByteSource(DocumentEntry entry, ThumbnailType kind) ;
 
-	public InputStream getDocumentStream(DocumentEntry entry) ;
+	ByteSource getByteSource(DocumentEntry entry) ;
 
 	public DocumentEntry find(String uuid);
 
@@ -82,9 +83,9 @@ public interface DocumentEntryBusinessService extends AbstractDocumentBusinessSe
 			String documentUuid, String name, boolean ciphered)
 			throws BusinessException;
 
-	InputStream getDocumentStream(WorkGroupDocument entry);
+	ByteSource getByteSource(WorkGroupDocument entry);
 
-	public InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry, ThumbnailType kind);
+	ByteSource getThumbnailByteSource(WorkGroupDocument entry, ThumbnailType kind);
 
 	@Deprecated
 	long getUsedSpace(Account owner) throws BusinessException;

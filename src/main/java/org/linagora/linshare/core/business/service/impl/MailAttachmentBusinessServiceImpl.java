@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -48,12 +49,15 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.MailAttachmentRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.service.impl.AbstractDocumentBusinessServiceImpl;
 
 import com.google.common.base.Strings;
+import com.google.common.io.Files;
 
 public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessServiceImpl implements MailAttachmentBusinessService{
 
@@ -91,7 +95,12 @@ public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessS
 		MailAttachment mailAttachment = new MailAttachment(enable, enableForAll, language, description, fileName,
 				tempFile.length(), mimeType, sha256sum, mailConfig, cid);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.MAIL_ATTACHMENT, mailAttachment);
-		metadata = fileDataStore.add(tempFile, metadata);
+		try {
+			metadata = fileDataStore.add(Files.asByteSource(tempFile), metadata);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "Can not store file when creating mail attachment.");
+		}
 		mailAttachment.setBucketUuid(metadata.getBucketUuid());
 		return attachmentRepository.create(mailAttachment);
 	}

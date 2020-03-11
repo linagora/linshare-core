@@ -95,10 +95,4 @@ public class SignatureServiceImpl implements SignatureService {
 	public void deleteSignature(Signature signature) throws BusinessException {
 		signatureBusinessService.deleteSignature(signature);
 	}
-
-	
-	@Override
-	public InputStream getDocumentStream(Signature signature) {
-		return signatureBusinessService.getDocumentStream(signature);
-	}
 }

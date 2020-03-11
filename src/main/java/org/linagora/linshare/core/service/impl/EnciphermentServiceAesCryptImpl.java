@@ -101,7 +101,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 		try {
 
-			in = documentEntryService.getDocumentStream(actor, owner, documentEntry.getUuid());
+			in = documentEntryService.getByteSource(actor, owner, documentEntry.getUuid()).openBufferedStream();
 
 			f = new File(workingDir + "/" + UUID.randomUUID());
 			out = new FileOutputStream(f);
@@ -157,7 +157,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 		File f = null;
 		try {
 
-			in = documentEntryService.getDocumentStream(actor, owner, documentEntry.getUuid());
+			in = documentEntryService.getByteSource(actor, owner, documentEntry.getUuid()).openBufferedStream();
 			f = new File(workingDir+"/"+UUID.randomUUID());
 			out = new FileOutputStream(f);
 

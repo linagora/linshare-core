@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.core.dao.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -53,6 +51,7 @@ import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 
 import com.google.common.collect.Iterators;
+import com.google.common.io.ByteSource;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.MongoDatabase;
@@ -90,17 +89,7 @@ public class MongoFileDataStoreImpl implements FileDataStore {
 	}
 
 	@Override
-	public FileMetaData add(File file, FileMetaData metadata) {
-		try (FileInputStream fis = new FileInputStream(file)) {
-			return metadata = add(fis, metadata);
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Can not add a new file : " + e.getMessage());
-		}
-	}
-
-	@Override
-	public FileMetaData add(InputStream inputStream, FileMetaData metadata) {
+	public FileMetaData add(ByteSource byteSource, FileMetaData metadata) throws IOException {
 		DBObject meta = new BasicDBObject();
 		// It is not used/useful for mongo.
 		// meta.put("bucketUuid", metadata.getBucketUuid());
@@ -113,12 +102,12 @@ public class MongoFileDataStoreImpl implements FileDataStore {
 			metadata.setFileName(UUID.randomUUID().toString());
 		}
 		// this throws MongoException
-		gridOperations.store(inputStream, metadata.getFileName(), metadata.getMimeType(), meta);
+		gridOperations.store(byteSource.openBufferedStream(), metadata.getFileName(), metadata.getMimeType(), meta);
 		return metadata;
 	}
 
 	@Override
-	public InputStream get(FileMetaData metadata) {
+	public ByteSource get(FileMetaData metadata) {
 		Query query = new Query().addCriteria(Criteria.where("metadata.uuid").is(metadata.getUuid()));
 		GridFSFindIterable find = gridOperations.find(query);
 		if (find == null) {
@@ -127,13 +116,14 @@ public class MongoFileDataStoreImpl implements FileDataStore {
 					"Can not find document in gridfs : " + metadata.getUuid());
 		}
 		checkNotTooMany(metadata, find);
-		GridFSDownloadStream gridFSDownloadStream = getGridFs().openDownloadStream(find.first().getObjectId());
-		GridFsResource gridFsResource = new GridFsResource(find.first(), gridFSDownloadStream);
-		try {
-			return gridFsResource.getInputStream();
-		} catch (IOException e) {
-			throw new IllegalStateException("Can not get the document inputStream : " + metadata.getUuid());
-		}
+		return new ByteSource() {
+			@Override
+			public InputStream openStream() throws IOException {
+				GridFSDownloadStream gridFSDownloadStream = getGridFs().openDownloadStream(find.first().getObjectId());
+				GridFsResource gridFsResource = new GridFsResource(find.first(), gridFSDownloadStream);
+				return gridFsResource.getInputStream();
+			}
+		};
 	}
 
 	private void checkNotTooMany(FileMetaData metadata, GridFSFindIterable find) {

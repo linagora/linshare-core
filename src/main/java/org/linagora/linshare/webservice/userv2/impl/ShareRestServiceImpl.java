@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.webservice.userv2.impl;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -62,12 +61,14 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.ShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
+import com.google.common.io.ByteSource;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 //Class created to generate the swagger documentation of v1 RestServices
@@ -127,7 +128,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Override
 	public Response getDocumentStream(@PathParam("uuid") String shareUuid) throws BusinessException {
 		ShareDto shareDto = webServiceShareFacade.getReceivedShare(shareUuid);
-		InputStream documentStream = webServiceShareFacade.getDocumentStream(shareUuid);
+		ByteSource documentStream = webServiceShareFacade.getDocumentByteSource(shareUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
 				shareDto.getName(), shareDto.getType(), shareDto.getSize());
 		return response.build();
@@ -140,7 +141,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
 		ShareDto shareDto = webServiceShareFacade.getShare(shareUuid);
-		InputStream documentStream = webServiceShareFacade.getThumbnailStream(shareUuid, ThumbnailType.MEDIUM);
+		ByteSource documentStream = webServiceShareFacade.getThumbnailByteSource(shareUuid, ThumbnailType.MEDIUM);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
 				shareDto.getName() + "_thumb.png", base64, ThumbnailType.MEDIUM);
 		return response.build();

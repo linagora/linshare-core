@@ -34,18 +34,19 @@
 
 package org.linagora.linshare.core.facade.webservice.user;
 
-import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
+import com.google.common.io.ByteSource;
+
 public interface UploadRequestEntryFacade {
 
 	UploadRequestEntryDto find(String actorUuid, String uuid) throws BusinessException;
 
-	InputStream download(String actorUuid, String uuid) throws BusinessException;
+	ByteSource download(String actorUuid, String uuid) throws BusinessException;
 
 	UploadRequestEntryDto delete(String actorUuid, String uuid);
 

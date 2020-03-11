@@ -34,14 +34,13 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -84,6 +83,7 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.DocumentMto;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 
 public class DocumentEntryServiceImpl
 		extends GenericEntryServiceImpl<Account, DocumentEntry>
@@ -473,14 +473,14 @@ public class DocumentEntryServiceImpl
 	}
 
 	@Override
-	public InputStream getDocumentThumbnailStream(Account actor, Account owner,
+	public ByteSource getThumbnailByteSource(Account actor, Account owner,
 			String uuid, ThumbnailType kind) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		DocumentEntry entry = find(actor, owner, uuid);
 		checkThumbNailDownloadPermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
-		return documentEntryBusinessService.getDocumentThumbnailStream(entry, kind);
+		return documentEntryBusinessService.getThumbnailByteSource(entry, kind);
 	}
 
 	@Override
@@ -493,7 +493,7 @@ public class DocumentEntryServiceImpl
 	}
 
 	@Override
-	public InputStream getDocumentStream(Account actor, Account owner,
+	public ByteSource getByteSource(Account actor, Account owner,
 			String uuid) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
@@ -506,12 +506,7 @@ public class DocumentEntryServiceImpl
 			EventNotification event = new EventNotification(log, owner.getLsUuid());
 			logEntryService.insert(log, event);
 		}
-		try {
-			return documentEntryBusinessService.getDocumentStream(entry);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE, "no stream available.");
-		}
+		return documentEntryBusinessService.getByteSource(entry);
 	}
 
 	@Override

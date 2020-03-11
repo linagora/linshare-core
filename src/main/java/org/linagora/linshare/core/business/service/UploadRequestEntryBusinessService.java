@@ -46,6 +46,8 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import com.google.common.io.ByteSource;
+
 public interface UploadRequestEntryBusinessService {
 
 	UploadRequestEntry findByUuid(String uuid);
@@ -70,7 +72,7 @@ public interface UploadRequestEntryBusinessService {
 
 	byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 
-	InputStream download(UploadRequestEntry entry);
+	ByteSource  download(UploadRequestEntry entry);
 
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
 

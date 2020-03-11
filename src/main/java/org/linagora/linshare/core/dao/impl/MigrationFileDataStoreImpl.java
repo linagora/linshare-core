@@ -34,11 +34,12 @@
 
 package org.linagora.linshare.core.dao.impl;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
+
+import com.google.common.io.ByteSource;
 
 public class MigrationFileDataStoreImpl implements FileDataStore {
 
@@ -63,24 +64,17 @@ public class MigrationFileDataStoreImpl implements FileDataStore {
 	}
 
 	@Override
-	public FileMetaData add(File file, FileMetaData metadata) {
-		return newDataStore.add(file, metadata);
+	public FileMetaData add(ByteSource byteSource, FileMetaData metadata) throws IOException {
+		return newDataStore.add(byteSource, metadata);
 	}
 
 	@Override
-	public FileMetaData add(InputStream inputStream, FileMetaData metadata) {
-		return newDataStore.add(inputStream, metadata);
-	}
-
-	@Override
-	public InputStream get(FileMetaData metadata) {
-		InputStream inputStream = null;
+	public ByteSource get(FileMetaData metadata) {
 		if (newDataStore.exists(metadata)) {
-			inputStream = newDataStore.get(metadata);
+			return newDataStore.get(metadata);
 		} else {
-			inputStream = oldDataStore.get(metadata);
+			return oldDataStore.get(metadata);
 		}
-		return inputStream;
 	}
 
 	@Override

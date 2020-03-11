@@ -36,8 +36,6 @@ package org.linagora.linshare.core.dao.impl;
 import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
 
 import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -56,6 +54,8 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteSource;
 
 
 public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectStorageFileDataStore, Closeable {
@@ -116,17 +116,7 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 	}
 
 	@Override
-	public FileMetaData add(File file, FileMetaData metadata) {
-		try (FileInputStream fis = new FileInputStream(file)) {
-			return metadata = add(fis, metadata);
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Can not add a new file : " + e.getMessage());
-		}
-	}
-
-	@Override
-	public FileMetaData add(InputStream file, FileMetaData metadata) {
+	public FileMetaData add(ByteSource byteSource, FileMetaData metadata) throws IOException {
 		String seq = "sequence-" + UUID.randomUUID().toString();
 		logger.info("{}:uploading file using jcloud ...", seq);
 		BlobStore blobStore = getBlobStore(bucketIdentifier);
@@ -134,7 +124,8 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 
 		// Create a Blob
 		start = new Date();
-		Payload payload = Payloads.newInputStreamPayload(file);
+
+		Payload payload = Payloads.newByteSourcePayload(byteSource);
 		stats(start, "Payload");
 
 		start = new Date();
@@ -169,22 +160,19 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 	}
 
 	@Override
-	public InputStream get(FileMetaData metadata) {
+	public ByteSource get(FileMetaData metadata) {
 		String containerName = metadata.getBucketUuid();
 		if (containerName == null) {
 			logger.error("document's BucketUuid can not be null.");
 			throw new TechnicalException(TechnicalErrorCode.MISSING_FILEDATASTORE_BUCKET, "document's BucketUuid can not be null.");
 		}
-		BlobStore blobStore = getBlobStore(containerName);
-		Date start = new Date();
-		Blob blobRetrieved = blobStore.getBlob(containerName, metadata.getUuid());
-		stats(start, "blobRetrieved");
-		try {
-			return blobRetrieved.getPayload().openStream();
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Can not get a file : " + e.getMessage());
-		}
+		return new ByteSource() {
+			@Override
+			public InputStream openStream() throws IOException {
+				Blob blob = getBlobStore(containerName).getBlob(containerName, metadata.getUuid());
+				return blob.getPayload().openStream();
+			}
+		};
 	}
 
 	@Override

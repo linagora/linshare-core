@@ -35,14 +35,13 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -82,6 +81,8 @@ import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
+
+import com.google.common.io.ByteSource;
 
 public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Account, UploadRequestEntry>
 		implements UploadRequestEntryService {
@@ -248,7 +249,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	}
 
 	@Override
-	public InputStream download(Account authUser, Account actor, String uuid) throws BusinessException {
+	public ByteSource download(Account authUser, Account actor, String uuid) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notEmpty(uuid, "upload request entry uuid is required.");
 		logger.debug("downloading for document : " + uuid);

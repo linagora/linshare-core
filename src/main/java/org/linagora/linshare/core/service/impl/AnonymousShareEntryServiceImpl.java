@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -68,6 +67,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteSource;
 
 public class AnonymousShareEntryServiceImpl extends
 		GenericEntryServiceImpl<Contact, AnonymousShareEntry> implements
@@ -179,7 +179,7 @@ public class AnonymousShareEntryServiceImpl extends
 	}
 
 	@Override
-	public InputStream getAnonymousShareEntryStream(Account actor,
+	public ByteSource getAnonymousShareEntryByteSource(Account actor,
 			String shareUuid) throws BusinessException {
 		preChecks(actor, null, true);
 		Validate.notEmpty(shareUuid, "Share uuid is required.");
@@ -211,7 +211,7 @@ public class AnonymousShareEntryServiceImpl extends
 				shareEntry, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
 		logEntryService.insert(log);
 		notifierService.sendNotification(mail);
-		return documentEntryBusinessService.getDocumentStream(shareEntry
+		return documentEntryBusinessService.getByteSource(shareEntry
 				.getDocumentEntry());
 	}
 
@@ -225,13 +225,13 @@ public class AnonymousShareEntryServiceImpl extends
 	}
 
 	@Override
-	public InputStream getAnonymousShareEntryThumbnailStream(Account actor,
+	public ByteSource getAnonymousShareEntryThumbnailByteSource(Account actor,
 			String shareUuid, ThumbnailType kind) throws BusinessException {
 		AnonymousShareEntry shareEntry = find(actor, actor, shareUuid);
 		rac.checkThumbNailDownloadPermission(actor, actor,
 				AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, shareEntry);
 		return documentEntryBusinessService
-				.getDocumentThumbnailStream(shareEntry.getDocumentEntry(), kind);
+				.getThumbnailByteSource(shareEntry.getDocumentEntry(), kind);
 	}
 }

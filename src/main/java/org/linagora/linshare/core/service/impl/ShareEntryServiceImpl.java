@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
@@ -76,6 +75,7 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteSource;
 
 public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, ShareEntry>
 		implements ShareEntryService {
@@ -230,18 +230,18 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	}
 
 	@Override
-	public InputStream getThumbnailStream(Account actor, Account owner,
+	public ByteSource getThumbnailByteSource(Account actor, Account owner,
 			String uuid, ThumbnailType kind) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
 		checkThumbNailDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
-		return documentEntryBusinessService.getDocumentThumbnailStream(share.
+		return documentEntryBusinessService.getThumbnailByteSource(share.
 				getDocumentEntry(), kind);
 	}
 
 	@Override
-	public InputStream getStream(Account actor, Account owner, String uuid)
+	public ByteSource getByteSource(Account actor, Account owner, String uuid)
 			throws BusinessException {
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
@@ -259,7 +259,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		log.addRelatedAccounts(senderUuid);
 		EventNotification event = new EventNotification(log, senderUuid);
 		logEntryService.insert(log, event);
-		return documentEntryBusinessService.getDocumentStream(share
+		return documentEntryBusinessService.getByteSource(share
 				.getDocumentEntry());
 	}
 

@@ -49,6 +49,4 @@ public interface SignatureBusinessService {
 	public Signature createSignature(Account owner, Document document, File myFile, Long size, String fileName, String mimeType, X509Certificate signerCertificate) throws BusinessException;
 	
 	public void deleteSignature(Signature signature) throws BusinessException;
-	
-	public InputStream getDocumentStream(Signature signature);
 }

@@ -73,6 +73,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 public class UploadRequestEntryBusinessServiceImpl implements
 		UploadRequestEntryBusinessService {
@@ -244,7 +246,12 @@ public class UploadRequestEntryBusinessServiceImpl implements
 		if (documents.isEmpty() || !deduplication) {
 			// Storing file
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, mimeType, size, fileName);
-			metadata = fileDataStore.add(myFile, metadata);
+			try {
+				metadata = fileDataStore.add(Files.asByteSource(myFile), metadata);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+				throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "Can not store file when creating upload request entry.");
+			}
 
 			// Computing and storing thumbnail
 			if (thumbnailGeneratorBusinessService.isSupportedMimetype(mimeType)) {
@@ -320,19 +327,12 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	}
 
 	@Override
-	public InputStream download(UploadRequestEntry entry) {
+	public ByteSource  download(UploadRequestEntry entry) {
 		String UUID = entry.getDocument().getUuid();
 		if (UUID != null && UUID.length() > 0) {
 			logger.debug("retrieve from fileDataStore : " + UUID);
-			InputStream stream = null;
-			try {
-				FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, entry.getDocument());
-				stream = fileDataStore.get(metadata);
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-				throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE, "no stream available.");
-			}
-			return stream;
+			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, entry.getDocument());
+			return fileDataStore.get(metadata);
 		}
 		return null;
 	}

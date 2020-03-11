@@ -92,7 +92,7 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 		context.setProcessed(false);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, resource);
 		if (fileDataStore.exists(metadata)) {
-			try (InputStream stream = fileDataStore.get(metadata)) {
+			try (InputStream stream = fileDataStore.get(metadata).openBufferedStream()) {
 				if (stream != null) {
 					String type = mimeTypeMagicNumberDao.getMimeType(stream);
 					resource.setType(type);

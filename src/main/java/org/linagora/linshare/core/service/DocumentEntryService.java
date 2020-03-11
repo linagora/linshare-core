@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
@@ -45,6 +44,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
+
+import com.google.common.io.ByteSource;
 
 public interface DocumentEntryService {
 
@@ -90,9 +91,9 @@ public interface DocumentEntryService {
 	 * @param uuid the identifier of the document
      * @return InputStream of the thumbnail
      */
-    public InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid, ThumbnailType kind) throws BusinessException;
+    public ByteSource getThumbnailByteSource(Account actor, Account owner, String uuid, ThumbnailType kind) throws BusinessException;
 
-    public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
+    public ByteSource getByteSource(Account actor, Account owner, String uuid) throws BusinessException;
 
 	/**
 	 * looking for a document entry using the uuid parameter.

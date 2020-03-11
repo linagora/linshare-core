@@ -83,6 +83,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessServiceImpl implements DocumentEntryBusinessService {
 
@@ -153,29 +155,24 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 	}
 
 	@Override
-	public InputStream getDocumentThumbnailStream(DocumentEntry entry, ThumbnailType kind) {
+	public ByteSource getThumbnailByteSource(DocumentEntry entry, ThumbnailType kind) {
 		Document doc = entry.getDocument();
 		FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
-		return getDocumentThumbnailStream(doc, kind, fileMetaDataKind);
+		return getThumbnailByteSource(doc, kind, fileMetaDataKind);
 	}
 
-	protected InputStream getDocumentThumbnailStream(Document doc, ThumbnailType kind,
+	protected ByteSource getThumbnailByteSource(Document doc, ThumbnailType kind,
 			FileMetaDataKind fileMetaDataKind) {
 		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnails();
 		if (thumbnailMap.containsKey(kind)) {
 			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
-			try {
-				InputStream stream = fileDataStore.get(metadata);
-				return stream;
-			} catch (TechnicalException ex) {
-				logger.debug(ex.getMessage(), ex);
-			}
+			return fileDataStore.get(metadata);
 		}
 		return null;
 	}
 
 	@Override
-	public InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry, ThumbnailType kind) {
+	public ByteSource  getThumbnailByteSource(WorkGroupDocument entry, ThumbnailType kind) {
 		Document doc = documentRepository.findByUuid(entry.getDocumentUuid());
 		if (doc == null) {
 			logger.error("can not find document entity with uuid : {}", entry.getDocumentUuid());
@@ -185,26 +182,17 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 		FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
 		if (thumbnailMap.containsKey(kind)) {
 			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
-			try {
-				InputStream stream = fileDataStore.get(metadata);
-				return stream;
-			} catch (TechnicalException ex) {
-				logger.debug(ex.getMessage(), ex);
-			}
+			return fileDataStore.get(metadata);
 		}
 		return null;
 	}
 
 	@Override
-	public InputStream getDocumentStream(DocumentEntry entry) {
-		String UUID = entry.getDocument().getUuid();
-		if (UUID!=null && UUID.length()>0) {
-			logger.debug("retrieve from fileDataStore : " + UUID);
-			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, entry.getDocument());
-			InputStream stream = fileDataStore.get(metadata);
-			return stream;
-		}
-		return null;
+	public ByteSource getByteSource(DocumentEntry entry) {
+		String uuid = entry.getDocument().getUuid();
+		logger.debug("retrieve from fileDataStore : " + uuid);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, entry.getDocument());
+		return fileDataStore.get(metadata);
 	}
 
 	@Override
@@ -251,7 +239,7 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 				// Storing file
 				metadata = new FileMetaData(FileMetaDataKind.DATA, mimeType, size, fileName);
 				metadata.setFileName(fileName);
-				metadata = fileDataStore.add(myFile, metadata);
+				metadata = fileDataStore.add(Files.asByteSource(myFile), metadata);
 				// Computing and storing thumbnail
 				if (thumbnailGeneratorBusinessService.isSupportedMimetype(mimeType)) {
 					fileMetadataThumbnail = thumbnailGeneratorBusinessService.getThumbnails(owner, myFile, metadata, mimeType);
@@ -295,6 +283,10 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 					}
 				}
 			}
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
 		}
 	}
@@ -380,22 +372,17 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 	}
 
 	@Override
-	public InputStream getDocumentStream(WorkGroupDocument entry) {
-		String UUID = entry.getDocumentUuid();
-		if (UUID!=null && UUID.length()>0) {
-			logger.debug("retrieving document from fileDataStore : " + UUID);
-			Document document = documentRepository.findByUuid(UUID);
-			if (document == null) {
-				logger.error("Can not retrieve document from fileDataStore : " + UUID);
-				return null;
-			}
-			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
-			InputStream stream = fileDataStore.get(metadata);
-			return stream;
+	public ByteSource  getByteSource(WorkGroupDocument entry) {
+		String uuid = entry.getDocumentUuid();
+		logger.debug("retrieving document from fileDataStore : " + uuid);
+		Document document = documentRepository.findByUuid(uuid);
+		if (document == null) {
+			logger.error("Can not retrieve document from fileDataStore : " + uuid);
+			return null;
 		}
-		return null;
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
+		return fileDataStore.get(metadata);
 	}
-
 
 	protected Document createDocument(Account owner, Document srcDocument, String fileName) throws BusinessException {
 		boolean createIt = false;
@@ -417,8 +404,9 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 			// copy document
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, srcDocument.getType(),
 					srcDocument.getSize(), fileName);
-			try (InputStream docStream = fileDataStore.get(metadataSrc)) {
-				metadata = fileDataStore.add(docStream, metadata);
+			ByteSource byteSource = fileDataStore.get(metadataSrc);
+			try {
+				metadata = fileDataStore.add(byteSource, metadata);
 			} catch (IOException e1) {
 				logger.error(e1.getMessage(), e1);
 				throw new BusinessException("Can not create a copy of existing document.");
@@ -475,7 +463,7 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 
 	private File getFileCopyThumbnail(Document srcDocument, Account owner, ThumbnailType kind) {
 		FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
-		try (InputStream inputStream = getDocumentThumbnailStream(srcDocument, kind, fileMetaDataKind)) {
+		try (InputStream inputStream = getThumbnailByteSource(srcDocument, kind, fileMetaDataKind).openBufferedStream()) {
 			if (inputStream != null) {
 				File tempThumbFile = null;
 				tempThumbFile = File.createTempFile("linthumbnail", owner + "_thumb.png");
@@ -488,6 +476,7 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 		} catch (IOException e1) {
 			logger.error("Can not create a copy thumbnail of existing document.");
 			logger.error(e1.getMessage(), e1);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "Can not store file when creating document entry.");
 		}
 		return null;
 	}
@@ -497,7 +486,12 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 		if (thumbFile != null) {
 			metadataThumb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png", thumbFile.length(),
 					metadata.getFileName());
-			metadataThumb = fileDataStore.add(thumbFile, metadataThumb);
+			try {
+				metadataThumb = fileDataStore.add(Files.asByteSource(thumbFile), metadataThumb);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+				throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "Can not store file when creating document entry.");
+			}
 		}
 		return metadataThumb;
 	}
@@ -586,7 +580,7 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 			FileMetaData fileMetaData = new FileMetaData(FileMetaDataKind.DATA, document);
 			if (fileDataStore.exists(fileMetaData)) {
 				File myFile = null;
-				try (InputStream stream = fileDataStore.get(fileMetaData);) {
+				try (InputStream stream = fileDataStore.get(fileMetaData).openBufferedStream()) {
 					String oldThumbUuid = document.getThmbUuid();
 					if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
 						FileMetaData thmbMetadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, document);

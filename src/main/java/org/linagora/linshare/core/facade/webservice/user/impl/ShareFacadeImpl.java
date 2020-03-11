@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +64,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteSource;
 
 public class ShareFacadeImpl extends UserGenericFacadeImp
 		implements ShareFacade {
@@ -182,19 +182,19 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public InputStream getDocumentStream(String shareEntryUuid)
+	public ByteSource getDocumentByteSource(String shareEntryUuid)
 			throws BusinessException {
 		User authUser = checkAuthentication();
-		return shareEntryService.getStream(authUser, authUser, shareEntryUuid);
+		return shareEntryService.getByteSource(authUser, authUser, shareEntryUuid);
 	}
 
 	@Override
-	public InputStream getThumbnailStream(String shareEntryUuid, ThumbnailType kind) throws BusinessException {
+	public ByteSource getThumbnailByteSource(String shareEntryUuid, ThumbnailType kind) throws BusinessException {
 		User authUser = checkAuthentication();
 		if (kind == null) {
 			kind = ThumbnailType.MEDIUM;
 		}
-		return shareEntryService.getThumbnailStream(authUser, authUser, shareEntryUuid, kind);
+		return shareEntryService.getThumbnailByteSource(authUser, authUser, shareEntryUuid, kind);
 	}
 
 	@Override

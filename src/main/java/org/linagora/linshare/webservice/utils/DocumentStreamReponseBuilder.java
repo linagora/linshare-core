@@ -49,46 +49,51 @@ import org.apache.commons.io.IOUtils;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 public class DocumentStreamReponseBuilder {
 
 	private static Logger logger = LoggerFactory.getLogger(DocumentStreamReponseBuilder.class);
 
-	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType) {
-		return getDocumentResponseBuilder(inputStream, fileName, mimeType, null);
+	public static ResponseBuilder getDocumentResponseBuilder(ByteSource byteSource, String fileName, String mimeType) {
+		return getDocumentResponseBuilder(byteSource, fileName, mimeType, null);
 	}
 
 	public static ResponseBuilder getThumbnailResponseBuilder(FileAndMetaData data, boolean base64, ThumbnailType kind) {
-		return getThumbnailResponseBuilder(data.getStream(), data.getName() + ThumbnailType.getFileType(kind), base64, kind);
+		return getThumbnailResponseBuilder(data.getByteSource(), data.getName() + ThumbnailType.getFileType(kind), base64, kind);
 	}
 
-	public static ResponseBuilder getThumbnailResponseBuilder(InputStream inputStream, String fileName, boolean base64, ThumbnailType kind) {
+	public static ResponseBuilder getThumbnailResponseBuilder(ByteSource byteSource, String fileName, boolean base64, ThumbnailType kind) {
 		ResponseBuilder response = null;
 		if (base64) {
-			response = getDocumentResponseBuilderBase64(inputStream, fileName,
+			response = getDocumentResponseBuilderBase64(byteSource, fileName,
 					ThumbnailType.getFileMimeType(kind), null);
 		} else {
-			response = getDocumentResponseBuilder(inputStream, fileName,
+			response = getDocumentResponseBuilder(byteSource, fileName,
 					ThumbnailType.getFileMimeType(kind), null);
 		}
 		return response;
 	}
 
-	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType,
+	public static ResponseBuilder getDocumentResponseBuilder(ByteSource byteSource, String fileName, String mimeType,
 			Long fileSize) {
+		if (byteSource == null) {
+			throw new TechnicalException(TechnicalErrorCode.MISSING_DOCUMENT_IN_FILEDATASTORE, "Can not download file : " + fileName);
+		}
 		StreamingOutput stream = new StreamingOutput() {
 			@Override
 			public void write(OutputStream out) throws IOException, WebApplicationException {
-				try {
+				try (InputStream inputStream = byteSource.openBufferedStream()) {
 					ByteStreams.copy(inputStream, out);
 				} finally {
 					out.close();
-					inputStream.close();
 				}
 			}
 		};
@@ -98,15 +103,18 @@ public class DocumentStreamReponseBuilder {
 	}
 
 	public static ResponseBuilder getDocumentResponseBuilder(FileAndMetaData data) {
-		return getDocumentResponseBuilder(data.getStream(), data.getName(), data.getMimeType(), data.getSize());
+		return getDocumentResponseBuilder(data.getByteSource(), data.getName(), data.getMimeType(), data.getSize());
 	}
 
 	public static ResponseBuilder getDocumentResponseBuilderBase64(
-			InputStream inputStream, String fileName, String mimeType,
+			ByteSource byteSource, String fileName, String mimeType,
 			Long fileSize) {
+		if (byteSource == null) {
+			throw new TechnicalException(TechnicalErrorCode.MISSING_DOCUMENT_IN_FILEDATASTORE, "Can not download file : " + fileName);
+		}
 		ResponseBuilder response = null;
 		byte[] byteArray = null;
-		try {
+		try (InputStream inputStream = byteSource.openBufferedStream()) {
 			if (inputStream != null) {
 				byteArray = IOUtils.toByteArray(inputStream);
 			}

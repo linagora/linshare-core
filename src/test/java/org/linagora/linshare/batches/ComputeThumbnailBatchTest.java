@@ -74,6 +74,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
@@ -170,10 +171,10 @@ public class ComputeThumbnailBatchTest {
 		documentEntries.add(createDocumentEntry);
 		document.setDocumentEntries(documentEntries);
 		File tempThmbFile = File.createTempFile("thumbnail", "png");
-		tempFile.deleteOnExit();
+		tempThmbFile.deleteOnExit();
 		FileMetaData metaDataThmb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
 				tempThmbFile.length(), "thumbnail");
-		metaDataThmb = fileDataStore.add(tempThmbFile, metaDataThmb);
+		metaDataThmb = fileDataStore.add(Files.asByteSource(tempThmbFile), metaDataThmb);
 		document.setThmbUuid(metaDataThmb.getUuid());
 		document.setComputeThumbnail(true);
 		return document;

@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -54,6 +54,8 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.SignatureRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.Files;
 
 public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 
@@ -85,10 +87,9 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 	public Signature createSignature(Account owner, Document document, File myFile, Long size, String fileName, String mimeType, X509Certificate signerCertificate) throws BusinessException {
 		// Storing file
 		FileMetaData metadataSign = new FileMetaData(FileMetaDataKind.SIGNATURE, mimeType, size, fileName);
-		metadataSign = fileDataStore.add(myFile, metadataSign);
-				
 		Signature entity = null;
 		try {
+			metadataSign = fileDataStore.add(Files.asByteSource(myFile), metadataSign);
 			// create signature in db
 			Calendar now = new GregorianCalendar();
 			
@@ -104,6 +105,9 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 		} catch (BusinessException e) {
 			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
 			fileDataStore.remove(metadataSign);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_SIGNATURE, "couldn't register the signature in the database");
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_SIGNATURE, "couldn't register the signature in the database");
 		}
 		return entity;
@@ -128,19 +132,4 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 		fileDataStore.remove(metadata);
 		signatureRepository.delete(signature);
 	}
-
-
-	@Override
-	public InputStream getDocumentStream(Signature signature) {
-		String UUID = signature.getUuid();
-		if (UUID!=null && UUID.length()>0) {
-			logger.debug("retrieve from fileDataStore : " + UUID);
-			FileMetaData metadata = new FileMetaData(signature);
-			InputStream stream = fileDataStore.get(metadata);
-			return stream;
-		}
-		return null;
-	}
-	
-	
 }

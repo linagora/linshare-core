@@ -34,20 +34,19 @@
 
 package org.linagora.linshare.core.dao;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 
 import org.linagora.linshare.core.domain.objects.FileMetaData;
+
+import com.google.common.io.ByteSource;
 
 public interface FileDataStore {
 
 	void remove(FileMetaData metadata);
 
-	FileMetaData add(File file, FileMetaData metadata);
+	FileMetaData add(ByteSource byteSource, FileMetaData metadata) throws IOException;
 
-	FileMetaData add(InputStream inputStream, FileMetaData metadata);
-
-	InputStream get(FileMetaData metadata);
+	ByteSource get(FileMetaData metadata);
 
 	boolean exists(FileMetaData metadata);
 

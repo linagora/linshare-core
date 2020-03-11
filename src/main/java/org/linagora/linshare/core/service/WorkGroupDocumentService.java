@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.io.InputStream;
-
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -47,6 +45,8 @@ import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
+
+import com.google.common.io.ByteSource;
 
 public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 
@@ -64,10 +64,10 @@ public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 
-	InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision node,
+	ByteSource getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision node,
 			WorkGroupNodeType nodeType) throws BusinessException;
 
-	InputStream getThumbnailStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node, ThumbnailType thumbnailType)
+	ByteSource getThumbnailByteSource(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node, ThumbnailType thumbnailType)
 			throws BusinessException;
 
 	FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, WorkGroupDocument node,
