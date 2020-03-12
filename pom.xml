@@ -773,7 +773,7 @@
 								<resourcePackage>org.linagora.linshare.webservice.adminv4</resourcePackage>
 								<resourcePackage>org.linagora.linshare.webservice.adminv4.impl</resourcePackage>
 							</resourcePackages>
-							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
 							<outputFilename>swagger-admin-v4</outputFilename>
 							<outputFormats>
 								<outputFormat>JSON</outputFormat>
@@ -807,7 +807,7 @@
 								<resourcePackage>org.linagora.linshare.webservice.admin</resourcePackage>
 								<resourcePackage>org.linagora.linshare.webservice.admin.impl</resourcePackage>
 							</resourcePackages>
-							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
 							<outputFilename>swagger-admin-v1</outputFilename>
 							<outputFormats>
 								<outputFormat>JSON</outputFormat>
@@ -841,7 +841,7 @@
 								<resourcePackage>org.linagora.linshare.webservice.userv2</resourcePackage>
 								<resourcePackage>org.linagora.linshare.webservice.userv2.impl</resourcePackage>
 							</resourcePackages>
-							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
 							<outputFilename>swagger-user-v2</outputFilename>
 							<outputFormats>
 								<outputFormat>JSON</outputFormat>
@@ -875,7 +875,7 @@
 								<resourcePackage>org.linagora.linshare.webservice.delegationv2</resourcePackage>
 								<resourcePackage>org.linagora.linshare.webservice.delegationv2.impl</resourcePackage>
 							</resourcePackages>
-							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
 							<outputFilename>swagger-delegation-v2</outputFilename>
 							<outputFormats>
 								<outputFormat>JSON</outputFormat>
@@ -909,7 +909,7 @@
 								<resourcePackage>org.linagora.linshare.webservice.external</resourcePackage>
 								<resourcePackage>org.linagora.linshare.webservice.external.impl</resourcePackage>
 							</resourcePackages>
-							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
 							<outputFilename>swagger-user-v2</outputFilename>
 							<outputFormats>
 								<outputFormat>JSON</outputFormat>
@@ -943,7 +943,7 @@
 								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv2</resourcePackage>
 								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv2.impl</resourcePackage>
 							</resourcePackages>
-							<outputDirectory>${basedir}/target</outputDirectory>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
 							<outputFilename>swagger-upload-request-v2</outputFilename>
 							<outputFormats>
 								<outputFormat>JSON</outputFormat>
@@ -1082,6 +1082,18 @@
 						<configuration>
 							<descriptors>
 								<descriptor>src/assembly/sql.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>documentation-webservices</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/documentation-webservices.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
