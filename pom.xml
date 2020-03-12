@@ -910,7 +910,7 @@
 								<resourcePackage>org.linagora.linshare.webservice.external.impl</resourcePackage>
 							</resourcePackages>
 							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-user-v2</outputFilename>
+							<outputFilename>swagger-external</outputFilename>
 							<outputFormats>
 								<outputFormat>JSON</outputFormat>
 								<outputFormat>YAML</outputFormat>
