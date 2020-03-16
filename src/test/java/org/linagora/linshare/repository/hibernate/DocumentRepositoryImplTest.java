@@ -34,6 +34,8 @@
 package org.linagora.linshare.repository.hibernate;
 
 
+import java.util.Calendar;
+
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.Assertions;
@@ -69,14 +71,13 @@ public class DocumentRepositoryImplTest  {
 	
 	
 	@Test
-	public void testCreateDocument() throws BusinessException{
+	public void testCreateDocument() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		Document doc = new Document(identifier, type, fileSize);
+		Document doc = new Document(identifier, "name", type, Calendar.getInstance(), null, null, false, false,
+				fileSize);
 		documentRepository.create(doc);
-
-		Assertions.assertTrue(documentRepository.findByUuid(identifier)!=null);
-		Assertions.assertFalse(documentRepository.findByUuid(identifier+"dummy")!=null);
+		Assertions.assertTrue(documentRepository.findByUuid(identifier) != null);
+		Assertions.assertFalse(documentRepository.findByUuid(identifier + "dummy") != null);
 		documentRepository.delete(doc);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

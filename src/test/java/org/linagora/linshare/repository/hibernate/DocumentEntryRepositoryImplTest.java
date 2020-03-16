@@ -113,12 +113,9 @@ public class DocumentEntryRepositoryImplTest  {
 		user.setDomain(rootDomain);
 		user.setLocale(rootDomain.getDefaultTapestryLocale());
 		user.setCmisLocale(rootDomain.getDefaultTapestryLocale().toString());
-		
 		userRepository.create(user);
-		
-		document = new Document(identifier, type, fileSize);
+		document = new Document(identifier, "name", type, Calendar.getInstance(), null, user, false, false, fileSize);
 		documentRepository.create(document);
-		
 		logger.debug("End setUp");
 	}
 

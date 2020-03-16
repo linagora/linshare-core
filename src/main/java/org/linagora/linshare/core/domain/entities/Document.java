@@ -147,20 +147,6 @@ public class Document implements Serializable {
 		this.computeThumbnail = false;
 	}
 
-	@Deprecated
-	public Document(String uuid, String type, Long size) {
-		super();
-		this.uuid=uuid;
-		this.type = type;
-		this.creationDate = new GregorianCalendar();
-		this.size = size;
-		this.timeStamp = null;
-		this.checkMimeType = false;
-		this.toUpgrade = false;
-		this.hasThumbnail = false;
-		this.computeThumbnail = false;
-	}
-
 	@Override
 	public boolean equals(Object o1){
 		if(o1 instanceof Document){
