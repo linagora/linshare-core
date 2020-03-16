@@ -127,7 +127,8 @@ public class DomainAccessRuleRepositoryImplTest {
 		logger.debug("Current AbstractDomain object: " + currentDomain.toString());
 		return currentDomain;
 	}
-
+	
+	@Test
 	private void deleteTestRootDomain(AbstractDomain currentDomain) throws BusinessException {
 		DomainPolicy p = currentDomain.getPolicy();
 //		currentDomain.setPolicy(null);
