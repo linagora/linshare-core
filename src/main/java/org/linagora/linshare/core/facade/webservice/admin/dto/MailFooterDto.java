@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailFooter")
 @Schema(name = "MailFooter", description = "")

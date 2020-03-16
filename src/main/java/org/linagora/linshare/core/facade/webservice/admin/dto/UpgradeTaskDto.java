@@ -44,7 +44,6 @@ import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UpgradeTask")
 @Schema(name = "UpgradeTask", description = "each object represents a task to accomplish in order to complete the upgrade process.")

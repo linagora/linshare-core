@@ -45,7 +45,6 @@ import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 /*
  * The objects document DTO and delegation document DTO has the same outside name.

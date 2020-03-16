@@ -46,7 +46,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 
 @XmlRootElement(name = "Share")

@@ -39,7 +39,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.exception.BusinessException;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "FineUploader")
 @Schema(name = "FineUploader", description = "A response for FineUploader")

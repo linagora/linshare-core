@@ -43,7 +43,6 @@ import org.linagora.linshare.core.domain.entities.MimeType;
 
 import com.google.common.collect.Sets;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MimePolicy")
 @Schema(name = "MimePolicy", description = "MimePolicy")

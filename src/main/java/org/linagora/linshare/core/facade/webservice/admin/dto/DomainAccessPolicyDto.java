@@ -42,7 +42,6 @@ import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DomainAccessPolicy")
 @Schema(name = "DomainAccessPolicy", description = "Access policy of a domain, defining it's communication rules")

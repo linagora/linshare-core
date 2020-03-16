@@ -47,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.UserLogEntry;
 
 import com.google.common.base.Strings;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Log")
 @Schema(name = "Log", description = "Criteria used to search the history")

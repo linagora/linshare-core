@@ -47,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContactDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "AnonymousUrl")
 @Schema(name = "AnonymousUrl", description = "An AnonymousUrl")

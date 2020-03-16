@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "GroupLdapPattern")
 @Schema(name = "GroupLdapPattern", description = "A group ldap pattern is used by domains to search WorkGroup in an LDAP directory")

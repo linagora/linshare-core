@@ -53,7 +53,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.webservice.admin.ThreadRestService;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -42,7 +42,6 @@ import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DomainAccessRule")
 @Schema(name = "DomainAccessRule", description = "Access rule of a domain")

@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "LdapConnection")
 @Schema(name = "LdapConnection", description = "An LDAP directory connection descriptor")

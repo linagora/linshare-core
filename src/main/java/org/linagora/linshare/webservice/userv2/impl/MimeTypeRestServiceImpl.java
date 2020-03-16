@@ -48,7 +48,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.user.MimeTypeFacade;
 import org.linagora.linshare.webservice.userv2.MimeTypeRestService;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

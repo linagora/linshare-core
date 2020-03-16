@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "GenericUser")
 @Schema(name = "GenericUser", description = "This class is a container to display or identify a user."

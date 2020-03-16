@@ -39,7 +39,6 @@ import org.linagora.linshare.core.domain.entities.Policy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonIgnoreProperties({"previousPolicy"})
 @XmlRootElement(name = "Policy")

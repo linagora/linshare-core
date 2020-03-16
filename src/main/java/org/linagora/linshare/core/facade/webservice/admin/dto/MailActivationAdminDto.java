@@ -43,7 +43,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PolicyDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonIgnoreProperties({"name"})
 @XmlRootElement(name = "Functionality")

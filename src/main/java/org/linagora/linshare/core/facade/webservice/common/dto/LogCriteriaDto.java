@@ -42,7 +42,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.LogActionV1;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "LogCriteria")
 @Schema(name = "LogCriteria", description = "Criteria used to search the history")

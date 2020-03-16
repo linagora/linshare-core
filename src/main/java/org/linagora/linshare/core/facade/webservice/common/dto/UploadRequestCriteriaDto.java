@@ -43,7 +43,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UploadRequestHistoryCriteria")
 @Schema(name = "UploadRequestHistoryCriteria", description = "Criteria of an upload request history")

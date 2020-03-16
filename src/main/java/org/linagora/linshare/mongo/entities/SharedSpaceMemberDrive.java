@@ -36,7 +36,6 @@ package org.linagora.linshare.mongo.entities;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 
 @XmlRootElement(name = "SharedSpaceMemberDrive")

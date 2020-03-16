@@ -49,7 +49,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 // This field is added to the JSON object by the angular interface for internationalization. 
 @JsonIgnoreProperties({"name"})

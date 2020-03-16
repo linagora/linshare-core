@@ -41,7 +41,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name="AccountQuota")
 @Schema(name = "AccountQuota", description = "A quota instance for accounts like users or workgroups.")

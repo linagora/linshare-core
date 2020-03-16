@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DomainPolicy")
 @Schema(name = "DomainPolicy", description = "Policy of a domain, defining the access policy of the domain")

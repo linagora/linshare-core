@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DomainPattern")
 @Schema(name = "DomainPattern", description = "A domain pattern is used by domains to search users in an LDAP directory")

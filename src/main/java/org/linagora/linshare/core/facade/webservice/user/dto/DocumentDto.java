@@ -49,7 +49,6 @@ import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Document")
 @Schema(name = "Document", description = "A Document")

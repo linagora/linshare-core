@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.webservice.delegationv2.impl;
 
-import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.Consumes;

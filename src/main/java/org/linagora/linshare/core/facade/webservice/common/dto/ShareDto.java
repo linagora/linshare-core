@@ -48,7 +48,6 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Share")
 @Schema(name = "Share", description = "A document can be shared between users.")

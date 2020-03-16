@@ -46,11 +46,6 @@ import org.linagora.linshare.core.facade.webservice.user.dto.AccountQuotaDto;
 import org.linagora.linshare.webservice.delegationv2.QuotaRestService;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/{actorUuid}/quota")

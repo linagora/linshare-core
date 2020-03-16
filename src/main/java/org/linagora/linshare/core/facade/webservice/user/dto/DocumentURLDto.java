@@ -37,7 +37,6 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DocumentURL")
 @Schema(name = "DocumentURL", description = "An URL of a document")

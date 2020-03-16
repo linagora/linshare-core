@@ -50,13 +50,6 @@ import org.linagora.linshare.core.facade.webservice.user.UserPreferenceFacade;
 import org.linagora.linshare.mongo.entities.UserPreference;
 import org.linagora.linshare.webservice.userv2.UserPreferenceRestService;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
-
 
 @Path("/prefs")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

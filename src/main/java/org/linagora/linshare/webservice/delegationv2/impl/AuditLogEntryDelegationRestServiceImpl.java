@@ -51,13 +51,6 @@ import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.delegationv2.AuditLogEntryDelegationRestService;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
-
 
 @Path("/audit")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

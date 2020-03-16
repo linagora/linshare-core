@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.Language;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Parameter")
 @Schema(name = "Parameter", description = "Parameters used by functionalities")

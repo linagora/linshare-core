@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "ThreadMember")
 @Schema(name = "ThreadMember", description = "A thread member")

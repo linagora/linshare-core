@@ -41,7 +41,6 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailAttachment")
 @Schema(name = "MailAttachment", description = "")

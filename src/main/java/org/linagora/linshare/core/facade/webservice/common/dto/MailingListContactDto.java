@@ -39,7 +39,6 @@ import org.linagora.linshare.core.domain.entities.ContactListContact;
 
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailingListContact")
 @Schema(name = "MailingListContact", description = "Mailing list contact")

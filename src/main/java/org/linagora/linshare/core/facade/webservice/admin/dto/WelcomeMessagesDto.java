@@ -50,7 +50,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Sets;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "WelcomeMessages")

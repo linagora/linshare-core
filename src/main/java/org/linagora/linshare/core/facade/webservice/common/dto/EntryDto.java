@@ -37,7 +37,6 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Entry")
 @Schema(name = "Entry", description="")

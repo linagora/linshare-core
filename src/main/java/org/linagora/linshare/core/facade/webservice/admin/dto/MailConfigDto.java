@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailConfig")
 @Schema(name = "MailConfig", description = "")

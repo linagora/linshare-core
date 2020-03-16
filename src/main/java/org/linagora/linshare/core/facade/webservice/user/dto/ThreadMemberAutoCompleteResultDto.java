@@ -41,7 +41,6 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.core.domain.entities.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "ThreadMemberAutoCompleteResult", description = "This DTO will contains members or autocomplete user")
 @XmlRootElement(name = "ThreadMemberAutoCompleteResult")

@@ -46,7 +46,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Guest")
 @Schema(name = "Guest", description = "")

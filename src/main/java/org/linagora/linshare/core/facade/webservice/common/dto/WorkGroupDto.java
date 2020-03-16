@@ -46,7 +46,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Thread")
 @Schema(name = "Thread", description = "A thread is a shared space for users to deposit files.")

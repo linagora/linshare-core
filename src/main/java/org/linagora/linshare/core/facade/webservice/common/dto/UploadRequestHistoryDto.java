@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "UploadRequestHistory")
 @Schema(name = "UploadRequestHistory", description = "History of an upload request")

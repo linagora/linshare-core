@@ -39,7 +39,6 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "MailFooterLang")
 @Schema(name = "MailFooterLang", description = "")

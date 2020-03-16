@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.entities.ContainerQuota;
 
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name="ContainerQuota")
 @Schema(name = "ContainerQuota", description = "A container quota instance for accounts like users in a domain.")

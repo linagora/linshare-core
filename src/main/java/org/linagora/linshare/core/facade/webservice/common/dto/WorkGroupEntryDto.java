@@ -45,7 +45,6 @@ import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskCo
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "ThreadEntry")
 @Schema(name = "ThreadEntry", description = "A file in a thread.")

@@ -43,7 +43,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "DomainQuota")
 @Schema(name = "DomainQuota", description = "A domain quota instance for a domain.")

@@ -51,7 +51,6 @@ import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.Upload
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.webservice.uploadproposition.UploadPropositionRestService;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
