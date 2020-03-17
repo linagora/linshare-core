@@ -238,6 +238,11 @@
 					<constructor-arg ref="auditAdminMongoRepository" />
 					<constructor-arg ref="mailAttachmentRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_4.UpgradeSharedSpaceMemberStructureWithTypedSharedSpaceRoles">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="mongoTemplate" />
+					<constructor-arg ref="sharedSpaceMemberMongoRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
