@@ -36,10 +36,10 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
@@ -81,7 +81,7 @@ public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<Anonymous
 	public List<String> findAllExpiredEntries() {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.setProjection(Projections.property("uuid"));
-		criteria.createAlias("anonymousShareEntries", "ase", CriteriaSpecification.LEFT_JOIN);
+		criteria.createAlias("anonymousShareEntries", "ase", JoinType.LEFT_OUTER_JOIN);
 		criteria.add(Restrictions.isNull("ase.anonymousUrl"));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
