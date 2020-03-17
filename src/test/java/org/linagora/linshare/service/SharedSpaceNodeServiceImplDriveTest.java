@@ -137,7 +137,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		SharedSpaceNode expectedDrive = service.create(authUser, authUser, drive);
 		Assertions.assertNotNull(expectedDrive, "Drive not created");
 		SharedSpaceNode workgroup = new SharedSpaceNode("My groups", NodeType.WORK_GROUP);
-		SharedSpaceNode expectedWorkgroup = service.create(authUser, authUser, workgroup);
+		service.create(authUser, authUser, workgroup);
 		Assertions.assertNotNull(workgroup, "Workgroup not created");
 		List<SharedSpaceNodeNested> ssNested = service.findAllByAccount(authUser, authUser);
 		Assertions.assertEquals(before + 2, ssNested.size());
@@ -151,7 +151,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "Drive not created");
 		int before = service.findAllByAccount(authUser, authUser).size();
-		SharedSpaceNode deleted = service.delete(authUser, authUser, expectedNode);
+		service.delete(authUser, authUser, expectedNode);
 		List<SharedSpaceNodeNested> ssNested = service.findAllByAccount(authUser, authUser);
 		Assertions.assertEquals(ssNested.size(), before - 1);
 		logger.info(LinShareTestConstants.END_TEST);

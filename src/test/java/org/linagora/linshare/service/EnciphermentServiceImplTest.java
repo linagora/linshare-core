@@ -64,10 +64,8 @@ import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.EnciphermentService;
@@ -100,12 +98,6 @@ public class EnciphermentServiceImplTest {
 	
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
-	
-	@Autowired
-	private AbstractDomainRepository abstractDomainRepository;
-	
-	@Autowired
-	private DomainPolicyRepository domainPolicyRepository;
 	
 	@Autowired
 	private DocumentRepository documentRepository;

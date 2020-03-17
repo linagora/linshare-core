@@ -71,8 +71,6 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 
 	private final FileDataStore fileDataStore;
 
-	private final WorkGroupDocumentService threadEntryService;
-
 	public DeleteMissingDocumentsBatchImpl(
 			AccountRepository<Account> accountRepository,
 			DocumentRepository documentRepository,
@@ -87,7 +85,6 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.shareService = shareService;
 		this.fileDataStore = fileDataStore;
-		this.threadEntryService = threadEntryService;
 	}
 
 	@Override

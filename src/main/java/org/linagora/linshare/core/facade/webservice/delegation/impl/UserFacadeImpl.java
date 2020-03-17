@@ -97,7 +97,7 @@ public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
 
 	@Override
 	public UserDto findUser(String uuid) throws BusinessException {
-		User authUser = checkAuthentication();
+		checkAuthentication();
 		Validate.notEmpty(uuid, "User uuid must be set.");
 		User user = userService.findByLsUuid(uuid);
 		UserDto dto = UserDto.getFull(user);

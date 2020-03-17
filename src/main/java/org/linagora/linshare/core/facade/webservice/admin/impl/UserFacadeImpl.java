@@ -78,8 +78,6 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final AbstractDomainService abstractDomainService;
 
-	private final UserProviderService userProviderService;
-
 	public UserFacadeImpl(final AccountService accountService,
 			final UserService userService,
 			final InconsistentUserService inconsistentUserService,
@@ -93,13 +91,12 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		this.guestService = guestService;
 		this.quotaService = quotaService;
 		this.abstractDomainService = abstractDomainService;
-		this.userProviderService = userProviderService;
 	}
 
 	@Override
 	public List<UserDto> search(UserSearchDto userSearchDto)
 			throws BusinessException {
-		User authUser = checkAuthentication(Role.ADMIN);
+		checkAuthentication(Role.ADMIN);
 		return searchUsers(userSearchDto.getFirstName(),
 				userSearchDto.getLastName(), userSearchDto.getMail(), null);
 	}
@@ -107,13 +104,13 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<UserDto> searchInternals(String pattern)
 			throws BusinessException {
-		User authUser = checkAuthentication(Role.ADMIN);
+		checkAuthentication(Role.ADMIN);
 		return searchUsers(pattern, AccountType.INTERNAL);
 	}
 
 	@Override
 	public Set<UserDto> searchGuests(String pattern) throws BusinessException {
-		User authUser = checkAuthentication(Role.ADMIN);
+		checkAuthentication(Role.ADMIN);
 		return searchUsers(pattern, AccountType.GUEST);
 	}
 
@@ -216,7 +213,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	public void updateInconsistent(UserDto userDto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		update(userDto);
-		User entity = userService.findByLsUuid(userDto.getUuid());
+		userService.findByLsUuid(userDto.getUuid());
 		inconsistentUserService.updateDomain(authUser, userDto.getUuid(), userDto.getDomain());
 	}
 

@@ -111,8 +111,6 @@ public class DocumentEntryServiceImpl
 
 	private final QuotaService quotaService;
 	
-	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
-
 	public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
@@ -139,7 +137,6 @@ public class DocumentEntryServiceImpl
 		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.notifierService = notifierService;
 		this.quotaService = quotaService;
-		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 	}
 
 	@Override

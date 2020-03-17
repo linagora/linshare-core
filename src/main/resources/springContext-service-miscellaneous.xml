@@ -87,7 +87,6 @@
 	<bean id="mimePolicyService"
 		class="org.linagora.linshare.core.service.impl.MimePolicyServiceImpl">
 		<constructor-arg ref="mimePolicyBusinessService" />
-		<constructor-arg ref="mimeTypeBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
 	</bean>

@@ -62,15 +62,12 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 	private final DocumentEntryService documentEntryService;
 
-    private final LogEntryService logEntryService;
-
 	private final String workingDir;
 
 
 	public EnciphermentServiceAesCryptImpl(DocumentEntryService documentEntryService, LogEntryService logEntryService, String workingDir) {
 		super();
 		this.documentEntryService = documentEntryService;
-		this.logEntryService = logEntryService;
 		this.workingDir = workingDir; //linshare.encipherment.tmp.dir
 
 		//test directory

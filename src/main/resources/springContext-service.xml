@@ -52,7 +52,6 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService"/>
-		<constructor-arg ref="uploadRequestEntryBusinessService"/>
 	</bean>
 
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">
@@ -95,7 +94,6 @@
 
 	<bean name="enciphermentService" class="org.linagora.linshare.core.service.impl.EnciphermentServiceAesCryptImpl">
 		<constructor-arg ref="documentEntryService" />
-		<constructor-arg ref="logEntryService" />
 		<constructor-arg value="${linshare.encipherment.tmp.dir}" />
 	</bean>
 

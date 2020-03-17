@@ -72,11 +72,6 @@ public class ShareEntryGroupRepositoryImplTest {
 	private static final String IMPORT_LOCAL_TEST_SEG_UUID_4 = "421a2bc5-d41c-4b83-8e94-cd87aa2964c3";
 	private static final String IMPORT_LOCAL_TEST_SEG_UUID_5 = "6588844c-3891-44bf-af14-b2b85ca47de4";
 	private static final String IMPORT_LOCAL_TEST_SEG_UUID_6 = "027599d8-3433-4e07-9b7c-e8be82fed4a9";
-	private static int countdocs = 4;
-	private static int countEntries = 14;
-	private static int countdocEntries = 4;
-	private static int countShareEntries = 7;
-	private static int countAnonymousShareEntries = 3;
 	private static int countShareEntryGroup = 6;
 
 	@Autowired

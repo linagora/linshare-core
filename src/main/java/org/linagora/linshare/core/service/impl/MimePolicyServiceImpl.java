@@ -59,8 +59,6 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 
 	final private MimePolicyBusinessService mimePolicyBusinessService;
 
-	final private MimeTypeBusinessService mimeTypeBusinessService;
-
 	final private DomainPermissionBusinessService domainPermissionService;
 
 	final private DomainBusinessService domainBusinessService;
@@ -74,7 +72,6 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
 		this.domainPermissionService = domainPermissionService;
 		this.domainBusinessService = domainBusinessService;
-		this.mimeTypeBusinessService = mimeTypeBusinessService;
 	}
 
 	@Override

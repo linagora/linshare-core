@@ -70,8 +70,6 @@ public class LoadingServiceTestDatas {
 	public static String FUNC4="TEST_FUNC4";
 	public static String FUNC5="TEST_FUNC5";
 	
-	private static String domainePolicyName0 = "TestAccessPolicy0";
-	
 	public static int TOTAL_COUNT_FUNC=10;
 	public static String timeStampingUrl = "http://server/service";
 

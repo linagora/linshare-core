@@ -53,7 +53,6 @@ import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.utils.HashUtils;
@@ -103,9 +102,6 @@ public class GuestRepositoryImplTest {
 	@Autowired
 	@Qualifier("guestRepository")
 	private GuestRepository guestRepository;
-
-	@Autowired
-	private DocumentRepository documentRepository;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;

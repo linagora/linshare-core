@@ -47,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -91,9 +90,6 @@ public class UserRepositoryImplTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
-
-	@Autowired
-	private DocumentRepository documentRepository;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;

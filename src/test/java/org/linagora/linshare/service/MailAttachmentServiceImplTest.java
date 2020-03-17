@@ -202,7 +202,7 @@ public class MailAttachmentServiceImplTest {
 		MailAttachment attachmentToDelete = attachmentService.create(admin, true, "Logo", true,
 				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "logo.mail.attachment.test", Language.FRENCH,
 				tempFile, null);
-		MailAttachment attachment = attachmentService.create(admin, false, "Logo", false,
+		attachmentService.create(admin, false, "Logo", false,
 				"946b190d-4c95-485f-bfe6-d288a2de1edd", "Test mail attachment", "logo.mail.attachment.test", Language.FRENCH,
 				tempFile, null);
 		MailConfig config = repository.findByUuid("946b190d-4c95-485f-bfe6-d288a2de1edd");

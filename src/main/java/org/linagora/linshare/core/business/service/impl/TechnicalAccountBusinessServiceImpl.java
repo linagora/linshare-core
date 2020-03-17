@@ -55,8 +55,6 @@ public class TechnicalAccountBusinessServiceImpl implements
 
 	private final TechnicalAccountRepository technicalAccountRepository;
 
-	private final PasswordService passwordService;
-
 	public TechnicalAccountBusinessServiceImpl(
 			AbstractDomainRepository abstractDomainRepository,
 			TechnicalAccountRepository technicalAccountRepository,
@@ -64,7 +62,6 @@ public class TechnicalAccountBusinessServiceImpl implements
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.technicalAccountRepository = technicalAccountRepository;
-		this.passwordService = passwordService;
 	}
 
 	@Override
