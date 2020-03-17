@@ -83,6 +83,7 @@ public class AbstractDomainRepositoryImpl extends
 				Restrictions.eq("uuid", identifier)));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllDomainIdentifiers() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
@@ -99,6 +100,7 @@ public class AbstractDomainRepositoryImpl extends
 				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE)));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<AbstractDomain> findAllTopAndSubDomain() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
@@ -109,6 +111,7 @@ public class AbstractDomainRepositoryImpl extends
 		return listByCriteria(crit);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllGuestAndSubDomainIdentifiers() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
@@ -159,6 +162,7 @@ public class AbstractDomainRepositoryImpl extends
 				welcomeMessage));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllSubDomainIdentifiers(String domain) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
@@ -198,6 +202,7 @@ public class AbstractDomainRepositoryImpl extends
 		this.update(abstractDomain);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllAbstractDomainsReadyToPurge() {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
@@ -224,6 +229,7 @@ public class AbstractDomainRepositoryImpl extends
 		return findByCriteria(det);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getSubDomainsByDomainIdentifiers(String domain) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
@@ -243,6 +249,7 @@ public class AbstractDomainRepositoryImpl extends
 		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllDomainIdentifiersWithGroupProviders() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())

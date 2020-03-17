@@ -88,6 +88,7 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllExpiredEntries() {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
@@ -97,6 +98,7 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findUpcomingExpiredEntries(Integer date) {
 		Calendar calMin = Calendar.getInstance();

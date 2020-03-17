@@ -129,6 +129,7 @@ public class ThreadMemberRepositoryImpl extends
 		return findByCriteria(det);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllAccountUuidForThreadMembers(WorkGroup workGroup) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());

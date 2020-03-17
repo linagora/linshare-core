@@ -91,6 +91,7 @@ public class MailingListContactRepositoryImpl extends
 		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllContactMails(ContactList list) {
 		DetachedCriteria det = DetachedCriteria.forClass(ContactListContact.class);
