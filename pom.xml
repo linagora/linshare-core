@@ -128,6 +128,11 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
+			<dependency>
+				<groupId>org.mongodb</groupId>
+				<artifactId>mongo-java-driver</artifactId>
+				<version>3.6.4</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -1622,7 +1627,7 @@
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
 		<cxf.version>3.3.5</cxf.version>
 		<cxf.swagger.ui.version>3.25.0</cxf.swagger.ui.version>
-		<fakemongo.version>2.1.1</fakemongo.version>
+		<fakemongo.version>2.2.0-RC2</fakemongo.version>
 		<guava.version>27.0-jre</guava.version>
 		<h2.version>1.4.199</h2.version>
 		<hibernate.version>5.4.2.Final</hibernate.version>
