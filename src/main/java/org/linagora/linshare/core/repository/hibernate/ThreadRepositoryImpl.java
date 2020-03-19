@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.Validate;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
@@ -49,7 +50,6 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate5.HibernateTemplate;
-import org.springframework.util.Assert;
 
 public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<WorkGroup>
 		implements ThreadRepository {
@@ -219,7 +219,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<WorkGroup
 
 	@Override
 	public List<String> findByDomainUuid(String domainUuid) {
-		Assert.notNull(domainUuid);
+		Validate.notEmpty(domainUuid);
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.setProjection(Projections.property("lsUuid"));
 		criteria.createAlias("domain", "domain");
