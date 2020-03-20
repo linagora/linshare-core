@@ -48,7 +48,6 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.sax.BodyContentHandler;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -72,63 +71,37 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 	public String getMimeType(InputStream theFileInputStream) throws BusinessException {
 		try {
 			Metadata metadata = new Metadata();
-			BodyContentHandler contenthandler = new BodyContentHandler();
 			AutoDetectParser parser = new AutoDetectParser();
-			try {
-				parser.parse(theFileInputStream, contenthandler, metadata, null);
-            } catch (Exception e) {
-                logger.debug("some exceptions could be raised in this case : " + e.getMessage());
-                if (e.getCause() != null) logger.debug(e.getCause().toString());
-            } catch (java.lang.NoSuchMethodError e) {
-                logger.debug("some exceptions could be raised in this case : " + e.getMessage());
-                if (e.getCause() != null) logger.debug(e.getCause().toString());
-            }
-			String stringMimeType = metadata.get(Metadata.CONTENT_TYPE);
-			logger.debug("Mime type : " + stringMimeType);
-
-//			MimeType mimeType = MimeTypes.getDefaultMimeTypes().forName(stringMimeType);
-//			String extension = mimeType.getExtension();
-//			logger.debug("extension : " + extension);
-			return stringMimeType;
+			MediaType detect = parser.getDetector().detect(theFileInputStream, metadata);
+			logger.debug("Mime type : {}", detect.toString());
+			return detect.toString();
+		} catch (java.lang.NoSuchMethodError e) {
+			logger.debug("some exceptions could be raised in this case : {}", e.getMessage());
+			if (e.getCause() != null) logger.debug(e.getCause().toString());
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			logger.debug(e.getCause().toString());
+			logger.debug(e.getMessage(), e);
 		}
 		return "data";
 	}
 
 	@Override
 	public String getMimeType(File file) throws BusinessException {
-		BufferedInputStream bufStream = null;
-		FileInputStream f = null;
 		String mimeType = null;
-		try {
-			f = new FileInputStream(file);
-			bufStream = new BufferedInputStream(f);
+		try(FileInputStream f = new FileInputStream(file);
+			BufferedInputStream bufStream = new BufferedInputStream(f)) {
 			mimeType = this.getMimeType(bufStream);
 		} catch (FileNotFoundException e) {
 			logger.error("Could not read the uploaded file !", e);
 			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND, "Could not read the uploaded file.");
-		} finally {
-			if (f != null) {
-				try {
-					f.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (bufStream != null) {
-				try {
-					bufStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		} catch (IOException e1) {
+			logger.error(e1.getMessage());
+			logger.debug(e1.getMessage(), e1);
 		}
 		if(mimeType == null) {
 			mimeType = "data";
 		}
-		logger.debug("Mime type found : " + mimeType);
+		logger.debug("Mime type found : {}", mimeType);
 		return mimeType;
 	}
 
