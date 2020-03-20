@@ -182,7 +182,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		List<SharedSpaceNodeNested> nodes = Lists.newArrayList();
 		Aggregation aggregation = Aggregation.newAggregation(
 				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
-				Aggregation.match(Criteria.where("node.parent").is(null)),
+				Aggregation.match(Criteria.where("node.parentUuid").is(null)),
 				Aggregation.project("node.uuid",
 						"node.name",
 						"node.nodeType",
