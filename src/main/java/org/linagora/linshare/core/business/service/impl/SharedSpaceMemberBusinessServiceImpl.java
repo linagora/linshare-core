@@ -177,27 +177,29 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return repository.findByMemberName(name);
 	}
 
+	
+	/**
+	 * @param accountUuid String uuid of shared space account
+	 * @param withRole Boolean if true return the role of  member in the node
+	 * @return {@link SharedSpaceNodeNested} {@link List} All nodes of the given member except Nested SharedSpaces on Drives 
+	 */
 	@Override
 	public List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole) {
-		List<SharedSpaceNodeNested> nodes = Lists.newArrayList();
-		Aggregation aggregation = Aggregation.newAggregation(
-				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
-				Aggregation.match(Criteria.where("node.parentUuid").is(null)),
-				Aggregation.project("node.uuid",
-						"node.name",
-						"node.nodeType",
-						"node.creationDate",
-						"node.modificationDate"));
-		nodes = mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
-		.getMappedResults();
 		if (withRole) {
-			nodes.stream().forEach(n -> n.setRole(
-					/**
-					 * Check for the roles of members in every top shared space node 
-					 */
-					repository.findByAccountAndNode(accountUuid, n.getUuid()).getRole()));
+			List<SharedSpaceMember> members = repository.findByAccountUuidAndNodeParentUuid(accountUuid, null);
+			return members.stream().map(member -> new SharedSpaceNodeNested(member)).collect(Collectors.toList());
+		} else {
+			Aggregation aggregation = Aggregation.newAggregation(
+					Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
+					Aggregation.match(Criteria.where("node.parentUuid").is(null)),
+					Aggregation.project("node.uuid",
+							"node.name",
+							"node.nodeType",
+							"node.creationDate",
+							"node.modificationDate"));
+			return mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
+					.getMappedResults();
 		}
-		return nodes;
 	}
 
 	@Override

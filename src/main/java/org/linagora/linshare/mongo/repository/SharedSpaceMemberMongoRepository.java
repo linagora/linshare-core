@@ -71,4 +71,7 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 
 	@Query("{ 'node.parentUuid' : ?0, 'nested' : ?1 }")
 	List<SharedSpaceMember> findByParentUuidAndNested(String parentUuid, boolean nested);
+	
+	@Query("{ 'accountUuid' : ?0, 'node.parentUuid' : ?1 }")
+	List<SharedSpaceMember> findByAccountUuidAndNodeParentUuid(String accountUuid, String parentUuid);
 }
