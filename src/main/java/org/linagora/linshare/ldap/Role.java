@@ -36,6 +36,6 @@
 package org.linagora.linshare.ldap;
 
 public enum Role {
-	READER, CONTRIBUTOR, WRITER, ADMIN;
+	READER, CONTRIBUTOR, WRITER, ADMIN, DRIVE_ADMIN, DRIVE_WRITER, DRIVE_READER;
 
 }

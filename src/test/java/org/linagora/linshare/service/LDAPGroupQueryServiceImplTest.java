@@ -49,6 +49,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
@@ -129,7 +130,7 @@ public class LDAPGroupQueryServiceImplTest {
 			Assertions.assertEquals("wg-1", ldapGroup.getName());
 			Assertions.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());
 			Assertions.assertEquals("cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Assertions.assertEquals(Role.READER, ldapGroup.getRole());
+			Assertions.assertEquals(Role.READER, ldapGroup.getRoles().get(NodeType.WORK_GROUP));
 		}
 		Assertions.assertEquals(1, listGroups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -148,7 +149,7 @@ public class LDAPGroupQueryServiceImplTest {
 			Assertions.assertEquals("wg-3", ldapGroup.getName());
 			Assertions.assertEquals("workgroup-wg-3", ldapGroup.getNameWithPrefix());
 			Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Assertions.assertEquals(Role.READER, ldapGroup.getRole());
+			Assertions.assertEquals(Role.READER, ldapGroup.getRoles().get(NodeType.WORK_GROUP));
 		}
 		Assertions.assertEquals(1, listGroups.size());
 		logger.debug(LinShareTestConstants.END_TEST);

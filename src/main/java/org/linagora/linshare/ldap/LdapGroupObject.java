@@ -36,8 +36,12 @@
 package org.linagora.linshare.ldap;
 
 import java.util.List;
+import java.util.Map;
+
+import org.linagora.linshare.core.domain.constants.NodeType;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class LdapGroupObject {
 
@@ -50,11 +54,14 @@ public class LdapGroupObject {
 
 	protected List<String> members;
 
-	protected Role role;
+	protected Map<NodeType, Role> roles;
 
 	public LdapGroupObject() {
 		super();
 		this.members = Lists.newArrayList();
+		roles = Maps.newHashMap();
+		roles.put(NodeType.WORK_GROUP, Role.READER);
+		roles.put(NodeType.DRIVE, Role.DRIVE_WRITER);
 	}
 
 	public String getName() {
@@ -81,12 +88,12 @@ public class LdapGroupObject {
 		this.externalId = externalId;
 	}
 
-	public Role getRole() {
-		return role;
+	public Map<NodeType, Role> getRoles() {
+		return roles;
 	}
 
-	public void setRole(Role role) {
-		this.role = role;
+	public void setRoles(Map<NodeType, Role> roles) {
+		this.roles = roles;
 	}
 
 	@Override

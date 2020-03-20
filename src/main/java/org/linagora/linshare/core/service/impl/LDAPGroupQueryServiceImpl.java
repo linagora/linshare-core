@@ -43,6 +43,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -127,7 +128,7 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 				res.addAll(convert(Role.CONTRIBUTOR, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
 			}
 			// load read only members
-			res.addAll(convert(group.getRole(), getMembers(group.getExternalId(), groupQuery, memberQuery)));
+			res.addAll(convert(group.getRoles().get(NodeType.WORK_GROUP), getMembers(group.getExternalId(), groupQuery, memberQuery)));
 		} finally {
 			ldapContext.close();
 		}
@@ -171,7 +172,7 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 			@Override
 			public LdapGroupObject apply(LdapGroupObject lgo) {
 				lgo.setPrefix(groupPattern.getGroupPrefix());
-				lgo.setRole(Role.READER);
+				lgo.setRoles(Map.of(NodeType.WORK_GROUP, Role.READER));
 				return lgo.removePrefix();
 			}
 		};
