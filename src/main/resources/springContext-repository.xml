@@ -282,6 +282,13 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="driveProviderRepository" class="org.linagora.linshare.core.repository.hibernate.DriveProviderRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="ldapDriveProviderRepository" class="org.linagora.linshare.core.repository.hibernate.LdapDriveProviderRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="mailAttachmentRepository" class="org.linagora.linshare.core.repository.hibernate.MailAttachmentRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>

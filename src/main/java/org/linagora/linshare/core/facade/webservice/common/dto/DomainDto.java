@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto;
@@ -87,6 +88,9 @@ public class DomainDto {
 
 	@Schema(description = "Providers")
 	private List<LDAPUserProviderDto> providers = new ArrayList<LDAPUserProviderDto>();
+
+	@Schema(description = "driveProviders")
+	private List<LDAPDriveProviderDto> driveProviders = new ArrayList<LDAPDriveProviderDto>();
 
 	@Schema(description = "groupProviders")
 	private List<LDAPGroupProviderDto> groupProviders = new ArrayList<LDAPGroupProviderDto>();
@@ -143,6 +147,9 @@ public class DomainDto {
 			}
 			if (domain.getGroupProvider() != null) {
 				this.groupProviders.add(domain.getGroupProvider().toLDAPGroupProviderDto());
+			}
+			if (domain.getDriveProvider() != null) {
+				this.driveProviders.add(domain.getDriveProvider().toLDAPDriveProviderDto());
 			}
 		}
 	}
@@ -300,5 +307,13 @@ public class DomainDto {
 
 	public void setGroupProviders(List<LDAPGroupProviderDto> groupProviders) {
 		this.groupProviders = groupProviders;
+	}
+
+	public List<LDAPDriveProviderDto> getDriveProviders() {
+		return driveProviders;
+	}
+
+	public void setDriveProviders(List<LDAPDriveProviderDto> driveProviders) {
+		this.driveProviders = driveProviders;
 	}
 }

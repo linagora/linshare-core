@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2020 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,36 +31,44 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.repository.hibernate;
 
-import org.linagora.linshare.core.domain.constants.DriveProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
+import java.util.Date;
+import java.util.UUID;
 
-import com.google.common.base.MoreObjects;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.LdapDriveProviderRepository;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
-public abstract class DriveProvider extends Provider {
+public class LdapDriveProviderRepositoryImpl extends AbstractRepositoryImpl<LdapDriveProvider> implements LdapDriveProviderRepository {
 
-	protected DriveProviderType type;
-
-	public DriveProviderType getType() {
-		return type;
-	}
-
-	public void setType(DriveProviderType type) {
-		this.type = type;
+	public LdapDriveProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
 	}
 
 	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("Type", type)
-				.add("uuid", uuid)
-				.toString();
+	public LdapDriveProvider create(LdapDriveProvider entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
 	}
 
-	public abstract LDAPDriveProviderDto toLDAPDriveProviderDto();
-
-	public Boolean getSearchInOtherDomains() {
-		return false;
+	@Override
+	public LdapDriveProvider findByUuid(String uuid) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("uuid", uuid)));
 	}
+
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(LdapDriveProvider entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(LdapDriveProvider.class)
+				.add(Restrictions.eq("id", entity.getId()));
+		return det;
+	}
+
 }

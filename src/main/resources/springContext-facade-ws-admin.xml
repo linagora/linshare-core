@@ -33,6 +33,7 @@
 		<constructor-arg ref="welcomeMessagesService" />
 		<constructor-arg ref="quotaService" />
 		<constructor-arg ref="groupProviderService"/>
+		<constructor-arg ref="driveProviderService"/>
 		<constructor-arg ref="groupLdapPatternService"/>
 		<constructor-arg ref="userService" />
 	</bean>

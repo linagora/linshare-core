@@ -134,4 +134,10 @@
 		<constructor-arg ref="groupProviderRepository" />
 		<constructor-arg ref="ldapGroupProviderRepository" />
 	</bean>
+
+	<bean name="driveProviderService"
+		class="org.linagora.linshare.core.service.impl.DriveProviderServiceImpl">
+		<constructor-arg ref="driveProviderRepository" />
+		<constructor-arg ref="ldapDriveProviderRepository" />
+	</bean>
 </beans>

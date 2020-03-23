@@ -31,40 +31,54 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.webservice.admin.dto;
 
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
 import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 
-public class LdapDriveProvider extends DriveProvider {
+import io.swagger.v3.oas.annotations.media.Schema;
 
-	protected GroupLdapPattern groupPattern;
+@XmlRootElement(name = "LDAPDriveProvider")
+@Schema(name = "LDAPDriveProvider", description = "Used to provide drives from an LDAP directory")
+public class LDAPDriveProviderDto {
 
-	protected String baseDn;
+	@Schema(description = "uuid")
+	private String uuid;
 
-	protected LdapConnection ldapConnection;
+	@Schema(description = "LdapConnection")
+	private LightCommonDto connection;
 
-	protected Boolean searchInOtherDomains;
+	@Schema(description = "GroupLdapPattern")
+	private LightCommonDto pattern;
 
-	public LdapDriveProvider() {
+	@Schema(description = "BaseDn")
+	private String baseDn;
+
+	@Schema(description = "SearchInOtherDomains")
+	private Boolean searchInOtherDomains;
+
+	public LDAPDriveProviderDto() {
 		super();
 	}
 
-	public LdapDriveProvider(GroupLdapPattern groupPattern, String baseDn, LdapConnection ldapConnection,
-			Boolean searchInOtherDomains) {
-		super();
-		this.groupPattern = groupPattern;
-		this.baseDn = baseDn;
-		this.ldapConnection = ldapConnection;
-		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
+	public LDAPDriveProviderDto(LdapDriveProvider driveProvider) {
+		this.uuid = driveProvider.getUuid();
+		this.connection = new LightCommonDto(driveProvider.getLdapConnection().getLabel(),
+				driveProvider.getLdapConnection().getUuid());
+		this.pattern = new LightCommonDto(driveProvider.getGroupPattern().getLabel(),
+				driveProvider.getGroupPattern().getUuid());
+		this.baseDn = driveProvider.getBaseDn();
+		this.searchInOtherDomains = driveProvider.getSearchInOtherDomains();
 	}
 
-	public GroupLdapPattern getGroupPattern() {
-		return groupPattern;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setGroupPattern(GroupLdapPattern groupPattern) {
-		this.groupPattern = groupPattern;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getBaseDn() {
@@ -75,15 +89,22 @@ public class LdapDriveProvider extends DriveProvider {
 		this.baseDn = baseDn;
 	}
 
-	public LdapConnection getLdapConnection() {
-		return ldapConnection;
+	public LightCommonDto getConnection() {
+		return connection;
 	}
 
-	public void setLdapConnection(LdapConnection ldapConnection) {
-		this.ldapConnection = ldapConnection;
+	public void setConnection(LightCommonDto connection) {
+		this.connection = connection;
 	}
 
-	@Override
+	public LightCommonDto getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(LightCommonDto pattern) {
+		this.pattern = pattern;
+	}
+
 	public Boolean getSearchInOtherDomains() {
 		return searchInOtherDomains;
 	}
@@ -92,15 +113,4 @@ public class LdapDriveProvider extends DriveProvider {
 		this.searchInOtherDomains = searchInOtherDomains;
 	}
 
-	@Override
-	public LDAPDriveProviderDto toLDAPDriveProviderDto() {
-		LDAPDriveProviderDto driveProvider = new LDAPDriveProviderDto();
-		driveProvider.setUuid(uuid);
-		driveProvider.setBaseDn(baseDn);
-		driveProvider.setPattern(
-				new LightCommonDto(this.groupPattern.getLabel(), this.groupPattern.getUuid()));
-		driveProvider.setConnection(new LightCommonDto(this.ldapConnection.getLabel(), this.ldapConnection.getUuid()));
-		driveProvider.setSearchInOtherDomains(this.searchInOtherDomains);
-		return driveProvider;
-	}
 }

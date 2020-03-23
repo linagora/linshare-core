@@ -31,36 +31,21 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.service;
 
-import org.linagora.linshare.core.domain.constants.DriveProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
+import org.linagora.linshare.core.domain.entities.DriveProvider;
+import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.exception.BusinessException;
 
-import com.google.common.base.MoreObjects;
+public interface DriveProviderService {
 
-public abstract class DriveProvider extends Provider {
+	LdapDriveProvider find(String uuid) throws BusinessException;
 
-	protected DriveProviderType type;
+	LdapDriveProvider create(LdapDriveProvider ldapDriveProvider) throws BusinessException;
 
-	public DriveProviderType getType() {
-		return type;
-	}
+	boolean exists(String uuid);
 
-	public void setType(DriveProviderType type) {
-		this.type = type;
-	}
+	LdapDriveProvider update(LdapDriveProvider ldapDriveProvider) throws BusinessException;
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("Type", type)
-				.add("uuid", uuid)
-				.toString();
-	}
-
-	public abstract LDAPDriveProviderDto toLDAPDriveProviderDto();
-
-	public Boolean getSearchInOtherDomains() {
-		return false;
-	}
+	void delete(DriveProvider driveProvider) throws BusinessException;
 }

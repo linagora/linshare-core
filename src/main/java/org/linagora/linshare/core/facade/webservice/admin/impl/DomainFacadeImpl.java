@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
 import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -59,6 +60,7 @@ import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
@@ -66,6 +68,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
+import org.linagora.linshare.core.service.DriveProviderService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.LdapConnectionService;
@@ -93,6 +96,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final GroupProviderService groupProviderService;
 
+	private final DriveProviderService driveProviderService;
+
 	private final GroupLdapPatternService groupLdapPatternService;
 
 	private final UserService userService;
@@ -106,7 +111,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			final QuotaService quotaService,
 			final GroupProviderService groupProviderService,
 			final GroupLdapPatternService groupLdapPatternService,
-			UserService userService) {
+			UserService userService,
+			DriveProviderService driveProviderService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
@@ -117,6 +123,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		this.groupProviderService = groupProviderService;
 		this.groupLdapPatternService = groupLdapPatternService;
 		this.userService = userService;
+		this.driveProviderService = driveProviderService;
 	}
 
 	@Override
@@ -191,14 +198,18 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		case TOPDOMAIN:
 			LdapUserProvider ldapUserProvider = createLdapUserProviderIfNeeded(domainDto);
 			LdapGroupProvider ldapGroupProvider = createLdapGroupProviderIfNeeded(domainDto);
+			LdapDriveProvider ldapDriveProvider = createLdapDriveProviderIfNeeded(domainDto);
 			domain.setUserProvider(ldapUserProvider);
 			domain.setGroupProvider(ldapGroupProvider);
+			domain.setDriveProvider(ldapDriveProvider);
 			return DomainDto.getFull(abstractDomainService.createTopDomain(authUser, (TopDomain) domain));
 		case SUBDOMAIN:
 			LdapUserProvider ldapUserProvider2 = createLdapUserProviderIfNeeded(domainDto);
 			domain.setUserProvider(ldapUserProvider2);
 			LdapGroupProvider ldapGroupProvider2 = createLdapGroupProviderIfNeeded(domainDto);
 			domain.setGroupProvider(ldapGroupProvider2);
+			LdapDriveProvider ldapDriveProvider2 = createLdapDriveProviderIfNeeded(domainDto);
+			domain.setDriveProvider(ldapDriveProvider2);
 			return DomainDto.getFull(abstractDomainService.createSubDomain(authUser, (SubDomain) domain));
 		case GUESTDOMAIN:
 			return DomainDto.getFull(abstractDomainService.createGuestDomain(authUser, (GuestDomain) domain));
@@ -276,6 +287,30 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		return ldapGroupProvider;
 	}
 
+	private LdapDriveProvider createLdapDriveProviderIfNeeded(DomainDto domainDto) {
+		LdapDriveProvider ldapDriveProvider = null;
+		List<LDAPDriveProviderDto> providers = domainDto.getDriveProviders();
+		if (providers != null && !providers.isEmpty()) {
+			LDAPDriveProviderDto driveProviderDto = providers.get(0);
+			LightCommonDto drivePatternLight = driveProviderDto.getPattern();
+			LightCommonDto ldapConnectionLight = driveProviderDto.getConnection();
+			String baseDn = driveProviderDto.getBaseDn();
+			Boolean searchInOtherDomains = driveProviderDto.getSearchInOtherDomains();
+			Validate.notNull(drivePatternLight, "drivePatternLight is mandatory for drive provider creation");
+			Validate.notNull(ldapConnectionLight, "ldapConnection is mandatory for drive provider creation");
+			Validate.notEmpty(drivePatternLight.getUuid(),
+					"group pattern uuid is mandatory for drive provider creation");
+			Validate.notEmpty(ldapConnectionLight.getUuid(),
+					"ldap connection Uuid is mandatory for drive provider creation");
+			Validate.notEmpty(baseDn, "baseDn is mandatory for drive provider creation");
+			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionLight.getUuid());
+			GroupLdapPattern pattern = groupLdapPatternService.find(drivePatternLight.getUuid());
+			ldapDriveProvider = driveProviderService
+					.create(new LdapDriveProvider(pattern, baseDn, ldapConnection, searchInOtherDomains));
+		}
+		return ldapDriveProvider;
+	}
+
 	@Override
 	public DomainDto update(DomainDto domainDto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
@@ -286,6 +321,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		domain.setUserProvider(ldapUserProvider);
 		LdapGroupProvider ldapGroupProvider = updateLdapGroupProvider(domainDto);
 		domain.setGroupProvider(ldapGroupProvider);
+		LdapDriveProvider ldapDriveProvider = updateLdapDriveProvider(domainDto);
+		domain.setDriveProvider(ldapDriveProvider);
 		return DomainDto.getFull(abstractDomainService.updateDomain(authUser, domain));
 	}
 
@@ -318,6 +355,37 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			}
 		}
 		return ldapGroupProvider;
+	}
+
+	private LdapDriveProvider updateLdapDriveProvider(DomainDto domainDto) {
+		LdapDriveProvider ldapDriveProvider = null;
+		List<LDAPDriveProviderDto> providers = domainDto.getDriveProviders();
+		if (providers != null && !providers.isEmpty()) {
+			LDAPDriveProviderDto driveProviderDto = providers.get(0);
+			LightCommonDto drivePatternLight = driveProviderDto.getPattern();
+			LightCommonDto ldapConnectionLight = driveProviderDto.getConnection();
+			String baseDn = driveProviderDto.getBaseDn();
+			Boolean searchInOtherDomains = driveProviderDto.getSearchInOtherDomains();
+			Validate.notNull(drivePatternLight, "drivePattern is mandatory for drive provider creation");
+			Validate.notNull(ldapConnectionLight, "ldapConnection is mandatory for drive provider creation");
+			Validate.notEmpty(drivePatternLight.getUuid(), "drive pattern uuid is mandatory for drive provider creation");
+			Validate.notEmpty(ldapConnectionLight.getUuid(), "ldap connection Uuid is mandatory for drive provider creation");
+			Validate.notEmpty(baseDn, "baseDn is mandatory for drive provider creation");
+			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionLight.getUuid());
+			GroupLdapPattern pattern = groupLdapPatternService.find(drivePatternLight.getUuid());
+			if (driveProviderService.exists(driveProviderDto.getUuid())) {
+				LdapDriveProvider driveProvider = driveProviderService.find(driveProviderDto.getUuid());
+				driveProvider.setBaseDn(driveProviderDto.getBaseDn());
+				driveProvider.setLdapConnection(ldapConnection);
+				driveProvider.setGroupPattern(pattern);
+				driveProvider.setSearchInOtherDomains(searchInOtherDomains);
+				ldapDriveProvider = driveProviderService.update(driveProvider);
+			} else {
+				ldapDriveProvider = driveProviderService.create(
+						new LdapDriveProvider(pattern, baseDn, ldapConnection, searchInOtherDomains));
+			}
+		}
+		return ldapDriveProvider;
 	}
 
 	@Override

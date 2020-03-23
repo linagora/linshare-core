@@ -31,36 +31,10 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.constants.DriveProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
+import org.linagora.linshare.core.domain.entities.DriveProvider;
 
-import com.google.common.base.MoreObjects;
+public interface DriveProviderRepository extends AbstractRepository<DriveProvider> {
 
-public abstract class DriveProvider extends Provider {
-
-	protected DriveProviderType type;
-
-	public DriveProviderType getType() {
-		return type;
-	}
-
-	public void setType(DriveProviderType type) {
-		this.type = type;
-	}
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("Type", type)
-				.add("uuid", uuid)
-				.toString();
-	}
-
-	public abstract LDAPDriveProviderDto toLDAPDriveProviderDto();
-
-	public Boolean getSearchInOtherDomains() {
-		return false;
-	}
 }

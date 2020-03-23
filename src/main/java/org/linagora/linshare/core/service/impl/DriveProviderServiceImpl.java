@@ -31,76 +31,60 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.service.impl;
 
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
+import org.linagora.linshare.core.domain.entities.DriveProvider;
+import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.DriveProviderRepository;
+import org.linagora.linshare.core.repository.LdapDriveProviderRepository;
+import org.linagora.linshare.core.service.DriveProviderService;
 
-public class LdapDriveProvider extends DriveProvider {
+public class DriveProviderServiceImpl extends GenericAdminServiceImpl implements DriveProviderService {
 
-	protected GroupLdapPattern groupPattern;
+	private DriveProviderRepository driveProviderRepository;
 
-	protected String baseDn;
+	private LdapDriveProviderRepository ldapDriveProviderRepository;
 
-	protected LdapConnection ldapConnection;
-
-	protected Boolean searchInOtherDomains;
-
-	public LdapDriveProvider() {
+	protected DriveProviderServiceImpl(
+			LdapDriveProviderRepository ldapDriveProviderRepository,
+			DriveProviderRepository driveProviderRepository) {
 		super();
-	}
-
-	public LdapDriveProvider(GroupLdapPattern groupPattern, String baseDn, LdapConnection ldapConnection,
-			Boolean searchInOtherDomains) {
-		super();
-		this.groupPattern = groupPattern;
-		this.baseDn = baseDn;
-		this.ldapConnection = ldapConnection;
-		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
-	}
-
-	public GroupLdapPattern getGroupPattern() {
-		return groupPattern;
-	}
-
-	public void setGroupPattern(GroupLdapPattern groupPattern) {
-		this.groupPattern = groupPattern;
-	}
-
-	public String getBaseDn() {
-		return baseDn;
-	}
-
-	public void setBaseDn(String baseDn) {
-		this.baseDn = baseDn;
-	}
-
-	public LdapConnection getLdapConnection() {
-		return ldapConnection;
-	}
-
-	public void setLdapConnection(LdapConnection ldapConnection) {
-		this.ldapConnection = ldapConnection;
+		this.ldapDriveProviderRepository = ldapDriveProviderRepository;
+		this.driveProviderRepository = driveProviderRepository;
 	}
 
 	@Override
-	public Boolean getSearchInOtherDomains() {
-		return searchInOtherDomains;
-	}
-
-	public void setSearchInOtherDomains(Boolean searchInOtherDomains) {
-		this.searchInOtherDomains = searchInOtherDomains;
+	public LdapDriveProvider find(String uuid) throws BusinessException {
+		LdapDriveProvider provider = ldapDriveProviderRepository.findByUuid(uuid);
+		if (provider == null) {
+			throw new BusinessException(
+					BusinessErrorCode.DRIVE_LDAP_PATTERN_NOT_FOUND,
+					"Drive provider identifier no found.");
+		}
+		return provider;
 	}
 
 	@Override
-	public LDAPDriveProviderDto toLDAPDriveProviderDto() {
-		LDAPDriveProviderDto driveProvider = new LDAPDriveProviderDto();
-		driveProvider.setUuid(uuid);
-		driveProvider.setBaseDn(baseDn);
-		driveProvider.setPattern(
-				new LightCommonDto(this.groupPattern.getLabel(), this.groupPattern.getUuid()));
-		driveProvider.setConnection(new LightCommonDto(this.ldapConnection.getLabel(), this.ldapConnection.getUuid()));
-		driveProvider.setSearchInOtherDomains(this.searchInOtherDomains);
-		return driveProvider;
+	public LdapDriveProvider create(LdapDriveProvider ldapDriveProvider) throws BusinessException {
+		return ldapDriveProviderRepository.create(ldapDriveProvider);
 	}
+
+	@Override
+	public boolean exists(String uuid) {
+		LdapDriveProvider provider = ldapDriveProviderRepository.findByUuid(uuid);
+		return provider != null;
+	}
+
+	@Override
+	public LdapDriveProvider update(LdapDriveProvider ldapDriveProvider) throws BusinessException {
+		return ldapDriveProviderRepository.update(ldapDriveProvider);
+	}
+
+	@Override
+	public void delete(DriveProvider driveProvider) throws BusinessException {
+		driveProviderRepository.delete(driveProvider);
+	}
+
 }
