@@ -62,5 +62,8 @@ public interface SharedSpaceRoleService {
 	 * @return List of {@link SharedSpaceRole}
 	 */
 	List<SharedSpaceRole> findRolesByNodeType(Account authUser, Account actor, NodeType type);
+
+	SharedSpaceRole findByNameAndNodeType(Account authUser, Account actor, String name, NodeType nodeType)
+			throws BusinessException;
 }
 

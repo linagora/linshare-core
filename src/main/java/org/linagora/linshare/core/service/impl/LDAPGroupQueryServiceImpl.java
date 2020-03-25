@@ -128,7 +128,7 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 				res.addAll(convert(Role.CONTRIBUTOR, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
 			}
 			// load read only members
-			res.addAll(convert(group.getRoles().get(NodeType.WORK_GROUP), getMembers(group.getExternalId(), groupQuery, memberQuery)));
+			res.addAll(convert(Role.READER, getMembers(group.getExternalId(), groupQuery, memberQuery)));
 		} finally {
 			ldapContext.close();
 		}

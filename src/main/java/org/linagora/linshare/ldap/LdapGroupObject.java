@@ -59,9 +59,7 @@ public class LdapGroupObject {
 	public LdapGroupObject() {
 		super();
 		this.members = Lists.newArrayList();
-		roles = Maps.newHashMap();
-		roles.put(NodeType.WORK_GROUP, Role.READER);
-		roles.put(NodeType.DRIVE, Role.DRIVE_WRITER);
+		this.roles = Maps.newHashMap();
 	}
 
 	public String getName() {
@@ -161,11 +159,19 @@ public class LdapGroupObject {
 		return this;
 	}
 
+	public Role getRole(NodeType nodeType) {
+		return getRoles().get(nodeType);
+	}
+
 	public String getContributorsDn() {
 		return "cn=contributors," + externalId;
 	}
 
 	public String getWritersDn() {
 		return "cn=writers," + externalId;
+	}
+
+	public String getDriveWritersDn() {
+		return "cn=drive_writers," + externalId;
 	}
 }

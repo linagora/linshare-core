@@ -41,6 +41,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
@@ -55,7 +56,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 public interface LDAPGroupSyncService {
 
 	SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, AbstractDomain domain, LdapGroupObject group,
-			Date syncDate, LdapGroupsBatchResultContext resultContext);
+			Date syncDate, LdapGroupsBatchResultContext resultContext, NodeType nodeType);
 
 	SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, String domainUuid,
 			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate,

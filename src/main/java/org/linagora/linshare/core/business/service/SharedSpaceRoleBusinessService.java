@@ -47,6 +47,8 @@ public interface SharedSpaceRoleBusinessService {
 
 	SharedSpaceRole findByName(String name) throws BusinessException;
 
+	SharedSpaceRole findByNameAndNodeType(String name, NodeType nodeType) throws BusinessException;
+
 	List<SharedSpaceRole> findAll() throws BusinessException;
 
 	List<SharedSpaceRole> findRolesByNodeType(NodeType type);

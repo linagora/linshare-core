@@ -16,4 +16,8 @@
 		class="org.linagora.linshare.core.service.impl.LDAPGroupQueryServiceImpl">
 	</bean>
 
+	<bean name="ldapDriveQueryService"
+		class="org.linagora.linshare.core.service.impl.LDAPDriveQueryServiceImpl">
+	</bean>
+
 </beans>

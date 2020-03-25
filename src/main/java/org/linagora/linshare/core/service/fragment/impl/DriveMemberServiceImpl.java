@@ -189,7 +189,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		}
 		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
 		if (!actor.getLsUuid().equals(user.getLsUuid())) {
-			notify(new DriveWarnDeletedMemberEmailContext(foundMemberToDelete, (User) actor, user));
+			notify(new DriveWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user));
 		}
 		return foundMemberToDelete;
 	}

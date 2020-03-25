@@ -71,4 +71,9 @@ public class SharedSpaceRoleBusinessServiceImpl implements SharedSpaceRoleBusine
 		return sharedSpaceRoleMongoRepository.findByType(type);
 	}
 
+	@Override
+	public SharedSpaceRole findByNameAndNodeType(String name, NodeType nodeType) throws BusinessException {
+		return sharedSpaceRoleMongoRepository.findByNameAndType(name, nodeType);
+	}
+
 }

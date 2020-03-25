@@ -117,4 +117,19 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 				null);
 		return sharedSpaceRoleBusinessService.findRolesByNodeType(type);
 	}
+
+	@Override
+	public SharedSpaceRole findByNameAndNodeType(Account authUser, Account actor, String name, NodeType nodeType) throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notEmpty(name, "Missing required shared space role name.");
+		Validate.notNull(nodeType, "Missing required nodeType.");
+		SharedSpaceRole found = sharedSpaceRoleBusinessService.findByNameAndNodeType(name, nodeType);
+		if (found == null) {
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND,
+					"The role with name " + name + " was not found");
+		}
+		checkReadPermission(authUser, actor, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
+				found);
+		return found;
+	}
 }

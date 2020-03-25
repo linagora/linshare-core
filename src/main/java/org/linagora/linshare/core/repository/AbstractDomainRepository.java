@@ -118,4 +118,7 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	public List<String> findAllDomainIdentifiersWithGroupProviders();
 
 	List<String> getSubDomainsByDomainIdentifiers(String domain);
+
+	List<String> findAllDomainIdentifiersWithDriveProviders();
+
 }

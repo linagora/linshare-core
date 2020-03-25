@@ -52,6 +52,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.GroupProviderType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
@@ -114,9 +115,11 @@ import com.beust.jcommander.internal.Lists;
 public class LDAPGroupSyncServiceImplTest {
 
 	@Autowired
+	@Qualifier("ldapGroupSyncService")
 	LDAPGroupSyncService syncService;
 
 	@Autowired
+	@Qualifier("ldapGroupSyncService")
 	LDAPGroupSyncServiceImpl syncServiceImpl;
 
 	@Autowired
@@ -222,7 +225,7 @@ public class LDAPGroupSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext);
+				resultContext, NodeType.WORK_GROUP);
 		Assertions.assertNotNull(group, "The group has not been found");
 		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
 				group.getExternalId(), "The externalId do not match");
@@ -265,7 +268,7 @@ public class LDAPGroupSyncServiceImplTest {
 				"uid=user1,ou=People,dc=linshare,dc=org");
 		ldapGroupMemberObject.setRole(Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext);
+				resultContext, NodeType.WORK_GROUP);
 		Assertions.assertNotNull(group, "The group has not been found");
 		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
 				group.getExternalId(), "The externalId do not match");
@@ -296,7 +299,7 @@ public class LDAPGroupSyncServiceImplTest {
 				"uid=user1,ou=People,dc=linshare,dc=org");
 		ldapGroupMemberObject.setRole(Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext);
+				resultContext, NodeType.WORK_GROUP);
 		Assertions.assertNotNull(group, "The group has not been found");
 		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
 				group.getExternalId(), "The externalId do not match");
@@ -329,7 +332,7 @@ public class LDAPGroupSyncServiceImplTest {
 		ldapGroupMemberObject.setRole(Role.CONTRIBUTOR);
 		// Create a group
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext);
+				resultContext, NodeType.WORK_GROUP);
 		// Create a member
 		syncService.createOrUpdateLDAPGroupMember(systemAccount, domain.getUuid(), group, ldapGroupMemberObject, syncDate,
 				resultContext, domain.getGroupProvider().getSearchInOtherDomains());
@@ -362,13 +365,13 @@ public class LDAPGroupSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext);
+				resultContext, NodeType.WORK_GROUP);
 		Assertions.assertNotNull(group, "The group has not been found");
 		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
 				group.getExternalId(), "The externalId do not match");
 		Assertions.assertEquals(syncDate, group.getSyncDate(), "The given syncDate is not the same as the found one");
 		int nbLDAPGroup = nodeService.findAll(systemAccount, systemAccount).size();
-		group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, calendar.getTime(), resultContext);
+		group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, calendar.getTime(), resultContext, NodeType.WORK_GROUP);
 		Assertions.assertTrue(group.getSyncDate().after(syncDate), "The new syncDate is not after the previous syncDate");
 		Assertions.assertEquals(nbLDAPGroup,
 				nodeService.findAll(systemAccount, systemAccount).size(), "A SharedSpaceLDAPGroup has been added and not updated");
@@ -387,7 +390,7 @@ public class LDAPGroupSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject,
-				syncDate, resultContext);
+				syncDate, resultContext, NodeType.WORK_GROUP);
 		Assertions.assertNotNull(group, "The group has not been found");
 		Assertions.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
 				group.getExternalId(), "The externalId do not match");

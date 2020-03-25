@@ -261,4 +261,14 @@ public class AbstractDomainRepositoryImpl extends
 		crit.add(Restrictions.isNotNull("groupProvider"));
 		return listByCriteria(crit);
 	}
+
+	@Override
+	public List<String> findAllDomainIdentifiersWithDriveProviders() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
+				.setProjection(Projections.property("uuid"))
+				.addOrder(Order.asc("authShowOrder"));
+		crit.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
+		crit.add(Restrictions.isNotNull("driveProvider"));
+		return listByCriteria(crit);
+	}
 }

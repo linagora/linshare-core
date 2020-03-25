@@ -51,4 +51,6 @@ public interface SharedSpaceRoleMongoRepository extends MongoRepository<SharedSp
 	List <SharedSpaceRole> findAll() throws BusinessException;
 
 	List<SharedSpaceRole> findByType(NodeType type);
+
+	SharedSpaceRole findByNameAndType(String name, NodeType nodeType);
 }

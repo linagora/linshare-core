@@ -45,6 +45,7 @@ import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessServic
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -85,19 +86,20 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 
 	@Override
 	public SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
-		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(), node.getNodeType());
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.DRIVE_FORBIDDEN, node);
 		if (!(NodeType.DRIVE.equals(node.getNodeType()))) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not create this kind of sharedSpace with this method.");
 		}
-		toCreate.setName(sanitize(toCreate.getName()));
-		SharedSpaceNode created = super.create(authUser, actor, toCreate);
-		SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
-		SharedSpaceRole workGroupRole = ssRoleService.getAdmin(authUser, actor);
-		SharedSpaceMemberContext context = new SharedSpaceMemberContext(driveRole, workGroupRole);
-		memberService.create(authUser, actor, created, context, new SharedSpaceAccount((User) actor));
-		new SharedSpaceAccount((User) actor);
+		node.setName(sanitize(node.getName()));
+		SharedSpaceNode created = super.create(authUser, actor, node);
+		// TODO: workaround to avoid to rely on account type
+		if (!(actor instanceof SystemAccount)) {
+			SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
+			SharedSpaceRole workGroupRole = ssRoleService.getAdmin(authUser, actor);
+			SharedSpaceMemberContext context = new SharedSpaceMemberContext(driveRole, workGroupRole);
+			memberService.create(authUser, actor, created, context, new SharedSpaceAccount((User) actor));
+		}
 		return created;
 	}
 

@@ -107,7 +107,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		this.memberService = memberService;
 	}
 
-	private SharedSpaceFragmentService getService(NodeType type) {
+	protected SharedSpaceFragmentService getService(NodeType type) {
 		Validate.notNull(type, "Node type must be set");
 		SharedSpaceFragmentService nodeService = serviceBuilders.get(type);
 		Validate.notNull(nodeService, "Can not find a service that handle your noteType: " + type);
@@ -116,8 +116,8 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 
 	@Override
 	public SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, AbstractDomain domain, LdapGroupObject group,
-			Date syncDate, LdapGroupsBatchResultContext resultContext) {
-		SharedSpaceLDAPGroup node = convertLdapGroup(group, syncDate, domain);
+			Date syncDate, LdapGroupsBatchResultContext resultContext, NodeType nodeType) {
+		SharedSpaceLDAPGroup node = convertLdapSharedSpace(group, syncDate, domain, nodeType);
 		SharedSpaceLDAPGroup ldapGroup = findGroupToUpdate(node.getExternalId(), syncDate);
 		SharedSpaceFragmentService nodeService  = getService(node.getNodeType());
 		if (ldapGroup != null) {
@@ -143,19 +143,8 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	public SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, String domainUuid,
 			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate,
 			LdapGroupsBatchResultContext resultContext, Boolean searchInOtherDomains) {
-		User user;
-		try {
-			if (null == searchInOtherDomains || searchInOtherDomains) {
-				user = userService.findOrCreateUserWithDomainPolicies(memberObject.getEmail(), domainUuid);
-			} else {
-				user = userService.findOrCreateUser(memberObject.getEmail(), domainUuid);
-			}
-		} catch (BusinessException e) {
-			logger.warn("The user [email=" + memberObject.getEmail() + ", domainUuid=" + domainUuid
-					+ "] has not been found", e);
-			return null;
-		}
-		SharedSpaceRole role = getRoleFrom(actor, memberObject.getRole());
+		User user = findOrCreateUser(memberObject.getEmail(), domainUuid, searchInOtherDomains, memberObject);
+		SharedSpaceRole role = getRoleFrom(actor, memberObject.getRole(), NodeType.WORK_GROUP);
 		SharedSpaceLDAPGroupMember member = findMemberToUpdate(group.getUuid(), memberObject.getExternalId(), syncDate);
 		if (member != null) {
 			member.setModificationDate(new Date());
@@ -178,12 +167,29 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		return memberService.create(actor, newMember);
 	}
 
-	private SharedSpaceRole getRoleFrom(Account actor, Role role) {
-		return ssRoleService.findByName(actor, actor, role.toString());
+	protected User findOrCreateUser(String email, String domainUuid, Boolean searchInOtherDomains,
+			LdapGroupMemberObject memberObject) {
+		User user;
+		try {
+			if (null == searchInOtherDomains || searchInOtherDomains) {
+				user = userService.findOrCreateUserWithDomainPolicies(memberObject.getEmail(), domainUuid);
+			} else {
+				user = userService.findOrCreateUser(memberObject.getEmail(), domainUuid);
+			}
+		} catch (BusinessException e) {
+			logger.warn("The user [email=" + memberObject.getEmail() + ", domainUuid=" + domainUuid
+					+ "] has not been found", e);
+			return null;
+		}
+		return user;
 	}
 
-	private SharedSpaceLDAPGroup convertLdapGroup(LdapGroupObject group, Date syncDate, AbstractDomain domain) {
-		return new SharedSpaceLDAPGroup(group.getName(), null, NodeType.WORK_GROUP, group.getExternalId(),
+	protected SharedSpaceRole getRoleFrom(Account actor, Role role, NodeType nodeType) {
+		return ssRoleService.findByNameAndNodeType(actor, actor, role.toString(), nodeType);
+	}
+
+	protected SharedSpaceLDAPGroup convertLdapSharedSpace(LdapGroupObject group, Date syncDate, AbstractDomain domain, NodeType nodeType) {
+		return new SharedSpaceLDAPGroup(group.getName(), null, nodeType, group.getExternalId(),
 				group.getPrefix(), syncDate, new GenericLightEntity(domain));
 	}
 
@@ -194,12 +200,12 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		return new SharedSpaceLDAPGroupMember(node, lightRole, new SharedSpaceAccount(user), externalId, syncDate);
 	}
 
-	private SharedSpaceLDAPGroup findGroupToUpdate(String externalId, Date syncDate) {
+	protected SharedSpaceLDAPGroup findGroupToUpdate(String externalId, Date syncDate) {
 		Query query = buildFindLdapGroupQuery(externalId, syncDate);
 		return mongoTemplate.findOne(query, SharedSpaceLDAPGroup.class);
 	}
 
-	private SharedSpaceLDAPGroupMember findMemberToUpdate(String nodeUuid, String externalId, Date syncDate) {
+	protected SharedSpaceLDAPGroupMember findMemberToUpdate(String nodeUuid, String externalId, Date syncDate) {
 		Query query = buildFindLdapGroupMemberQuery(nodeUuid, externalId, syncDate);
 		return mongoTemplate.findOne(query, SharedSpaceLDAPGroupMember.class);
 	}
@@ -269,7 +275,8 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	@Override
 	public void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject,
 			Set<LdapGroupMemberObject> memberObjects, Date syncDate, LdapGroupsBatchResultContext resultContext) {
-		SharedSpaceLDAPGroup created = createOrUpdateLDAPGroup(actor, domain, ldapGroupObject, syncDate, resultContext);
+		SharedSpaceLDAPGroup created = createOrUpdateLDAPGroup(actor, domain, ldapGroupObject, syncDate, resultContext,
+				NodeType.WORK_GROUP);
 		// Create each member
 		for (LdapGroupMemberObject memberObject : memberObjects) {
 			createOrUpdateLDAPGroupMember(actor, domain.getUuid(), created, memberObject, syncDate, resultContext,
