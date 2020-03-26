@@ -56,7 +56,7 @@ public class DatabaseAuthenticationProvider extends
 	// ~ Instance fields
 	// ================================================================================================
 
-	private PasswordEncoder passwordEncoder = new StandardPasswordEncoder();
+	private PasswordEncoder passwordEncoder;
 
 	private DatabaseUserDetailsProvider userDetailsProvider;
 

@@ -55,7 +55,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.core.service.PasswordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +66,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(locations = {
-		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml" })
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml",
+		"classpath:springContext-facade.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-test.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-ldap.xml" })
 public class GuestRepositoryImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(GuestRepositoryImplTest.class);
@@ -98,6 +107,9 @@ public class GuestRepositoryImplTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
+	
+	@Autowired
+	private PasswordService passwordService;
 
 	@Autowired
 	@Qualifier("guestRepository")
@@ -113,7 +125,7 @@ public class GuestRepositoryImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
-		String encpass = HashUtils.hashBcrypt(PASSWORD);
+		String encpass = passwordService.encode(PASSWORD);
 		if (!flag) {
 			Guest u1 = new Guest(FIRST_NAME2, LAST_NAME2, MAIL2, encpass, true, "comment");
 			u1.setLocale(domain.getDefaultTapestryLocale());

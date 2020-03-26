@@ -35,11 +35,16 @@ package org.linagora.linshare.core.service;
 
 public interface PasswordService {
 
-
 	/**
-     * generate the password of a guest or password for a secure URL (SHA1PRNG algorithm)
-     * @return password in plain text
-     */
-    public String generatePassword();
+	 * generate the password of a guest or password for a secure URL (SHA1PRNG
+	 * algorithm)
+	 * 
+	 * @return password in plain text
+	 */
+	public String generatePassword();
+
+	public String encode(CharSequence rawPassword);
+
+	public boolean matches(CharSequence rawPassword, String encodedPassword);
 
 }

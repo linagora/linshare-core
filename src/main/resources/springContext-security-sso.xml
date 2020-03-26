@@ -261,8 +261,9 @@
 
 	<!-- DAO Authentification -->
 	<b:bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
-		<b:constructor-arg value="SHA" />
 	</b:bean>
+	
+	<b:bean id="passwordEncoder" factory-bean="passwordEncoderFactory" factory-method="getInstance" />
 
 	<b:bean id="databaseUserDetailsProvider" class="org.linagora.linshare.auth.dao.DatabaseUserDetailsProvider">
 		<b:constructor-arg ref="authentificationFacade" />
@@ -278,9 +279,7 @@
 	<!-- database accounts : guests, root, technical accounts, ... -->
 	<b:bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.dao.DatabaseAuthenticationProvider">
 		<b:constructor-arg ref="databaseUserDetailsProvider" />
-		<b:property name="passwordEncoder">
-			<b:bean factory-bean="passwordEncoderFactory" factory-method="getInstance" />
-		</b:property>
+		<b:property name="passwordEncoder" ref="passwordEncoder" />
 	</b:bean>
 
 	<!-- Domain Authentification -->

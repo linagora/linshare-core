@@ -73,9 +73,10 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.core.utils.HashUtils;
+
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
@@ -96,6 +97,8 @@ public class UserServiceImpl implements UserService {
 			.getLogger(UserServiceImpl.class);
 
 	private final UserRepository<User> userRepository;
+	
+	private final PasswordService passwordService;
 
 	private final LogEntryService logEntryService;
 
@@ -138,7 +141,8 @@ public class UserServiceImpl implements UserService {
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final JwtLongTimeBusinessService jwtLongTimeBusinessService,
-			final SharedSpaceMemberService ssMemberService) {
+			final SharedSpaceMemberService ssMemberService,
+			final PasswordService passwordService) {
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
@@ -153,6 +157,7 @@ public class UserServiceImpl implements UserService {
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
 		this.ssMemberService = ssMemberService;
+		this.passwordService = passwordService;
 	}
 
 	@Override
@@ -677,12 +682,12 @@ public class UserServiceImpl implements UserService {
 					"Could not find a user with the login " + mail);
 		}
 
-		if (!HashUtils.matches(oldPassword, user.getPassword())) {
+		if (!passwordService.matches(oldPassword, user.getPassword())) {
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR,
 					"The supplied password is invalid");
 		}
 
-		user.setPassword(HashUtils.hashBcrypt(newPassword));
+		user.setPassword(passwordService.encode(newPassword));
 		userRepository.update(user);
 	}
 

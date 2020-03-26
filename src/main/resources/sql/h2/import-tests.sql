@@ -81,9 +81,10 @@ VALUES
 	'Bar', true, '', false, 
 	true, false),
 -- Guest (13)	
+-- password generated from https://www.browserling.com/tools/bcrypt 
 	(13, 'guest@linshare.org', 3, '46455499-f703-46a2-9659-24ed0fa0d63c', 
-	now(), now(), 0, 'en', 
-	'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 
+	now(), now(), 0, 'en',
+	'en', 'en', true, '{bcrypt}$2a$10$GX1j3pNgFcg8LfANc4w9h.oivxTErSnP/6YYpVLX.pdqTLjdF6Dfm', 
 	0, @guest_domain_id , 'IN_USE', 'Guest', 
 	'Test', true, '', false, 
 	true, false);
@@ -479,7 +480,7 @@ UPDATE domain_abstract SET mime_policy_id=1 WHERE id >= 100001;
 
 
 INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) 
-VALUES (100001, 'root@localhost.localdomain@test', 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 100001, 'IN_USE', 'Administrator', 'LinShare', true, '', false, false, false);
+VALUES (100001, 'root@localhost.localdomain@test', 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', 'en', true, '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW4k3k0UxxtdFIEquzTA6', 0, 100001, 'IN_USE', 'Administrator', 'LinShare', true, '', false, false, false);
 
 -- root domain de test
 -- Functionality : TEST_TIME_STAMPING

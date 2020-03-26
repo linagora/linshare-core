@@ -41,7 +41,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UploadRequestUrlRepository;
 import org.linagora.linshare.core.service.PasswordService;
-import org.linagora.linshare.core.utils.HashUtils;
+
 
 public class UploadRequestUrlBusinessServiceImpl implements
 		UploadRequestUrlBusinessService {
@@ -83,7 +83,7 @@ public class UploadRequestUrlBusinessServiceImpl implements
 			String password = passwordService.generatePassword();
 			// We store it temporary in this object for mail notification.
 			url.setTemporaryPlainTextPassword(password);
-			url.setPassword(HashUtils.hashBcrypt((password)));
+			url.setPassword(passwordService.encode((password)));
 		}
 		request.getUploadRequestURLs().add(url);
 		return uploadRequestUrlRepository.create(url);

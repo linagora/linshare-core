@@ -47,26 +47,31 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
-import org.linagora.linshare.core.utils.HashUtils;
+
 
 public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 
 	private final TechnicalAccountBusinessService technicalAccountBusinessService;
 
 	private final TechnicalAccountPermissionService technicalAccountPermissionService;
+	
+	private final PasswordService passwordService;
 
 	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
 	public TechnicalAccountServiceImpl(
 			final TechnicalAccountBusinessService technicalAccountBusinessService,
 			final TechnicalAccountPermissionService technicalAccountPermissionService,
-			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			final PasswordService passwordService) {
 		super();
 		this.technicalAccountBusinessService = technicalAccountBusinessService;
 		this.technicalAccountPermissionService = technicalAccountPermissionService;
 		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
+		this.passwordService = passwordService;
 	}
 
 	@Override
@@ -148,11 +153,11 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 					"Could not find a user with the uuid " + uuid);
 		}
 
-		if (!HashUtils.matches(oldPassword, account.getPassword())) {
+		if (!passwordService.matches(oldPassword, account.getPassword())) {
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR,
 					"The supplied password is invalid");
 		}
-		account.setPassword(HashUtils.hashBcrypt((newPassword)));
+		account.setPassword(passwordService.encode((newPassword)));
 		technicalAccountBusinessService.update(account);
 	}
 }

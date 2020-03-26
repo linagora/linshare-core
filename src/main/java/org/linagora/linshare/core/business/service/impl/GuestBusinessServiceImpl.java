@@ -51,7 +51,7 @@ import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.PasswordService;
-import org.linagora.linshare.core.utils.HashUtils;
+
 
 public class GuestBusinessServiceImpl implements GuestBusinessService {
 
@@ -125,7 +125,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	public Guest create(Account owner, Guest guest,
 			AbstractDomain domain, List<User> allowedContacts) throws BusinessException {
 		String password = passwordService.generatePassword();
-		String hashedPassword = HashUtils.hashBcrypt(password);
+		String hashedPassword = passwordService.encode(password);
 		guest.setMail(guest.getMail().toLowerCase());
 		guest.setOwner(owner);
 		guest.setDomain(domain);
@@ -225,7 +225,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	public GuestWithMetadata resetPassword(Guest guest)
 			throws BusinessException {
 		String password = passwordService.generatePassword();
-		String hashedPassword = HashUtils.hashBcrypt(password);
+		String hashedPassword = passwordService.encode(password);
 		guest.setPassword(hashedPassword);
 		Guest update = guestRepository.update(guest);
 		return new GuestWithMetadata(password, update);
@@ -233,7 +233,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	@Override
 	public Guest resetPassword(Guest guest, String password) throws BusinessException {
-		String hashedPassword = HashUtils.hashBcrypt(password);
+		String hashedPassword = passwordService.encode(password);
 		guest.setPassword(hashedPassword);
 		Guest update = guestRepository.update(guest);
 		return update;

@@ -48,7 +48,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.core.service.PasswordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +59,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(locations={
-		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml"})
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml",
+		"classpath:springContext-facade.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-test.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-ldap.xml" })
 public class UserRepositoryImplTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -90,6 +99,9 @@ public class UserRepositoryImplTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
+	
+	@Autowired
+	private PasswordService passwordService;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
@@ -100,7 +112,7 @@ public class UserRepositoryImplTest {
 	public void setUp() throws Exception {
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
-		String encpassword = HashUtils.hashBcrypt(PASSWORD);
+		String encpassword = passwordService.encode(PASSWORD);
 		if (!flag) {
 			User u1=new Guest(FIRST_NAME2, LAST_NAME2, MAIL2,encpassword, true, "comment");
 			u1.setLocale(domain.getDefaultTapestryLocale());
@@ -122,7 +134,7 @@ public class UserRepositoryImplTest {
 	@Test
 	public void testExistUser() throws BusinessException{
 		
-		String encpassword = HashUtils.hashBcrypt(PASSWORD);
+		String encpassword = passwordService.encode(PASSWORD);
 		
 		User u = new Guest( FIRST_NAME, LAST_NAME, MAIL, encpassword, true, "comment");
 		u.setLocale(domain.getDefaultTapestryLocale());

@@ -57,9 +57,10 @@ import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
+import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.core.utils.HashUtils;
+
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +82,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-mongo-java-server.xml",
@@ -108,6 +110,9 @@ public class GuestServiceImplTest {
 
 	@Autowired
 	private InconsistentUserService inconsistentUserService;
+	
+	@Autowired
+	private PasswordService passwordService;
 
 	@Autowired
 	private QuotaService quotaService;
@@ -272,11 +277,11 @@ public class GuestServiceImplTest {
 		// create guest
 		Guest guest = new Guest("Foo", "Bar", "user10@linshare.org");
 		String oldPassword = "password222";
-		guest.setPassword(HashUtils.hashBcrypt(oldPassword));
+		guest.setPassword(passwordService.encode(oldPassword));
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
 		guestService.triggerResetPassword(guest.getLsUuid());
-		Assertions.assertFalse(HashUtils.matches(oldPassword, guest.getPassword()));
+		Assertions.assertFalse(passwordService.matches(oldPassword, guest.getPassword()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

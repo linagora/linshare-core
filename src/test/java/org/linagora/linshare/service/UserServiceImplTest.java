@@ -74,8 +74,9 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
+import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.core.utils.HashUtils;
+
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,9 @@ public class UserServiceImplTest {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private PasswordService passwordService;
+	
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
@@ -438,33 +442,12 @@ public class UserServiceImplTest {
 		user1.setDomain(topDomain);
 		String oldPassword = "oldPassword";
 		String newPassword = "newPassword";
-		user1.setPassword(HashUtils.hashBcrypt(oldPassword));
+		user1.setPassword(passwordService.encode(oldPassword));
 		user1.setCmisLocale("en");
 		userService.saveOrUpdateUser(user1);
-		Assertions.assertTrue(HashUtils.matches(oldPassword, user1.getPassword()));
+		Assertions.assertTrue(passwordService.matches(oldPassword, user1.getPassword()));
 		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", oldPassword, newPassword);
-		Assertions.assertTrue(HashUtils.matches(newPassword, user1.getPassword()));
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	/**
-	 * Test password migration from SHA to BCRYPT
-	 */
-	@Test
-	
-	public void testChangeSHAPassword() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain topDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlDomain);
-		Guest user1 = new Guest("John", "Doe", "user-unknow@linshare.org");
-		user1.setDomain(topDomain);
-		String oldPassword = "oldPassword";
-		String newPassword = "newPassword";
-		user1.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
-		user1.setCmisLocale("en");
-		userService.saveOrUpdateUser(user1);
-		Assertions.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
-		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", oldPassword, newPassword);
-		Assertions.assertTrue(HashUtils.matches(newPassword, user1.getPassword()));
+		Assertions.assertTrue(passwordService.matches(newPassword, user1.getPassword()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -495,7 +478,7 @@ public class UserServiceImplTest {
 		guest.setCmisLocale("en");
 		String oldPassword = "password222";
 
-		guest.setPassword(HashUtils.hashBcrypt(oldPassword));
+		guest.setPassword(passwordService.encode(oldPassword));
 
 		guest = guestRepository.create(guest);
 		// Disable. We don't change guest password anymore, we send him a link to reset it.

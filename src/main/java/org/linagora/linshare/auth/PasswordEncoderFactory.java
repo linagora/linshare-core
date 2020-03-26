@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2015-2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,59 +31,32 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+
 package org.linagora.linshare.auth;
 
 import java.util.Map;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
-import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import com.google.common.collect.Maps;
 
-/** 
- * Returns an instance of password encoder.
- */
 public class PasswordEncoderFactory {
 
-    private static final String MD5 = "MD5";
-    private static final String SHA = "SHA";
-    private static final String SSHA = "SSHA";
-    private static final String PLAIN = "PLAIN";
+	/**
+	 * Returns an instance of password encoder. The password are encoded in using
+	 * {@link BCryptPasswordEncoder} encoding.
+	 * @return a password encoder.
+	 */
+	public PasswordEncoder getInstance() {
+		String defaultAlgoForEncode = "bcrypt";
+		Map<String, PasswordEncoder> encoders = Maps.newHashMap();
+		encoders.put(defaultAlgoForEncode, new BCryptPasswordEncoder());
+		DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(defaultAlgoForEncode,
+				encoders);
+		delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
+		return delegatingPasswordEncoder;
+	}
 
-    private String passwordEncoderName;
-
-    public PasswordEncoderFactory(String passwordEncoderName) {
-        if (!passwordEncoderName.equalsIgnoreCase(MD5) && !passwordEncoderName.equalsIgnoreCase(SHA)
-            && !passwordEncoderName.equalsIgnoreCase(SSHA) && !passwordEncoderName.equalsIgnoreCase(PLAIN)) {
-            throw new RuntimeException("Unkown password encoder name : " + passwordEncoderName);
-        }
-        this.passwordEncoderName = passwordEncoderName;
-    }
-
-    /** Returns an instance of password encoder.
-     * The password are encoded in using Bcryp encoding. DelegatingPasswordEncoder allows to decode MD5 and SHA-1 passwords.
-     * @return a password encoder.
-     */
-    public PasswordEncoder getInstance() {
-    	String defaultAlgoForEncode = "bcrypt";
-    	BCryptPasswordEncoder defaultEncoder = new BCryptPasswordEncoder();
-    	Map<String, PasswordEncoder> encoders = Maps.newHashMap();
-    	encoders.put(defaultAlgoForEncode, defaultEncoder);
-    	DelegatingPasswordEncoder hybridPasswordEncoder = new DelegatingPasswordEncoder(defaultAlgoForEncode, encoders);
-        if (passwordEncoderName.equalsIgnoreCase(MD5)) {
-        	MessageDigestPasswordEncoder passwordEncoder = new MessageDigestPasswordEncoder("MD5");
-            passwordEncoder.setEncodeHashAsBase64(true);
-            hybridPasswordEncoder.setDefaultPasswordEncoderForMatches(passwordEncoder);
-        } else if (passwordEncoderName.equalsIgnoreCase(SHA) || passwordEncoderName.equalsIgnoreCase(SSHA)) {
-        	MessageDigestPasswordEncoder passwordEncoder = new MessageDigestPasswordEncoder("SHA-1");
-            passwordEncoder.setEncodeHashAsBase64(true);
-            hybridPasswordEncoder.setDefaultPasswordEncoderForMatches(passwordEncoder);
-        } else {
-        	hybridPasswordEncoder.setDefaultPasswordEncoderForMatches(new StandardPasswordEncoder());
-        }
-        return hybridPasswordEncoder;
-    }
 }

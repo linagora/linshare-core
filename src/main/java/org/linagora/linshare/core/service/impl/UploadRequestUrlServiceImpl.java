@@ -63,9 +63,10 @@ import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestUrlResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
-import org.linagora.linshare.core.utils.HashUtils;
+
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestUrlAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
@@ -81,6 +82,8 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	private final NotifierService notifierService;
 
 	private final UploadRequestEntryService uploadRequestEntryService;
+	
+	private final PasswordService passwordService;
 
 	public UploadRequestUrlServiceImpl(
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
@@ -89,6 +92,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 			final NotifierService notifierService,
 			final UploadRequestEntryService uploadRequestEntryService,
 			final UploadRequestUrlResourceAccessControl rac,
+			final PasswordService passwordService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
@@ -96,6 +100,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
+		this.passwordService = passwordService;
 	}
 
 	@Override
@@ -181,7 +186,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 		if (data.isProtectedByPassword()) {
 			if (password == null)
 				return false;
-			return HashUtils.matches(password, data.getPassword());
+			return passwordService.matches(password, data.getPassword());
 		}
 		return true;
 	}

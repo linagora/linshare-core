@@ -39,7 +39,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -64,19 +69,27 @@ import org.slf4j.LoggerFactory;
 		"classpath:springContext-security-sso.xml",
 		"classpath:springContext-security-common.xml",
 		"classpath:springContext-security.xml",})
-public class PasswordEncoderFactoryTest {
+public class PasswordEncoderTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private PasswordEncoderFactory passwordEncoderFactory;
-
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	@Qualifier("userRepository")
+	private UserRepository<User> userRepository;
+	
+	private LoadingServiceTestDatas datas;
+	
+	private Account root;
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		passwordEncoder = passwordEncoderFactory.getInstance();
+		datas = new LoadingServiceTestDatas(userRepository);
+		datas.loadUsers();
+		root = datas.getRoot();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -88,9 +101,9 @@ public class PasswordEncoderFactoryTest {
 
 	@Test
 	public void testPasswordEncoder() {
-		String encPass = "JYRd2THzjEqTGYq3gjzUh2UBso8=";
-		logger.debug("Encoded password : " + encPass);
-		logger.debug("Encoded Adminlinshare : " + passwordEncoder.encode("adminlinshare"));
+		//default bcrypt encode for encPass: "$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW4k3k0UxxtdFIEquzTA6" 
+		String encPass = root.getPassword();
+		logger.debug("Encoded password : {}", encPass);
 		Assertions.assertTrue(passwordEncoder.matches("adminlinshare", encPass), "The password is not correct");
 	}
 

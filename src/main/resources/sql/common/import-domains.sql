@@ -16,8 +16,9 @@ INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_d
 UPDATE domain_abstract SET mime_policy_id=1;
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
+-- password generated from https://www.browserling.com/tools/bcrypt
 INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, password, destroyed, domain_id, purge_step, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) 
-	VALUES (1, 'root@localhost.localdomain', 6, 'root@localhost.localdomain', now(),now(), 3, 'en', 'en','en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 1, 'IN_USE', 'Administrator', 'LinShare', true, '', false, false);
+	VALUES (1, 'root@localhost.localdomain', 6, 'root@localhost.localdomain', now(),now(), 3, 'en', 'en','en', true, '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW4k3k0UxxtdFIEquzTA6', 0, 1, 'IN_USE', 'Administrator', 'LinShare', true, '', false, false);
 
 -- system account :
 INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest) 
@@ -25,10 +26,6 @@ INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification
 -- system account for upload-request:
 INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest) 
 	VALUES (3,'system-account-uploadrequest', 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en','en', true, 0, 1, 'IN_USE', false, false, false);
-
--- system account for upload-proposition
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, password, destroyed, domain_id, purge_step, first_name, last_name, can_upload, comment, restricted, can_create_guest)
-	VALUES (4,'linshare-noreply@linagora.com', 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en','en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 1, 'IN_USE', null, 'Technical Account for upload proposition', false, '', false, false);
 
 -- system
 -- OBM user ldap pattern.

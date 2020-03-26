@@ -31,6 +31,7 @@
 		<constructor-arg ref="accountQuotaBusinessService"/>
 		<constructor-arg ref="containerQuotaBusinessService"/>
 		<constructor-arg ref="jwtLongTimeBusinessService"/>
+		<constructor-arg ref="passwordService" />
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
@@ -183,6 +184,7 @@
 	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">
 		<constructor-arg ref="technicalAccountBusinessService" />
 		<constructor-arg ref="technicalAccountPermissionService" />
+		<constructor-arg ref="passwordService" />
 	</bean>
 
 	<bean id="technicalAccountPermissionService" class="org.linagora.linshare.core.service.impl.TechnicalAccountPermissionServiceImpl">
@@ -195,6 +197,7 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="uploadRequestEntryService" />
 		<constructor-arg ref="uploadRequestUrlResourceAccessControl" />
+		<constructor-arg ref="passwordService" />
 	</bean>
 	<bean name="uploadRequestEntryService"
 			class="org.linagora.linshare.core.service.impl.UploadRequestEntryServiceImpl">

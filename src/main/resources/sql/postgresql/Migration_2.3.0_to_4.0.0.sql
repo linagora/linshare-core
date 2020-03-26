@@ -649,6 +649,9 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
 	VALUES(37, false, 'DRIVE_WARN_DELETED_MEMBER', 314, 315, 316, 1, true);
 
+-- Migrate default root password from SHA to bcrypt
+UPDATE account SET password = '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW4k3k0UxxtdFIEquzTA6' WHERE id=1;
+
 -- End of your requests
 
 -- LinShare version

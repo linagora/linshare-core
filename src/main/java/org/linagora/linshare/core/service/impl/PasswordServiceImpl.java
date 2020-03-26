@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2015-2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -40,21 +40,39 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.PasswordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class PasswordServiceImpl implements PasswordService {
 
 	final private static Logger logger = LoggerFactory.getLogger(PasswordServiceImpl.class);
-	
+
+	private final PasswordEncoder passwordEncoder;
+
+	public PasswordServiceImpl(PasswordEncoder passwordEncoder) {
+		super();
+		this.passwordEncoder = passwordEncoder;
+	}
+
+	@Override
+	public String encode(CharSequence rawPassword) {
+		return passwordEncoder.encode(rawPassword);
+	}
+
+	@Override
+	public boolean matches(CharSequence rawPassword, String encodedPassword) {
+		return passwordEncoder.matches(rawPassword, encodedPassword);
+	}
+
 	@Override
 	public String generatePassword() {
 		SecureRandom sr = null;
-        try {
-            sr = SecureRandom.getInstance("SHA1PRNG");
-        } catch (NoSuchAlgorithmException e) {
-        	logger.error("Algorithm \"SHA1PRNG\" not supported");
-            throw new TechnicalException("Algorithm \"SHA1PRNG\" not supported");
-        }
-
-        return Long.toString(sr.nextLong() & Long.MAX_VALUE , 36 );
+		try {
+			sr = SecureRandom.getInstance("SHA1PRNG");
+		} catch (NoSuchAlgorithmException e) {
+			logger.error("Algorithm \"SHA1PRNG\" not supported");
+			throw new TechnicalException("Algorithm \"SHA1PRNG\" not supported");
+		}
+		return Long.toString(sr.nextLong() & Long.MAX_VALUE, 36);
 	}
+
 }

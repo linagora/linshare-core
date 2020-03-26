@@ -177,6 +177,7 @@
 	<bean id="technicalAccountBusinessService" class="org.linagora.linshare.core.business.service.impl.TechnicalAccountBusinessServiceImpl">
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="technicalAccountRepository" />
+		<constructor-arg ref="passwordService" />
 	</bean>
 
 	<bean id="technicalAccountPermissionBusinessService" class="org.linagora.linshare.core.business.service.impl.TechnicalAccountPermissionBusinessServiceImpl">
@@ -302,8 +303,15 @@
 		class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
 		<constructor-arg ref="accountRepository" />
 	</bean>
+	
+	<bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
+	</bean>
+	
+	<bean id="passwordEncoder" factory-bean="passwordEncoderFactory" factory-method="getInstance" />
+	
 	<bean name="passwordService"
 		class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
+		<constructor-arg ref="passwordEncoder" />
 	</bean>
 
 	<bean id="jwtLongTimeBusinessService" class="org.linagora.linshare.core.business.service.impl.JwtLongTimeBusinessServiceImpl">
