@@ -135,11 +135,6 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
-			<dependency>
-				<groupId>org.mongodb</groupId>
-				<artifactId>mongo-java-driver</artifactId>
-				<version>3.6.4</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -1509,7 +1504,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<slf4j-release-version>1.7.30</slf4j-release-version>
-		<spring-data.version>Kay-SR12</spring-data.version>
+		<spring-data.version>Moore-SR5</spring-data.version>
 		<spring.mvc.version>5.1.14.RELEASE</spring.mvc.version>
 		<spring-release-version>5.1.14.RELEASE</spring-release-version>
 		<spring-security-release-version>5.1.9.RELEASE</spring-security-release-version>

@@ -109,7 +109,7 @@ public class UniqueName {
 		Validate.notEmpty(searchPattern, "Missing search pattern");
 		Query query = new Query();
 		query.addCriteria(Criteria.where("name").regex(searchPattern));
-		query.with(new Sort(Sort.Direction.DESC, "name"));
+		query.with(Sort.by(Sort.Direction.DESC, "name"));
 		return query;
 	}
 

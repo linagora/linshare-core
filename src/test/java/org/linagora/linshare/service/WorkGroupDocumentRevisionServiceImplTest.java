@@ -212,7 +212,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
 
 		WorkGroupNode createdDocument = workGroupDocumentService.find(john, john, workGroup, document.getUuid());
-		Sort sort = new Sort(Direction.DESC, "creationDate");
+		Sort sort = Sort.by(Direction.DESC, "creationDate");
 		List<WorkGroupNode> createdRevisions = repository.findByWorkGroupAndParentAndNodeType(
 				workGroup.getLsUuid(), createdDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION, sort);
 
@@ -265,7 +265,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 
 		assertEquals(false, document.getHasRevision());
 		WorkGroupNode createdDocument = workGroupDocumentService.find(john, john, workGroup, document.getUuid());
-		Sort sort = new Sort(Direction.DESC, "creationDate");
+		Sort sort = Sort.by(Direction.DESC, "creationDate");
 		List<WorkGroupNode> createdRevisions = repository.findByWorkGroupAndParentAndNodeType(
 				workGroup.getLsUuid(), createdDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION, sort);
 
@@ -300,7 +300,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 
 		WorkGroupNode createdDocument = workGroupDocumentService.find(john, john, workGroup, document.getUuid());
 
-		Sort sort = new Sort(Direction.DESC, "creationDate");
+		Sort sort = Sort.by(Direction.DESC, "creationDate");
 		List<WorkGroupNode> createdRevisions = repository.findByWorkGroupAndParentAndNodeType(
 				workGroup.getLsUuid(), createdDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION, sort);
 

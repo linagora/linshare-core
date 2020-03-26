@@ -150,13 +150,13 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 					workGroup.getLsUuid(), workGroupNode.getUuid(),
 					actions, types,
 					begin, end,
-					new Sort(Sort.Direction.DESC, CREATION_DATE));
+					Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		} else {
 			res = userMongoRepository.findWorkGroupHistoryForUser(
 					workGroup.getLsUuid(),
 					actions, types,
 					begin, end,
-					new Sort(Sort.Direction.DESC, CREATION_DATE));
+					Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		}
 		return res;
 	}
@@ -173,7 +173,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		res = userMongoRepository.findContactListsActivity(
 				contactListUuid,
 				supportedTypes,
-				new Sort(Sort.Direction.DESC, CREATION_DATE));
+				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		return res;
 	}
 
@@ -193,7 +193,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		res = userMongoRepository.findDocumentHistoryForUser(
 				owner.getLsUuid(), entryUuid,
 				actions, types,
-				new Sort(Sort.Direction.DESC, CREATION_DATE));
+				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		return res;
 	}
 
@@ -286,7 +286,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		}
 		action = getActions(action);
 		res = userMongoRepository.findUploadRequestHistoryForUser(actor.getLsUuid(), requestUuid, action,
-				entriesTypes, new Sort(Sort.Direction.DESC, CREATION_DATE));
+				entriesTypes, Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		return res;
 	}
 
@@ -313,7 +313,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			action.add(LogAction.DELETE);
 		}
 		return auditMongoRepository.findAll(domainUuid, action, AuditLogEntryType.PUBLIC_KEY,
-				new Sort(Sort.Direction.DESC, CREATION_DATE));
+				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
 	private List<LogAction> getMailAttachmentActions(List<LogAction> actions) {
@@ -330,7 +330,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			List<LogAction> actions) {
 		List<LogAction> actionsList = getMailAttachmentActions(actions);
 		return auditMongoRepository.findAllAudits(uuid, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
-				new Sort(Sort.Direction.DESC, CREATION_DATE));
+				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
 	@Override
@@ -338,7 +338,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			List<LogAction> actions) {
 		List<LogAction> actionsList = getMailAttachmentActions(actions);
 		return auditMongoRepository.findAllAuditsByDomain(domains, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
-				new Sort(Sort.Direction.DESC, CREATION_DATE));
+				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
 	@Override
@@ -349,7 +349,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		}
 		List<LogAction> actionsList = getMailAttachmentActions(actions);
 		return auditMongoRepository.findAllAuditsByRoot(actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
-				new Sort(Sort.Direction.DESC, CREATION_DATE));
+				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
 }

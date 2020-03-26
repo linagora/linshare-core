@@ -59,7 +59,7 @@ public class JwtLongTimeBusinessServiceImpl implements JwtLongTimeBusinessServic
 
 	@Override
 	public List<PermanentToken> findAll(Account actor) {
-		Sort sort = new Sort(Sort.Direction.DESC, CREATION_DATE);
+		Sort sort = Sort.by(Sort.Direction.DESC, CREATION_DATE);
 		List<PermanentToken> tokens = jwtLongTimeMongoRepository.findAllByActorUuid(actor.getLsUuid(), sort);
 		return tokens;
 	}

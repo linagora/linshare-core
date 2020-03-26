@@ -165,7 +165,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 					"You are not allowed to use this domain");
 		}
 		List<PublicKeyLs> publickeys = publicKeyMongoRepository.findByDomainUuid(domain.getUuid(),
-				new Sort(Sort.Direction.DESC, CREATION_DATE));
+				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		return publickeys;
 	}
 

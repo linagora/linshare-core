@@ -150,7 +150,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		if (nodeTypes == null) {
 			nodeTypes = Lists.newArrayList();
 		}
-		Sort defaultSort = new Sort(Sort.Direction.DESC, MODIFICATION_DATE);
+		Sort defaultSort = Sort.by(Sort.Direction.DESC, MODIFICATION_DATE);
 		if (flat) {
 			if (nodeTypes.isEmpty()) {
 				nodeTypes.add(WorkGroupNodeType.DOCUMENT);
