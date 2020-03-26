@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="
+          http://www.springframework.org/schema/data/mongo
+          http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean name="server" class="de.bwaldvogel.mongo.MongoServer" destroy-method="shutdown" init-method="bind">
+		<constructor-arg>
+			<bean class="de.bwaldvogel.mongo.backend.memory.MemoryBackend" />
+		</constructor-arg>
+	</bean>
+	<bean name="mongoSocketAddress" class="java.net.InetSocketAddress" factory-bean="server" factory-method="getLocalAddress" />
+	<bean name="mongoClientDefault" class="com.mongodb.MongoClient">
+		<constructor-arg>
+			<bean class="com.mongodb.ServerAddress">
+				<constructor-arg ref="mongoSocketAddress" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	<!-- 	org.springframework.data.mongodb.core.SimpleMongoDbFactory  -->
+	<mongo:db-factory
+		id="mongoDbFactoryDefault"
+		mongo-ref="mongoClientDefault"
+		dbname="${linshare.mongo.data.database}"
+		write-concern="${linshare.mongo.write.concern}"
+		/>
+	<!--  This template is the default instance used by every mongo repositories -->
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongoDbFactory" ref="mongoDbFactoryDefault" />
+	</bean>
+	<mongo:repositories base-package="org.linagora.linshare.mongo" />
+</beans>

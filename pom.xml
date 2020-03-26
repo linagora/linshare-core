@@ -173,9 +173,9 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-validator</artifactId>
-		    <version>${hibernate.validator.version}</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.validator.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -590,9 +590,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.github.fakemongo</groupId>
-			<artifactId>fongo</artifactId>
-			<version>${fakemongo.version}</version>
+			<groupId>de.bwaldvogel</groupId>
+			<artifactId>mongo-java-server</artifactId>
+			<version>${mongo.java.server}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- Test dependencies - end -->
@@ -1238,7 +1238,7 @@
 				<directory>src/test/resources</directory>
 			</testResource>
 			<testResource>
-				<directory>src/fongo/resources</directory>
+				<directory>src/mongo-java-server/resources</directory>
 			</testResource>
 		</testResources>
 		<pluginManagement>
@@ -1352,24 +1352,25 @@
 				</plugins>
 			</build>
 		</profile>
-		<!--  profile:id=fongo -->
+		<!--  profile:id=mongo-java-server -->
+		<!--  to-be-tested -->
 		<profile>
-			<id>fongo</id>
+			<id>mongo-java-server</id>
 			<build>
 				<resources>
 					<resource>
 						<directory>src/main/resources</directory>
 					</resource>
 					<resource>
-						<directory>src/fongo/resources</directory>
+						<directory>src/mongo-java-server/resources</directory>
 					</resource>
 				</resources>
 			</build>
 			<dependencies>
 				<dependency>
-					<groupId>com.github.fakemongo</groupId>
-					<artifactId>fongo</artifactId>
-					<version>${fakemongo.version}</version>
+					<groupId>de.bwaldvogel</groupId>
+					<artifactId>mongo-java-server</artifactId>
+					<version>${mongo.java.server}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.springframework.data</groupId>
@@ -1490,7 +1491,6 @@
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
 		<cxf.version>3.3.6</cxf.version>
 		<cxf.swagger.ui.version>3.25.0</cxf.swagger.ui.version>
-		<fakemongo.version>2.2.0-RC2</fakemongo.version>
 		<guava.version>28.2-jre</guava.version>
 		<h2.version>1.4.200</h2.version>
 		<hibernate.version>5.4.13.Final</hibernate.version>
@@ -1500,6 +1500,7 @@
 		<jjwt.version>0.11.1</jjwt.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
+		<mongo.java.server>1.26.0</mongo.java.server>
 		<mozilla.rhino.version>1.7.12</mozilla.rhino.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servlet.context.version>3.0.1</servlet.context.version>

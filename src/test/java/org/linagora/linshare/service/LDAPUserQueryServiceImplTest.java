@@ -76,7 +76,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-fongo.xml",
+		"classpath:springContext-mongo-java-server.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class LDAPUserQueryServiceImplTest {

@@ -90,7 +90,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-batches-quota-and-statistics.xml",
-		"classpath:springContext-fongo.xml",
+		"classpath:springContext-mongo-java-server.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
