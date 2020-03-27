@@ -74,7 +74,8 @@ public abstract class EmailContext {
 
 	public String getBusinessMailReplyTo() {
 		String mailReplyTo = getMailReplyTo();
-		if (LinShareConstants.defaultRootMailAddress.equals(mailReplyTo)) {
+		if (LinShareConstants.defaultRootMailAddress.equals(mailReplyTo)
+				|| LinShareConstants.defaultSystemMailAddress.equals(mailReplyTo)) {
 			// It is a technical email address that does not exist.
 			return null;
 		}

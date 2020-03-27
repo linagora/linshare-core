@@ -77,7 +77,7 @@ public class LoadingServiceTestDatas {
 	private User user2;	 /* Jane Smith */
 	private User user3;	 /* Foo Bar */
 	private Account root;
-	
+	private Account system;
 
 	public LoadingServiceTestDatas(
 			UserRepository<User> userRepository) {
@@ -87,6 +87,7 @@ public class LoadingServiceTestDatas {
 
 	public  void loadUsers() throws BusinessException {
 		root = userRepository.findByMail("root@localhost.localdomain");
+		system = userRepository.getBatchSystemAccount();
 		user1 = userRepository.findByMail("user1@linshare.org"); // John Do
 		user2 = userRepository.findByMail("user2@linshare.org"); // Jane Smith
 		user3 = userRepository.findByMail("user3@linshare.org"); // Foo Bar
@@ -106,6 +107,10 @@ public class LoadingServiceTestDatas {
 
 	public Account getRoot() {
 		return root;
+	}
+
+	public Account getSystem() {
+		return system;
 	}
 
 	public int getAvailableFunctionalitiesForTopDomain2() {

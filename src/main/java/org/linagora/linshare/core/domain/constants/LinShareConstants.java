@@ -46,6 +46,11 @@ public class LinShareConstants {
 	public static final String defaultRootMailAddress = "root@localhost.localdomain";
 
 	/**
+	 * Default system email address
+	 */
+	public static final String defaultSystemMailAddress = "system";
+
+	/**
 	 * Default domain policy identifier
 	 */
 	public static final String defaultDomainPolicyIdentifier = "DefaultDomainPolicy";
