@@ -243,7 +243,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		return query;
 	}
 
-	private Query buildFindOutDatedLdapGroupsQuery(Date syncDate, String domainUuid) {
+	protected Query buildFindOutDatedLdapGroupsQuery(Date syncDate, String domainUuid) {
 		return buildFindLdapGroupQuery(null, syncDate, domainUuid);
 	}
 
@@ -256,7 +256,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		nodeService.delete(actor, actor, group);
 	}
 
-	private void deleteOutDatedMembers(Account actor, SharedSpaceLDAPGroup group, Date syncDate,
+	protected void deleteOutDatedMembers(Account actor, SharedSpaceLDAPGroup group, Date syncDate,
 			LdapGroupsBatchResultContext resultContext) {
 		Query outdatedGroupMembersQuery = buildFindOutDatedLdapMembersQuery(group.getUuid(), syncDate);
 		List<SharedSpaceLDAPGroupMember> outDatedMembers = mongoTemplate.find(outdatedGroupMembersQuery,

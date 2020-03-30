@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,6 +68,7 @@ import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 
 public class LDAPDriveSyncServiceImpl extends LDAPGroupSyncServiceImpl implements LDAPDriveSyncService {
 
@@ -140,6 +142,7 @@ public class LDAPDriveSyncServiceImpl extends LDAPGroupSyncServiceImpl implement
 			createOrUpdateLDAPDriveMember(actor, domain.getUuid(), created, memberObject, syncDate, resultContext,
 					domain.getGroupProvider().getSearchInOtherDomains());
 		}
+		deleteOutDatedMembers(actor, created, syncDate, resultContext);
 	}
 
 	@Override
@@ -154,17 +157,16 @@ public class LDAPDriveSyncServiceImpl extends LDAPGroupSyncServiceImpl implement
 					ldapGroupObject);
 			applyDriveTask(actor, domain, ldapGroupObject, members, syncDate, resultContext);
 		}
-//		// Delete all outdated groups by deleting all its outdated members
-//		Query outdatedGroupsQuery = buildFindOutDatedLdapGroupsQuery(syncDate, domain.getUuid());
-//		List<SharedSpaceLDAPGroup> groupsOutDated = mongoTemplate.find(outdatedGroupsQuery, SharedSpaceLDAPGroup.class);
-//		logger.info(String.format(
-//				"Found %d outdated group(s) in domain %s. All the members of these groups will be removed",
-//				groupsOutDated.size(), domain.toString()));
-//		for (SharedSpaceLDAPGroup ldapGroup : groupsOutDated) {
-//			resultContext.add(LdapBatchMetaDataType.DELETED_GROUPS);
-//			deleteOutDatedMembers(actor, ldapGroup, syncDate, resultContext);
-//		}
-		
+		// Delete all outdated drives by deleting all its outdated members
+		Query outdatedGroupsQuery = buildFindOutDatedLdapGroupsQuery(syncDate, domain.getUuid());
+		List<SharedSpaceLDAPGroup> groupsOutDated = mongoTemplate.find(outdatedGroupsQuery, SharedSpaceLDAPGroup.class);
+		logger.info(String.format(
+				"Found %d outdated group(s) in domain %s. All the members of these groups will be removed",
+				groupsOutDated.size(), domain.toString()));
+		for (SharedSpaceLDAPGroup ldapGroup : groupsOutDated) {
+			resultContext.add(LdapBatchMetaDataType.DELETED_DRIVES);
+			deleteOutDatedMembers(actor, ldapGroup, syncDate, resultContext);
+		}
 	}
 
 }
