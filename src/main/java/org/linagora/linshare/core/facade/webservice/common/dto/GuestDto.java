@@ -38,7 +38,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
@@ -107,7 +106,7 @@ public class GuestDto extends AccountDto {
 		guest.setCanUpload(isCanUpload());
 		guest.setComment(getComment());
 		guest.setLocale(getLocale());
-		guest.setExternalMailLocale(SupportedLanguage.toLanguage(getLocale()));
+		guest.setExternalMailLocale(getExternalMailLocale());
 		guest.setExpirationDate(getExpirationDate());
 		guest.setFirstName(getFirstName());
 		guest.setLastName(getLastName());
