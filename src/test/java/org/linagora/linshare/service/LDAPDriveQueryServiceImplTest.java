@@ -84,8 +84,9 @@ public class LDAPDriveQueryServiceImplTest {
 
 	private static final String user2_email = "user2@linshare.org";
 
-	public LDAPDriveQueryServiceImplTest() {
-		super();
+	@BeforeEach
+	public void setUp() throws Exception {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		attributes = new HashMap<String, LdapAttribute>();
 		attributes.put(GroupLdapPattern.GROUP_NAME, new LdapAttribute(GroupLdapPattern.GROUP_NAME, "cn"));
 		attributes.put(GroupLdapPattern.GROUP_MEMBER, new LdapAttribute(GroupLdapPattern.GROUP_MEMBER, "member"));
@@ -102,11 +103,6 @@ public class LDAPDriveQueryServiceImplTest {
 
 		ldapConnection = new LdapConnection("testldap", "ldap://localhost:33389", "anonymous");
 		baseDn = "ou=Groups,dc=linshare,dc=org";
-	}
-
-	@BeforeEach
-	public void setUp() throws Exception {
-		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -121,7 +117,7 @@ public class LDAPDriveQueryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES:" + ldapGroup.toString());
+			logger.info("DRIVES: {}", ldapGroup.toString());
 			if (!ldapGroup.getMembers().isEmpty()) {
 				logger.info(ldapGroup.getMembers().toString());
 			}
@@ -139,7 +135,7 @@ public class LDAPDriveQueryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES:" + ldapGroup.toString());
+			logger.info("DRIVES: {}", ldapGroup.toString());
 			Assertions.assertEquals("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
 			Set<LdapDriveMemberObject> listMembers = ldapDriveQueryService.listDriveMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
@@ -163,7 +159,7 @@ public class LDAPDriveQueryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES:" + ldapGroup.toString());
+			logger.info("DRIVES: {}", ldapGroup.toString());
 			Assertions.assertEquals("cn=drive-drive-2,ou=Groups2,dc=linshare,dc=org", ldapGroup.getExternalId());
 			Set<LdapDriveMemberObject> listMembers = ldapDriveQueryService.listDriveMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
@@ -189,7 +185,7 @@ public class LDAPDriveQueryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES:" + ldapGroup.toString());
+			logger.info("DRIVES: {}", ldapGroup.toString());
 			Assertions.assertEquals("cn=drive-drive-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
 			Set<LdapDriveMemberObject> listMembers = ldapDriveQueryService.listDriveMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
@@ -215,7 +211,7 @@ public class LDAPDriveQueryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES:" + ldapGroup.toString());
+			logger.info("DRIVES: {}", ldapGroup.toString());
 			Assertions.assertEquals("cn=drive-drive-4,ou=Groups4,dc=linshare,dc=org", ldapGroup.getExternalId());
 			Set<LdapDriveMemberObject> listMembers = ldapDriveQueryService.listDriveMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
