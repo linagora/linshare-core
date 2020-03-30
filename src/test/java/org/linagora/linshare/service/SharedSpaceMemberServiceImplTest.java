@@ -109,6 +109,8 @@ public class SharedSpaceMemberServiceImplTest {
 
 	private Account root;
 
+	private Account system;
+
 	private User john;
 
 	private User jane;
@@ -158,6 +160,7 @@ public class SharedSpaceMemberServiceImplTest {
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		root = datas.getRoot();
+		system = datas.getSystem();
 		john = datas.getUser1();
 		jane = datas.getUser2();
 		initService.init();
@@ -243,6 +246,26 @@ public class SharedSpaceMemberServiceImplTest {
 		User user = userRepository.findByLsUuid(jane.getLsUuid());
 		MailContainerWithRecipient mail = buildingService
 				.build(new WorkGroupWarnDeletedMemberEmailContext(memberToCreate, root, user));
+		Assertions.assertNull(mail.getReplyTo());
+	}
+
+	/**
+	 * This Test shows the field replyTo in MailContainerWithRecipient is null in case the system who did the action 
+	 */
+	@Test
+	public void testDeleteNoReplyToMailSystemEmail() {
+		SharedSpaceMember memberToCreate = service.create(john, john, node, adminRole, accountJane);
+		Assertions.assertEquals(memberToCreate.getAccount().getUuid(), jane.getLsUuid(),
+				"The account referenced in this member is not john's");
+		memberBusinessService.delete(memberToCreate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(john, john, memberToCreate.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, exception.getErrorCode(),
+				"The member is found in the database. It has not been deleted");
+		User user = userRepository.findByLsUuid(jane.getLsUuid());
+		MailContainerWithRecipient mail = buildingService
+				.build(new WorkGroupWarnDeletedMemberEmailContext(memberToCreate, system, user));
 		Assertions.assertNull(mail.getReplyTo());
 	}
 
