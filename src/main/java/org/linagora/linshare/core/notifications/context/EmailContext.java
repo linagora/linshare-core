@@ -36,6 +36,7 @@ package org.linagora.linshare.core.notifications.context;
 import java.util.Locale;
 
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -70,6 +71,16 @@ public abstract class EmailContext {
 	public abstract String getMailRcpt();
 
 	public abstract String getMailReplyTo();
+
+	public String getBusinessMailReplyTo() {
+		String mailReplyTo = getMailReplyTo();
+		if (LinShareConstants.defaultRootMailAddress.equals(mailReplyTo)
+				|| LinShareConstants.defaultSystemMailAddress.equals(mailReplyTo)) {
+			// It is a technical email address that does not exist.
+			return null;
+		}
+		return mailReplyTo;
+	}
 
 	public abstract void validateRequiredField();
 

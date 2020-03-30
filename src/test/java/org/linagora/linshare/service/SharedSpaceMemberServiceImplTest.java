@@ -40,14 +40,18 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
@@ -95,6 +99,8 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	private Account root;
 
+	private Account system;
+
 	private User john;
 
 	private User jane;
@@ -123,7 +129,14 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	@Qualifier("sharedSpaceMemberService")
 	private SharedSpaceMemberService service;
 
+	@Autowired
+	@Qualifier("sharedSpaceMemberBusinessService")
+	SharedSpaceMemberBusinessService memberBusinessService;
+
 	private LinShareWiser wiser;
+
+	@Autowired
+	private MailBuildingService buildingService;
 
 	public SharedSpaceMemberServiceImplTest() {
 		super();
@@ -139,6 +152,7 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		root = datas.getRoot();
+		system = datas.getSystem();
 		john = datas.getUser1();
 		jane = datas.getUser2();
 		initService.init();
@@ -217,6 +231,50 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		service.deleteAllMembers(john, john, lightNodePersisted.getUuid());
 		foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
 		Assert.assertEquals("There are members left in the shared space node", 0, foundMembers.size());
+	}
+
+	/**
+	 * This Test shows the field replyTo in MailContainerWithRecipient is null in case the root user who did the action 
+	 */
+	@Test
+	public void testDeleteNoReplyToMail() {
+		SharedSpaceMember memberToCreate = service.create(john, john, node, adminRole, accountJane);
+		Assert.assertEquals("The account referenced in this member is not john's",
+				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
+		memberBusinessService.delete(memberToCreate);
+		try {
+			service.find(john, john, memberToCreate.getUuid());
+			Assert.assertTrue("An exception should be thrown because the member should not be found", false);
+		} catch (BusinessException e) {
+			Assert.assertEquals("The member is found in the database. It has not been deleted",
+					BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e.getErrorCode());
+		}
+		User user = userRepository.findByLsUuid(jane.getLsUuid());
+		MailContainerWithRecipient mail = buildingService
+				.build(new WorkGroupWarnDeletedMemberEmailContext(memberToCreate, root, user));
+		Assert.assertNull(mail.getReplyTo());
+	}
+
+	/**
+	 * This Test shows the field replyTo in MailContainerWithRecipient is null in case the system who did the action 
+	 */
+	@Test
+	public void testDeleteNoReplyToMailSystemEmail() {
+		SharedSpaceMember memberToCreate = service.create(john, john, node, adminRole, accountJane);
+		Assert.assertEquals("The account referenced in this member is not john's",
+				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
+		memberBusinessService.delete(memberToCreate);
+		try {
+			service.find(john, john, memberToCreate.getUuid());
+			Assert.assertTrue("An exception should be thrown because the member should not be found", false);
+		} catch (BusinessException e) {
+			Assert.assertEquals("The member is found in the database. It has not been deleted",
+					BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e.getErrorCode());
+		}
+		User user = userRepository.findByLsUuid(jane.getLsUuid());
+		MailContainerWithRecipient mail = buildingService
+				.build(new WorkGroupWarnDeletedMemberEmailContext(memberToCreate, system, user));
+		Assert.assertNull(mail.getReplyTo());
 	}
 
 	@Test

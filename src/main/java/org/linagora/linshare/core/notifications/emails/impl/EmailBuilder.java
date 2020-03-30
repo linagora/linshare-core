@@ -375,7 +375,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			container.setContent(body);
 
 			container.setFrom(getFromMailAddress(emailCtx.getFromDomain()));
-			container.setReplyTo(emailCtx.getMailReplyTo());
+			container.setReplyTo(emailCtx.getBusinessMailReplyTo());
 			container.setRecipient(emailCtx.getMailRcpt());
 
 			// Message IDs from Web service API (ex Plugin Thunderbird)
