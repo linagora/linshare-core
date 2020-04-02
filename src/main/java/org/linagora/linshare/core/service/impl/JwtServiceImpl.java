@@ -53,17 +53,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Clock;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.DefaultClock;
 
 public class JwtServiceImpl implements JwtService {
 
 	final private static Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
-
-	protected Clock clock = DefaultClock.INSTANCE;
 
 	protected String issuer;
 
@@ -97,7 +93,7 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public String generateToken(Account actor, String tokenUuid, Date creationDate) {
-		Date createdDate = clock.now();
+		Date createdDate = new Date();
 		Date expirationDate = getExpirationDate(createdDate);
 
 		// extra claims

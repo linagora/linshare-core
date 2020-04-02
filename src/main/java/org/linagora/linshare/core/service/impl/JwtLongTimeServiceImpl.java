@@ -69,11 +69,9 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
 
 import io.jsonwebtoken.Clock;
-import io.jsonwebtoken.impl.DefaultClock;
 
 public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, PermanentToken> implements JwtLongTimeService {
 
-	protected Clock clock = DefaultClock.INSTANCE;
 
 	protected String issuer;
 
@@ -131,7 +129,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 	@Override
 	public PermanentToken create(Account authUser, Account actor, PermanentToken permanentToken) throws BusinessException {
 		Validate.notNull(actor, "actor must be set");
-		final Date creationDate = clock.now();
+		final Date creationDate = new Date();
 		final String tokenUuid = UUID.randomUUID().toString();
 		GenericLightEntity lightActor = new GenericLightEntity(actor.getLsUuid(), actor.getFullName());
 		GenericLightEntity lightDomain = new GenericLightEntity(actor.getDomain());
