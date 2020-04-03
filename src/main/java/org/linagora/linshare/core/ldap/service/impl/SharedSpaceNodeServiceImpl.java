@@ -35,6 +35,7 @@ package org.linagora.linshare.core.ldap.service.impl;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -60,9 +61,10 @@ public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.servi
 			LogEntryService logEntryService,
 			ThreadService threadService,
 			FunctionalityReadOnlyService functionalityService,
-			AccountQuotaBusinessService accountQuotaBusinessService) {
+			AccountQuotaBusinessService accountQuotaBusinessService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(businessService, sharedSpaceNodeResourceAccessControl, memberBusinessService, sharedSpaceMemberService,
-				ssRoleService, logEntryService, threadService, functionalityService, accountQuotaBusinessService);
+				ssRoleService, logEntryService, threadService, functionalityService, accountQuotaBusinessService, sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
 	}
 

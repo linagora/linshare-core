@@ -142,6 +142,29 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	}
 
 	@Test
+	public void createSharedSpaceSpecialCharInName() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Assert.assertNotNull("node not created", sharedSpaceNodes);
+		SharedSpaceNode node = new SharedSpaceNode("EP_TEST_v233<script>alert(document.cookie)</script>", null, NodeType.WORK_GROUP);
+		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
+		Assert.assertNotNull("node not created", expectedNode);
+		Assert.assertEquals(expectedNode.getName(), "EP_TEST_v233");
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void updateSharedSpaceSpecialCharInName() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode nodeToUpdate = new SharedSpaceNode("nodeName ToUpdate", null, NodeType.WORK_GROUP);
+		Assert.assertEquals(nodeToUpdate.getName(), "nodeName ToUpdate");
+		nodeToUpdate = service.create(authUser, authUser, nodeToUpdate);
+		nodeToUpdate.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		service.update(authUser, authUser, nodeToUpdate);
+		Assert.assertEquals(nodeToUpdate.getName(), "EP_TEST_v233");
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void find() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpaceNode toFindNode = service.find(authUser, authUser, sharedSpaceNodes.get(0).getUuid());

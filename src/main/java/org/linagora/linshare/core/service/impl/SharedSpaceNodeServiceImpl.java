@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -90,6 +91,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	protected final AccountQuotaBusinessService accountQuotaBusinessService;
 
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
+
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
@@ -98,7 +101,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			LogEntryService logEntryService,
 			ThreadService threadService,
 			FunctionalityReadOnlyService functionalityService,
-			AccountQuotaBusinessService accountQuotaBusinessService) {
+			AccountQuotaBusinessService accountQuotaBusinessService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(rac);
 		this.businessService = businessService;
 		this.memberService = memberService;
@@ -108,6 +112,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	@Override
@@ -140,6 +145,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not create this kind of sharedSpace with this method.");
 		}
+		node.setName(sanitizerInputHtmlBusinessService.strictClean(node.getName()));
 		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
 		// Hack to create thread into shared space node
@@ -242,6 +248,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 				nodeToUpdate);
 		checkUpdateVersioningParameters(nodeToUpdate.getVersioningParameters(), node.getVersioningParameters(),
 				actor.getDomain());
+		nodeToUpdate.setName(sanitizerInputHtmlBusinessService.strictClean(nodeToUpdate.getName()));
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		threadService.update(authUser, actor, updated.getUuid(), updated.getName());
