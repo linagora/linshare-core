@@ -395,6 +395,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- override org.linid.dm.authorization dependency requirement - security issue. -->
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.4</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.mozilla</groupId>
 			<artifactId>rhino</artifactId>
