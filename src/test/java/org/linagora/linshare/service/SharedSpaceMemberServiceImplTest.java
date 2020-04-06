@@ -140,20 +140,16 @@ public class SharedSpaceMemberServiceImplTest {
 	@Qualifier("sharedSpaceMemberBusinessService")
 	SharedSpaceMemberBusinessService memberBusinessService;
 
-	private LinShareWiser wiser;
-
 	@Autowired
 	private MailBuildingService buildingService;
 
 	public SharedSpaceMemberServiceImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		root = datas.getRoot();
@@ -180,7 +176,6 @@ public class SharedSpaceMemberServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
