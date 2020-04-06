@@ -36,9 +36,9 @@ package org.linagora.linshare.webservice.interceptor;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.facade.webservice.admin.ExceptionStatisticAdminFacade;
@@ -62,7 +62,7 @@ public class DataIntegrityViolationExceptionMapper implements ExceptionMapper<Da
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_BAD_DATA_FORMAT.getCode(),
 				"Bad data format : " + exception.getMostSpecificCause().toString()
 				+ ", " + exception.getClass().toString());
-		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
+		ResponseBuilder response = Response.status(Status.BAD_REQUEST);
 		exceptionStatisticFacade.createExceptionStatistic(null, null, ExceptionType.DATA_INTEGRITY_VIOLATION_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();

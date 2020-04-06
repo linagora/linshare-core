@@ -62,22 +62,6 @@ public class WebserviceBase {
 
 	// REST
 
-	protected WebApplicationException giveRestException(int httpErrorCode,
-			String message) {
-		return giveRestException(httpErrorCode, message, null);
-	}
-
-	protected WebApplicationException giveRestException(int httpErrorCode,
-			String message, Throwable cause) {
-		if (cause == null) {
-			return new WebApplicationException(Response.status(httpErrorCode)
-					.entity(message).build());
-		} else {
-			return new WebApplicationException(cause, Response
-					.status(httpErrorCode).entity(message).build());
-		}
-	}
-
 	protected String getCoreVersion() {
 		Properties prop = new Properties();
 		try {

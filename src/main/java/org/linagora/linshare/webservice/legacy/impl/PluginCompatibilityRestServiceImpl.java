@@ -44,10 +44,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -61,12 +63,8 @@ import org.linagora.linshare.core.utils.StringPredicates;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.legacy.PluginCompatibilityRestService;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PluginCompatibilityRestServiceImpl extends WebserviceBase implements PluginCompatibilityRestService {
-
-	private static final Logger logger = LoggerFactory.getLogger(PluginCompatibilityRestServiceImpl.class);
 
 	private final DocumentFacade webServiceDocumentFacade;
 	private final ShareFacade webServiceShareFacade;
@@ -98,7 +96,8 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 			throws BusinessException {
 		CollectionUtils.filter(uuid, StringPredicates.isNotBlank());
 		if (uuid.isEmpty())
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing parameter file");
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
+					.entity("Missing parameter file").build());
 		webServiceShareFacade.multiplesharedocuments(targetMail, uuid, securedShare, message, inReplyTo, references);
 	}
 
@@ -116,7 +115,8 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		checkMaintenanceMode();
 		String comment = (description == null) ? "" : description;
 		if (theFile == null) {
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
+					.entity("Missing file (check parameter file)").build());
 		}
 		String fileName = getFileName(givenFileName, body);
 		File tempFile = WebServiceUtils.getTempFile(theFile, "rest-plugin", fileName);

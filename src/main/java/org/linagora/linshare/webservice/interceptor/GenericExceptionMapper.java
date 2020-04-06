@@ -38,9 +38,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.facade.webservice.admin.ExceptionStatisticAdminFacade;
@@ -61,7 +61,7 @@ public class GenericExceptionMapper implements ExceptionMapper<Exception> {
 	public Response toResponse(Exception exception) {
 		logger.error("A NullPointerException was caught : " + exception.getLocalizedMessage() + ". ", exception);
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_FAULT.getCode(), "Unexpected exception : " + exception.getClass().toString() + " : " +exception.getMessage());
-		ResponseBuilder response = Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+		ResponseBuilder response = Response.status(Status.INTERNAL_SERVER_ERROR);
 		exceptionStatisticFacade.createExceptionStatistic(null, exception.getStackTrace(), ExceptionType.EXCEPTION);
 		response.entity(errorDto);
 		return response.build();

@@ -47,10 +47,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -66,12 +67,12 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailAttachmentRestService;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/mail_attachments")
@@ -133,8 +134,9 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 			MultipartBody body) throws BusinessException {
 		checkMaintenanceMode();
 		if (file == null) {
-			logger.error("Missing file (check parameter file)");
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check multipart parameter named 'file')");
+			logger.error("Missing file (check multipart parameter named 'file')");
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
+					.entity("Missing file (check multipart parameter named 'file')").build());
 		}
 		String fileName = getFileName(givenFileName, body);
 		File tempFile = WebServiceUtils.getTempFile(file, "rest-userv2-document-entries", fileName);

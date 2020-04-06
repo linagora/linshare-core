@@ -38,7 +38,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 
-import org.apache.commons.httpclient.HttpStatus;
+import javax.ws.rs.core.Response.Status;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.facade.webservice.admin.ExceptionStatisticAdminFacade;
@@ -63,7 +63,7 @@ public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<Unre
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_BAD_REQUEST.getCode(),
 				"You have an unrecognized field in your json check the : " + exception.getPropertyName().toString()
 				+ ", " + exception.getClass().toString());
-		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
+		ResponseBuilder response = Response.status(Status.BAD_REQUEST);
 		exceptionStatisticFacade.createExceptionStatistic(null, null, ExceptionType.UNRECOGNIZED_PROPERTY_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();

@@ -50,11 +50,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang3.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -87,12 +88,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.google.common.io.ByteSource;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/documents")
@@ -150,7 +151,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		Long transfertDuration = WebServiceUtils.getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check multipart parameter named 'file')");
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
+					.entity("Missing file (check multipart parameter named 'file')").build());
 		}
 		String fileName = getFileName(givenFileName, body);
 		File tempFile = WebServiceUtils.getTempFile(file, "rest-userv2-document-entries", fileName);

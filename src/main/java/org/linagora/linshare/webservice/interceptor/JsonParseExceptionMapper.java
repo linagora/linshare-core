@@ -40,7 +40,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 
-import org.apache.commons.httpclient.HttpStatus;
+import javax.ws.rs.core.Response.Status;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.facade.webservice.admin.ExceptionStatisticAdminFacade;
@@ -65,7 +65,7 @@ public class JsonParseExceptionMapper implements ExceptionMapper<JsonParseExcept
 				exception);
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_BAD_REQUEST.getCode(),
 				"You have an error in your json : " + exception.getClass().toString() + " : " + exception.getMessage());
-		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
+		ResponseBuilder response = Response.status(Status.BAD_REQUEST);
 		exceptionStatisticFacade.createExceptionStatistic(null, exception.getStackTrace(), ExceptionType.JSON_PARSE_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();

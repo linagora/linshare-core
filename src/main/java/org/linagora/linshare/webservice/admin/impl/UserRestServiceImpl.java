@@ -51,9 +51,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -73,12 +75,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 
@@ -320,9 +323,10 @@ public class UserRestServiceImpl extends WebserviceBase implements
 			@Parameter(description = "The given field delimiter of the csv file.", required = false) @Multipart(value = "csvFieldDelimiter", required = false) String csvFieldDelimiter,
 			MultipartBody body) throws BusinessException {
 		if (file == null) {
-			logger.error("Missing file (check parameter file)");
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
-					"Missing file (check parameter file)");
+			String msg = "Missing file (check multipart parameter named 'file')";
+			logger.error(msg);
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
+					.entity(msg).build());
 		}
 		String fileName = getFileName(givenFileName, body);
 		String extension = null;
@@ -332,9 +336,10 @@ public class UserRestServiceImpl extends WebserviceBase implements
 			extension = fileName.substring(splitIdx, fileName.length());
 		}
 		if (!extension.equals(csvExtension)) {
-			logger.error("Bad file extension");
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
-					"bad file extension");
+			String msg = "Bad file extension";
+			logger.error(msg);
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
+					.entity(msg).build());
 		}
 		File tempFile = WebServiceUtils.getTempFile(file, "emails-migration", fileName);
 		BufferedReader reader = null;
