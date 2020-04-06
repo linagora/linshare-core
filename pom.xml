@@ -1605,7 +1605,7 @@
 		<cxf.swagger.ui.version>3.25.0</cxf.swagger.ui.version>
 		<fakemongo.version>2.2.0-RC2</fakemongo.version>
 		<guava.version>27.0-jre</guava.version>
-		<h2.version>1.4.199</h2.version>
+		<h2.version>1.4.200</h2.version>
 		<hibernate.version>5.4.13.Final</hibernate.version>
 		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
 		<jackson.version>2.10.0</jackson.version>
