@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -79,8 +80,9 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			UserRepository<User> userRepository,
 			DriveMemberBusinessService driveMemberBusinessService,
 			SharedSpaceNodeBusinessService nodeBusinessService,
-			SharedSpaceRoleService roleService) {
-		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, roleService, nodeBusinessService);
+			SharedSpaceRoleService roleService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, roleService, nodeBusinessService, sanitizerInputHtmlBusinessService);
 		this.driveMemberBusinessService = driveMemberBusinessService;
 	}
 

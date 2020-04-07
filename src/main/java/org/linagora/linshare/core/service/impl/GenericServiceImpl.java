@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -42,15 +43,22 @@ import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 public class GenericServiceImpl<R, E> {
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected final AbstractResourceAccessControl<Account, R, E> rac;
 
-	public GenericServiceImpl(AbstractResourceAccessControl<Account, R, E> rac) {
+	protected final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
+
+	public GenericServiceImpl(
+			AbstractResourceAccessControl<Account, R, E> rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super();
 		this.rac = rac;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	protected void preChecks(Account actor, Account owner) {
@@ -106,5 +114,12 @@ public class GenericServiceImpl<R, E> {
 			throws BusinessException {
 		rac.checkDeletePermission(actor, targetedAccount, clazz, errCode,
 				entry, opt);
+	}
+
+	protected String sanitize(String input) {
+		if (!Strings.isNullOrEmpty(input)) {
+			return sanitizerInputHtmlBusinessService.strictClean(input);
+		}
+		return input;
 	}
 }

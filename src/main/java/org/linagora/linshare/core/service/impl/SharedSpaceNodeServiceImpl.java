@@ -39,6 +39,7 @@ import java.util.Map;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
@@ -105,8 +106,9 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService,
 			DriveMemberBusinessService driveMemberBusinessService,
-			Map<NodeType, SharedSpaceFragmentService> serviceBuilders) {
-		super(rac);
+			Map<NodeType, SharedSpaceFragmentService> serviceBuilders,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
 		this.memberService = memberService;
 		this.ssRoleService = ssRoleService;

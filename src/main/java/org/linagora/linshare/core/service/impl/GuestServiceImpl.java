@@ -103,8 +103,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	protected final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository;
 	
-	protected final SanitizerInputHtmlBusinessService sanitizer;
-
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -116,8 +114,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
-			final SanitizerInputHtmlBusinessService sanitier) {
-		super(rac);
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
@@ -128,7 +126,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.resetGuestPasswordMongoRepository = resetGuestPasswordMongoRepository;
-		this.sanitizer = sanitier;
 	}
 
 	@Override

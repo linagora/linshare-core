@@ -96,8 +96,6 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected final LogEntryService logEntryService;
 
-	protected final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
-
 	protected final MongoTemplate mongoTemplate;
 
 	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
@@ -121,12 +119,11 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			WorkGroupDocumentRevisionService revisionService,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			WorkGroupNodeBusinessService workGroupNodeBusinessService) {
-		super(rac);
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.repository = repository;
 		this.workGroupDocumentService = workGroupDocumentService;
 		this.workGroupFolderService = workGroupFolderService;
 		this.logEntryService = logEntryService;
-		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.mongoTemplate = mongoTemplate;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.revisionService = revisionService;

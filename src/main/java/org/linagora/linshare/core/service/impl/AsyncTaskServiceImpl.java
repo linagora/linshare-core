@@ -39,6 +39,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AsyncTaskBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AsyncTaskStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
@@ -54,8 +55,9 @@ public class AsyncTaskServiceImpl extends
 	protected AsyncTaskBusinessService businessService;
 
 	public AsyncTaskServiceImpl(AsyncTaskBusinessService businessService,
-			AsyncTaskResourceAccessControl rac) {
-		super(rac);
+			AsyncTaskResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
 	}
 

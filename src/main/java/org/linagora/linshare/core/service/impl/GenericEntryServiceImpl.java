@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -45,8 +46,9 @@ public class GenericEntryServiceImpl<R, E extends Entry> extends
 
 	protected final EntryResourceAccessControl<R, E> rac;
 
-	public GenericEntryServiceImpl(EntryResourceAccessControl<R, E> rac) {
-		super(rac);
+	public GenericEntryServiceImpl(EntryResourceAccessControl<R, E> rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.rac = rac;
 	}
 

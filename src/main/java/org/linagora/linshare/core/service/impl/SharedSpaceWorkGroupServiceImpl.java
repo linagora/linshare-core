@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -82,9 +83,10 @@ public class SharedSpaceWorkGroupServiceImpl extends AbstractSharedSpaceFragment
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService,
-			SharedSpaceMemberBusinessService memberDriveService) {
+			SharedSpaceMemberBusinessService memberDriveService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(rac, businessService, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
-				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService);
+				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService, sanitizerInputHtmlBusinessService);
 	}
 
 	@Override

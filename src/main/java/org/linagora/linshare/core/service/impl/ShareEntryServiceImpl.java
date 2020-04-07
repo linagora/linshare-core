@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -105,8 +106,9 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
 			FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository,
-			ShareEntryResourceAccessControl rac) {
-		super(rac);
+			ShareEntryResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.guestRepository = guestRepository;
 		this.functionalityService = functionalityService;
 		this.shareEntryBusinessService = shareEntryBusinessService;

@@ -41,6 +41,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -117,9 +118,9 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final ShareEntryResourceAccessControl rac,
 			final MailBuildingService mailBuildingService,
 			final ShareExpiryDateService shareExpiryDateService,
-			final ShareEntryGroupService shareEntryGroupService
-			) {
-		super(rac);
+			final ShareEntryGroupService shareEntryGroupService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.funcService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
 		this.userService = userService;

@@ -125,7 +125,7 @@ public class DocumentEntryServiceImpl
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService,
 			UploadRequestEntryBusinessService uploadRequestEntryBusinessService) {
-		super(rac);
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.logEntryService = logEntryService;

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
@@ -68,8 +69,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 			ThreadResourceAccessControl rac,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			ContainerQuotaBusinessService containerQuotaBusinessService,
-			WorkGroupNodeService workGroupNodeService) {
-		super(rac);
+			WorkGroupNodeService workGroupNodeService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.threadRepository = threadRepository;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;

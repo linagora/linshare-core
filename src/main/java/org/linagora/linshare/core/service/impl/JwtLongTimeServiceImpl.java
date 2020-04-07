@@ -41,6 +41,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -110,8 +111,9 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 			LogEntryService logEntryService,
 			AuditLogEntryService auditLogEntryService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
-			DomainBusinessService domainBuisnessService) {
-		super(rac);
+			DomainBusinessService domainBuisnessService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.issuer = issuer;
 		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
 		this.jwtService = jwtService;

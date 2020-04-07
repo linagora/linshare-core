@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.fragment.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -91,8 +92,9 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 			LogEntryService logEntryService,
 			UserRepository<User> userRepository,
 			SharedSpaceRoleService roleService,
-			SharedSpaceNodeBusinessService nodeBusinessService) {
-		super(rac);
+			SharedSpaceNodeBusinessService nodeBusinessService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
 		this.logEntryService = logEntryService;
 		this.userRepository = userRepository;

@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -65,8 +66,9 @@ public class ShareEntryGroupServiceImpl extends GenericServiceImpl<Account, Shar
 			final ShareEntryService shareEntryService,
 			final LogEntryService logEntryService,
 			final AnonymousShareEntryService anonymousShareEntryService,
-			final ShareEntryGroupResourceAccessControl rac) {
-		super(rac);
+			final ShareEntryGroupResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.businessService = shareEntryGroupBusinessService;
 		this.logEntryService = logEntryService;
 		this.anonymousShareEntryService = anonymousShareEntryService;

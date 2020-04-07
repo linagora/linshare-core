@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -56,8 +57,9 @@ public class SafeDetailServiceImpl extends GenericServiceImpl<Account, SafeDetai
 
 	public SafeDetailServiceImpl(SafeDetailMongoRepository safeDetailMongoRepository,
 			LogEntryService logEntryService,
-			SafeDetailResourceAccessControl rac) {
-		super(rac);
+			SafeDetailResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.safeDetailMongoRepository = safeDetailMongoRepository;
 		this.logEntryService = logEntryService;
 	}
