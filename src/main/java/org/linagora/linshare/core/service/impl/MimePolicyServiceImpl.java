@@ -48,14 +48,10 @@ import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.MimePolicyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 public class MimePolicyServiceImpl implements MimePolicyService {
-
-	private static final Logger logger = LoggerFactory.getLogger(MimePolicyServiceImpl.class);
 
 	final private MimePolicyBusinessService mimePolicyBusinessService;
 

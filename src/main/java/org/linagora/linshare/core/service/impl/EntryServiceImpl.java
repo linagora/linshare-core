@@ -46,16 +46,12 @@ import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.ShareEntryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author fred
  *
  */
 public class EntryServiceImpl implements EntryService {
-
-	private static final Logger logger = LoggerFactory.getLogger(EntryServiceImpl.class);
 
 	private final ShareEntryService shareEntryService;
 

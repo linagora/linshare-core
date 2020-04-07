@@ -37,9 +37,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.lang3.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessErrorCode;

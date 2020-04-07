@@ -123,8 +123,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 	private final MailActivationBusinessService mailActivationBusinessService;
 
-	private final FileDataStore fileDataStore;
-
 	private class ContactRepresentation {
 		private String mail;
 		private String firstName;
@@ -223,7 +221,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.domainBusinessService = domainBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailActivationBusinessService = mailActivationBusinessService;
-		this.fileDataStore = fileDataStore;
 		this.templateEngine = new TemplateEngine();
 		LinShareStringTemplateResolver templateResolver = new LinShareStringTemplateResolver(insertLicenceTerm, templatingSubjectPrefix);
 		if (templatingStrictMode) {

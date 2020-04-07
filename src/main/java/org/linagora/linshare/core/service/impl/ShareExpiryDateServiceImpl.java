@@ -45,11 +45,8 @@ import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
-	private static final Logger logger = LoggerFactory.getLogger(ShareExpiryDateServiceImpl.class);
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 

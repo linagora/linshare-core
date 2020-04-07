@@ -45,14 +45,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.MimePolicyRepository;
 import org.linagora.linshare.core.repository.MimeTypeRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService {
-
-	private static final Logger logger = LoggerFactory.getLogger(MimePolicyBusinessServiceImpl.class);
 
 	private final MimePolicyRepository mimePolicyRepository;
 

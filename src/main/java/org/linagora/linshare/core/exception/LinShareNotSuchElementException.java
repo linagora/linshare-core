@@ -35,6 +35,11 @@ package org.linagora.linshare.core.exception;
 
 public class LinShareNotSuchElementException extends BusinessException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2555974556225117503L;
+
 	public LinShareNotSuchElementException(String message) {
 		this(BusinessErrorCode.NO_SUCH_ELEMENT,message);
 	}

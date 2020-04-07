@@ -69,8 +69,6 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
 
-import io.jsonwebtoken.Clock;
-
 public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, PermanentToken> implements JwtLongTimeService {
 
 
