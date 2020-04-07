@@ -61,7 +61,6 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,8 +84,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class NestedSharedSpaceNodeTest {
 
 	private static Logger logger = LoggerFactory.getLogger(NestedSharedSpaceNodeTest.class);
-
-	private LinShareWiser wiser;
 
 	private LoadingServiceTestDatas datas;
 
@@ -129,14 +126,11 @@ public class NestedSharedSpaceNodeTest {
 
 	public NestedSharedSpaceNodeTest() {
 		super();
-		wiser = new LinShareWiser(2525);
-		
 	}
 
 	@BeforeEach
 	public void init() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		initService.init();
@@ -156,7 +150,6 @@ public class NestedSharedSpaceNodeTest {
 	@AfterEach
 	public void tearDown() {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 

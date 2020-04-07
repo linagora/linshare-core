@@ -45,10 +45,9 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.runner.BatchRunner;
-import org.linagora.linshare.utils.LinShareWiser;
+import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -99,24 +98,19 @@ public class LinShareJobBeanTest {
 	@Autowired
 	private GenericBatch purgeUserBatch;
 
-	private LinShareWiser wiser;
-
 	public LinShareJobBeanTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -128,6 +122,5 @@ public class LinShareJobBeanTest {
 		batches.add(markUserToPurgeBatch);
 		batches.add(purgeUserBatch);
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
-		wiser.checkGeneratedMessages();
 	}
 }

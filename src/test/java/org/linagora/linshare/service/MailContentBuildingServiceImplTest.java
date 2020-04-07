@@ -86,7 +86,7 @@ public class MailContentBuildingServiceImplTest {
 	 * configure file : src/test/resources/linshare-test.properties with
 	 * properties : - mail.smtp.host= - mail.smtp.port=
 	 */
-	private boolean sendMail = false;
+	private boolean sendMail = true;
 
 	private String recipientForSendMail = "felton.gumper@int6.linshare.dev";
 

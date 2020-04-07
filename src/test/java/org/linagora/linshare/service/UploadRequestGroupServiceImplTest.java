@@ -59,7 +59,6 @@ import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,17 +111,13 @@ public class UploadRequestGroupServiceImplTest {
 
 	private Contact yoda;
 
-	private LinShareWiser wiser;
-
 	public UploadRequestGroupServiceImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
@@ -140,7 +135,6 @@ public class UploadRequestGroupServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -150,7 +144,6 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		Assertions.assertNotNull(uploadRequestGroup);
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -188,7 +181,6 @@ public class UploadRequestGroupServiceImplTest {
 		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.DELETED, false);
 		Assertions.assertEquals(UploadRequestStatus.DELETED, group.getStatus());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -218,7 +210,6 @@ public class UploadRequestGroupServiceImplTest {
 		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(),
 				UploadRequestStatus.CLOSED, false);
 		Assertions.assertEquals(UploadRequestStatus.CLOSED, ure.getUploadRequestGroup().getStatus());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -236,7 +227,6 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequest uploadRequest = uploadRequests.get(0);
 		Assertions.assertEquals(false, uploadRequest.isCanClose());
 		Assertions.assertEquals(Integer.valueOf(5), uploadRequest.getMaxFileCount());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

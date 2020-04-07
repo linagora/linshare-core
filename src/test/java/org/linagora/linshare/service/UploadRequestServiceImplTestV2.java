@@ -74,7 +74,6 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,17 +158,13 @@ public class UploadRequestServiceImplTestV2 {
 
 	private final String comment = "file description";
 
-	private LinShareWiser wiser;
-
 	public UploadRequestServiceImplTestV2() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
@@ -202,7 +197,6 @@ public class UploadRequestServiceImplTestV2 {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -267,7 +261,6 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertEquals(uRequest.getMaxDepositSize(), Long.valueOf(150));
 		Assertions.assertEquals(uRequest.getEnableNotification(), true);
 		Assertions.assertEquals(uRequest.getDirty(), true);
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -280,7 +273,6 @@ public class UploadRequestServiceImplTestV2 {
 				"This is a body sent after the creation of the Upload Request", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus());
-		wiser.checkGeneratedMessages();
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -297,7 +289,6 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequestGroupService.create(john, john, ureActivatedLater, Lists.newArrayList(yoda),
 				"This is the subject of a new Upload Request",
 				"This is a body sent after the creation of the Upload Request", false);
-		wiser.checkGeneratedMessages();
 		// END OF UPLOAD REQUEST CREATE
 		logger.info(LinShareTestConstants.END_TEST);
 	}

@@ -71,7 +71,6 @@ import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 import org.linagora.linshare.mongo.entities.UploadPropositionRule;
 import org.linagora.linshare.mongo.repository.UploadPropositionExceptionRuleMongoRepository;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,19 +144,15 @@ public class UploadPropositionServiceImplTest {
 
 	private UploadPropositionFilter noRejectionFilter;
 
-	private LinShareWiser wiser;
-
 	private String rootDomainIdentifier = "TEST_Domain-0";
 
 	public UploadPropositionServiceImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
@@ -185,7 +180,6 @@ public class UploadPropositionServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
