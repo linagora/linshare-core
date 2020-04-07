@@ -194,12 +194,12 @@ public enum UpgradeTaskType {
 	 * 	Update tagetDomainUuid for mail attachment audit
 	 * 
 	 */
-	UPGRADE_2_4_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT,
+	UPGRADE_4_0_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT,
 	
 	/**
 	 * Upgrade the SharedSpaceMember structure by adding a NodeType for the member's roles
 	 */
-	UPGRADE_2_4_UPDATE_SHARED_SPACE_MEMBER_STRUCTURE_WITH_TYPED_ROLES;
+	UPGRADE_4_0_UPDATE_SHARED_SPACE_MEMBER_STRUCTURE_WITH_TYPED_ROLES;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

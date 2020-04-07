@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.upgrade.v2_4;
+package org.linagora.linshare.core.upgrade.v4_0;
 
 import java.util.List;
 
@@ -80,7 +80,7 @@ public class UpdateTargetDomainUuidMailAttachmentAuditUpgradeTaskImpl extends Ge
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_2_4_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT;
+		return UpgradeTaskType.UPGRADE_4_0_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT;
 	}
 
 	@Override

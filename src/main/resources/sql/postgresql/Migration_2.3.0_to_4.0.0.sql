@@ -9,14 +9,14 @@ SET default_with_oids = false;
 
 CREATE OR REPLACE FUNCTION ls_version() RETURNS void AS $$
 BEGIN
-	INSERT INTO version (id, version, creation_date) VALUES ((SELECT nextVal('hibernate_sequence')),'2.4.0', now());
+	INSERT INTO version (id, version, creation_date) VALUES ((SELECT nextVal('hibernate_sequence')),'4.0.0', now());
 END
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION ls_prechecks() RETURNS void AS $$
 BEGIN
 	-- TODO: CHANGE THE VERSIONS
-	DECLARE version_to VARCHAR := '2.4.0';
+	DECLARE version_to VARCHAR := '4.0.0';
 	DECLARE version_from VARCHAR := '2.3.0';
 	DECLARE start VARCHAR := concat('You are about to upgrade from LinShare : ', version_from,  ' to ' , version_to);
 	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
@@ -239,7 +239,7 @@ SELECT 21, 'user_uid', 'uid', false, true, true, 5, false WHERE NOT EXISTS (SELE
 UPDATE account SET purge_step = 'PURGED' where ((account_type = 5) AND (purge_step = 'IN_USE') AND (destroyed > 0));
 
 -- Upgrade Task
--- TASK: UPGRADE_2_4_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT
+-- TASK: UPGRADE_4_0_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT
   INSERT INTO upgrade_task
   (id,
   uuid,
@@ -256,8 +256,8 @@ UPDATE account SET purge_step = 'PURGED' where ((account_type = 5) AND (purge_st
 VALUES
  (31,
  'UNDEFINED',
- 'UPGRADE_2_4_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT',
- 'UPGRADE_2_4',
+ 'UPGRADE_4_0_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT',
+ 'UPGRADE_4_0',
   null,
   null,
   31,
