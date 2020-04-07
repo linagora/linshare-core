@@ -57,7 +57,7 @@ import com.mongodb.client.DistinctIterable;
 /**
  * Upgrade SharedSpaceMember structure by replace GenericLightEntity by
  * LightSharedSpaceRole that contains a new property [type: NodeType] introduced
- * on LinShare v2.4.
+ * on LinShare v4.0
  */
 public class UpgradeSharedSpaceMemberStructureWithTypedSharedSpaceRoles extends GenericUpgradeTaskImpl {
 

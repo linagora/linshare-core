@@ -232,13 +232,18 @@
 					<constructor-arg ref="threadService" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
-				<bean class="org.linagora.linshare.core.upgrade.v2_4.UpdateTargetDomainUuidMailAttachmentAuditUpgradeTaskImpl">
+				<bean class="org.linagora.linshare.core.upgrade.v4_0.UpdateTargetDomainUuidMailAttachmentAuditUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="mongoTemplate" />
 					<constructor-arg ref="auditAdminMongoRepository" />
 					<constructor-arg ref="mailAttachmentRepository" />
 				</bean>
-				<bean class="org.linagora.linshare.core.upgrade.v2_4.UpgradeSharedSpaceMemberStructureWithTypedSharedSpaceRoles">
+				<bean class="org.linagora.linshare.core.upgrade.v4_0.UpgradeSharedSpaceMemberStructureWithTypedSharedSpaceRoles">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="mongoTemplate" />
+					<constructor-arg ref="sharedSpaceMemberMongoRepository" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_0.UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="mongoTemplate" />
 					<constructor-arg ref="sharedSpaceMemberMongoRepository" />
