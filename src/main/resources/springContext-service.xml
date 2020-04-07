@@ -97,12 +97,6 @@
 		<constructor-arg value="${linshare.encipherment.tmp.dir}" />
 	</bean>
 
-	<bean name="statisticsService" class="org.linagora.linshare.core.service.impl.StatisticsServiceImpl">
-		<constructor-arg ref="userRepository" />
-		<constructor-arg ref="documentRepository" />
-		<constructor-arg ref="logEntryRepository" />
-	</bean>
-
 	<bean name="abstractDomainService"
 		class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />

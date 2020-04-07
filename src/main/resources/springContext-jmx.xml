@@ -17,7 +17,6 @@
 		<property name="autodetect" value="true"/>
 		<property name="beans">
 			<map>
-<!-- 				<entry key="LinshareJMXBeans:name=LinshareStatistics" value-ref="linshareStats" /> -->
 				<entry key="LinshareJMXBeans:name=LinshareAntivirus" value-ref="linshareConfigAntivirus" />
 				<entry key="LinshareJMXBeans:name=LinshareEmailServer" value-ref="linshareConfigEmailServer" />
 				<entry key="LinshareJMXBeans:name=LinshareLoggers" value-ref="linshareConfigLoggers" />
@@ -27,9 +26,6 @@
 		
 	</bean>
 
-<!-- 	<bean name="linshareStats" class="org.linagora.linshare.jmx.LinshareStatsImpl"> -->
-<!-- 		<constructor-arg ref="statisticsService" /> -->
-<!-- 	</bean> -->
 	<bean name="linshareConfigAntivirus" class="org.linagora.linshare.jmx.impl.AntivirusServerConfigImpl">
 		<constructor-arg ref="virusScannerBusinessService" />
 	</bean>

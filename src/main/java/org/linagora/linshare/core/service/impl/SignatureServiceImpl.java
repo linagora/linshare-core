@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 public class SignatureServiceImpl implements SignatureService {
 	
 	private final SignatureBusinessService signatureBusinessService;
+	@SuppressWarnings("unused")
 	private final LogEntryService logEntryService;
 	private static final Logger logger = LoggerFactory.getLogger(SignatureServiceImpl.class);
 	
