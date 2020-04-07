@@ -230,6 +230,26 @@ public class LDAPGroupSyncServiceImplTest {
 	}
 
 	@Test
+	public void testCreateLDAPGroupFromLDAPGroupObjectSpecialCharInName() {
+		systemAccount = userRepository.getBatchSystemAccount();
+		Date syncDate = new Date();
+		LdapGroupObject ldapGroupObject = new LdapGroupObject();
+		LdapGroupsBatchResultContext resultContext = new LdapGroupsBatchResultContext(domain);
+		ldapGroupObject.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		ldapGroupObject.setExternalId("cn=workgroup-EP_TEST_v233<script>alert(document.cookie)</script>,ou=Groups3,dc=linshare,dc=org");
+		ldapGroupObject.setMembers(Lists.newArrayList());
+		ldapGroupObject.setPrefix("prefix");
+		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
+				resultContext);
+		Assertions.assertNotNull(group, "The group has not been found");
+		Assertions.assertEquals("cn=workgroup-EP_TEST_v233<script>alert(document.cookie)</script>,ou=Groups3,dc=linshare,dc=org",
+				group.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(syncDate, group.getSyncDate(), "The given syncDate is not the same as the found one");
+		Assertions.assertEquals(group.getName(), "EP_TEST_v233");
+		syncServiceImpl.deleteLDAPGroup(systemAccount, group);
+	}
+
+	@Test
 	@DirtiesContext
 	public void testCreateLDAPMemberFromLDAPGroupMember() {
 		systemAccount = userRepository.getBatchSystemAccount();

@@ -89,6 +89,7 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not create this kind of sharedSpace with this method.");
 		}
+		toCreate.setName(sanitize(toCreate.getName()));
 		SharedSpaceNode created = super.create(authUser, actor, toCreate);
 		SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
 		SharedSpaceRole workGroupRole = ssRoleService.getAdmin(authUser, actor);

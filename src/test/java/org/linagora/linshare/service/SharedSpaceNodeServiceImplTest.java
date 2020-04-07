@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
@@ -120,6 +121,41 @@ public class SharedSpaceNodeServiceImplTest {
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "node not created");
 		Assertions.assertNotNull(expectedNode.getQuotaUuid());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void createSharedSpaceSpecialCharInName() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode node = new SharedSpaceNode("EP_TEST_v233<script>alert(document.cookie)</script>", NodeType.WORK_GROUP);
+		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
+		Assertions.assertNotNull(expectedNode, "node not created");
+		Assertions.assertEquals(expectedNode.getName(), "EP_TEST_v233");
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void updateSharedSpaceSpecialCharInName() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode nodeToUpdate = new SharedSpaceNode("nodeName ToUpdate", NodeType.WORK_GROUP);
+		Assertions.assertEquals(nodeToUpdate.getName(), "nodeName ToUpdate");
+		nodeToUpdate = service.create(authUser, authUser, nodeToUpdate);
+		nodeToUpdate.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		service.update(authUser, authUser, nodeToUpdate);
+		Assertions.assertEquals(nodeToUpdate.getName(), "EP_TEST_v233");
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void updatePartialSharedSpaceSpecialCharInName() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode nodeToUpdate = new SharedSpaceNode("nodeName ToUpdate", NodeType.WORK_GROUP);
+		Assertions.assertEquals(nodeToUpdate.getName(), "nodeName ToUpdate");
+		nodeToUpdate = service.create(authUser, authUser, nodeToUpdate);
+		PatchDto patchDto = new PatchDto(nodeToUpdate.getUuid(), "name",
+				"EP_TEST_v233<script>alert(document.cookie)</script>");
+		SharedSpaceNode updated = service.updatePartial(authUser, authUser, patchDto);
+		Assertions.assertEquals(updated.getName(), "EP_TEST_v233");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

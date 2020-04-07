@@ -96,12 +96,12 @@ public class SharedSpaceWorkGroupServiceImpl extends AbstractSharedSpaceFragment
 		Validate.notNull(node.getNodeType(), "you must set the node type");
 		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
-		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(), node.getParentUuid(), node.getNodeType(),
-				node.getVersioningParameters());
 		if (!(NodeType.WORK_GROUP.equals(node.getNodeType()))) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not create this kind of sharedSpace with this method.");
 		}
+		SharedSpaceNode toCreate = new SharedSpaceNode(sanitize(node.getName()), node.getParentUuid(), node.getNodeType(),
+				node.getVersioningParameters());
 		SharedSpaceNode created = simpleCreate(authUser, actor, toCreate);
 		SharedSpaceNode parent = null;
 		if (node.getParentUuid() != null) {

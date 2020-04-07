@@ -120,6 +120,30 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	}
 
 	@Test
+	public void createDriveSpecialCharInName() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode node = new SharedSpaceNode("EP_TEST_v233<script>alert(document.cookie)</script>",
+				NodeType.DRIVE);
+		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
+		Assertions.assertNotNull(expectedNode, "Drive not created");
+		Assertions.assertEquals(expectedNode.getName(), "EP_TEST_v233");
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void updateDriveSpecialCharInName() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode node = new SharedSpaceNode("My drive", NodeType.DRIVE);
+		SharedSpaceNode nodeToUpdate = service.create(authUser, authUser, node);
+		Assertions.assertNotNull(nodeToUpdate, "Drive not created");
+		Assertions.assertEquals(nodeToUpdate.getName(), "My drive");
+		nodeToUpdate.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		service.update(authUser, authUser, nodeToUpdate);
+		Assertions.assertEquals(nodeToUpdate.getName(), "EP_TEST_v233");
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void createDriveAndFind() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.DRIVE);

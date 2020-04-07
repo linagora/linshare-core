@@ -165,6 +165,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public WorkGroupDto createWorkGroupDto(Account authUser, Account actor, SharedSpaceNode node)
 			throws BusinessException {
 		SharedSpaceFragmentService nodeService = getService(node.getNodeType());
+		node.setName(sanitize(node.getName()));
 		SharedSpaceNode created = nodeService.create(authUser, actor, node);
 		return new WorkGroupDto(new WorkGroup(created), created);
 	}
@@ -199,7 +200,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public SharedSpaceNode updatePartial(Account authUser, Account actor, PatchDto patchNode) throws BusinessException {
 		SharedSpaceNode nodeToUpdate = find(authUser, actor, patchNode.getUuid());
 		if (patchNode.getName().equals("name")) {
-			nodeToUpdate.setName(patchNode.getValue());
+			nodeToUpdate.setName(sanitize(patchNode.getValue()));
 		} else {
 			throw new BusinessException("Unsupported field name, allowed values: name");
 		}

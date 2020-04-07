@@ -142,6 +142,7 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 				fromNodeType(nodeToUpdate.getNodeType().toString()), nodeLog);
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 				nodeToUpdate);
+		nodeToUpdate.setName(sanitize(nodeToUpdate.getName()));
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		List<String> members = memberBusinessService.findMembersUuidBySharedSpaceNodeUuid(updated.getUuid());
