@@ -142,7 +142,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not create this kind of sharedSpace with this method.");
 		}
-		node.setName(sanitizerInputHtmlBusinessService.strictClean(node.getName()));
+		node.setName(sanitize(node.getName()));
 		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
 		// Hack to create thread into shared space node
@@ -245,7 +245,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 				nodeToUpdate);
 		checkUpdateVersioningParameters(nodeToUpdate.getVersioningParameters(), node.getVersioningParameters(),
 				actor.getDomain());
-		nodeToUpdate.setName(sanitizerInputHtmlBusinessService.strictClean(nodeToUpdate.getName()));
+		nodeToUpdate.setName(sanitize(nodeToUpdate.getName()));
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		threadService.update(authUser, actor, updated.getUuid(), updated.getName());
