@@ -204,17 +204,11 @@ public class MailConfigServiceImplTest {
 
 	private List<MailContentType> getMailContentTypes() {
 		MailContentType[] list = MailContentType.values();
-		List<MailContentType> excludes = Lists.newArrayList(
-				MailContentType.UPLOAD_PROPOSITION_CREATED,
-				MailContentType.UPLOAD_PROPOSITION_REJECTED,
-				MailContentType.UPLOAD_REQUEST_AUTO_FILTER);
 		List<MailContentType> values = Lists.newArrayList();
 		for (int i = 0; i < list.length; i++) {
 			MailContentType mailContentType = list[i];
 			if (!values.contains(mailContentType)) {
-				if (!excludes.contains(mailContentType)) {
-					values.add(mailContentType);
-				}
+				values.add(mailContentType);
 			}
 		}
 		return values;

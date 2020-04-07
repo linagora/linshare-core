@@ -39,13 +39,10 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
-import org.linagora.linshare.mongo.entities.UploadProposition;
 
 public interface MailBuildingService {
 
@@ -57,12 +54,4 @@ public interface MailBuildingService {
 
 	List<ContextMetadata> getAvailableVariables(MailContentType type);
 
-	MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
-			throws BusinessException;
-
-	MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadProposition proposition)
-			throws BusinessException;
-
-	MailContainerWithRecipient buildFilterUploadRequest(User owner, UploadRequestUrl request)
-			throws BusinessException;
 }

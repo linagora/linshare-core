@@ -54,7 +54,6 @@ import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -91,8 +90,10 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
+	@SuppressWarnings("unused")
 	private final MailBuildingService mailBuildingService;
 
+	@SuppressWarnings("unused")
 	private final NotifierService notifierService;
 	
 	private final UploadRequestGroupService uploadRequestGroupService;
@@ -166,9 +167,10 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 			// is submitted to the targeted account
 			created = uploadPropositionBusinessService.create(uploadProposition);
 			uploadPropositionBusinessService.updateStatus(created, UploadPropositionStatus.USER_PENDING);
-			MailContainerWithRecipient mail = mailBuildingService.buildCreateUploadProposition((User) targetedAccount,
-					uploadProposition);
-			notifierService.sendNotification(mail);
+			// TODO: UploadProposition is not supported anymore since 2.0. Do we want to support it again ?
+//			MailContainerWithRecipient mail = mailBuildingService.buildCreateUploadProposition((User) targetedAccount,
+//					uploadProposition);
+//			notifierService.sendNotification(mail);
 			UploadPropositionAuditLogEntry log = new UploadPropositionAuditLogEntry(authUser, targetedAccount,
 					LogAction.CREATE, AuditLogEntryType.UPLOAD_PROPOSITION, created.getUuid(), created);
 			logEntryService.insert(log);
@@ -261,8 +263,9 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 		checkUpdatePermission(authUser, actor, UploadProposition.class,
 				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_UPDATE, found);
 		found = uploadPropositionBusinessService.updateStatus(found, UploadPropositionStatus.USER_REJECTED);
-		MailContainerWithRecipient mail = mailBuildingService.buildRejectUploadProposition((User) actor, found);
-		notifierService.sendNotification(mail);
+		// TODO: UploadProposition is not supported anymore since 2.0. Do we want to support it again ?
+//		MailContainerWithRecipient mail = mailBuildingService.buildRejectUploadProposition((User) actor, found);
+//		notifierService.sendNotification(mail);
 		UploadPropositionAuditLogEntry log = new UploadPropositionAuditLogEntry(authUser, actor, LogAction.UPDATE,
 				AuditLogEntryType.UPLOAD_PROPOSITION, found.getUuid(), found);
 		log.setResourceUpdated(found);

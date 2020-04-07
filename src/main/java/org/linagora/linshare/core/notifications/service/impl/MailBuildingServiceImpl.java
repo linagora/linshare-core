@@ -34,27 +34,18 @@
 package org.linagora.linshare.core.notifications.service.impl;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -100,7 +91,6 @@ import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnNewMemb
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnUpdatedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
@@ -118,85 +108,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	private final Map<MailContentType, EmailBuilder> emailBuilders;
 
 	private final DomainBusinessService domainBusinessService;
-
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-
-	private final MailActivationBusinessService mailActivationBusinessService;
-
-	private class ContactRepresentation {
-		private String mail;
-		private String firstName;
-		private String lastName;
-
-		public ContactRepresentation(User user) {
-			this.mail = StringUtils.trimToNull(user.getMail());
-			this.firstName = StringUtils.trimToNull(user.getFirstName());
-			this.lastName = StringUtils.trimToNull(user.getLastName());
-		}
-
-		public String getContactRepresentation() {
-			return getContactRepresentation(false);
-		}
-
-		public String getContactRepresentation(boolean includeMail) {
-			if (this.firstName == null || this.lastName == null)
-				return this.mail;
-			StringBuilder res = new StringBuilder();
-			res.append(firstName);
-			res.append(" ");
-			res.append(lastName);
-			if (includeMail) {
-				res.append(" (");
-				res.append(mail);
-				res.append(")");
-			}
-			return res.toString();
-		}
-	}
-
-	/**
-	 * XXX HACK
-	 * 
-	 * Helper using LinkedHashMap to chain the Key/Value substitution
-	 * in mail templates.
-	 * 
-	 * @author nbertrand
-	 */
-	private class MailContainerBuilder {
-
-		@SuppressWarnings("serial")
-		private class KeyValueChain extends LinkedHashMap<String, String> {
-			public KeyValueChain add(String key, String value) {
-				logger.debug("Adding K/V pair: [" + key + ", " + value
-						+ "]");
-				super.put(key, StringUtils.defaultString(value));
-				return this;
-			}
-		}
-
-		private KeyValueChain subjectChain;
-		private KeyValueChain greetingsChain;
-		private KeyValueChain bodyChain;
-
-		public MailContainerBuilder() {
-			super();
-			subjectChain = new KeyValueChain();
-			greetingsChain = new KeyValueChain();
-			bodyChain = new KeyValueChain();
-		}
-
-		public KeyValueChain getSubjectChain() {
-			return subjectChain;
-		}
-
-		public KeyValueChain getGreetingsChain() {
-			return greetingsChain;
-		}
-
-		public KeyValueChain getBodyChain() {
-			return bodyChain;
-		}
-	}
 
 	/**
 	 * Constructor
@@ -219,8 +130,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			String urlTemplateForUploadRequestEntries
 			) throws Exception {
 		this.domainBusinessService = domainBusinessService;
-		this.functionalityReadOnlyService = functionalityReadOnlyService;
-		this.mailActivationBusinessService = mailActivationBusinessService;
 		this.templateEngine = new TemplateEngine();
 		LinShareStringTemplateResolver templateResolver = new LinShareStringTemplateResolver(insertLicenceTerm, templatingSubjectPrefix);
 		if (templatingStrictMode) {
@@ -363,172 +272,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			throw new BusinessException(BusinessErrorCode.TEMPLATE_MISSING_TEMPLATE_BUILDER, "Missing template builder");
 		}
 		return builder.getAvailableVariables();
-	}
-
-	/**
-	 * Old and ugly code, to be removed.
-	 */
-
-	@Override
-	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
-			throws BusinessException {
-//		if (isDisable(recipient, MailActivationType.UPLOAD_PROPOSITION_CREATED)) {
-		if (isDisable(recipient, null)) {
-			return null;
-		}
-		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", proposition.getContact().getMail())
-				.add("subject", proposition.getLabel());
-		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
-		builder.getBodyChain()
-				.add("subject", proposition.getLabel())
-				.add("body", proposition.getBody())
-				.add("firstName", proposition.getContact().getFirstName())
-				.add("lastName", proposition.getContact().getLastName())
-				.add("mail", proposition.getContact().getMail())
-				.add("uploadPropositionUrl", getUploadPropositionUrl(recipient));
-		container.setRecipient(recipient.getMail());
-		container.setFrom(getFromMailAddress(recipient));
-
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_PROPOSITION_CREATED, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadProposition proposition)
-			throws BusinessException {
-		// MailActivationType.UPLOAD_PROPOSITION_REJECTED
-		if (isDisable(sender, null)) {
-			return null;
-		}
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", new ContactRepresentation(sender).getContactRepresentation())
-				.add("subject", proposition.getLabel());
-		builder.getGreetingsChain()
-				.add("firstName", proposition.getContact().getFirstName())
-				.add("lastName", proposition.getContact().getLastName());
-		builder.getBodyChain()
-				.add("subject", proposition.getLabel())
-				.add("body", proposition.getBody())
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
-				.add("mail", proposition.getContact().getMail());
-
-		container.setRecipient(proposition.getContact().getMail());
-		container.setFrom(getFromMailAddress(sender));
-
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_PROPOSITION_REJECTED, builder);
-	}
-
-	private String getFromMailAddress(User owner) {
-		String fromMail = functionalityReadOnlyService
-				.getDomainMailFunctionality(owner.getDomain()).getValue();
-		return fromMail;
-	}
-
-	// TODO : to be used ?
-	@Override
-	public MailContainerWithRecipient buildFilterUploadRequest(User owner, UploadRequestUrl request)
-			throws BusinessException {
-		// MailActivationType.UPLOAD_REQUEST_AUTO_FILTER
-		if (isDisable(request.getContact(), owner, null)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName());
-		builder.getBodyChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody());
-		container.setRecipient(request.getContact());
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(owner);
-
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_AUTO_FILTER, builder);
-	}
-
-	/*
-	 * Helpers
-	 */
-
-	private String getUploadPropositionUrl(Account recipient) {
-		String baseUrl = getLinShareUrlForAUserRecipient(recipient);
-		StringBuffer uploadPropositionUrl = new StringBuffer();
-		uploadPropositionUrl.append(baseUrl);
-		if (!baseUrl.endsWith("/")) {
-			uploadPropositionUrl.append('/');
-		}
-		uploadPropositionUrl.append("uploadrequest/proposition");
-		return uploadPropositionUrl.toString();
-	}
-
-	private String getLinShareUrlForAUserRecipient(Account recipient) {
-		String value = functionalityReadOnlyService
-				.getCustomNotificationUrlFunctionality(recipient.getDomain())
-				.getValue();
-		if (!value.endsWith("/")) {
-			return value + "/";
-		}
-		return value;
-	}
-
-	/*
-	 * MAIL CONTAINER BUILDER SECTION
-	 */
-
-	private MailContainerWithRecipient buildMailContainer(MailConfig cfg,
-			final MailContainerWithRecipient input, String pm,
-			MailContentType type, MailContainerBuilder builder)
-			throws BusinessException {
-		MailContainerWithRecipient container = new MailContainerWithRecipient(input);
-		String layout = cfg.getMailLayoutHtml().getLayout();
-		container.setContent(layout);
-		// Message IDs from Web service API (ex Plugin Thunderbird)
-		container.setInReplyTo(input.getInReplyTo());
-		container.setReferences(input.getReferences());
-		return container;
-	}
-
-	private boolean isDisable(Contact contact, Account sender, MailActivationType type) {
-		AbstractDomain recipientDomain = domainBusinessService.findGuestDomain(sender.getDomain());
-		// guest domain could be inexistent into the database.
-		if (recipientDomain == null) {
-			recipientDomain = sender.getDomain();
-		}
-		MailActivation mailActivation = mailActivationBusinessService
-				.findForInternalUsage(recipientDomain, type);
-		boolean enable = mailActivation.isEnable();
-		return !enable;
-	}
-
-	@SuppressWarnings("unused")
-	private boolean isDisable(Account recipient, MailActivationType type) {
-		// Disable old deprecated notifications !!
-		if (true) {
-			return true;
-		}
-		MailActivation mailActivation = mailActivationBusinessService
-				.findForInternalUsage(recipient.getDomain(), type);
-		boolean enable = mailActivation.isEnable();
-		return !enable;
 	}
 
 }
