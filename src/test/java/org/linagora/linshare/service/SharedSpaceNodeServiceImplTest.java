@@ -53,7 +53,6 @@ import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,17 +93,13 @@ public class SharedSpaceNodeServiceImplTest {
 	@Qualifier("sharedSpaceNodeService")
 	private SharedSpaceNodeService service;
 
-	private LinShareWiser wiser;
-
 	public SharedSpaceNodeServiceImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepo);
 		datas.loadUsers();
 		init.init();
@@ -116,7 +111,6 @@ public class SharedSpaceNodeServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 	}
 
 	@Test

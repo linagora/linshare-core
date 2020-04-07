@@ -54,7 +54,6 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,17 +101,13 @@ public class WarnOwnerAboutGuestExpirationBatchTest {
 	@Qualifier("accountService")
 	AccountService accountService;
 
-	private LinShareWiser wiser;
-
 	public WarnOwnerAboutGuestExpirationBatchTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		initAccount();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -120,7 +115,6 @@ public class WarnOwnerAboutGuestExpirationBatchTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -129,7 +123,6 @@ public class WarnOwnerAboutGuestExpirationBatchTest {
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(warnOwnerAboutGuestExpirationBatch);
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
-		wiser.checkGeneratedMessages();
 	}
 
 	private void initAccount() {

@@ -56,7 +56,6 @@ import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,11 +115,8 @@ public class AuditRestGuestPasswordTest {
 
 	private SystemAccount actor;
 
-	private LinShareWiser wiser;
-
 	public AuditRestGuestPasswordTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
@@ -141,7 +137,6 @@ public class AuditRestGuestPasswordTest {
 		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
 		resetGuestPassword = resetGuestPasswordMongoRepository.insert(resetGuestPassword);
 		actor = resetGuestPasswordService.getGuestSystemAccount();
-		wiser.start();
 	}
 
 	@AfterEach
@@ -150,7 +145,6 @@ public class AuditRestGuestPasswordTest {
 		resetGuestPasswordMongoRepository.delete(resetGuestPassword);
 		guestRepository.delete(guest);
 		abstractDomainRepository.delete(guestDomain);
-		wiser.stop();
 		logger.debug("End tearDown");
 	}
 
@@ -189,7 +183,6 @@ public class AuditRestGuestPasswordTest {
 		resetGuestPassword = resetGuestPasswordMongoRepository.save(resetGuestPassword);
 		resetGuestPasswordService.update(actor, actor, resetGuestPassword);
 		Assertions.assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.SUCCESS)).size());
-		wiser.checkGeneratedMessages();
 	}
 
 	@Test

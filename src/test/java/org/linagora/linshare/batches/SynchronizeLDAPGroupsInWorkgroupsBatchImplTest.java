@@ -59,15 +59,14 @@ import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -118,20 +117,16 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	@Autowired
 	private InitMongoService initService;
 
-	private LinShareWiser wiser;
-
 	private LoadingServiceTestDatas datas;
 
 	public SynchronizeLDAPGroupsInWorkgroupsBatchImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		initService.init();
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		Account root = datas.getRoot();
@@ -167,7 +162,6 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 

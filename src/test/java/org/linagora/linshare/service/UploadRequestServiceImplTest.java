@@ -70,7 +70,6 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,17 +150,13 @@ public class UploadRequestServiceImplTest {
 
 	private Contact yoda;
 
-	private LinShareWiser wiser;
-
 	public UploadRequestServiceImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
@@ -196,7 +191,6 @@ public class UploadRequestServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -230,7 +224,6 @@ public class UploadRequestServiceImplTest {
 		Assertions.assertEquals(tmp.isCanDelete(), false);
 		Assertions.assertEquals(tmp.isCanEditExpiryDate(), false);
 		Assertions.assertEquals(tmp.getMaxFileCount(), Integer.valueOf(2));
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -249,7 +242,6 @@ public class UploadRequestServiceImplTest {
 		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.DELETED, false);
 		Assertions.assertEquals(tmp.getStatus(), UploadRequestStatus.DELETED);
 		Assertions.assertEquals(john, (User) eJohn.getUploadRequestGroup().getOwner());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -260,7 +252,6 @@ public class UploadRequestServiceImplTest {
 		tmp = service.closeRequestByRecipient(eJohn.getUploadRequestURLs().iterator().next());
 		Assertions.assertEquals(tmp.getStatus(), UploadRequestStatus.CLOSED);
 		Assertions.assertEquals(john, (User) eJohn.getUploadRequestGroup().getOwner());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -276,7 +267,6 @@ public class UploadRequestServiceImplTest {
 		} catch (BusinessException ex) {
 			Assertions.assertEquals("Cannot transition from CLOSED to ENABLED.", ex.getMessage());
 		}
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

@@ -61,7 +61,6 @@ import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,8 +114,6 @@ public class GuestServiceImplTest {
 
 	private User root;
 
-	private LinShareWiser wiser;
-
 	private User owner1;
 
 	private User owner2;
@@ -125,13 +122,11 @@ public class GuestServiceImplTest {
 
 	public GuestServiceImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		root = rootUserRepository
 				.findByLsUuid("root@localhost.localdomain@test");
 
@@ -167,7 +162,6 @@ public class GuestServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
@@ -183,7 +177,6 @@ public class GuestServiceImplTest {
 		AccountQuota aq = quotaService.findByRelatedAccount(guest);
 		Assertions.assertNotNull(aq.getDomainShared());
 		Assertions.assertNotNull(aq.getMaxFileSize());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -219,7 +212,6 @@ public class GuestServiceImplTest {
 		Assertions.assertEquals(Role.SIMPLE, update.getRole());
 		Assertions.assertEquals("First", update.getFirstName());
 		Assertions.assertEquals("Last", update.getLastName());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -229,7 +221,6 @@ public class GuestServiceImplTest {
 		// create guest
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setCmisLocale("en");
-		wiser.checkGeneratedMessages();
 		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guest.setDomain(guestDomain);
 		guest = guestService.create(owner1, owner1, guest, null);
@@ -254,7 +245,6 @@ public class GuestServiceImplTest {
 		guest = guestService.create(owner1, owner1, guest, null);
 		guestService.triggerResetPassword(guest.getLsUuid());
 		Assertions.assertFalse(HashUtils.matches(oldPassword, guest.getPassword()));
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -275,7 +265,6 @@ public class GuestServiceImplTest {
 		Assertions.assertTrue(guest.isGuest());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
 		Assertions.assertEquals(3, ac.size());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -297,7 +286,6 @@ public class GuestServiceImplTest {
 		Assertions.assertTrue(guest.isGuest());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
 		Assertions.assertEquals(2, ac.size());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -321,7 +309,6 @@ public class GuestServiceImplTest {
 		guest = guestService.update(owner1, owner1, guest, restrictedContacts);
 		List<AllowedContact> ac = guestService.load(owner1, guest);
 		Assertions.assertEquals(1, ac.size());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	@Test
@@ -349,7 +336,6 @@ public class GuestServiceImplTest {
 
 		ac = guestService.load(owner1, guest);
 		Assertions.assertEquals(0, ac.size());
-		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	@Test

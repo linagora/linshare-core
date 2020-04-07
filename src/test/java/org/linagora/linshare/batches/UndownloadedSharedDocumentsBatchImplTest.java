@@ -45,7 +45,6 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.runner.BatchRunner;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,24 +85,19 @@ public class UndownloadedSharedDocumentsBatchImplTest {
 	@Autowired
 	private GenericBatch undownloadedSharedDocumentsBatch;
 
-	private LinShareWiser wiser;
-
 	public UndownloadedSharedDocumentsBatchImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -112,6 +106,5 @@ public class UndownloadedSharedDocumentsBatchImplTest {
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(undownloadedSharedDocumentsBatch);
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
-		wiser.checkGeneratedMessages();
 	}
 }

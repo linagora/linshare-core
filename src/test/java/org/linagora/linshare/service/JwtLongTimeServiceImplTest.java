@@ -51,7 +51,6 @@ import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.impl.JwtServiceImpl;
 import org.linagora.linshare.mongo.entities.PermanentToken;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +88,6 @@ public class JwtLongTimeServiceImplTest {
 	@Autowired
 	private JwtLongTimeService jwtLongTimeService;
 
-	private LinShareWiser wiser;
-
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
@@ -108,13 +105,11 @@ public class JwtLongTimeServiceImplTest {
 
 	public JwtLongTimeServiceImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
@@ -126,7 +121,6 @@ public class JwtLongTimeServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -233,7 +227,6 @@ public class JwtLongTimeServiceImplTest {
 		Assertions.assertEquals(token.getUuid(), deleted.getUuid());
 		Assertions.assertEquals(token.getLabel(), deleted.getLabel());
 		Assertions.assertEquals(deleted.getActor().getUuid(), john.getLsUuid());
-		wiser.checkGeneratedMessages();
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -242,7 +235,6 @@ public class JwtLongTimeServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
 		jwtLongTimeService.create(root, john, johnToken);
-		wiser.checkGeneratedMessages();
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

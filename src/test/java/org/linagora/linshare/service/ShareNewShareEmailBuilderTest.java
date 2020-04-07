@@ -59,7 +59,6 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MailAttachmentService;
 import org.linagora.linshare.core.service.ShareService;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,17 +119,13 @@ public class ShareNewShareEmailBuilderTest {
 
 	private Account admin;
 
-	private LinShareWiser wiser;
-
 	public ShareNewShareEmailBuilderTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		owner = datas.getUser1();
@@ -142,7 +137,6 @@ public class ShareNewShareEmailBuilderTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -156,7 +150,6 @@ public class ShareNewShareEmailBuilderTest {
 		shareContainer.addShareRecipient(recipient);
 		shareContainer.addDocumentUuid(documents);
 		Assertions.assertNotNull(shareService.create(actor, owner, shareContainer));
-		wiser.checkGeneratedMessages();
 	}
 
 	@Test
@@ -177,6 +170,5 @@ public class ShareNewShareEmailBuilderTest {
 		shareContainer.addShareRecipient(recipient);
 		shareContainer.addDocumentUuid(documents);
 		Assertions.assertNotNull(shareService.create(actor, owner, shareContainer));
-		wiser.checkGeneratedMessages();
 	}
 }

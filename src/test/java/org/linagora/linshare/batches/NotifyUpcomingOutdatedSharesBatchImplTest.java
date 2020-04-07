@@ -58,7 +58,6 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,8 +116,6 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 	@Qualifier("accountService")
 	AccountService accountService;
 
-	private LinShareWiser wiser;
-
 	private LoadingServiceTestDatas datas;
 
 	private User owner;
@@ -131,13 +128,11 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 
 	public NotifyUpcomingOutdatedSharesBatchImplTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		owner = datas.getUser1();
@@ -151,7 +146,6 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -161,7 +155,6 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 		batches.add(shareNotifyUpcomingOutdatedSharesBatch);
 		batches.add(anonymousShareNotifyUpcomingOudatedSharesBatch);
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
-		wiser.checkGeneratedMessages();
 	}
 
 	private void initShares() throws IOException {

@@ -51,7 +51,6 @@ import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperator
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 import org.linagora.linshare.mongo.entities.UploadPropositionRule;
-import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,17 +84,13 @@ public class UploadPropositionFilterBusinessServiceTest {
 
 	private UploadPropositionFilter referenceFilter;
 
-	private LinShareWiser wiser;
-
 	public UploadPropositionFilterBusinessServiceTest() {
 		super();
-		wiser = new LinShareWiser(2525);
 	}
 
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		wiser.start();
 		UploadPropositionRule rule = new UploadPropositionRule(UploadPropositionRuleOperatorType.CONTAIN,
 				UploadPropositionRuleFieldType.RECIPIENT_EMAIL, "gmail.com");
 		referenceFilter = new UploadPropositionFilter(UUID.randomUUID().toString(), "LinShareRootDomain", "Upload Proposition Filter",
@@ -107,7 +102,6 @@ public class UploadPropositionFilterBusinessServiceTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
