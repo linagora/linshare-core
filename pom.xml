@@ -1360,12 +1360,6 @@
 		<!--  profile:id=fongo -->
 		<profile>
 			<id>fongo</id>
-			<activation>
-				<property>
-					<name>target</name>
-					<value>distribution</value>
-				</property>
-			</activation>
 			<build>
 				<resources>
 					<resource>
@@ -1391,12 +1385,6 @@
 		<!--  profile:id=h2 -->
 		<profile>
 			<id>h2</id>
-			<activation>
-				<property>
-					<name>target</name>
-					<value>distribution</value>
-				</property>
-			</activation>
 			<dependencies>
 				<dependency>
 					<groupId>com.h2database</groupId>
@@ -1472,102 +1460,6 @@
 					</exclusions>
 				</dependency>
 			</dependencies>
-		</profile>
-		<!--  profile:id=distribution -->
-		<profile>
-			<id>distribution</id>
-			<activation>
-				<property>
-					<name>target</name>
-					<value>distribution</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>prepare-jetty</id>
-								<phase>package</phase>
-								<configuration>
-									<tasks>
-										<property name="execution.path" refid="maven.runtime.classpath" />
-										<ant antfile="${basedir}/misc/build.xml" target="prepare-jetty" />
-									</tasks>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>clean-jetty</id>
-								<phase>clean</phase>
-								<configuration>
-									<tasks>
-										<property name="execution.path" refid="maven.runtime.classpath" />
-										<ant antfile="${basedir}/misc/build.xml" target="clean" />
-									</tasks>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/dist.xml</descriptor>
-								<descriptor>src/main/assembly/src.xml</descriptor>
-							</descriptors>
-							<!-- Required since default value is true (Maven 2.2-beta-3) -->
-							<ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>directory-single</goal>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.izpack</groupId>
-						<artifactId>izpack-maven-plugin</artifactId>
-						<version>1.0-alpha-5</version>
-						<configuration>
-							<descriptor>${basedir}/src/install/install.xml</descriptor>
-							<descriptorEncoding>UTF-8</descriptorEncoding>
-							<fileExtension>jar</fileExtension>
-							<installerFile>${project.build.directory}/${project.artifactId}</installerFile>
-							<izpackBasedir>${project.build.directory}/${project.artifactId}-dist/${project.artifactId}-${project.version}</izpackBasedir>
-						</configuration>
-
-						<executions>
-							<execution>
-								<id>standard-installer</id>
-								<phase>package</phase>
-								<goals>
-									<goal>izpack</goal>
-								</goals>
-							</execution>
-						</executions>
-						<dependencies>
-							<dependency>
-								<groupId>org.codehaus.izpack</groupId>
-								<artifactId>izpack-standalone-compiler</artifactId>
-								<version>4.3.2</version>
-							</dependency>
-						</dependencies>
-
-					</plugin>
-				</plugins>
-			</build>
-
 		</profile>
 	</profiles>
 
