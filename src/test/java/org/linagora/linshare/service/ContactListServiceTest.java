@@ -46,6 +46,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ContactList;
@@ -182,6 +183,46 @@ public class ContactListServiceTest {
 		accountRepository.delete(internal);
 
 		logger.debug("End tearDown");
+	}
+
+	@Test
+	public void testCreateContactListSpecialCharacter() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		ContactList contactList = new ContactList();
+		contactList.setIdentifier("EP_TEST_v233<script>alert(document.cookie)</script>");
+		contactList.setOwner(internal);
+		contactList.setDomain(domain);
+		contactList.setPublic(false);
+		contactList.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		contactList.setMailingListContact(new ArrayList<ContactListContact>());
+		contactListService.create(internal, internal, contactList);
+		Assertions.assertEquals(contactList.getIdentifier(), "EP_TEST_v233");
+		Assertions.assertEquals(contactList.getDescription(), "EP_TEST_v233");
+		ContactList deletedContactList = contactListService.findByIdentifier(internal.getLsUuid(),
+				contactList.getUuid());
+		Assertions.assertNull(deletedContactList);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUpdateContactListSpecialCharacter() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		ContactList contactList = new ContactList();
+		contactList.setIdentifier("contactList");
+		contactList.setOwner(internal);
+		contactList.setDomain(domain);
+		contactList.setPublic(false);
+		contactList.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		contactList.setMailingListContact(new ArrayList<ContactListContact>());
+		contactListService.create(internal, internal, contactList);
+		contactList.setIdentifier("EP_TEST_v233<script>alert(document.cookie)</script>");
+		contactListService.update(internal, internal, contactList);
+		Assertions.assertEquals(contactList.getIdentifier(), "EP_TEST_v233");
+		Assertions.assertEquals(contactList.getDescription(), "EP_TEST_v233");
+		ContactList deletedContactList = contactListService.findByIdentifier(internal.getLsUuid(),
+				contactList.getUuid());
+		Assertions.assertNull(deletedContactList);
+		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
