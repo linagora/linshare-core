@@ -91,8 +91,6 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	protected final AccountQuotaBusinessService accountQuotaBusinessService;
 
-	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
-
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
@@ -103,7 +101,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
-		super(rac);
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
 		this.memberService = memberService;
 		this.ssRoleService = ssRoleService;
@@ -112,7 +110,6 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
-		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	@Override

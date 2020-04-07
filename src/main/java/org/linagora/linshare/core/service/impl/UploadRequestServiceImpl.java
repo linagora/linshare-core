@@ -41,6 +41,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -108,8 +109,9 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			final UploadRequestResourceAccessControl rac,
 			final UploadRequestTemplateResourceAccessControl templateRac,
 			final LogEntryService logEntryService,
-			final UploadRequestEntryService uploadRequestEntryService) {
-		super(rac);
+			final UploadRequestEntryService uploadRequestEntryService,
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
 		this.uploadRequestTemplateBusinessService = uploadRequestTemplateBusinessService;

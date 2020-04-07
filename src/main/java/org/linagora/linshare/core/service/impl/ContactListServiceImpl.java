@@ -68,18 +68,15 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 
 	private final LogEntryService logEntryService;
 	
-	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
-
 	public ContactListServiceImpl(MailingListBusinessService contactListBusinessService,
 			UserService userService,
 			final LogEntryService logEntryService,
 			MailingListResourceAccessControl rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
-		super(rac);
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.contactListBusinessService = contactListBusinessService;
 		this.userService = userService;
 		this.logEntryService = logEntryService;
-		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	/**

@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
@@ -110,8 +111,9 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 			final NotifierService notifierService,
 			final UploadRequestGroupService uploadRequestGroupService,
 			final UploadPropositionExceptionRuleService uploadPropositionExceptionRuleService,
-			final LogEntryService logEntryService) {
-		super(rac);
+			final LogEntryService logEntryService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.userService = userService;
 		this.userRepository = userRepository;

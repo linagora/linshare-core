@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -43,8 +44,9 @@ public class GenericWorkGroupNodeServiceImpl extends GenericServiceImpl<Account,
 
 	protected final WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> rac;
 
-	public GenericWorkGroupNodeServiceImpl(WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> rac) {
-		super(rac);
+	public GenericWorkGroupNodeServiceImpl(WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.rac = rac;
 	}
 

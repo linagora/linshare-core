@@ -113,8 +113,9 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final GuestResourceAccessControl rac,
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository,
-			final AccountQuotaBusinessService accountQuotaBusinessService) {
-		super(rac);
+			final AccountQuotaBusinessService accountQuotaBusinessService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;

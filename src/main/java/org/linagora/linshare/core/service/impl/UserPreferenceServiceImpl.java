@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -57,8 +58,9 @@ public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserP
 
 	public UserPreferenceServiceImpl(UserPreferenceMongoRepository repository,
 			AuditUserMongoRepository mongoRepository,
-			UserPreferenceResourceAccessControl rac) {
-		super(rac);
+			UserPreferenceResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.repository = repository;
 		this.mongoRepository = mongoRepository;
 	}

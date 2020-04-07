@@ -40,6 +40,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
@@ -95,8 +96,9 @@ public class AnonymousShareEntryServiceImpl extends
 			final MailBuildingService mailBuildingService,
 			final DocumentEntryBusinessService documentEntryBusinessService,
 			final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository,
-			final AnonymousShareEntryResourceAccessControl rac) {
-		super(rac);
+			final AnonymousShareEntryResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.functionalityService = functionalityService;
 		this.anonymousShareEntryBusinessService = anonymousShareEntryBusinessService;
 		this.logEntryService = logEntryService;

@@ -40,6 +40,7 @@ import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -65,8 +66,9 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			DomainQuotaBusinessService domainQuotaBusinessService,
 			ContainerQuotaBusinessService containerQuotaBusinessService,
-			OperationHistoryBusinessService operationHistoryBusinessService) {
-		super(rac);
+			OperationHistoryBusinessService operationHistoryBusinessService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;

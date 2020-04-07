@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
@@ -50,8 +51,9 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 	private AccountQuotaBusinessService business;
 
 	public AccountQuotaServiceImpl(QuotaResourceAccessControl rac,
-			AccountQuotaBusinessService accountQuotaBusinessService) {
-		super(rac);
+			AccountQuotaBusinessService accountQuotaBusinessService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.business = accountQuotaBusinessService;
 	}
 

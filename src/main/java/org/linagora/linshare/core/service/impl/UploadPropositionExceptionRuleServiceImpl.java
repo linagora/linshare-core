@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionExceptionRuleBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -52,8 +53,9 @@ public class UploadPropositionExceptionRuleServiceImpl extends GenericServiceImp
 
 	public UploadPropositionExceptionRuleServiceImpl(
 			final UploadPropositionExceptionRuleBusinessService exceptionRuleBusinessService,
-			final UploadPropositionExceptionRuleResourceAccessControl rac) {
-		super(rac);
+			final UploadPropositionExceptionRuleResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.exceptionRuleBusinessService = exceptionRuleBusinessService;
 	}
 

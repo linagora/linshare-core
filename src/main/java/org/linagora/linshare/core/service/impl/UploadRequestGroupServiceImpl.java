@@ -39,6 +39,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
@@ -100,8 +101,9 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final UploadRequestUrlService uploadRequestUrlService,
 			final NotifierService notifierService,
 			final LogEntryService logEntryService,
-			final UploadRequestService uploadRequestService) {
-		super(groupRac);
+			final UploadRequestService uploadRequestService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(groupRac, sanitizerInputHtmlBusinessService);
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 		this.functionalityService = functionalityService;
 		this.uploadRequestUrlService = uploadRequestUrlService;

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -50,8 +51,9 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 	private final SharedSpaceRoleBusinessService sharedSpaceRoleBusinessService;
 
 	public SharedSpaceRoleServiceImpl(SharedSpaceRoleBusinessService sharedSpaceRoleBusinessService,
-			SharedSpaceRoleResourceAccessControl rac) {
-		super(rac);
+			SharedSpaceRoleResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.sharedSpaceRoleBusinessService = sharedSpaceRoleBusinessService;
 	}
 

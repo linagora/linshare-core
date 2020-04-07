@@ -105,8 +105,6 @@ public class DocumentEntryServiceImpl
 
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
-	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
-
 	private final NotifierService notifierService;
 
 	private final QuotaService quotaService;
@@ -127,7 +125,7 @@ public class DocumentEntryServiceImpl
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService,
 			UploadRequestEntryBusinessService uploadRequestEntryBusinessService) {
-		super(rac);
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.logEntryService = logEntryService;
@@ -136,7 +134,6 @@ public class DocumentEntryServiceImpl
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
-		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.notifierService = notifierService;
 		this.quotaService = quotaService;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;

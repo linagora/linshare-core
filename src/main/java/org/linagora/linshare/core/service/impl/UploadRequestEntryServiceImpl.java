@@ -99,8 +99,6 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
-	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
-
 	private final QuotaService quotaService;
 
 	private final MailBuildingService mailBuildingService;
@@ -129,14 +127,13 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			NotifierService notifierService,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService) {
-		super(rac);
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
-		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.quotaService = quotaService;
 		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
