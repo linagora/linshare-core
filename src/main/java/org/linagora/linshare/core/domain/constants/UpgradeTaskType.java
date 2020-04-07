@@ -195,11 +195,18 @@ public enum UpgradeTaskType {
 	 * 
 	 */
 	UPGRADE_4_0_UPDATE_TARGET_DOMAIN_UUID_MAIL_ATTACHMENT_AUDIT,
-	
+
 	/**
 	 * Upgrade the SharedSpaceMember structure by adding a NodeType for the member's roles
 	 */
-	UPGRADE_4_0_UPDATE_SHARED_SPACE_MEMBER_STRUCTURE_WITH_TYPED_ROLES;
+	UPGRADE_4_0_UPDATE_SHARED_SPACE_MEMBER_STRUCTURE_WITH_TYPED_ROLES,
+
+	/*
+	 * When we upgraded apache tika (1.24) we have new mimeType
+	 * We have to update our database
+	 *
+	 */
+	UPGRADE_4_0_ADD_ALL_NEW_MIME_TYPE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

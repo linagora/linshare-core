@@ -266,7 +266,34 @@ VALUES
   now(),
   now(),
   null);
- 
+
+-- TASK: UPGRADE_4_0_ADD_ALL_NEW_MIME_TYPE
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (32,
+ 'UNDEFINED',
+ 'UPGRADE_4_0_ADD_ALL_NEW_MIME_TYPE',
+ 'UPGRADE_4_0',
+  null,
+  null,
+  26,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);
   -- End Upgrade Task
 
 -- Functionality DRIVE
