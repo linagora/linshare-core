@@ -235,6 +235,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 					"Pair mail/domain already exist");
 		}
 		guest.setRole(Role.SIMPLE);
+		guest.setFirstName(sanitize(guest.getFirstName()));
+		guest.setLastName(sanitize(guest.getLastName()));
 		List<User> restrictedContacts = null;
 		if (guest.isRestricted()) {
 			restrictedContacts = transformToUsers(actor, restrictedMails);
@@ -292,6 +294,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		} else {
 			guest.setExpirationDate(entity.getExpirationDate());
 		}
+		guest.setFirstName(sanitize(guest.getFirstName()));
+		guest.setLastName(sanitize(guest.getLastName()));
 		Guest result = guestBusinessService.update(owner, entity, guest, guestDomain,
 				restrictedContacts);
 		log.setResourceUpdated(new UserMto(result));

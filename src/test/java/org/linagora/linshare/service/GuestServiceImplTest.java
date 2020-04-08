@@ -188,7 +188,21 @@ public class GuestServiceImplTest extends
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void testCreateGuestSpecialCharacters() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Guest guest = new Guest("EP_TEST_v233<script>alert(document.cookie)</script>",
+				"EP_TEST_v233<script>alert(document.cookie)</script>", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = guestService.create(owner1, owner1, guest, null);
+		Assert.assertNotNull(guest);
+		Assert.assertEquals(Role.SIMPLE, guest.getRole());
+		Assert.assertEquals(guest.getFirstName(), "EP_TEST_v233");
+		Assert.assertEquals(guest.getLastName(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void testCreateInternalAsGuest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -224,7 +238,25 @@ public class GuestServiceImplTest extends
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void testUpdateGuestSpecialCharacters() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = guestService.create(owner1, owner1, guest, null);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		guest.setDomain(domain);
+		guest.setFirstName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		guest.setLastName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		Guest update = guestService.update(owner1, owner1, guest, null);
+		Assert.assertEquals(Role.SIMPLE, update.getRole());
+		Assert.assertEquals(update.getFirstName(), "EP_TEST_v233");
+		Assert.assertEquals(update.getLastName(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void testUpdateInconsistentDomain() {
 		
