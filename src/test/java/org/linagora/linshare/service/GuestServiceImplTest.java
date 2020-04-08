@@ -179,7 +179,21 @@ public class GuestServiceImplTest {
 		Assertions.assertNotNull(aq.getMaxFileSize());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void testCreateGuestSpecialCharacters() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Guest guest = new Guest("EP_TEST_v233<script>alert(document.cookie)</script>",
+				"EP_TEST_v233<script>alert(document.cookie)</script>", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = guestService.create(owner1, owner1, guest, null);
+		Assertions.assertNotNull(guest);
+		Assertions.assertEquals(Role.SIMPLE, guest.getRole());
+		Assertions.assertEquals(guest.getFirstName(), "EP_TEST_v233");
+		Assertions.assertEquals(guest.getLastName(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void testCreateInternalAsGuest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -214,7 +228,25 @@ public class GuestServiceImplTest {
 		Assertions.assertEquals("Last", update.getLastName());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void testUpdateGuestSpecialCharacters() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = guestService.create(owner1, owner1, guest, null);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		guest.setDomain(domain);
+		guest.setFirstName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		guest.setLastName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		Guest update = guestService.update(owner1, owner1, guest, null);
+		Assertions.assertEquals(Role.SIMPLE, update.getRole());
+		Assertions.assertEquals(update.getFirstName(), "EP_TEST_v233");
+		Assertions.assertEquals(update.getLastName(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void testUpdateInconsistentDomain() {
 		
