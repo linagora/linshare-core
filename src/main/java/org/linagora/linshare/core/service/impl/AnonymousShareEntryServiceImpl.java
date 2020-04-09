@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
@@ -48,12 +49,14 @@ import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.ShareFileDownloadEmailContext;
@@ -174,6 +177,16 @@ public class AnonymousShareEntryServiceImpl extends
 		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, targetedAccount,
 				LogAction.DELETE, share, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
 		logEntryService.insert(log);
+		TimeUnitValueFunctionality fileExpirationFunc = functionalityService.getDefaultFileExpiryTimeFunctionality(targetedAccount.getDomain());
+		if (fileExpirationFunc.getActivationPolicy().getStatus()) {
+			DocumentEntry documentEntry = share.getDocumentEntry();
+			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) == 0 ) {
+				Calendar deletionDate = Calendar.getInstance();
+				deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getValue());
+				documentEntry.setExpirationDate(deletionDate);
+				documentEntryBusinessService.update(documentEntry);
+			}
+		}
 		// TODO : anonymous share deletion notification
 		// notifierService.sendNotification();
 	}
