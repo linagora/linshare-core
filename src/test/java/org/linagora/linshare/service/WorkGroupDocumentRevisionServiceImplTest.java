@@ -166,6 +166,32 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	}
 
 	@Test
+	public void createNewDocumentSpecialCharactersTest() throws IOException {
+		InputStream stream1 = getStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("EP_TEST_v233<script>alert(document.cookie)</script>", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		WorkGroupDocument document = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile1,
+				"EP_TEST_v233<script>alert(document.cookie)</script>", rootFolder.getUuid(), false);
+		assertEquals(document.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
+	}
+
+	@Test
+	public void createNewDocumentAndRevisionSpecialCharTest() throws IOException {
+		InputStream stream1 = getStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		InputStream stream2 = getStream("linshare.properties.sample");
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream2, tempFile2);
+		WorkGroupDocument document = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile1,
+				"EP_TEST_v233<script>alert(document.cookie)</script>", rootFolder.getUuid(), false);
+		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupNodeService.create(john, john,
+				workGroup, tempFile2, "EP_TEST_v233<script>alert(document.cookie)</script>", document.getUuid(), false);
+		assertEquals(document.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
+		assertEquals(document.getName(), revision.getName());
+	}
+
+	@Test
 	public void findAllTest() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
 		InputStream stream2 = getStream("linshare.properties.sample");

@@ -49,6 +49,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -145,6 +146,16 @@ public class WorkGroupNodeServiceImplTest {
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
+	}
+
+	@Test
+	public void createFolderSpecialCharactersTest() {
+		WorkGroupNode groupNode = new WorkGroupNode(new AccountMto(john),
+				"EP_TEST_v233<script>alert(document.cookie)</script>", rootFolder.getUuid(), workGroup.getLsUuid());
+		groupNode.setNodeType(WorkGroupNodeType.FOLDER);
+		groupNode = workGroupNodeService.create(john, john, workGroup, groupNode, false, false);
+		Assertions.assertNotNull(groupNode, "Folder is null");
+		Assertions.assertEquals(groupNode.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
 	}
 
 	@Test

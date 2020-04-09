@@ -121,4 +121,11 @@ public class GenericServiceImpl<R, E> {
 		}
 		return input;
 	}
+
+	protected String sanitizeFileName(String input) {
+		if (!Strings.isNullOrEmpty(input)) {
+			return sanitizerInputHtmlBusinessService.sanitizeFileName(input);
+		}
+		return input;
+	}
 }
