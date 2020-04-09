@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -33,7 +33,8 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
-import java.util.Formatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
@@ -43,37 +44,49 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordEmailContext;
+import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordFor4_0_EmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class GuestAccountResetPasswordEmailBuilder extends EmailBuilder {
+/**
+ * Builder to create a mail for notify guests with passwords encoded in old
+ * strategy since LS migration from 2.3 to 4.0
+ *
+ */
+public class GuestAccountResetPasswordFor4_0_EmailBuilder extends GuestAccountResetPasswordEmailBuilder {
+	
+	private Date urlExpirationDate;
+	
+	public GuestAccountResetPasswordFor4_0_EmailBuilder(String urlTemplateForGuestReset) {
+		super(urlTemplateForGuestReset);
+	}
 
-	protected String urlTemplateForGuestReset;
+	public Date getUrlExpirationDate() {
+		return urlExpirationDate;
+	}
 
-	public GuestAccountResetPasswordEmailBuilder(String urlTemplateForGuestReset) {
-		super();
-		this.urlTemplateForGuestReset = urlTemplateForGuestReset;
+	public void setUrlExpirationDate(Date urlExpirationDate) {
+		this.urlExpirationDate = urlExpirationDate;
 	}
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK;
+		return MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0;
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		GuestAccountResetPasswordEmailContext emailCtx = (GuestAccountResetPasswordEmailContext) context;
+		GuestAccountResetPasswordFor4_0_EmailContext emailCtx = (GuestAccountResetPasswordFor4_0_EmailContext) context;
 		Guest guest = emailCtx.getGuest();
+		Date urlExpirationDate = emailCtx.getUrlExpirationDate();
 		String linshareURL = getLinShareUrl(guest);
 		MailConfig cfg = guest.getDomain().getCurrentMailConfiguration();
 		Context ctx = new Context(emailCtx.getLocale());
-		ctx.setVariable("customMessage", null);
 		ctx.setVariable("guest", new MailContact(guest));
-		ctx.setVariable("guestExpirationDate", guest.getExpirationDate());
 		ctx.setVariable("linshareURL", linshareURL);
+		ctx.setVariable("urlExpirationDate", urlExpirationDate);
 		ctx.setVariable("resetLink", getResetLink(linshareURL, emailCtx.getResetPasswordTokenUuid()));
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
@@ -84,20 +97,14 @@ public class GuestAccountResetPasswordEmailBuilder extends EmailBuilder {
 	public List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		ctx.setVariable("customMessage", null);
-		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		ctx.setVariable("guestExpirationDate", getFakeExpirationDate());
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.DATE, 7);
+		ctx.setVariable("urlExpirationDate", c.getTime());
+		ctx.setVariable("guest", new MailContact("guest@linshare.org", "Guest", "Guest"));
 		ctx.setVariable("resetLink", getResetLink(fakeLinshareURL, "cb1443d0-a34f-4d0b-92e4-c19d4eeb7fae"));
 		res.add(ctx);
 		return res;
 	}
 
-	protected String getResetLink(String linshareURL, String token) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(linshareURL);
-		Formatter formatter = new Formatter(sb);
-		formatter.format(urlTemplateForGuestReset, token);
-		formatter.close();
-		return sb.toString();
-	}
 }

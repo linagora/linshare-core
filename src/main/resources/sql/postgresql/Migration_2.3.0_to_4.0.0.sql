@@ -347,6 +347,97 @@ UPDATE mail_content SET messages_russian = messages_english WHERE id=36;
 
 
 -- New Mails
+-- GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0
+-- -- mail content table
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible)
+	VALUES ('',NOW(),'',1,37,37,'','','',NOW(),true,'','cb30b05c-78b5-11ea-ae9c-3f0dd07b717b',true);
+-- -- mail_content_lang table (en)
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid)
+	VALUES (37,0,1,37,37,true,'bc543cdc-78c1-11ea-872b-bbec41be01d1');
+-- -- mail_content_lang table (fr)
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid)
+	VALUES (137,1,1,37,37,true,'fa6a42d2-78c1-11ea-aba9-174059c40540');
+-- -- mail_content_lang table (ru)
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid)
+	VALUES (237,2,1,37,37,true,'4f5a1b10-78c1-11ea-959e-43f0d02dafd1');
+
+-- --policies 
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (319, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (320, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (321, false, false, 2, true);
+-- --mail activation
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(38, false, 'GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0', 319, 320, 321, 1, true);
+
+-- Mail to notify guests that have old passwords encoded in old strategy to reset passwords
+UPDATE mail_content SET subject= '[( #{subject})]',
+body= '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${guest.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p data-th-utext="#{mainTitle}"><p>
+          <br/>
+        <span data-th-utext="#{additionalMsg}"></span>
+        <br/>
+          <b>NB:</b> <span data-th-utext="#{noteMsg}"></span>
+        </p><br/>
+        <p  data-th-utext="#{endingMainMsg}"></p>
+          <!--/* Activation link for initialisation of the guest account */-->
+          <th:block data-th-replace="layout :: actionButtonLink(#{changePasswordBtn},${resetLink})"/>
+        <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoStandardArea(#{userNameTitle},${guest.mail})"/>
+    <th:block data-th-replace="layout :: infoActionLink(#{resetLinkTitle},${resetLink})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{urlExpiryDateTitle},${urlExpirationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',
+messages_french= 'urlExpiryDateTitle = Date d''''expiration de l''''URL
+additionalMsg = Vous pouvez également, utiliser le formulaire de mot de passe perdu pour accomplir cette tache.
+noteMsg = Ce lien est utilisable une seule fois et sera valide pendant 1 semaine.
+changePasswordBtn = Réinitialiser
+endingMainMsg = Cordialement.
+mainTitle = Afin de renforcer la sécurité de votre compte, vous devez changer le mot de passe de votre compte LinShare. Toute connexion sera impossible tant que cette étape ne sera pas réalisée.
+resetLinkTitle = Lien de réinitialisation
+subject =  Mise à jour de sécurité
+userNameTitle = Identifiant',
+messages_english= 'urlExpiryDateTitle = URL expiry date
+additionalMsg = You can also use the reset password form to do this task.
+noteMsg = This link can be used only once and will be valid for 1 week. 
+changePasswordBtn = Change password
+endingMainMsg = Regards.
+mainTitle = In order to enhance the security of your account, you must change your password to your LinShare account. Any connection will be forbidden until this step is not carried out.
+resetLinkTitle = LinShare reset password link
+subject =  Security update
+userNameTitle = Username',
+messages_russian= 'urlExpiryDateTitle = URL expiry date
+additionalMsg = You can also use the reset password form to do this task.
+noteMsg = This link can be used only once and will be valid for 1 week. 
+changePasswordBtn = Change password
+endingMainMsg = Regards.
+mainTitle = In order to enhance the security of your account, you must change your password to your LinShare account. Any connection will be forbidden until this step is not carried out.
+resetLinkTitle = LinShare reset password link
+subject =  Security update
+userNameTitle = Username'
+WHERE id= 37;
+
 -- Drive notification :
 -- DRIVE_WARN_NEW_MEMBER
 UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>

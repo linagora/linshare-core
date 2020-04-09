@@ -358,4 +358,13 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (316, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
 	VALUES(37, false, 'DRIVE_WARN_DELETED_MEMBER', 314, 315, 316, 1, true);
-
+	
+-- MailActivation : GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (317, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (318, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (319, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(38, false, 'GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0', 317, 318, 319, 1, true);

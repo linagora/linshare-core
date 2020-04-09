@@ -59,6 +59,7 @@ import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.FileWarnOwnerBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountNewCreationEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPasswordEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPasswordFor4_0_EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestWarnGuestAboutHisPasswordResetEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.JwtPermanentCreatedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.JwtPermanentDeletedEmailBuilder;
@@ -146,9 +147,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		emailBuilders.put(MailContentType.SHARE_FILE_DOWNLOAD, new ShareFileDownloadEmailBuilder());
 
-		GuestAccountResetPasswordEmailBuilder resetGuestBuilder = new GuestAccountResetPasswordEmailBuilder();
-		resetGuestBuilder.setUrlTemplateForGuestReset(urlTemplateForGuestReset);
-		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK, resetGuestBuilder);
+		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK, new GuestAccountResetPasswordEmailBuilder(urlTemplateForGuestReset));
 		emailBuilders.put(MailContentType.GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET, new GuestWarnGuestAboutHisPasswordResetEmailBuilder());
 
 		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
@@ -190,6 +189,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.DRIVE_WARN_NEW_MEMBER, new DriveWarnNewMemberEmailBuilder());
 		emailBuilders.put(MailContentType.DRIVE_WARN_UPDATED_MEMBER, new DriveWarnUpdatedMemberEmailBuilder());
 		emailBuilders.put(MailContentType.DRIVE_WARN_DELETED_MEMBER, new DriveWarnDeletedMemberEmailBuilder());
+		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0, new GuestAccountResetPasswordFor4_0_EmailBuilder(urlTemplateForGuestReset));
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
 				mailActivationBusinessService, fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments,
