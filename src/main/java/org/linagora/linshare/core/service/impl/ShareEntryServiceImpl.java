@@ -205,6 +205,16 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			}
 		}
 		shareEntryBusinessService.delete(share);
+		TimeUnitValueFunctionality fileExpirationFunc = functionalityService.getDefaultFileExpiryTimeFunctionality(owner.getDomain());
+		if (fileExpirationFunc.getActivationPolicy().getStatus()) {
+			DocumentEntry documentEntry = share.getDocumentEntry();
+			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) == 0 ) {
+				Calendar deletionDate = Calendar.getInstance();
+				deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getValue());
+				documentEntry.setExpirationDate(deletionDate);
+				documentEntryBusinessService.update(documentEntry);
+			}
+		}
 		notifierService.sendNotification(mail, true);
 		return share;
 	}
