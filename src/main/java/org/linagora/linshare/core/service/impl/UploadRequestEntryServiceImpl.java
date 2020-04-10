@@ -152,7 +152,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		Validate.notEmpty(fileName, "fileName is required.");
 		UploadRequestEntry upReqEntry = null;
 		try {
-			fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName);
+			fileName = sanitizeFileName(fileName);
 			Long size = tempFile.length();
 			checkSpace(actor, size);
 			// detect file's mime type.
@@ -216,6 +216,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_BE_COPIED,
 					"You need first close the current upload request before copying file");
 		}
+		uploadRequestEntry.setName(sanitizeFileName(uploadRequestEntry.getName()));
 		entity = documentEntryBusinessService.copy(owner, uploadRequestEntry);
 		uploadRequestEntry.setDocumentEntry(entity);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entity, LogAction.CREATE);

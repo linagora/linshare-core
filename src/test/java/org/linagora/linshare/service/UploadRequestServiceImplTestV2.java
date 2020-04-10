@@ -329,6 +329,24 @@ public class UploadRequestServiceImplTestV2 {
 	}
 
 	@Test
+	public void testUploadRequestEntryCreateSpecialCharacters() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		Assertions.assertNotNull(actor);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		UploadRequestUrl requestUrl = ureJohn.getUploadRequestURLs().iterator().next();
+		Assertions.assertNotNull(requestUrl);
+		UploadRequest uploadRequest = requestUrl.getUploadRequest();
+		Assertions.assertNotNull(uploadRequest);
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, "EP_TEST_v233<script>alert(document.cookie)</script>", comment, false, null,
+				requestUrl);
+		Assertions.assertNotNull(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()));
+		Assertions.assertEquals(uploadRequestEntry.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testUploadRequestCopyUploadRequestEntry() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
@@ -347,6 +365,36 @@ public class UploadRequestServiceImplTestV2 {
 		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, uploadRequestEntry);
 		Assertions.assertNotNull(documentEntry);
 
+		Document aDocument = uploadRequestEntry.getDocument();
+		userRepository.update(jane);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
+		metadata.setUuid(aDocument.getUuid());
+		fileDataStore.remove(metadata);
+		documentRepository.delete(aDocument);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUploadRequestCopyUploadRequestEntrySpecialCharacters() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		Assertions.assertNotNull(actor);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		UploadRequestUrl requestUrl = ureJane.getUploadRequestURLs().iterator().next();
+		Assertions.assertNotNull(requestUrl);
+		UploadRequest uploadRequest = requestUrl.getUploadRequest();
+		Assertions.assertNotNull(uploadRequest);
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
+				requestUrl);
+		Assertions.assertNotNull(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()));
+		uploadRequestEntry.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		uploadRequestEntryRepository.update(uploadRequestEntry);
+		Assertions.assertEquals(uploadRequestEntry.getName(), "EP_TEST_v233<script>alert(document.cookie)</script>");
+		uploadRequestService.updateStatus(actor, actor, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, uploadRequestEntry);
+		Assertions.assertNotNull(documentEntry);
+		Assertions.assertEquals(documentEntry.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
 		Document aDocument = uploadRequestEntry.getDocument();
 		userRepository.update(jane);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
