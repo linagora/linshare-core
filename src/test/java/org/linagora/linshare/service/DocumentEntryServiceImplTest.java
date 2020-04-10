@@ -171,6 +171,27 @@ public class DocumentEntryServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testCreateDocumentEntrySpecialCharacters() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		aDocumentEntry = documentEntryService.create(actor, actor, tempFile,
+				"EP_TEST_v233<script>alert(document.cookie)</script>", comment, false, null);
+		Assertions.assertNotNull(documentEntryRepository.findById(aDocumentEntry.getUuid()));
+		Assertions.assertEquals(aDocumentEntry.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
+		Document aDocument = aDocumentEntry.getDocument();
+		documentEntryRepository.delete(aDocumentEntry);
+		jane.getEntries().clear();
+		userRepository.update(jane);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
+		metadata.setUuid(aDocument.getUuid());
+		fileDataStore.remove(metadata);
+		documentRepository.delete(aDocument);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	/**
 	 * We need this method because all the functionalities are check when we create
 	 * a DocumentEntry
@@ -291,6 +312,36 @@ public class DocumentEntryServiceImplTest {
 					"The user should have access to this resource. This exception must not be thrown "
 							+ e.getMessage());
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	private InputStream getStream(String resourceName) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
+	}
+
+	@Test
+	public void testUpdateDocumentEntrySpecialCharacters() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		InputStream stream1 = getStream("linshare-default.properties");
+		File tempFile = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream1, tempFile);
+		InputStream stream2 = getStream("linshare.properties.sample");
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream2, tempFile2);
+		aDocumentEntry = documentEntryService.create(john, john, tempFile, fileName, comment, false, null);
+		Assertions.assertNotNull(documentEntryRepository.findById(aDocumentEntry.getUuid()));
+		Assertions.assertEquals(aDocumentEntry.getName(), fileName);
+		aDocumentEntry = documentEntryService.update(john, john, aDocumentEntry.getUuid(), tempFile2,
+				"EP_TEST_v233<script>alert(document.cookie)</script>");
+		Assertions.assertEquals(aDocumentEntry.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
+		Document aDocument = aDocumentEntry.getDocument();
+		documentEntryRepository.delete(aDocumentEntry);
+		jane.getEntries().clear();
+		userRepository.update(jane);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
+		metadata.setUuid(aDocument.getUuid());
+		fileDataStore.remove(metadata);
+		documentRepository.delete(aDocument);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
