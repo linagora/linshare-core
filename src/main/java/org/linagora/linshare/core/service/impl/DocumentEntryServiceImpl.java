@@ -196,7 +196,7 @@ public class DocumentEntryServiceImpl
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
 		DocumentEntry docEntry = null;
 		try {
-			fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName);
+			fileName = sanitizeFileName(fileName);
 			Long size = tempFile.length();
 			checkSpace(owner, size);
 
@@ -295,7 +295,7 @@ public class DocumentEntryServiceImpl
 		}
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, originalEntry);
-		fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName); // throws
+		fileName = sanitizeFileName(fileName); // throws
 		DocumentEntry documentEntry = null;
 
 		try {
@@ -545,7 +545,7 @@ public class DocumentEntryServiceImpl
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.UPDATE);
-		newName = sanitizerInputHtmlBusinessService.sanitizeFileName(newName);
+		newName = sanitizeFileName(newName);
 		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry,newName,fileComment, meta);
 		log.setResourceUpdated(new DocumentMto(res));
 		logEntryService.insert(log);
@@ -568,7 +568,7 @@ public class DocumentEntryServiceImpl
 		if (!isFromCmisSync)
 			entry.setCmisSync(false);
 		else {
-			newName = sanitizerInputHtmlBusinessService.sanitizeFileName(newName);
+			newName = sanitizeFileName(newName);
 			documentEntryBusinessService.syncUniqueDocument(actor, newName);
 			entry.setCmisSync(true);
 		}
