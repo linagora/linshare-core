@@ -52,7 +52,7 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implements GuestRepository {
-
+	
 	public GuestRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
@@ -305,6 +305,21 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		return findByCriteria(criteria);
 	}
 
+	/**
+	 * Find all guests mails, those passwords are encoded in not bcrypt
+	 * @return {@link List} mails of guests
+	 */
+	@Deprecated(forRemoval = true, since = "4.0")
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllWithDeprecatedPasswordEncoding() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.not(Restrictions.ilike("password", "{bcrypt}", MatchMode.START)))
+				.add(Restrictions.eq("destroyed", 0L))
+				.setProjection(Projections.property("lsUuid"));
+		return listByCriteria(crit);
+	}
+	
 	@Override
 	public List<Guest> findAllMyGuests(Account owner) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());

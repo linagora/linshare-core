@@ -248,6 +248,15 @@
 					<constructor-arg ref="mongoTemplate" />
 					<constructor-arg ref="sharedSpaceMemberMongoRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_0.NotifyAllGuestsToResetPasswordsWithOldEncodingUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="guestRepository" />
+					<constructor-arg ref="notifierService" />
+					<constructor-arg ref="resetGuestPasswordMongoRepository" />
+					<constructor-arg ref="mailBuildingService" />
+					<constructor-arg value="${guests.notify.with.deprecated.passwords.url.expiration.days}" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

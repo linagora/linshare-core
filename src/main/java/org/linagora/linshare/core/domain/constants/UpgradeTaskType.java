@@ -206,7 +206,12 @@ public enum UpgradeTaskType {
 	 * We have to update our database
 	 *
 	 */
-	UPGRADE_4_0_ADD_ALL_NEW_MIME_TYPE;
+	UPGRADE_4_0_ADD_ALL_NEW_MIME_TYPE,
+
+	/*
+	 * Notify all guests with old password encoding strategy to reset
+	 */
+	UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_GUESTS;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

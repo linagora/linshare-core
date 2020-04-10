@@ -294,6 +294,34 @@ VALUES
   now(),
   now(),
   null);
+
+-- TASK: UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_GUESTS
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (33,
+ 'UNDEFINED',
+ 'UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_GUESTS',
+ 'UPGRADE_4_0',
+  null,
+  null,
+  33,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);
   -- End Upgrade Task
 
 -- Functionality DRIVE
@@ -338,7 +366,6 @@ INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_c
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (235,2,1,35,35,true,'dbaef9ba-5f7b-11e9-909b-b73741598b74');
 
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (236,2,1,36,36,true,'e6d0bb08-5f7b-11e9-a49e-bffcfe6b06bf');
-
 
 --Set English text into message_russian (To be deleted once the Russian translation is done)
 UPDATE mail_content SET messages_russian = messages_english WHERE id=34;
