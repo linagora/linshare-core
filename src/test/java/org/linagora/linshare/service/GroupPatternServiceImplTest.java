@@ -106,6 +106,39 @@ public class GroupPatternServiceImplTest {
 	}
 
 	@Test
+	public void testCreateGroupPatternSpecialChar() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		GroupLdapPattern groupPattern = new GroupLdapPattern("EP_TEST_v233<script>alert(document.cookie)</script>",
+				"EP_TEST_v233<script>alert(document.cookie)</script>", "searchAllGroupsQuery", "searchGroupQuery",
+				"groupPrefix", false);
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		groupLdapPatternService.create(actor, groupPattern);
+		Assertions.assertNotNull(groupPattern);
+		Assertions.assertEquals(groupPattern.getLabel(), "EP_TEST_v233");
+		Assertions.assertEquals(groupPattern.getDescription(), "EP_TEST_v233");
+		logger.debug("Current pattern object: " + groupPattern.toString());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUpdateGroupPatternSpecialChar() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		GroupLdapPattern groupPattern = new GroupLdapPattern("Label",
+				"Description", "searchAllGroupsQuery", "searchGroupQuery",
+				"groupPrefix", false);
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		groupLdapPatternService.create(actor, groupPattern);
+		Assertions.assertNotNull(groupPattern);
+		groupPattern.setLabel("EP_TEST_v233<script>alert(document.cookie)</script>");
+		groupPattern.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		groupLdapPatternService.update(actor, groupPattern);
+		Assertions.assertEquals(groupPattern.getLabel(), "EP_TEST_v233");
+		Assertions.assertEquals(groupPattern.getDescription(), "EP_TEST_v233");
+		logger.debug("Current pattern object: " + groupPattern.toString());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testCreateFindDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);

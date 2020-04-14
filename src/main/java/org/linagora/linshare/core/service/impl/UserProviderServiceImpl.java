@@ -41,6 +41,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UserProviderType;
@@ -84,7 +85,9 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			LDAPUserQueryService ldapQueryService,
 			LdapUserProviderRepository ldapUserProviderRepository,
 			UserProviderRepository userProviderRepository,
-			AuditAdminMongoRepository mongoRepository) {
+			AuditAdminMongoRepository mongoRepository,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(sanitizerInputHtmlBusinessService);
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
 		this.userProviderRepository = userProviderRepository;
@@ -110,6 +113,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						BusinessErrorCode.LDAP_ATTRIBUTE_CONTAINS_NULL,
 						"Attribute must be not null");
 		}
+		domainPattern.setLabel(sanitize(domainPattern.getLabel()));
+		domainPattern.setDescription(sanitize(domainPattern.getDescription()));
 		UserLdapPattern createdDomain = domainPatternRepository
 				.create(domainPattern);
 		DomainPatternAuditLogEntry log = new DomainPatternAuditLogEntry(actor, actor.getDomainId(),
@@ -221,7 +226,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnAllAttributes(), "Patterns's auto complete command on all attributes must be set.");
 		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnFirstAndLastName(), "Patterns's auto complete command on first name and last name must be set.");
 		Validate.notEmpty(domainPattern.getSearchUserCommand(), "Patterns's search command user must be set.");
-		pattern.setDescription(domainPattern.getDescription());
+		pattern.setDescription(sanitize(domainPattern.getDescription()));
 		pattern.setAuthCommand(domainPattern.getAuthCommand());
 		pattern.setSearchUserCommand(domainPattern.getSearchUserCommand());
 		pattern.setAutoCompleteCommandOnAllAttributes(domainPattern

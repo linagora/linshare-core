@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
@@ -53,7 +54,9 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 	protected LdapGroupProviderRepository ldapGroupProviderRepository;
 
 	public GroupLdapPatternServiceImpl(GroupPatternRepository groupPatternRepository,
-			LdapGroupProviderRepository ldapGroupProviderRepository) {
+			LdapGroupProviderRepository ldapGroupProviderRepository,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(sanitizerInputHtmlBusinessService);
 		this.groupPatternRepository = groupPatternRepository;
 		this.ldapGroupProviderRepository = ldapGroupProviderRepository;
 	}
@@ -86,6 +89,8 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 						"Attribute must be not null");
 			}
 		}
+		groupLdapPattern.setLabel(sanitize(groupLdapPattern.getLabel()));
+		groupLdapPattern.setDescription(sanitize(groupLdapPattern.getDescription()));
 		GroupLdapPattern createdGroupPattern = groupPatternRepository.create(groupLdapPattern);
 		// TODO AUDIT
 		return createdGroupPattern;
@@ -110,8 +115,8 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 		Validate.notNull(groupLdapPattern.getSearchAllGroupsQuery(), "Pattern's search all groups query must be set.");
 		Validate.notEmpty(groupLdapPattern.getSearchGroupQuery(), "Pattern's search group query must be set.");
 
-		pattern.setLabel(groupLdapPattern.getLabel());
-		pattern.setDescription(groupLdapPattern.getDescription());
+		pattern.setLabel(sanitize(groupLdapPattern.getLabel()));
+		pattern.setDescription(sanitize(groupLdapPattern.getDescription()));
 		pattern.setSearchPageSize(groupLdapPattern.getSearchPageSize());
 		pattern.setSearchAllGroupsQuery(groupLdapPattern.getSearchAllGroupsQuery());
 		pattern.setSearchGroupQuery(groupLdapPattern.getSearchGroupQuery());

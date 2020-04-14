@@ -34,13 +34,30 @@
 package org.linagora.linshare.core.service.impl;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 public class GenericAdminServiceImpl {
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	protected final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
+
+	public GenericAdminServiceImpl(SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super();
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
+	}
+
+	protected String sanitize(String input) {
+		if (!Strings.isNullOrEmpty(input)) {
+			return sanitizerInputHtmlBusinessService.strictClean(input);
+		}
+		return input;
+	}
 
 	protected void preChecks(Account actor) {
 		Validate.notNull(actor, "Missing actor account");

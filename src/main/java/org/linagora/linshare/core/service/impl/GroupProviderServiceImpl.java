@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.GroupProvider;
 import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -48,8 +49,9 @@ public class GroupProviderServiceImpl extends GenericAdminServiceImpl implements
 	private LdapGroupProviderRepository ldapGroupProviderRepository;
 
 	public GroupProviderServiceImpl(GroupProviderRepository groupProviderRepository,
-			LdapGroupProviderRepository ldapGroupProviderRepository) {
-		super();
+			LdapGroupProviderRepository ldapGroupProviderRepository,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(sanitizerInputHtmlBusinessService);
 		this.groupProviderRepository = groupProviderRepository;
 		this.ldapGroupProviderRepository = ldapGroupProviderRepository;
 	}
