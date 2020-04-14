@@ -43,6 +43,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -58,17 +59,19 @@ import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
@@ -109,9 +112,6 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	private LdapConnectionService ldapConnectionService;
 
 	@Autowired
-	private AccountService accountService;
-
-	@Autowired
 	private WelcomeMessagesService welcomeService;
 
 	@Autowired
@@ -126,13 +126,27 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 
 	private WelcomeMessages current;
 
+	private Account root;
+
+	private LoadingServiceTestDatas datas;
+
+	private AbstractDomain domain;
+
+	@Autowired
+	@Qualifier("userRepository")
+	private UserRepository<User> userRepository;
+
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
+		datas = new LoadingServiceTestDatas(userRepository);
+		datas.loadUsers();
+		domain = datas.getUser1().getDomain();
 		ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		root = datas.getRoot();
+		current = welcomeService.find((User) root, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 			attributeList.put("first", attribute);
@@ -147,7 +161,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
-			domainPattern = userProviderService.createDomainPattern(actor, domainPattern);
+			domainPattern = userProviderService.createDomainPattern(root, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}
@@ -164,6 +178,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	public void testCreateTopDomain() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("label");
+		topDomain.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
 		topDomain.setDefaultRole(Role.SIMPLE);
 		topDomain.setPurgeStep(DomainPurgeStepEnum.IN_USE);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
@@ -178,11 +193,9 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		topDomain.setMimePolicy(mimePolicy);
 		
 		try {
-			Account actor = accountService.findByLsUuid("root@localhost.localdomain");
-			current = welcomeService.find((User) actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 			topDomain.setCurrentWelcomeMessages(current);
-			abstractDomainService.createTopDomain(actor, topDomain);
-			abstractDomainService.markToPurge(actor, topDomain.getUuid());
+			abstractDomainService.createTopDomain(root, topDomain);
+			abstractDomainService.markToPurge(root, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create top domain.");
@@ -190,10 +203,71 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test()
+	public void testCreateTopDomainSpecialCharWithoutDescription() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		TopDomain topDomain = new TopDomain("EP_TEST_v233<script>alert(document.cookie)</script>");
+		topDomain.setDefaultRole(Role.SIMPLE);
+		topDomain.setPurgeStep(DomainPurgeStepEnum.IN_USE);
+		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
+		topDomain.setPolicy(policy);
+
+		MailConfig mailConfig = new MailConfig();
+		mailConfig.setUuid(LinShareConstants.defaultMailConfigIdentifier);
+		topDomain.setCurrentMailConfiguration(mailConfig);
+
+		MimePolicy mimePolicy = new MimePolicy();
+		mimePolicy.setUuid(LinShareConstants.defaultMimePolicyIdentifier);
+		topDomain.setMimePolicy(mimePolicy);
+		topDomain.setCurrentWelcomeMessages(current);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			abstractDomainService.createTopDomain(root, topDomain);
+		});
+		Assertions.assertEquals(BusinessErrorCode.INVALID_FILENAME, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCreateTopDomainSpecialChar() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		TopDomain topDomain = new TopDomain("EP_TEST_v233<script>alert(document.cookie)</script>");
+		topDomain.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		topDomain.setDefaultRole(Role.SIMPLE);
+		topDomain.setPurgeStep(DomainPurgeStepEnum.IN_USE);
+		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
+		topDomain.setPolicy(policy);
+
+		MailConfig mailConfig = new MailConfig();
+		mailConfig.setUuid(LinShareConstants.defaultMailConfigIdentifier);
+		topDomain.setCurrentMailConfiguration(mailConfig);
+
+		MimePolicy mimePolicy = new MimePolicy();
+		mimePolicy.setUuid(LinShareConstants.defaultMimePolicyIdentifier);
+		topDomain.setMimePolicy(mimePolicy);
+		topDomain.setCurrentWelcomeMessages(current);
+		abstractDomainService.createTopDomain(root, topDomain);
+		Assert.assertNotNull(topDomain);
+		Assert.assertEquals(topDomain.getLabel(), "EP_TEST_v233");
+		Assert.assertEquals(topDomain.getDescription(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUpdateDomainSpecialChar() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		domain.setLabel("EP_TEST_v233<script>alert(document.cookie)</script>");
+		domain.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		abstractDomainService.updateDomain(root, domain);
+		Assert.assertEquals(domain.getLabel(), "EP_TEST_v233");
+		Assert.assertEquals(domain.getDescription(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void testCreateTopDomain2() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("label");
+		topDomain.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
 		topDomain.setDefaultRole(Role.SIMPLE);
 		topDomain.setPurgeStep(DomainPurgeStepEnum.IN_USE);
 		DomainPolicy policy = domainPolicyRepository
@@ -208,18 +282,16 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		mimePolicy.setUuid(LinShareConstants.defaultMimePolicyIdentifier);
 		topDomain.setMimePolicy(mimePolicy);
 		
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
-		current = welcomeService.find((User) actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 		topDomain.setCurrentWelcomeMessages(current);
 		try {
-			abstractDomainService.createTopDomain(actor, topDomain);
+			abstractDomainService.createTopDomain(root, topDomain);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create domain.");
 		}
 		
 		try {
-			abstractDomainService.markToPurge(actor, topDomain.getUuid());
+			abstractDomainService.markToPurge(root, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't delete top domain.");
@@ -231,6 +303,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	public void testCreateFindAndPurgeDomain() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("topDomainToPurge");
+		topDomain.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
 		topDomain.setDefaultRole(Role.SIMPLE);
 		topDomain.setPurgeStep(DomainPurgeStepEnum.IN_USE);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
@@ -244,25 +317,23 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		mimePolicy.setUuid(LinShareConstants.defaultMimePolicyIdentifier);
 		topDomain.setMimePolicy(mimePolicy);
 
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
-		current = welcomeService.find((User) actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 		topDomain.setCurrentWelcomeMessages(current);
-		int initSize = abstractDomainService.findAll(actor).size();
+		int initSize = abstractDomainService.findAll(root).size();
 		try {
-			abstractDomainService.createTopDomain(actor, topDomain);
+			abstractDomainService.createTopDomain(root, topDomain);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create domain.");
 		}
-		List<AbstractDomain> abstractDomainsService = abstractDomainService.findAll(actor);
+		List<AbstractDomain> abstractDomainsService = abstractDomainService.findAll(root);
 		Assert.assertEquals(initSize + 1, abstractDomainsService.size());
 		try {
-			abstractDomainService.markToPurge(actor, topDomain.getUuid());
+			abstractDomainService.markToPurge(root, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't delete top domain.");
 		}
-		Assert.assertEquals(initSize, abstractDomainService.findAll(actor).size());
+		Assert.assertEquals(initSize, abstractDomainService.findAll(root).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -272,15 +343,14 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(subDomain);
 		assertNotNull(subDomain.getFunctionalities());
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
-		int initSize = abstractDomainService.findAll(actor).size();
+		int initSize = abstractDomainService.findAll(root).size();
 		try {
-			abstractDomainService.markToPurge(actor, subDomain.getUuid());
+			abstractDomainService.markToPurge(root, subDomain.getUuid());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("Can't delete top domain.");
 		}
-		Assert.assertEquals(initSize - 1, abstractDomainService.findAll(actor).size());
+		Assert.assertEquals(initSize - 1, abstractDomainService.findAll(root).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
