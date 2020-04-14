@@ -53,13 +53,12 @@ import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -84,7 +83,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
+// TODO: Revamp the whole test. Dirty test :(
 public class BasicStatisticDailyBatchTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -98,63 +97,98 @@ public class BasicStatisticDailyBatchTest {
 	private BasicStatisticMongoRepository basicStatisticMongoRepository;
 
 	@Autowired
+	@Qualifier("auditUserMongoRepository")
+	private AuditUserMongoRepository auditUserMongoRepository;
+
+	@Autowired
 	private AbstractDomainRepository domainRepository;
+
+	private String topDomainUuid;
+
+	private String rootDomainUuid = "LinShareRootDomain";
 
 	@BeforeEach
 	public void setUp() {
+		basicStatisticMongoRepository.deleteAll();
+		auditUserMongoRepository.deleteAll();
 		Calendar d = Calendar.getInstance();
 		d.add(Calendar.DATE, -1);
+		// is it a good idea to create a topDomain like that ?
 		AbstractDomain topDomain = domainRepository
 				.create(new TopDomain("topDomain", (RootDomain) domainRepository.findById("LinShareRootDomain")));
-		basicStatisticMongoRepository.insert(new BasicStatistic(1L, "LinShareRootDomain", null, LogAction.CREATE,
+		topDomainUuid = topDomain.getUuid();
+
+		// Adding 3 traces for CONTACTS_LISTS_CONTACTS.CREATE for LinShareRootDomain
+		basicStatisticMongoRepository.insert(new BasicStatistic(1L, rootDomainUuid, null, LogAction.CREATE,
 				d.getTime(), AuditLogEntryType.CONTACTS_LISTS_CONTACTS, BasicStatisticType.ONESHOT));
-		basicStatisticMongoRepository.insert(new BasicStatistic(1L, "LinShareRootDomain", null, LogAction.CREATE,
+		basicStatisticMongoRepository.insert(new BasicStatistic(1L, rootDomainUuid, null, LogAction.CREATE,
 				d.getTime(), AuditLogEntryType.CONTACTS_LISTS_CONTACTS, BasicStatisticType.ONESHOT));
-		basicStatisticMongoRepository.insert(new BasicStatistic(1L, "LinShareRootDomain", null, LogAction.CREATE,
+		basicStatisticMongoRepository.insert(new BasicStatistic(1L, rootDomainUuid, null, LogAction.CREATE,
 				d.getTime(), AuditLogEntryType.CONTACTS_LISTS_CONTACTS, BasicStatisticType.ONESHOT));
-		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomain.getUuid(), "LinShareRootDomain",
+
+		// Adding 3 traces for CONTACTS_LISTS_CONTACTS.CREATE for topDomain
+		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomainUuid, rootDomainUuid,
 				LogAction.CREATE, d.getTime(), AuditLogEntryType.CONTACTS_LISTS_CONTACTS, BasicStatisticType.ONESHOT));
-		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomain.getUuid(), "LinShareRootDomain",
+		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomainUuid, rootDomainUuid,
 				LogAction.CREATE, d.getTime(), AuditLogEntryType.CONTACTS_LISTS_CONTACTS, BasicStatisticType.ONESHOT));
-		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomain.getUuid(), "LinShareRootDomain",
+		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomainUuid, rootDomainUuid,
+				LogAction.CREATE, d.getTime(), AuditLogEntryType.CONTACTS_LISTS_CONTACTS, BasicStatisticType.ONESHOT));
+
+		// Adding 2 traces for WORKGROUP_DOCUMENT.CREATE for topDomain
+		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomainUuid, rootDomainUuid,
 				LogAction.CREATE, d.getTime(), AuditLogEntryType.WORKGROUP_DOCUMENT, BasicStatisticType.ONESHOT));
-		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomain.getUuid(), "LinShareRootDomain",
+		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomainUuid, rootDomainUuid,
 				LogAction.CREATE, d.getTime(), AuditLogEntryType.WORKGROUP_DOCUMENT, BasicStatisticType.ONESHOT));
-		basicStatisticMongoRepository.insert(new BasicStatistic(1L, topDomain.getUuid(), "LinShareRootDomain",
-				LogAction.CREATE, d.getTime(), AuditLogEntryType.CONTACTS_LISTS_CONTACTS, BasicStatisticType.ONESHOT));
 	}
 
 	@Test
 	public void test() {
+		// Expected result:
+		// - 1 Daily trace  for LinShareRootDomain : CONTACTS_LISTS_CONTACTS (3 hits)
+		// - 2 Daily traces for topDomain : CONTACTS_LISTS_CONTACTS (3 hits) and WORKGROUP_DOCUMENT (2 hits)
+		//
+		String currentDomain = "LinShareRootDomain";
 		BatchRunContext batchRunContext = new BatchRunContext();
 		List<String> listIdentifier = basicStatisticDailyBatch.getAll(batchRunContext);
-		assertEquals(2, listIdentifier.size());
+		for (String identifier : listIdentifier) {
+			logger.debug("listIdentifier: {}", identifier);
+		}
+		// LinShareRootDomain and topDomain
+		int domainsCount = listIdentifier.size();
+		assertEquals(2, domainsCount);
 
-		basicStatisticDailyBatch.execute(batchRunContext, listIdentifier.get(0), listIdentifier.size(), 0);
+		basicStatisticDailyBatch.execute(batchRunContext, currentDomain, domainsCount, 0);
 
 		Calendar d = Calendar.getInstance();
 		d.add(Calendar.DATE, -2);
 		Set<BasicStatistic> listDailyBasicStatistics = basicStatisticMongoRepository.findBetweenTwoDates(
-				listIdentifier.get(0), Lists.newArrayList(LogAction.class.getEnumConstants()), d.getTime(), new Date(),
+				currentDomain, Lists.newArrayList(LogAction.class.getEnumConstants()), d.getTime(), new Date(),
 				Lists.newArrayList(AuditLogEntryType.class.getEnumConstants()), BasicStatisticType.DAILY);
 		assertEquals(1, listDailyBasicStatistics.size());
-		assertEquals(3, (long) Lists.newArrayList(listDailyBasicStatistics).get(0).getValue());
+		BasicStatistic firstAndUnique = listDailyBasicStatistics.iterator().next();
+		assertEquals(3, (long) firstAndUnique.getValue());
+
 		Set<BasicStatistic> DailyBasicStatistic = basicStatisticMongoRepository.findBetweenTwoDates(
-				listIdentifier.get(0), Lists.newArrayList(LogAction.CREATE), d.getTime(), new Date(),
+				currentDomain, Lists.newArrayList(LogAction.CREATE), d.getTime(), new Date(),
 				Lists.newArrayList(AuditLogEntryType.CONTACTS_LISTS_CONTACTS), BasicStatisticType.DAILY);
 		assertEquals(3, (long) Lists.newArrayList(DailyBasicStatistic).get(0).getValue());
-		basicStatisticDailyBatch.execute(batchRunContext, listIdentifier.get(1), listIdentifier.size(), 0);
+
+		basicStatisticDailyBatch.execute(batchRunContext, topDomainUuid, domainsCount, 0);
 		Set<BasicStatistic> listBasicStatistics = basicStatisticMongoRepository.findBetweenTwoDates(
-				listIdentifier.get(1), Lists.newArrayList(LogAction.class.getEnumConstants()), d.getTime(), new Date(),
+				topDomainUuid, Lists.newArrayList(LogAction.class.getEnumConstants()), d.getTime(), new Date(),
 				Lists.newArrayList(AuditLogEntryType.class.getEnumConstants()), BasicStatisticType.DAILY);
 		assertEquals(2, listBasicStatistics.size());
+
 		Set<BasicStatistic> basicStatisticContactList = basicStatisticMongoRepository.findBetweenTwoDates(
-				listIdentifier.get(1), Lists.newArrayList(LogAction.CREATE), d.getTime(), new Date(),
+				topDomainUuid, Lists.newArrayList(LogAction.CREATE), d.getTime(), new Date(),
 				Lists.newArrayList(AuditLogEntryType.CONTACTS_LISTS_CONTACTS), BasicStatisticType.DAILY);
-		assertEquals(3, (long) Lists.newArrayList(basicStatisticContactList).get(0).getValue());
+		firstAndUnique = basicStatisticContactList.iterator().next();
+		assertEquals(3, (long) firstAndUnique.getValue());
+
 		Set<BasicStatistic> basicStatisticWorkGroup = basicStatisticMongoRepository.findBetweenTwoDates(
-				listIdentifier.get(1), Lists.newArrayList(LogAction.CREATE), d.getTime(), new Date(),
+				topDomainUuid, Lists.newArrayList(LogAction.CREATE), d.getTime(), new Date(),
 				Lists.newArrayList(AuditLogEntryType.WORKGROUP_DOCUMENT), BasicStatisticType.DAILY);
-		assertEquals(2, (long) Lists.newArrayList(basicStatisticWorkGroup).get(0).getValue());
+		firstAndUnique = basicStatisticWorkGroup.iterator().next();
+		assertEquals(2, (long) firstAndUnique.getValue());
 	}
 }
