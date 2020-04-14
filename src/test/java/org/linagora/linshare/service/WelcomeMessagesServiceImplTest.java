@@ -40,6 +40,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
@@ -171,6 +172,35 @@ public class WelcomeMessagesServiceImplTest extends
 			e.printStackTrace();
 			logger.debug(e.getMessage());
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void createWelcomeMessageSpecialChar() {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		WelcomeMessages welcomeMessage = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
+		welcomeMessage.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		welcomeMessage.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		WelcomeMessages welcomeMessage_create = welcomeService.create(actor, welcomeMessage,
+				LoadingServiceTestDatas.rootDomainName);
+		Assertions.assertNotNull(welcomeMessage_create);
+		Assertions.assertEquals(welcomeMessage_create.getName(), "EP_TEST_v233");
+		Assertions.assertEquals(welcomeMessage_create.getDescription(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void createAndUpdateWelcomeMessageSpecialChar() {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		WelcomeMessages welcomeMessage = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
+		WelcomeMessages welcomeMessage_create = welcomeService.create(actor, welcomeMessage,
+				LoadingServiceTestDatas.rootDomainName);
+		Assertions.assertNotNull(welcomeMessage_create);
+		welcomeMessage_create.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		welcomeMessage_create.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		welcomeService.update(actor, welcomeMessage_create, null);
+		Assertions.assertEquals(welcomeMessage_create.getName(), "EP_TEST_v233");
+		Assertions.assertEquals(welcomeMessage_create.getDescription(), "EP_TEST_v233");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

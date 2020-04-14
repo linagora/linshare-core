@@ -39,6 +39,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
@@ -58,11 +59,15 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 
 	private final DomainBusinessService domainBusinessService;
 
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
+
 	public WelcomeMessagesServiceImpl(
 			final WelcomeMessagesBusinessService wlcmBusinessService,
-			final DomainBusinessService domainBusinessService) {
+			final DomainBusinessService domainBusinessService,
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		this.businessService = wlcmBusinessService;
 		this.domainBusinessService = domainBusinessService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	@Override
@@ -114,8 +119,11 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		AbstractDomain domain = domainBusinessService.findById(domainId);
 		WelcomeMessages wlcm = find(actor, wlcmInput.getUuid());
 		WelcomeMessages welcomeMessage = new WelcomeMessages(wlcm);
-		welcomeMessage.setBussinessName(wlcmInput.getName());
-		welcomeMessage.setBussinessDescription(wlcmInput.getDescription());
+		welcomeMessage.setBussinessName(sanitizerInputHtmlBusinessService.strictClean(wlcmInput.getName()));
+		if (wlcmInput.getDescription() != null) {
+			welcomeMessage
+					.setBussinessDescription(sanitizerInputHtmlBusinessService.strictClean(wlcmInput.getDescription()));
+		}
 		welcomeMessage.setDomain(domain);
 		return businessService.create(welcomeMessage);
 	}
@@ -154,9 +162,9 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		}
 		// Updating current WM.
 		if (wlcm.getDescription() != null)
-			welcomeMessage.setDescription(wlcm.getDescription());
+			welcomeMessage.setDescription(sanitizerInputHtmlBusinessService.strictClean(wlcm.getDescription()));
 		if (wlcm.getName() != null)
-			welcomeMessage.setName(wlcm.getName());
+			welcomeMessage.setName(sanitizerInputHtmlBusinessService.strictClean(wlcm.getName()));
 		Map<SupportedLanguage, WelcomeMessagesEntry> welcomeMessagesEntries = welcomeMessage
 				.getWelcomeMessagesEntries();
 		for (SupportedLanguage key : tmpMsg.keySet()) {
