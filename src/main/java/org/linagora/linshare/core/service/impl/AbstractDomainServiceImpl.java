@@ -47,6 +47,7 @@ import org.linagora.linshare.core.business.service.MailContentBusinessService;
 import org.linagora.linshare.core.business.service.MailFooterBusinessService;
 import org.linagora.linshare.core.business.service.MailLayoutBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionFilterBusinessService;
 import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
@@ -121,7 +122,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final MimeTypeService mimeTypeService;
 	private final MailLayoutBusinessService mailLayoutBusinessService;
 	private final GroupProviderService groupProviderService;
-
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService ;
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
 			final DomainPolicyService domainPolicyService,
@@ -145,7 +146,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final MimeTypeService mimeTypeService,
 			final MailLayoutBusinessService mailLayoutBusinessService,
-			final GroupProviderService groupProviderService) {
+			final GroupProviderService groupProviderService, 
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -170,6 +172,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.mimeTypeService = mimeTypeService;
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
 		this.groupProviderService = groupProviderService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	@Override
@@ -222,6 +225,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		domain.setPolicy(policy);
 		domain.setParentDomain(parentDomain);
 		domain.setAuthShowOrder(Long.valueOf(1));
+		domain.setLabel(sanitizerInputHtmlBusinessService.strictClean(domain.getLabel()));
+		domain.setDescription(sanitizerInputHtmlBusinessService.strictClean(domain.getDescription()));
 		// Object creation
 		domain = abstractDomainRepository.create(domain);
 		createDomainQuotaAndContainerQuota(domain);
@@ -388,6 +393,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					"This new domain has a wrong domain policy identifier.");
 		}
 		entity.setPolicy(policy);
+		domain.setLabel(sanitizerInputHtmlBusinessService.strictClean(domain.getLabel()));
+		domain.setDescription(sanitizerInputHtmlBusinessService.strictClean(domain.getDescription()));
 		entity.updateDomainWith(domain);
 		if (entity.getDomainType().equals(DomainType.ROOTDOMAIN)) {
 			return abstractDomainRepository.update(entity);
