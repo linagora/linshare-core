@@ -179,6 +179,35 @@ public class WelcomeMessagesServiceImplTest {
 	}
 
 	@Test
+	public void createWelcomeMessageSpecialChar() {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		WelcomeMessages welcomeMessage = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
+		welcomeMessage.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		welcomeMessage.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		WelcomeMessages welcomeMessage_create = welcomeService.create(actor, welcomeMessage,
+				LoadingServiceTestDatas.rootDomainName);
+		Assertions.assertNotNull(welcomeMessage_create);
+		Assertions.assertEquals(welcomeMessage_create.getName(), "EP_TEST_v233");
+		Assertions.assertEquals(welcomeMessage_create.getDescription(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void createAndUpdateWelcomeMessageSpecialChar() {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		WelcomeMessages welcomeMessage = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
+		WelcomeMessages welcomeMessage_create = welcomeService.create(actor, welcomeMessage,
+				LoadingServiceTestDatas.rootDomainName);
+		Assertions.assertNotNull(welcomeMessage_create);
+		welcomeMessage_create.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		welcomeMessage_create.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		welcomeService.update(actor, welcomeMessage_create, null);
+		Assertions.assertEquals(welcomeMessage_create.getName(), "EP_TEST_v233");
+		Assertions.assertEquals(welcomeMessage_create.getDescription(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void updateWelcomeMessages() {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 
