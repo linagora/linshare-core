@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -52,10 +53,14 @@ public class LdapConnectionServiceImpl implements LdapConnectionService {
 
 	private final LdapConnectionRepository ldapConnectionRepository;
 
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
+
 	public LdapConnectionServiceImpl(
-			LdapConnectionRepository ldapConnectionRepository) {
+			LdapConnectionRepository ldapConnectionRepository,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super();
 		this.ldapConnectionRepository = ldapConnectionRepository;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	@Override
@@ -63,7 +68,12 @@ public class LdapConnectionServiceImpl implements LdapConnectionService {
 			throws BusinessException {
 		Validate.notEmpty(ldapConnection.getLabel(),
 				"ldap connection label must be set.");
+		ldapConnection.setLabel(sanitize(ldapConnection.getLabel()));
 		return ldapConnectionRepository.create(ldapConnection);
+	}
+
+	private String sanitize (String input) {
+		return sanitizerInputHtmlBusinessService.strictClean(input);
 	}
 
 	@Override
@@ -89,7 +99,7 @@ public class LdapConnectionServiceImpl implements LdapConnectionService {
 		Validate.notEmpty(ldapConnection.getUuid(),
 				"Ldap connection uuid must be set.");
 		LdapConnection ldapConn = find(ldapConnection.getUuid());
-		ldapConn.setLabel(ldapConnection.getLabel());
+		ldapConn.setLabel(sanitize(ldapConnection.getLabel()));
 		ldapConn.setProviderUrl(ldapConnection.getProviderUrl());
 		ldapConn.setSecurityAuth(ldapConnection.getSecurityAuth());
 		ldapConn.setSecurityCredentials(ldapConnection.getSecurityCredentials());
