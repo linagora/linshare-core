@@ -298,6 +298,32 @@ INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_c
 
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (237,2,1,37,37,true,'4f5a1b10-78c1-11ea-959e-43f0d02dafd1');
 
+-- SHARE_ANONYMOUS_RESET_PASSWORD
+-- -- mail content table 
+INSERT INTO mail_content 
+	(body,creation_date,description,domain_abstract_id,
+	id, mail_content_type, messages_english, messages_french, 
+	messages_russian, modification_date, readonly,subject,
+	uuid, visible)
+VALUES 
+	('',NOW(),'', 1, 
+	38, 38,'','',
+	'', NOW(),true,'',
+	'cea69b9c-7e38-11ea-ba25-7307bfa8c28e',true);
+INSERT INTO mail_content_lang 
+	(id,language, mail_config_id, mail_content_id, 
+	mail_content_type, readonly, uuid)
+VALUES
+-- -- mail_content_lang table (en) 
+	(38, 0, 1, 38,
+	38,true,'d4a62580-7e38-11ea-a959-7b71cac4767c'),
+-- -- mail_content_lang table (fr)
+	(138, 1, 1, 38,
+	38, true, 'df2c01dc-7e38-11ea-84b1-ef277e1a9180'),
+-- -- mail_content_lang table (ru)
+	(238, 2, 1, 38,
+	38, true, 'cea69b9c-7e38-11ea-ba25-7307bfa8c28e');
+
 INSERT INTO mail_footer (creation_date,description,domain_abstract_id,footer,id,messages_english,messages_french,messages_russian,modification_date,readonly,uuid,visible) VALUES (NOW(),'footer html',1,'',1,'','','',NOW(),true,'e85f4a22-8cf2-11e3-8a7a-5404a683a462',true);
 
 INSERT INTO mail_footer_lang (id,language,mail_config_id,mail_footer_id,readonly,uuid) VALUES (1,0,1,1,true,'bf87e580-fb25-49bb-8d63-579a31a8f81e');

@@ -63,6 +63,7 @@ import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPas
 import org.linagora.linshare.core.notifications.emails.impl.GuestWarnGuestAboutHisPasswordResetEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.JwtPermanentCreatedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.JwtPermanentDeletedEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareAnonymousResetPasswordEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareFileDownloadEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareFileShareDeletedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareAcknowledgementEmailBuilder;
@@ -140,6 +141,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		emailBuilders = Maps.newHashMap();
 		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_FOR_RECIPIENT, new ShareNewShareEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_ANONYMOUS_RESET_PASSWORD, new ShareAnonymousResetPasswordEmailBuilder());
 
 		GuestAccountNewCreationEmailBuilder newGuestBuilder = new GuestAccountNewCreationEmailBuilder();
 		newGuestBuilder.setUrlTemplateForGuestReset(urlTemplateForGuestReset);
