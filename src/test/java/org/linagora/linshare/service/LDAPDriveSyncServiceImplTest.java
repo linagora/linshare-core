@@ -152,6 +152,10 @@ public class LDAPDriveSyncServiceImplTest {
 
 	private AbstractDomain domain;
 
+	@Autowired
+	@Qualifier("ldapDriveSyncService")
+	LDAPGroupSyncServiceImpl syncServiceImpl;
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(LDAPGroupSyncServiceImpl.class);
 
@@ -345,5 +349,38 @@ public class LDAPDriveSyncServiceImplTest {
 		Assertions.assertTrue(drive.getSyncDate().after(syncDate), "The new syncDate is not after the previous syncDate");
 		Assertions.assertEquals(nbLDAPGroup,
 				nodeService.findAll(systemAccount, systemAccount).size(), "A SharedSpaceLDAPGroup has been added and not updated");
+	}
+
+	@Test
+	@DirtiesContext
+	public void testDeleteNodeFromLDAPDriveSync() {
+		systemAccount = userRepository.getBatchSystemAccount();
+		Date syncDate = new Date();
+		LdapGroupObject ldapGroupObject = new LdapGroupObject();
+		LdapGroupsBatchResultContext resultContext = new LdapGroupsBatchResultContext(domain);
+		ldapGroupObject.setName("drive-1");
+		ldapGroupObject.setExternalId("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org");
+		ldapGroupObject.setMembers(Lists.newArrayList());
+		ldapGroupObject.setPrefix("prefix");
+		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
+				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER);
+		ldapDriveMemberObject.setRole(Role.CONTRIBUTOR);
+		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
+				resultContext, NodeType.DRIVE);
+		Assertions.assertNotNull(drive, "The drive has not been found");
+		Assertions.assertEquals("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org",
+				drive.getExternalId(), "The externalId do not match");
+		Assertions.assertEquals(syncDate, drive.getSyncDate(), "The given syncDate is not the same as the found one");
+		SharedSpaceLDAPDriveMember member = driveSyncService.createOrUpdateLDAPDriveMember(systemAccount,
+				domain.getUuid(), drive, ldapDriveMemberObject, syncDate, resultContext,
+				domain.getDriveProvider().getSearchInOtherDomains());
+		Assertions.assertNotNull(member, "The member has not been found");
+		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
+				member.getExternalId(), "The externalId do not match");
+		int nbLDAPMember = memberService.findAll(systemAccount, systemAccount, drive.getUuid()).size();
+		Date syncDate2 = new Date();
+		syncServiceImpl.deleteOutDatedMembers(systemAccount, drive, syncDate2, resultContext);
+		Assertions.assertEquals(nbLDAPMember - 1,
+				memberService.findAll(systemAccount, systemAccount, drive.getUuid()).size(), "A SharedSpaceLDAPDrive member has not been deleted");
 	}
 }

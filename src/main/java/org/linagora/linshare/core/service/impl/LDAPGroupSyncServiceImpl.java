@@ -256,7 +256,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		nodeService.delete(actor, actor, group);
 	}
 
-	protected void deleteOutDatedMembers(Account actor, SharedSpaceLDAPGroup group, Date syncDate,
+	public void deleteOutDatedMembers(Account actor, SharedSpaceLDAPGroup group, Date syncDate,
 			LdapGroupsBatchResultContext resultContext) {
 		Query outdatedGroupMembersQuery = buildFindOutDatedLdapMembersQuery(group.getUuid(), syncDate);
 		List<SharedSpaceLDAPGroupMember> outDatedMembers = mongoTemplate.find(outdatedGroupMembersQuery,
