@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UpgradeTaskBusinessService;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -47,8 +48,9 @@ public class UpgradeTaskServiceImpl extends GenericAdminServiceImpl implements U
 
 	protected UpgradeTaskBusinessService businessService;
 
-	public UpgradeTaskServiceImpl(UpgradeTaskBusinessService businessService) {
-		super();
+	public UpgradeTaskServiceImpl(UpgradeTaskBusinessService businessService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
 	}
 

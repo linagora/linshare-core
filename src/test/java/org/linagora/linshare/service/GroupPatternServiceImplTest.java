@@ -113,6 +113,39 @@ public class GroupPatternServiceImplTest extends AbstractTransactionalJUnit4Spri
 	}
 
 	@Test
+	public void testCreateGroupPatternSpecialChar() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		GroupLdapPattern groupPattern = new GroupLdapPattern("EP_TEST_v233<script>alert(document.cookie)</script>",
+				"EP_TEST_v233<script>alert(document.cookie)</script>", "searchAllGroupsQuery", "searchGroupQuery",
+				"groupPrefix", false);
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		groupLdapPatternService.create(actor, groupPattern);
+		Assert.assertNotNull(groupPattern);
+		Assert.assertEquals(groupPattern.getLabel(), "EP_TEST_v233");
+		Assert.assertEquals(groupPattern.getDescription(), "EP_TEST_v233");
+		logger.debug("Current pattern object: " + groupPattern.toString());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUpdateGroupPatternSpecialChar() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		GroupLdapPattern groupPattern = new GroupLdapPattern("Label",
+				"Description", "searchAllGroupsQuery", "searchGroupQuery",
+				"groupPrefix", false);
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		groupLdapPatternService.create(actor, groupPattern);
+		Assert.assertNotNull(groupPattern);
+		groupPattern.setLabel("EP_TEST_v233<script>alert(document.cookie)</script>");
+		groupPattern.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
+		groupLdapPatternService.update(actor, groupPattern);
+		Assert.assertEquals(groupPattern.getLabel(), "EP_TEST_v233");
+		Assert.assertEquals(groupPattern.getDescription(), "EP_TEST_v233");
+		logger.debug("Current pattern object: " + groupPattern.toString());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testCreateDeleteDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);

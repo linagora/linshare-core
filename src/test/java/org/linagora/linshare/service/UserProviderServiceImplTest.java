@@ -131,7 +131,26 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug("Current pattern object: " + domainPattern.toString());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void testCreateDomainPatternSpecialChar() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
+		Map<String, LdapAttribute> attributeList = new HashMap<>();
+		attributeList.put("first", attribute);
+		UserLdapPattern domainPattern = new UserLdapPattern("EP_TEST_v233<script>alert(document.cookie)</script>",
+				"EP_TEST_v233<script>alert(document.cookie)</script>", "getUserCommand", "getAllDomainUsersCommand",
+				"authCommand", "searchUserCommand", attributeList);
+		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
+		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		userProviderService.createDomainPattern(actor, domainPattern);
+		Assert.assertNotNull(domainPattern);
+		Assert.assertEquals(domainPattern.getLabel(), "EP_TEST_v233");
+		Assert.assertEquals(domainPattern.getDescription(), "EP_TEST_v233");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void testCreateDeleteLDAPConnection() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
