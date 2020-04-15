@@ -122,10 +122,13 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public Calendar getDefaultFileExpiryTime(AbstractDomain domain) {
-		Calendar expirationDate = Calendar.getInstance();
 		TimeUnitValueFunctionality fileExpirationTimeFunctionality = getDefaultFileExpiryTimeFunctionality(domain);
-		expirationDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
-		return expirationDate;
+		if (fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
+			Calendar expirationDate = Calendar.getInstance();
+			expirationDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
+			return expirationDate;
+		}
+		return null;
 	}
 
 	@Override
