@@ -43,6 +43,7 @@ import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MailContentBusinessService;
 import org.linagora.linshare.core.business.service.MailFooterBusinessService;
 import org.linagora.linshare.core.business.service.MailLayoutBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -75,6 +76,8 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 	private final DomainPermissionBusinessService permissionService;
 
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
+
 	protected final boolean templatingOverrideReadonlyMode;
 
 	protected static Logger logger = LoggerFactory.getLogger(MailConfigServiceImpl.class);
@@ -85,7 +88,9 @@ public class MailConfigServiceImpl implements MailConfigService {
 			final MailContentBusinessService mailContentBusinessService,
 			final MailFooterBusinessService mailFooterBusinessService,
 			final MailLayoutBusinessService mailLayoutBusinessService,
-			final DomainPermissionBusinessService domainPermissionBusinessService,boolean templatingReadonlyMode
+			final DomainPermissionBusinessService domainPermissionBusinessService,
+			boolean templatingReadonlyMode,
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService
 			) {
 		super();
 		this.domainBusinessService = domainBusinessService;
@@ -95,6 +100,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
 		this.permissionService = domainPermissionBusinessService;
 		this.templatingOverrideReadonlyMode = templatingReadonlyMode;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	@Override
@@ -134,6 +140,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throw new BusinessException(BusinessErrorCode.MAILCONFIG_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail config in this domain "
 					+ actor.getDomainId());
+		config.setName(sanitizerInputHtmlBusinessService.strictClean(config.getName()));
 		return mailConfigBusinessService.create(config.getDomain(), config);
 	}
 
@@ -145,6 +152,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
 		}
+		config.setName(sanitizerInputHtmlBusinessService.strictClean(config.getName()));
 		return mailConfigBusinessService.update(config);
 	}
 
@@ -209,6 +217,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throw new BusinessException(BusinessErrorCode.MAILCONTENT_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail content in this domain "
 					+ actor.getDomainId());
+		content.setDescription(sanitizerInputHtmlBusinessService.strictClean(content.getDescription()));
 		return mailContentBusinessService.create(content.getDomain(), content);
 	}
 
@@ -220,6 +229,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 					+ actor + " cannot update a mail content in this domain "
 					+ actor.getDomainId());
 		}
+		content.setDescription(sanitizerInputHtmlBusinessService.strictClean(content.getDescription()));
 		return mailContentBusinessService.update(content);
 	}
 
@@ -321,6 +331,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throw new BusinessException(BusinessErrorCode.MAILFOOTER_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail footer in this domain "
 					+ actor.getDomainId());
+		footer.setDescription(sanitizerInputHtmlBusinessService.strictClean(footer.getDescription()));
 		return mailFooterBusinessService.create(footer.getDomain(), footer);
 	}
 
@@ -332,6 +343,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 					+ actor + " cannot update a mail footer in this domain "
 					+ actor.getDomainId());
 		}
+		footer.setDescription(sanitizerInputHtmlBusinessService.strictClean(footer.getDescription()));
 		return mailFooterBusinessService.update(footer);
 	}
 
@@ -433,6 +445,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail layout in this domain "
 					+ actor.getDomainId());
+		layout.setDescription(sanitizerInputHtmlBusinessService.strictClean(layout.getDescription()));
 		return mailLayoutBusinessService.create(layout.getDomain(), layout);
 	}
 
@@ -451,6 +464,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			logger.error("Missing copyright footer : {}", strPattern);
 			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_DO_NOT_REMOVE_COPYRIGHT_FOOTER, "You do not have the right to remove copyright footer.");
 		}
+		layout.setDescription(sanitizerInputHtmlBusinessService.strictClean(layout.getDescription()));
 		return mailLayoutBusinessService.update(layout);
 	}
 
