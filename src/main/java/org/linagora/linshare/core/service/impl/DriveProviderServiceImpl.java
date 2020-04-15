@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.DriveProvider;
 import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -49,8 +50,9 @@ public class DriveProviderServiceImpl extends GenericAdminServiceImpl implements
 
 	protected DriveProviderServiceImpl(
 			LdapDriveProviderRepository ldapDriveProviderRepository,
-			DriveProviderRepository driveProviderRepository) {
-		super();
+			DriveProviderRepository driveProviderRepository,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(sanitizerInputHtmlBusinessService);
 		this.ldapDriveProviderRepository = ldapDriveProviderRepository;
 		this.driveProviderRepository = driveProviderRepository;
 	}

@@ -35,6 +35,7 @@ package org.linagora.linshare.core.ldap.service.impl;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -58,9 +59,9 @@ public class SharedSpaceNodeDriveServiceImpl extends org.linagora.linshare.core.
 			SharedSpaceMemberService memberService, SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService, ThreadService threadService, ThreadRepository threadRepository,
 			FunctionalityReadOnlyService functionalityService, AccountQuotaBusinessService accountQuotaBusinessService,
-			WorkGroupNodeService workGroupNodeService, SharedSpaceMemberBusinessService memberDriveService) {
+			WorkGroupNodeService workGroupNodeService, SharedSpaceMemberBusinessService memberDriveService, SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(rac, businessService, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
-				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService);
+				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService, sanitizerInputHtmlBusinessService);
 	}
 
 	@Override

@@ -244,7 +244,7 @@ public class LDAPGroupSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext);
+				resultContext, NodeType.WORK_GROUP);
 		Assertions.assertNotNull(group, "The group has not been found");
 		Assertions.assertEquals("cn=workgroup-EP_TEST_v233<script>alert(document.cookie)</script>,ou=Groups3,dc=linshare,dc=org",
 				group.getExternalId(), "The externalId do not match");
