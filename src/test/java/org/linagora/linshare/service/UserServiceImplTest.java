@@ -57,6 +57,7 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.Policy;
+import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
@@ -68,6 +69,7 @@ import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.TechnicalAccountService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.linagora.linshare.utils.LinShareWiser;
@@ -132,6 +134,13 @@ public class UserServiceImplTest extends
 
 	private LinShareWiser wiser;
 
+	private LoadingServiceTestDatas datas;
+
+	private User john;
+
+	@Autowired
+	private TechnicalAccountService technicalAccountService;
+
 	public UserServiceImplTest() {
 		super();
 		wiser = new LinShareWiser(2525);
@@ -141,6 +150,9 @@ public class UserServiceImplTest extends
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		datas = new LoadingServiceTestDatas(userRepository);
+		datas.loadUsers();
+		john = datas.getUser1();
 		wiser.start();
 
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -898,4 +910,43 @@ public class UserServiceImplTest extends
 		logger.debug(LinShareTestConstants.END_TEST);
 		wiser.checkGeneratedMessages();
 	}
+
+	@Test
+	public void testCreateTechnicalAccountSpecialChar() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		TechnicalAccount technicalAccount = new TechnicalAccount();
+		technicalAccount = new TechnicalAccount();
+		technicalAccount.setMail("technicalAccount@linshare.org");
+		technicalAccount.setLastName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		technicalAccount.setEnable(true);
+		technicalAccount.setRole(Role.SUPERADMIN);
+		technicalAccount.setPassword("secret");
+		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
+		technicalAccount.setOwner(john);
+		technicalAccount = technicalAccountService.create(john, technicalAccount);
+		Assert.assertNotNull(technicalAccount);
+		Assert.assertEquals("EP_TEST_v233", technicalAccount.getLastName());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCreateAndUpdateTechnicalAccountSpecialChar() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		TechnicalAccount technicalAccount = new TechnicalAccount();
+		technicalAccount = new TechnicalAccount();
+		technicalAccount.setMail("technicalAccount@linshare.org");
+		technicalAccount.setLastName("technicalAccount");
+		technicalAccount.setEnable(true);
+		technicalAccount.setRole(Role.SUPERADMIN);
+		technicalAccount.setPassword("secret");
+		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
+		technicalAccount.setOwner(john);
+		technicalAccount = technicalAccountService.create(john, technicalAccount);
+		Assert.assertNotNull(technicalAccount);
+		technicalAccount.setLastName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		technicalAccountService.update(john, technicalAccount);
+		Assert.assertEquals("EP_TEST_v233", technicalAccount.getLastName());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 }
