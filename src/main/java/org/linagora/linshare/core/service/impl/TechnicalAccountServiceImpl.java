@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -56,12 +57,16 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 
 	private final TechnicalAccountPermissionService technicalAccountPermissionService;
 
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
+
 	public TechnicalAccountServiceImpl(
 			final TechnicalAccountBusinessService technicalAccountBusinessService,
-			final TechnicalAccountPermissionService technicalAccountPermissionService) {
+			final TechnicalAccountPermissionService technicalAccountPermissionService,
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super();
 		this.technicalAccountBusinessService = technicalAccountBusinessService;
 		this.technicalAccountPermissionService = technicalAccountPermissionService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	@Override
@@ -74,7 +79,12 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 		// mail unicity ?
 		TechnicalAccountPermission accountPermission = technicalAccountPermissionService.create(actor, new TechnicalAccountPermission());
 		account.setPermission(accountPermission);
+		account.setLastName(sanitize(account.getLastName()));
 		return technicalAccountBusinessService.create(LinShareConstants.rootDomainIdentifier, account);
+	}
+
+	private String sanitize (String input) {
+		return sanitizerInputHtmlBusinessService.strictClean(input);
 	}
 
 	@Override
@@ -115,7 +125,7 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 		// TODO : check rights, log actions.
 		TechnicalAccount entity = find(actor, dto.getLsUuid());
 		checkAccountPermission(actor, entity, dto);
-		entity.setLastName(dto.getLastName());
+		entity.setLastName(sanitize(dto.getLastName()));
 		entity.setMail(dto.getMail());
 		entity.setEnable(dto.isEnable());
 		return technicalAccountBusinessService.update(entity);
