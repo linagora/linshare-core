@@ -107,6 +107,7 @@
 		<constructor-arg ref="mailLayoutBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg value="${linshare.notifications.email.templating.override.readonly.mode}" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 	</bean>
 
 	<bean id="virusScannerService" class="org.linagora.linshare.core.service.impl.VirusScannerServiceImpl">
