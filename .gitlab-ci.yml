@@ -1,5 +1,4 @@
 stages:
-  - prepare
   - check
   - build
 
@@ -32,10 +31,9 @@ check_author:
       - tags@linagora/lgs/linshare/products/linshare-core
       - /^release-.*/@linagora/lgs/linshare/products/linshare-core
 
-# deactivated.
-.prepare:
-  image: maven:3.5-jdk-8
-  stage: prepare
+prepare:
+  image: maven:3.6-jdk-11
+  stage: check
   tags:
     - docker
   cache:
@@ -46,15 +44,19 @@ check_author:
     - mvn dependency:resolve --batch-mode
     - mvn dependency:resolve-plugins --batch-mode
 
-# deactivated.
-.build:
+build:
   stage: build
   tags:
     - docker
-  image: maven:3.5-jdk-8
+  image: maven:3.6-jdk-11
   cache:
     <<: *cache-tpl
+  artifacts:
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
   script:
     - apt-get update
     - apt-get -y install libreoffice
-    - mvn -X clean test
+    - export LINSHARE_HOME=/tmp/linshare
+    - mvn clean test
