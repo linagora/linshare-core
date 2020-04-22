@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -128,7 +129,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode,
+	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, String nodeUuid,
 			List<LogAction> action, List<AuditLogEntryType> type, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
@@ -145,9 +146,9 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		Date end = getEndDate(endDate);
 		Date begin = getBeginDate(beginDate, end);
 		// TODO:workgroups: use limit (Pageable query).
-		if (workGroupNode != null) {
+		if (Objects.nonNull(nodeUuid)) {
 			res = userMongoRepository.findWorkGroupNodeHistoryForUser(
-					workGroup.getLsUuid(), workGroupNode.getUuid(),
+					workGroup.getLsUuid(), nodeUuid,
 					actions, types,
 					begin, end,
 					Sort.by(Sort.Direction.DESC, CREATION_DATE));
