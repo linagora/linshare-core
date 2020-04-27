@@ -50,7 +50,7 @@ public interface AuditLogEntryService {
 	Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<LogAction> action, List<AuditLogEntryType> type,
 			boolean forceAll, String beginDate, String endDate);
 
-	Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode,
+	Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid,
 			List<LogAction> action, List<AuditLogEntryType> type, String beginDate, String endDate);
 
 	Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<LogAction> action,

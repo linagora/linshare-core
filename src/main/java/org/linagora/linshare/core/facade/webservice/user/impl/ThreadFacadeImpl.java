@@ -194,10 +194,10 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public Set<AuditLogEntryUser> findAll(String workGroupUuid, List<LogAction> actions, List<AuditLogEntryType> types,
-			String beginDate, String endDate) {
+			String beginDate, String endDate, String nodeUuid) {
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);
 		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
-		return auditLogEntryService.findAll(authUser, actor, workGroup, null, actions, types, beginDate, endDate);
+		return auditLogEntryService.findAll(authUser, actor, workGroup, nodeUuid, actions, types, beginDate, endDate);
 	}
 }

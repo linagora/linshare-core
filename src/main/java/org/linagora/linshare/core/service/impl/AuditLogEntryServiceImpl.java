@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -51,7 +52,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -127,7 +127,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode,
+	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid,
 			List<LogAction> action, List<AuditLogEntryType> type, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
@@ -144,9 +144,9 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		Date end = getEndDate(endDate);
 		Date begin = getBeginDate(beginDate, end);
 		// TODO:workgroups: use limit (Pageable query).
-		if (workGroupNode != null) {
+		if (Objects.nonNull(workGroupNodeUuid)) {
 			res = userMongoRepository.findWorkGroupNodeHistoryForUser(
-					workGroup.getLsUuid(), workGroupNode.getUuid(),
+					workGroup.getLsUuid(), workGroupNodeUuid,
 					actions, types,
 					begin, end,
 					new Sort(Sort.Direction.DESC, CREATION_DATE));

@@ -58,5 +58,5 @@ public interface WorkGroupFacade extends GenericFacade {
 			throws BusinessException;
 
 	Set<AuditLogEntryUser> findAll(String workGroupUuid, List<LogAction> actions, List<AuditLogEntryType> types,
-			String beginDate, String endDate);
+			String beginDate, String endDate, String nodeUuid);
 }
