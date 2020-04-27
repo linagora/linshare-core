@@ -73,6 +73,7 @@
 	<bean name="ldapConnectionService"
 		class="org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl">
 		<constructor-arg ref="ldapConnectionRepository" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 	</bean>
 
 	<bean name="userProviderService"
