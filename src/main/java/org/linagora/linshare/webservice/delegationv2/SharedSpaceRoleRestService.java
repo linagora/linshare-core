@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.delegationv2;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -45,7 +46,7 @@ public interface SharedSpaceRoleRestService {
 
 	SharedSpaceRole findByName(String actorUuid, String name) throws BusinessException;
 
-	List<SharedSpaceRole> findAll(String actorUuid) throws BusinessException;
+	List<SharedSpaceRole> findAll(String actorUuid, NodeType nodeType) throws BusinessException;
 
 	List<SharedSpacePermission> findAllPermissions(String actorUuid, String roleUuid) throws BusinessException;
 

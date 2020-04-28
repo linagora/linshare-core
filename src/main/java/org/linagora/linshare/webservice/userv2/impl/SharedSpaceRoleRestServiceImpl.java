@@ -36,24 +36,27 @@ package org.linagora.linshare.webservice.userv2.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.webservice.userv2.SharedSpaceRoleRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/shared_space_roles")
@@ -109,8 +112,10 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 		)
 	})
 	@Override
-	public List<SharedSpaceRole> findAll() throws BusinessException {
-		return sharedSpaceRoleFacade.findAll(null);
+	public List<SharedSpaceRole> findAll(
+			@Parameter(description = "Filter the roles by node type.", required = false)
+				@QueryParam("nodeType") @DefaultValue("WORK_GROUP") NodeType nodeType) throws BusinessException {
+		return sharedSpaceRoleFacade.findAll(null, nodeType);
 	}
 
 	@Path("/{uuid}/permissions")

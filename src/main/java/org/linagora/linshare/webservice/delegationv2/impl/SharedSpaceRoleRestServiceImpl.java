@@ -36,11 +36,15 @@ package org.linagora.linshare.webservice.delegationv2.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -114,9 +118,10 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	@Override
 	public List<SharedSpaceRole> findAll(
 			@Parameter(description = "the actor uuid")
-				@PathParam(value="actorUuid")String actorUuid)
-						throws BusinessException {
-		return roleFacade.findAll(actorUuid);
+				@PathParam(value="actorUuid")String actorUuid,
+			@Parameter(description = "Filter the roles by node type.", required = false)
+				@QueryParam("nodeType") @DefaultValue("WORK_GROUP") NodeType nodeType) throws BusinessException {
+		return roleFacade.findAll(actorUuid, nodeType);
 	}
 	
 	@Path("{uuid}/permissions")

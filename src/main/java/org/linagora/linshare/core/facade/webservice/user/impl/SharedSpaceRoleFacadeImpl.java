@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
@@ -103,10 +104,10 @@ public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements Shar
 	}
 
 	@Override
-	public List<SharedSpaceRole> findAll(String actorUuid) throws BusinessException {
+	public List<SharedSpaceRole> findAll(String actorUuid, NodeType nodeType) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		List<SharedSpaceRole> list = roleService.findAll(authUser, actor);
+		List<SharedSpaceRole> list = roleService.findRolesByNodeType(authUser, actor, nodeType);
 		return Lists.transform(list, convert);
 	}
 
