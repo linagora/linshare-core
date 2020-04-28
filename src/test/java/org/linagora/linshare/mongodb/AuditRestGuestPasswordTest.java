@@ -186,6 +186,21 @@ public class AuditRestGuestPasswordTest {
 	}
 
 	@Test
+	public void testAuditPasswordResetedFail() {
+		resetGuestPassword.setPassword("test");
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			resetGuestPasswordService.update(actor, actor, resetGuestPassword);
+		});
+		Assertions.assertEquals(BusinessErrorCode.RESET_GUEST_PASSWORD_INVALID_PASSWORD, exception.getErrorCode());
+		Assertions.assertEquals(
+				"[Password must be 12 or more characters in length.,"
+				+ " Password must contain 1 or more uppercase characters.,"
+				+ " Password must contain 1 or more digit characters.,"
+				+ " Password must contain 1 or more special characters.]",
+				exception.getMessage());
+	}
+
+	@Test
 	public void testResetWithWeakPassword() {
 		Calendar instance = Calendar.getInstance();
 		instance.add(Calendar.HOUR, +1);

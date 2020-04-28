@@ -301,6 +301,12 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
+		<constructor-arg value="${uppercase.character.password}" />
+		<constructor-arg value="${lowercase.character.password}" />
+		<constructor-arg value="${digits.character.password}" />
+		<constructor-arg value="${special.character.password}" />
+		<constructor-arg value="${password.min.length}" />
+		<constructor-arg value="${password.max.length}" />
 	</bean>
 
 	<bean id="workGroupFolderService" class="org.linagora.linshare.core.service.impl.WorkGroupFolderServiceImpl">

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang3.Validate;
@@ -54,12 +55,17 @@ import org.linagora.linshare.core.service.ResetGuestPasswordService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.LengthRule;
+import org.passay.PasswordData;
+import org.passay.PasswordValidator;
+import org.passay.RuleResult;
+import org.passay.WhitespaceRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService {
-
-	protected static final String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!?%])(?=\\S+$).{8,}$";
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -73,18 +79,41 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 
 	protected final MailBuildingService mailBuildingService;
 
+	protected Integer numberUpperCaseCharacters;
+	
+	protected Integer numberLowerCaseCharacters;
+
+	protected Integer numberDicgitsCharacters;
+
+	protected Integer numberSpecialCharacters;
+
+	protected Integer passwordMinLength;
+
+	protected Integer passwordMaxLength;
 
 	public ResetGuestPasswordServiceImpl(ResetGuestPasswordMongoRepository repository,
 			GuestService guestService,
 			LogEntryService logEntryService,
 			NotifierService notifierService,
-			MailBuildingService mailBuildingService) {
+			MailBuildingService mailBuildingService,
+			Integer numberUpperCaseCharacters,
+			Integer numberLowerCaseCharacters,
+			Integer numberDicgitsCharacters,
+			Integer numberSpecialCharacters,
+			Integer passwordMinLength,
+			Integer passwordMaxLength) {
 		super();
 		this.repository = repository;
 		this.guestService = guestService;
 		this.logEntryService = logEntryService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
+		this.numberUpperCaseCharacters = numberUpperCaseCharacters;
+		this.numberLowerCaseCharacters = numberLowerCaseCharacters;
+		this.numberDicgitsCharacters = numberDicgitsCharacters;
+		this.numberSpecialCharacters = numberSpecialCharacters;
+		this.passwordMinLength = passwordMinLength;
+		this.passwordMaxLength = passwordMaxLength;
 	}
 
 	@Override
@@ -127,6 +156,21 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 		return resetGuestPassword;
 	}
 
+	private void validatePassword(String password) {
+		PasswordValidator validator = new PasswordValidator(Arrays.asList(
+				new LengthRule(passwordMinLength, passwordMaxLength),
+				new CharacterRule(EnglishCharacterData.UpperCase, numberUpperCaseCharacters),
+				new CharacterRule(EnglishCharacterData.LowerCase, numberLowerCaseCharacters),
+				new CharacterRule(EnglishCharacterData.Digit, numberDicgitsCharacters),
+				new CharacterRule(EnglishCharacterData.Special, numberSpecialCharacters),
+				new WhitespaceRule()));
+		RuleResult result = validator.validate(new PasswordData(password));
+		if (!result.isValid()) {
+			throw new BusinessException(BusinessErrorCode.RESET_GUEST_PASSWORD_INVALID_PASSWORD,
+					validator.getMessages(result).toString());
+		}
+	}
+
 	@Override
 	public ResetGuestPassword update(Account actor, Account owner, ResetGuestPassword dto) throws BusinessException {
 		Validate.notNull(dto);
@@ -134,10 +178,7 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 		Validate.notEmpty(dto.getPassword(), "Missing password");
 		ResetGuestPassword reset = find(actor, owner, dto.getUuid());
 		reset.setAlreadyUsed(true);
-		if (!dto.getPassword().matches(pattern)) {
-			throw new BusinessException(BusinessErrorCode.RESET_GUEST_PASSWORD_INVALID_PASSWORD,
-					"Your password must be at least 8 characters long, contain at least one number, one special character among this characters [@ # $ % ^ & + = ! ? %] and have a mixture of uppercase and lowercase letters.");
-		}
+		validatePassword(dto.getPassword());
 		Guest guest = guestService.find(actor, owner, reset.getGuestUuid());
 		guestService.resetPassword(guest, dto.getPassword());
 		reset = repository.save(reset);

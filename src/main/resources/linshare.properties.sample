@@ -264,3 +264,20 @@ linshare.warn.owner.about.guest.expiration.days.before=7
 #******** Production Mode
 linshare.mode.production=true
 
+# Minimum length of password
+# password.min.length=12
+
+# Maximum length of password
+# password.max.length=30
+
+# Minimum Number of uppercase in password
+# uppercase.character.password=1
+
+# Minimum Number of lowercase in password
+# lowercase.character.password=1
+
+# Minimum Number of digits in password
+# digits.character.password=1
+
+# Minimum Number of special characters in password
+# special.character.password=1
