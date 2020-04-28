@@ -211,7 +211,12 @@ public enum UpgradeTaskType {
 	/*
 	 * Notify all guests with old password encoding strategy to reset
 	 */
-	UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_GUESTS;
+	UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_GUESTS,
+
+	/**
+	 * Send mail notification that contains new generated password for anonymous shares  
+	 */
+	UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_ANONYMOUS;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

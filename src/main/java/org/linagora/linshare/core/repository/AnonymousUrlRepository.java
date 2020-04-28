@@ -42,5 +42,7 @@ public interface AnonymousUrlRepository extends AbstractRepository<AnonymousUrl>
 	public AnonymousUrl findByUuid(String uuid);
 	
 	public List<String> findAllExpiredEntries();
+
+	List<String> findAllMyAnonymousUuids();
 	
 }

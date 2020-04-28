@@ -71,8 +71,8 @@ public class ShareAnonymousResetPasswordEmailBuilder extends EmailBuilder {
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("expiryDate", shareContainer.getExpiryDate());
 		ctx.setVariable("shareDate", new Date());
-		ctx.setVariable("shareNote", shareContainer.getSharingNote());
 		ctx.setVariable("shareOwner", emailCtx.getMailContactShareOwner());
+		ctx.setVariable("shareRecipient", emailCtx.getMailContactShareRecipient());
 
 		List<Share> shares = Lists.newArrayList();
 		AnonymousUrl url = emailCtx.getAnonymousUrl();

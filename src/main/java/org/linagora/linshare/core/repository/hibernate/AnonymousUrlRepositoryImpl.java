@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -87,5 +88,14 @@ public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<Anonymous
 		List<String> list = listByCriteria(criteria);
 		return list;
 	}
-
+	
+	@Deprecated(forRemoval = true, since = "4.0")
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllMyAnonymousUuids() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.not(Restrictions.ilike("password", "{bcrypt}", MatchMode.START)))
+				.setProjection(Projections.property("uuid"));
+		return listByCriteria(crit);
+	}
 }

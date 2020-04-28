@@ -322,6 +322,34 @@ VALUES
   now(),
   now(),
   null);
+  
+ -- TASK: UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_ANONYMOUS
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (34,
+ 'UNDEFINED',
+ 'UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_ANONYMOUS',
+ 'UPGRADE_4_0',
+  null,
+  null,
+  34,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);
   -- End Upgrade Task
 
 -- Functionality DRIVE
