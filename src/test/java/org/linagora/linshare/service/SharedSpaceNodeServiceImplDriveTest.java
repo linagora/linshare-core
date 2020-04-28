@@ -45,9 +45,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -86,6 +89,9 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
+
+	@Autowired
+	private FunctionalityReadOnlyService functionalityService;
 
 	private Account authUser;
 
@@ -178,6 +184,26 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		service.delete(authUser, authUser, expectedNode);
 		List<SharedSpaceNodeNested> ssNested = service.findAllByAccount(authUser, authUser);
 		Assertions.assertEquals(ssNested.size(), before - 1);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void allowNestedWgCreationFunctionilityDisabled() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode drive = new SharedSpaceNode("My Drive", NodeType.DRIVE);
+		SharedSpaceNode expectedDrive = service.create(authUser, authUser, drive);
+		Assertions.assertNotNull(expectedDrive, "Drive not created");
+		Functionality workGroupCreationRightFunctionality = functionalityService.getWorkGroupCreationRight(authUser.getDomain());
+		workGroupCreationRightFunctionality.getActivationPolicy().setStatus(false);
+		SharedSpaceNode nestedWorkgroup = new SharedSpaceNode("My groups", expectedDrive.getUuid(), NodeType.WORK_GROUP);
+		service.create(authUser, authUser, nestedWorkgroup);
+		Assertions.assertNotNull(nestedWorkgroup, "Workgroup not created");
+		SharedSpaceNode workgroupOnRoot = new SharedSpaceNode("My groups", NodeType.WORK_GROUP);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.create(authUser, authUser, workgroupOnRoot);
+		});
+		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_FORBIDDEN, exception.getErrorCode());
+		Assertions.assertEquals("You are not authorized to create an entry.", exception.getMessage());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

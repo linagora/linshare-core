@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import java.util.Objects;
+
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
@@ -95,9 +97,10 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			parent = (SharedSpaceNode) opt[0];
 		}
 		Functionality creation = new Functionality();
-		if (NodeType.WORK_GROUP.equals(entry.getNodeType())) {
+		if (NodeType.WORK_GROUP.equals(entry.getNodeType()) && (Objects.isNull(entry.getParentUuid()))) {
 			creation = functionalityService.getWorkGroupCreationRight(actor.getDomain());
-		} else if (NodeType.DRIVE.equals(entry.getNodeType())) {
+		} else if (NodeType.DRIVE.equals(entry.getNodeType())
+				|| (NodeType.WORK_GROUP.equals(entry.getNodeType()))) {
 			creation = functionalityService.getDriveCreationRight(actor.getDomain());
 		} else {
 			String message = "Unsupported NodeType exception.";
