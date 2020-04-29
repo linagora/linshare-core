@@ -44,6 +44,7 @@ import org.hibernate.sql.JoinType;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
+import org.linagora.linshare.core.upgrade.v4_0.NotifyAllAnonymousWithNewPasswordUpgradeTaskImpl;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<AnonymousUrl> implements AnonymousUrlRepository {
@@ -89,6 +90,9 @@ public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<Anonymous
 		return list;
 	}
 	
+	/**
+	 * Method used only for upgrade task {@link NotifyAllAnonymousWithNewPasswordUpgradeTaskImpl}
+	 */
 	@Deprecated(forRemoval = true, since = "4.0")
 	@SuppressWarnings("unchecked")
 	@Override
