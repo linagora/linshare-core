@@ -76,7 +76,6 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
-
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
@@ -681,12 +680,11 @@ public class UserServiceImpl implements UserService {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
 					"Could not find a user with the login " + mail);
 		}
-
 		if (!passwordService.matches(oldPassword, user.getPassword())) {
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR,
 					"The supplied password is invalid");
 		}
-
+		passwordService.validatePassword(newPassword);
 		user.setPassword(passwordService.encode(newPassword));
 		userRepository.update(user);
 	}

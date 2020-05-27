@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -42,10 +43,12 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -56,10 +59,14 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 
 	private final GuestService guestService;
 
+	private final UserService userService;
+
 	public GuestFacadeImpl(final AccountService accountService,
-			final GuestService guestService) {
+			final GuestService guestService,
+			UserService userService) {
 		super(accountService);
 		this.guestService = guestService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -174,5 +181,20 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 
 	private List<GuestDto> toGuestDto(List<Guest> col) {
 		return ImmutableList.copyOf(Lists.transform(col, GuestDto.toDto()));
+	}
+
+	private void validatePasswordInputs(String password, String message) {
+		String valid = Optional.ofNullable(password).orElse("");
+		Validate.notEmpty(valid, message);
+	}
+
+	@Override
+	public void changePassword(PasswordDto password) {
+		User authUser = checkAuthentication();
+		Validate.notNull(password, "Password is required");
+		validatePasswordInputs(password.getOldPwd(), "The old password is required");
+		validatePasswordInputs(password.getNewPwd(), "The new password is required");
+		userService.changePassword(authUser.getLsUuid(), authUser.getMail(), password.getOldPwd(),
+				password.getNewPwd());
 	}
 }

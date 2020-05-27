@@ -47,4 +47,6 @@ public interface PasswordService {
 
 	public boolean matches(CharSequence rawPassword, String encodedPassword);
 
+	void validatePassword(String password);
+
 }

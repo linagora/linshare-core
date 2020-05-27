@@ -312,6 +312,12 @@
 	<bean name="passwordService"
 		class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
 		<constructor-arg ref="passwordEncoder" />
+		<constructor-arg value="${uppercase.character.password}" />
+		<constructor-arg value="${lowercase.character.password}" />
+		<constructor-arg value="${digits.character.password}" />
+		<constructor-arg value="${special.character.password}" />
+		<constructor-arg value="${password.min.length}" />
+		<constructor-arg value="${password.max.length}" />
 	</bean>
 
 	<bean id="jwtLongTimeBusinessService" class="org.linagora.linshare.core.business.service.impl.JwtLongTimeBusinessServiceImpl">

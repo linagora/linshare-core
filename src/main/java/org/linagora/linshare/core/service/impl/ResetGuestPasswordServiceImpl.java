@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang3.Validate;
@@ -51,17 +50,11 @@ import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.ResetGuestPasswordService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
-import org.passay.CharacterRule;
-import org.passay.EnglishCharacterData;
-import org.passay.LengthRule;
-import org.passay.PasswordData;
-import org.passay.PasswordValidator;
-import org.passay.RuleResult;
-import org.passay.WhitespaceRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,41 +72,21 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 
 	protected final MailBuildingService mailBuildingService;
 
-	protected Integer numberUpperCaseCharacters;
-	
-	protected Integer numberLowerCaseCharacters;
-
-	protected Integer numberDicgitsCharacters;
-
-	protected Integer numberSpecialCharacters;
-
-	protected Integer passwordMinLength;
-
-	protected Integer passwordMaxLength;
+	protected final PasswordService passwordService;
 
 	public ResetGuestPasswordServiceImpl(ResetGuestPasswordMongoRepository repository,
 			GuestService guestService,
 			LogEntryService logEntryService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
-			Integer numberUpperCaseCharacters,
-			Integer numberLowerCaseCharacters,
-			Integer numberDicgitsCharacters,
-			Integer numberSpecialCharacters,
-			Integer passwordMinLength,
-			Integer passwordMaxLength) {
+			PasswordService passwordService) {
 		super();
 		this.repository = repository;
 		this.guestService = guestService;
 		this.logEntryService = logEntryService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
-		this.numberUpperCaseCharacters = numberUpperCaseCharacters;
-		this.numberLowerCaseCharacters = numberLowerCaseCharacters;
-		this.numberDicgitsCharacters = numberDicgitsCharacters;
-		this.numberSpecialCharacters = numberSpecialCharacters;
-		this.passwordMinLength = passwordMinLength;
-		this.passwordMaxLength = passwordMaxLength;
+		this.passwordService = passwordService;
 	}
 
 	@Override
@@ -156,21 +129,6 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 		return resetGuestPassword;
 	}
 
-	private void validatePassword(String password) {
-		PasswordValidator validator = new PasswordValidator(Arrays.asList(
-				new LengthRule(passwordMinLength, passwordMaxLength),
-				new CharacterRule(EnglishCharacterData.UpperCase, numberUpperCaseCharacters),
-				new CharacterRule(EnglishCharacterData.LowerCase, numberLowerCaseCharacters),
-				new CharacterRule(EnglishCharacterData.Digit, numberDicgitsCharacters),
-				new CharacterRule(EnglishCharacterData.Special, numberSpecialCharacters),
-				new WhitespaceRule()));
-		RuleResult result = validator.validate(new PasswordData(password));
-		if (!result.isValid()) {
-			throw new BusinessException(BusinessErrorCode.RESET_GUEST_PASSWORD_INVALID_PASSWORD,
-					validator.getMessages(result).toString());
-		}
-	}
-
 	@Override
 	public ResetGuestPassword update(Account actor, Account owner, ResetGuestPassword dto) throws BusinessException {
 		Validate.notNull(dto);
@@ -178,7 +136,7 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 		Validate.notEmpty(dto.getPassword(), "Missing password");
 		ResetGuestPassword reset = find(actor, owner, dto.getUuid());
 		reset.setAlreadyUsed(true);
-		validatePassword(dto.getPassword());
+		passwordService.validatePassword(dto.getPassword());
 		Guest guest = guestService.find(actor, owner, reset.getGuestUuid());
 		guestService.resetPassword(guest, dto.getPassword());
 		reset = repository.save(reset);

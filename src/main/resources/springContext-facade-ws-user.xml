@@ -56,6 +56,7 @@
 	<bean id="wsGuestFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.GuestFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="guestService" />
+		<constructor-arg ref="userService" />
 	</bean>
 	<bean id="wsFunctionalityFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.FunctionalityFacadeImpl">
 		<constructor-arg ref="accountService" />

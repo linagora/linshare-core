@@ -146,6 +146,8 @@ public class UserServiceImplTest {
 
 	private User john;
 
+	private final static String NEW_PASSWORD ="Root2000@linshare";
+
 	@Autowired
 	private TechnicalAccountService technicalAccountService;
 
@@ -441,7 +443,7 @@ public class UserServiceImplTest {
 		Guest user1 = new Guest("John", "Doe", "user-unknow@linshare.org");
 		user1.setDomain(topDomain);
 		String oldPassword = "oldPassword";
-		String newPassword = "newPassword";
+		String newPassword = NEW_PASSWORD;
 		user1.setPassword(passwordService.encode(oldPassword));
 		user1.setCmisLocale("en");
 		userService.saveOrUpdateUser(user1);

@@ -35,12 +35,15 @@ package org.linagora.linshare.webservice.userv2.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
@@ -52,6 +55,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 
 //Class created to generate the swagger documentation of v1 RestServices
@@ -62,8 +66,13 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	private final UserFacade userFacade;
 
-	public AuthenticationRestServiceImpl(final UserFacade userFacade) {
+	private final GuestFacade guestFacade;
+
+	public AuthenticationRestServiceImpl(
+			final UserFacade userFacade,
+			final GuestFacade guestFacade) {
 		this.userFacade = userFacade;
+		this.guestFacade = guestFacade;
 	}
 
 	@Path("/")
@@ -110,5 +119,16 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	public JwtToken generateToken() throws BusinessException {
 		String token = userFacade.generateToken();
 		return new JwtToken(token);
+	}
+
+
+	@Path("/change_password")
+	@POST
+	@Operation(summary = "Change the password of the current guest.")
+	@Override
+	public void changePassword(
+			@Parameter(description = "The password to update.", required = true)
+			PasswordDto password) throws BusinessException {
+		guestFacade.changePassword(password);
 	}
 }

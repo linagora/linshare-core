@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
 public interface GuestFacade extends GenericFacade {
@@ -59,4 +60,6 @@ public interface GuestFacade extends GenericFacade {
 	GuestDto delete(String actorUuid, GuestDto dto, String uuid) throws BusinessException;
 
 	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
+
+	void changePassword(PasswordDto password);
 }

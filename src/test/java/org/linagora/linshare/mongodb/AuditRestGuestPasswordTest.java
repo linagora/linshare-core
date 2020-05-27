@@ -191,7 +191,7 @@ public class AuditRestGuestPasswordTest {
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			resetGuestPasswordService.update(actor, actor, resetGuestPassword);
 		});
-		Assertions.assertEquals(BusinessErrorCode.RESET_GUEST_PASSWORD_INVALID_PASSWORD, exception.getErrorCode());
+		Assertions.assertEquals(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_INVALID_PASSWORD, exception.getErrorCode());
 		Assertions.assertEquals(
 				"[Password must be 12 or more characters in length.,"
 				+ " Password must contain 1 or more uppercase characters.,"
@@ -210,7 +210,7 @@ public class AuditRestGuestPasswordTest {
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			resetGuestPasswordService.update(actor, actor, resetGuestPassword);
 		});
-		Assertions.assertEquals(BusinessErrorCode.RESET_GUEST_PASSWORD_INVALID_PASSWORD, exception.getErrorCode());
+		Assertions.assertEquals(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_INVALID_PASSWORD, exception.getErrorCode());
 	}
 
 }
