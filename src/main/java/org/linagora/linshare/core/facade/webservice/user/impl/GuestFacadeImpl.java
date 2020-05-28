@@ -38,8 +38,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
@@ -188,9 +190,18 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		Validate.notEmpty(valid, message);
 	}
 
+	private User getAuthenticatedGuest() throws BusinessException {
+		User authUser = checkAuthentication();
+		if (!AccountType.GUEST.equals(authUser.getAccountType())) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"This service is used only for guests.");
+		}
+		return authUser;
+	}
+
 	@Override
 	public void changePassword(PasswordDto password) {
-		User authUser = checkAuthentication();
+		User authUser = getAuthenticatedGuest();
 		Validate.notNull(password, "Password is required");
 		validatePasswordInputs(password.getOldPwd(), "The old password is required");
 		validatePasswordInputs(password.getNewPwd(), "The new password is required");

@@ -122,7 +122,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	}
 
 
-	@Path("/change_password")
+	@Path("/password")
 	@POST
 	@Operation(summary = "Change the password of the current guest.")
 	@Override
