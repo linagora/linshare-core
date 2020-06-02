@@ -20,6 +20,8 @@
 		<property name="password" column="password" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="destroyed" column="destroyed" type="long" not-null="true" lazy="false"/>
 		<property access="field" name="purgeStep" column="purge_step" type="purgeStep" not-null="true" lazy="false"/>
+		<property name="secondFASecret" column="second_fa_secret" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="secondFACreationDate" column="second_fa_creation_date" type="timestamp" not-null="false" lazy="false"/>
 
 		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy"/>
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true"

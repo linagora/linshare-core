@@ -34,6 +34,8 @@ CREATE TABLE account (
   ldap_uid              varchar(255),
   can_create_guest      bool,
   inconsistent          bool DEFAULT 'False',
+  second_fa_secret            varchar(255) DEFAULT NULL,
+  second_fa_creation_date     timestamp(6),
   CONSTRAINT account_pkey
     PRIMARY KEY (id),
   CONSTRAINT account_unique_mail_domain_destroyed

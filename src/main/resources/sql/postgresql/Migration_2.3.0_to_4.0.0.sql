@@ -110,6 +110,8 @@ UPDATE policy SET system = FALSE WHERE id = 305;
 ALTER TABLE upload_request_entry ALTER COLUMN ls_type DROP NOT NULL;
 ALTER TABLE upload_request_entry ALTER COLUMN document_id DROP NOT NULL;
 
+ALTER TABLE account ADD COLUMN second_fa_creation_date TIMESTAMP(6);
+ALTER TABLE account ADD COLUMN second_fa_secret  varchar(255) DEFAULT NULL;
 
 -- Group ldap pattern
 WITH ldap_pattern_already_exists AS ( UPDATE ldap_pattern SET id=id WHERE id=4 RETURNING *)
@@ -368,6 +370,17 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
 	VALUES (62, false, 'DRIVE__CREATION_RIGHT', 295, 296, 1, 'DRIVE', true, now(), now());
 
+-- Functionality : SECOND_FACTOR_AUTHENTICATION
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (319, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (320, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (321, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, param, creation_date, modification_date)
+	VALUES (68, false, 'SECOND_FACTOR_AUTHENTICATION', 319, 320, 321, 1, false, now(), now());
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+	VALUES (68, false);
 
 -- Update the mail_content
 INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,34,34,'','','',NOW(),true,'','16a7001a-ee6d-11e8-bb18-ef4f3a73c249',true);

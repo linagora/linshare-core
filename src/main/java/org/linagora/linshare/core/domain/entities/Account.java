@@ -89,6 +89,10 @@ public abstract class Account {
 
 	protected Set<UploadRequestGroup> uploadRequestGroups;
 
+	protected Date secondFACreationDate;
+
+	protected String secondFASecret;
+
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
@@ -397,5 +401,21 @@ public abstract class Account {
 	@Override
 	public String toString() {
 		return getAccountRepresentation();
+	}
+
+	public Date getSecondFACreationDate() {
+		return secondFACreationDate;
+	}
+
+	public void setSecondFACreationDate(Date secondFACreationDate) {
+		this.secondFACreationDate = secondFACreationDate;
+	}
+
+	public String getSecondFASecret() {
+		return secondFASecret;
+	}
+
+	public void setSecondFASecret(String secondFASecret) {
+		this.secondFASecret = secondFASecret;
 	}
 }
