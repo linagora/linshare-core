@@ -89,6 +89,8 @@ public abstract class Account {
 
 	protected Set<UploadRequestGroup> uploadRequestGroups;
 
+	protected Set<PasswordHistory> passwordHistories;
+
 	protected Date secondFACreationDate;
 
 	protected String secondFASecret;
@@ -421,5 +423,13 @@ public abstract class Account {
 
 	public boolean isUsing2FA() {
 		return this.secondFASecret != null;
+	}
+
+	public Set<PasswordHistory> getPasswordHistories() {
+		return passwordHistories;
+	}
+
+	public void setPasswordHistories(Set<PasswordHistory> passwordHistories) {
+		this.passwordHistories = passwordHistories;
 	}
 }

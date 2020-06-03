@@ -51,6 +51,11 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadRequestTemplate"/>
 		</set>
 
+		<set name="passwordHistories" lazy="true" inverse="true">
+			<key column="account_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.PasswordHistory"/>
+		</set>
+
 		<many-to-one name="permission" cascade="lock" column="technical_account_permission_id"
 			class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="false" lazy="proxy">
 		</many-to-one>

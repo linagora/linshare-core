@@ -40,6 +40,12 @@ CREATE TABLE account (
     PRIMARY KEY (id),
   CONSTRAINT account_unique_mail_domain_destroyed
     UNIQUE (domain_id, mail, destroyed));
+  CREATE TABLE password_history (
+  id                  int8 NOT NULL,
+  password                        varchar(255),
+  creation_date                   timestamp(6) NOT NULL,
+  account_id    int8 NOT NULL,
+  PRIMARY KEY (id));
 CREATE TABLE anonymous_share_entry (
   entry_id             int8 NOT NULL,
   downloaded           int8 NOT NULL,
@@ -1064,3 +1070,5 @@ ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) 
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi815203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
 ALTER TABLE mail_attachment ADD CONSTRAINT FKmail_attachment35169 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
+ALTER TABLE password_history ADD CONSTRAINT FKpass_hist220240 FOREIGN KEY (account_id) REFERENCES account (id);
+

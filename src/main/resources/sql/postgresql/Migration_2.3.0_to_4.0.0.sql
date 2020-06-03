@@ -920,6 +920,16 @@ UPDATE account SET password = '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW
 -- Delete not used Technical account for upload proposition
 DELETE FROM account WHERE id=4; 
 
+-- Create the passsword history table
+  CREATE TABLE password_history (
+  id                  int8 NOT NULL,
+  password                        varchar(255),
+  creation_date                   timestamp(6) NOT NULL,
+  account_id    int8 NOT NULL,
+  PRIMARY KEY (id));
+
+ALTER TABLE password_history ADD CONSTRAINT FKpass_hist220240 FOREIGN KEY (account_id) REFERENCES account (id);
+
 -- End of your requests
 
 -- LinShare version
