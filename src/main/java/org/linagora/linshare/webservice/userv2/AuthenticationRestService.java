@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.webservice.userv2;
 
+import java.util.Map;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
@@ -53,4 +55,6 @@ public interface AuthenticationRestService {
 	JwtToken generateToken() throws BusinessException;
 
 	void changePassword(PasswordDto password) throws BusinessException;
+	
+	 Map<String, Integer> getPasswordRules() throws BusinessException;
 }

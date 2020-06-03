@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.Map;
+
 public interface PasswordService {
 
 	/**
@@ -48,5 +50,7 @@ public interface PasswordService {
 	public boolean matches(CharSequence rawPassword, String encodedPassword);
 
 	void validatePassword(String password);
+	
+	 Map<String, Integer> getPasswordRules();
 
 }

@@ -71,4 +71,11 @@ private static Logger logger = LoggerFactory.getLogger(UserServiceImplTest.class
 		Assertions.assertNotNull(passwordService.generatePassword());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void testGetPasswordRules() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Assertions.assertFalse(passwordService.getPasswordRules().isEmpty());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }

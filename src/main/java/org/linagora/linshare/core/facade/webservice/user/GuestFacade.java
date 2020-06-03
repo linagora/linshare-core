@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
@@ -62,4 +63,6 @@ public interface GuestFacade extends GenericFacade {
 	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
 
 	void changePassword(PasswordDto password);
+
+	Map<String, Integer> getPasswordRules() throws BusinessException;
 }

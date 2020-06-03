@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -52,39 +53,48 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.google.common.collect.Maps;
+
 public class PasswordServiceImpl implements PasswordService {
 
 	final private static Logger logger = LoggerFactory.getLogger(PasswordServiceImpl.class);
 
 	private final PasswordEncoder passwordEncoder;
 
-	protected Integer numberUpperCaseCharacters;
-	
-	protected Integer numberLowerCaseCharacters;
+	protected final Map<String, Integer> rules;
 
-	protected Integer numberDicgitsCharacters;
+	protected PasswordValidator validator;
 
-	protected Integer numberSpecialCharacters;
-
-	protected Integer passwordMinLength;
-
-	protected Integer passwordMaxLength;
+	private final static String UpperCaseNumber = "numberUpperCaseCharacters";
+	private final static String LowerCaseNumber = "numberLowerCaseCharacters";
+	private final static String NumberDigits = "numberDigitsCharacters";
+	private final static String NumberSpecialChar = "numberSpecialCharacters";
+	private final static String MinLength = "passwordMinLength";
+	private final static String MaxLength = "passwordMaxLength";
 
 	public PasswordServiceImpl(PasswordEncoder passwordEncoder,
 			Integer numberUpperCaseCharacters,
 			Integer numberLowerCaseCharacters,
-			Integer numberDicgitsCharacters,
+			Integer numberDigitsCharacters,
 			Integer numberSpecialCharacters,
 			Integer passwordMinLength,
 			Integer passwordMaxLength) {
 		super();
 		this.passwordEncoder = passwordEncoder;
-		this.numberUpperCaseCharacters = numberUpperCaseCharacters;
-		this.numberLowerCaseCharacters = numberLowerCaseCharacters;
-		this.numberDicgitsCharacters = numberDicgitsCharacters;
-		this.numberSpecialCharacters = numberSpecialCharacters;
-		this.passwordMinLength = passwordMinLength;
-		this.passwordMaxLength = passwordMaxLength;
+		this.validator = new PasswordValidator(Arrays.asList(
+				new LengthRule(passwordMinLength, passwordMaxLength),
+				new CharacterRule(EnglishCharacterData.UpperCase, numberUpperCaseCharacters),
+				new CharacterRule(EnglishCharacterData.LowerCase, numberLowerCaseCharacters),
+				new CharacterRule(EnglishCharacterData.Digit, numberDigitsCharacters),
+				new CharacterRule(EnglishCharacterData.Special, numberSpecialCharacters),
+				new WhitespaceRule()));
+		rules = Maps.newHashMap();
+		rules.put(UpperCaseNumber, numberUpperCaseCharacters);
+		rules.put(LowerCaseNumber, numberLowerCaseCharacters);
+		rules.put(NumberDigits, numberDigitsCharacters);
+		rules.put(NumberSpecialChar, numberSpecialCharacters);
+		rules.put(MinLength, passwordMinLength);
+		rules.put(MaxLength, passwordMaxLength);
 	}
 
 	@Override
@@ -111,17 +121,15 @@ public class PasswordServiceImpl implements PasswordService {
 
 	@Override
 	public void validatePassword(String password) {
-		PasswordValidator validator = new PasswordValidator(Arrays.asList(
-				new LengthRule(passwordMinLength, passwordMaxLength),
-				new CharacterRule(EnglishCharacterData.UpperCase, numberUpperCaseCharacters),
-				new CharacterRule(EnglishCharacterData.LowerCase, numberLowerCaseCharacters),
-				new CharacterRule(EnglishCharacterData.Digit, numberDicgitsCharacters),
-				new CharacterRule(EnglishCharacterData.Special, numberSpecialCharacters),
-				new WhitespaceRule()));
 		RuleResult result = validator.validate(new PasswordData(password));
 		if (!result.isValid()) {
 			throw new BusinessException(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_INVALID_PASSWORD,
 					validator.getMessages(result).toString());
 		}
+	}
+
+	@Override
+	public Map<String, Integer> getPasswordRules() {
+		return rules;
 	}
 }

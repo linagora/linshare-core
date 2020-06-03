@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.util.Map;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -130,5 +132,13 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 			@Parameter(description = "The password to update.", required = true)
 			PasswordDto password) throws BusinessException {
 		guestFacade.changePassword(password);
+	}
+
+	@Path("/password")
+	@GET
+	@Operation(summary = "Get the password validation rules.")
+	@Override
+	public Map<String, Integer> getPasswordRules() throws BusinessException {
+		return guestFacade.getPasswordRules();
 	}
 }

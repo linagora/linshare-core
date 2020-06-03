@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
@@ -50,6 +51,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.UserService;
 
 import com.google.common.base.Strings;
@@ -62,13 +64,17 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	private final GuestService guestService;
 
 	private final UserService userService;
+	
+	private final PasswordService passwordService;
 
 	public GuestFacadeImpl(final AccountService accountService,
 			final GuestService guestService,
-			UserService userService) {
+			UserService userService,
+			PasswordService passwordService) {
 		super(accountService);
 		this.guestService = guestService;
 		this.userService = userService;
+		this.passwordService = passwordService;
 	}
 
 	@Override
@@ -207,5 +213,11 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		validatePasswordInputs(password.getNewPwd(), "The new password is required");
 		userService.changePassword(authUser.getLsUuid(), authUser.getMail(), password.getOldPwd(),
 				password.getNewPwd());
+	}
+
+	@Override
+	public Map<String, Integer> getPasswordRules() throws BusinessException {
+		checkAuthentication();
+		return passwordService.getPasswordRules();
 	}
 }
