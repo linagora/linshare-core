@@ -37,6 +37,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -51,6 +52,7 @@ import org.passay.RuleResult;
 import org.passay.WhitespaceRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.google.common.collect.Maps;
@@ -126,6 +128,14 @@ public class PasswordServiceImpl implements PasswordService {
 			throw new BusinessException(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_INVALID_PASSWORD,
 					validator.getMessages(result).toString());
 		}
+	}
+
+	@Override
+	public boolean checkPassword(String password_plaintext, String stored_hash) {
+		if (Objects.isNull(stored_hash) || !stored_hash.startsWith("$2a$")) {
+			throw new java.lang.IllegalArgumentException("Invalid hash provided for comparison");
+		}
+		return BCrypt.checkpw(password_plaintext, stored_hash);
 	}
 
 	@Override

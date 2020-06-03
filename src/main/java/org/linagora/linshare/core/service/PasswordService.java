@@ -53,4 +53,6 @@ public interface PasswordService {
 	
 	 Map<String, Integer> getPasswordRules();
 
+	boolean checkPassword(String password_plaintext, String stored_hash);
+
 }
