@@ -31,65 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.Date;
+import java.util.List;
 
-public class PasswordHistory {
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.PasswordHistory;
+import org.linagora.linshare.core.repository.PasswordHistoryRepository;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
-	private long id;
+public class PasswordHistoryRepositoryImpl extends AbstractRepositoryImpl<PasswordHistory> implements PasswordHistoryRepository{
 
-	protected String password;
-
-	private Date creationDate;
-
-	private Account account;
-
-	public PasswordHistory() {
-		super();
-	}
-
-	public PasswordHistory(String password, Date creationDate, Account account) {
-		super();
-		this.password = password;
-		this.creationDate = creationDate;
-		this.account = account;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
+	public PasswordHistoryRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
 	}
 
 	@Override
-	public String toString() {
-		return "PasswordHistory [creationDate=" + creationDate + ", account=" + account + "]";
+	protected DetachedCriteria getNaturalKeyCriteria(PasswordHistory entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.eq("id", entity.getId()));
+		return det;
 	}
+
+	@Override
+	public List<PasswordHistory> findAllByAccount(Account account) {
+		return findByCriteria(DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.eq("account", account)));
+	}
+
+	@Override
+	public PasswordHistory findOldestByAccount(Account account) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("account", account));
+		criteria.addOrder(Order.asc("creationDate"));
+		return findByCriteria(criteria).get(0);
+	}
+
 }

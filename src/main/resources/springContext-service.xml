@@ -32,6 +32,7 @@
 		<constructor-arg ref="containerQuotaBusinessService"/>
 		<constructor-arg ref="jwtLongTimeBusinessService"/>
 		<constructor-arg ref="passwordService" />
+		<constructor-arg ref="passwordHistoryRepository" />
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">

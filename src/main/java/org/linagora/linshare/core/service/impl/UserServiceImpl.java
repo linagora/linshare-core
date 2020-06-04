@@ -58,6 +58,7 @@ import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.PasswordHistory;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -67,6 +68,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
+import org.linagora.linshare.core.repository.PasswordHistoryRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -126,6 +128,10 @@ public class UserServiceImpl implements UserService {
 
 	private final JwtLongTimeBusinessService jwtLongTimeBusinessService;
 
+	private final PasswordHistoryRepository passwordHistoryRepository;
+
+	private final static Integer password_history_max_size = 10;
+
 	public UserServiceImpl(
 			final UserRepository<User> userRepository,
 			final LogEntryService logEntryService,
@@ -141,7 +147,8 @@ public class UserServiceImpl implements UserService {
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final JwtLongTimeBusinessService jwtLongTimeBusinessService,
 			final SharedSpaceMemberService ssMemberService,
-			final PasswordService passwordService) {
+			final PasswordService passwordService,
+			final PasswordHistoryRepository passwordHistoryRepository) {
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
@@ -157,6 +164,7 @@ public class UserServiceImpl implements UserService {
 		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
 		this.ssMemberService = ssMemberService;
 		this.passwordService = passwordService;
+		this.passwordHistoryRepository = passwordHistoryRepository;
 	}
 
 	@Override
@@ -685,8 +693,19 @@ public class UserServiceImpl implements UserService {
 					"The supplied password is invalid");
 		}
 		passwordService.validatePassword(newPassword);
+		storePwdHistory(user, oldPassword);
 		user.setPassword(passwordService.encode(newPassword));
 		userRepository.update(user);
+	}
+
+	private void storePwdHistory(User user, String oldPassword) {
+		List<PasswordHistory> histories = passwordHistoryRepository.findAllByAccount(user);
+		if (!histories.isEmpty() && password_history_max_size <= histories.size()) {
+			PasswordHistory oldest = passwordHistoryRepository.findOldestByAccount(user);
+			passwordHistoryRepository.delete(oldest);
+		}
+		PasswordHistory passwordHistory = new PasswordHistory(passwordService.encode(oldPassword), new Date(), user);
+		passwordHistoryRepository.create(passwordHistory);
 	}
 
 	@Override

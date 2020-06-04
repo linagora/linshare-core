@@ -305,4 +305,8 @@
 	<bean name="mailAttachmentRepository" class="org.linagora.linshare.core.repository.hibernate.MailAttachmentRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="passwordHistoryRepository" class="org.linagora.linshare.core.repository.hibernate.PasswordHistoryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

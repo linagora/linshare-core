@@ -31,65 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.repository;
 
-import java.util.Date;
+import java.util.List;
 
-public class PasswordHistory {
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.PasswordHistory;
 
-	private long id;
+public interface PasswordHistoryRepository extends  AbstractRepository<PasswordHistory>{
 
-	protected String password;
+	List<PasswordHistory> findAllByAccount(Account account);
 
-	private Date creationDate;
-
-	private Account account;
-
-	public PasswordHistory() {
-		super();
-	}
-
-	public PasswordHistory(String password, Date creationDate, Account account) {
-		super();
-		this.password = password;
-		this.creationDate = creationDate;
-		this.account = account;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
-	@Override
-	public String toString() {
-		return "PasswordHistory [creationDate=" + creationDate + ", account=" + account + "]";
-	}
+	PasswordHistory findOldestByAccount(Account account);
 }
