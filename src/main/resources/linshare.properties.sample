@@ -281,3 +281,6 @@ linshare.mode.production=true
 
 # Minimum Number of special characters in password
 # special.character.password=1
+
+# Maximum Number of stored passwords
+password.history.max.number=10

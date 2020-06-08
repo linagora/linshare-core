@@ -318,6 +318,8 @@
 		<constructor-arg value="${special.character.password}" />
 		<constructor-arg value="${password.min.length}" />
 		<constructor-arg value="${password.max.length}" />
+		<constructor-arg ref="passwordHistoryRepository" />
+		<constructor-arg value="${password.history.max.number}" />
 	</bean>
 
 	<bean id="jwtLongTimeBusinessService" class="org.linagora.linshare.core.business.service.impl.JwtLongTimeBusinessServiceImpl">

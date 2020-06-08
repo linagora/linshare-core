@@ -60,9 +60,11 @@ import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.PasswordHistory;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -71,6 +73,7 @@ import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.repository.PasswordHistoryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
@@ -146,10 +149,23 @@ public class UserServiceImplTest {
 
 	private User john;
 
-	private final static String NEW_PASSWORD ="Root2000@linshare";
+	private final static String FIRST_PASSWORD ="Root2010@linshare";
+	private final static String SECOND_PASSWORD ="Root2011@linshare";
+	private final static String THIRD_PASSWORD ="Root2012@linshare";
+	private final static String FOURTH_PASSWORD ="Root2013@linshare";
+	private final static String FIFTH_PASSWORD ="Root2014@linshare";
+	private final static String SIXTH_PASSWORD ="Root2015@linshare";
+	private final static String SEVENTH_PASSWORD ="Root2016@linshare";
+	private final static String EIGHTH_PASSWORD ="Root2017@linshare";
+	private final static String NINTH_PASSWORD ="Root2018@linshare";
+	private final static String TENTH_PASSWORD ="Root2019@linshare";
+	private final static String LAST_PASSWORD ="Root2020@linshare";
 
 	@Autowired
 	private TechnicalAccountService technicalAccountService;
+
+	@Autowired
+	private PasswordHistoryRepository historyRepository;
 
 	public UserServiceImplTest() {
 		super();
@@ -443,7 +459,7 @@ public class UserServiceImplTest {
 		Guest user1 = new Guest("John", "Doe", "user-unknow@linshare.org");
 		user1.setDomain(topDomain);
 		String oldPassword = "oldPassword";
-		String newPassword = NEW_PASSWORD;
+		String newPassword = LAST_PASSWORD;
 		user1.setPassword(passwordService.encode(oldPassword));
 		user1.setCmisLocale("en");
 		userService.saveOrUpdateUser(user1);
@@ -451,6 +467,97 @@ public class UserServiceImplTest {
 		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", oldPassword, newPassword);
 		Assertions.assertTrue(passwordService.matches(newPassword, user1.getPassword()));
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testStoreOldPassword() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		AbstractDomain topDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlDomain);
+		Guest user1 = new Guest("John", "Doe", "user-unknow@linshare.org");
+		user1.setDomain(topDomain);
+		String oldPassword = FIRST_PASSWORD;
+		String newPassword = LAST_PASSWORD;
+		user1.setPassword(passwordService.encode(oldPassword));
+		user1.setCmisLocale("en");
+		userService.saveOrUpdateUser(user1);
+		Assertions.assertTrue(passwordService.matches(oldPassword, user1.getPassword()));
+		String oldHashedPassword = user1.getPassword();
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", oldPassword, newPassword);
+		Assertions.assertTrue(passwordService.matches(newPassword, user1.getPassword()));
+		List<PasswordHistory> histories = historyRepository.findAllByAccount(user1);
+		Assertions.assertTrue(histories.size() == 1);
+		Assertions.assertEquals(histories.iterator().next().getPassword(), oldHashedPassword);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testStorePasswordHistory() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		AbstractDomain topDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlDomain);
+		Guest user1 = new Guest("John", "Doe", "user-unknow@linshare.org");
+		user1.setDomain(topDomain);
+		String oldPassword = FIRST_PASSWORD;
+		user1.setPassword(passwordService.encode(oldPassword));
+		user1.setCmisLocale("en");
+		userService.saveOrUpdateUser(user1);
+		Assertions.assertTrue(passwordService.matches(oldPassword, user1.getPassword()));
+		String firstHashedPassword = user1.getPassword();
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", oldPassword, SECOND_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(SECOND_PASSWORD, user1.getPassword()));
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", SECOND_PASSWORD, THIRD_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(THIRD_PASSWORD, user1.getPassword()));
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", THIRD_PASSWORD, FOURTH_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(FOURTH_PASSWORD, user1.getPassword()));
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", FOURTH_PASSWORD, FIFTH_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(FIFTH_PASSWORD, user1.getPassword()));
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", FIFTH_PASSWORD, SIXTH_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(SIXTH_PASSWORD, user1.getPassword()));
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", SIXTH_PASSWORD, SEVENTH_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(SEVENTH_PASSWORD, user1.getPassword()));
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", SEVENTH_PASSWORD, EIGHTH_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(EIGHTH_PASSWORD, user1.getPassword()));
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", EIGHTH_PASSWORD, NINTH_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(NINTH_PASSWORD, user1.getPassword()));
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", NINTH_PASSWORD, TENTH_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(TENTH_PASSWORD, user1.getPassword()));
+
+		userService.changePassword(user1.getLsUuid(), "user1@linshare.org", TENTH_PASSWORD, LAST_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(LAST_PASSWORD, user1.getPassword()));
+
+		List<PasswordHistory> histories = historyRepository.findAllByAccount(user1);
+		Assertions.assertTrue(histories.size() == 10);
+		Assertions.assertFalse(histories.contains(firstHashedPassword));
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testChangeSamePasswordFail() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		AbstractDomain topDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlDomain);
+		Guest user1 = new Guest("John", "Doe", "user-unknow@linshare.org");
+		user1.setDomain(topDomain);
+		String oldPassword = LAST_PASSWORD;
+		String newPassword = LAST_PASSWORD;
+		user1.setPassword(passwordService.encode(oldPassword));
+		user1.setCmisLocale("en");
+		userService.saveOrUpdateUser(user1);
+		Assertions.assertTrue(passwordService.matches(oldPassword, user1.getPassword()));
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			userService.changePassword(user1.getLsUuid(), "user1@linshare.org", oldPassword, newPassword);
+		});
+		Assertions.assertEquals(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED, exception.getErrorCode());
+		Assertions.assertEquals(
+				"The new password you entered is the same as your old password, Enter a different password please",
+				exception.getMessage());
 	}
 
 	@Test

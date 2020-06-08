@@ -36,12 +36,16 @@ package org.linagora.linshare.core.service.impl;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
+import org.linagora.linshare.core.domain.entities.PasswordHistory;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.repository.PasswordHistoryRepository;
 import org.linagora.linshare.core.service.PasswordService;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -52,7 +56,6 @@ import org.passay.RuleResult;
 import org.passay.WhitespaceRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.google.common.collect.Maps;
@@ -67,6 +70,11 @@ public class PasswordServiceImpl implements PasswordService {
 
 	protected PasswordValidator validator;
 
+
+	private final PasswordHistoryRepository passwordHistoryRepository;
+
+	private Integer maxSavedPasswordsNumber;
+
 	private final static String UpperCaseNumber = "numberUpperCaseCharacters";
 	private final static String LowerCaseNumber = "numberLowerCaseCharacters";
 	private final static String NumberDigits = "numberDigitsCharacters";
@@ -80,9 +88,13 @@ public class PasswordServiceImpl implements PasswordService {
 			Integer numberDigitsCharacters,
 			Integer numberSpecialCharacters,
 			Integer passwordMinLength,
-			Integer passwordMaxLength) {
+			Integer passwordMaxLength,
+			final PasswordHistoryRepository passwordHistoryRepository,
+			Integer maxSavedPasswordsNumber) {
 		super();
 		this.passwordEncoder = passwordEncoder;
+		this.passwordHistoryRepository = passwordHistoryRepository;
+		this.maxSavedPasswordsNumber = maxSavedPasswordsNumber;
 		this.validator = new PasswordValidator(Arrays.asList(
 				new LengthRule(passwordMinLength, passwordMaxLength),
 				new CharacterRule(EnglishCharacterData.UpperCase, numberUpperCaseCharacters),
@@ -131,15 +143,39 @@ public class PasswordServiceImpl implements PasswordService {
 	}
 
 	@Override
-	public boolean checkPassword(String password_plaintext, String stored_hash) {
-		if (Objects.isNull(stored_hash) || !stored_hash.startsWith("$2a$")) {
-			throw new java.lang.IllegalArgumentException("Invalid hash provided for comparison");
-		}
-		return BCrypt.checkpw(password_plaintext, stored_hash);
+	public Map<String, Integer> getPasswordRules() {
+		return rules;
 	}
 
 	@Override
-	public Map<String, Integer> getPasswordRules() {
-		return rules;
+	public void verifyAndStorePassword(User user, String newPassword) {
+		List<PasswordHistory> histories = passwordHistoryRepository.findAllByAccount(user);
+		verifyPasswordHistroy(user, newPassword, histories);
+		storePwdHistory(user, histories);
+	}
+
+	private void verifyPasswordHistroy(User user, String newPassword, List<PasswordHistory> histories) {
+		if (!histories.isEmpty()) {
+			for (PasswordHistory password : histories) {
+				verifyPasswordMatches(newPassword, password.getPassword());
+			}
+		}
+		verifyPasswordMatches(newPassword, user.getPassword());
+	}
+
+	private void verifyPasswordMatches(String newPassword, String oldPassword) {
+		if (matches(newPassword, oldPassword)) {
+			throw new BusinessException(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED,
+					"The new password you entered is the same as your old password, Enter a different password please");
+		}
+	}
+
+	private void storePwdHistory(User user, List<PasswordHistory> histories) {
+		if (histories.size() >= maxSavedPasswordsNumber && !histories.isEmpty()) {
+			PasswordHistory oldest = passwordHistoryRepository.findOldestByAccount(user);
+			passwordHistoryRepository.delete(oldest);
+		}
+		PasswordHistory passwordHistory = new PasswordHistory(user.getPassword(), new Date(), user);
+		passwordHistoryRepository.create(passwordHistory);
 	}
 }

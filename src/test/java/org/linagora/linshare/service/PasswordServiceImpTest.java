@@ -43,7 +43,6 @@ import org.linagora.linshare.core.service.PasswordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -61,11 +60,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml" })
 public class PasswordServiceImpTest {
 
-	private static Logger logger = LoggerFactory.getLogger(PasswordServiceImpTest.class);
-
-	private final static String NEW_PASSWORD = "Root2000@linshare";
-
-	private static int workload = 12;
+private static Logger logger = LoggerFactory.getLogger(UserServiceImplTest.class);
 
 	@Autowired
 	private PasswordService passwordService;
@@ -81,15 +76,6 @@ public class PasswordServiceImpTest {
 	public void testGetPasswordRules() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Assertions.assertFalse(passwordService.getPasswordRules().isEmpty());
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void testCheckPassword() {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		String salt = BCrypt.gensalt(workload);
-		String hashed_password = BCrypt.hashpw(NEW_PASSWORD, salt);
-		Assertions.assertTrue(passwordService.checkPassword(NEW_PASSWORD, hashed_password));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

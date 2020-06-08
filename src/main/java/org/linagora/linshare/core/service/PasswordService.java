@@ -35,6 +35,8 @@ package org.linagora.linshare.core.service;
 
 import java.util.Map;
 
+import org.linagora.linshare.core.domain.entities.User;
+
 public interface PasswordService {
 
 	/**
@@ -53,6 +55,6 @@ public interface PasswordService {
 	
 	 Map<String, Integer> getPasswordRules();
 
-	boolean checkPassword(String password_plaintext, String stored_hash);
+	public void verifyAndStorePassword(User user, String newPassword);
 
 }

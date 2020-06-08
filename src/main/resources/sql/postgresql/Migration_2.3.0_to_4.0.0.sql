@@ -920,7 +920,7 @@ UPDATE account SET password = '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW
 -- Delete not used Technical account for upload proposition
 DELETE FROM account WHERE id=4; 
 
--- Create the passsword history table
+-- Create the password history table
   CREATE TABLE password_history (
   id                  int8 NOT NULL,
   password                        varchar(255),
