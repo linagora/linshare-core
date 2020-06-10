@@ -372,13 +372,13 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 
 -- Functionality : SECOND_FACTOR_AUTHENTICATION
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (319, true, true, 1, false);
+	VALUES (325, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (320, true, true, 1, false);
+	VALUES (326, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (321, true, true, 1, false);
+	VALUES (327, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, param, creation_date, modification_date)
-	VALUES (68, false, 'SECOND_FACTOR_AUTHENTICATION', 319, 320, 321, 1, false, now(), now());
+	VALUES (68, false, 'SECOND_FACTOR_AUTHENTICATION', 325, 326, 327, 1, false, now(), now());
 INSERT INTO functionality_boolean(functionality_id, boolean_value)
 	VALUES (68, false);
 
