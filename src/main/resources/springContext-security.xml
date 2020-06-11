@@ -162,26 +162,6 @@
 		</b:property>
 	</b:bean>
 
-
-	<!-- REST part / Magic lies there -->
-	<b:bean id="linShareWebAuthenticationDetailsSource"
-			class="org.linagora.linshare.auth.LinShareWebAuthenticationDetailsSource">
-	</b:bean>
-	<b:bean id="restAuthenticationEntryPoint"
-			class="org.linagora.linshare.auth.LinShareBasicAuthenticationEntryPoint">
-		<b:property name="realmName" value="Name Of Your LinShare Realm" />
-	</b:bean>
-	<b:bean id="basicProcessingFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
-		<b:constructor-arg>
-			<b:ref bean="authenticationManager" />
-		</b:constructor-arg>
-		<b:constructor-arg>
-			<b:ref bean="restAuthenticationEntryPoint" />
-		</b:constructor-arg>
-		<b:property name="authenticationDetailsSource" ref="linShareWebAuthenticationDetailsSource"/>
-	</b:bean>
-
-
 	<b:bean id="CORSRequestFilter" class="org.linagora.linshare.auth.CORSRequestFilter" />
 
 	<b:bean id="basicExceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
@@ -207,7 +187,7 @@
 	</b:bean>
 	
 	<b:bean id="passwordEncoder" factory-bean="passwordEncoderFactory" factory-method="getInstance" />
-	
+
 	<b:bean id="databaseUserDetailsProvider" class="org.linagora.linshare.auth.dao.DatabaseUserDetailsProvider">
 		<b:constructor-arg ref="authentificationFacade" />
 		<b:property name="userRepositories">

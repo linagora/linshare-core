@@ -73,7 +73,7 @@ public class AccountDto {
 
 	@Schema(description = "If defined, it means that the current user must enable Second Factor Authentication (2FA) before using any api.")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	protected Boolean secondFARequired= null;
+	protected Boolean secondFARequired = null;
 
 	public AccountDto() {
 		super();

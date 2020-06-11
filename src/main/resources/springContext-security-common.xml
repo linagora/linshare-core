@@ -17,4 +17,22 @@
 		<b:property name="jwtLongTimeMongoRepository" ref="jwtLongTimeMongoRepository" />
 		<b:property name="userRepository" ref="userRepository" />
 	</b:bean>
+
+	<b:bean id="linShareWebAuthenticationDetailsSource"
+			class="org.linagora.linshare.auth.LinShareWebAuthenticationDetailsSource">
+	</b:bean>
+	<b:bean id="restAuthenticationEntryPoint"
+			class="org.linagora.linshare.auth.LinShareBasicAuthenticationEntryPoint">
+		<b:property name="realmName" value="Name Of Your LinShare Realm" />
+	</b:bean>
+	<b:bean id="basicProcessingFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+		<b:constructor-arg>
+			<b:ref bean="authenticationManager" />
+		</b:constructor-arg>
+		<b:constructor-arg>
+			<b:ref bean="restAuthenticationEntryPoint" />
+		</b:constructor-arg>
+		<b:property name="authenticationDetailsSource" ref="linShareWebAuthenticationDetailsSource"/>
+	</b:bean>
+
 </b:beans>

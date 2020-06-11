@@ -52,6 +52,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="quotaService" />
 		<constructor-arg ref="jwtService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 	<bean id="wsGuestFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.GuestFacadeImpl">
 		<constructor-arg ref="accountService" />
