@@ -51,18 +51,26 @@ public class LinShareBasicAuthenticationEntryPoint extends BasicAuthenticationEn
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException, ServletException {
 		String authenticationHeader = request.getHeader("WWW-No-Authenticate");
-		if (authenticationHeader == null) {
-			response.addHeader("WWW-Authenticate", "Basic realm=\"" + this.getRealmName() + "\"");
-		}
-		response.addHeader("X-LinShare-Auth-error-msg", authException.getMessage());
+		int errorCode = 1000;
 		if (authException instanceof LinShareAuthenticationException) {
-			response.addIntHeader("X-LinShare-Auth-error-code",
-					((LinShareAuthenticationException) authException).getErrorCode());
+			errorCode = ((LinShareAuthenticationException) authException).getErrorCode();
 		} else if (authException instanceof BadCredentialsException) {
-			response.addIntHeader("X-LinShare-Auth-error-code", 1001);
-		} else {
-			response.addIntHeader("X-LinShare-Auth-error-code", 1000);
+			errorCode = 1001;
 		}
+		if (authenticationHeader == null) {
+			/**
+			 *  1002 and 1003 error codes are related to the 2FA.
+			 *  It means login/password authentication succeeded but TOTP was invalid or not provided.
+			 *  So we inform the client of the supported authentication process.
+			 */
+			if (errorCode == 1002 || errorCode == 1003) {
+				response.addHeader("WWW-Authenticate-", "Basic+TOTP realm=\"" + this.getRealmName() + "\"");
+			} else {
+				response.addHeader("WWW-Authenticate", "Basic realm=\"" + this.getRealmName() + "\"");
+			}
+		}
+		response.addIntHeader("X-LinShare-Auth-error-code", errorCode);
+		response.addHeader("X-LinShare-Auth-error-msg", authException.getMessage());
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
 	}
 }
