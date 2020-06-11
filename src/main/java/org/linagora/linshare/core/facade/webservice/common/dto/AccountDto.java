@@ -41,6 +41,8 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Account")
@@ -64,6 +66,14 @@ public class AccountDto {
 
 	@Schema(description = "Domain")
 	protected String domain;
+
+	@Schema(description = "If defined, it informs if current user is using Second Factor Authentication (2FA).")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected Boolean secondFAEnabled = null;
+
+	@Schema(description = "If defined, it means that the current user must enable Second Factor Authentication (2FA) before using any api.")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected Boolean secondFARequired= null;
 
 	public AccountDto() {
 		super();
@@ -126,5 +136,21 @@ public class AccountDto {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	public Boolean getSecondFAEnabled() {
+		return secondFAEnabled;
+	}
+
+	public void setSecondFAEnabled(Boolean secondFAEnabled) {
+		this.secondFAEnabled = secondFAEnabled;
+	}
+
+	public Boolean getSecondFARequired() {
+		return secondFARequired;
+	}
+
+	public void setSecondFARequired(Boolean secondFARequired) {
+		this.secondFARequired = secondFARequired;
 	}
 }

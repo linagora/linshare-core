@@ -37,12 +37,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
@@ -55,16 +57,20 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 
 	protected final JwtService jwtService;
 
+	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
+
 	public UserFacadeImpl(
 			final AccountService accountService,
 			final UserService userService,
 			final QuotaService quotaService,
-			final JwtService jwtService
+			final JwtService jwtService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService
 			) {
 		super(accountService);
 		this.userService = userService;
 		this.quotaService = quotaService;
 		this.jwtService = jwtService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -93,6 +99,14 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 		// get the quota for the current logged in user.
 		AccountQuota quota = quotaService.findByRelatedAccount(authUser);
 		dto.setQuotaUuid(quota.getUuid());
+		BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
+		if (twofaFunc.getActivationPolicy().getStatus()) {
+			dto.setSecondFAEnabled(authUser.isUsing2FA());
+			dto.setSecondFARequired(twofaFunc.getValue());
+		} else {
+			dto.setSecondFAEnabled(false);
+			dto.setSecondFARequired(false);
+		}
 		return dto;
 	}
 

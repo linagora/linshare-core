@@ -418,4 +418,8 @@ public abstract class Account {
 	public void setSecondFASecret(String secondFASecret) {
 		this.secondFASecret = secondFASecret;
 	}
+
+	public boolean isUsing2FA() {
+		return this.secondFASecret != null;
+	}
 }

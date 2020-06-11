@@ -129,4 +129,6 @@ public interface FunctionalityReadOnlyService {
 	Functionality getDriveCreationRight(AbstractDomain domain);
 
 	Functionality getDriveFunctionality(AbstractDomain domain);
+
+	BooleanValueFunctionality getSecondFactorAuthenticationFunctionality(AbstractDomain domain);
 }

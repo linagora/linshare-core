@@ -373,6 +373,12 @@
 		</dependency>
 		<!-- spring security - end -->
 
+		<dependency>
+			<groupId>org.jboss.aerogear</groupId>
+			<artifactId>aerogear-otp-java</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<!-- spring data - begin -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>

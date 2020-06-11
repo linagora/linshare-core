@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -34,35 +34,15 @@
 
 package org.linagora.linshare.auth;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
-public class LinShareBasicAuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
+public class LinShareWebAuthenticationDetailsSource implements AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails>  {
 
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
-		String authenticationHeader = request.getHeader("WWW-No-Authenticate");
-		if (authenticationHeader == null) {
-			response.addHeader("WWW-Authenticate", "Basic realm=\"" + this.getRealmName() + "\"");
-		}
-		response.addHeader("X-LinShare-Auth-error-msg", authException.getMessage());
-		if (authException instanceof LinShareAuthenticationException) {
-			response.addIntHeader("X-LinShare-Auth-error-code",
-					((LinShareAuthenticationException) authException).getErrorCode());
-		} else if (authException instanceof BadCredentialsException) {
-			response.addIntHeader("X-LinShare-Auth-error-code", 1001);
-		} else {
-			response.addIntHeader("X-LinShare-Auth-error-code", 1000);
-		}
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+	public WebAuthenticationDetails buildDetails(HttpServletRequest context) {
+		return new LinShareWebAuthenticationDetails(context);
 	}
 }

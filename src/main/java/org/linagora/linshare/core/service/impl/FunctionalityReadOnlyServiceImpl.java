@@ -424,4 +424,10 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public Functionality getDriveCreationRight(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.DRIVE__CREATION_RIGHT);
 	}
+
+
+	@Override
+	public BooleanValueFunctionality getSecondFactorAuthenticationFunctionality(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.SECOND_FACTOR_AUTHENTICATION);
+	}
 }

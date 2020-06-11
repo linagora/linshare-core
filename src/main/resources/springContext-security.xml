@@ -6,21 +6,6 @@
 	profile="default">
 
 
-<!-- <b:beans xmlns="http://www.springframework.org/schema/beans" xmlns:sec="http://www.springframework.org/schema/security" -->
-<!-- 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" -->
-<!-- 	xsi:schemaLocation="http://www.springframework.org/schema/beans -->
-<!--            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  -->
-<!--            http://www.springframework.org/schema/security  -->
-<!--            http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">  -->
-
-
-<!-- <b:constructor-arg> -->
-<!-- 			<b:bean class="org.springframework.security.web.DefaultSecurityFilterChain"> -->
-<!-- 			<b:constructor-arg value="#{T(org.springframework.security.web.util.matcher.AntRequestMatcher).INSTANCE}"/> -->
-<!-- 			<b:constructor-arg> -->
-
-
-
 	<b:bean id="springSecurityFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
 			<!-- allow spring security filter to apply rules on URL parameters -->
 			<!-- 		<b:property name="stripQueryStringFromUrls" value="false" /> -->
@@ -29,33 +14,6 @@
 			<b:list>
 
 <!-- 		<sec:filter-chain-map> -->
-			<sec:filter-chain pattern="/?login_error=*" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/assets/**" filters="none" />
-			<sec:filter-chain pattern="/applet/**" filters="none" />
-			<sec:filter-chain pattern="/css/**" filters="none" />
-			<sec:filter-chain pattern="/images/**" filters="none" />
-			<sec:filter-chain pattern="/videos/**" filters="none" />
-
-			<sec:filter-chain pattern="/**/help/**" filters="none" />
-			<sec:filter-chain pattern="/**/*.js" filters="none" />
-			<sec:filter-chain pattern="/**/*.css" filters="none" />
-			<sec:filter-chain pattern="/**/*.swf" filters="none" />
-
-			<sec:filter-chain pattern="/**/en" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/fr" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/nl" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/vi" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-			<sec:filter-chain pattern="/**/mq" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter" />
-
-			<sec:filter-chain pattern="/download/**" filters="none" />
-			<sec:filter-chain pattern="/**/download.passwordpopup.formpassword" filters="none" />
-			<sec:filter-chain pattern="/download.downloadthemall/**" filters="none" />
-			<sec:filter-chain pattern="/localDecrypt/**" filters="none" />
-
-			<sec:filter-chain pattern="/urentryurldownload/**" filters="none" />
-			<sec:filter-chain pattern="/urentryurldownload.passwordpopup.formpassword" filters="none" />
-
 			<!-- allow rest wadl to be public with these rule -->
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			<sec:filter-chain pattern="/webservice/api-docs/**" filters="CORSRequestFilter" />
@@ -88,9 +46,6 @@
 
 			<sec:filter-chain pattern="/webservice/**"
 				filters="httpSessionIntegrationFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
-
-			<sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter" />
-			<sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter" />
 			<sec:filter-chain pattern="/**"
 				filters="httpSessionIntegrationFilter,exceptionTranslationFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor" />
 <!-- 		</sec:filter-chain-map> -->
@@ -123,36 +78,6 @@
 	<!-- FILTERS DEFINITION -->
 	<b:bean id="httpSessionIntegrationFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter" >
 <!-- 		<b:property name="forceEagerSessionCreation" value="true"/> -->
-	</b:bean>
-
-	<b:bean id="authenticationProcessingFilter" class="org.linagora.linshare.auth.DomainAuthenticationProcessingFilter">
-		<b:property name="domainRequestHeader" value="${sso.header.domain}" />
-		<b:property name="authenticationFailureHandler" ref="failureHandler" />
-		<b:property name="authenticationSuccessHandler" ref="successHandler" />
-		<b:property name="filterProcessesUrl" value="/j_security_check" />
-		<b:property name="usernameParameter" value="login" />
-		<b:property name="passwordParameter" value="password" />
-		<b:property name="allowSessionCreation" value="true" />
-		<b:property name="sessionAuthenticationStrategy" ref="sas" />
-		<b:property name="authenticationManager" ref="authenticationManager" />
-		<b:property name="rememberMeServices" ref="rememberMeService" />
-
-	</b:bean>
-
-	<b:bean id="successHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
-		<b:property name="defaultTargetUrl" value="/startingPage" /> <!-- which is the default value -->
-	</b:bean>
-
-	<b:bean id="failureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
-		<b:property name="defaultFailureUrl" value="/?login_error=1" />
-		<b:property name="exceptionMappings">
-			<b:props>
-				<b:prop key="org.linagora.linshare.auth.exceptions.BadDomainException">/?login_error=2</b:prop>
-			</b:props>
-		</b:property>
-	</b:bean>
-	<b:bean id="sas" class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
-		<b:property name="migrateSessionAttributes" value="true" />
 	</b:bean>
 
 	<b:bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
@@ -239,6 +164,13 @@
 
 
 	<!-- REST part / Magic lies there -->
+	<b:bean id="linShareWebAuthenticationDetailsSource"
+			class="org.linagora.linshare.auth.LinShareWebAuthenticationDetailsSource">
+	</b:bean>
+	<b:bean id="restAuthenticationEntryPoint"
+			class="org.linagora.linshare.auth.LinShareBasicAuthenticationEntryPoint">
+		<b:property name="realmName" value="Name Of Your LinShare Realm" />
+	</b:bean>
 	<b:bean id="basicProcessingFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
 		<b:constructor-arg>
 			<b:ref bean="authenticationManager" />
@@ -246,11 +178,9 @@
 		<b:constructor-arg>
 			<b:ref bean="restAuthenticationEntryPoint" />
 		</b:constructor-arg>
+		<b:property name="authenticationDetailsSource" ref="linShareWebAuthenticationDetailsSource"/>
 	</b:bean>
 
-	<b:bean id="restAuthenticationEntryPoint" class="org.linagora.linshare.auth.LinShareBasicAuthenticationEntryPoint">
-		<b:property name="realmName" value="Name Of Your LinShare Realm"/>
-	</b:bean>
 
 	<b:bean id="CORSRequestFilter" class="org.linagora.linshare.auth.CORSRequestFilter" />
 

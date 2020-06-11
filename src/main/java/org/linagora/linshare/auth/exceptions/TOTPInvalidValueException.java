@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,30 +31,22 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.auth;
+package org.linagora.linshare.auth.exceptions;
 
-import javax.servlet.http.HttpServletRequest;
+public class TOTPInvalidValueException extends LinShareAuthenticationException {
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+	private static final long serialVersionUID = 3861879734946688155L;
 
-public class DomainAuthenticationProcessingFilter extends
-		UsernamePasswordAuthenticationFilter {
+	public TOTPInvalidValueException(String msg, Throwable t) {
+		super(msg, t);
+	}
 
-	private String domainRequestHeader;
-
-	public void setDomainRequestHeader(String domainRequestHeader) {
-		this.domainRequestHeader = domainRequestHeader;
+	public TOTPInvalidValueException(String msg) {
+		super(msg);
 	}
 
 	@Override
-	protected void setDetails(HttpServletRequest request,
-			UsernamePasswordAuthenticationToken authRequest) {
-		String domainIdentifier = request.getParameter("domain");
-
-		if (domainRequestHeader != null && domainIdentifier == null)
-			domainIdentifier = request.getHeader(domainRequestHeader);
-
-		authRequest.setDetails(domainIdentifier);
+	public Integer getErrorCode() {
+		return 1003;
 	}
 }

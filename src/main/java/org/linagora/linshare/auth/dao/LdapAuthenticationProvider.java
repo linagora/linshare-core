@@ -37,7 +37,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.aerogear.security.otp.Totp;
+import org.linagora.linshare.auth.LinShareWebAuthenticationDetails;
 import org.linagora.linshare.auth.RoleProvider;
+import org.linagora.linshare.auth.exceptions.TOTPBadFormatException;
+import org.linagora.linshare.auth.exceptions.TOTPInvalidValueException;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.springframework.dao.DataAccessException;
@@ -131,7 +135,21 @@ public class LdapAuthenticationProvider extends
 						+ foundUser.getDomainId() + " : "
 						+ foundUser.getMail(), e);
 			}
-
+			if (user.isUsing2FA()) {
+				String verificationCode = ((LinShareWebAuthenticationDetails) authentication.getDetails())
+						.getSecondFactorAuthCode();
+				final Totp totp = new Totp(user.getSecondFASecret());
+				if (!isValidLong(verificationCode)) {
+					String msg = "Missing or Invalid format for TOTP code. See X-LinShare-2fa-pin header.";
+					logger.info(msg + " for account " + foundUser.getLsUuid());
+					throw new TOTPBadFormatException(msg);
+				}
+				if (!totp.verify(verificationCode)) {
+					String msg = "Invalid or Expired TOTP code . See X-LinShare-2fa-pin header.";
+					logger.info(msg + " for account " + foundUser.getLsUuid());
+					throw new TOTPInvalidValueException(msg);
+				}
+			}
 			List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
 			loadedUser = new org.springframework.security.core.userdetails.User(
 					user.getLsUuid(), "", true, true, true, true,
@@ -141,5 +159,14 @@ public class LdapAuthenticationProvider extends
 					repositoryProblem.getMessage(), repositoryProblem);
 		}
 		return loadedUser;
+	}
+
+	private boolean isValidLong(String code) {
+		try {
+			Long.parseLong(code);
+		} catch (final NumberFormatException e) {
+			return false;
+		}
+		return true;
 	}
 }
