@@ -36,28 +36,32 @@ package org.linagora.linshare.webservice.userv2.impl;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
+import org.linagora.linshare.core.facade.webservice.user.SecondFactorAuthenticationFacade;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.AuthenticationRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 
 
 //Class created to generate the swagger documentation of v1 RestServices
@@ -70,10 +74,14 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	private final GuestFacade guestFacade;
 
+	private final SecondFactorAuthenticationFacade secondFactorAuthenticationFacade;
+
 	public AuthenticationRestServiceImpl(
 			final UserFacade userFacade,
+			final SecondFactorAuthenticationFacade secondFactorAuthenticationFacade,
 			final GuestFacade guestFacade) {
 		this.userFacade = userFacade;
+		this.secondFactorAuthenticationFacade = secondFactorAuthenticationFacade;
 		this.guestFacade = guestFacade;
 	}
 
@@ -140,5 +148,48 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@Override
 	public Map<String, Integer> getPasswordRules() throws BusinessException {
 		return guestFacade.getPasswordRules();
+	}
+
+	@Path("/2fa/{uuid}")
+	@GET
+	@Operation(summary = "Get current 2FA state. use account uuid as 2FA uuid.", responses = {
+		@ApiResponse(
+			content = @Content(schema = @Schema(implementation = SecondFactorDto.class)),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public SecondFactorDto get2FA(String uuid) {
+		return secondFactorAuthenticationFacade.find(uuid);
+	}
+
+	@Path("/2fa")
+	@POST
+	@Operation(summary = "Enable 2FA. A shared key will be computend and returned. This is the one and only time the shared key will be returned.", responses = {
+			@ApiResponse(
+				content = @Content(schema = @Schema(implementation = SecondFactorDto.class)),
+				responseCode = "200"
+			)
+		})
+	@Override
+	public SecondFactorDto create2FA(SecondFactorDto sfd) {
+		return secondFactorAuthenticationFacade.create(sfd);
+	}
+
+	@Path("/2fa/{uuid : .*}")
+	@DELETE
+	@Operation(summary = "Disable 2FA. Shared key will be remvoved.", responses = {
+			@ApiResponse(
+				content = @Content(schema = @Schema(implementation = SecondFactorDto.class)),
+				responseCode = "200"
+			)
+		})
+	@Override
+	public SecondFactorDto delete2FA(
+			@Parameter(description = "Optional 2FA 's uuid to delete.", required = true)
+			@PathParam("uuid") String uuid,
+			@Parameter(description = "Optional 2FA object to delete.", required = true)
+			SecondFactorDto sfd) {
+		return secondFactorAuthenticationFacade.delete(uuid, sfd);
 	}
 }

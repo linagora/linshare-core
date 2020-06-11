@@ -25,6 +25,7 @@
 	<bean id="userv2AuthenticationRestService" class="org.linagora.linshare.webservice.userv2.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="wsUserFacade" />
 		<constructor-arg ref="wsGuestFacade" />
+		<constructor-arg ref="wsSecondFactorAuthenticationFacade" />
 	</bean>
 
 	<bean id="userv2DocumentRestService" class="org.linagora.linshare.webservice.userv2.impl.DocumentRestServiceImpl">

@@ -186,4 +186,8 @@
 		<constructor-arg ref="sharedSpaceNodeService" />
 		<constructor-arg ref="sharedSpaceRoleService" />
 	</bean>	
+	<bean id="wsSecondFactorAuthenticationFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.SecondFactorAuthenticationFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 </beans>

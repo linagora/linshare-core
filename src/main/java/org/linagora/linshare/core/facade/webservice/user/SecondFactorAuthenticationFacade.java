@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,37 +31,15 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.user;
 
-package org.linagora.linshare.webservice.userv2;
-
-import java.util.Map;
-
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
-import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
 
-public interface AuthenticationRestService {
+public interface SecondFactorAuthenticationFacade extends GenericFacade {
 
-	void noop();
+	SecondFactorDto find(String uuid);
 
-	UserDto isAuthorized() throws BusinessException;
+	SecondFactorDto create(SecondFactorDto sfd);
 
-	void logout();
-
-	VersionDto getVersion();
-
-	JwtToken generateToken() throws BusinessException;
-
-	void changePassword(PasswordDto password) throws BusinessException;
-
-	Map<String, Integer> getPasswordRules() throws BusinessException;
-
-	SecondFactorDto get2FA(String uuid);
-
-	SecondFactorDto create2FA(SecondFactorDto sfd);
-
-	SecondFactorDto delete2FA(String uuid, SecondFactorDto sfd);
+	SecondFactorDto delete(String uuid, SecondFactorDto sfd);
 }
