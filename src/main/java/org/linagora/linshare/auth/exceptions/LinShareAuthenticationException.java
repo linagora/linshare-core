@@ -33,9 +33,9 @@
  */
 package org.linagora.linshare.auth.exceptions;
 
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.AccountStatusException;
 
-public abstract class LinShareAuthenticationException extends BadCredentialsException {
+public abstract class LinShareAuthenticationException extends AccountStatusException {
 
 	private static final long serialVersionUID = 6813322601281355070L;
 
