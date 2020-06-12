@@ -279,7 +279,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public void changePassword(PasswordDto password) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		userService.changePassword(authUser.getLsUuid(), authUser.getMail(),
+		User actor = getActor(authUser, null);
+		userService.changePassword(authUser, actor,
 				password.getOldPwd(), password.getNewPwd());
 	}
 

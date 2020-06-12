@@ -672,22 +672,25 @@ public class UserServiceImpl implements UserService {
 		userRepository.update(user);
 	}
 
+	private boolean checkPermissionForChangePassword(User authUser, User actor) {
+		if (authUser.hasSuperAdminRole() || authUser.isGuest()) {
+			if (authUser.equals(actor)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
-	public void changePassword(String uuid, String mail, String oldPassword,
-			String newPassword) throws BusinessException {
-		User user = userRepository.findByLsUuid(uuid);
-		if (user == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Could not find a user with the login " + mail);
+	public void changePassword(User authUser, User actor, String oldPassword, String newPassword)
+			throws BusinessException {
+		Validate.notNull(authUser, "Missing authUser account");
+		Validate.notNull(actor, "Missing actor account");
+		if (!checkPermissionForChangePassword(authUser, actor)) {
+			throw new BusinessException(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_FORBIDDEN,
+					"You are not authorized to use this service");
 		}
-		if (!passwordService.matches(oldPassword, user.getPassword())) {
-			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR,
-					"The supplied password is invalid");
-		}
-		passwordService.validatePassword(newPassword);
-		passwordService.verifyAndStorePassword(user, newPassword);
-		user.setPassword(passwordService.encode(newPassword));
-		userRepository.update(user);
+		passwordService.changePassword(actor, oldPassword, newPassword);
 	}
 
 	@Override

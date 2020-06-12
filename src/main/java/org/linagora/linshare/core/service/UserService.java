@@ -93,11 +93,6 @@ public interface UserService {
 	 * @throws BusinessException 
 	 */
 	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale,Language externalMailLocale, String cmisLocale) throws BusinessException;
-	/**
-	 * change a guest or superadmin password
-	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
-	 */
-	public void changePassword(String uuid, String mail, String oldPassword, String newPassword) throws BusinessException;
 
 	/**
 	 * Search user that are internal and in the DB but not in domains (=removed from ldap).
@@ -197,4 +192,6 @@ public interface UserService {
 	void updateRecipientFavourite(Account actor, String currentEmail, String newEmail);
 
 	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
+
+	void changePassword(User authUser, User actor, String oldPassword, String newPassword) throws BusinessException;
 }

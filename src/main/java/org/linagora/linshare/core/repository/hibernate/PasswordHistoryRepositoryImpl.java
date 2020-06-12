@@ -67,7 +67,10 @@ public class PasswordHistoryRepositoryImpl extends AbstractRepositoryImpl<Passwo
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("account", account));
 		criteria.addOrder(Order.asc("creationDate"));
-		return findByCriteria(criteria).get(0);
+		List<PasswordHistory> histories = findByCriteria(criteria);
+		if (histories.isEmpty()) {
+			return null;
+		}
+		return histories.get(0);
 	}
-
 }

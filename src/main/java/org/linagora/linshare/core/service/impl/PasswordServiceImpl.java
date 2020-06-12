@@ -46,6 +46,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.PasswordHistoryRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.PasswordService;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -70,6 +71,7 @@ public class PasswordServiceImpl implements PasswordService {
 
 	protected PasswordValidator validator;
 
+	protected final UserRepository<User> userRepository;
 
 	private final PasswordHistoryRepository passwordHistoryRepository;
 
@@ -90,11 +92,13 @@ public class PasswordServiceImpl implements PasswordService {
 			Integer passwordMinLength,
 			Integer passwordMaxLength,
 			final PasswordHistoryRepository passwordHistoryRepository,
-			Integer maxSavedPasswordsNumber) {
+			Integer maxSavedPasswordsNumber,
+			final UserRepository<User> userRepository) {
 		super();
 		this.passwordEncoder = passwordEncoder;
 		this.passwordHistoryRepository = passwordHistoryRepository;
 		this.maxSavedPasswordsNumber = maxSavedPasswordsNumber;
+		this.userRepository = userRepository;
 		this.validator = new PasswordValidator(Arrays.asList(
 				new LengthRule(passwordMinLength, passwordMaxLength),
 				new CharacterRule(EnglishCharacterData.UpperCase, numberUpperCaseCharacters),
@@ -114,6 +118,10 @@ public class PasswordServiceImpl implements PasswordService {
 	@Override
 	public String encode(CharSequence rawPassword) {
 		return passwordEncoder.encode(rawPassword);
+	}
+
+	public Integer setMaxSavedPasswordNumber (Integer enteredValue) {
+		return this.maxSavedPasswordsNumber = enteredValue;
 	}
 
 	@Override
@@ -148,34 +156,33 @@ public class PasswordServiceImpl implements PasswordService {
 	}
 
 	@Override
-	public void verifyAndStorePassword(User user, String newPassword) {
+	public void changePassword(User actor, String oldPassword, String newPassword) throws BusinessException {
+		if (!matches(oldPassword, actor.getPassword())) {
+			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR, "The supplied password is invalid");
+		}
+		updatePassword(actor, newPassword);
+	}
+
+	private void updatePassword(User user, String newPassword) {
+		validatePassword(newPassword);
 		List<PasswordHistory> histories = passwordHistoryRepository.findAllByAccount(user);
-		verifyPasswordHistroy(user, newPassword, histories);
-		storePwdHistory(user, histories);
-	}
-
-	private void verifyPasswordHistroy(User user, String newPassword, List<PasswordHistory> histories) {
-		if (!histories.isEmpty()) {
-			for (PasswordHistory password : histories) {
-				verifyPasswordMatches(newPassword, password.getPassword());
-			}
+		for (PasswordHistory password : histories) {
+			verifyPasswordMatches(newPassword, password.getPassword());
 		}
-		verifyPasswordMatches(newPassword, user.getPassword());
-	}
-
-	private void verifyPasswordMatches(String newPassword, String oldPassword) {
-		if (matches(newPassword, oldPassword)) {
-			throw new BusinessException(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED,
-					"The new password you entered is the same as your old password, Enter a different password please");
-		}
-	}
-
-	private void storePwdHistory(User user, List<PasswordHistory> histories) {
-		if (histories.size() >= maxSavedPasswordsNumber && !histories.isEmpty()) {
+		if (histories.size() >= maxSavedPasswordsNumber) {
 			PasswordHistory oldest = passwordHistoryRepository.findOldestByAccount(user);
 			passwordHistoryRepository.delete(oldest);
 		}
 		PasswordHistory passwordHistory = new PasswordHistory(user.getPassword(), new Date(), user);
 		passwordHistoryRepository.create(passwordHistory);
+		user.setPassword(encode(newPassword));
+		userRepository.update(user);
+	}
+
+	private void verifyPasswordMatches(String newPassword, String oldPassword) {
+		if (matches(newPassword, oldPassword)) {
+			throw new BusinessException(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED,
+					"The new password you entered is the same as your old passwords, Enter a different password please");
+		}
 	}
 }

@@ -208,10 +208,11 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	@Override
 	public void changePassword(PasswordDto password) {
 		User authUser = getAuthenticatedGuest();
+		User actor = getActor(authUser, null);
 		Validate.notNull(password, "Password is required");
 		validatePasswordInputs(password.getOldPwd(), "The old password is required");
 		validatePasswordInputs(password.getNewPwd(), "The new password is required");
-		userService.changePassword(authUser.getLsUuid(), authUser.getMail(), password.getOldPwd(),
+		userService.changePassword(authUser, actor, password.getOldPwd(),
 				password.getNewPwd());
 	}
 

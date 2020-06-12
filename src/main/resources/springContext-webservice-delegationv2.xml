@@ -31,7 +31,6 @@
 	<bean id="delegationV2AuthenticationRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="wsDelegationGenericFacade" />
-		<constructor-arg ref="wsDelegationUserFacade" />
 	</bean>
 
 	<bean id="delegationV2GuestRestService" class="org.linagora.linshare.webservice.delegationv2.impl.GuestRestServiceImpl">

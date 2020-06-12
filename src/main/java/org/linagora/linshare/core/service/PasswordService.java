@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface PasswordService {
 
@@ -51,10 +52,10 @@ public interface PasswordService {
 
 	public boolean matches(CharSequence rawPassword, String encodedPassword);
 
+	public void changePassword(User actor, String oldPassword, String newPassword)
+			throws BusinessException;
+
 	void validatePassword(String password);
 	
 	 Map<String, Integer> getPasswordRules();
-
-	public void verifyAndStorePassword(User user, String newPassword);
-
 }

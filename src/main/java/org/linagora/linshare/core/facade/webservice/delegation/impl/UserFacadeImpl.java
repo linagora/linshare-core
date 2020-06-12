@@ -39,7 +39,6 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDetailsDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
@@ -58,13 +57,6 @@ public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
 			QuotaService quotaService) {
 		super(accountService, userService);
 		this.quotaService = quotaService;
-	}
-
-	@Override
-	public void changePassword(PasswordDto password) throws BusinessException {
-		User authUser = checkAuthentication();
-		userService.changePassword(authUser.getLsUuid(), authUser.getMail(),
-				password.getOldPwd(), password.getNewPwd());
 	}
 
 	@Override
