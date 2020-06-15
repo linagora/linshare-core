@@ -14,6 +14,7 @@
 			<b:list>
 
 <!-- 		<sec:filter-chain-map> -->
+			<sec:filter-chain pattern="/" filters="httpSessionIntegrationFilter" />
 			<!-- allow rest wadl to be public with these rule -->
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			<sec:filter-chain pattern="/webservice/api-docs/**" filters="CORSRequestFilter" />
