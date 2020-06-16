@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Date;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -50,7 +51,6 @@ import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.ResetGuestPasswordService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;

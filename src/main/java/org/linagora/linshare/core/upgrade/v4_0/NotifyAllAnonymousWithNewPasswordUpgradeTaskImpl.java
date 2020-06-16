@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
@@ -57,7 +58,6 @@ import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
 /**

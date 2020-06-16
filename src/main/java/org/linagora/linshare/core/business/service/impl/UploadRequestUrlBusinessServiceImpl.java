@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -40,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UploadRequestUrlRepository;
-import org.linagora.linshare.core.service.PasswordService;
 
 
 public class UploadRequestUrlBusinessServiceImpl implements

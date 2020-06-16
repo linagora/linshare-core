@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
@@ -51,7 +52,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
-import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.UserService;
 
 import com.google.common.base.Strings;

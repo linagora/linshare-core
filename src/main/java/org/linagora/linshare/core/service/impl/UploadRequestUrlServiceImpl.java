@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -63,10 +64,8 @@ import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestUrlResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
-
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestUrlAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;

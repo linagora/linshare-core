@@ -37,8 +37,8 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.GuestBusinessService;
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -50,7 +50,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.PasswordService;
 
 
 public class GuestBusinessServiceImpl implements GuestBusinessService {

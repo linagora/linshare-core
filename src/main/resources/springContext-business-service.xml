@@ -310,7 +310,7 @@
 	<bean id="passwordEncoder" factory-bean="passwordEncoderFactory" factory-method="getInstance" />
 	
 	<bean name="passwordService"
-		class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
+		class="org.linagora.linshare.core.business.service.impl.PasswordServiceImpl">
 		<constructor-arg ref="passwordEncoder" />
 		<constructor-arg value="${uppercase.character.password}" />
 		<constructor-arg value="${lowercase.character.password}" />

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
@@ -47,7 +48,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
 

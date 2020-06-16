@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.business.service.impl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.entities.PasswordHistory;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -47,7 +48,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.PasswordHistoryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.PasswordService;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.LengthRule;

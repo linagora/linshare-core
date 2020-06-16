@@ -36,6 +36,7 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -43,8 +44,6 @@ import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.TechnicalAccountRepository;
-import org.linagora.linshare.core.service.PasswordService;
-
 
 import com.google.common.collect.Sets;
 

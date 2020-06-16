@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
@@ -44,7 +45,6 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
-import org.linagora.linshare.core.service.PasswordService;
 
 
 public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessService {
