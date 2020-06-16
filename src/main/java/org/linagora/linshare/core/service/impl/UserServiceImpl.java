@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -691,6 +692,9 @@ public class UserServiceImpl implements UserService {
 					"You are not authorized to use this service");
 		}
 		passwordService.changePassword(actor, oldPassword, newPassword);
+		UserAuditLogEntry log = new UserAuditLogEntry(authUser, actor, LogAction.UPDATE, AuditLogEntryType.USER, actor);
+		log.setCause(LogActionCause.CHANGE_PASSWORD);
+		logEntryService.insert(log);
 	}
 
 	@Override
