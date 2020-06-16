@@ -208,5 +208,13 @@
 		<constructor-arg ref="groupLdapPatternService"/>
 		<constructor-arg ref="ldapGroupSyncService" />
 	</bean>
+	
+	<bean name="computeNewExpirationUnsharedDocumentBatch"
+		class="org.linagora.linshare.core.batches.impl.ComputeNewExpirationUnsharedDocumentBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="documentEntryRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="functionalityReadOnlyService"/>
+	</bean>
 
 </beans>

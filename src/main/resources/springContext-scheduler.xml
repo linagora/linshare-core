@@ -119,6 +119,7 @@
 						<ref bean="deleteExpiredDocumentEntryBatch" />
 						<ref bean="documentGarbageCollectorBatch" />
 						<ref bean="computeThumbnailBatch" />
+						<ref bean="computeNewExpirationUnsharedDocumentBatch" />
 <!-- 					<ref bean="deleteMissingDocumentsBatch" /> -->
 					</list>
 				</entry>

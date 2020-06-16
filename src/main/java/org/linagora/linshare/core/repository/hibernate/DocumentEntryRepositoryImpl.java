@@ -213,4 +213,15 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		}
 		return results;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findDocumentsWithNullExpiration(List<AbstractDomain> domains) throws BusinessException {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"))
+		.add(Restrictions.isNull("expirationDate"))
+		.createAlias("entryOwner", "entryOwner")
+		.add(Restrictions.in("entryOwner.domain", domains));
+		return listByCriteria(criteria);
+	}
 }

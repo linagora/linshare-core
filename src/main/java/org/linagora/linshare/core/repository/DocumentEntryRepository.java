@@ -72,4 +72,11 @@ public interface DocumentEntryRepository extends
 	void syncUniqueDocument(Account owner, String fileName) throws BusinessException;
 
 	Map<String, Long> countAndGroupByMimeType(AbstractDomain domain, Calendar bDate, Calendar eDate);
+
+	/**
+	 * find unshared documents with a null expiration date due to a legacy bug  
+	 * @return List uuid's 
+	 * @throws BusinessException
+	 */
+	List<String> findDocumentsWithNullExpiration(List<AbstractDomain> domains) throws BusinessException;
 }
