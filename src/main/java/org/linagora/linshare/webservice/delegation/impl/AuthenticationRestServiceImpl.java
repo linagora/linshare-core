@@ -35,24 +35,18 @@ package org.linagora.linshare.webservice.delegation.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.delegation.DelegationGenericFacade;
-import org.linagora.linshare.core.facade.webservice.delegation.UserFacade;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.AccountDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.AuthenticationRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/authentication")
 @Api(value = "/rest/delegation/authentication", basePath = "/rest/delegation/", description = "Authentication delegation API",
@@ -63,13 +57,9 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 
 	private final DelegationGenericFacade delegationGenericFacade;
 
-	private final UserFacade userFacade;
-
 	public AuthenticationRestServiceImpl(
-			final DelegationGenericFacade delegationFacade,
-			final UserFacade userFacade) {
+			final DelegationGenericFacade delegationFacade) {
 		this.delegationGenericFacade = delegationFacade;
-		this.userFacade = userFacade;
 	}
 
 	@Path("/")
@@ -86,15 +76,6 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@Override
 	public AccountDto isAuthorized() throws BusinessException {
 		return delegationGenericFacade.isAuthorized();
-	}
-
-	@Path("/change_password")
-	@POST
-	@ApiOperation(value = "Change the password of the current user.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
-	@Override
-	public void changePassword(@ApiParam(value = "New password.", required = true) PasswordDto password) throws BusinessException {
-		userFacade.changePassword(password);
 	}
 
 	@Path("/logout")
