@@ -38,6 +38,7 @@
 			<ref bean="unrecognizedPropertyExceptionMapper" />
 			<ref bean="dataIntegrityViolationExceptionMapper" />
 			<ref bean="mismatchedInputExceptionMapper" />
+			<ref bean="nullPointerExceptionMapper" />
 			<!-- Json provider for serialisation -->
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>

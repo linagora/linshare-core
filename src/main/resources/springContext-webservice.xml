@@ -41,6 +41,7 @@
 	<bean id="unrecognizedPropertyExceptionMapper"  class="org.linagora.linshare.webservice.interceptor.UnrecognizedPropertyExceptionMapper" />
 	<bean id="dataIntegrityViolationExceptionMapper"  class="org.linagora.linshare.webservice.interceptor.DataIntegrityViolationExceptionMapper" />
 	<bean id="mismatchedInputExceptionMapper"  class="org.linagora.linshare.webservice.interceptor.MismatchedInputExceptionMapper" />
+	<bean id="nullPointerExceptionMapper"  class="org.linagora.linshare.webservice.interceptor.NullPointerExceptionMapper" />
 	<!-- Timing interceptors.  -->
 	<bean id="timingInInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingInInterceptor" />
 	<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />
@@ -69,6 +70,7 @@
 			<ref bean="genericExceptionMapper" />
 			<ref bean="webApplicationExceptionMapper" />
 			<ref bean="illegalArgumentExceptionMapper" />
+			<ref bean="nullPointerExceptionMapper" />
 			<!-- Json provider for serialisation -->
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
