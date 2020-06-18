@@ -189,5 +189,6 @@
 	<bean id="wsSecondFactorAuthenticationFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.SecondFactorAuthenticationFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 </beans>

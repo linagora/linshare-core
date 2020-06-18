@@ -87,6 +87,7 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="userProviderService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 	<bean id="wsAdminGuestFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.GuestFacadeImpl">

@@ -37,6 +37,9 @@ import java.security.SecureRandom;
 import java.util.Date;
 
 import org.jboss.aerogear.security.otp.api.Base32;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
@@ -46,17 +49,23 @@ import org.linagora.linshare.core.facade.webservice.user.SecondFactorAuthenticat
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 
 public class SecondFactorAuthenticationFacadeImpl extends UserGenericFacadeImp implements SecondFactorAuthenticationFacade {
 
 	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
+	
+	protected final LogEntryService logEntryService;
 
 	public SecondFactorAuthenticationFacadeImpl(
 			final AccountService accountService,
-			final FunctionalityReadOnlyService functionalityReadOnlyService
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
+			final LogEntryService logEntryService
 			) {
 		super(accountService);
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -69,7 +78,8 @@ public class SecondFactorAuthenticationFacadeImpl extends UserGenericFacadeImp i
 	@Override
 	public SecondFactorDto create(SecondFactorDto sfd) {
 		User authUser = checkAuthentication();
-		BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
+		BooleanValueFunctionality twofaFunc = functionalityReadOnlyService
+				.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
 		if (!twofaFunc.getActivationPolicy().getStatus()) {
 			String message = "You can not create a 2FA shared key for your account. Functionality is not enabled.";
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_SECOND_FACTOR_NOT_ENABLED, message);
@@ -83,6 +93,10 @@ public class SecondFactorAuthenticationFacadeImpl extends UserGenericFacadeImp i
 		authUser.setSecondFACreationDate(new Date());
 		authUser.setSecondFASecret(Base32.encode(secret));
 		Account updated = accountService.update(authUser);
+		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(authUser, updated, LogAction.UPDATE,
+				AuditLogEntryType.USER, (User) updated);
+		userAuditLogEntry.setCause(LogActionCause.SECOND_FACTOR_SHARED_KEY_CREATE);
+		logEntryService.insert(userAuditLogEntry);
 		SecondFactorDto dto = to2FADto(updated);
 		dto.setSharedKey(updated.getSecondFASecret());
 		return dto;
@@ -94,6 +108,10 @@ public class SecondFactorAuthenticationFacadeImpl extends UserGenericFacadeImp i
 		authUser.setSecondFACreationDate(null);
 		authUser.setSecondFASecret(null);
 		Account updated = accountService.update(authUser);
+		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(authUser, updated, LogAction.UPDATE,
+				AuditLogEntryType.USER, (User) updated);
+		userAuditLogEntry.setCause(LogActionCause.SECOND_FACTOR_SHARED_KEY_DELETE);
+		logEntryService.insert(userAuditLogEntry);
 		SecondFactorDto dto = to2FADto(updated);
 		return dto;
 	}

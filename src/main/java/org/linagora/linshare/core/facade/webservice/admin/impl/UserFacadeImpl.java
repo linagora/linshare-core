@@ -40,6 +40,9 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -59,9 +62,11 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -83,6 +88,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	private final AbstractDomainService abstractDomainService;
 	
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
+	
+	private final LogEntryService logEntryService;
 
 	public UserFacadeImpl(final AccountService accountService,
 			final UserService userService,
@@ -91,7 +98,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			final QuotaService quotaService,
 			final AbstractDomainService abstractDomainService,
 			final UserProviderService userProviderService,
-			final DomainPermissionBusinessService domainPermissionBusinessService) {
+			final DomainPermissionBusinessService domainPermissionBusinessService,
+			final LogEntryService logEntryService) {
 		super(accountService);
 		this.userService = userService;
 		this.inconsistentUserService = inconsistentUserService;
@@ -99,6 +107,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		this.quotaService = quotaService;
 		this.abstractDomainService = abstractDomainService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -219,6 +228,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		user.setSecondFACreationDate(null);
 		user.setSecondFASecret(null);
 		accountService.update(user);
+		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(authUser, authUser, LogAction.UPDATE,
+				AuditLogEntryType.USER, (User) user);
+		userAuditLogEntry.setCause(LogActionCause.SECOND_FACTOR_SHARED_KEY_DELETE);
+		logEntryService.insert(userAuditLogEntry);
 		return new SecondFactorDto(user.getLsUuid(), user.getSecondFACreationDate(), user.isUsing2FA());
 	}
 
