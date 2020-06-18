@@ -67,6 +67,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.InconsistentSearch
 import org.linagora.linshare.core.facade.webservice.admin.dto.UpdateUsersEmailStateDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRestService;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
@@ -96,7 +97,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	private final UserFacade userFacade;
 
 	private final AutocompleteFacade autocompleteFacade;
-
+	
 	public UserRestServiceImpl(final UserFacade userFacade,
 			final AutocompleteFacade autocompleteFacade) {
 		this.userFacade = userFacade;
@@ -120,6 +121,32 @@ public class UserRestServiceImpl extends WebserviceBase implements
 			return Lists.newArrayList();
 		}
 		return userFacade.search(userSearchDto);
+	}
+	
+	@Path("/2fa/{userUuid: .*}")
+	@DELETE
+	@Operation(summary = "Delete a shared key of a given user, 2fa will be disabled ", responses = {
+			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200") })
+	@Override
+	public SecondFactorDto delete2FA(
+			@Parameter(description = "The user uuid for who shared key will be removed.", required = false)
+				@PathParam("userUuid") String userUuid,
+			@Parameter(description = "Second factor dto , contains the shared key.", required = true) SecondFactorDto dto)
+			throws BusinessException {
+		return userFacade.delete2FA(userUuid, dto);
+	}
+	
+	@Path("/2fa/{userUuid}")
+	@GET
+	@Operation(summary = "Get the 2FA state ", responses = {
+			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200") })
+	@Override
+	public SecondFactorDto find2FA(
+			@Parameter(description = "user uuid to get 2fa state.", required = false)
+				@PathParam("userUuid") String userUuid)
+			throws BusinessException {
+		logger.info("Getting the 2FA state for current user");
+		return userFacade.find2FA(userUuid);
 	}
 
 	@Path("/search/internals/{pattern}")

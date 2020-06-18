@@ -38,9 +38,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -52,6 +54,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.InconsistentSearch
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
@@ -60,6 +63,7 @@ import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -77,6 +81,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	private final InconsistentUserService inconsistentUserService;
 
 	private final AbstractDomainService abstractDomainService;
+	
+	private final DomainPermissionBusinessService domainPermissionBusinessService;
 
 	public UserFacadeImpl(final AccountService accountService,
 			final UserService userService,
@@ -84,13 +90,15 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			final GuestService guestService,
 			final QuotaService quotaService,
 			final AbstractDomainService abstractDomainService,
-			final UserProviderService userProviderService) {
+			final UserProviderService userProviderService,
+			final DomainPermissionBusinessService domainPermissionBusinessService) {
 		super(accountService);
 		this.userService = userService;
 		this.inconsistentUserService = inconsistentUserService;
 		this.guestService = guestService;
 		this.quotaService = quotaService;
 		this.abstractDomainService = abstractDomainService;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
 	}
 
 	@Override
@@ -196,6 +204,40 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "user unique identifier must be set.");
 		User user = userService.deleteUser(authUser, uuid);
 		return UserDto.getFull(user);
+	}
+	
+	@Override
+	public SecondFactorDto delete2FA(String userUuid, SecondFactorDto dto) throws BusinessException {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		checkAdminPermission(authUser);
+		if (Strings.isNullOrEmpty(userUuid)) {
+			Validate.notNull(dto, "missing SecondFactorDto");
+			Validate.notEmpty(dto.getUuid(), "Missing user uuid");
+			userUuid = dto.getUuid();
+		}
+		Account user = userService.findByLsUuid(userUuid);
+		user.setSecondFACreationDate(null);
+		user.setSecondFASecret(null);
+		accountService.update(user);
+		return new SecondFactorDto(user.getLsUuid(), user.getSecondFACreationDate(), user.isUsing2FA());
+	}
+
+	private void checkAdminPermission(Account authUser) {
+		if (!domainPermissionBusinessService.isAdminforThisDomain(authUser, authUser.getDomain())) {
+			logger.error("Not allowed to perform this action, You are not an admin for domain {}",
+					authUser.getDomainId());
+			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_SECOND_FACTOR_FORBIDEN,
+					"Not allowed to perform this action");
+		}
+	}
+
+	@Override
+	public SecondFactorDto find2FA(String userUuid) throws BusinessException {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		checkAdminPermission(authUser);
+		Validate.notEmpty(userUuid, "user uuid must be set");
+		Account user = userService.findByLsUuid(userUuid);
+		return new SecondFactorDto(user.getLsUuid(), user.getSecondFACreationDate(), user.isUsing2FA());
 	}
 
 	@Override

@@ -23,11 +23,16 @@
 		<constructor-arg ref="wsAdminGenericFacade" />
 		<constructor-arg ref="wsAdminUserFacade" />
 	</bean>
+	
+	<bean id="adminv4UserRestService" class="org.linagora.linshare.webservice.adminv4.impl.UserRestServiceImpl">
+		<constructor-arg ref="wsAdminUserFacade" />
+	</bean>
 
 
 	<jaxrs:server id="restAdminV4Container" address="/rest/admin/v4">
 		<jaxrs:serviceBeans>
 			<ref bean="adminv4AuthenticationRestService" />
+			<ref bean="adminv4UserRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

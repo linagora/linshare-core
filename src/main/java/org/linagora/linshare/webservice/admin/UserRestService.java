@@ -43,6 +43,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.InconsistentSearch
 import org.linagora.linshare.core.facade.webservice.admin.dto.UpdateUsersEmailStateDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 
 public interface UserRestService {
 
@@ -77,5 +78,9 @@ public interface UserRestService {
 	List<String> autocompleteInconsistent(UserSearchDto dto) throws BusinessException;
 
 	UpdateUsersEmailStateDto updateUsersEmail(InputStream file, String givenFileName, String csvFieldDelimiter, MultipartBody body) throws BusinessException;
+
+	SecondFactorDto delete2FA(String userUuid, SecondFactorDto dto) throws BusinessException;
+	
+	SecondFactorDto find2FA(String userUuid) throws BusinessException;
 
 }
