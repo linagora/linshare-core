@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.security.SecureRandom;
 import java.util.Date;
 
+import org.apache.commons.lang3.Validate;
 import org.jboss.aerogear.security.otp.api.Base32;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -104,6 +105,7 @@ public class SecondFactorAuthenticationFacadeImpl extends UserGenericFacadeImp i
 
 	@Override
 	public SecondFactorDto delete(String uuid, SecondFactorDto sfd) {
+		Validate.notEmpty(uuid, "Missing account uuid as path param.");
 		User authUser = checkAuthentication();
 		authUser.setSecondFACreationDate(null);
 		authUser.setSecondFASecret(null);
