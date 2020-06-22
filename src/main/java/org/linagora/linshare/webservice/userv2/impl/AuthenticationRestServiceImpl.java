@@ -159,7 +159,10 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 		)
 	})
 	@Override
-	public SecondFactorDto get2FA(String uuid) {
+	public SecondFactorDto get2FA(
+			@Parameter(description = "Required 2FA's uuid to get (aka account uuid).", required = true)
+			@PathParam("uuid") String uuid
+			) {
 		return secondFactorAuthenticationFacade.find(uuid);
 	}
 
