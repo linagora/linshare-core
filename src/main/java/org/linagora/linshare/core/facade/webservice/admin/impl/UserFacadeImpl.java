@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -60,6 +61,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -86,10 +88,12 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	private final InconsistentUserService inconsistentUserService;
 
 	private final AbstractDomainService abstractDomainService;
-	
+
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
-	
+
 	private final LogEntryService logEntryService;
+
+	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public UserFacadeImpl(final AccountService accountService,
 			final UserService userService,
@@ -99,6 +103,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			final AbstractDomainService abstractDomainService,
 			final UserProviderService userProviderService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final LogEntryService logEntryService) {
 		super(accountService);
 		this.userService = userService;
@@ -107,6 +112,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		this.quotaService = quotaService;
 		this.abstractDomainService = abstractDomainService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.logEntryService = logEntryService;
 	}
 
@@ -216,15 +222,17 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 	
 	@Override
-	public SecondFactorDto delete2FA(String userUuid, SecondFactorDto dto) throws BusinessException {
+	public SecondFactorDto delete2FA(String userUuid, String secondFactorUuid, SecondFactorDto dto) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		checkAdminPermission(authUser);
-		if (Strings.isNullOrEmpty(userUuid)) {
+		Validate.notEmpty(userUuid, "user uuid must be set");
+		if (Strings.isNullOrEmpty(secondFactorUuid)) {
 			Validate.notNull(dto, "missing SecondFactorDto");
-			Validate.notEmpty(dto.getUuid(), "Missing user uuid");
-			userUuid = dto.getUuid();
+			Validate.notEmpty(dto.getUuid(), "Missing second factor key uuid");
+			secondFactorUuid = dto.getUuid();
 		}
+		checkSecondFactorUuid(userUuid, secondFactorUuid);
 		Account user = userService.findByLsUuid(userUuid);
+		checkAdminPermission(authUser, user);
 		user.setSecondFACreationDate(null);
 		user.setSecondFASecret(null);
 		accountService.update(user);
@@ -235,21 +243,32 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		return new SecondFactorDto(user.getLsUuid(), user.getSecondFACreationDate(), user.isUsing2FA());
 	}
 
-	private void checkAdminPermission(Account authUser) {
-		if (!domainPermissionBusinessService.isAdminforThisDomain(authUser, authUser.getDomain())) {
+	private void checkSecondFactorUuid(String userUuid, String secondFactorUuid) {
+		// For now, second factor uuid must equal user uuid.
+		if (!userUuid.equals(secondFactorUuid)) {
+			String message = "Second factor key uuid must be the same as user uuid.";
+			logger.error(message);
+			throw new BusinessException(message);
+		}
+	}
+
+	private void checkAdminPermission(Account actor, Account user) {
+		if (!domainPermissionBusinessService.isAdminforThisDomain(actor, user.getDomain())) {
 			logger.error("Not allowed to perform this action, You are not an admin for domain {}",
-					authUser.getDomainId());
+					user.getDomainId());
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_SECOND_FACTOR_FORBIDEN,
 					"Not allowed to perform this action");
 		}
 	}
 
 	@Override
-	public SecondFactorDto find2FA(String userUuid) throws BusinessException {
+	public SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		checkAdminPermission(authUser);
 		Validate.notEmpty(userUuid, "user uuid must be set");
+		Validate.notEmpty(secondFactorUuid, "Second Factor uuid must be set");
+		checkSecondFactorUuid(userUuid, secondFactorUuid);
 		Account user = userService.findByLsUuid(userUuid);
+		checkAdminPermission(authUser, user);
 		return new SecondFactorDto(user.getLsUuid(), user.getSecondFACreationDate(), user.isUsing2FA());
 	}
 
@@ -340,7 +359,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public UserDto findUser(String uuid) throws BusinessException {
+	public UserDto findUser(String uuid, Integer version) throws BusinessException {
 		User currentUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "User uuid must be set.");
 		UserDto userDto = null;
@@ -355,6 +374,17 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		// get the quota for the current user.
 		AccountQuota quota = quotaService.findByRelatedAccount(user);
 		userDto.setQuotaUuid(quota.getUuid());
+		if (version >= 4) {
+			BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(user.getDomain());
+			if (twofaFunc.getActivationPolicy().getStatus()) {
+				userDto.setSecondFAUuid(user.getLsUuid());
+				userDto.setSecondFAEnabled(user.isUsing2FA());
+				userDto.setSecondFARequired(twofaFunc.getValue());
+			} else {
+				userDto.setSecondFAEnabled(false);
+				userDto.setSecondFARequired(false);
+			}
+		}
 		return userDto;
 	}
 

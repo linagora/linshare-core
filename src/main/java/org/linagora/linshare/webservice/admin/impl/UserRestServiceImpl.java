@@ -122,31 +122,43 @@ public class UserRestServiceImpl extends WebserviceBase implements
 		}
 		return userFacade.search(userSearchDto);
 	}
-	
-	@Path("/2fa/{userUuid: .*}")
+
+	@Path("/{uuid}/2fa/{secondfaUuid: .*}")
 	@DELETE
-	@Operation(summary = "Delete a shared key of a given user, 2fa will be disabled ", responses = {
-			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200") })
+	@Operation(summary = "Delete a shared key of a given user, 2fa will be disabled ",
+		responses = {
+			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200")
+		})
 	@Override
 	public SecondFactorDto delete2FA(
-			@Parameter(description = "The user uuid for who shared key will be removed.", required = false)
-				@PathParam("userUuid") String userUuid,
-			@Parameter(description = "Second factor dto , contains the shared key.", required = true) SecondFactorDto dto)
+			@Parameter(description = "User uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@Parameter(description = "The second factor key uuid, Optional if defined in payload.", required = false)
+				@PathParam("secondfaUuid") String secondfaUuid,
+			@Parameter(
+					description = "Second factor dto. Optional. Uuid can be provided if not defined in the URL.",
+					required = false
+					)
+				SecondFactorDto dto)
 			throws BusinessException {
-		return userFacade.delete2FA(userUuid, dto);
+		return userFacade.delete2FA(uuid, secondfaUuid, dto);
 	}
-	
-	@Path("/2fa/{userUuid}")
+
+	@Path("/{uuid}/2fa/{secondfaUuid}")
 	@GET
-	@Operation(summary = "Get the 2FA state ", responses = {
-			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200") })
+	@Operation(summary = "Get the 2FA state ",
+		responses = {
+			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200")
+		})
 	@Override
 	public SecondFactorDto find2FA(
-			@Parameter(description = "user uuid to get 2fa state.", required = false)
-				@PathParam("userUuid") String userUuid)
+			@Parameter(description = "User uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@Parameter(description = "The second factor key uuid, Required.", required = true)
+				@PathParam("secondfaUuid") String secondfaUuid
+			)
 			throws BusinessException {
-		logger.info("Getting the 2FA state for current user");
-		return userFacade.find2FA(userUuid);
+		return userFacade.find2FA(uuid, secondfaUuid);
 	}
 
 	@Path("/search/internals/{pattern}")
@@ -214,7 +226,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public UserDto find(
 			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return userFacade.findUser(uuid);
+		return userFacade.findUser(uuid, 2);
 	}
 
 	@Path("/{uuid}")
@@ -224,7 +236,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public void head(
 			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		userFacade.findUser(uuid);
+		userFacade.findUser(uuid, 2);
 	}
 
 	@Path("/{uuid}")

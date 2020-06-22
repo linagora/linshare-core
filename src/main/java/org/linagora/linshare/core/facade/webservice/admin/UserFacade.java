@@ -62,7 +62,7 @@ public interface UserFacade extends AdminGenericFacade {
 
 	void changePassword(PasswordDto password) throws BusinessException;
 
-	UserDto findUser(String uuid) throws BusinessException;
+	UserDto findUser(String uuid, Integer version) throws BusinessException;
 
 	boolean exist(String uuid) throws BusinessException;
 
@@ -74,7 +74,7 @@ public interface UserFacade extends AdminGenericFacade {
 
 	List<String> autocompleteInconsistent(UserSearchDto dto) throws BusinessException;
 
-	SecondFactorDto delete2FA(String userUuid, SecondFactorDto dto) throws BusinessException;
+	SecondFactorDto delete2FA(String userUuid, String secondFactorUuid, SecondFactorDto dto) throws BusinessException;
 
-	SecondFactorDto find2FA(String userUuid) throws BusinessException;;
+	SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException;;
 }

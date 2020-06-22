@@ -79,8 +79,8 @@ public interface UserRestService {
 
 	UpdateUsersEmailStateDto updateUsersEmail(InputStream file, String givenFileName, String csvFieldDelimiter, MultipartBody body) throws BusinessException;
 
-	SecondFactorDto delete2FA(String userUuid, SecondFactorDto dto) throws BusinessException;
-	
-	SecondFactorDto find2FA(String userUuid) throws BusinessException;
+	SecondFactorDto delete2FA(String userUuid, String secondFactorUuid, SecondFactorDto dto) throws BusinessException;
+
+	SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException;
 
 }

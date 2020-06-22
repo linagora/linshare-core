@@ -40,14 +40,14 @@ import javax.ws.rs.PathParam;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv4.UserRestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,38 +55,62 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Path("/users")
 public class UserRestServiceImpl extends WebserviceBase implements UserRestService {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserRestServiceImpl.class);
-
 	private final UserFacade userFacade;
 
 	public UserRestServiceImpl(final UserFacade userFacade) {
 		this.userFacade = userFacade;
 	}
 
-	@Path("/2fa/{userUuid: .*}")
-	@DELETE
-	@Operation(summary = "Delete a shared key of a given user, 2fa will be disabled ", responses = {
-			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200") })
+	@Path("/{uuid}")
+	@GET
+	@Operation(summary = "Find a user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
 	@Override
-	public SecondFactorDto delete2FA(
-			@Parameter(description = "The user uuid for who shared key will be removed.", required = false)
-				@PathParam("userUuid") String userUuid,
-			@Parameter(description = "Second factor dto , contains the shared key.", required = true) SecondFactorDto dto)
+	public UserDto find(
+			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		logger.info("Removing shared key and disabling 2FA ");
-		return userFacade.delete2FA(userUuid, dto);
+		return userFacade.findUser(uuid, 4);
 	}
 
-	@Path("/2fa/{userUuid}")
+	@Path("/{uuid}/2fa/{secondfaUuid: .*}")
+	@DELETE
+	@Operation(summary = "Delete a shared key of a given user, 2fa will be disabled ",
+		responses = {
+			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200")
+		})
+	@Override
+	public SecondFactorDto delete2FA(
+			@Parameter(description = "User uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@Parameter(description = "The second factor key uuid, Optional if defined in payload.", required = false)
+				@PathParam("secondfaUuid") String secondfaUuid,
+			@Parameter(
+					description = "Second factor dto. Optional. Uuid can be provided if not defined in the URL.",
+					required = false
+					)
+				SecondFactorDto dto)
+			throws BusinessException {
+		return userFacade.delete2FA(uuid, secondfaUuid, dto);
+	}
+
+	@Path("/{uuid}/2fa/{secondfaUuid}")
 	@GET
-	@Operation(summary = "Get the 2FA state ", responses = {
-			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200") })
+	@Operation(summary = "Get the 2FA state ",
+		responses = {
+			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200")
+		})
 	@Override
 	public SecondFactorDto find2FA(
-			@Parameter(description = "user uuid to get 2fa state.", required = false) 
-				@PathParam("userUuid") String userUuid)
+			@Parameter(description = "User uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@Parameter(description = "The second factor key uuid, Required.", required = true)
+				@PathParam("secondfaUuid") String secondfaUuid
+			)
 			throws BusinessException {
-		logger.info("Getting the 2FA state for current user");
-		return userFacade.find2FA(userUuid);
+		return userFacade.find2FA(uuid, secondfaUuid);
 	}
 }

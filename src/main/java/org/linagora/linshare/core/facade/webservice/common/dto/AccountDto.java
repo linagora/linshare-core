@@ -67,6 +67,10 @@ public class AccountDto {
 	@Schema(description = "Domain")
 	protected String domain;
 
+	@Schema(description = " 2FA uuid")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected String secondFAUuid;
+
 	@Schema(description = "If defined, it informs if current user is using Second Factor Authentication (2FA).")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected Boolean secondFAEnabled = null;
@@ -152,5 +156,13 @@ public class AccountDto {
 
 	public void setSecondFARequired(Boolean secondFARequired) {
 		this.secondFARequired = secondFARequired;
+	}
+
+	public String getSecondFAUuid() {
+		return secondFAUuid;
+	}
+
+	public void setSecondFAUuid(String secondFAUuid) {
+		this.secondFAUuid = secondFAUuid;
 	}
 }
