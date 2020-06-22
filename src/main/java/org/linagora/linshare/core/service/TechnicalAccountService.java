@@ -37,6 +37,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface TechnicalAccountService {
@@ -54,5 +55,5 @@ public interface TechnicalAccountService {
 	TechnicalAccount update(Account actor, TechnicalAccount accountDto)
 			throws BusinessException;
 
-	void changePassword(String uuid, String oldPwd, String newPwd) throws BusinessException;
+	void changePassword(User authUser, User actor, String oldPwd, String newPwd) throws BusinessException;
 }

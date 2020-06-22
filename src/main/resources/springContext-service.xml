@@ -184,6 +184,7 @@
 		<constructor-arg ref="technicalAccountBusinessService" />
 		<constructor-arg ref="technicalAccountPermissionService" />
 		<constructor-arg ref="passwordService" />
+		<constructor-arg ref="userService" />
 	</bean>
 
 	<bean id="technicalAccountPermissionService" class="org.linagora.linshare.core.service.impl.TechnicalAccountPermissionServiceImpl">

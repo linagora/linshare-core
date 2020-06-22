@@ -674,7 +674,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private boolean checkPermissionForChangePassword(User authUser, User actor) {
-		if (authUser.hasSuperAdminRole() || authUser.isGuest()) {
+		if (authUser.hasSuperAdminRole()) {
+			return true;
+		}
+		if (authUser.isTechnicalAccount() || authUser.isGuest()) {
 			if (authUser.equals(actor)) {
 				return true;
 			}

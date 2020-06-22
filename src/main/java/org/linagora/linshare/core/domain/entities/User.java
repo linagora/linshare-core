@@ -237,6 +237,10 @@ public abstract class User extends Account {
 		return this.getAccountType().equals(AccountType.GUEST);
 	}
 
+	public boolean isTechnicalAccount() {
+		return this.getAccountType().equals(AccountType.TECHNICAL_ACCOUNT);
+	}
+
 	@Override
 	public String toString() {
 		return "User [firstName=" + firstName + ", lastName=" + lastName

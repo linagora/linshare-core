@@ -160,10 +160,11 @@ public class PasswordServiceImpl implements PasswordService {
 		if (!matches(oldPassword, actor.getPassword())) {
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR, "The supplied password is invalid");
 		}
-		updatePassword(actor, newPassword);
+		validateAndStorePassword(actor, newPassword);
 	}
 
-	private void updatePassword(User user, String newPassword) {
+	@Override
+	public void validateAndStorePassword(User user, String newPassword) {
 		validatePassword(newPassword);
 		List<PasswordHistory> histories = passwordHistoryRepository.findAllByAccount(user);
 		for (PasswordHistory password : histories) {
@@ -173,9 +174,9 @@ public class PasswordServiceImpl implements PasswordService {
 			PasswordHistory oldest = passwordHistoryRepository.findOldestByAccount(user);
 			passwordHistoryRepository.delete(oldest);
 		}
+		user.setPassword(encode(newPassword));
 		PasswordHistory passwordHistory = new PasswordHistory(user.getPassword(), new Date(), user);
 		passwordHistoryRepository.create(passwordHistory);
-		user.setPassword(encode(newPassword));
 		userRepository.update(user);
 	}
 

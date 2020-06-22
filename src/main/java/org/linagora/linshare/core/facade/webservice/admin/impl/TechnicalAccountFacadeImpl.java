@@ -123,11 +123,14 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public void changePassword(String uuid, PasswordDto password)
-			throws BusinessException {
-		checkAuth();
+	public void changePassword(String uuid, PasswordDto password) throws BusinessException {
+		User authUser = checkAuth();
+		Validate.notNull(password, "Password mus be set");
+		Validate.notEmpty(password.getOldPwd(), "The old password is required");
+		Validate.notEmpty(password.getNewPwd(), "The new password is required");
 		Validate.notEmpty(uuid, "uuid must be set.");
-		technicalAccountService.changePassword(uuid, password.getOldPwd(), password.getNewPwd());
+		TechnicalAccount account = technicalAccountService.find(authUser, uuid);
+		technicalAccountService.changePassword(authUser, account, password.getOldPwd(), password.getNewPwd());
 	}
 
 	/**

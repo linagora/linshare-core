@@ -44,12 +44,12 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
+import org.linagora.linshare.core.service.UserService;
 
 
 public class TechnicalAccountServiceImpl implements TechnicalAccountService {
@@ -62,16 +62,20 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 
 	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
+	private final UserService userService;
+
 	public TechnicalAccountServiceImpl(
 			final TechnicalAccountBusinessService technicalAccountBusinessService,
 			final TechnicalAccountPermissionService technicalAccountPermissionService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			final PasswordService passwordService) {
+			final PasswordService passwordService,
+			final UserService userService) {
 		super();
 		this.technicalAccountBusinessService = technicalAccountBusinessService;
 		this.technicalAccountPermissionService = technicalAccountPermissionService;
 		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.passwordService = passwordService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -85,7 +89,9 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 		TechnicalAccountPermission accountPermission = technicalAccountPermissionService.create(actor, new TechnicalAccountPermission());
 		account.setPermission(accountPermission);
 		account.setLastName(sanitize(account.getLastName()));
-		return technicalAccountBusinessService.create(LinShareConstants.rootDomainIdentifier, account);
+		account = technicalAccountBusinessService.create(LinShareConstants.rootDomainIdentifier, account);
+		passwordService.validateAndStorePassword(account, account.getPassword());
+		return account;
 	}
 
 	private String sanitize (String input) {
@@ -145,19 +151,8 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 	}
 
 	@Override
-	public void changePassword(String uuid, String oldPassword,
-							   String newPassword) throws BusinessException {
-		TechnicalAccount account = technicalAccountBusinessService.find(uuid);
-		if (account == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Could not find a user with the uuid " + uuid);
-		}
-
-		if (!passwordService.matches(oldPassword, account.getPassword())) {
-			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR,
-					"The supplied password is invalid");
-		}
-		account.setPassword(passwordService.encode((newPassword)));
-		technicalAccountBusinessService.update(account);
+	public void changePassword(User authUser, User actor, String oldPassword, String newPassword)
+			throws BusinessException {
+		userService.changePassword(authUser, actor, oldPassword, newPassword);
 	}
 }

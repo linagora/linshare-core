@@ -36,7 +36,6 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 import java.util.Set;
 
-import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -54,16 +53,12 @@ public class TechnicalAccountBusinessServiceImpl implements
 
 	private final TechnicalAccountRepository technicalAccountRepository;
 	
-	private final PasswordService passwordService;
-
 	public TechnicalAccountBusinessServiceImpl(
 			AbstractDomainRepository abstractDomainRepository,
-			TechnicalAccountRepository technicalAccountRepository,
-			PasswordService passwordService) {
+			TechnicalAccountRepository technicalAccountRepository) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.technicalAccountRepository = technicalAccountRepository;
-		this.passwordService = passwordService;
 	}
 
 	@Override
@@ -84,7 +79,6 @@ public class TechnicalAccountBusinessServiceImpl implements
 	public TechnicalAccount create(String domainId, TechnicalAccount account)
 			throws BusinessException {
 		AbstractDomain domain = abstractDomainRepository.findById(domainId);
-		account.setPassword(passwordService.encode(account.getPassword()));
 		account.setCmisLocale(SupportedLanguage.toLanguage(domain.getDefaultTapestryLocale()).getTapestryLocale());
 		return this.create(domain, account);
 	}

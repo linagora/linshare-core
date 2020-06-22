@@ -57,5 +57,7 @@ public interface PasswordService {
 
 	void validatePassword(String password);
 	
-	 Map<String, Integer> getPasswordRules();
+	Map<String, Integer> getPasswordRules();
+
+	void validateAndStorePassword(User user, String newPassword);
 }
