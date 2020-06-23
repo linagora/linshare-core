@@ -162,6 +162,11 @@
 	</b:bean>
 
 	<!-- AUTHENTICATION MANAGEMENT -->
+	<b:bean id="linShareApplicationEventPublisher" class="org.linagora.linshare.auth.LinShareApplicationEventPublisher">
+		<b:constructor-arg ref="authentificationFacade" />
+		<b:constructor-arg ref="userRepository" />
+	</b:bean>
+
 	<!-- Authentication manager -->
 	<b:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
 		<b:constructor-arg>
@@ -172,7 +177,7 @@
 			<b:ref bean="ldapAuthenticationProvider" />
 		</b:list>
 		</b:constructor-arg>
-<!-- 		<b:constructor-arg ref="parent"/> -->
+		<b:property name="authenticationEventPublisher" ref="linShareApplicationEventPublisher" />
 	</b:bean>
 
 	<!-- DAO Authentification -->
@@ -181,30 +186,25 @@
 	
 	<b:bean id="passwordEncoder" factory-bean="passwordEncoderFactory" factory-method="getInstance" />
 
-	<b:bean id="databaseUserDetailsProvider" class="org.linagora.linshare.auth.dao.DatabaseUserDetailsProvider">
-		<b:constructor-arg ref="authentificationFacade" />
-		<b:property name="userRepositories">
-			<b:list>
-				<b:ref bean="guestRepository" />
-				<b:ref bean="rootUserRepository" />
-				<b:ref bean="technicalAccountRepository" />
-			</b:list>
-		</b:property>
-	</b:bean>
 
-	<!-- database accounts : guests, root, technical accounts, ... -->
-	<b:bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.dao.DatabaseAuthenticationProvider">
-		<b:constructor-arg ref="databaseUserDetailsProvider" />
+
+	<b:bean id="databaseUserDetailsService" class="org.linagora.linshare.auth.details.service.DatabaseUserDetailsServiceImpl">
+		<b:constructor-arg ref="userRepository" />
+	</b:bean>
+	<b:bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.providers.DatabaseAuthenticationProvider">
 		<b:property name="passwordEncoder" ref="passwordEncoder" />
+		<b:property name="userRepository" ref="userRepository" />
+		<b:property name="userDetailsService" ref="databaseUserDetailsService" />
 	</b:bean>
 
-	<!-- Domain Authentification -->
-	<b:bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.LdapUserDetailsProvider">
+	<b:bean id="ldapUserDetailsService" class="org.linagora.linshare.auth.details.service.LdapUserDetailsServiceImpl">
 		<b:constructor-arg ref="authentificationFacade" />
 	</b:bean>
-
-	<b:bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.dao.LdapAuthenticationProvider">
-		<b:constructor-arg ref="ldapUserDetailsProvider" />
+	<b:bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.providers.LdapAuthenticationProvider">
+		<b:property name="passwordEncoder" ref="passwordEncoder" />
+		<b:property name="userRepository" ref="userRepository" />
+		<b:property name="userDetailsService" ref="ldapUserDetailsService" />
+		<b:property name="authentificationFacade" ref="authentificationFacade" />
 	</b:bean>
 
 	<!-- AUTHORIZATIONS MANAGEMENT -->

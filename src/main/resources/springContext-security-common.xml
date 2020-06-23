@@ -8,6 +8,10 @@
 		class="org.linagora.linshare.auth.jwt.JwtAuthenticationFilter">
 	</b:bean>
 
+	<b:bean id="ldapUserDetailsProvider" class="org.linagora.linshare.auth.dao.LdapUserDetailsProvider">
+		<b:constructor-arg ref="authentificationFacade" />
+	</b:bean>
+
 	<b:bean id="jwtAuthenticationProvider"
 		class="org.linagora.linshare.auth.jwt.JwtAuthenticationProvider">
 		<b:property name="authentificationFacade" ref="authentificationFacade" />
