@@ -38,6 +38,7 @@ import java.util.Map;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.google.common.collect.Maps;
@@ -50,13 +51,16 @@ public class PasswordEncoderFactory {
 	 * @return a password encoder.
 	 */
 	public PasswordEncoder getInstance() {
-		String defaultAlgoForEncode = "bcrypt";
-		Map<String, PasswordEncoder> encoders = Maps.newHashMap();
-		encoders.put(defaultAlgoForEncode, new BCryptPasswordEncoder());
-		DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(defaultAlgoForEncode,
-				encoders);
-		delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
-		return delegatingPasswordEncoder;
+		String defaultEncoderId = "bcrypt";
+		return new DelegatingPasswordEncoder(defaultEncoderId, getSupportedEncoders());
 	}
 
+	private Map<String, PasswordEncoder> getSupportedEncoders() {
+		Map<String, PasswordEncoder> encoders = Maps.newHashMap();
+		encoders.put("bcrypt", new BCryptPasswordEncoder());
+		MessageDigestPasswordEncoder shaEncoder = new MessageDigestPasswordEncoder("SHA-1");
+		shaEncoder.setEncodeHashAsBase64(true);
+		encoders.put("sha", shaEncoder);
+		return encoders;
+	}
 }
