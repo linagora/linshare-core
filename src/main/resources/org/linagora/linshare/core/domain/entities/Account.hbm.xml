@@ -22,6 +22,9 @@
 		<property access="field" name="purgeStep" column="purge_step" type="purgeStep" not-null="true" lazy="false"/>
 		<property name="secondFASecret" column="second_fa_secret" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="secondFACreationDate" column="second_fa_creation_date" type="timestamp" not-null="false" lazy="false"/>
+		<property name="authenticationFailureLastDate" column="authentication_failure_last_date" type="timestamp" not-null="false" lazy="false"/>
+		<property name="authenticationSuccessLastDate" column="authentication_success_last_date" type="timestamp" not-null="false" lazy="false"/>
+		<property name="authenticationFailureCount" column="authentication_failure_count" type="int" not-null="true" lazy="false"/>
 
 		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy"/>
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true"

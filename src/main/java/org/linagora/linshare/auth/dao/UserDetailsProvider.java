@@ -81,7 +81,7 @@ public abstract class UserDetailsProvider {
 
 	public void logAuthError(User user, String message) {
 		try {
-			authentificationFacade.logAuthError(user, message);
+			authentificationFacade.logAuthError(user.getLsUuid(), message);
 		} catch (IllegalArgumentException e) {
 			logger.error("Couldn't log an authentication failure : " + message);
 			logger.debug(e.getMessage());
@@ -93,7 +93,7 @@ public abstract class UserDetailsProvider {
 
 	public void logAuthSuccess(User user) {
 		try {
-			authentificationFacade.logAuthSuccess(user);
+			authentificationFacade.logAuthSuccess(user.getLsUuid());
 		} catch (IllegalArgumentException e) {
 			logger.error("Error while trying to log user successfull auth", e);
 		} catch (BusinessException e) {
@@ -104,7 +104,7 @@ public abstract class UserDetailsProvider {
 	public void logAuthSuccess(String userUuid) {
 		try {
 			User user = authentificationFacade.loadUserDetails(userUuid);
-			authentificationFacade.logAuthSuccess(user);
+			authentificationFacade.logAuthSuccess(user.getLsUuid());
 		} catch (IllegalArgumentException e) {
 			logger.error("Error while trying to log user successfull auth", e);
 		} catch (BusinessException e) {

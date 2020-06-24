@@ -1034,4 +1034,25 @@ public class UserServiceImpl implements UserService {
 		userQuota.setDomainSharedOverride(false);
 		accountQuotaBusinessService.create(userQuota);
 	}
+
+	@Override
+	public User updateUserForSuccessfulAuthentication(String uuid) throws BusinessException {
+		// TODO: revamping the whole service is highly need. #ugly ! :(
+		User user = findByLsUuid(uuid);
+		user.setAuthenticationFailureCount(0);
+		user.setAuthenticationFailureLastDate(null);
+		user.setAuthenticationSuccessLastDate(new Date());
+		return userRepository.update(user);
+	}
+
+	@Override
+	public User updateUserForFailureAuthentication(String uuid) throws BusinessException {
+		// TODO: revamping the whole service is highly need. #ugly ! :(
+		User user = findByLsUuid(uuid);
+		if (!user.isLocked()) {
+			user.setAuthenticationFailureCount(user.getAuthenticationFailureCount() + 1);
+			user.setAuthenticationFailureLastDate(new Date());
+		}
+		return userRepository.update(user);
+	}
 }

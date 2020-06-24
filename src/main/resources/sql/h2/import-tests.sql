@@ -57,7 +57,7 @@ INSERT INTO account(
 	external_mail_locale, cmis_locale, enable, password, 
 	destroyed, domain_id, purge_step, first_name, 
 	last_name, can_upload, comment, restricted, 
-	CAN_CREATE_GUEST, inconsistent) 
+	CAN_CREATE_GUEST, inconsistent, authentication_failure_count)
 VALUES
 -- John Do  (10)
 	(10, 'user1@linshare.org', 2, 'aebe1b64-39c0-11e5-9fa8-080027b8274b', 
@@ -65,21 +65,21 @@ VALUES
 	'en', 'en', true, null, 
 	0, @my_domain_id , 'IN_USE', 'John', 
 	'Do', true, '', false, 
-	true, false),
+	true, false, 0),
 -- Jane smith (11)
 	(11, 'user2@linshare.org', 2, 'd896140a-39c0-11e5-b7f9-080027b8274b', 
 	now(), now(), 0, 'en', 
 	'en', 'en', true, null, 
 	0, @my_domain_id , 'IN_USE', 'Jane', 
 	'Simth', true, '', false, 
-	true, false),
+	true, false, 0),
 -- Foo Bar (12)	
 	(12, 'user3@linshare.org', 2, 'e524e1ba-39c0-11e5-b704-080027b8274b', 
 	now(), now(), 0, 'en', 
 	'en', 'en', true, null, 
 	0, @my_domain_id , 'IN_USE', 'Foo', 
 	'Bar', true, '', false, 
-	true, false),
+	true, false, 0),
 -- Guest (13)	
 -- password generated from https://www.browserling.com/tools/bcrypt 
 	(13, 'guest@linshare.org', 3, '46455499-f703-46a2-9659-24ed0fa0d63c', 
@@ -87,7 +87,7 @@ VALUES
 	'en', 'en', true, '{bcrypt}$2a$10$GX1j3pNgFcg8LfANc4w9h.oivxTErSnP/6YYpVLX.pdqTLjdF6Dfm', 
 	0, @guest_domain_id , 'IN_USE', 'Guest', 
 	'Test', true, '', false, 
-	true, false);
+	true, false, 0);
 	
 SET @john_do_id = SELECT 10;
 SET @jane_simth_id = SELECT 11;
@@ -100,27 +100,27 @@ INSERT INTO account(
 	id, mail, account_type, ls_uuid,
 	creation_date, modification_date, role_id, locale, 
 	external_mail_locale, cmis_locale, enable, password, 
-	destroyed, domain_id, purge_step) 
+	destroyed, domain_id, purge_step, authentication_failure_count)
 VALUES
 	(20, 'cf32c1e4-4f44-11ea-9f38-f7f9633276e3', 5, 'cf32c1e4-4f44-11ea-9f38-f7f9633276e3', 
 	now(), now(), 0, 'en', 
 	'en', 'en', true, null, 
-	false, @my_domain_id , 'IN_USE'),
+	false, @my_domain_id , 'IN_USE', 0),
 	
 	(21, 'd5a8e558-4f44-11ea-bacf-4ff46dad21b7', 5, 'd5a8e558-4f44-11ea-bacf-4ff46dad21b7',
 	now(), now(), 0, 'en', 
 	'en', 'en', true, null, 
-	false, @my_domain_id, 'IN_USE'),
+	false, @my_domain_id, 'IN_USE', 0),
 	
 	(22, 'da79e852-4f44-11ea-90a3-238dff97526d', 5, 'da79e852-4f44-11ea-90a3-238dff97526d', 
 	now(), now(), 0, 'en', 
 	'en', 'en', true, null, 
-	0, @my_domain_id, 'IN_USE'),
+	0, @my_domain_id, 'IN_USE', 0),
 	
 	(23, 'dabb0364-4f44-11ea-9fe7-eb275404c745', 5, 'dabb0364-4f44-11ea-9fe7-eb275404c745', 
 	now(), now(), 0, 'en', 
 	'en', 'en', true, null, 
-	0, @my_domain_id, 'IN_USE');
+	0, @my_domain_id, 'IN_USE', 0);
 	
 INSERT INTO thread (account_id, name) VALUES (20, 'Linagora');
 INSERT INTO thread (account_id, name) VALUES (21, 'RATP');
@@ -479,8 +479,8 @@ UPDATE domain_abstract SET mime_policy_id=1 WHERE id >= 100001;
 
 
 
-INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) 
-VALUES (100001, 'root@localhost.localdomain@test', 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', 'en', true, '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW4k3k0UxxtdFIEquzTA6', 0, 100001, 'IN_USE', 'Administrator', 'LinShare', true, '', false, false, false);
+INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent, authentication_failure_count) 
+VALUES (100001, 'root@localhost.localdomain@test', 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', 'en', true, '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW4k3k0UxxtdFIEquzTA6', 0, 100001, 'IN_USE', 'Administrator', 'LinShare', true, '', false, false, false, 0);
 
 -- root domain de test
 -- Functionality : TEST_TIME_STAMPING

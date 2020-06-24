@@ -102,9 +102,14 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
-	public void logAuthError(User user, String message)
+	public boolean userExist(String lsUuid) {
+		return userService.exist(lsUuid);
+	}
+
+	@Override
+	public void logAuthError(String userUuid, String message)
 			throws BusinessException {
-		user = userService.findByLsUuid(user.getLsUuid());
+		User user = userService.updateUserForFailureAuthentication(userUuid);
 		AuthenticationAuditLogEntryUser log = new AuthenticationAuditLogEntryUser(user, LogAction.FAILURE, AuditLogEntryType.AUTHENTICATION, message);
 		logEntryService.insert(log);
 	}
@@ -119,9 +124,9 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
-	public void logAuthSuccess(User user) throws BusinessException {
+	public void logAuthSuccess(String userUuid) throws BusinessException {
 		// Reloading entity inside a new transaction/session.
-		user = userService.findByLsUuid(user.getLsUuid());
+		User user = userService.updateUserForSuccessfulAuthentication(userUuid);
 		AuthenticationAuditLogEntryUser log = new AuthenticationAuditLogEntryUser(user, LogAction.SUCCESS, AuditLogEntryType.AUTHENTICATION, "Successfull authentification");
 		logEntryService.insert(log);
 	}

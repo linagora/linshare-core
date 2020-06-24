@@ -184,7 +184,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 					+ foundUser.getMail(), e);
 		}
 
-		authentificationFacade.logAuthSuccess(foundUser);
+		authentificationFacade.logAuthSuccess(foundUser.getLsUuid());
 		logger.info(String.format("Successful authentication of  %1$s with JWT token : %2$s", foundUser.getLsUuid(), claims));
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
 		UserDetails userDetail = new org.springframework.security.core.userdetails.User(foundUser.getLsUuid(), "", true,

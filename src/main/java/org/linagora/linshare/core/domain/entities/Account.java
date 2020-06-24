@@ -95,9 +95,16 @@ public abstract class Account {
 
 	protected String secondFASecret;
 
+	protected Date authenticationFailureLastDate;
+
+	protected Date authenticationSuccessLastDate;
+
+	protected Integer authenticationFailureCount;
+
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
+		authenticationFailureCount = 0;
 	}
 
 	@Override
@@ -431,5 +438,29 @@ public abstract class Account {
 
 	public void setPasswordHistories(Set<PasswordHistory> passwordHistories) {
 		this.passwordHistories = passwordHistories;
+	}
+
+	public Date getAuthenticationFailureLastDate() {
+		return authenticationFailureLastDate;
+	}
+
+	public void setAuthenticationFailureLastDate(Date authenticationFailureLastDate) {
+		this.authenticationFailureLastDate = authenticationFailureLastDate;
+	}
+
+	public Integer getAuthenticationFailureCount() {
+		return authenticationFailureCount;
+	}
+
+	public void setAuthenticationFailureCount(Integer authenticationFailureCount) {
+		this.authenticationFailureCount = authenticationFailureCount;
+	}
+
+	public Date getAuthenticationSuccessLastDate() {
+		return authenticationSuccessLastDate;
+	}
+
+	public void setAuthenticationSuccessLastDate(Date authenticationSuccessLastDate) {
+		this.authenticationSuccessLastDate = authenticationSuccessLastDate;
 	}
 }

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Set;
 
@@ -245,6 +247,38 @@ public abstract class User extends Account {
 	public String toString() {
 		return "User [firstName=" + firstName + ", lastName=" + lastName
 				+ ", mail=" + getMail() + ", lsUuid=" + lsUuid + "]";
+	}
+
+	public boolean isLocked() {
+		int modulo = authenticationFailureCount % 3;
+		System.out.println("authenticationFailureCount: " + authenticationFailureCount);
+		System.out.println("modulo: " + modulo);
+		Instant lastFailure = authenticationFailureLastDate != null ? authenticationFailureLastDate.toInstant(): null;
+		Instant instantNow = new Date().toInstant();
+		System.out.println("now: " + instantNow);
+		System.out.println("lastFailure: " + lastFailure);
+		if (authenticationFailureCount < 3) {
+			return false;
+		}
+		if (modulo == 0) {
+			Instant endLockout = authenticationFailureLastDate.toInstant();
+			if (authenticationFailureCount < 6) {
+				endLockout = endLockout.plus(10, ChronoUnit.MINUTES);
+			} else if (authenticationFailureCount < 9) {
+				endLockout = endLockout.plus(20, ChronoUnit.MINUTES);
+			} else if (authenticationFailureCount < 12) {
+				endLockout = endLockout.plus(60, ChronoUnit.MINUTES);
+			} else if (authenticationFailureCount < 15) {
+				endLockout = endLockout.plus(1440, ChronoUnit.MINUTES);
+			} else {
+				return true;
+			}
+			System.out.println("endLockout: " + endLockout);
+			if (instantNow.isBefore(endLockout)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

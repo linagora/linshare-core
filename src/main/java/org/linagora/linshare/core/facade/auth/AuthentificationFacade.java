@@ -50,13 +50,15 @@ public interface AuthentificationFacade {
 
 	Internal findByLoginAndDomain(String domain, String login);
 
+	boolean userExist(String lsUuid);
+
 	public void logAuthError(String login, String domainIdentifier, String message) throws BusinessException;
 
 	void logAuthError(User user, String domainIdentifier, String message) throws BusinessException;
 
-	void logAuthError(User user, String message) throws BusinessException;
+	void logAuthError(String userUuid, String message) throws BusinessException;
 
-	public void logAuthSuccess(User user) throws BusinessException;
+	public void logAuthSuccess(String userUuid) throws BusinessException;
 
 	public AbstractDomain retrieveDomain(String domainIdentifier);
 

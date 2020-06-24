@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
@@ -54,6 +55,8 @@ public class LinShareBasicAuthenticationEntryPoint extends BasicAuthenticationEn
 		int errorCode = 1000;
 		if (authException instanceof LinShareAuthenticationException) {
 			errorCode = ((LinShareAuthenticationException) authException).getErrorCode();
+		} else if (authException instanceof LockedException) {
+			errorCode = 1004;
 		} else if (authException instanceof BadCredentialsException) {
 			errorCode = 1001;
 		}

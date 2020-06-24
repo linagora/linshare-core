@@ -36,6 +36,9 @@ CREATE TABLE account (
   inconsistent          bool DEFAULT 'False',
   second_fa_secret            varchar(255) DEFAULT NULL,
   second_fa_creation_date     timestamp(6),
+  authentication_failure_last_date     timestamp(6),
+  authentication_failure_success_date     timestamp(6),
+  authentication_failure_count         int4 NOT NULL DEFAULT 0,
   CONSTRAINT account_pkey
     PRIMARY KEY (id),
   CONSTRAINT account_unique_mail_domain_destroyed

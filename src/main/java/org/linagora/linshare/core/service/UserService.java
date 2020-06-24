@@ -194,4 +194,8 @@ public interface UserService {
 	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
 
 	void changePassword(User authUser, User actor, String oldPassword, String newPassword) throws BusinessException;
+
+	User updateUserForSuccessfulAuthentication(String uuid) throws BusinessException;
+
+	User updateUserForFailureAuthentication(String uuid) throws BusinessException;
 }

@@ -4,14 +4,14 @@ INSERT INTO account(
 	external_mail_locale, cmis_locale, enable, password,
 	destroyed, domain_id, purge_step,first_name,
 	last_name, can_upload, comment, restricted,
-	CAN_CREATE_GUEST, inconsistent )
+	CAN_CREATE_GUEST, inconsistent, authentication_failure_count)
 VALUES
 	(14, 'inconsistent-user1@linshare.org', 2, '412da435-1860-439c-b753-b91a2b13af70',
 	now(),now(), 0,	'en',
 	'en','en', true, null,
 	0, 2, 'IN_USE', 'inconsistent',
 	'User1',true, '', false,
-	true, false);
+	true, false, 0);
 
 -- subdomain 2, ACCOUNT_QUOTA - inconsistent-user1@linshare.org (14)
 INSERT INTO quota (

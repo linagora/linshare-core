@@ -112,6 +112,9 @@ ALTER TABLE upload_request_entry ALTER COLUMN document_id DROP NOT NULL;
 
 ALTER TABLE account ADD COLUMN second_fa_creation_date TIMESTAMP(6);
 ALTER TABLE account ADD COLUMN second_fa_secret  varchar(255) DEFAULT NULL;
+ALTER TABLE account ADD COLUMN authentication_failure_last_date TIMESTAMP(6) DEFAULT NULL;
+ALTER TABLE account ADD COLUMN authentication_success_last_date TIMESTAMP(6) DEFAULT NULL;
+ALTER TABLE account ADD COLUMN authentication_failure_count int4 NOT NULL DEFAULT 0;
 
 -- Group ldap pattern
 WITH ldap_pattern_already_exists AS ( UPDATE ldap_pattern SET id=id WHERE id=4 RETURNING *)

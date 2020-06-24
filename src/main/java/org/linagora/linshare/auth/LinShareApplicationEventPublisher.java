@@ -60,11 +60,9 @@ public class LinShareApplicationEventPublisher implements AuthenticationEventPub
 
 	@Override
 	public void publishAuthenticationSuccess(Authentication authentication) {
-		// TODO Auto-generated method stub
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		logger.info(userDetails.toString());
-		User user = userRepository.findByLsUuid(userDetails.getUsername());
-		authentificationFacade.logAuthSuccess(user);
+		authentificationFacade.logAuthSuccess(userDetails.getUsername());
 	}
 
 	@Override
@@ -72,13 +70,14 @@ public class LinShareApplicationEventPublisher implements AuthenticationEventPub
 		if (authentication.getPrincipal() instanceof UserDetails) {
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 			logger.info(userDetails.toString());
-			User user = userRepository.findByLsUuid(userDetails.getUsername());
-			authentificationFacade.logAuthError(user, exception.getMessage());
+			authentificationFacade.logAuthError(userDetails.getUsername(), exception.getMessage());
 		} else {
-			User user = userRepository.findByLogin(authentication.getPrincipal().toString());
+			String login = authentication.getPrincipal().toString();
+			// No matter the provider, it should be store in the database if it is a valid user
+			User user = userRepository.findByLogin(login);
 			if (user != null) {
 				logger.info("Authentication failure for:" + authentication.toString());
-				authentificationFacade.logAuthError(user, exception.getMessage());
+				authentificationFacade.logAuthError(user.getLsUuid(), exception.getMessage());
 			} else {
 				logger.debug("Unknown account:" + authentication.toString(), exception);
 			}

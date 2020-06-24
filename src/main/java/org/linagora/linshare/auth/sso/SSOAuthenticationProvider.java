@@ -84,7 +84,7 @@ public class SSOAuthenticationProvider implements AuthenticationProvider {
 		}
 
 		try {
-			authentificationFacade.logAuthSuccess(foundUser);
+			authentificationFacade.logAuthSuccess(foundUser.getLsUuid());
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getStackTrace());

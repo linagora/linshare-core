@@ -95,9 +95,17 @@ public class LdapUserDetailsServiceImpl implements UserDetailsService {
 
 	private UserDetails toUserDetail(User user) {
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
-		// Passwords of LDAP users are not store in the database. using empty string, null is not accepted.
+		boolean enabled = true;
+		boolean accountNonExpired = true;
+		boolean credentialsNonExpired = true;
+		boolean accountNonLocked = !user.isLocked();
 		UserDetails loadedUser = new org.springframework.security.core.userdetails.User(
-				user.getLsUuid(), "", true, true, true, true,
+				user.getLsUuid(),
+				"", // Passwords of LDAP users are not store in the database. using empty string, null is not accepted.
+				enabled,
+				accountNonExpired,
+				credentialsNonExpired,
+				accountNonLocked,
 				grantedAuthorities);
 		return loadedUser;
 	}
