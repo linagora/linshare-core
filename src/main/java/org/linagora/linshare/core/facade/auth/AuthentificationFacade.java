@@ -36,7 +36,6 @@ package org.linagora.linshare.core.facade.auth;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -46,9 +45,9 @@ public interface AuthentificationFacade {
 
 	User findOrCreateUser(String domainIdentifier, String mail) throws BusinessException;
 
-	Internal  findByLogin(String login);
+	User  findByLogin(String login);
 
-	Internal findByLoginAndDomain(String domain, String login);
+	User findByLoginAndDomain(String domain, String login);
 
 	boolean userExist(String lsUuid);
 
@@ -64,13 +63,11 @@ public interface AuthentificationFacade {
 
 	List<String> getAllSubDomainIdentifiers(String domainIdentifier);
 
-	public List<AbstractDomain> getAllDomains();
+	public List<String> getAllDomains();
 
 	public User ldapAuth(String domainIdentifier,	String login, String userPasswd) throws BusinessException;
 
 	public User ldapSearchForAuth(String domainIdentifier, String login) throws BusinessException;
-
-	public User updateUser(User user) throws BusinessException;
 
 	public User checkStillInLdap(User user, String login) throws BusinessException;
 

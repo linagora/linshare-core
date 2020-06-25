@@ -36,7 +36,6 @@ package org.linagora.linshare.auth.details.service;
 import java.util.List;
 
 import org.linagora.linshare.auth.RoleProvider;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.slf4j.Logger;
@@ -73,17 +72,18 @@ public class LdapUserDetailsServiceImpl implements UserDetailsService {
 		}
 		logger.debug("Can't find the user in DB. Searching user in all LDAP domains.");
 		User transientUser = null;
-		for (AbstractDomain loopedDomain : authentificationFacade.getAllDomains()) {
-			transientUser = authentificationFacade.ldapSearchForAuth(loopedDomain.getUuid(), username);
+		String transientDomainUuid = null;
+		for (String domainUuid : authentificationFacade.getAllDomains()) {
+			transientUser = authentificationFacade.ldapSearchForAuth(domainUuid, username);
 			if (transientUser != null) {
-				transientUser.setDomain(loopedDomain);
-				logger.debug("User found in domain " + loopedDomain.getUuid());
+				transientDomainUuid = domainUuid;
+				logger.debug("User found in domain " + transientDomainUuid);
 				break;
 			}
 		}
 		if (transientUser != null) {
 			// need to persist
-			user = authentificationFacade.findOrCreateUser(transientUser.getDomainId(), transientUser.getMail());
+			user = authentificationFacade.findOrCreateUser(transientDomainUuid, transientUser.getMail());
 		}
 		if (user == null) {
 			String message = "User not found ! Login : " + username;

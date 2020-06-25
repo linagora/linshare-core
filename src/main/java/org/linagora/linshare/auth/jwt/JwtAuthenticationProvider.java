@@ -40,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.RoleProvider;
-import org.linagora.linshare.auth.dao.LdapUserDetailsProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
@@ -55,6 +54,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import com.google.common.collect.Lists;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -68,18 +70,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private JwtService jwtService;
 
-	private LdapUserDetailsProvider ldapUserDetailsProvider;
-
 	private JwtLongTimeMongoRepository jwtLongTimeMongoRepository;
 
 	private UserRepository<User> userRepository;
 
 	public void setAuthentificationFacade(AuthentificationFacade authentificationFacade) {
 		this.authentificationFacade = authentificationFacade;
-	}
-
-	public void setLdapUserDetailsProvider(LdapUserDetailsProvider ldapUserDetailsProvider) {
-		this.ldapUserDetailsProvider = ldapUserDetailsProvider;
 	}
 
 	public void setJwtService(JwtService jwtService) {
@@ -157,25 +153,31 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		logger.debug("JWT token seems to be good. Processing authentication...");
 
 		User foundUser = null;
+		String email = claims.getSubject();
 		String domainUuid = claims.get("domain", String.class);
-		try {
-			String email= claims.getSubject();
-			// If account uuid, is provided, we use it instead of email.
-			foundUser = ldapUserDetailsProvider.retrieveUser(domainUuid, email);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage(), e);
-			throw new AuthenticationServiceException("Could not find user account : " + claims, e);
+		List<String> domains = Lists.newArrayList();
+		if (domainUuid == null) {
+			foundUser = authentificationFacade.findByLogin(email);
+			domains = authentificationFacade.getAllDomains();
+		} else {
+			foundUser = authentificationFacade.findByLoginAndDomain(domainUuid, email);
+			domains = authentificationFacade.getAllSubDomainIdentifiers(domainUuid);
 		}
 		if (foundUser == null) {
-			// if we can find the user with jwt token, the user may not exist.
-			// Token is still valid but we can't continue, we have to abord authentification process.
-			// We can't return null because there is one and only Provider that can handle JwtAuthenticationToken
-			logger.error("Weird, found user is null, should never happen.");
-			throw new AuthenticationServiceException("Could not find user account : " + claims);
+			for (String domain : domains) {
+				foundUser = authentificationFacade.ldapSearchForAuth(domain, email);
+				if (foundUser != null) {
+					break;
+				}
+			}
+		}
+		if (foundUser == null) {
+			logger.error("User not found: " + claims);
+			throw new UsernameNotFoundException("Could not find user account : " + claims);
 		}
 		try {
 			// loading/creating the real entity
-			foundUser = ldapUserDetailsProvider.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
+			foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
 		} catch (BusinessException e) {
 			logger.error(e);
 			throw new AuthenticationServiceException(

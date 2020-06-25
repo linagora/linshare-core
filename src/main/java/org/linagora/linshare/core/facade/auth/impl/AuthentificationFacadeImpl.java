@@ -40,11 +40,10 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
-import org.linagora.linshare.core.repository.InternalRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -66,20 +65,20 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
 	private final UserProviderService userProviderService;
 
-	private final InternalRepository internalRepository;
+	private final UserRepository<User> userRepository;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public AuthentificationFacadeImpl(UserService userService, LogEntryService logEntryService,
 			AbstractDomainService abstractDomainService, UserProviderService userProviderService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
-			InternalRepository internalRepository) {
+			UserRepository<User> userRepository) {
 		super();
 		this.userService = userService;
 		this.logEntryService = logEntryService;
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
-		this.internalRepository = internalRepository;
+		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
@@ -142,8 +141,8 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
-	public List<AbstractDomain> getAllDomains() {
-		return abstractDomainService.getAllDomains();
+	public List<String> getAllDomains() {
+		return abstractDomainService.getAllDomainIdentifiers();
 	}
 
 	@Override
@@ -161,24 +160,23 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
-	public Internal findByLogin(String login) {
-		Internal internal = internalRepository.findByLogin(login);
+	public User findByLogin(String login) {
+		User user = userRepository.findByLogin(login);
+		// Ugly but needed until we find a more elegant solution :(
+		if (user != null) user.getDomain().getUuid();
+		return user;
+	}
+
+	@Override
+	public User findByLoginAndDomain(String domain, String login) {
+		User internal = userRepository.findByLoginAndDomain(domain, login);
 		// Ugly but needed until we find a more elegant solution :(
 		if (internal != null) internal.getDomain().getUuid();
 		return internal;
 	}
 
-	@Override
-	public Internal findByLoginAndDomain(String domain, String login) {
-		Internal internal = internalRepository.findByLoginAndDomain(domain, login);
-		// Ugly but needed until we find a more elegant solution :(
-		if (internal != null) internal.getDomain().getUuid();
-		return internal;
-	}
-
-	@Override
-	public User updateUser(User user) throws BusinessException {
-		Account system = internalRepository.getBatchSystemAccount();
+	private User updateUser(User user) throws BusinessException {
+		Account system = userRepository.getBatchSystemAccount();
 		return userService.updateUser(system, user, user.getDomainId());
 	}
 

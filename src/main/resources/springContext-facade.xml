@@ -12,7 +12,7 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="userProviderService" />
-		<constructor-arg ref="internalRepository" />
+		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 </beans>

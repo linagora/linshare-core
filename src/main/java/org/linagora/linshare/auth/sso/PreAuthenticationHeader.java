@@ -39,9 +39,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.linagora.linshare.auth.dao.LdapUserDetailsProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.repository.RootUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +49,8 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import org.springframework.util.Assert;
+
+import com.google.common.collect.Lists;
 
 /**
  * This Spring Security filter is designed to filter authentication against a
@@ -63,8 +65,6 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
 	private RootUserRepository rootUserRepository;
 
-	private LdapUserDetailsProvider userDetailsProvider;
-
 	private String principalRequestHeader;
 
 	private String domainRequestHeader;
@@ -73,6 +73,8 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	private List<String> authorizedAddresses;
 
 	private Boolean authorizedAddressesEnable;
+
+	protected AuthentificationFacade authentificationFacade;
 
 	public PreAuthenticationHeader(Boolean authorizedAddressesEnable, String authorizedAddressesList) {
 		super();
@@ -123,12 +125,26 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 			String domainIdentifier) {
 		// Looking for a root user no matter the domain.
 		User foundUser = rootUserRepository.findByLogin(authenticationHeader);
-
 		if (foundUser == null) {
-			logger.debug("looking into ldap.");
+			logger.debug("looking into ldap or db");
 			try {
-				foundUser = userDetailsProvider.retrieveUser(domainIdentifier,
-						authenticationHeader);
+				// Workaround. everything need to be revamped.
+				List<String> domains = Lists.newArrayList();
+				if (domainIdentifier == null) {
+					foundUser = authentificationFacade.findByLogin(authenticationHeader);
+					domains = authentificationFacade.getAllDomains();
+				} else {
+					foundUser = authentificationFacade.findByLoginAndDomain(domainIdentifier, authenticationHeader);
+					domains = authentificationFacade.getAllSubDomainIdentifiers(domainIdentifier);
+				}
+				if (foundUser == null) {
+					for (String domainUuid : domains) {
+						foundUser = authentificationFacade.ldapSearchForAuth(domainUuid, authenticationHeader);
+						if (foundUser != null) {
+							break;
+						}
+					}
+				}
 			} catch (UsernameNotFoundException e) {
 				logger.error(e.getMessage());
 				foundUser = null;
@@ -136,7 +152,7 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 		}
 		if (foundUser != null) {
 			try {
-				foundUser = userDetailsProvider.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
+				foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
 			} catch (BusinessException e) {
 				logger.error(e.getMessage());
 				throw new AuthenticationServiceException(
@@ -164,10 +180,6 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 		this.rootUserRepository = rootUserRepository;
 	}
 
-	public void setUserDetailsProvider(LdapUserDetailsProvider userDetailsProvider) {
-		this.userDetailsProvider = userDetailsProvider;
-	}
-
 	public String getPrincipalRequestHeader() {
 		return principalRequestHeader;
 	}
@@ -178,5 +190,9 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
 	public List<String> getAuthorizedAddresses() {
 		return authorizedAddresses;
+	}
+
+	public void setAuthentificationFacade(AuthentificationFacade authentificationFacade) {
+		this.authentificationFacade = authentificationFacade;
 	}
 }
