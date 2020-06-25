@@ -72,14 +72,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 		Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
-// ?
-//		if (currentAuthentication == null) {
-			if (authenticationIsRequired(token, currentAuthentication)) {
-				JwtAuthenticationToken authentication = new JwtAuthenticationToken(token);
-				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-			}
-//		}
+		if (authenticationIsRequired(token, currentAuthentication)) {
+			JwtAuthenticationToken authentication = new JwtAuthenticationToken(token);
+			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+		}
 		filterChain.doFilter(request, response);
 	}
 
