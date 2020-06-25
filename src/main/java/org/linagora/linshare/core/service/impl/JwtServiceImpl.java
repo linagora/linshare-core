@@ -116,7 +116,7 @@ public class JwtServiceImpl implements JwtService {
 				.setIssuedAt(createdDate)
 				.setIssuer(issuer)
 				.setExpiration(expirationDate)
-				.signWith(SignatureAlgorithm.RS512, pk)
+				.signWith(pk, SignatureAlgorithm.RS512)
 				.compact();
 		return compact;
 	}
