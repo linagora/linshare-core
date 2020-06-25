@@ -2,8 +2,32 @@
 <b:beans xmlns:b="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
- 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
+	<!-- Database authentication provider -->
+	<b:bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory" />
+	<b:bean id="passwordEncoder" factory-bean="passwordEncoderFactory" factory-method="getInstance" />
+	<b:bean id="databaseUserDetailsService" class="org.linagora.linshare.auth.details.service.DatabaseUserDetailsServiceImpl">
+		<b:constructor-arg ref="userRepository" />
+	</b:bean>
+	<b:bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.providers.DatabaseAuthenticationProvider">
+		<b:property name="passwordEncoder" ref="passwordEncoder" />
+		<b:property name="userRepository" ref="userRepository" />
+		<b:property name="userDetailsService" ref="databaseUserDetailsService" />
+	</b:bean>
+
+	<!-- LDAP authentication provider -->
+	<b:bean id="ldapUserDetailsService" class="org.linagora.linshare.auth.details.service.LdapUserDetailsServiceImpl">
+		<b:constructor-arg ref="authentificationFacade" />
+	</b:bean>
+	<b:bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.providers.LdapAuthenticationProvider">
+		<b:property name="passwordEncoder" ref="passwordEncoder" />
+		<b:property name="userRepository" ref="userRepository" />
+		<b:property name="userDetailsService" ref="ldapUserDetailsService" />
+		<b:property name="authentificationFacade" ref="authentificationFacade" />
+	</b:bean>
+
+	<!-- JWT authentication provider -->
 	<b:bean name="jwtAuthenticationFilter"
 		class="org.linagora.linshare.auth.jwt.JwtAuthenticationFilter">
 	</b:bean>
@@ -33,5 +57,17 @@
 		</b:constructor-arg>
 		<b:property name="authenticationDetailsSource" ref="linShareWebAuthenticationDetailsSource"/>
 	</b:bean>
+
+	<b:bean id="linShareApplicationEventPublisher" class="org.linagora.linshare.auth.LinShareApplicationEventPublisher">
+		<b:constructor-arg ref="authentificationFacade" />
+		<b:constructor-arg ref="userRepository" />
+	</b:bean>
+
+	<!-- AUTHORIZATIONS MANAGEMENT -->
+	<b:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+		<b:constructor-arg ref="roleVoter"/>
+	</b:bean>
+
+	<b:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
 
 </b:beans>

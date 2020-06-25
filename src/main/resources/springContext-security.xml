@@ -161,12 +161,6 @@
 		<b:constructor-arg ref="restAuthenticationEntryPoint" />
 	</b:bean>
 
-	<!-- AUTHENTICATION MANAGEMENT -->
-	<b:bean id="linShareApplicationEventPublisher" class="org.linagora.linshare.auth.LinShareApplicationEventPublisher">
-		<b:constructor-arg ref="authentificationFacade" />
-		<b:constructor-arg ref="userRepository" />
-	</b:bean>
-
 	<!-- Authentication manager -->
 	<b:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
 		<b:constructor-arg>
@@ -179,40 +173,6 @@
 		</b:constructor-arg>
 		<b:property name="authenticationEventPublisher" ref="linShareApplicationEventPublisher" />
 	</b:bean>
-
-	<!-- DAO Authentification -->
-	<b:bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
-	</b:bean>
-	
-	<b:bean id="passwordEncoder" factory-bean="passwordEncoderFactory" factory-method="getInstance" />
-
-
-
-	<b:bean id="databaseUserDetailsService" class="org.linagora.linshare.auth.details.service.DatabaseUserDetailsServiceImpl">
-		<b:constructor-arg ref="userRepository" />
-	</b:bean>
-	<b:bean id="databaseAuthenticationProvider" class="org.linagora.linshare.auth.providers.DatabaseAuthenticationProvider">
-		<b:property name="passwordEncoder" ref="passwordEncoder" />
-		<b:property name="userRepository" ref="userRepository" />
-		<b:property name="userDetailsService" ref="databaseUserDetailsService" />
-	</b:bean>
-
-	<b:bean id="ldapUserDetailsService" class="org.linagora.linshare.auth.details.service.LdapUserDetailsServiceImpl">
-		<b:constructor-arg ref="authentificationFacade" />
-	</b:bean>
-	<b:bean id="ldapAuthenticationProvider" class="org.linagora.linshare.auth.providers.LdapAuthenticationProvider">
-		<b:property name="passwordEncoder" ref="passwordEncoder" />
-		<b:property name="userRepository" ref="userRepository" />
-		<b:property name="userDetailsService" ref="ldapUserDetailsService" />
-		<b:property name="authentificationFacade" ref="authentificationFacade" />
-	</b:bean>
-
-	<!-- AUTHORIZATIONS MANAGEMENT -->
-	<b:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
-		<b:constructor-arg ref="roleVoter"/>
-	</b:bean>
-
-	<b:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
 
 	<b:bean class="org.linagora.linshare.auth.sso.SSOInfoLogger"
 		init-method="afterPropertiesSet">
