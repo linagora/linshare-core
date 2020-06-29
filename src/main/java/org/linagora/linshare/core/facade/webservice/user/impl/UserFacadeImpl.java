@@ -93,21 +93,23 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 	}
 
 	@Override
-	public UserDto isAuthorized() throws BusinessException {
+	public UserDto isAuthorized(Integer version) throws BusinessException {
 		User authUser = checkAuthentication();
 		UserDto dto = UserDto.getFull(authUser);
 		// get the quota for the current logged in user.
 		AccountQuota quota = quotaService.findByRelatedAccount(authUser);
 		dto.setQuotaUuid(quota.getUuid());
-		BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
-		if (twofaFunc.getActivationPolicy().getStatus()) {
-			dto.setSecondFAUuid(authUser.getLsUuid());
-			dto.setSecondFAEnabled(authUser.isUsing2FA());
-			dto.setSecondFARequired(twofaFunc.getValue());
-		} else {
-			dto.setSecondFAUuid(null);
-			dto.setSecondFAEnabled(false);
-			dto.setSecondFARequired(false);
+		if (version >= 4) {
+			BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
+			if (twofaFunc.getActivationPolicy().getStatus()) {
+				dto.setSecondFAUuid(authUser.getLsUuid());
+				dto.setSecondFAEnabled(authUser.isUsing2FA());
+				dto.setSecondFARequired(twofaFunc.getValue());
+			} else {
+				dto.setSecondFAUuid(null);
+				dto.setSecondFAEnabled(false);
+				dto.setSecondFARequired(false);
+			}
 		}
 		return dto;
 	}

@@ -64,17 +64,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-//Class created to generate the swagger documentation of v1 RestServices
 @Path("/authentication")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
-	private final UserFacade userFacade;
+	protected final UserFacade userFacade;
 
-	private final GuestFacade guestFacade;
+	protected final GuestFacade guestFacade;
 
-	private final SecondFactorAuthenticationFacade secondFactorAuthenticationFacade;
+	protected final SecondFactorAuthenticationFacade secondFactorAuthenticationFacade;
 
 	public AuthenticationRestServiceImpl(
 			final UserFacade userFacade,
@@ -103,7 +102,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	})
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return userFacade.isAuthorized();
+		return userFacade.isAuthorized(2);
 	}
 
 	@Path("/logout")

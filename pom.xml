@@ -864,6 +864,40 @@
 						</goals>
 					</execution>
 					<execution>
+						<id>user v4</id>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.userv4</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv4.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-user-v4</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>User v4 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+					<execution>
 						<id>delegation v2</id>
 						<configuration>
 							<attachSwaggerArtifact>true</attachSwaggerArtifact>
