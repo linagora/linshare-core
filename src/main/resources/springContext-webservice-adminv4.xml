@@ -10,8 +10,7 @@
 	http://cxf.apache.org/schemas/jaxrs.xsd
 	http://cxf.apache.org/core
 	http://cxf.apache.org/schemas/core.xsd
-	"
-	profile="adminv4">
+	">
 
 	<!-- cxf -->
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
@@ -26,13 +25,57 @@
 	
 	<bean id="adminv4UserRestService" class="org.linagora.linshare.webservice.adminv4.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsAdminUserFacade" />
+		<constructor-arg ref="wsAdminAutocompleteFacade" />
 	</bean>
 
 
 	<jaxrs:server id="restAdminV4Container" address="/rest/admin/v4">
 		<jaxrs:serviceBeans>
 			<ref bean="adminv4AuthenticationRestService" />
+			<ref bean="adminLdapConnectionRestService" />
+			<ref bean="adminDomainPatternRestService" />
+			<ref bean="adminDomainPolicyRestService" />
+			<ref bean="adminDomainRestService" />
+			<ref bean="adminFunctionalityRestService" />
+			<ref bean="adminThreadRestService" />
+			<ref bean="adminMailingListRestService" />
+			<ref bean="adminThreadMemberRestService" />
 			<ref bean="adminv4UserRestService" />
+			<ref bean="adminLogRestService" />
+			<ref bean="adminEnumRestService" />
+			<ref bean="adminMailConfigRestService" />
+			<ref bean="adminMailLayoutRestService" />
+			<ref bean="adminMailFooterRestService" />
+			<ref bean="adminMailFooterLangRestService" />
+			<ref bean="adminMailContentRestService" />
+			<ref bean="adminMailContentLangRestService" />
+			<ref bean="adminMimePolicyRestService" />
+			<ref bean="adminMimeTypeRestService" />
+			<ref bean="adminTechnicalAccountRestService" />
+			<ref bean="adminTechnicalAccountPermissionRestService" />
+			<ref bean="adminUploadRequestRestService" />
+			<ref bean="adminUploadPropositionFilterRestService" />
+			<ref bean="adminWelcomeMessagesRestService" />
+			<ref bean="adminSystemConfigurationRestService" />
+			<ref bean="adminMailActivationRestService" />
+			<ref bean="adminAuditLogEntryRestService" />
+			<ref bean="adminStatisticRestService" />
+			<ref bean="adminDomainQuotaRestService" />
+			<ref bean="adminContainerQuotaRestService" />
+			<ref bean="adminAccountQuotaRestService" />
+			<ref bean="adminUpgradeTaskRestService" />
+			<ref bean="adminPublicKeyRestService"/>
+			<ref bean="adminJwtPermanentTokenRestService"/>
+			<ref bean="adminSharedSpaceMemberRestService"/>
+			<ref bean="adminSharedSpaceRestService"/>
+			<ref bean="adminSharedSpaceNodesLegacyRestService"/>
+			<ref bean="adminSharedSpaceRoleRestService"/>
+			<ref bean="adminBasicStatisticRestService" />
+			<ref bean="adminExceptionStatisticRestService" />
+			<ref bean="adminAdvancedStatisticRestService" />
+			<ref bean="adminGroupPatternRestService"/>
+			<ref bean="adminMailAttachmentRestService" />
+			<ref bean="adminGuestRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

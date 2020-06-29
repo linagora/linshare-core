@@ -33,15 +33,6 @@
  */
 package org.linagora.linshare.webservice.adminv4;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
+public interface UserRestService extends org.linagora.linshare.webservice.admin.UserRestService {
 
-public interface UserRestService {
-
-	UserDto find(String uuid) throws BusinessException;
-
-	SecondFactorDto delete2FA(String userUuid, String secondFactorUuid, SecondFactorDto dto) throws BusinessException;
-
-	SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException;
 }

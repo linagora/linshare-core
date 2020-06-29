@@ -92,11 +92,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 public class UserRestServiceImpl extends WebserviceBase implements
 		UserRestService {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserRestServiceImpl.class);
+	protected static final Logger logger = LoggerFactory.getLogger(UserRestServiceImpl.class);
 
-	private final UserFacade userFacade;
+	protected final UserFacade userFacade;
 
-	private final AutocompleteFacade autocompleteFacade;
+	protected final AutocompleteFacade autocompleteFacade;
 	
 	public UserRestServiceImpl(final UserFacade userFacade,
 			final AutocompleteFacade autocompleteFacade) {

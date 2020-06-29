@@ -33,16 +33,14 @@
  */
 package org.linagora.linshare.webservice.adminv4.impl;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
-import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv4.UserRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,12 +51,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/users")
-public class UserRestServiceImpl extends WebserviceBase implements UserRestService {
+public class UserRestServiceImpl extends org.linagora.linshare.webservice.admin.impl.UserRestServiceImpl implements UserRestService {
 
-	private final UserFacade userFacade;
-
-	public UserRestServiceImpl(final UserFacade userFacade) {
-		this.userFacade = userFacade;
+	public UserRestServiceImpl(UserFacade userFacade, AutocompleteFacade autocompleteFacade) {
+		super(userFacade, autocompleteFacade);
 	}
 
 	@Path("/{uuid}")
@@ -74,43 +70,5 @@ public class UserRestServiceImpl extends WebserviceBase implements UserRestServi
 			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return userFacade.findUser(uuid, 4);
-	}
-
-	@Path("/{uuid}/2fa/{secondfaUuid: .*}")
-	@DELETE
-	@Operation(summary = "Delete a shared key of a given user, 2fa will be disabled ",
-		responses = {
-			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200")
-		})
-	@Override
-	public SecondFactorDto delete2FA(
-			@Parameter(description = "User uuid.", required = true)
-				@PathParam("uuid") String uuid,
-			@Parameter(description = "The second factor key uuid, Optional if defined in payload.", required = false)
-				@PathParam("secondfaUuid") String secondfaUuid,
-			@Parameter(
-					description = "Second factor dto. Optional. Uuid can be provided if not defined in the URL.",
-					required = false
-					)
-				SecondFactorDto dto)
-			throws BusinessException {
-		return userFacade.delete2FA(uuid, secondfaUuid, dto);
-	}
-
-	@Path("/{uuid}/2fa/{secondfaUuid}")
-	@GET
-	@Operation(summary = "Get the 2FA state ",
-		responses = {
-			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200")
-		})
-	@Override
-	public SecondFactorDto find2FA(
-			@Parameter(description = "User uuid.", required = true)
-				@PathParam("uuid") String uuid,
-			@Parameter(description = "The second factor key uuid, Required.", required = true)
-				@PathParam("secondfaUuid") String secondfaUuid
-			)
-			throws BusinessException {
-		return userFacade.find2FA(uuid, secondfaUuid);
 	}
 }

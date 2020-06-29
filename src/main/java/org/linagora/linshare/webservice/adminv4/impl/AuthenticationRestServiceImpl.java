@@ -84,11 +84,11 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@Operation(
 			summary = "Check if user is authorized.",
 			responses = {
-		            @ApiResponse(
-		                content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
-		                responseCode = "200"
-		            )
-		        }
+					@ApiResponse(
+							content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+							responseCode = "200"
+					)
+			}
 	)
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
