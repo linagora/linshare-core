@@ -102,7 +102,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
 	protected final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository;
-	
+
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -523,12 +523,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	@Override
 	public SystemAccount getGuestSystemAccount() {
 		return guestBusinessService.getGuestSystemAccount();
-	}
-
-	@Override
-	public Guest resetPassword(Guest guest, String password) throws BusinessException {
-		// TODO : Check password complexity.
-		return guestBusinessService.resetPassword(guest, password);
 	}
 
 	private void createQuotaGuest(Guest guest) throws BusinessException {

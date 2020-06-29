@@ -231,14 +231,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public Guest resetPassword(Guest guest, String password) throws BusinessException {
-		String hashedPassword = passwordService.encode(password);
-		guest.setPassword(hashedPassword);
-		Guest update = guestRepository.update(guest);
-		return update;
-	}
-
-	@Override
 	public void evict(Guest entity) {
 		guestRepository.evict(entity);
 	}

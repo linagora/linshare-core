@@ -136,9 +136,8 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 		Validate.notEmpty(dto.getPassword(), "Missing password");
 		ResetGuestPassword reset = find(actor, owner, dto.getUuid());
 		reset.setAlreadyUsed(true);
-		passwordService.validatePassword(dto.getPassword());
 		Guest guest = guestService.find(actor, owner, reset.getGuestUuid());
-		guestService.resetPassword(guest, dto.getPassword());
+		passwordService.validateAndStorePassword(guest, dto.getPassword());
 		reset = repository.save(reset);
 		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(guest, guest, LogAction.SUCCESS,
 				AuditLogEntryType.RESET_PASSWORD, guest);

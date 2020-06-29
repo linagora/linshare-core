@@ -171,6 +171,4 @@ public interface GuestService {
 	Date getGuestExpirationDate(Account actor, Date currentGuestExpirationDate) throws BusinessException;
 
 	SystemAccount getGuestSystemAccount();
-
-	Guest resetPassword(Guest guest, String password) throws BusinessException;
 }

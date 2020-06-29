@@ -42,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.PasswordService;
+import org.linagora.linshare.core.business.service.impl.PasswordServiceImpl;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -51,15 +52,21 @@ import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.PasswordHistory;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.PasswordHistoryRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.QuotaService;
+import org.linagora.linshare.core.service.ResetGuestPasswordService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.ResetGuestPassword;
+import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +121,19 @@ public class GuestServiceImplTest {
 	private PasswordService passwordService;
 
 	@Autowired
+	private PasswordServiceImpl passwordServiceImpl;
+
+	@Autowired
 	private QuotaService quotaService;
+
+	@Autowired
+	private PasswordHistoryRepository historyRepository;
+
+	@Autowired
+	private ResetGuestPasswordService resetGuestPasswordService;
+
+	@Autowired
+	private ResetGuestPasswordMongoRepository guestPasswordMongoRepository;
 
 	private User root;
 
@@ -123,6 +142,13 @@ public class GuestServiceImplTest {
 	private User owner2;
 	
 	private User owner3;
+
+	private Guest guest;
+
+	private final static String FIRST_PASSWORD ="Root2017@linshare";
+	private final static String SECOND_PASSWORD ="Root2018@linshare";
+	private final static String THIRD_PASSWORD ="Root2019@linshare";
+	private final static String LAST_PASSWORD ="Root2020@linshare";
 
 	public GuestServiceImplTest() {
 		super();
@@ -160,6 +186,8 @@ public class GuestServiceImplTest {
 		functionality.getActivationPolicy().setStatus(true);
 		functionalityService.update(root, LoadingServiceTestDatas.sqlSubDomain,
 				functionality);
+		guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -249,6 +277,83 @@ public class GuestServiceImplTest {
 		Assertions.assertEquals(update.getFirstName(), "EP_TEST_v233");
 		Assertions.assertEquals(update.getLastName(), "EP_TEST_v233");
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+
+	@Test
+	public void testChangePassword() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		guest = guestService.create(owner1, owner1, guest, null);
+		Assertions.assertNotNull(guest);
+		ResetGuestPassword reset = new ResetGuestPassword(guest);
+		reset.setPassword(FIRST_PASSWORD);
+		guestPasswordMongoRepository.save(reset);
+		resetGuestPasswordService.update(guest, guest, reset);
+		Assertions.assertTrue(passwordService.matches(FIRST_PASSWORD, guest.getPassword()));
+		userService.changePassword(guest, guest, FIRST_PASSWORD, SECOND_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(SECOND_PASSWORD, guest.getPassword()));
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testStoreOldAndNewPassword() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		guest = guestService.create(owner1, owner1, guest, null);
+		Assertions.assertNotNull(guest);
+		ResetGuestPassword reset = new ResetGuestPassword(guest);
+		reset.setPassword(FIRST_PASSWORD);
+		guestPasswordMongoRepository.save(reset);
+		resetGuestPasswordService.update(guest, guest, reset);
+		List<PasswordHistory> histories = historyRepository.findAllByAccount(guest);
+		Assertions.assertTrue(histories.size() == 1);
+		Assertions.assertEquals(histories.iterator().next().getPassword(), guest.getPassword());
+		Assertions.assertTrue(passwordService.matches(FIRST_PASSWORD, guest.getPassword()));
+		userService.changePassword(guest, guest, FIRST_PASSWORD, SECOND_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(SECOND_PASSWORD, guest.getPassword()));
+		histories = historyRepository.findAllByAccount(guest);
+		Assertions.assertTrue(histories.size() == 2);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testStorePasswordHistory() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		passwordServiceImpl.setMaxSavedPasswordNumber(3);
+		guest = guestService.create(owner1, owner1, guest, null);
+		Assertions.assertNotNull(guest);
+		ResetGuestPassword reset = new ResetGuestPassword(guest);
+		reset.setPassword(FIRST_PASSWORD);
+		guestPasswordMongoRepository.save(reset);
+		resetGuestPasswordService.update(guest, guest, reset);
+		String firstHashedPassword = guest.getPassword();
+		Assertions.assertTrue(passwordService.matches(FIRST_PASSWORD, guest.getPassword()));
+		userService.changePassword(guest, guest, FIRST_PASSWORD, SECOND_PASSWORD);
+		Assertions.assertTrue(passwordService.matches(SECOND_PASSWORD, guest.getPassword()));
+		userService.changePassword(guest, guest, SECOND_PASSWORD, THIRD_PASSWORD);
+		userService.changePassword(guest, guest, THIRD_PASSWORD, LAST_PASSWORD);
+		List<PasswordHistory> histories = historyRepository.findAllByAccount(guest);
+		for (PasswordHistory passwordHistory : histories) {
+			Assertions.assertFalse(passwordHistory.getPassword().equals(firstHashedPassword));
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testChangeSamePasswordFail() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		guest = guestService.create(owner1, owner1, guest, null);
+		Assertions.assertNotNull(guest);
+		ResetGuestPassword reset = new ResetGuestPassword(guest);
+		reset.setPassword(FIRST_PASSWORD);
+		guestPasswordMongoRepository.save(reset);
+		resetGuestPasswordService.update(guest, guest, reset);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			userService.changePassword(guest, guest, FIRST_PASSWORD, FIRST_PASSWORD);
+		});
+		Assertions.assertEquals(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED, exception.getErrorCode());
+		Assertions.assertEquals(
+				"The new password you entered is the same as your old passwords, Enter a different password please",
+				exception.getMessage());
 	}
 
 	@Test

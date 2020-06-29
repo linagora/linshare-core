@@ -76,8 +76,6 @@ public interface GuestBusinessService {
 
 	GuestWithMetadata resetPassword(Guest guest) throws BusinessException;
 
-	Guest resetPassword(Guest guest, String password) throws BusinessException;
-
 	void evict(Guest entity);
 
 	/**
