@@ -4,6 +4,84 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
+	<!--  logout filters -->
+	<b:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:constructor-arg value="/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
+	<b:bean id="logoutFilterAdmin" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/admin/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/admin/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
+	<b:bean id="logoutFilterAdminV4" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/admin/v4/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/admin/v4/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
+	<b:bean id="logoutFilterUser" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/user/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/user/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
+	<b:bean id="logoutFilterUserV2" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/user/v2/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/user/v2/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
+	<b:bean id="logoutFilterUserV4" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/user/v4/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/user/v4/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
+
+
 	<!-- Database authentication provider -->
 	<b:bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory" />
 	<b:bean id="passwordEncoder" factory-bean="passwordEncoderFactory" factory-method="getInstance" />
