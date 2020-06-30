@@ -283,8 +283,6 @@ data-th-text="${labelBtn}"  th:href="@{${urlLink}}">Button label</a>
         my-file-name.pdf
          </a>
 </div>
-      </li>
-   </ul>
 </div>
 <!--/* Lists all file links in a share   */-->
 <div   style="margin-bottom:17px;" data-th-fragment="infoFileLinksListingArea(titleInfo,arrayFileLinks,isAnonymous)">
@@ -297,10 +295,12 @@ data-th-text="${labelBtn}"  th:href="@{${urlLink}}">Button label</a>
          </a>
 </div>
 <div data-th-if="(${isAnonymous})">
-         <span style="color:#787878;text-decoration:none;font-size:13px"  data-th-utext="${shareLink.name}">
+         <a style="color:#787878;text-decoration:none;font-size:13px"  data-th-utext="${shareLink.name}">
         my-file-name.pdf
          </a>
 </div>
+   </li>
+</ul>
 </div>
 <!--/* Lists all file links in a share  and checks witch one are the recpient\s */-->
 <div   style="margin-bottom:17px;" data-th-fragment="infoFileListWithMyUploadRefs(titleInfo,arrayFileLinks)">
