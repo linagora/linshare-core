@@ -2685,21 +2685,21 @@ INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config
 INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (136, 1, 36, 1, 36, 'a99a4650-ffa9-11e8-b09e-83360a30f184', true);
 INSERT INTO public.mail_footer (id, domain_abstract_id, description, visible, footer, creation_date, modification_date, uuid, readonly, messages_french, messages_english) VALUES (1, 1, 'footer html', true, '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <body>
-    <div data-th-fragment="email_footer">
-                                <td style="border-collapse:collapse;padding: 6px 0 4px 17px;" valign="top">
-                                  <p style="margin: 0; font-size: 10px;"><span th:text="#{learnMoreAbout}">En savoir plus sur</span>
-<a   th:href="@{#{productOfficialWebsite}}"  target="_blank"style="text-decoration:none; color:#a9a9a9;"><strong th:text="#{productName}">LinShare</strong>™</a>
-                                  </p>
-                                </td>
-                                <td style="border-collapse:collapse; padding:  6px 17px 4px 0;"  valign="top" width="60">
-                                  <img alt="libre-and-free" height="9"
-                                       src="cid:logo.libre.and.free@linshare.org"
-                                       style="line-height:100%;width:60px;height:9px;padding:0" width="60" />
- </td>
-   </div>
- </body>
- </html>', now(), now(), 'e85f4a22-8cf2-11e3-8a7a-5404a683a462', true, 'learnMoreAbout=En savoir plus sur
+   <body>
+      <div data-th-fragment="email_footer">
+         <td style="border-collapse:collapse;padding: 6px 0 4px 17px;" valign="top">
+            <p style="margin: 0; font-size: 10px;"><span th:text="#{learnMoreAbout}">En savoir plus sur</span>
+               <a th:href="@{#{productOfficialWebsite}}"  target="_blank" style="text-decoration:none; color:#a9a9a9;"><strong th:text="#{productName}">LinShare</strong>™</a>
+            </p>
+         </td>
+         <td style="border-collapse:collapse; padding:  6px 17px 4px 0;"  valign="top" width="60">
+            <img alt="libre-and-free" height="9"
+               src="cid:logo.libre.and.free@linshare.org"
+               style="line-height:100%;width:60px;height:9px;padding:0" width="60" />
+         </td>
+      </div>
+   </body>
+</html>', now(), now(), 'e85f4a22-8cf2-11e3-8a7a-5404a683a462', true, 'learnMoreAbout=En savoir plus sur
 productOfficialWebsite=http://www.linshare.org/', 'learnMoreAbout=Learn more about
 productOfficialWebsite=http://www.linshare.org/');
 INSERT INTO public.mail_footer_lang (id, mail_config_id, mail_footer_id, language, uuid, readonly) VALUES (1, 1, 1, 0, 'bf87e580-fb25-49bb-8d63-579a31a8f81e', true);
