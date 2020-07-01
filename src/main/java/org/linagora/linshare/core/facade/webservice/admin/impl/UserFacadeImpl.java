@@ -235,8 +235,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		checkAdminPermission(authUser, user);
 		user.setSecondFACreationDate(null);
 		user.setSecondFASecret(null);
-		accountService.update(user);
-		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(authUser, authUser, LogAction.UPDATE,
+		user = accountService.update(user);
+		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(authUser, user, LogAction.UPDATE,
 				AuditLogEntryType.USER, (User) user);
 		userAuditLogEntry.setCause(LogActionCause.SECOND_FACTOR_SHARED_KEY_DELETE);
 		logEntryService.insert(userAuditLogEntry);
