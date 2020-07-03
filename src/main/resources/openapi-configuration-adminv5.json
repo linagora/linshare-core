@@ -1,0 +1,20 @@
+{
+	"resourcePackages": [
+		"org.linagora.linshare.webservice.adminv5"
+	],
+	"prettyPrint": true,
+	"cacheTTL": 0,
+	"openAPI": {
+		"info": {
+			"version": "${project.version}",
+			"title": "Admin v5 API",
+			"description": "Admin v5 API"
+		},
+		"servers": [
+			{
+				"url": "/linshare/webservice/rest/admin/v5/",
+				"description": "The ADMIN API server"
+			}
+		]
+	}
+}

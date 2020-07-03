@@ -40,13 +40,16 @@
 			<sec:filter-chain pattern="/webservice/rest/admin/v4/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/admin/v4/authentication/logout" filters="logoutFilterAdminV4" />
 
+			<sec:filter-chain pattern="/webservice/rest/admin/v5/authentication/" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/admin/v5/authentication/logout" filters="logoutFilterAdminV5" />
+
 			<sec:filter-chain pattern="/webservice/rest/uploadrequest/v2/**" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/external/**" filters="none" />
 
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin, logoutFilterAdminV4, logoutFilterUser, logoutFilterUserV2, logoutFilterUserV4" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin, logoutFilterAdminV4, logoutFilterAdminV5, logoutFilterUser, logoutFilterUserV2, logoutFilterUserV4" />
 
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
