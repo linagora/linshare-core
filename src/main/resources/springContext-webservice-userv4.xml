@@ -30,11 +30,7 @@
 			<ref bean="userv2EnumRestService" />
 			<ref bean="userv4AuthenticationRestService" />
 			<ref bean="userv2DocumentRestService" />
-			<ref bean="userv2WorkGroupRestService" />
-			<ref bean="userv2WorkGroupMemberRestService" />
 			<ref bean="userv2MailingListRestService" />
-			<ref bean="userv2WorkGroupNodeRestService" />
-			<ref bean="userv2WorkGroupNodeLightRestService" />
 			<ref bean="userv2GuestRestService" />
 			<ref bean="userv2ShareRestService" />
 			<ref bean="userv2RestService" />
@@ -58,7 +54,6 @@
 			<ref bean="userv2UploadPropositionRestService" />
 			<ref bean="userv2JwtPermanentTokenRestService" />
 			<ref bean="userv2SharedSpaceRestService" />
-			<ref bean="userv2SharedSpaceLegacyNodeRestService" />
 			<ref bean="userv2SharedSpaceRoleRestService" />
 			<ref bean="userv2SharedSpaceMemberRestService" />
 			<ref bean="userv2SharedSpaceNodeRestService" />
