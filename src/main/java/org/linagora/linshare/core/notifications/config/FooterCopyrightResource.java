@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.notifications.config;
 
+import java.util.Calendar;
+
 import org.linagora.linshare.core.domain.constants.Language;
 
 public class FooterCopyrightResource extends LinShareTemplateResource {
@@ -49,6 +51,8 @@ public class FooterCopyrightResource extends LinShareTemplateResource {
 						, "</html>"
 				)
 				, baseName);
+		Calendar calendar = Calendar.getInstance();
+		int year = calendar.get(Calendar.YEAR);
 		if (lang.equals(Language.FRENCH)) {
 			this.messages = String.join(""
 					, "copyrightText =  Vous utilisez la version libre et gratuite de "
@@ -57,7 +61,9 @@ public class FooterCopyrightResource extends LinShareTemplateResource {
 					, ", développée par "
 					, "<a href=\"http://www.linagora.com/\" style=\"text-decoration:none;color:#b2b2b2;\" target=\"_blank\">"
 					, "<strong>Linagora</strong> ©</a>"
-					, " 2009–2018."
+					, " 2009–"
+					, String.valueOf(year)
+					, "."
 					, " Contribuez à la R&D du produit en souscrivant à une offre entreprise."
 					, "\n"
 					);
@@ -69,7 +75,9 @@ public class FooterCopyrightResource extends LinShareTemplateResource {
 					, ", powered by "
 					, "<a href=\"http://www.linagora.com/\" style=\"text-decoration:none;color:#b2b2b2;\" target=\"_blank\">"
 					, "<strong>Linagora</strong> ©</a>"
-					, " 2009–2018."
+					, " 2009–"
+					, String.valueOf(year)
+					, "."
 					, " Contribute to LinShare R&amp;D by subscribing to an Enterprise offer."
 					, "\n"
 					);
