@@ -36,7 +36,6 @@ package org.linagora.linshare.auth.details.service;
 import java.util.List;
 
 import org.linagora.linshare.auth.RoleProvider;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.slf4j.Logger;
@@ -66,14 +65,28 @@ public class DatabaseUserDetailsServiceImpl implements UserDetailsService {
 		}
 		logger.debug("User found {}", user);
 		if (user.isGuest() || user.isRoot() || user.isTechnicalAccount()) {
-			List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
-			UserDetails loadedUser = new org.springframework.security.core.userdetails.User(
-					user.getLsUuid(), user.getPassword(), true, true, true, true,
-					grantedAuthorities);
-			return loadedUser;
+			return toUserDetail(user);
 		}
-		// TODO: Maybe we need to stop ProviderManager to look for a other AuthenticationProvider ?
+		// TODO: Maybe we need to stop ProviderManager to look for a other
+		// AuthenticationProvider ?
 		// User is found but not handled bu the current DatabaseAuthenticationProvider
 		throw new UsernameNotFoundException("Account not found");
+	}
+	
+	private UserDetails toUserDetail(User user) {
+		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
+		boolean enabled = true;
+		boolean accountNonExpired = true;
+		boolean credentialsNonExpired = true;
+		boolean accountNonLocked =  !user.isLocked();
+		UserDetails loadedUser = new org.springframework.security.core.userdetails.User(
+				user.getLsUuid(),
+				user.getPassword(),
+				enabled,
+				accountNonExpired,
+				credentialsNonExpired,
+				accountNonLocked,
+				grantedAuthorities);
+		return loadedUser;
 	}
 }
