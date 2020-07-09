@@ -251,12 +251,8 @@ public abstract class User extends Account {
 
 	public boolean isLocked() {
 		int modulo = authenticationFailureCount % 3;
-		System.out.println("authenticationFailureCount: " + authenticationFailureCount);
-		System.out.println("modulo: " + modulo);
 		Instant lastFailure = authenticationFailureLastDate != null ? authenticationFailureLastDate.toInstant(): null;
 		Instant instantNow = new Date().toInstant();
-		System.out.println("now: " + instantNow);
-		System.out.println("lastFailure: " + lastFailure);
 		if (authenticationFailureCount < 3) {
 			return false;
 		}
@@ -273,7 +269,6 @@ public abstract class User extends Account {
 			} else {
 				return true;
 			}
-			System.out.println("endLockout: " + endLockout);
 			if (instantNow.isBefore(endLockout)) {
 				return true;
 			}
