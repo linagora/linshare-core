@@ -1,7 +1,7 @@
 #!/bin/sh
 
-path=$1
-	echo ${path}
+l_path=$1
+	echo ${l_path}
 
 usage() {
 	echo "Usage : license.sh PATH"
@@ -9,28 +9,31 @@ usage() {
 	exit 0
 }
 
-if [ -z "$path" ]; then
+if [ -z "$l_path" ]; then
     usage
 fi
-if [ ! -d "$path" ]; then
+if [ ! -d "$l_path" ]; then
     usage
 fi
 
 set -o verbose
 
-yearto='2018'
+yearto='2020'
 
 # some legacy license use - instead of –
-find ${path} -name "*.*" | xargs -i sed -Ei 's/\(C\) (20[0-9]{2})–(20[0-9]{2}) LINAGORA/(C) \1-\2 LINAGORA/g' {}
+find ${l_path} -name "*.*" | xargs -i sed -Ei 's/\(C\) (20[0-9]{2})–(20[0-9]{2}) LINAGORA/(C) \1-\2 LINAGORA/g' {}
 
 # Match date like 2015
-find ${path} -name "*.*" | xargs -i sed -Ei 's/\(C\) (20[0-9]{2}) LINAGORA/(C) \1-'${yearto}' LINAGORA/g' {}
+find ${l_path} -name "*.*" | xargs -i sed -Ei 's/\(C\) (20[0-9]{2}) LINAGORA/(C) \1-'${yearto}' LINAGORA/g' {}
 
 # Match date like 2010-2015 
-find ${path} -name "*.*" | xargs -i sed -Ei 's/\(C\) (20[0-9]{2}-)(20[0-9]{2}) LINAGORA/(C) \1'${yearto}' LINAGORA/g' {}
+find ${l_path} -name "*.*" | xargs -i sed -Ei 's/\(C\) (20[0-9]{2}-)(20[0-9]{2}) LINAGORA/(C) \1'${yearto}' LINAGORA/g' {}
 
 # Match deeper date like 2009–2015
-find ${path} -name "*.*" | xargs -i sed -Ei 's/(20[0-9]{2}–)(20[0-9]{2})/\1'${yearto}'/g' {}
+find ${l_path} -name "*.*" | xargs -i sed -Ei 's/(20[0-9]{2}–)(20[0-9]{2})/\1'${yearto}'/g' {}
 
 # get original date for a file :
 # git rev-list --reverse  HEAD AuthRole.java |head -n1 | xargs git  show -q --format="%ci" | grep -Eo "20[0-9]{2}(-[0-1][1-9]){2}" | grep -Eo "20[0-9]{2}"
+
+
+find ${l_path} -name "*.*" | xargs -i sed -Ei 's/'${yearto}'-'${yearto}'/'${yearto}'/g' {}
