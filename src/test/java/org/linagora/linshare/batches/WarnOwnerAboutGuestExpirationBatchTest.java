@@ -1,6 +1,5 @@
 /*
-R * LinShare is an open source filesharing software, part of the LinPKI software
- * suite, developed by Linagora.
+R * LinShare is an open source filesharing software developed by LINAGORA.
  * 
  * Copyright (C) 2017-2020 LINAGORA
  * 

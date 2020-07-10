@@ -1,7 +1,6 @@
 package org.linagora.linshare.webservice.delegationv2.impl;
 /*
- * LinShare is an open source filesharing software, part of the LinPKI software
- * suite, developed by Linagora.
+ * LinShare is an open source filesharing software developed by LINAGORA.
  * 
  * Copyright (C) 2017-2020 LINAGORA
  * 
