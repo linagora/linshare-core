@@ -46,6 +46,7 @@ import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
@@ -70,6 +71,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@Disabled
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
