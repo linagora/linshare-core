@@ -47,6 +47,7 @@
 			<sec:filter-chain pattern="/webservice/rest/external/**" filters="none" />
 
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/healthcheck" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin, logoutFilterAdminV4, logoutFilterAdminV5, logoutFilterUser, logoutFilterUserV2, logoutFilterUserV4" />
