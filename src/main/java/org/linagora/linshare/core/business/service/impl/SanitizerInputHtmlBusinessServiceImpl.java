@@ -56,10 +56,10 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 	}
 
 	/**
-	 * This function clean all inputs that contains untrusted HTML and also check if
-	 * it contains predefined special characters.
+	 * This function clean all inputs that contains untrusted HTML that complies
+	 * with default {@link PolicyFactory}.
 	 * 
-	 * @param String It can contains untrusted HTML elements.
+	 * @param entry It can contains untrusted HTML elements.
 	 * @return String cleaned from all HTML and trimmed.
 	 * @throws IllegalArgumentException.
 	 */
@@ -73,10 +73,10 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 	}
 
 	/**
-	 * It can be used for control the uploaded or updated file names
+	 * It can be used for sanitize the uploaded or updated file names
 	 * 
-	 * @param String It can contains untrusted HTML elements.
-	 * @return String cleaned from all HTML and trimmed.
+	 * @param fileName contains untrusted HTML elements.
+	 * @return String cleaned from all untrusted HTML and trimmed.
 	 * @throws IllegalArgumentException.
 	 */
 	@Override

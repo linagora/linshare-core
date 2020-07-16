@@ -184,13 +184,12 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 	}
 
 	/**
-	 * 
+	 * This method will retrieve the list of MailAttachmentAuditLogEntry related to a chosen domain
 	 * @param authUser 
 	 * @param domainUuid 
-	 * @param List<LogAction>
-	 * This method will retrieve the list of MailAttachmentAuditLogEntry related to a chosen domain
+	 * @param actions List<LogAction>
+	 * @return Set of {@link MailAttachmentAuditLogEntry}
 	 */
-
 	@Override
 	public Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(Account authUser, String domainUuid,
 			List<LogAction> actions) {
@@ -201,12 +200,12 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 	}
 
 	/**
+	 * This method will retrieve the list of MailAttachmentAuditLogEntry of all domains and it is used only by a root user
 	 * 
 	 * @param authUser 
-	 * @param List<LogAction>
-	 * This method will retrieve the list of MailAttachmentAuditLogEntry of all domains and it is used only by a root user
+	 * @param actions List<LogAction>
+	 * @return Set of {@link MailAttachmentAuditLogEntry}
 	 */
-
 	@Override
 	public Set<MailAttachmentAuditLogEntry> findAllAuditsByRoot(Account authUser, List<LogAction> actions) {
 		return auditLogEntryService.findAllAuditsByRoot(authUser, actions);

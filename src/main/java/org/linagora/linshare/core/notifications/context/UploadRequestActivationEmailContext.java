@@ -49,7 +49,6 @@ public class UploadRequestActivationEmailContext extends GenericUploadRequestEma
 	 * @param owner
 	 * @param uploadRequest
 	 * @param requestUrl
-	 * @param warnOwner
 	 */
 	public UploadRequestActivationEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl) {
 		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, false);

@@ -104,9 +104,8 @@ public interface ThreadMemberRepository extends AbstractRepository<WorkgroupMemb
 
 	/**
 	 * Find members with no deleted accounts
-	 *
-	 * @param thread
-	 * @return the List of ThreadMember
+	 * @param workGroup
+	 * @return the List of {@link WorkgroupMember}
 	 */
 	public List<WorkgroupMember> findAllThreadMembers(WorkGroup workGroup);
 
@@ -114,9 +113,8 @@ public interface ThreadMemberRepository extends AbstractRepository<WorkgroupMemb
 
 	/**
 	 * Find members with deleted accounts
-	 *
-	 * @param thread
-	 * @return the List of ThreadMember
+	 * @param workGroup
+	 * @return the List of {@link WorkgroupMember}
 	 */
 	public List<WorkgroupMember> findAllInconsistentThreadMembers(WorkGroup workGroup);
 }

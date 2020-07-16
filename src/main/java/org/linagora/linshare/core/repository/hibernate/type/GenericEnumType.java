@@ -96,7 +96,7 @@ import org.hibernate.usertype.UserType;
  *        <param name="identifierMethod">toInt</param>
  *        <param name="valueOfMethod">fromInt</param>
  *    </typedef>
- *    <class ...>
+ *    <class>
  *      ...
  *     <property name="number" column="number" type="SimpleNumber"/>
  *    </class>

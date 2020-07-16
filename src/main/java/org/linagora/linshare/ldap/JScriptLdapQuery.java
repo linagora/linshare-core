@@ -205,14 +205,10 @@ public abstract class JScriptLdapQuery<T extends Object> {
 	}
 
 	/**
-	 * This function build user list from input dn list
-	 * @param dnResultList
-	 *            : // list of dn without baseDn used by the previous search.
-	 * @param completionMode
-	 *            : completion mode return a user object with only mail,
-	 *            first name, and last name set. Otherwise all defined attributes
-	 *            will be search and set (mail, firstname, lastname, uid, ...)
-	 * @return List<User> List of user
+	 * 
+	 * @param dnResultList list of dn without baseDn used by the previous search.
+	 * @param ldapDbAttributes ldap search attributes (mail, firstname, lastname)
+	 * @return List of User
 	 */
 	protected Set<T> dnListToObjectList(List<String> dnResultList, Map<String, LdapAttribute> ldapDbAttributes) {
 		// converting resulting dn to User object

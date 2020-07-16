@@ -48,9 +48,7 @@ public interface AccountRepository<U extends Account> extends
 
 	/**
 	 * Find account by lsUuid, to find activate and deleted user.
-	 *
-	 * @param clazz The entity class
-	 *
+	 * @param lsUuid uuid of the account
 	 * @return The Account
 	 */
 	U findActivateAndDestroyedByLsUuid(String lsUuid);

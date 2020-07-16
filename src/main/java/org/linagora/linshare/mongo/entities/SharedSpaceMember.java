@@ -118,7 +118,7 @@ public class SharedSpaceMember {
 	
 	/**
 	 * used by old upgrade {@link MigrateThreadToMongoUpgradeTaskImpl}
-	 * & {@link MigrateWorkGroupMemberAuditToSharedSpaceMemberAuditUpgradeTaskImpl}
+	 * and {@link MigrateWorkGroupMemberAuditToSharedSpaceMemberAuditUpgradeTaskImpl}
 	 * @param node
 	 * @param oldRole
 	 * @param account

@@ -55,10 +55,11 @@ public interface SharedSpaceRoleService {
 	SharedSpaceRole getDriveAdmin(Account authUser, Account actor) throws BusinessException;
 
 	/**
-	 * This method will retrieve a list of roles filtered by NodeType
+	 * This method will retrieve a list of roles filtered by {@link NodeType}
 	 * @param authUser: The authenticated account
 	 * @param actor: The account on which the processing will be applied
-	 * @param NodeType
+	 * @param type
+	 * @return List of {@link SharedSpaceRole}
 	 */
 	List<SharedSpaceRole> findRolesByNodeType(Account authUser, Account actor, NodeType type);
 }
