@@ -65,6 +65,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-check-inconsistent.sql" })
 @Transactional
 @ContextConfiguration(locations = { 

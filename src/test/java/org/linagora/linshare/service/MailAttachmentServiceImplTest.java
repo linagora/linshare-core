@@ -77,7 +77,8 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-		"/import-tests-domain-quota-updates.sql" })
+	"/import-tests-account.sql",
+	"/import-tests-domain-quota-updates.sql" })
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -102,8 +103,6 @@ public class MailAttachmentServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas datas;
-
 	@Autowired
 	private MailConfigRepository repository;
 
@@ -120,9 +119,7 @@ public class MailAttachmentServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		admin = datas.getRoot();
+		admin = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

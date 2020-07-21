@@ -50,7 +50,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,6 +61,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql",
 	"/import-tests-stat.sql"})
@@ -101,15 +101,11 @@ public class StatisticDailyUserBatchTest {
 	@Autowired
 	private OperationHistoryBusinessService operationHistoryBusinessService;
 
-	LoadingServiceTestDatas datas;
-
 	private User jane;
 
 	@BeforeEach
 	public void setUp (){
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		jane = datas.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org"); // Jane Smith
 	}
 
 	@Test

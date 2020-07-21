@@ -50,7 +50,6 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
@@ -146,8 +145,9 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
-		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
-		Account user = context.getResource();
+		@SuppressWarnings("rawtypes")
+		BatchResultContext context = (BatchResultContext) exception.getContext();
+		Account user = (Account) context.getResource();
 		console.logError(batchRunContext, total, position,
 				"creating DailyUserStatistic and AccountQuota has failed : " + user.getAccountRepresentation());
 	}

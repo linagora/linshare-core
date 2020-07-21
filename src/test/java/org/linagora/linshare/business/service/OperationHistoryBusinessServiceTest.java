@@ -38,9 +38,9 @@ package org.linagora.linshare.business.service;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -52,7 +52,6 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +62,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
+
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -77,6 +77,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-stat.sql"})
 @Transactional
 public class OperationHistoryBusinessServiceTest {
@@ -94,15 +95,12 @@ public class OperationHistoryBusinessServiceTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dataes;
 	private User jane;
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		dataes = new LoadingServiceTestDatas(userRepository);
-		dataes.loadUsers();
-		jane = dataes.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

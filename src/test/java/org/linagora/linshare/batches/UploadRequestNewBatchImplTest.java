@@ -67,6 +67,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
+	"/import-tests-account.sql",
 	"/import-tests-close-expired-upload-requests.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",

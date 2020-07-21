@@ -72,9 +72,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({ "/import-tests-account.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -121,8 +123,6 @@ public class SharedSpaceMemberServiceImplTest {
 
 	private SharedSpaceAccount accountJane;
 
-	private LoadingServiceTestDatas datas;
-
 	@Autowired
 	private SharedSpaceRoleBusinessService roleBusinessService;
 
@@ -151,12 +151,10 @@ public class SharedSpaceMemberServiceImplTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		root = datas.getRoot();
-		system = datas.getSystem();
-		john = datas.getUser1();
-		jane = datas.getUser2();
+		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
+		system = userRepository.getBatchSystemAccount();
+		john = userRepository.findByMail("user1@linshare.org");
+		jane = userRepository.findByMail("user2@linshare.org");
 		initService.init();
 		adminRole = roleBusinessService.findByName("ADMIN");
 		readerRole = roleBusinessService.findByName("READER");

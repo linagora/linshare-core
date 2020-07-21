@@ -61,7 +61,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserDailyStat;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +78,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-stat.sql",
 	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql" })
@@ -163,14 +163,11 @@ public class DailyBatchJobTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dates;
 	private User jane;
 
 	@BeforeEach
 	public void setUp() {
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
-		jane = dates.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");;
 	}
 
 	@Test

@@ -63,7 +63,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
@@ -71,6 +70,7 @@ import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
 import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
@@ -86,6 +86,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.subethamail.wiser.Wiser;
@@ -94,6 +95,7 @@ import com.beust.jcommander.internal.Lists;
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
+@Sql({ "/import-tests.sql" })
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -151,8 +153,6 @@ public class LDAPGroupSyncServiceImplTest {
 
 	private String baseDn;
 
-	private LoadingServiceTestDatas datas;
-
 	private SystemAccount systemAccount;
 
 	private AbstractDomain domain;
@@ -170,10 +170,9 @@ public class LDAPGroupSyncServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
 		init.init();
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
 		systemAccount = userRepository.getBatchSystemAccount();
-		domain = datas.getUser2().getDomain();
+		Account root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
+		domain = abstractDomainService.findById("MyDomain");
 		attributes = new HashMap<String, LdapAttribute>();
 		attributes.put(GroupLdapPattern.GROUP_NAME, new LdapAttribute(GroupLdapPattern.GROUP_NAME, "cn"));
 		attributes.put(GroupLdapPattern.GROUP_MEMBER, new LdapAttribute(GroupLdapPattern.GROUP_MEMBER, "member"));
@@ -191,7 +190,6 @@ public class LDAPGroupSyncServiceImplTest {
 				"ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-\" + pattern + \"))\");");
 		groupPattern.setSearchPageSize(100);
 		groupPattern.setGroupPrefix("workgroup-");
-		Account root = datas.getRoot();
 		baseDn = "dc=linshare,dc=org";
 		groupPattern = groupPatternService.create(root, groupPattern);
 		ldapConnection = new LdapConnection("testldap", "ldap://localhost:33389", "anonymous");
@@ -200,7 +198,7 @@ public class LDAPGroupSyncServiceImplTest {
 		groupProvider.setType(GroupProviderType.LDAP_PROVIDER);
 		groupProvider = groupProviderService.create(groupProvider);
 		domain.setGroupProvider(groupProvider);
-		domain = abstractDomainService.updateDomain(datas.getRoot(), domain);
+		domain = abstractDomainService.updateDomain(root, domain);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

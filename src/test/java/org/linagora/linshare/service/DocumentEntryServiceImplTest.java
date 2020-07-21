@@ -82,9 +82,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-account.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -127,23 +130,20 @@ public class DocumentEntryServiceImplTest {
 	private User john;
 
 	private User jane;
+
 	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 
 	private final String fileName = "linshare-default.properties";
 	private final String comment = "file description";
 	private DocumentEntry aDocumentEntry;
 
-	private LoadingServiceTestDatas datas;
-
 	private static final String EXCEPTION_GET_MESSAGE = "You are not authorized to get this entry.";
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
-		jane = datas.getUser2();
+		john = userRepository.findByMail("user1@linshare.org");
+		jane = userRepository.findByMail("user2@linshare.org");
 		createFunctionalities();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

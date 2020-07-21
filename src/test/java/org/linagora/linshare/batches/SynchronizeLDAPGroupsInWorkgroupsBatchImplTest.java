@@ -46,7 +46,6 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.GroupProviderType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
@@ -61,6 +60,9 @@ import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +74,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
-
 @ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
@@ -119,7 +121,8 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	@Autowired
 	private InitMongoService initService;
 
-	private LoadingServiceTestDatas datas;
+	@Mock
+	private User root;
 
 	public SynchronizeLDAPGroupsInWorkgroupsBatchImplTest() {
 		super();
@@ -128,10 +131,9 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		Mockito.when(root.hasSuperAdminRole()).thenReturn(true);
+		Mockito.when(root.getLsUuid()).thenReturn("lsUuid");
 		initService.init();
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		Account root = datas.getRoot();
 		GroupLdapPatternDto groupPatternDto = new GroupLdapPatternDto();
 		groupPatternDto.setDescription("description");
 		groupPatternDto.setLabel("New Pattern");
@@ -155,9 +157,10 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 //		AbstractDomain topDomain = abstractDomainService.findById(LoadingServiceTestDatas.topDomainName);
 //		topDomain.setGroupProvider(groupProvider);
 //		topDomain = abstractDomainService.updateDomain(datas.getRoot(), topDomain);
-		AbstractDomain domain = abstractDomainService.findById(LoadingServiceTestDatas.sqlDomain);
+		AbstractDomain domain = abstractDomainService.findById(LoadingServiceTestDatas.sqlRootDomain);
 		domain.setGroupProvider(groupProvider);
-		domain = abstractDomainService.updateDomain(datas.getRoot(), domain);
+		Mockito.when(root.getDomain()).thenReturn(domain);
+		domain = abstractDomainService.updateDomain(root, domain);
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 	}
 

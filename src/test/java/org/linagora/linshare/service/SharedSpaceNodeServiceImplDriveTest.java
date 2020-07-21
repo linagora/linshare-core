@@ -62,9 +62,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({ "/import-tests-account.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -97,8 +99,6 @@ public class SharedSpaceNodeServiceImplDriveTest {
 
 	private Account authUser;
 
-	private LoadingServiceTestDatas datas;
-
 	public SharedSpaceNodeServiceImplDriveTest() {
 		super();
 	}
@@ -106,10 +106,8 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
 		init.init();
-		authUser = datas.getUser1();
+		authUser = userRepository.findByMail("user1@linshare.org");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

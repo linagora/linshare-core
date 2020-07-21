@@ -56,7 +56,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Sql({"/import-tests-domain-quota-updates.sql"})
+@Sql({
+	"/import-tests-account.sql",
+	"/import-tests-domain-quota-updates.sql"})
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -86,17 +88,13 @@ public class DomainQuotaServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas datas;
-
 	private AbstractDomain topDomain;
 
 	private Account jane;
 
 	@BeforeEach
 	public void setUp() {
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		jane = datas.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 		topDomain = domainRepository.findById(LoadingServiceTestDatas.sqlDomain);
 	}
 

@@ -67,9 +67,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-account.sql"})
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -106,7 +109,6 @@ public class WorkGroupFolderServiceTest {
 	@Autowired
 	private InitMongoService init;
 
-	private LoadingServiceTestDatas datas;
 	private User jane;
 
 	private boolean dryRun = false;
@@ -114,9 +116,7 @@ public class WorkGroupFolderServiceTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		jane = datas.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 		init.init();
 	}
 

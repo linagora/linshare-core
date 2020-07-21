@@ -31,15 +31,17 @@ import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-account.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -82,9 +84,7 @@ public class AnonymousUrlRepositoryImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		LoadingServiceTestDatas datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
+		john = userRepository.findByMail("user1@linshare.org");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

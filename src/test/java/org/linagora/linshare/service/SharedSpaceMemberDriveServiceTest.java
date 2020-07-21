@@ -66,9 +66,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({ "/import-tests-account.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -120,9 +122,6 @@ public class SharedSpaceMemberDriveServiceTest {
 
 	private SharedSpaceRole reader;
 
-	private LoadingServiceTestDatas datas;
-
-
 	public SharedSpaceMemberDriveServiceTest() {
 		super();
 	}
@@ -130,12 +129,10 @@ public class SharedSpaceMemberDriveServiceTest {
 	@BeforeEach
 	public void init() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
 		initService.init();
-		Account root = datas.getRoot();
-		john = datas.getUser1();
-		jane = datas.getUser2();
+		Account root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
+		john = userRepository.findByMail("user1@linshare.org");
+		jane = userRepository.findByMail("user2@linshare.org");
 		adminWorkgroupRole = ssRoleService.getAdmin(root, root);
 		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
 		writerDriveRole = ssRoleService.findByName(root, root, "DRIVE_WRITER");

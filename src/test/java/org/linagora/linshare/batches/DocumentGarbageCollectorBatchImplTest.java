@@ -60,18 +60,20 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-account.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -113,8 +115,6 @@ public class DocumentGarbageCollectorBatchImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	private LoadingServiceTestDatas datas;
-
 	private Account john;
 
 	private File tempFile, tempFile2;
@@ -127,9 +127,7 @@ public class DocumentGarbageCollectorBatchImplTest {
 		tempFile = File.createTempFile("linshare-test-1", ".tmp");
 		tempFile2 = File.createTempFile("linshare-test-2", ".tmp");
 		stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
+		john =userRepository.findByMail("user1@linshare.org");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

@@ -73,6 +73,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-document-entry-setup.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -113,8 +114,6 @@ public class ShareNewShareEmailBuilderTest {
 	@Autowired
 	protected MailAttachmentService attachmentService;
 
-	private LoadingServiceTestDatas datas;
-
 	private User owner;
 
 	private Account actor;
@@ -128,11 +127,9 @@ public class ShareNewShareEmailBuilderTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		owner = datas.getUser1();
+		owner = userRepository.findByMail("user1@linshare.org");
 		actor = (Account) owner;
-		admin = datas.getRoot();
+		admin = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -144,7 +141,7 @@ public class ShareNewShareEmailBuilderTest {
 
 	@Test
 	public void testCreateNewSharesFiles() throws BusinessException, IOException {
-		User recipient = datas.getUser2();
+		User recipient = userRepository.findByMail("user2@linshare.org");
 		List<String> documents = new  ArrayList<String>();
 		documents.add("bfaf3fea-c64a-4ee0-bae8-b1482f1f6401");
 		documents.add("fd87394a-41ab-11e5-b191-080027b8274b");
@@ -156,7 +153,7 @@ public class ShareNewShareEmailBuilderTest {
 
 	@Test
 	public void testCreateNewSharesFiles_MailAttachment() throws BusinessException, IOException {
-		User recipient = datas.getUser3();
+		User recipient = userRepository.findByMail("user3@linshare.org");
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
 		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 		File tempFile = File.createTempFile("linshare-test", ".tmp");

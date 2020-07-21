@@ -88,6 +88,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,6 +110,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-mongo-java-server.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
+@Sql({ "/import-tests-account.sql" })
 public class UserServiceImplTest {
 
 	private static Logger logger = LoggerFactory
@@ -146,8 +148,6 @@ public class UserServiceImplTest {
 	@Autowired
 	private GuestService guestService;
 
-	private LoadingServiceTestDatas datas;
-
 	private User john;
 	
 	private Account root;
@@ -166,10 +166,7 @@ public class UserServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
-		root = datas.getRoot();
+		john = userRepository.findByMail("user1@linshare.org");
 		technicalAccount = new TechnicalAccount();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

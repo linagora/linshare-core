@@ -66,6 +66,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
+	"/import-tests.sql",
 	"/import-tests-domain-quota-updates.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", 

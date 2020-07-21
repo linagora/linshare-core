@@ -58,11 +58,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import io.jsonwebtoken.Claims;
 
 @ExtendWith(SpringExtension.class)
+@Sql({ "/import-tests.sql" })
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -94,8 +96,6 @@ public class JwtLongTimeServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas datas;
-
 	private User john;
 
 	private User jane;
@@ -112,11 +112,9 @@ public class JwtLongTimeServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
-		jane = datas.getUser2();
-		root = datas.getRoot();
+		john = userRepository.findByMail("user1@linshare.org");
+		jane = userRepository.findByMail("user2@linshare.org");
+		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

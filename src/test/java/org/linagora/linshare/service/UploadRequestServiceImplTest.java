@@ -84,6 +84,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -134,8 +135,6 @@ public class UploadRequestServiceImplTest {
 
 	private UploadRequest ure = new UploadRequest();
 
-	private LoadingServiceTestDatas datas;
-
 	private UploadRequest eJohn;
 
 	private UploadRequest eJane;
@@ -159,10 +158,8 @@ public class UploadRequestServiceImplTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
-		jane = datas.getUser2();
+		john = userRepository.findByMail("user1@linshare.org");
+		jane = userRepository.findByMail("user2@linshare.org");
 		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
 		yoda = repository.findByMail("yoda@linshare.org");
 		john.setDomain(subDomain);

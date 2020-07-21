@@ -49,7 +49,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -76,6 +75,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -108,10 +108,6 @@ public class UploadRequestUpdateStatusTest {
 
 	@Autowired
 	private UploadRequestUrlService uploadRequestUrlService;
-
-	@Qualifier("jcloudFileDataStore")
-	@Autowired
-	private FileDataStore fileDataStore;
 
 	private UploadRequest referenceUploadRequest = new UploadRequest();
 

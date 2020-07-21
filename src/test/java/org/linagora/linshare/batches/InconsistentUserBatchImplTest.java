@@ -46,7 +46,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.batches.InconsistentUserBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
@@ -54,7 +53,9 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
+@ExtendWith(MockitoExtension.class)
 @Sql({
 	"/import-tests-inconsistent.sql"})
 @Transactional
@@ -103,9 +105,8 @@ public class InconsistentUserBatchImplTest {
 	@Autowired
 	private InconsistentUserService inService;
 
-	private LoadingServiceTestDatas datas;
-
-	private Account root;
+	@Mock
+	private User root;
 
 	public InconsistentUserBatchImplTest() {
 		super();
@@ -114,9 +115,6 @@ public class InconsistentUserBatchImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		root = datas.getRoot();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -137,6 +135,7 @@ public class InconsistentUserBatchImplTest {
 
 	@Test
 	public void testInconsistentBatch() {
+		Mockito.when(root.hasSuperAdminRole()).thenReturn(true);
 		BatchRunContext batchRunContext = new BatchRunContext();
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		List<String> list = inconsistentUserBatch.getAll(batchRunContext);
@@ -145,7 +144,7 @@ public class InconsistentUserBatchImplTest {
 			inconsistentUserBatch.execute(batchRunContext, s, list.size(), i);
 		}
 		List<Internal> l = inService.findAllInconsistent((User)root);
-		Assertions.assertEquals(l.size(), 5);
+		Assertions.assertEquals(2, l.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

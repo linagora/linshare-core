@@ -55,21 +55,22 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
+	"/import-tests-account.sql",
 	"/import-tests-stat.sql",
-	"/import-tests-operationHistory.sql" })
+	"/import-tests-operationHistory.sql",
+	"/import-tests-workgroup-operation-history.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
 public class OperationHistoryRepositoryImplTest {
@@ -87,17 +88,14 @@ public class OperationHistoryRepositoryImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dates;
 	private User jane;
 	private User john;
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
-		jane = dates.getUser2();
-		john = dates.getUser1();
+		jane = userRepository.findByMail("user2@linshare.org");
+		john = userRepository.findByMail("user1@linshare.org");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

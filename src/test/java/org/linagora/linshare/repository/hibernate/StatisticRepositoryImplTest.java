@@ -49,10 +49,10 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.domain.entities.Statistic;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DomainDailyStatisticRepository;
 import org.linagora.linshare.core.repository.StatisticRepository;
@@ -60,19 +60,19 @@ import org.linagora.linshare.core.repository.ThreadDailyStatisticRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.ThreadWeeklyStatisticRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-stat.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -116,14 +116,11 @@ public class StatisticRepositoryImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dates;
 	private User jane;
 
 	@BeforeEach
 	public void setUp() {
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
-		jane = dates.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 	}
 
 	@Test

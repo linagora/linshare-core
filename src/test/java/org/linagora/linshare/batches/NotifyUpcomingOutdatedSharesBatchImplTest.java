@@ -59,18 +59,19 @@ import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
+@Sql({ "/import-tests-account.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -118,8 +119,6 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 	@Qualifier("accountService")
 	AccountService accountService;
 
-	private LoadingServiceTestDatas datas;
-
 	private User owner;
 
 	private Account actor;
@@ -135,12 +134,10 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		owner = datas.getUser1();
+		owner = userRepository.findByMail("user1@linshare.org"); // John Do
+		recipient = userRepository.findByMail("user2@linshare.org"); // Jane Smith
+		anonymousRecipient = userRepository.findByMail("user3@linshare.org"); // Foo Bar
 		actor = (Account) owner;
-		recipient = datas.getUser1();
-		anonymousRecipient = datas.getUser2();
 		initShares();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

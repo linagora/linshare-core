@@ -59,9 +59,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({ "/import-tests-account.sql" })
 @Transactional
 @ContextConfiguration(locations={
 		"classpath:springContext-test.xml", 
@@ -106,7 +108,7 @@ public class RecipientFavouriteRepositoryImplTest {
 		user2 = new Internal("Jane","Smith","user2@linshare.org", null);
 		user3 = new Internal("Foo","Bar","user3@linshare.org", null); 
 
-		AbstractDomain userGuestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.guestDomainName1);
+		AbstractDomain userGuestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		user1.setLocale(userGuestDomain.getDefaultTapestryLocale());
 		user2.setLocale(userGuestDomain.getDefaultTapestryLocale());
 		user3.setLocale(userGuestDomain.getDefaultTapestryLocale());
@@ -115,9 +117,9 @@ public class RecipientFavouriteRepositoryImplTest {
 		user2.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
 		user3.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
 
-		user1.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.topDomainName));
-		user2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1));
-		user3.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.guestDomainName1));
+		user1.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlDomain));
+		user2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain));
+		user3.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 
 		user1 = userRepository.create(user1);		
 		user2 = userRepository.create(user2);

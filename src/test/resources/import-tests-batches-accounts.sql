@@ -1,3 +1,16 @@
+INSERT INTO domain_abstract(
+	id, type , uuid, label, 
+	enable, template, description, default_role, 
+	default_locale, purge_step, user_provider_id, 
+	domain_policy_id, parent_id, auth_show_order, mailconfig_id, 
+	welcome_messages_id, creation_date, modification_date) 
+VALUES
+-- Top domain (MyDomain)
+	( 2, 1, 'MyDomain', 'MyDomain', 
+	true, false, 'a simple description', 0, 
+	'en','IN_USE', null, 1, 
+	1, 2, null, 1,
+	 now(), now());
 
 -- guest1 - expired
 INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date, inconsistent, authentication_failure_count)

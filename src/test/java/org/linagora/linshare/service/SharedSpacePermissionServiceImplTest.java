@@ -51,6 +51,9 @@ import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpacePermissionService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +62,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-repository.xml",
@@ -80,7 +84,7 @@ public class SharedSpacePermissionServiceImplTest{
 
 	@Autowired
 	@Qualifier("userRepository")
-	private UserRepository<User> userRepo;
+	private UserRepository<User> userRepository;
 
 	@Autowired
 	InitMongoService initMongoService;
@@ -88,17 +92,14 @@ public class SharedSpacePermissionServiceImplTest{
 	@Autowired
 	private SharedSpacePermissionService service;
 
+	@Mock
 	private Account authUser;
-
-	private LoadingServiceTestDatas datas;
 
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		initMongoService.init();
-		datas = new LoadingServiceTestDatas(userRepo);
-		datas.loadUsers();
-		authUser = datas.getUser1();
+		Mockito.when(authUser.isUser()).thenReturn(true);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -111,6 +112,7 @@ public class SharedSpacePermissionServiceImplTest{
 	@Test
 	public void testFind() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		addStubingUuid();
 		SharedSpacePermission toFindPermission = service.findByUuid(authUser, authUser,
 				"31cb4d80-c939-40f1-a79e-4d77392e0e0b");
 		Assertions.assertNotNull(toFindPermission,"Permission has not been found.");
@@ -120,6 +122,7 @@ public class SharedSpacePermissionServiceImplTest{
 	@Test
 	public void testFindByRole() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		addStubingUuid();
 		List<SharedSpacePermission> toFindPermission = service.findByRole(authUser, authUser, "ADMIN");
 		Assertions.assertNotNull(toFindPermission,"Permission has not been found.");
 		logger.info(LinShareTestConstants.END_TEST);
@@ -131,5 +134,9 @@ public class SharedSpacePermissionServiceImplTest{
 		List<SharedSpacePermission> toFindPermission = service.findAll(authUser, authUser);
 		Assertions.assertNotNull(toFindPermission,"Permission has not been found.");
 		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	private void addStubingUuid() {
+		Mockito.when(authUser.getLsUuid()).thenReturn("aebe1b64-39c0-11e5-9fa8-080027b8274b");
 	}
 }

@@ -56,7 +56,6 @@ import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +82,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-quota.sql"
 	})
 @Transactional
@@ -109,16 +109,12 @@ public class QuotaBusinessServiceTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas datas;
 	private User jane;
 
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		jane = datas.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

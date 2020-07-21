@@ -1,3 +1,4 @@
+
 INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail, compute_thumbnail)
 	VALUES (1, '92ce81a8-3e87-413b-82c6-8ae9940aae9e', now(), 'data', 1024, false, false, false);
 

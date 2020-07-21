@@ -85,6 +85,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-domain-quota-updates.sql" })
 @Transactional
 @ContextConfiguration(locations = { 
@@ -128,8 +129,6 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Autowired
 	private WorkGroupNodeMongoRepository repository;
 
-	LoadingServiceTestDatas datas;
-
 	private User john;
 
 	private WorkGroup workGroup;
@@ -141,9 +140,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
+		john = userRepository.findByMail("user1@linshare.org");
 		initMongoService.init();
 		createNeed();
 		logger.debug(LinShareTestConstants.END_SETUP);

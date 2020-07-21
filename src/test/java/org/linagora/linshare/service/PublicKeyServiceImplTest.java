@@ -58,10 +58,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-account.sql"})
 @ContextConfiguration(locations = {
 				"classpath:springContext-datasource.xml",
 				"classpath:springContext-repository.xml",
@@ -86,8 +89,6 @@ public class PublicKeyServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	private LoadingServiceTestDatas datas;
-
 	private Account root;
 
 	private Account jane;
@@ -97,10 +98,8 @@ public class PublicKeyServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		root = datas.getRoot();
-		jane = datas.getUser2();
+		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
+		jane = userRepository.findByMail("user2@linshare.org");
 		domain = root.getDomain();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

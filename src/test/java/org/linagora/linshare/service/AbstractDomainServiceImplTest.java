@@ -77,9 +77,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({ "/import-tests.sql" })
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -137,8 +139,6 @@ public class AbstractDomainServiceImplTest {
 
 	private Account root;
 
-	private LoadingServiceTestDatas datas;
-
 	private AbstractDomain domain;
 
 	@Autowired
@@ -148,11 +148,9 @@ public class AbstractDomainServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		domain = datas.getUser1().getDomain();
+		domain = userRepository.findByMail("user1@linshare.org").getDomain();
 		ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
-		root = datas.getRoot();
+		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
 		current = welcomeService.find((User) root, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
@@ -347,7 +345,7 @@ public class AbstractDomainServiceImplTest {
 	@Test
 	public void testPurgeDomainWithFunctionalities() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
+		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
 		Assertions.assertNotNull(subDomain);
 		Assertions.assertNotNull(subDomain.getFunctionalities());
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");

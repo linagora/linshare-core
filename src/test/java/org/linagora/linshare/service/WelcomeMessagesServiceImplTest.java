@@ -56,9 +56,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-account.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -187,7 +190,7 @@ public class WelcomeMessagesServiceImplTest {
 		welcomeMessage.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
 		welcomeMessage.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
 		WelcomeMessages welcomeMessage_create = welcomeService.create(actor, welcomeMessage,
-				LoadingServiceTestDatas.rootDomainName);
+				LoadingServiceTestDatas.sqlRootDomain);
 		Assertions.assertNotNull(welcomeMessage_create);
 		Assertions.assertEquals(welcomeMessage_create.getName(), "EP_TEST_v233");
 		Assertions.assertEquals(welcomeMessage_create.getDescription(), "EP_TEST_v233");
@@ -199,7 +202,7 @@ public class WelcomeMessagesServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		WelcomeMessages welcomeMessage = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 		WelcomeMessages welcomeMessage_create = welcomeService.create(actor, welcomeMessage,
-				LoadingServiceTestDatas.rootDomainName);
+				LoadingServiceTestDatas.sqlRootDomain);
 		Assertions.assertNotNull(welcomeMessage_create);
 		welcomeMessage_create.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
 		welcomeMessage_create.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");

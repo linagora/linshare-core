@@ -62,6 +62,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
+@Sql({ "/import-tests-account.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -97,8 +98,6 @@ public class ContainerQuotaBusinessServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas datas;
-
 	private AbstractDomain guestDomain;
 
 	private AbstractDomain topDomain;
@@ -113,10 +112,7 @@ public class ContainerQuotaBusinessServiceImplTest {
 
 	@BeforeEach
 	public void setUp() {
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		jane = datas.getUser2();
-//		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
+		jane = userRepository.findByMail("user2@linshare.org");
 		guestDomain = domainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		topDomain = domainRepository.findById(LoadingServiceTestDatas.sqlDomain);
 		rootDomain = domainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);

@@ -39,9 +39,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.UserMonthlyStatBusinessService;
@@ -52,7 +52,6 @@ import org.linagora.linshare.core.domain.entities.UserDailyStat;
 import org.linagora.linshare.core.domain.entities.UserMonthlyStat;
 import org.linagora.linshare.core.domain.entities.UserWeeklyStat;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +75,10 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-@Sql({"/import-tests-stat.sql","/import-tests-operationHistory.sql"})
+@Sql({
+	"/import-tests-account.sql",
+	"/import-tests-stat.sql",
+	"/import-tests-operationHistory.sql"})
 @Transactional
 public class UserStatBusinessServiceTest {
 
@@ -95,15 +97,12 @@ public class UserStatBusinessServiceTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dates;
 	private User jane;
 
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
-		jane = dates.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

@@ -52,9 +52,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@Sql({ "/import-tests-account.sql" })
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -68,8 +70,6 @@ public class LoadingServiceTestDatasTest {
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
-
-	private LoadingServiceTestDatas datas;
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -88,11 +88,9 @@ public class LoadingServiceTestDatasTest {
 	@Test
 	public void testUser() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		Account a = datas.getUser1();
+		Account a = userRepository.findByMail("user1@linshare.org");
 		Assertions.assertNotNull(a);
-		Account b = datas.getUser2();
+		Account b = userRepository.findByMail("user2@linshare.org");
 		Assertions.assertNotNull(b);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

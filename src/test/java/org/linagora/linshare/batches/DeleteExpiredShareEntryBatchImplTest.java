@@ -62,6 +62,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-expired-share-entry-setup.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",

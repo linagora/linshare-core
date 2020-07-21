@@ -71,7 +71,6 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +86,9 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
+	"/import-tests.sql",
 	"/import-tests-operationHistory.sql",
+	"/import-tests-workgroup-operation-history.sql",
 	"/import-tests-quota.sql"})
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -148,14 +149,11 @@ public class DailyBatchTest {
 	@Autowired
 	private OperationHistoryBusinessService operationHistoryBusinessService;
 
-	LoadingServiceTestDatas dates;
 	private User jane;
 
 	@BeforeEach
 	public void setUp (){
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
-		jane = dates.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 	}
 
 	@AfterEach

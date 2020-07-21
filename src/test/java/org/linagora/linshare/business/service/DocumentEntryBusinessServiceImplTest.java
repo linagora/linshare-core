@@ -71,13 +71,13 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,6 +86,8 @@ import com.google.common.io.Files;
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
+@Sql({
+	"/import-tests-account.sql"})
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -130,16 +132,12 @@ public class DocumentEntryBusinessServiceImplTest {
 	@Autowired
 	private FileDataStore fileDataStore;
 
-	private LoadingServiceTestDatas datas;
-
 	private User jane;
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		jane = datas.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 		workGroup = threadService.create(jane, jane, "work_group_name_1");
 		workGroupFolder = new WorkGroupFolder(new AccountMto(jane), "folder1", null, workGroup.getLsUuid());
 		logger.debug(LinShareTestConstants.END_SETUP);

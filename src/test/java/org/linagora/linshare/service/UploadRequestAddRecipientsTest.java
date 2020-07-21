@@ -69,6 +69,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-upload-request-add-recipients.sql" })
 @Transactional
 @ContextConfiguration(locations = {
@@ -97,8 +98,6 @@ public class UploadRequestAddRecipientsTest {
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
-	private LoadingServiceTestDatas datas;
-
 	private UploadRequest uploadRequest;
 
 	private User john;
@@ -112,10 +111,8 @@ public class UploadRequestAddRecipientsTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
-		jane = datas.getUser2();
+		john = userRepository.findByMail("user1@linshare.org");
+		jane = userRepository.findByMail("user2@linshare.org");
 		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
 		john.setDomain(subDomain);
 		jane.setDomain(subDomain);

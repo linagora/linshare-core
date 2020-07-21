@@ -35,7 +35,7 @@
  */
 package org.linagora.linshare.batches;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -44,32 +44,32 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.linagora.linshare.core.business.service.UserWeeklyStatBusinessService;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessService;
 import org.linagora.linshare.core.business.service.ThreadWeeklyStatisticBusinessService;
+import org.linagora.linshare.core.business.service.UserWeeklyStatBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainWeeklyStat;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserWeeklyStat;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
+	"/import-tests-account.sql",
 	"/import-tests-stat.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -120,14 +120,11 @@ public class WeeklyBatchTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dates;
 	private User jane;
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
-		jane = dates.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org"); // Jane Smith
 	}
 
 	@Test

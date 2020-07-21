@@ -81,6 +81,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
+	"/import-tests.sql",
 	"/import-tests-domain-quota-updates.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -126,8 +127,6 @@ public class WorkGroupNodeServiceImplTest {
 	@Autowired
 	private FunctionalityReadOnlyService functionalityService;
 
-	LoadingServiceTestDatas datas;
-
 	private User john;
 
 	private SharedSpaceNode ssnode;
@@ -141,9 +140,7 @@ public class WorkGroupNodeServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
+		john = userRepository.findByMail("user1@linshare.org");
 		initMongoService.init();
 		ssnode = sharedSpaceNodeService.create(john, john,
 				new SharedSpaceNode("Workgroup_test", "My parent nodeUuid", NodeType.WORK_GROUP));

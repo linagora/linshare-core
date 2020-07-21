@@ -57,19 +57,19 @@ import org.linagora.linshare.core.domain.entities.UserMonthlyStat;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
+	"/import-tests-account.sql",
 	"/import-tests-stat.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -122,19 +122,16 @@ public class MonthlyBatchTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas dates;
 	private User jane;
 
 	private Date currentDate;
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		dates = new LoadingServiceTestDatas(userRepository);
-		dates.loadUsers();
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -1);
 		currentDate = calendar.getTime();
-		jane = dates.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 	}
 
 	@Test

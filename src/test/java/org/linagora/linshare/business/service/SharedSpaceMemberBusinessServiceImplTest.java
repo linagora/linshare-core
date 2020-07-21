@@ -63,16 +63,18 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @Disabled
 @ExtendWith(SpringExtension.class)
+@Sql({
+	"/import-tests-account.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -109,17 +111,13 @@ public class SharedSpaceMemberBusinessServiceImplTest {
 	private User jane;
 
 	private SharedSpaceAccount accountJane;
-
-	private LoadingServiceTestDatas datas;
 	
 	private LightSharedSpaceRole lightAdminRoleToPersist, lightReaderRoleToPersist, lightContirbutorRoleToPersist;
 
 	@BeforeEach
 	public void setUp() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		jane = datas.getUser2();
+		jane = userRepository.findByMail("user2@linshare.org");
 		initService.init();
 		lightAdminRoleToPersist = new LightSharedSpaceRole(roleRepository.findByName("ADMIN"));
 		lightReaderRoleToPersist = new LightSharedSpaceRole(roleRepository.findByName("READER"));

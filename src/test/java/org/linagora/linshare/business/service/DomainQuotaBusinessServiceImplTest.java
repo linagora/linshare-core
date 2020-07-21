@@ -69,7 +69,9 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-@Sql({"/import-tests-domain-quota-updates.sql"})
+@Sql({
+	"/import-tests-account.sql",
+	"/import-tests-domain-quota-updates.sql"})
 @Transactional
 public class DomainQuotaBusinessServiceImplTest {
 	@Autowired
@@ -86,17 +88,12 @@ public class DomainQuotaBusinessServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas datas;
-
 	private AbstractDomain guestDomain;
 
 	private AbstractDomain topDomain;
 
 	@BeforeEach
 	public void setUp() {
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-//		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
 		guestDomain = domainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		topDomain = domainRepository.findById(LoadingServiceTestDatas.sqlDomain);
 	}
