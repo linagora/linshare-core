@@ -185,17 +185,22 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public UserDto update(UserDto userDto) throws BusinessException {
+	public UserDto update(UserDto userDto, Integer version) throws BusinessException {
 		Validate.notNull(userDto, "user must be set.");
 		Validate.notEmpty(userDto.getUuid(), "uuid must be set.");
 		Validate.notNull(userDto.getLocale(), "locale must be set.");
 		User authUser = checkAuthentication(Role.ADMIN);
 		User entity = userService.findByLsUuid(userDto.getUuid());
 		if (entity == null) {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-					"Can not find user");
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Can not find user");
 		}
 		User userToUpdate = userDto.toUserObject(entity.isGuest());
+		if (version >= 4) {
+			Validate.notNull(userDto.isLocked(), "isLocked parameter should be set");
+			if (!userDto.isLocked() && entity.isLocked()) {
+				entity = userService.unlockUser(authUser, entity);
+			}
+		}
 		User update;
 		if (entity.isGuest()) {
 			List<String> ac = null;
@@ -211,7 +216,11 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			update = userService.updateUser(authUser, userToUpdate,
 					userDto.getDomain());
 		}
-		return UserDto.getFull(update);
+		UserDto updatedDto = UserDto.getFull(update);
+		if (version >= 4) {
+			updatedDto.setLocked(update.isLocked());
+		}
+		return updatedDto;
 	}
 
 	@Override
@@ -288,8 +297,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public void updateInconsistent(UserDto userDto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		update(userDto);
-		userService.findByLsUuid(userDto.getUuid());
+		update(userDto, 1);
 		inconsistentUserService.updateDomain(authUser, userDto.getUuid(), userDto.getDomain());
 	}
 
@@ -377,6 +385,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		AccountQuota quota = quotaService.findByRelatedAccount(user);
 		userDto.setQuotaUuid(quota.getUuid());
 		if (version >= 4) {
+			userDto.setLocked(user.isLocked());
 			BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(user.getDomain());
 			if (twofaFunc.getActivationPolicy().getStatus()) {
 				userDto.setSecondFAUuid(user.getLsUuid());

@@ -36,6 +36,7 @@
 package org.linagora.linshare.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -55,6 +56,7 @@ import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
@@ -147,6 +149,8 @@ public class UserServiceImplTest {
 	private LoadingServiceTestDatas datas;
 
 	private User john;
+	
+	private Account root;
 
 	private TechnicalAccount technicalAccount;
 
@@ -165,6 +169,7 @@ public class UserServiceImplTest {
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
+		root = datas.getRoot();
 		technicalAccount = new TechnicalAccount();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -922,5 +927,19 @@ public class UserServiceImplTest {
 				+ " Password must contain 1 or more special characters.]",
 				exception.getMessage());
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUnclock() throws BusinessException {
+		Assertions.assertFalse(john.isLocked(), "John should be unlocked");
+		john.setAuthenticationFailureCount(2);
+		Assertions.assertFalse(john.isLocked(), "John should still be unlocked");
+		john.setAuthenticationFailureCount(3);
+		Calendar authLastFaillureInstant = Calendar.getInstance();
+		authLastFaillureInstant.add(Calendar.MINUTE, -5);
+		john.setAuthenticationFailureLastDate(authLastFaillureInstant.getTime());
+		Assertions.assertTrue(john.isLocked(), "Initial conditions: John should be locked");
+		userService.unlockUser(root, john);
+		Assertions.assertFalse(john.isLocked(), "John still locked");
 	}
 }

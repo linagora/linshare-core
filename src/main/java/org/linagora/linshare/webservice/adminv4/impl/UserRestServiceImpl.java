@@ -36,6 +36,7 @@
 package org.linagora.linshare.webservice.adminv4.impl;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -72,5 +73,15 @@ public class UserRestServiceImpl extends org.linagora.linshare.webservice.admin.
 			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return userFacade.findUser(uuid, 4);
+	}
+
+	@Path("/")
+	@PUT
+	@Operation(summary = "Update an user.")
+	@Override
+	public UserDto update(
+			@Parameter(description = "User to update", required = true) UserDto userDto)
+			throws BusinessException {
+		return userFacade.update(userDto, 4);
 	}
 }

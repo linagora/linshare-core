@@ -200,4 +200,13 @@ public interface UserService {
 	User updateUserForSuccessfulAuthentication(String uuid) throws BusinessException;
 
 	User updateUserForFailureAuthentication(String uuid) throws BusinessException;
+
+	/**
+	 * Method that allows administrator of a domain to unlock users.
+	 * @param authUser {@link Account} the authenticated account
+	 * @param accountToUnlock user that'll be unlocked
+	 * @return {@link User}
+	 * @throws BusinessException
+	 */
+	User unlockUser(Account authUser, User accountToUnlock) throws BusinessException;
 }

@@ -54,7 +54,7 @@ public interface UserFacade extends AdminGenericFacade {
 
 	Set<UserDto> searchGuests(String pattern) throws BusinessException;
 
-	UserDto update(UserDto userDto) throws BusinessException;
+	UserDto update(UserDto userDto, Integer version) throws BusinessException;
 
 	UserDto delete(UserDto userDto) throws BusinessException;
 
@@ -78,5 +78,5 @@ public interface UserFacade extends AdminGenericFacade {
 
 	SecondFactorDto delete2FA(String userUuid, String secondFactorUuid, SecondFactorDto dto) throws BusinessException;
 
-	SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException;;
+	SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException;
 }

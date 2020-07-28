@@ -1057,4 +1057,18 @@ public class UserServiceImpl implements UserService {
 		}
 		return userRepository.update(user);
 	}
+
+	@Override
+	public User unlockUser(Account authUser, User accountToUnlock) throws BusinessException {
+		if (!isAdminForThisUser(authUser, accountToUnlock)) {
+			logger.error("Not allowed to perform this action, You are not an admin for domain {}",
+					accountToUnlock.getDomainId());
+			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "Not allowed to perform this action");
+		}
+		logger.info("unlocking account {}", accountToUnlock.getMail());
+		accountToUnlock.setAuthenticationFailureCount(0);
+		accountToUnlock.setAuthenticationFailureLastDate(null);
+		return accountToUnlock;
+	}
+
 }

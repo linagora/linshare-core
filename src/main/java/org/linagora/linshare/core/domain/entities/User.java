@@ -253,7 +253,6 @@ public abstract class User extends Account {
 
 	public boolean isLocked() {
 		int modulo = authenticationFailureCount % 3;
-		Instant lastFailure = authenticationFailureLastDate != null ? authenticationFailureLastDate.toInstant(): null;
 		Instant instantNow = new Date().toInstant();
 		if (authenticationFailureCount < 3) {
 			return false;

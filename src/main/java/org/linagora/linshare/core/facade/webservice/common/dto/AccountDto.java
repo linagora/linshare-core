@@ -81,6 +81,10 @@ public class AccountDto {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected Boolean secondFARequired = null;
 
+	@Schema(description = "Show if user access is locked")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected Boolean locked = null;
+
 	public AccountDto() {
 		super();
 	}
@@ -167,4 +171,13 @@ public class AccountDto {
 	public void setSecondFAUuid(String secondFAUuid) {
 		this.secondFAUuid = secondFAUuid;
 	}
+
+	public Boolean isLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
+	}
+
 }

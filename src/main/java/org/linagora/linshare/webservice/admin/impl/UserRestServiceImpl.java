@@ -266,7 +266,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public UserDto update(
 			@Parameter(description = "User to update", required = true) UserDto userDto)
 			throws BusinessException {
-		return userFacade.update(userDto);
+		return userFacade.update(userDto, 1);
 	}
 
 	@Path("/")
