@@ -51,6 +51,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	protected Unit<?> unit;
 
+	protected Integer defaultValue;
+
 	public UnitValueFunctionality() {
 		super();
 	}
@@ -179,5 +181,13 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			return f;
 		}
 		return null;
+	}
+
+	public Integer getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(Integer defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 }

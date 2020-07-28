@@ -46,6 +46,8 @@ import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityIntege
 
 public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 
+	protected Integer defaultValue;
+
 	public IntegerValueFunctionality() {
 		super();
 	}
@@ -109,5 +111,13 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 			f.setValue(value);
 		}
 		return f;
+	}
+
+	public Integer getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(Integer defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 }
