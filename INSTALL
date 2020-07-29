@@ -1,6 +1,0 @@
-Build procedure
-===============
-
-	* mvn package
-	* War file will be available in target directory as target/linshare.war
-	* Jar auto installer file is available in target/linshare-0.8-SNAPSHOT.jar
