@@ -103,7 +103,24 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		criteria.add(Restrictions.eq("destroyed", 0L));
 		return findByCriteria(criteria);
 	}
-
+	
+	@Override
+	public U findByMailAndDomain(String domainUuid, String mail) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.createAlias("domain", "domain");
+		criteria.add(Restrictions.eq("domain.uuid", domainUuid));
+		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		List<U> accounts = findByCriteria(criteria);
+		if (accounts == null || accounts.isEmpty()) {
+			return null;
+		} else if (accounts.size() == 1) {
+			return accounts.get(0);
+		} else {
+			logger.error("Mail: {}  must be unique in domain {}", domainUuid, mail);
+			throw new IllegalStateException("Mail must be unique in domain");
+		}
+	}
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(U entity) {

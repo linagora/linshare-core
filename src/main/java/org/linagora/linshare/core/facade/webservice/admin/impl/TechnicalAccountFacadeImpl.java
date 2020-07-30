@@ -63,11 +63,16 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public TechnicalAccountDto create(TechnicalAccountDto dto)
-			throws BusinessException {
+	public TechnicalAccountDto create(TechnicalAccountDto dto, Integer version) throws BusinessException {
 		User authUser = checkAuth();
+		Validate.notNull(dto);
 		Validate.notEmpty(dto.getName(), "name must be set.");
-		Validate.notEmpty(dto.getMail(), "mail must be set.");
+		if (version == 1) {
+			// In Admin API V1 we never use 'mail' attribute so we force it to null
+			dto.setMail(null);
+		} else {
+			Validate.notEmpty(dto.getMail(), "mail must be set.");
+		}
 		TechnicalAccount technicalAccount = new TechnicalAccount(dto);
 		TechnicalAccount create = technicalAccountService.create(authUser, technicalAccount);
 		return new TechnicalAccountDto(create);

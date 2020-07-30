@@ -881,8 +881,8 @@ public class UserServiceImplTest {
 		technicalAccount.setRole(Role.SUPERADMIN);
 		technicalAccount.setPassword(NEW_PASSWORD);
 		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
-		technicalAccount.setOwner(john);
-		technicalAccount = technicalAccountService.create(john, technicalAccount);
+		technicalAccount.setOwner(root);
+		technicalAccount = technicalAccountService.create(root, technicalAccount);
 		Assertions.assertNotNull(technicalAccount);
 		Assertions.assertEquals("EP_TEST_v233", technicalAccount.getLastName());
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -897,8 +897,8 @@ public class UserServiceImplTest {
 		technicalAccount.setRole(Role.SUPERADMIN);
 		technicalAccount.setPassword(NEW_PASSWORD);
 		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
-		technicalAccount.setOwner(john);
-		technicalAccount = technicalAccountService.create(john, technicalAccount);
+		technicalAccount.setOwner(root);
+		technicalAccount = technicalAccountService.create(root, technicalAccount);
 		Assertions.assertNotNull(technicalAccount);
 		technicalAccount.setLastName("EP_TEST_v233<script>alert(document.cookie)</script>");
 		technicalAccountService.update(john, technicalAccount);
@@ -915,9 +915,9 @@ public class UserServiceImplTest {
 		technicalAccount.setRole(Role.SUPERADMIN);
 		technicalAccount.setPassword("secret");
 		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
-		technicalAccount.setOwner(john);
+		technicalAccount.setOwner(root);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			technicalAccountService.create(john, technicalAccount);
+			technicalAccountService.create(root, technicalAccount);
 		});
 		Assertions.assertEquals(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_INVALID_PASSWORD, exception.getErrorCode());
 		Assertions.assertEquals(

@@ -82,8 +82,8 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 
 	@Override
 	public TechnicalAccount create(Account actor, TechnicalAccount account) throws BusinessException {
-		Validate.notNull(actor, "name must be set.");
-		Validate.notNull(account, "name must be set.");
+		Validate.notNull(actor, "actor must be set.");
+		Validate.notNull(account, "account must be set.");
 		Validate.notEmpty(account.getLastName(), "last name must be set.");
 		// TODO : check rights, log actions.
 		// Check role : only uploadprop or delegation
@@ -91,7 +91,7 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 		TechnicalAccountPermission accountPermission = technicalAccountPermissionService.create(actor, new TechnicalAccountPermission());
 		account.setPermission(accountPermission);
 		account.setLastName(sanitize(account.getLastName()));
-		account = technicalAccountBusinessService.create(LinShareConstants.rootDomainIdentifier, account);
+		account = technicalAccountBusinessService.create(actor.getDomainId(), account);
 		passwordService.validateAndStorePassword(account, account.getPassword());
 		return account;
 	}

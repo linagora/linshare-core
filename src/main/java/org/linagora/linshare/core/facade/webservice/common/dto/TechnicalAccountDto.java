@@ -35,6 +35,8 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AccountPermission;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
@@ -43,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+@XmlRootElement
 public class TechnicalAccountDto extends AccountDto {
 
 	@Schema(description = "Password, only set at creation")

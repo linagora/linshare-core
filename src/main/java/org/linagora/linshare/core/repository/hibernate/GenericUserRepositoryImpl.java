@@ -82,26 +82,6 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	}
 
 	@Override
-	public U findByMailAndDomain(String domainId, String mail) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.eq("domain.uuid",domainId));
-		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
-		criteria.add(Restrictions.eq("destroyed", 0L));
-
-		List<U> users = findByCriteria(criteria);
-		if (users == null || users.isEmpty()) {
-			return null;
-		} else if (users.size() == 1) {
-			return users.get(0);
-		} else {
-			logger.error("Mail and domain must be unique : " + domainId + " : "
-					+ mail);
-			throw new IllegalStateException("Mail and domain must be unique");
-		}
-	}
-
-	@Override
 	public List<U> findByDomain(String domainId) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");

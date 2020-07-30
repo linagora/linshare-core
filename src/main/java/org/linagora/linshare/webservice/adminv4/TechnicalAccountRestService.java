@@ -33,30 +33,9 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin;
+package org.linagora.linshare.webservice.adminv4;
 
-import java.util.Set;
+public interface TechnicalAccountRestService
+		extends org.linagora.linshare.webservice.admin.TechnicalAccountRestService {
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
-
-public interface TechnicalAccountFacade extends AdminGenericFacade {
-
-	TechnicalAccountDto create(TechnicalAccountDto dto, Integer version)
-			throws BusinessException;
-
-	TechnicalAccountDto find(String uuid) throws BusinessException;
-
-	Set<TechnicalAccountDto> findAll() throws BusinessException;
-
-	TechnicalAccountDto update(TechnicalAccountDto dto)
-			throws BusinessException;
-
-	TechnicalAccountDto delete(String uuid) throws BusinessException;
-
-	TechnicalAccountDto delete(TechnicalAccountDto dto) throws BusinessException;
-
-	void changePassword(String uuid, PasswordDto password)
-			throws BusinessException;
 }

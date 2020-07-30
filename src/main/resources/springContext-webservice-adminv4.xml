@@ -27,7 +27,10 @@
 		<constructor-arg ref="wsAdminUserFacade" />
 		<constructor-arg ref="wsAdminAutocompleteFacade" />
 	</bean>
-
+	
+	<bean id="adminv4TechnicalAccountRestService" class="org.linagora.linshare.webservice.adminv4.impl.TechnicalAccountRestServiceImpl">
+		<constructor-arg ref="wsAdminTechnicalAccountFacade" />
+	</bean>
 
 	<jaxrs:server id="restAdminV4Container" address="/rest/admin/v4">
 		<jaxrs:serviceBeans>
@@ -51,7 +54,7 @@
 			<ref bean="adminMailContentLangRestService" />
 			<ref bean="adminMimePolicyRestService" />
 			<ref bean="adminMimeTypeRestService" />
-			<ref bean="adminTechnicalAccountRestService" />
+			<ref bean="adminv4TechnicalAccountRestService" />
 			<ref bean="adminTechnicalAccountPermissionRestService" />
 			<ref bean="adminUploadRequestRestService" />
 			<ref bean="adminUploadPropositionFilterRestService" />

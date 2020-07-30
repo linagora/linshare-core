@@ -148,6 +148,7 @@ public class SafeDetailServiceTest {
 		technicalAccount.setCmisLocale(CMIS_LOCALE);
 		technicalAccount.setDomain(testDomain);
 		technicalAccount.setPermission(technicalAccountPermission);
+		technicalAccount.setMail("techn@mail.com");
 		technicalAccount = technicalAccountRepository.create(technicalAccount);
 
 		actor = new Internal();

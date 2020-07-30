@@ -68,7 +68,7 @@ import io.swagger.v3.oas.annotations.Operation;
 public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 		TechnicalAccountRestService {
 
-	private final TechnicalAccountFacade technicalAccountFacade;
+	protected final TechnicalAccountFacade technicalAccountFacade;
 
 	public TechnicalAccountRestServiceImpl(
 			TechnicalAccountFacade technicalAccountFacade) {
@@ -135,7 +135,7 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 	@Override
 	public TechnicalAccountDto create(TechnicalAccountDto account)
 			throws BusinessException {
-		return technicalAccountFacade.create(account);
+		return technicalAccountFacade.create(account, 1);
 	}
 
 	@Path("/{uuid}/change_password")

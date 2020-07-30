@@ -35,13 +35,16 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.TechnicalAccountRepository;
@@ -78,10 +81,23 @@ public class TechnicalAccountBusinessServiceImpl implements
 	}
 
 	@Override
-	public TechnicalAccount create(String domainId, TechnicalAccount account)
-			throws BusinessException {
+	public TechnicalAccount create(String domainId, TechnicalAccount account) throws BusinessException {
 		AbstractDomain domain = abstractDomainRepository.findById(domainId);
+		if (!domain.isRootDomain()) {
+			throw new BusinessException(BusinessErrorCode.TECHNICAL_ACCOUNT_FORBIDEN,
+					"Technical account should be created only in the root domain");
+		}
 		account.setCmisLocale(SupportedLanguage.toLanguage(domain.getDefaultTapestryLocale()).getTapestryLocale());
+		account.setCreationDate(new Date());
+		account.setModificationDate(new Date());
+		if (account.getMail() != null) {
+			if (technicalAccountRepository.findByMailAndDomain(domainId, account.getMail()) != null) {
+				throw new BusinessException(BusinessErrorCode.TECHNICAL_ACCOUNT_ALREADY_EXISTS,
+						"Technical account already exists");
+			}
+		} else {
+			account.setMail(UUID.randomUUID().toString());
+		} 
 		return this.create(domain, account);
 	}
 

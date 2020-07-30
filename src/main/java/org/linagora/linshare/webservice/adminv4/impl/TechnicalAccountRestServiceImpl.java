@@ -33,30 +33,41 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin;
+package org.linagora.linshare.webservice.adminv4.impl;
 
-import java.util.Set;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.admin.TechnicalAccountFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
+import org.linagora.linshare.webservice.admin.TechnicalAccountRestService;
 
-public interface TechnicalAccountFacade extends AdminGenericFacade {
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-	TechnicalAccountDto create(TechnicalAccountDto dto, Integer version)
-			throws BusinessException;
+@Path("/technical_accounts")
+public class TechnicalAccountRestServiceImpl extends org.linagora.linshare.webservice.admin.impl.TechnicalAccountRestServiceImpl implements TechnicalAccountRestService{
 
-	TechnicalAccountDto find(String uuid) throws BusinessException;
+	public TechnicalAccountRestServiceImpl(TechnicalAccountFacade technicalAccountFacade) {
+		super(technicalAccountFacade);
+	}
 
-	Set<TechnicalAccountDto> findAll() throws BusinessException;
+	@Path("/")
+	@POST
+	@Operation(summary = "Create a technical account.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = TechnicalAccountDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public TechnicalAccountDto create(TechnicalAccountDto account)
+			throws BusinessException {
+		return technicalAccountFacade.create(account, 4);
+	}
 
-	TechnicalAccountDto update(TechnicalAccountDto dto)
-			throws BusinessException;
-
-	TechnicalAccountDto delete(String uuid) throws BusinessException;
-
-	TechnicalAccountDto delete(TechnicalAccountDto dto) throws BusinessException;
-
-	void changePassword(String uuid, PasswordDto password)
-			throws BusinessException;
 }

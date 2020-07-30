@@ -50,14 +50,6 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
     T findByMail(String mail);
     
     /**
-     * Find a user using its mail and domain
-     * @param mail
-     * @param domain
-     * @return user, null if not found.
-     */
-    T findByMailAndDomain(String domain, String mail);
-
-    /**
      * Return a list of mails beginning with the text
      * @param beginWith
      * @return List<String>

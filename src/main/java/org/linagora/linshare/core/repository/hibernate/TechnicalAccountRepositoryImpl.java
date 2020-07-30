@@ -36,9 +36,6 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.Date;
-import java.util.UUID;
-
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.TechnicalAccountRepository;
@@ -53,10 +50,6 @@ public class TechnicalAccountRepositoryImpl extends GenericUserRepositoryImpl<Te
 
 	@Override
 	public TechnicalAccount create(TechnicalAccount entity) throws BusinessException {
-		entity.setCreationDate(new Date());
-		entity.setModificationDate(new Date());
-		entity.setLsUuid(UUID.randomUUID().toString());
-		entity.setMail(entity.getLsUuid());
 		return super.create(entity);
 	}
 
