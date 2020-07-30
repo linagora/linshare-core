@@ -87,7 +87,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql"})
+	"/import-tests-domains-and-accounts.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -142,8 +142,8 @@ public class DocumentEntryServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		john = userRepository.findByMail("user1@linshare.org");
-		jane = userRepository.findByMail("user2@linshare.org");
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		createFunctionalities();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

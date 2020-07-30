@@ -105,7 +105,7 @@ public class GroupProviderServiceImplTest {
 		attributeList.put("first", attribute);
 		groupPattern = new GroupLdapPattern("lable", "description", "searchAllGroupsQuery",
 				"searchGroupQuery", "groupPrefix", false);
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		groupPattern = groupLdapPatternService.create(actor, groupPattern);
 		Assertions.assertNotNull(groupPattern);
 		logger.debug(LinShareTestConstants.END_SETUP);

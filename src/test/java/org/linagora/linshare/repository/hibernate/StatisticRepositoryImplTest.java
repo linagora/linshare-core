@@ -44,6 +44,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.ThreadWeeklyStatisticBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -72,7 +73,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-stat.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -120,7 +121,7 @@ public class StatisticRepositoryImplTest {
 
 	@BeforeEach
 	public void setUp() {
-		jane = userRepository.findByMail("user2@linshare.org");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 	}
 
 	@Test

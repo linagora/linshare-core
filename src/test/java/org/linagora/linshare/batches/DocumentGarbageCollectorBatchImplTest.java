@@ -72,8 +72,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
-@Sql({
-	"/import-tests-account.sql"})
+@Sql({ "/import-tests-domains-and-accounts.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -127,7 +126,7 @@ public class DocumentGarbageCollectorBatchImplTest {
 		tempFile = File.createTempFile("linshare-test-1", ".tmp");
 		tempFile2 = File.createTempFile("linshare-test-2", ".tmp");
 		stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-		john =userRepository.findByMail("user1@linshare.org");
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

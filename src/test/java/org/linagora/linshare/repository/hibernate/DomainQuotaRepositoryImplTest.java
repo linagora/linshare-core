@@ -42,6 +42,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.QuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -52,7 +53,6 @@ import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.repository.hibernate.DomainQuotaRepositoryImpl;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,20 +95,20 @@ public class DomainQuotaRepositoryImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas datas;
 	private User jane;
+
 	private User root;
+
 	private AbstractDomain guestDomain;
+
 	private AbstractDomain topDomain;
 
 	@BeforeEach
 	public void setUp() {
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		jane = datas.getUser2();
-		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
-		guestDomain = domainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		topDomain = domainRepository.findById(LoadingServiceTestDatas.sqlDomain);
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		guestDomain = domainRepository.findById(LinShareTestConstants.GUEST_DOMAIN);
+		topDomain = domainRepository.findById(LinShareTestConstants.TOP_DOMAIN);
 	}
 
 	@Test

@@ -42,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
@@ -57,7 +58,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-domain-quota-updates.sql"})
 @Transactional
 @ContextConfiguration(locations = {
@@ -94,7 +95,7 @@ public class DomainQuotaServiceImplTest {
 
 	@BeforeEach
 	public void setUp() {
-		jane = userRepository.findByMail("user2@linshare.org");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		topDomain = domainRepository.findById(LoadingServiceTestDatas.sqlDomain);
 	}
 

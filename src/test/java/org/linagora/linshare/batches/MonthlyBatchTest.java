@@ -50,6 +50,7 @@ import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessServi
 import org.linagora.linshare.core.business.service.ThreadMonthlyStatBusinessService;
 import org.linagora.linshare.core.business.service.ThreadWeeklyStatisticBusinessService;
 import org.linagora.linshare.core.business.service.UserMonthlyStatBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.DomainMonthlyStat;
 import org.linagora.linshare.core.domain.entities.ThreadMonthlyStat;
 import org.linagora.linshare.core.domain.entities.User;
@@ -69,7 +70,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-stat.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -131,7 +132,7 @@ public class MonthlyBatchTest {
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -1);
 		currentDate = calendar.getTime();
-		jane = userRepository.findByMail("user2@linshare.org");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 	}
 
 	@Test

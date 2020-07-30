@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.User;
@@ -61,7 +62,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql",
 	"/import-tests-stat.sql"})
@@ -105,7 +106,7 @@ public class StatisticDailyUserBatchTest {
 
 	@BeforeEach
 	public void setUp (){
-		jane = userRepository.findByMail("user2@linshare.org"); // Jane Smith
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 	}
 
 	@Test

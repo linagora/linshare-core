@@ -73,7 +73,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-"/import-tests-account.sql"})
+	"/import-tests-domains-and-accounts.sql"})
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -127,9 +127,9 @@ public class WarnSenderAboutShareExpirationBatchImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		owner = userRepository.findByMail("user1@linshare.org"); // John Do
+		owner = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		actor = (Account) owner;
-		recipient = userRepository.findByMail("user2@linshare.org"); // Jane Smith
+		recipient = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		initShareEntryGroupe();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

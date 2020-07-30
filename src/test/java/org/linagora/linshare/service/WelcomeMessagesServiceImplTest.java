@@ -61,7 +61,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql"})
+	"/import-tests-domains-and-accounts.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -90,7 +90,7 @@ public class WelcomeMessagesServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		try {
 			actor = rootUserRepository
-					.findByLsUuid("root@localhost.localdomain");
+					.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());

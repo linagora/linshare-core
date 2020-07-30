@@ -74,7 +74,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Disabled
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql"})
+	"/import-tests-domains-and-accounts.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -117,7 +117,7 @@ public class SharedSpaceMemberBusinessServiceImplTest {
 	@BeforeEach
 	public void setUp() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		jane = userRepository.findByMail("user2@linshare.org");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		initService.init();
 		lightAdminRoleToPersist = new LightSharedSpaceRole(roleRepository.findByName("ADMIN"));
 		lightReaderRoleToPersist = new LightSharedSpaceRole(roleRepository.findByName("READER"));

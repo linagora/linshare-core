@@ -85,7 +85,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-domain-quota-updates.sql" })
 @Transactional
 @ContextConfiguration(locations = { 
@@ -140,7 +140,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		john = userRepository.findByMail("user1@linshare.org");
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		initMongoService.init();
 		createNeed();
 		logger.debug(LinShareTestConstants.END_SETUP);

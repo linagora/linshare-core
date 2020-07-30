@@ -59,10 +59,6 @@ import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LdapConnectionService;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +71,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
-@ExtendWith(MockitoExtension.class)
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
@@ -121,7 +116,6 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	@Autowired
 	private InitMongoService initService;
 
-	@Mock
 	private User root;
 
 	public SynchronizeLDAPGroupsInWorkgroupsBatchImplTest() {
@@ -131,8 +125,7 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		Mockito.when(root.hasSuperAdminRole()).thenReturn(true);
-		Mockito.when(root.getLsUuid()).thenReturn("lsUuid");
+		root = userRepository.findByLoginAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		initService.init();
 		GroupLdapPatternDto groupPatternDto = new GroupLdapPatternDto();
 		groupPatternDto.setDescription("description");
@@ -157,9 +150,8 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 //		AbstractDomain topDomain = abstractDomainService.findById(LoadingServiceTestDatas.topDomainName);
 //		topDomain.setGroupProvider(groupProvider);
 //		topDomain = abstractDomainService.updateDomain(datas.getRoot(), topDomain);
-		AbstractDomain domain = abstractDomainService.findById(LoadingServiceTestDatas.sqlRootDomain);
+		AbstractDomain domain = abstractDomainService.findById(LinShareTestConstants.ROOT_DOMAIN);
 		domain.setGroupProvider(groupProvider);
-		Mockito.when(root.getDomain()).thenReturn(domain);
 		domain = abstractDomainService.updateDomain(root, domain);
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 	}

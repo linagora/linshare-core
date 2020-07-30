@@ -68,6 +68,50 @@ public class LinShareTestConstants {
 	 * Default sentence to marked the end of a setUp
 	 */
 	public static final String END_SETUP = "End setUp";
-	
-	
+
+	/**
+	 *  Root domain
+	 */
+	public static final String ROOT_DOMAIN = "LinShareRootDomain";
+
+	/**
+	 * Top domain
+	 */
+	public static final String TOP_DOMAIN = "MyDomain";
+
+	/**
+	 * Sub_domain
+	 */
+	public static final String SUB_DOMAIN = "MySubDomain";
+
+	/**
+	 * Guest domain
+	 */
+	public static final String GUEST_DOMAIN = "GuestDomain";
+
+	/**
+	 * Root account, on root domain
+	 */
+	public static final String ROOT_ACCOUNT = "root@localhost.localdomain";
+
+	/**
+	 * John Do account, on Top domain
+	 */
+	public static final String JOHN_ACCOUNT = "user1@linshare.org";
+
+	/**
+	 * Jane Simth account, on Top domain
+	 */
+	public static final String JANE_ACCOUNT = "user2@linshare.org";
+
+	/**
+	 * Foo Bar account, on Top domain
+	 */
+	public static final String FOO_ACCOUNT = "user3@linshare.org";
+
+	/**
+	 * Guest account, on guest domain
+	 */
+	public static final String GUEST_ACCOUNT = "guest@linshare.org";
+
 }

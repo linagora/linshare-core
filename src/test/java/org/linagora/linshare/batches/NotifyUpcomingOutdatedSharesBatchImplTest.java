@@ -71,7 +71,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
-@Sql({ "/import-tests-account.sql" })
+@Sql({ "/import-tests-domains-and-accounts.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -134,9 +134,10 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		owner = userRepository.findByMail("user1@linshare.org"); // John Do
-		recipient = userRepository.findByMail("user2@linshare.org"); // Jane Smith
-		anonymousRecipient = userRepository.findByMail("user3@linshare.org"); // Foo Bar
+		owner = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
+		recipient = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		// TODO : FixMe, anonymousRecipient must not be an internal account
+		anonymousRecipient = userRepository.findByMail(LinShareTestConstants.FOO_ACCOUNT);
 		actor = (Account) owner;
 		initShares();
 		logger.debug(LinShareTestConstants.END_SETUP);

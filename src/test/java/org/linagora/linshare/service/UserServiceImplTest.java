@@ -110,7 +110,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-mongo-java-server.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-@Sql({ "/import-tests-account.sql" })
+@Sql({ "/import-tests-domains-and-accounts.sql" })
 public class UserServiceImplTest {
 
 	private static Logger logger = LoggerFactory
@@ -166,7 +166,8 @@ public class UserServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		john = userRepository.findByMail("user1@linshare.org");
+		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		technicalAccount = new TechnicalAccount();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

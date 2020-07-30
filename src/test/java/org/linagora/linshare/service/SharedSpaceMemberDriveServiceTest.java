@@ -70,7 +70,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Sql({ "/import-tests-account.sql" })
+@Sql({ "/import-tests-domains-and-accounts.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -130,9 +130,9 @@ public class SharedSpaceMemberDriveServiceTest {
 	public void init() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		initService.init();
-		Account root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
-		john = userRepository.findByMail("user1@linshare.org");
-		jane = userRepository.findByMail("user2@linshare.org");
+		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		adminWorkgroupRole = ssRoleService.getAdmin(root, root);
 		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
 		writerDriveRole = ssRoleService.findByName(root, root, "DRIVE_WRITER");

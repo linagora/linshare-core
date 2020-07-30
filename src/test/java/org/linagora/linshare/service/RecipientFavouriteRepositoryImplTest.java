@@ -63,7 +63,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Sql({ "/import-tests-account.sql" })
+@Sql({ "/import-tests-domains-and-accounts.sql" })
 @Transactional
 @ContextConfiguration(locations={
 		"classpath:springContext-test.xml", 

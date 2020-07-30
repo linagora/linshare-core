@@ -140,7 +140,7 @@ public class WorkGroupNodeServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		john = userRepository.findByMail("user1@linshare.org");
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		initMongoService.init();
 		ssnode = sharedSpaceNodeService.create(john, john,
 				new SharedSpaceNode("Workgroup_test", "My parent nodeUuid", NodeType.WORK_GROUP));

@@ -94,7 +94,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-document-entry-setup.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
@@ -154,8 +154,6 @@ public class AdvancedStatisticBatchTest {
 	@Autowired
 	private ThreadService threadService;
 
-	private LoadingServiceTestDatas datas;
-
 	private User john;
 
 	private User jane;
@@ -168,10 +166,8 @@ public class AdvancedStatisticBatchTest {
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		initMongoService.init();
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		john = datas.getUser1();
-		jane = datas.getUser2();
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		createWorkgroupDocument();
 		createUploadRequestEntry();
 		logger.debug(LinShareTestConstants.END_SETUP);

@@ -67,10 +67,9 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-stat.sql",
-	"/import-tests-operationHistory.sql",
-	"/import-tests-workgroup-operation-history.sql"})
+	"/import-tests-operationHistory.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml" })
 public class OperationHistoryRepositoryImplTest {
@@ -94,8 +93,8 @@ public class OperationHistoryRepositoryImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		jane = userRepository.findByMail("user2@linshare.org");
-		john = userRepository.findByMail("user1@linshare.org");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

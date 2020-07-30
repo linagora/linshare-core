@@ -112,9 +112,9 @@ public class JwtLongTimeServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		john = userRepository.findByMail("user1@linshare.org");
-		jane = userRepository.findByMail("user2@linshare.org");
-		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

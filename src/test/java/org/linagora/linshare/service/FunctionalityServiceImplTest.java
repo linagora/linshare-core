@@ -104,7 +104,7 @@ public class FunctionalityServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		actor = rootUserRepository.findByLsUuid("root@localhost.localdomain@test");
+		actor = rootUserRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

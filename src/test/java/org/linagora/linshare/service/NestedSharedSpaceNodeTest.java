@@ -73,7 +73,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql"})
+	"/import-tests-domains-and-accounts.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -113,7 +113,7 @@ public class NestedSharedSpaceNodeTest {
 
 	private Account jane;
 
-	private Account justin;
+	private Account foo;
 
 	private SharedSpaceRole adminDriveRole;
 
@@ -135,10 +135,10 @@ public class NestedSharedSpaceNodeTest {
 	public void init() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		initService.init();
-		Account root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
-		john = userRepository.findByMail("user1@linshare.org");
-		jane = userRepository.findByMail("user2@linshare.org");
-		justin = userRepository.findByMail("user3@linshare.org");
+		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		foo = userRepository.findByMail(LinShareTestConstants.FOO_ACCOUNT);
 		adminWorkgroupRole = ssRoleService.getAdmin(root, root);
 		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
 		writerDriveRole = ssRoleService.findByName(root, root, "DRIVE_WRITER");
@@ -297,14 +297,14 @@ public class NestedSharedSpaceNodeTest {
 				new SharedSpaceNode("Nested_WorkGroup", drive.getUuid(), NodeType.WORK_GROUP));
 		// Add Justin to the nested workgroup [Nested_WorkGroup]
 		SharedSpaceMember justinMemberNestedWg = ssMemberService.create(jane, jane, nestedWorkgroup, reader,
-				new SharedSpaceAccount((User) justin));
+				new SharedSpaceAccount((User) foo));
 		// Check Justin has reader role in the workgroup
 		Assertions.assertEquals(reader.getUuid(), justinMemberNestedWg.getRole().getUuid());
 		// Check Justin is a member on created NESTED workgroup [Nested_WorkGroup]
 		Assertions.assertEquals(true, justinMemberNestedWg.isNested());
 		Assertions.assertEquals(drive.getUuid(), nestedWorkgroup.getParentUuid());
-		List<SharedSpaceNodeNested> justinNodes = ssMemberService.findAllWorkGroupsInNode(justin, justin,
-				nestedWorkgroup.getParentUuid(), justin.getLsUuid());
+		List<SharedSpaceNodeNested> justinNodes = ssMemberService.findAllWorkGroupsInNode(foo, foo,
+				nestedWorkgroup.getParentUuid(), foo.getLsUuid());
 		Assertions.assertEquals(1, justinNodes.size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}

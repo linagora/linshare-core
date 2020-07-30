@@ -65,9 +65,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-operationHistory.sql",
-	"/import-tests-workgroup-operation-history.sql",
 	"/import-tests-quota.sql" })
 @Transactional
 @ContextConfiguration(locations = {
@@ -106,7 +105,7 @@ public class QuotaServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		jane = userRepository.findByMail("user2@linshare.org");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

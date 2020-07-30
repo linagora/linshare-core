@@ -56,6 +56,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserService;
@@ -102,7 +103,8 @@ public class CoumputeNewExpirationUnsharedDocumentBatchImplTest {
 	private GenericBatch computeNewExpirationUnsharedDocumentBatch;
 
 	@Autowired
-	private UserService userService;
+	@Qualifier("userRepository")
+	private UserRepository<User> userRepository;
 	
 	@Autowired
 	private DocumentEntryBusinessService documentEntryBusinessService;
@@ -115,7 +117,7 @@ public class CoumputeNewExpirationUnsharedDocumentBatchImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		jane = userService.findOrCreateUser("user6@linshare.org", "LinShareRootDomain");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

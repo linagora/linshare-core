@@ -88,7 +88,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Sql({
 	"/import-tests.sql",
 	"/import-tests-operationHistory.sql",
-	"/import-tests-workgroup-operation-history.sql",
 	"/import-tests-quota.sql"})
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -153,7 +152,7 @@ public class DailyBatchTest {
 
 	@BeforeEach
 	public void setUp (){
-		jane = userRepository.findByMail("user2@linshare.org");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 	}
 
 	@AfterEach

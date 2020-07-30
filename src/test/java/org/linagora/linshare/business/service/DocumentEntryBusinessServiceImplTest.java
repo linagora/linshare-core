@@ -87,7 +87,7 @@ import com.google.common.io.Files;
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
 @Sql({
-	"/import-tests-account.sql"})
+	"/import-tests-domains-and-accounts.sql"})
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -137,7 +137,7 @@ public class DocumentEntryBusinessServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		jane = userRepository.findByMail("user2@linshare.org");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		workGroup = threadService.create(jane, jane, "work_group_name_1");
 		workGroupFolder = new WorkGroupFolder(new AccountMto(jane), "folder1", null, workGroup.getLsUuid());
 		logger.debug(LinShareTestConstants.END_SETUP);

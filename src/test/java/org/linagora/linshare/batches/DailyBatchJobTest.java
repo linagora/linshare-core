@@ -53,6 +53,7 @@ import org.linagora.linshare.core.business.service.DomainDailyStatBusinessServic
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
@@ -78,7 +79,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-stat.sql",
 	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql" })
@@ -167,7 +168,7 @@ public class DailyBatchJobTest {
 
 	@BeforeEach
 	public void setUp() {
-		jane = userRepository.findByMail("user2@linshare.org");;
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 	}
 
 	@Test

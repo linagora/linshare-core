@@ -148,9 +148,9 @@ public class AbstractDomainServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		domain = userRepository.findByMail("user1@linshare.org").getDomain();
+		domain = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT).getDomain();
 		ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
-		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
+		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		current = welcomeService.find((User) root, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
@@ -348,7 +348,7 @@ public class AbstractDomainServiceImplTest {
 		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
 		Assertions.assertNotNull(subDomain);
 		Assertions.assertNotNull(subDomain.getFunctionalities());
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		int initSize = abstractDomainService.findAll(actor).size();
 		try {
 			abstractDomainService.markToPurge(actor, subDomain.getUuid());

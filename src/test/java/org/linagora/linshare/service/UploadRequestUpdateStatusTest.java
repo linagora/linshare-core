@@ -75,7 +75,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -151,7 +151,7 @@ public class UploadRequestUpdateStatusTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		Account actor = userRepository.findByMail("user1@linshare.org");
+		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -174,7 +174,7 @@ public class UploadRequestUpdateStatusTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		Account actor = userRepository.findByMail("user1@linshare.org");
+		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -197,7 +197,7 @@ public class UploadRequestUpdateStatusTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		Account actor = userRepository.findByMail("user1@linshare.org");
+		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -218,7 +218,7 @@ public class UploadRequestUpdateStatusTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		Account actor = userRepository.findByMail("user1@linshare.org");
+		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -239,7 +239,7 @@ public class UploadRequestUpdateStatusTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		Account actor = userRepository.findByMail("user1@linshare.org");
+		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();

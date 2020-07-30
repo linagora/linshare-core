@@ -41,7 +41,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql" })
+	"/import-tests-domains-and-accounts.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -84,7 +84,7 @@ public class AnonymousUrlRepositoryImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		john = userRepository.findByMail("user1@linshare.org");
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

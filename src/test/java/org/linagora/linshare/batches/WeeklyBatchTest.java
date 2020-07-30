@@ -48,6 +48,7 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessService;
 import org.linagora.linshare.core.business.service.ThreadWeeklyStatisticBusinessService;
 import org.linagora.linshare.core.business.service.UserWeeklyStatBusinessService;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainWeeklyStat;
 import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
@@ -69,7 +70,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-stat.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -124,7 +125,7 @@ public class WeeklyBatchTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		jane = userRepository.findByMail("user2@linshare.org"); // Jane Smith
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 	}
 
 	@Test

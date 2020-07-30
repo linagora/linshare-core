@@ -73,7 +73,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-document-entry-setup.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -127,9 +127,9 @@ public class ShareNewShareEmailBuilderTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		owner = userRepository.findByMail("user1@linshare.org");
+		owner = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		actor = (Account) owner;
-		admin = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
+		admin = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -141,7 +141,7 @@ public class ShareNewShareEmailBuilderTest {
 
 	@Test
 	public void testCreateNewSharesFiles() throws BusinessException, IOException {
-		User recipient = userRepository.findByMail("user2@linshare.org");
+		User recipient = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		List<String> documents = new  ArrayList<String>();
 		documents.add("bfaf3fea-c64a-4ee0-bae8-b1482f1f6401");
 		documents.add("fd87394a-41ab-11e5-b191-080027b8274b");
@@ -153,7 +153,7 @@ public class ShareNewShareEmailBuilderTest {
 
 	@Test
 	public void testCreateNewSharesFiles_MailAttachment() throws BusinessException, IOException {
-		User recipient = userRepository.findByMail("user3@linshare.org");
+		User recipient = userRepository.findByMail(LinShareTestConstants.FOO_ACCOUNT);
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
 		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 		File tempFile = File.createTempFile("linshare-test", ".tmp");

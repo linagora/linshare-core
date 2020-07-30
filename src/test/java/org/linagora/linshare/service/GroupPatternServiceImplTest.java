@@ -97,7 +97,7 @@ public class GroupPatternServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		GroupLdapPattern groupPattern = new GroupLdapPattern("lable", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);
 		try {
-			Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+			Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 			groupLdapPatternService.create(actor, groupPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -113,7 +113,7 @@ public class GroupPatternServiceImplTest {
 		GroupLdapPattern groupPattern = new GroupLdapPattern("EP_TEST_v233<script>alert(document.cookie)</script>",
 				"EP_TEST_v233<script>alert(document.cookie)</script>", "searchAllGroupsQuery", "searchGroupQuery",
 				"groupPrefix", false);
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		groupLdapPatternService.create(actor, groupPattern);
 		Assertions.assertNotNull(groupPattern);
 		Assertions.assertEquals(groupPattern.getLabel(), "EP_TEST_v233");
@@ -128,7 +128,7 @@ public class GroupPatternServiceImplTest {
 		GroupLdapPattern groupPattern = new GroupLdapPattern("Label",
 				"Description", "searchAllGroupsQuery", "searchGroupQuery",
 				"groupPrefix", false);
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		groupLdapPatternService.create(actor, groupPattern);
 		Assertions.assertNotNull(groupPattern);
 		groupPattern.setLabel("EP_TEST_v233<script>alert(document.cookie)</script>");
@@ -145,7 +145,7 @@ public class GroupPatternServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);
 		try {
-			Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+			Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 			groupPattern = groupLdapPatternService.create(actor, groupPattern);
 			GroupLdapPattern found = groupLdapPatternService.find(groupPattern.getUuid());
 			Assertions.assertEquals("searchGroupQuery", found.getSearchGroupQuery());
@@ -161,7 +161,7 @@ public class GroupPatternServiceImplTest {
 	public void testCreateDeleteDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		try {
 			groupPattern = groupLdapPatternService.create(actor, groupPattern);
 		} catch (BusinessException e) {
@@ -182,7 +182,7 @@ public class GroupPatternServiceImplTest {
 	public void testFindAllUpdateDomainPattern() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		try {
 			List<GroupLdapPattern> list = groupLdapPatternService.findAll();
 			groupPattern = groupLdapPatternService.create(actor, groupPattern);

@@ -43,6 +43,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.QuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -112,10 +113,10 @@ public class ContainerQuotaRepositoryImplTest {
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
-		inconsistent = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlDomain, "inconsistent-user1@linshare.org");
-		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
-		guestDomain = domainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		topDomain = domainRepository.findById(LoadingServiceTestDatas.sqlDomain);
+		inconsistent = userRepository.findByMailAndDomain(LinShareTestConstants.TOP_DOMAIN, "inconsistent-user1@linshare.org");
+		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		guestDomain = domainRepository.findById(LinShareTestConstants.GUEST_DOMAIN);
+		topDomain = domainRepository.findById(LinShareTestConstants.TOP_DOMAIN);
 	}
 
 	private void initialChecks() {

@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.service;
 
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -88,7 +89,7 @@ public class LoadingServiceTestDatas {
 	}
 
 	public  void loadUsers() throws BusinessException {
-		root = userRepository.findByMail("root@localhost.localdomain");
+		root = userRepository.findByMail(LinShareTestConstants.ROOT_ACCOUNT);
 		system = userRepository.getBatchSystemAccount();
 		user1 = userRepository.findByMail("user1@linshare.org"); // John Do
 		user2 = userRepository.findByMail("user2@linshare.org"); // Jane Smith

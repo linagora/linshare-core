@@ -63,7 +63,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Sql({ "/import-tests-account.sql" })
+@Sql({ "/import-tests-domains-and-accounts.sql" })
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -136,7 +136,7 @@ public class UserProviderServiceImplTest {
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
-			Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+			Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 			userProviderService.createDomainPattern(actor, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -157,7 +157,7 @@ public class UserProviderServiceImplTest {
 				"authCommand", "searchUserCommand", attributeList);
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		userProviderService.createDomainPattern(actor, domainPattern);
 		Assertions.assertNotNull(domainPattern);
 		Assertions.assertEquals(domainPattern.getLabel(), "EP_TEST_v233");
@@ -198,7 +198,7 @@ public class UserProviderServiceImplTest {
 		UserLdapPattern domainPattern = new UserLdapPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		try {
 			domainPattern = userProviderService.createDomainPattern(actor, domainPattern);
 		} catch (BusinessException e) {
@@ -231,7 +231,7 @@ public class UserProviderServiceImplTest {
 			e.printStackTrace();
 			Assertions.fail("Can't retrieve pattern.");
 		}
-		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
 		attributes.get(UserLdapPattern.USER_FIRST_NAME).setAttribute("foo");
 		try {

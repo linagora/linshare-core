@@ -94,7 +94,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql"})
+	"/import-tests-domains-and-accounts.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -169,7 +169,7 @@ public class ShaBatchImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		jane = userRepository.findByMail("user2@linshare.org");
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		shaSumBatch = new Sha256SumUpgradeTaskImpl(accountRepository, documentRepository, fileDataStore, threadEntryRepository, upgradeTaskLogMongoRepository, documentEntryBusinessService);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

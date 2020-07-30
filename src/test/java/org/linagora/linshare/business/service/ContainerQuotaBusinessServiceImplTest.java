@@ -43,6 +43,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
@@ -51,7 +52,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
@@ -62,7 +62,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
-@Sql({ "/import-tests-account.sql" })
+@Sql({ "/import-tests-domains-and-accounts.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -112,10 +112,10 @@ public class ContainerQuotaBusinessServiceImplTest {
 
 	@BeforeEach
 	public void setUp() {
-		jane = userRepository.findByMail("user2@linshare.org");
-		guestDomain = domainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		topDomain = domainRepository.findById(LoadingServiceTestDatas.sqlDomain);
-		rootDomain = domainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		guestDomain = domainRepository.findById(LinShareTestConstants.GUEST_DOMAIN);
+		topDomain = domainRepository.findById(LinShareTestConstants.TOP_DOMAIN);
+		rootDomain = domainRepository.findById(LinShareTestConstants.ROOT_DOMAIN);
 	}
 
 	@Test

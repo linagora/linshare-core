@@ -64,7 +64,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql"})
+	"/import-tests-domains-and-accounts.sql"})
 @ContextConfiguration(locations = {
 				"classpath:springContext-datasource.xml",
 				"classpath:springContext-repository.xml",
@@ -93,14 +93,14 @@ public class PublicKeyServiceImplTest {
 
 	private Account jane;
 
-	private AbstractDomain domain;
+	private AbstractDomain rootDomain;
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
-		jane = userRepository.findByMail("user2@linshare.org");
-		domain = root.getDomain();
+		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		rootDomain = root.getDomain();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -115,7 +115,7 @@ public class PublicKeyServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("New application");
-		pubKey = publicKeyService.create(root, pubKey, domain);
+		pubKey = publicKeyService.create(root, pubKey, rootDomain);
 		Assertions.assertNotNull(pubKey);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -125,7 +125,7 @@ public class PublicKeyServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initPEMPublicKeys();
 		pubKey.setIssuer("app with pem public key");
-		pubKey = publicKeyService.create(root, pubKey, domain);
+		pubKey = publicKeyService.create(root, pubKey, rootDomain);
 		Assertions.assertNotNull(pubKey);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -135,11 +135,11 @@ public class PublicKeyServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("app for key test duplication");
-		pubKey = publicKeyService.create(root, pubKey, domain);
+		pubKey = publicKeyService.create(root, pubKey, rootDomain);
 		try {
 			PublicKeyLs pubKey2 = initSSHPublicKeys();
 			pubKey2.setIssuer("app for key test duplication");
-			pubKey2 = publicKeyService.create(root, pubKey2, domain);
+			pubKey2 = publicKeyService.create(root, pubKey2, rootDomain);
 			Assertions.assertNotNull(pubKey2);
 		} catch (BusinessException ex) {
 			Assertions.assertTrue(ex.getErrorCode().equals(BusinessErrorCode.PUBLIC_KEY_ALREADY_EXIST));
@@ -154,7 +154,7 @@ public class PublicKeyServiceImplTest {
 		pubKey.setIssuer("My app");
 		pubKey.setPublicKey("Invalid public key format");
 		try {
-			pubKey = publicKeyService.create(root, pubKey, domain);
+			pubKey = publicKeyService.create(root, pubKey, rootDomain);
 			Assertions.assertNotNull(pubKey);
 		} catch (BusinessException ex) {
 			Assertions.assertTrue(ex.getErrorCode().equals(BusinessErrorCode.PUBLIC_KEY_INVALID_FORMAT));
@@ -167,7 +167,7 @@ public class PublicKeyServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("New Application");
-		pubKey = publicKeyService.create(root, pubKey, domain);
+		pubKey = publicKeyService.create(root, pubKey, rootDomain);
 		Assertions.assertNotNull(pubKey);
 		PublicKeyLs found = publicKeyService.find(root, pubKey.getUuid());
 		Assertions.assertNotNull(found);
@@ -181,7 +181,7 @@ public class PublicKeyServiceImplTest {
 		try {
 			PublicKeyLs pubKey = initSSHPublicKeys();
 			pubKey.setIssuer("application test");
-			pubKey = publicKeyService.create(root, pubKey, domain);
+			pubKey = publicKeyService.create(root, pubKey, rootDomain);
 			Assertions.assertNotNull(pubKey);
 			publicKeyService.find(jane, pubKey.getUuid());
 		} catch (BusinessException ex) {
@@ -193,17 +193,17 @@ public class PublicKeyServiceImplTest {
 	@Test
 	public void testFindPublicKeyByDomain() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
-		List<PublicKeyLs> oldPublicKeys = publicKeyService.findAll(root, domain);
+		List<PublicKeyLs> oldPublicKeys = publicKeyService.findAll(root, rootDomain);
 		int oldSize = oldPublicKeys.size();
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("Application");
-		pubKey = publicKeyService.create(root, pubKey, domain);
+		pubKey = publicKeyService.create(root, pubKey, rootDomain);
 		PublicKeyLs pubKey2 = initSSHPublicKeys();
 		pubKey2.setIssuer("General Application");
-		pubKey2 = publicKeyService.create(root, pubKey2, domain);
+		pubKey2 = publicKeyService.create(root, pubKey2, rootDomain);
 		Assertions.assertNotNull(pubKey);
 		Assertions.assertNotNull(pubKey2);
-		List<PublicKeyLs> publicKeys = publicKeyService.findAll(root, domain);
+		List<PublicKeyLs> publicKeys = publicKeyService.findAll(root, rootDomain);
 		Assertions.assertEquals(oldSize + 2, publicKeys.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -213,7 +213,7 @@ public class PublicKeyServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("linshare");
-		pubKey = publicKeyService.create(root, pubKey, domain);
+		pubKey = publicKeyService.create(root, pubKey, rootDomain);
 		Assertions.assertNotNull(pubKey);
 		PublicKeyLs found = publicKeyService.find(root, pubKey.getUuid());
 		Assertions.assertNotNull(found);
@@ -231,7 +231,7 @@ public class PublicKeyServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("OpenPass");
-		pubKey = publicKeyService.create(root, pubKey, domain);
+		pubKey = publicKeyService.create(root, pubKey, rootDomain);
 		Assertions.assertNotNull(pubKey);
 		PublicKeyLs found = publicKeyService.findByIssuer("OpenPass");
 		Assertions.assertNotNull(found);
@@ -241,7 +241,7 @@ public class PublicKeyServiceImplTest {
 
 	private PublicKeyLs initSSHPublicKeys() {
 		PublicKeyLs publicKeyLs = new PublicKeyLs();
-		publicKeyLs.setDomainUuid(domain.getUuid());
+		publicKeyLs.setDomainUuid(rootDomain.getUuid());
 		publicKeyLs.setFormat(PublicKeyFormat.SSH);
 		publicKeyLs.setPublicKey(
 				"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDG3WzeguQTjxpS9GpYnmLRyrRWZUV1BEXDjYR6uZSlTFcwVVfQnKigf0WOJsK2xIJ8dWbI8+75vDNJ1binQ38qaytAUyIDC7a89r+0T7R9MhWcxW1B7B3dkwaOM+HR1lGnMBxi7WTz86DxhRDdhKgCCsGtQex3ZDTyEhwlvV0qvj/HQhqCEuYSuok+C+eWrYbzlDK2y5CODPiV8vclwoVZ4pbq0UZcqt9WfldVdtGijaNqtCTKZXWtvDCC2rURyWsUfgYs0UHg1gvD+PA07/2GhcmFwv6Ap4LuliTbsWSQfZu2/05U5INmqWpOrm3oxXzppm1hs7UNGaWVYN82/XJp fred@fredarc");
@@ -250,7 +250,7 @@ public class PublicKeyServiceImplTest {
 
 	private PublicKeyLs initPEMPublicKeys() {
 		PublicKeyLs publicKeyLs = new PublicKeyLs();
-		publicKeyLs.setDomainUuid(domain.getUuid());
+		publicKeyLs.setDomainUuid(rootDomain.getUuid());
 		publicKeyLs.setFormat(PublicKeyFormat.PEM);
 		publicKeyLs.setPublicKey("-----BEGIN PUBLIC KEY-----\n" +
 				"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtUIZXEawBZ6GEZlNcLEf\n" +

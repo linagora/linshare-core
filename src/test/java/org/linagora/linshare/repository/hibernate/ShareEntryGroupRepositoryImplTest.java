@@ -60,7 +60,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
-	"/import-tests-account.sql",
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-share-entry-group-setup.sql" })
 @ContextConfiguration(locations = { 
 		"classpath:springContext-test.xml",

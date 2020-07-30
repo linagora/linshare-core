@@ -58,7 +58,7 @@ import io.jsonwebtoken.Claims;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-account.sql"})
+	"/import-tests-domains-and-accounts.sql"})
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -83,17 +83,12 @@ public class JwtServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	LoadingServiceTestDatas datas;
-
 	private User jane;
 
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		// this.executeSqlScript("import-tests-quota.sql", false);
-		datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		jane = datas.getUser2();
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
