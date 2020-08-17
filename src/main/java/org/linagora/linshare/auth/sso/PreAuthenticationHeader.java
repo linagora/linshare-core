@@ -143,6 +143,15 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 					for (String domainUuid : domains) {
 						foundUser = authentificationFacade.ldapSearchForAuth(domainUuid, authenticationHeader);
 						if (foundUser != null) {
+							try {
+								foundUser = authentificationFacade.findOrCreateUser(domainUuid, foundUser.getMail());
+							} catch (BusinessException e) {
+								logger.error(e.getMessage());
+								throw new AuthenticationServiceException(
+										"Could not create user account : "
+												+ foundUser.getDomainId() + " : "
+												+ foundUser.getMail(), e);
+							}
 							break;
 						}
 					}
@@ -150,17 +159,6 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 			} catch (UsernameNotFoundException e) {
 				logger.error(e.getMessage());
 				foundUser = null;
-			}
-		}
-		if (foundUser != null) {
-			try {
-				foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
-			} catch (BusinessException e) {
-				logger.error(e.getMessage());
-				throw new AuthenticationServiceException(
-						"Could not create user account : "
-								+ foundUser.getDomainId() + " : "
-								+ foundUser.getMail(), e);
 			}
 		}
 		return foundUser;
