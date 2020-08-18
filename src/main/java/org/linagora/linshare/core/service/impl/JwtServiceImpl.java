@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -125,11 +126,10 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public Claims decode(String token) {
-		Jws<Claims> jws = Jwts.parser()
-				.setSigningKeyResolver(new MongoPublicKeySigningKeyResolver(globalKey.getPublic(), issuer, publicKeyService))
-				.parseClaimsJws(token);
-		Claims claims = jws.getBody();
-		return claims;
+		JwtParserBuilder builder = Jwts.parserBuilder()
+				.setSigningKeyResolver(new MongoPublicKeySigningKeyResolver(globalKey.getPublic(), issuer, publicKeyService));
+		Jws<Claims> claims = builder.build().parseClaimsJws(token);
+		return claims.getBody();
 	}
 
 	@Override

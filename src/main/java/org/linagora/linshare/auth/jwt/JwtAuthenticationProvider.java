@@ -62,7 +62,7 @@ import com.google.common.collect.Lists;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
