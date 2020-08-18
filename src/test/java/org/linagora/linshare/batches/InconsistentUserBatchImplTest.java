@@ -72,6 +72,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(LdapServerRule.class)
 @ExtendWith(MockitoExtension.class)
 @Sql({
+	"/import-tests-domains-and-accounts.sql",
 	"/import-tests-inconsistent.sql"})
 @Transactional
 @ContextConfiguration(locations = { 
@@ -144,7 +145,7 @@ public class InconsistentUserBatchImplTest {
 			inconsistentUserBatch.execute(batchRunContext, s, list.size(), i);
 		}
 		List<Internal> l = inService.findAllInconsistent((User)root);
-		Assertions.assertEquals(2, l.size());
+		Assertions.assertEquals(5, l.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
