@@ -72,7 +72,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(LdapServerRule.class)
 @ExtendWith(MockitoExtension.class)
 @Sql({
-	"/import-tests-domains-and-accounts.sql",
+	
 	"/import-tests-inconsistent.sql"})
 @Transactional
 @ContextConfiguration(locations = { 

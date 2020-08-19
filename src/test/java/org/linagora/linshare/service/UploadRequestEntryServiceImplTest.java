@@ -82,7 +82,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-domains-and-accounts.sql",
+	
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = {

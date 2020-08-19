@@ -79,7 +79,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
-	"/import-tests-domains-and-accounts.sql",
+	
 	"/import-tests-stat.sql",
 	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql" })

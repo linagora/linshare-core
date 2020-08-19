@@ -51,6 +51,8 @@ SET @my_domain_id = SELECT 2;
 SET @my_sub_domain_id = SELECT 3;
 SET @guest_domain_id = SELECT 4;
 
+UPDATE domain_abstract SET mime_policy_id = 1;
+UPDATE domain_abstract SET mailconfig_id = 1;
 
 -- LinShare Users 
 INSERT INTO account(

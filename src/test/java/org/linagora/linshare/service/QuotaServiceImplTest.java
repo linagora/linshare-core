@@ -65,7 +65,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests-domains-and-accounts.sql",
+	
 	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql" })
 @Transactional

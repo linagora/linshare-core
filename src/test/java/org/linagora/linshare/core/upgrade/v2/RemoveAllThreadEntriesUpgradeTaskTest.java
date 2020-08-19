@@ -66,7 +66,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
-	"/import-tests-domains-and-accounts.sql",
+	
 	"/import-test-thread-entry.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",

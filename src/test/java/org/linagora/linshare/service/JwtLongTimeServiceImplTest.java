@@ -46,10 +46,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.impl.JwtServiceImpl;
 import org.linagora.linshare.mongo.entities.PermanentToken;
@@ -58,13 +56,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import io.jsonwebtoken.Claims;
 
 @ExtendWith(SpringExtension.class)
-@Sql({ "/import-tests.sql" })
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -100,10 +96,9 @@ public class JwtLongTimeServiceImplTest {
 
 	private User jane;
 
-	private Account root;
+	private User guest;
 
-	@Autowired
-	private GuestService guestService;
+	private Account root;
 
 	public JwtLongTimeServiceImplTest() {
 		super();
@@ -114,6 +109,7 @@ public class JwtLongTimeServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		guest = userRepository.findByMail(LinShareTestConstants.GUEST_ACCOUNT);
 		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -177,9 +173,6 @@ public class JwtLongTimeServiceImplTest {
 		}
 		List<PermanentToken> mongoEntities = jwtLongTimeService.findAllByDomain(root, john.getDomain(), false);
 		Assertions.assertEquals(initSize + 5, mongoEntities.size());
-		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
-		guest.setCmisLocale("en");
-		guest = guestService.create(john, john, guest, null);
 		PermanentToken guestToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
 		int initSizeGuest = jwtLongTimeService.findAllByDomain(root, guest.getDomain(), true).size();
 		for (int i = 0; i < 5; i++) {

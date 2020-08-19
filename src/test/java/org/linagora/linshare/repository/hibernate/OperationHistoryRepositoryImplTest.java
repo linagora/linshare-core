@@ -67,7 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
-	"/import-tests-domains-and-accounts.sql",
+	
 	"/import-tests-stat.sql",
 	"/import-tests-operationHistory.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", "classpath:springContext-datasource.xml",
