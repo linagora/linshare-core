@@ -358,39 +358,52 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private Date checkDate(TimeUnitValueFunctionality func, Date currentDate) {
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
-			Calendar c = new GregorianCalendar();
-			c.add(func.toCalendarValue(), func.getValue());
-			Date maxDate = c.getTime();
+			Calendar calendar = new GregorianCalendar();
+			calendar.add(func.toCalendarValue(), func.getDefaultValue());
+			Date defaultDate = calendar.getTime();
 			if (func.getDelegationPolicy() != null
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");
 				if (currentDate != null) {
-					if (currentDate.after(maxDate) || (currentDate.before(new Date())
-							&& FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION.toString()
-									.equals(func.getIdentifier()))) {
+					if (currentDate.before(new Date()) && FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
+							.toString().equals(func.getIdentifier())) {
 						logger.warn("the current value " + currentDate.toString() + " is out of range : "
-								+ func.toString() + " : " + maxDate.toString());
-						return maxDate;
+								+ func.toString() + " : " + defaultDate.toString());
+						return defaultDate;
 					} else if (currentDate.before(new Date ())) {
 						return new Date();
-					} else {
+					}
+					// check if there is limitation of maximum value
+					// -1 mean no limit
+					else if (func.getValue() == -1) {
 						return currentDate;
+					} else {
+						Calendar c = new GregorianCalendar();
+						c.add(func.toCalendarValue(), func.getValue());
+						Date maxDate = c.getTime(); // Maximum value allowed
+						if (currentDate.after(maxDate)) {
+							logger.warn("the current value " + currentDate.toString() + " is out of range : "
+									+ func.toString() + " : " + defaultDate.toString());
+							return defaultDate;
+						} else {
+							return currentDate;
+						}
 					}
 				}
-				return maxDate;
+				return defaultDate;
 			} else {
 				// there is no delegation, the current value should be the
 				// system value or null
 				logger.debug(func.getIdentifier()
 						+ " does not have a delegation policy");
 				if (currentDate != null) {
-					if (!currentDate.equals(maxDate)) {
+					if (!currentDate.equals(defaultDate)) {
 						logger.warn("the current value "
 								+ currentDate.toString()
-								+ " is different than system value " + maxDate);
+								+ " is different than system value " + defaultDate);
 					}
 				}
-				return maxDate;
+				return defaultDate;
 			}
 		} else {
 			logger.debug(func.getIdentifier() + " is not activated");

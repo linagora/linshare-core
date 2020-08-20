@@ -78,7 +78,6 @@ import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
-import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +93,6 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
-	
 	"/import-tests-document-entry-setup.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 
