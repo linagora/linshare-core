@@ -6,5 +6,5 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 	VALUES (66, false, 'WORK_GROUP__DOWNLOAD_ARCHIVE', 306, 307, 1, 'WORK_GROUP', true, now(), now());
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (12, 1, 1);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) 
-	VALUES (66, 900, 12);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id, integer_default_value)
+	VALUES (66, 0, 12, 900);
