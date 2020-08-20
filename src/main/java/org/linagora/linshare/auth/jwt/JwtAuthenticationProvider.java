@@ -42,10 +42,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.RoleProvider;
+import org.linagora.linshare.auth.exceptions.JwtBadFormatException;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
-import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
@@ -74,8 +74,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private JwtLongTimeMongoRepository jwtLongTimeMongoRepository;
 
-	private UserRepository<User> userRepository;
-
 	public void setAuthentificationFacade(AuthentificationFacade authentificationFacade) {
 		this.authentificationFacade = authentificationFacade;
 	}
@@ -88,27 +86,21 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		this.jwtLongTimeMongoRepository = jwtLongTimeMongoRepository;
 	}
 
-	public void setUserRepository(UserRepository<User> userRepository) {
-		this.userRepository = userRepository;
-	}
-
-	// TODO:JWT: log authentication attempts with failures
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-		final String token = (String) authentication.getPrincipal();
+		JwtAuthenticationToken jwtAuthentication = (JwtAuthenticationToken)authentication;
+		final String token = jwtAuthentication.getToken();
 		Claims claims;
 		try {
 			claims = jwtService.decode(token);
 		} catch (SignatureException e) {
 			logger.warn(e.getMessage(), e);
 			String msg = String.format("The token is not valid : %1$s : %2$s", e.getMessage(), token);
-			throw new AuthenticationServiceException(msg, e);
+			throw new JwtBadFormatException(msg, e);
 		} catch (ExpiredJwtException e) {
 			logger.warn(e.getMessage(), e);
-			// TODO:JWT: log authentication failure
-//			authentificationFacade.logAuthError(user, message);
-			throw new AuthenticationServiceException("The token is expired and not valid anymore : " + token, e);
+			throw new JwtBadFormatException("The token is expired and not valid anymore : " + token, e);
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 			String msg = String.format("Invalid token : %1$s : %2$s", e.getMessage(), token);
@@ -134,14 +126,14 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			PermanentToken jwtLongTime = jwtLongTimeMongoRepository.findByUuid(claims.get("uuid", String.class));
 			if (jwtLongTime == null) {
 				String message = "No valid JWT permanent token found for this token : %1$s";
-				insertJwtLongTimeFailureLogEntry(claims, message);
-				String msg = String.format(message, token);
-				throw new AuthenticationServiceException(msg);
+				logger.warn(String.format(message, claims.get("uuid")));
+				jwtAuthentication.setSubject(claims.get("sub", String.class));
+				throw new JwtBadFormatException(String.format(message, token));
 			} else if (!jwtLongTime.getSubject().equals(claims.getSubject())) {
 				String message = "Wrong JWT permanent token found for this token : %1$s";
-				insertJwtLongTimeFailureLogEntry(claims, message);
-				String msg = String.format(message, token);
-				throw new AuthenticationServiceException(msg);
+				logger.warn(String.format(message, claims.get("uuid")));
+				jwtAuthentication.setSubject(claims.get("sub", String.class));
+				throw new JwtBadFormatException(String.format(message, token));
 			}
 			if (!authentificationFacade.isJwtLongTimeFunctionalityEnabled(jwtLongTime.getDomain().getUuid())) {
 				throw new AuthenticationServiceException("JWT permanent token Functionality is disabled.");
@@ -188,28 +180,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 					+ foundUser.getMail(), e);
 		}
 
-		authentificationFacade.logAuthSuccess(foundUser.getLsUuid());
 		logger.info(String.format("Successful authentication of  %1$s with JWT token : %2$s", foundUser.getLsUuid(), claims));
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
 		UserDetails userDetail = new org.springframework.security.core.userdetails.User(foundUser.getLsUuid(), "", true,
 				true, true, true, grantedAuthorities);
 
-		return new UsernamePasswordAuthenticationToken(userDetail, authentication.getCredentials(), grantedAuthorities);
-	}
-
-	private void insertJwtLongTimeFailureLogEntry(Claims claims, String message) {
-		logger.warn(message);
-		User found = userRepository.findByMail(claims.getSubject());
-		String msg = new String();
-		if (claims.containsKey("uuid") && claims.get("uuid") != null) {
-			if (found != null) {
-				msg = String.format(message, claims.get("uuid"));
-				authentificationFacade.logAuthError(found, found.getDomainId(), msg);
-			} else {
-				msg = String.format("User not found for this JWT permanent token : %1$s", claims.get("uuid"));
-				authentificationFacade.logAuthError(claims.getSubject(), null, msg);
-			}
-		}
+		return new UsernamePasswordAuthenticationToken(userDetail, jwtAuthentication.getCredentials(), grantedAuthorities);
 	}
 
 	@Override

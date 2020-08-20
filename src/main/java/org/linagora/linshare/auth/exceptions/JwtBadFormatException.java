@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2018-2020 LINAGORA
+ * Copyright (C) 2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,42 +33,23 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.auth.jwt;
+package org.linagora.linshare.auth.exceptions;
 
-import org.springframework.security.authentication.AbstractAuthenticationToken;
+public class JwtBadFormatException extends LinShareAuthenticationException {
 
-public class JwtAuthenticationToken extends AbstractAuthenticationToken {
+	private static final long serialVersionUID = -4063554701880320974L;
 
-	private static final long serialVersionUID = 9181838390481593862L;
-
-	private final String token;
-
-	private String subject = "";
-
-	public JwtAuthenticationToken(String token) {
-		super(null);
-		this.token = token;
+	public JwtBadFormatException(String msg, Throwable t) {
+		super(msg, t);
 	}
 
-	public String getToken() {
-		return token;
+	public JwtBadFormatException(String msg) {
+		super(msg);
 	}
 
 	@Override
-	public Object getCredentials() {
-		return null;
+	public Integer getErrorCode() {
+		return 1005;
 	}
 
-	@Override
-	public Object getPrincipal() {
-		return getSubject();
-	}
-
-	public String getSubject() {
-		return subject;
-	}
-
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
 }

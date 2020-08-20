@@ -129,7 +129,6 @@
 		<!-- good practice ? -->
 		<b:property name="jwtService" ref="jwtService" />
 		<b:property name="jwtLongTimeMongoRepository" ref="jwtLongTimeMongoRepository" />
-		<b:property name="userRepository" ref="userRepository" />
 	</b:bean>
 
 	<b:bean id="linShareWebAuthenticationDetailsSource"
