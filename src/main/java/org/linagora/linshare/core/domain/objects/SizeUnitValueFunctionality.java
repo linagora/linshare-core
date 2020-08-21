@@ -57,6 +57,7 @@ public class SizeUnitValueFunctionality extends UnitValueFunctionality {
 		setSystem(f.isSystem());
 		setUnit(f.getUnit());
 		setValue(f.getValue());
+		setDefaultValue(f.getDefaultValue());
 	}
 	
 	public long getPlainSize() {

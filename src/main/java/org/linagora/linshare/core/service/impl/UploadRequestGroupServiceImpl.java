@@ -266,6 +266,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			logger.debug(func.getIdentifier() + " is activated");
 			long maxSize = ((FileSizeUnitClass) func.getUnit())
 					.getPlainSize(func.getValue());
+			long defaultSize = ((FileSizeUnitClass) func.getUnit())
+					.getPlainSize(func.getDefaultValue());
 			if (func.getDelegationPolicy() != null
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");
@@ -315,24 +317,24 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 					if (!(currentSize > 0 && currentSize <= maxSize)) {
 						logger.warn("the current value " + currentSize.toString()
 								+ " is out of range : " + func.toString());
-						return maxSize;
+						return defaultSize;
 					}
 					return currentSize;
 				}
-				return maxSize;
+				return defaultSize;
 			} else {
 				// there is no delegation, the current value should be the
 				// system value or null
 				logger.debug(func.getIdentifier()
 						+ " does not have a delegation policy");
 				if (currentSize != null) {
-					if (!currentSize.equals(maxSize)) {
+					if (!currentSize.equals(defaultSize)) {
 						logger.warn("the current value "
 								+ currentSize.toString()
-								+ " is different than system value " + maxSize);
+								+ " is different than system value " + defaultSize);
 					}
 				}
-				return maxSize;
+				return defaultSize;
 			}
 		} else {
 			logger.debug(func.getIdentifier() + " is not activated");
