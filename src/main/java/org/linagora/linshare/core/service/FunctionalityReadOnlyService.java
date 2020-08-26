@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.service;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
@@ -131,4 +132,12 @@ public interface FunctionalityReadOnlyService {
 	Functionality getDriveFunctionality(AbstractDomain domain);
 
 	BooleanValueFunctionality getSecondFactorAuthenticationFunctionality(AbstractDomain domain);
+
+	Integer getIntegerValue(IntegerValueFunctionality func, Integer maxFileCount);
+
+	Date getDateValue(TimeUnitValueFunctionality func, Date currentDate);
+
+	Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize);
+
+	Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate);
 }
