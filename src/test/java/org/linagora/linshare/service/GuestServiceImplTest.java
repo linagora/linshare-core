@@ -73,6 +73,7 @@ import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -82,7 +83,7 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
-@Sql({ "/import-tests.sql" })
+@Sql({ "/import-tests-fake-domains.sql" })
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -98,10 +99,13 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-mongo-java-server.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
+@DirtiesContext
 public class GuestServiceImplTest {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(GuestServiceImplTest.class);
+
+	private static String guestDomainName1 = "guestDomainName1";
 
 	@Autowired
 	private GuestService guestService;
@@ -374,7 +378,7 @@ public class GuestServiceImplTest {
 		Assertions.assertEquals(Role.SIMPLE, find.getRole());
 		
 		// updateGuestDomain
-		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.guestDomainName1);
+		AbstractDomain domain = abstractDomainRepository.findById(guestDomainName1);
 		inconsistentUserService.updateDomain(owner1, guest.getLsUuid(), domain.getUuid());
 
 	}

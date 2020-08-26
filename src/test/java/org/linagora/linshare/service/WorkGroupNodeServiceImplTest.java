@@ -74,6 +74,7 @@ import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -81,7 +82,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests.sql",
+	"/import-tests-fake-domains.sql",
 	"/import-tests-domain-quota-updates.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -95,6 +96,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml" })
+@DirtiesContext
 public class WorkGroupNodeServiceImplTest {
 
 	protected final Log logger = LogFactory.getLog(getClass());

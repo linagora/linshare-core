@@ -157,7 +157,7 @@ public class WelcomeMessagesServiceImplTest {
 			WelcomeMessages welcm = welcomeService.find(actor,
 					"4bc57114-c8c9-11e4-a859-37b5db95d856");
 			WelcomeMessages welcm_create = welcomeService.create(actor, welcm,
-					LoadingServiceTestDatas.rootDomainName);
+					LinShareTestConstants.ROOT_DOMAIN);
 			logger.debug("Object created.");
 			Assertions.assertNotNull(welcm_create);
 			Assertions.assertEquals(4, welcm_create.getWelcomeMessagesEntries()

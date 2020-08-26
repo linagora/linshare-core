@@ -60,7 +60,6 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	"/import-tests.sql",
 	"/import-tests-quota.sql"})
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml", 

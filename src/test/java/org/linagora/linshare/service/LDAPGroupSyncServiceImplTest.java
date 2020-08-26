@@ -95,7 +95,7 @@ import com.beust.jcommander.internal.Lists;
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
-@Sql({ "/import-tests.sql" })
+@Sql({ "/import-tests-fake-domains.sql" })
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -110,6 +110,7 @@ import com.beust.jcommander.internal.Lists;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml"
 })
+@DirtiesContext
 public class LDAPGroupSyncServiceImplTest {
 
 	@Autowired

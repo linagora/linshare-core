@@ -86,7 +86,6 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
-	"/import-tests.sql",
 	"/import-tests-operationHistory.sql",
 	"/import-tests-quota.sql"})
 @ContextConfiguration(locations = {

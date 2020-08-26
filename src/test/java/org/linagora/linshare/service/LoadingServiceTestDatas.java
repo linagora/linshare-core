@@ -48,31 +48,12 @@ public class LoadingServiceTestDatas {
 	protected Logger logger = LoggerFactory.getLogger(LoadingServiceTestDatas.class);
 	
 	private UserRepository<User> userRepository;
-	
-	public static String rootDomainName = "TEST_Domain-0";
-	public static String topDomainName = "TEST_Domain-0-1";
-	public static String topDomainName2 = "TEST_Domain-0-2";
-	public static String subDomainName1 = "TEST_Domain-0-1-1";
-	public static String subDomainName2 = "TEST_Domain-0-1-2";
-	public static String guestDomainName1 = "guestDomainName1";
-	
+
 	public static String sqlRootDomain = "LinShareRootDomain";
 	public static String sqlDomain = "MyDomain";
 	public static String sqlSubDomain = "MySubDomain";
 	public static String sqlGuestDomain = "GuestDomain";
-	
-	
-	public static String TEST_TIME_STAMPING="TEST_TIME_STAMPING";
-	public static String FILESIZE_MAX="TEST_FILESIZE_MAX";
-	public static String QUOTA_USER="TEST_QUOTA_USER";
-	public static String QUOTA_GLOBAL="TEST_QUOTA_GLOBAL";
-	public static String GUEST="GUEST";
-	public static String FUNC1="TEST_FUNC1";
-	public static String FUNC2="TEST_FUNC2";
-	public static String FUNC3="TEST_FUNC3";
-	public static String FUNC4="TEST_FUNC4";
-	public static String FUNC5="TEST_FUNC5";
-	
+
 	public static int TOTAL_COUNT_FUNC=10;
 	public static String timeStampingUrl = "http://server/service";
 
