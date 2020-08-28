@@ -62,7 +62,7 @@ public class UploadRequestDto {
 	private ContactDto owner;
 
 	@Schema(description = "Recipient")
-	private ContactDto recipient;
+	private Set<ContactDto> recipients;
 
 	@Schema(description = "Activation date")
 	private Date activationDate;
@@ -137,7 +137,7 @@ public class UploadRequestDto {
 			this.canClose = entity.isCanClose();
 			this.body = entity.getUploadRequestGroup().getBody();
 		}
-		this.recipient = null;
+		this.recipients = null;
 		if (entity.getStatus().equals(UploadRequestStatus.CLOSED)) {
 			this.isClosed = true;
 			this.canDeleteDocument = false;
@@ -150,7 +150,7 @@ public class UploadRequestDto {
 	public UploadRequestDto(UploadRequestUrl requestUrl) {
 		this(requestUrl.getUploadRequest(), false);
 		this.uuid = requestUrl.getUuid();
-		this.recipient = new ContactDto(requestUrl.getContact());
+		this.recipients.add(new ContactDto(requestUrl.getContact()));
 		this.protectedByPassword = requestUrl.isProtectedByPassword();
 	}
 
@@ -170,6 +170,15 @@ public class UploadRequestDto {
 		e.setEnableNotification(getEnableNotification());
 		e.setCanEditExpiryDate(getCanEditExpiryDate());
 		return e;
+	}
+
+	public static UploadRequestDto toDto(UploadRequest uploadRequest, Boolean full) {
+		UploadRequestDto requestDto = new UploadRequestDto(uploadRequest, full);
+		Set<ContactDto> recipients = Sets.newHashSet();
+		uploadRequest.getUploadRequestURLs()
+				.forEach(requestUrl -> recipients.add(new ContactDto(requestUrl.getContact())));
+		requestDto.setRecipients(recipients);
+		return requestDto;
 	}
 
 	public String getUuid() {
@@ -308,12 +317,12 @@ public class UploadRequestDto {
 		this.locale = locale;
 	}
 
-	public ContactDto getRecipient() {
-		return recipient;
+	public Set<ContactDto> getRecipients() {
+		return recipients;
 	}
 
-	public void setRecipient(ContactDto recipient) {
-		this.recipient = recipient;
+	public void setRecipients(Set<ContactDto> recipient) {
+		this.recipients = recipient;
 	}
 
 	public Date getNotificationDate() {
@@ -352,6 +361,6 @@ public class UploadRequestDto {
 	 * Transformers
 	 */
 	public static Function<UploadRequest, UploadRequestDto> toDto(Boolean full) {
-		return uploadRequest -> new UploadRequestDto(uploadRequest, full);
+		return uploadRequest -> toDto(uploadRequest, full);
 	}
 }

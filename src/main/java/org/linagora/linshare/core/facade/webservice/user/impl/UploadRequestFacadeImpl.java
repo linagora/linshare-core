@@ -71,7 +71,7 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequest ur = uploadRequestService.find(authUser, actor, uuid);
-		return new UploadRequestDto(ur, true);
+		return UploadRequestDto.toDto(ur, true);
 	}
 
 	@Override
