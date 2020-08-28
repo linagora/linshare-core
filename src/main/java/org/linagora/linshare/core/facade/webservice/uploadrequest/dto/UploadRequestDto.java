@@ -59,6 +59,9 @@ public class UploadRequestDto {
 	@Schema(description = "Recipient")
 	private ContactDto recipient;
 
+	@Schema(description = "The list of recipients")
+	private Set<ContactDto> recipients;
+
 	// could be null
 	private Integer maxFileCount;
 
@@ -131,6 +134,15 @@ public class UploadRequestDto {
 		e.setLocale(getLocale());
 		e.setExpiryDate(getExpiryDate());
 		return e;
+	}
+
+	public static UploadRequestDto toDto(UploadRequestUrl uploadRequestUrl) {
+		UploadRequestDto requestDto = new UploadRequestDto(uploadRequestUrl);
+		Set<ContactDto> recipients = Sets.newHashSet();
+		uploadRequestUrl.getUploadRequest().getUploadRequestURLs()
+				.forEach(requestUrl -> recipients.add(new ContactDto(requestUrl.getContact())));
+		requestDto.setRecipients(recipients);
+		return requestDto;
 	}
 
 	public String getUuid() {
@@ -267,6 +279,14 @@ public class UploadRequestDto {
 
 	public void setLocale(String locale) {
 		this.locale = locale;
+	}
+
+	public Set<ContactDto> getRecipients() {
+		return recipients;
+	}
+
+	public void setRecipients(Set<ContactDto> recipients) {
+		this.recipients = recipients;
 	}
 
 	/**

@@ -140,7 +140,7 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 		if (requestUrl == null) {
 			return null;
 		}
-		UploadRequestDto dto = new UploadRequestDto(requestUrl);
+		UploadRequestDto dto = UploadRequestDto.toDto(requestUrl);
 		Account actor = requestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 		Functionality functionality = functionalityReadOnlyService.getMimeTypeFunctionality(actor.getDomain());
 		if (functionality.getActivationPolicy().getStatus()) {

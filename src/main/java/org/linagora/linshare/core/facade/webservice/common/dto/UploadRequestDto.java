@@ -43,12 +43,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -61,7 +61,7 @@ public class UploadRequestDto {
 	@Schema(description = "Owner")
 	private ContactDto owner;
 
-	@Schema(description = "Recipient")
+	@Schema(description = "The list of recipients")
 	private Set<ContactDto> recipients;
 
 	@Schema(description = "Activation date")
@@ -145,13 +145,6 @@ public class UploadRequestDto {
 		}
 		this.protectedByPassword = false;
 		this.locale = entity.getLocale();
-	}
-
-	public UploadRequestDto(UploadRequestUrl requestUrl) {
-		this(requestUrl.getUploadRequest(), false);
-		this.uuid = requestUrl.getUuid();
-		this.recipients.add(new ContactDto(requestUrl.getContact()));
-		this.protectedByPassword = requestUrl.isProtectedByPassword();
 	}
 
 	public UploadRequest toObject() {
