@@ -95,6 +95,8 @@ public class UploadRequestDto {
 
 	private String locale;
 
+	private Boolean collective;
+
 	public UploadRequestDto() {
 		super();
 	}
@@ -121,6 +123,7 @@ public class UploadRequestDto {
 		this.recipient = new ContactDto(requestUrl.getContact());
 		this.protectedByPassword = requestUrl.isProtectedByPassword();
 		this.locale = requestUrl.getUploadRequest().getLocale();
+		this.collective = !requestUrl.getUploadRequest().getUploadRequestGroup().getRestricted();
 	}
 
 	public UploadRequest toObject() {
@@ -139,8 +142,12 @@ public class UploadRequestDto {
 	public static UploadRequestDto toDto(UploadRequestUrl uploadRequestUrl) {
 		UploadRequestDto requestDto = new UploadRequestDto(uploadRequestUrl);
 		Set<ContactDto> recipients = Sets.newHashSet();
-		uploadRequestUrl.getUploadRequest().getUploadRequestURLs()
-				.forEach(requestUrl -> recipients.add(new ContactDto(requestUrl.getContact())));
+		if (requestDto.getCollective()) {
+			uploadRequestUrl.getUploadRequest().getUploadRequestURLs()
+			.forEach(requestUrl -> recipients.add(new ContactDto(requestUrl.getContact())));
+		} else {
+			recipients.add(new ContactDto(uploadRequestUrl.getContact()));
+		}
 		requestDto.setRecipients(recipients);
 		return requestDto;
 	}
@@ -294,5 +301,13 @@ public class UploadRequestDto {
 	 */
 	public void addExtensions(String mimeType) {
 		this.extensions.add(mimeType);
+	}
+
+	public Boolean getCollective() {
+		return collective;
+	}
+
+	public void setCollective(Boolean collective) {
+		this.collective = collective;
 	}
 }

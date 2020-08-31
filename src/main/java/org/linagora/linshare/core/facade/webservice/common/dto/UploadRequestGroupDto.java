@@ -106,8 +106,8 @@ public class UploadRequestGroupDto {
 	@Schema(description = "Enable Notification")
 	private Boolean enableNotification;
 
-	@Schema(description = "Is restricted")
-	private Boolean restricted;
+	@Schema(description = "Is collective upload request group")
+	private Boolean collective;
 
 	@Schema(description = "Owner")
 	private ContactDto owner;
@@ -142,7 +142,7 @@ public class UploadRequestGroupDto {
 		this.secured = entity.isSecured();
 		this.mailMessageId = entity.getMailMessageId();
 		this.enableNotification = entity.getEnableNotification();
-		this.restricted = entity.getRestricted();
+		this.collective = !entity.getRestricted();
 		this.owner = new ContactDto(entity.getOwner());
 		this.domainDto = new DomainDto(entity.getAbstractDomain(), true);
 		this.status = entity.getStatus();
@@ -168,7 +168,7 @@ public class UploadRequestGroupDto {
 		uploadRequestGroup.setSecured(isSecured());
 		uploadRequestGroup.setMailMessageId(getMailMessageId());
 		uploadRequestGroup.setEnableNotification(getEnableNotification());
-		uploadRequestGroup.setRestricted(getRestricted());
+		uploadRequestGroup.setRestricted(!getCollective());
 		uploadRequestGroup.setStatus(getStatus());
 		return uploadRequestGroup;
 	}
@@ -317,12 +317,12 @@ public class UploadRequestGroupDto {
 		this.enableNotification = enableNotification;
 	}
 
-	public Boolean getRestricted() {
-		return restricted;
+	public Boolean getCollective() {
+		return collective;
 	}
 
-	public void setRestricted(Boolean restricted) {
-		this.restricted = restricted;
+	public void setCollective(Boolean collective) {
+		this.collective = collective;
 	}
 
 	public ContactDto getOwner() {

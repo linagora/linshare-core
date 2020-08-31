@@ -114,6 +114,8 @@ public class UploadRequestDto {
 
 	private Boolean canEditExpiryDate;
 
+	private Boolean collective;
+
 	public UploadRequestDto() {
 		super();
 	}
@@ -145,6 +147,7 @@ public class UploadRequestDto {
 		}
 		this.protectedByPassword = false;
 		this.locale = entity.getLocale();
+		this.collective = !entity.getUploadRequestGroup().getRestricted();
 	}
 
 	public UploadRequest toObject() {
@@ -355,5 +358,13 @@ public class UploadRequestDto {
 	 */
 	public static Function<UploadRequest, UploadRequestDto> toDto(Boolean full) {
 		return uploadRequest -> toDto(uploadRequest, full);
+	}
+
+	public Boolean getCollective() {
+		return collective;
+	}
+
+	public void setCollective(Boolean collective) {
+		this.collective = collective;
 	}
 }
