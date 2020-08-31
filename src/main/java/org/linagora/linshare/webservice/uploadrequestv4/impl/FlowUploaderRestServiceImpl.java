@@ -33,7 +33,7 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.uploadrequestv2.impl;
+package org.linagora.linshare.webservice.uploadrequestv4.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +61,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.uploadrequestv2.FlowUploaderRestService;
+import org.linagora.linshare.webservice.uploadrequestv4.FlowUploaderRestService;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.slf4j.Logger;

@@ -34,25 +34,57 @@
  * Additional Terms applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.uploadrequestv2;
+package org.linagora.linshare.webservice.test.userv4.impl;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.test.user.uploadrequest.UploadRequestTestFacade;
+import org.linagora.linshare.core.facade.webservice.test.user.uploadrequest.dto.UploadRequestDto;
+import org.linagora.linshare.webservice.test.userv4.UploadRequestTestRestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface UploadRequestRestService {
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 
-	Response find(String uuid, String password) throws BusinessException;
 
-	UploadRequestDto close(String uuid, String password)
-			throws BusinessException;
+@Path("/upload_requests_groups")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class UploadRequestTestRestServiceImpl implements UploadRequestTestRestService {
 
-	UploadRequestEntryDto delete(String uuid, String password, String entryUuid, EntryDto entry) throws BusinessException;
+	protected final Logger logger = LoggerFactory.getLogger(UploadRequestTestRestServiceImpl.class);
 
-	List<UploadRequestEntryDto> findAllEntries(String uuid, String password) throws BusinessException;
+	private final UploadRequestTestFacade uploadRequestFacade;
+
+	public UploadRequestTestRestServiceImpl(UploadRequestTestFacade uploadRequestFacade) {
+		super();
+		this.uploadRequestFacade = uploadRequestFacade;
+	}
+
+	@GET
+	@Path("/{uuid}/upload_requests")
+	@Operation(summary = "Find a list of upload request.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UploadRequestDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public List<UploadRequestDto> findAllUploadRequestsURl(
+			@Parameter(description = "Upload request group uuid.", required = true)
+				@PathParam(value = "uuid") String uuid) {
+		return uploadRequestFacade.findAllUploadRequestsURl(null, uuid);
+	}
 }

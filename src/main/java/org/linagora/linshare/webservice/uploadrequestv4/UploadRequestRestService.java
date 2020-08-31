@@ -1,8 +1,8 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
- *
+ * 
  * Copyright (C) 2015-2020 LINAGORA
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -33,25 +33,26 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.uploadrequestv2;
 
-import java.io.InputStream;
+package org.linagora.linshare.webservice.uploadrequestv4;
+
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
 
-public interface FlowUploaderRestService {
+public interface UploadRequestRestService {
 
-	FlowDto uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
-			long totalSize, String identifier, String filename,
-			String relativePath, InputStream file, MultipartBody body,
-			String uploadRequestUrlUuid, String password)
+	Response find(String uuid, String password) throws BusinessException;
+
+	UploadRequestDto close(String uuid, String password)
 			throws BusinessException;
 
-	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
-			long totalSize, String identifier, String filename,
-			String relativePath);
+	UploadRequestEntryDto delete(String uuid, String password, String entryUuid, EntryDto entry) throws BusinessException;
+
+	List<UploadRequestEntryDto> findAllEntries(String uuid, String password) throws BusinessException;
 }

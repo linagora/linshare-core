@@ -34,7 +34,7 @@
  * Additional Terms applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.uploadrequestv2.impl;
+package org.linagora.linshare.webservice.uploadrequestv4.impl;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntr
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
-import org.linagora.linshare.webservice.uploadrequestv2.UploadRequestRestService;
+import org.linagora.linshare.webservice.uploadrequestv4.UploadRequestRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

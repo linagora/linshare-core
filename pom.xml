@@ -978,16 +978,16 @@
 							<goal>generate</goal>
 						</goals>
 					</execution>
-				<execution>
-						<id>upload request v2</id>
+					<execution>
+						<id>upload request v4</id>
 						<configuration>
 							<attachSwaggerArtifact>true</attachSwaggerArtifact>
 							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv2</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv2.impl</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv4</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv4.impl</resourcePackage>
 							</resourcePackages>
 							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-upload-request-v2</outputFilename>
+							<outputFilename>swagger-upload-request-v4</outputFilename>
 							<outputFormats>
 								<outputFormat>JSON</outputFormat>
 								<outputFormat>YAML</outputFormat>
@@ -995,7 +995,7 @@
 							<prettyPrint>true</prettyPrint>
 							<swaggerConfig>
 								<info>
-									<title>Upload Request v2 API</title>
+									<title>Upload Request v4 API</title>
 									<version>${project.version}</version>
 									<contact>
 										<name>LINAGORA/LinShare</name>

@@ -16,9 +16,9 @@
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
 
-	<jaxrs:server id="userv2UploadRequestTest" address="/rest/test/user/v2/">
+	<jaxrs:server id="userv2UploadRequestTest" address="/rest/test/user/v4/">
 		<jaxrs:serviceBeans>
-			<bean class="org.linagora.linshare.webservice.test.userv2.impl.UploadRequestTestRestServiceImpl">
+			<bean class="org.linagora.linshare.webservice.test.userv4.impl.UploadRequestTestRestServiceImpl">
 				<constructor-arg ref="wsUploadRequestTestFacade" />
 			</bean>
 <!-- 			<ref bean="id"/> -->
