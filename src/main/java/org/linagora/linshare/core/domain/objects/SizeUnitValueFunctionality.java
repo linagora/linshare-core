@@ -62,7 +62,7 @@ public class SizeUnitValueFunctionality extends UnitValueFunctionality {
 	
 	public long getPlainSize() {
 		FileSizeUnitClass sizeUnit = (FileSizeUnitClass)getUnit();
-		return sizeUnit.getPlainSize(getValue());
+		return sizeUnit.getPlainSize(getDefaultValue());
 	}
 	
 }
