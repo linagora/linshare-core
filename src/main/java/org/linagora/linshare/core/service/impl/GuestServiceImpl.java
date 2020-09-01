@@ -212,13 +212,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Guest domain was not found");
 		}
-		Date expiryDate = guest.getExpirationDate();
-		if (expiryDate != null) {
-			checkDateValidity((User) owner, null, expiryDate, null, guest);
-		} else {
-			expiryDate = calculateUserExpiryDate(owner, null);
-			guest.setExpirationDate(expiryDate);
-		}
+		Date expiryDate = calculateGuestExpiryDate(owner, guest.getExpirationDate());
+		guest.setExpirationDate(expiryDate);
 		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(owner
 				.getDomainId());
 		User user = null;
@@ -283,16 +278,16 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 					"New owner doesn't have guest domain");
 		}
 		List<User> restrictedContacts = transformToUsers(actor, restrictedMails);
-		Date newExpirationDate = guest.getExpirationDate();
-		if (newExpirationDate != null) {
-			checkDateValidity(
-					owner,
-					entity.getExpirationDate(),
-					newExpirationDate,
-					functionalityReadOnlyService
-							.getGuestsExpirationDateProlongation(
-									owner.getDomain()).getActivationPolicy()
-							.getStatus(), entity);
+		Date newExpirationDate = guest.getExpirationDate(); 
+		if (newExpirationDate != null && !newExpirationDate.before(new Date())) {
+			if (!userService.isAdminForThisUser(actor, owner)) {
+				newExpirationDate = calculateGuestExpiryDate(owner, newExpirationDate);
+				checkDateValidity(owner, entity.getExpirationDate(), newExpirationDate,
+						functionalityReadOnlyService.getGuestsExpirationDateProlongation(owner.getDomain())
+								.getActivationPolicy().getStatus(),
+						entity);
+			}
+			guest.setExpirationDate(newExpirationDate);
 		} else {
 			guest.setExpirationDate(entity.getExpirationDate());
 		}
@@ -307,20 +302,18 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	private void checkDateValidity(User owner, Date oldExpiryDate,
 			Date dateToCheck, Boolean prolongation, Guest guest) {
-
-		if (oldExpiryDate == null) {
-			if (dateToCheck.before(new Date())
-					|| dateToCheck.after(calculateUserExpiryDate(owner, null))) {
-				throw new BusinessException(
-						BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID,
-						"Guest expiry date invalid.");
-			}
-		} else {
+		if (oldExpiryDate != null) {
 			Date date;
 			if (prolongation) {
-				date = calculateUserExpiryDate(owner, null);
-			} else
-				date = calculateUserExpiryDate(owner, guest.getCreationDate());
+				date = dateToCheck;
+			} else {
+				TimeUnitValueFunctionality func = functionalityReadOnlyService
+						.getGuestsExpiration(owner.getDomain());
+				Calendar expiryDate = Calendar.getInstance();
+				expiryDate.setTime(guest.getCreationDate());
+				expiryDate.add(Calendar.MONTH, func.getValue());
+				date = expiryDate.getTime();
+			}
 			if (dateToCheck.before(new Date()) || dateToCheck.after(date)) {
 				throw new BusinessException(
 						BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID,
@@ -503,23 +496,16 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		return abstractDomainService.findGuestDomain(topDomainId) != null;
 	}
 
-	private Date calculateUserExpiryDate(Account owner, Date guestCreationDate) {
-		Calendar expiryDate = Calendar.getInstance();
-		if (guestCreationDate == null) {
+	private Date calculateGuestExpiryDate(Account owner, Date currentGuestExpirationDate) {
 			TimeUnitValueFunctionality func = functionalityReadOnlyService
 					.getGuestsExpiration(owner.getDomain());
-			expiryDate.add(func.toCalendarValue(), func.getValue());
-		} else {
-			expiryDate.setTime(guestCreationDate);
-			expiryDate.add(Calendar.MONTH, 3);
-		}
-		return expiryDate.getTime();
+			return functionalityReadOnlyService.getDateValue(func, currentGuestExpirationDate);
 	}
 
 	@Override
 	public Date getGuestExpirationDate(Account actor,
 			Date currentGuestExpirationDate) throws BusinessException {
-		return calculateUserExpiryDate(actor, currentGuestExpirationDate);
+		return calculateGuestExpiryDate(actor, currentGuestExpirationDate);
 	}
 
 	@Override

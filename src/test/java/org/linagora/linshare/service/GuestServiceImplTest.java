@@ -36,6 +36,7 @@
 
 package org.linagora.linshare.service;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -56,11 +57,13 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.PasswordHistory;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.PasswordHistoryRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
@@ -142,6 +145,9 @@ public class GuestServiceImplTest {
 
 	@Autowired
 	private ResetGuestPasswordMongoRepository guestPasswordMongoRepository;
+
+	@Autowired
+	private FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private User root;
 
@@ -267,6 +273,22 @@ public class GuestServiceImplTest {
 		Assertions.assertEquals("First", update.getFirstName());
 		Assertions.assertEquals("Last", update.getLastName());
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUpdateExpirationDateByAdmin() throws BusinessException {
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = guestService.create(owner2, owner2, guest, null);
+
+		TimeUnitValueFunctionality func = functionalityReadOnlyService
+				.getGuestsExpiration(owner1.getDomain());
+		Calendar newExpiryDate = Calendar.getInstance();
+		newExpiryDate.setTime(guest.getCreationDate());
+		newExpiryDate.add(Calendar.MONTH, func.getValue() + 2); // the new expiration date is over the maximum value setted in the functionality.
+		guest.setExpirationDate(newExpiryDate.getTime());
+		Guest update = guestService.update(owner1, owner2, guest, null); // Owner1 is SuperAdmin and owner2 is a simple user
+		Assertions.assertEquals(newExpiryDate.getTime(), update.getExpirationDate());
 	}
 
 	@Test
