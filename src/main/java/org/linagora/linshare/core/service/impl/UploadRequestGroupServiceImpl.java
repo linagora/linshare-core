@@ -135,24 +135,14 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	@Override
 	public UploadRequestGroup create(Account actor, User owner, UploadRequest inputRequest,
-			List<Contact> contacts, String subject, String body, Boolean groupedMode) throws BusinessException {
+			List<Contact> contacts, String subject, String body, Boolean collectiveMode) throws BusinessException {
 		checkCreatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
 		AbstractDomain domain = owner.getDomain();
-		BooleanValueFunctionality groupedFunc = functionalityService.getUploadRequestGroupedFunctionality(domain);
-		boolean groupedModeLocal = groupedFunc.getValue();
-		if (groupedFunc.getActivationPolicy().getStatus()) {
-			if (groupedFunc.getDelegationPolicy().getStatus()) {
-				if (groupedMode != null) {
-					groupedModeLocal = groupedMode;
-				}
-			}
-		} else {
-			groupedModeLocal = false;
-		}
+		boolean collectiveModeLocal = checkCollectiveModeCreation(collectiveMode, domain);
 		UploadRequest req = initUploadRequest(owner, inputRequest);
 		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup(owner, domain, subject, body,
 				req.getActivationDate(), req.isCanDelete(), req.isCanClose(), req.isCanEditExpiryDate(),
-				req.getLocale(), req.isSecured(), req.getEnableNotification(), !groupedModeLocal, req.getStatus(),
+				req.getLocale(), req.isSecured(), req.getEnableNotification(), !collectiveModeLocal, req.getStatus(),
 				req.getExpiryDate(), req.getNotificationDate(), req.getMaxFileCount(), req.getMaxDepositSize(),
 				req.getMaxFileSize());
 		uploadRequestGroup = uploadRequestGroupBusinessService.create(uploadRequestGroup);
@@ -162,7 +152,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				uploadRequestGroup.getUuid(), uploadRequestGroup);
 		container.addLog(groupLog);
 		req.setUploadRequestGroup(uploadRequestGroup);
-		if (groupedModeLocal) {
+		if (collectiveModeLocal) {
 			container = uploadRequestService.create(actor, owner, req, container);
 			for (Contact contact : contacts) {
 				container = uploadRequestUrlService.create(container.getUploadRequests().iterator().next(), contact, container);
@@ -178,6 +168,26 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		notifierService.sendNotification(container.getMailContainers());
 		logEntryService.insert(container.getLogs());
 		return uploadRequestGroup;
+	}
+
+	private boolean checkCollectiveModeCreation(Boolean collectiveMode, AbstractDomain domain) {
+		BooleanValueFunctionality collectiveFunc = functionalityService.getUploadRequestGroupedFunctionality(domain);
+		boolean collectiveModeLocal = collectiveFunc.getValue();
+		boolean funcStatus = collectiveFunc.getActivationPolicy().getStatus();
+		if (!funcStatus && collectiveMode) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+					"You can not create a collective upload request, please check the domain's admin to enable the functionality");
+		}
+		if (funcStatus) {
+			if (collectiveFunc.getDelegationPolicy().getStatus()) {
+				if (collectiveMode != null) {
+					collectiveModeLocal = collectiveMode;
+				}
+			}
+		} else {
+			collectiveModeLocal = false;
+		}
+		return collectiveModeLocal;
 	}
 
 	private UploadRequest initUploadRequest(User owner, UploadRequest req) {
