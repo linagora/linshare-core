@@ -59,7 +59,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;

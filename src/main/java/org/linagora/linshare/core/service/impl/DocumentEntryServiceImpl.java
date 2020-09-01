@@ -602,7 +602,7 @@ public class DocumentEntryServiceImpl
 				} else {
 					TimeUnitValueFunctionality fileExpirationFunc = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
 					Calendar deletionDate = Calendar.getInstance();
-					deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getValue());
+					deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getDefaultValue());
 					documentEntry.setExpirationDate(deletionDate);
 					documentEntryBusinessService.update(documentEntry);
 				}
