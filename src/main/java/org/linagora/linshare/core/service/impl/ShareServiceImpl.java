@@ -229,7 +229,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		Date defaultUsdaNotificationDate = null;
 		IntegerValueFunctionality usdaDurationFunc = funcService
 				.getUndownloadedSharedDocumentsAlertDuration(owner.getDomain());
-		Integer usdaDuration = usdaDurationFunc.getValue();
+		Integer usdaDuration = usdaDurationFunc.getDefaultValue();
 		Calendar c = Calendar.getInstance();
 		int day = c.get(Calendar.DAY_OF_WEEK);
 		int nbWeek = (day -2 + usdaDuration) / 5;
@@ -392,6 +392,15 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		expirationDate.set(Calendar.MINUTE, 0);
 		expirationDate.set(Calendar.SECOND, 0);
 		Date highLimit = expirationDate.getTime();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(shareExpiration.toCalendarValue(),
+				shareExpiration.getDefaultValue());
+		calendar.add(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		Date defaultExpirationDate = calendar.getTime();
 		if (shareExpiration.getDelegationPolicy().getStatus()) {
 			if (userExpiryDate != null) {
 				userExpiryDate = setEndOfDayTime(userExpiryDate);
@@ -405,10 +414,10 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
 							"Can not share documents, expiry date is after the max date.");
 				}
-				highLimit = userExpiryDate;
+				return userExpiryDate;
 			}
 		}
-		return highLimit;
+		return defaultExpirationDate;
 	}
 
 	private Date setEndOfDayTime(Date date) {
