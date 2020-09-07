@@ -55,7 +55,7 @@ public interface UploadRequestGroupRestService {
 
 	UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException;
 
-	UploadRequestGroupDto create(String actorUuid, UploadRequestCreationDto uploadRequestCreationDto, Boolean groupMode);
+	UploadRequestGroupDto create(String actorUuid, UploadRequestCreationDto uploadRequestCreationDto, Boolean collectiveMode);
 
 	UploadRequestGroupDto updateStatus(String actorUuid, String requestUuid, UploadRequestStatus status, boolean copy)
 			throws BusinessException;

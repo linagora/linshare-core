@@ -49,10 +49,6 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
-	<bean name="uploadRequestTemplateResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UploadRequestTemplateResourceAccessControlImpl">
-		<constructor-arg ref="functionalityReadOnlyService" />
-	</bean>
-
 	<bean name="uploadRequestGroupResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UploadRequestGroupResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>

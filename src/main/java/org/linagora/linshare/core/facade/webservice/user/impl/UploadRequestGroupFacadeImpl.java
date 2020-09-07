@@ -101,7 +101,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 
 	@Override
 	public UploadRequestGroupDto create(String actorUuid, UploadRequestCreationDto uploadRequesCreationtDto,
-			Boolean groupMode) throws BusinessException {
+			Boolean collectiveMode) throws BusinessException {
 		Validate.notNull(uploadRequesCreationtDto, "Upload request must be set.");
 		Validate.notEmpty(uploadRequesCreationtDto.getLabel(), "Upload request label must be set.");
 		Validate.notEmpty(uploadRequesCreationtDto.getContactList(), "ContactList must be set");
@@ -113,7 +113,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 			contacts.add(new Contact(mail));
 		}
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(authUser, actor, req, contacts,
-				uploadRequesCreationtDto.getLabel(), uploadRequesCreationtDto.getBody(), groupMode);
+				uploadRequesCreationtDto.getLabel(), uploadRequesCreationtDto.getBody(), collectiveMode);
 		return new UploadRequestGroupDto(uploadRequestGroup);
 	}
 

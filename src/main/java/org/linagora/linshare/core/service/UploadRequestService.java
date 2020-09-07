@@ -44,7 +44,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -65,16 +64,6 @@ public interface UploadRequestService {
 	UploadRequest closeRequestByRecipient(UploadRequestUrl url) throws BusinessException;
 
 	UploadRequest deleteRequest(Account actor, Account owner, String uuid) throws BusinessException;
-
-	UploadRequestTemplate findTemplateByUuid(Account actor, Account owner, String uuid) throws BusinessException;
-
-	UploadRequestTemplate createTemplate(Account actor, Account owner, UploadRequestTemplate template)
-			throws BusinessException;
-
-	UploadRequestTemplate updateTemplate(Account actor, Account owner, String uuid, UploadRequestTemplate template)
-			throws BusinessException;
-
-	UploadRequestTemplate deleteTemplate(Account actor, Account owner, String uuid) throws BusinessException;
 
 	Set<UploadRequest> findAll(Account actor, List<UploadRequestStatus> status, Date afterDate, Date beforeDate)
 			throws BusinessException;

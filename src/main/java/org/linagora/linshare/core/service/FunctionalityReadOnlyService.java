@@ -100,7 +100,7 @@ public interface FunctionalityReadOnlyService {
 	StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain);
 	TimeUnitValueFunctionality getUploadRequestActivationTimeFunctionality(AbstractDomain domain);
 	TimeUnitValueFunctionality getUploadRequestExpiryTimeFunctionality(AbstractDomain domain);
-	BooleanValueFunctionality getUploadRequestGroupedFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getUploadRequestCollectiveFunctionality(AbstractDomain domain);
 	IntegerValueFunctionality getUploadRequestMaxFileCountFunctionality(AbstractDomain domain);
 	SizeUnitValueFunctionality getUploadRequestMaxFileSizeFunctionality(AbstractDomain domain);
 	SizeUnitValueFunctionality getUploadRequestMaxDepositSizeFunctionality(AbstractDomain domain);

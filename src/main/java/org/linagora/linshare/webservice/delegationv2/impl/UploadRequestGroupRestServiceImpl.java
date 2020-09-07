@@ -132,9 +132,9 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 				@PathParam("actorUuid") String actorUuid,
 			@Parameter(description = "Upload request.", required = true)
 				UploadRequestCreationDto uploadRequestCreationDto,
-			@Parameter(description = "Group mode.", required = true)
-				@QueryParam(value = "groupMode") Boolean groupMode) {
-		return uploadRequestGroupFacade.create(actorUuid, uploadRequestCreationDto, groupMode);
+			@Parameter(description = "Collective mode.", required = true)
+				@QueryParam(value = "collectiveMode") Boolean collectiveMode) {
+		return uploadRequestGroupFacade.create(actorUuid, uploadRequestCreationDto, collectiveMode);
 	}
 
 	@PUT

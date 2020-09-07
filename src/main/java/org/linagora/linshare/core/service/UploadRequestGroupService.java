@@ -55,7 +55,7 @@ public interface UploadRequestGroupService {
 	UploadRequestGroup find(Account actor, Account owner, String uuid);
 
 	UploadRequestGroup create(Account actor, User owner, UploadRequest req, List<Contact> contacts,
-			String subject, String body, Boolean groupedMode) throws BusinessException;
+			String subject, String body, Boolean collectiveMode) throws BusinessException;
 
 	UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup);
 

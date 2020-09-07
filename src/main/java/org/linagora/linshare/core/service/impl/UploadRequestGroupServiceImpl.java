@@ -171,9 +171,13 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	}
 
 	private boolean checkCollectiveModeCreation(Boolean collectiveMode, AbstractDomain domain) {
-		BooleanValueFunctionality collectiveFunc = functionalityService.getUploadRequestGroupedFunctionality(domain);
+		BooleanValueFunctionality collectiveFunc = functionalityService.getUploadRequestCollectiveFunctionality(domain);
 		boolean collectiveModeLocal = collectiveFunc.getValue();
 		boolean funcStatus = collectiveFunc.getActivationPolicy().getStatus();
+		if (!funcStatus && collectiveMode) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+					"You can not create a collective upload request, functionality is disabled");
+		}
 		if (funcStatus) {
 			if (collectiveFunc.getDelegationPolicy().getStatus()) {
 				if (collectiveMode != null) {

@@ -311,7 +311,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public BooleanValueFunctionality getUploadRequestGroupedFunctionality(AbstractDomain domain) {
+	public BooleanValueFunctionality getUploadRequestCollectiveFunctionality(AbstractDomain domain) {
 		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__GROUPED_MODE);
 	}
 

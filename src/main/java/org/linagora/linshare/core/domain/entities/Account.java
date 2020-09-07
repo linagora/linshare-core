@@ -87,8 +87,6 @@ public abstract class Account {
 
 	protected TechnicalAccountPermission permission;
 
-	protected Set<UploadRequestTemplate> uploadRequestTemplates;
-
 	protected Set<UploadRequestGroup> uploadRequestGroups;
 
 	protected Set<PasswordHistory> passwordHistories;
@@ -312,15 +310,6 @@ public abstract class Account {
 
 	public void setUploadRequestGroups(Set<UploadRequestGroup> uploadRequestGroups) {
 		this.uploadRequestGroups = uploadRequestGroups;
-	}
-
-	public Set<UploadRequestTemplate> getUploadRequestTemplates() {
-		return uploadRequestTemplates;
-	}
-
-	public void setUploadRequestTemplates(
-			Set<UploadRequestTemplate> uploadRequestTemplates) {
-		this.uploadRequestTemplates = uploadRequestTemplates;
 	}
 
 	public String getCmisLocale() {

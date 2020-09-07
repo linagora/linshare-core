@@ -163,10 +163,6 @@
 		<constructor-arg ref="uploadRequestGroupRepository" />
 	</bean>
 
-	<bean id="uploadRequestTemplateBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestTemplateBusinessServiceImpl">
-		<constructor-arg ref="uploadRequestTemplateRepository" />
-	</bean>
-
 	<bean id="uploadRequestUrlBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestUrlBusinessServiceImpl">
 		<constructor-arg ref="uploadRequestUrlRepository" />
 		<constructor-arg ref="passwordService" />

@@ -56,7 +56,7 @@ public interface UploadRequestGroupFacade {
 	UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException;
 
 	UploadRequestGroupDto create(String actorUuid, UploadRequestCreationDto uploadRequestCreationtDto,
-			Boolean groupMode) throws BusinessException;
+			Boolean collectiveMode) throws BusinessException;
 
 	UploadRequestGroupDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status, boolean copy)
 			throws BusinessException;

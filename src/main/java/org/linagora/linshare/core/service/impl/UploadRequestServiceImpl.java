@@ -45,7 +45,6 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -54,7 +53,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -68,7 +66,6 @@ import org.linagora.linshare.core.notifications.context.UploadRequestClosedByRec
 import org.linagora.linshare.core.notifications.context.UploadRequestUpdateSettingsEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestResourceAccessControl;
-import org.linagora.linshare.core.rac.UploadRequestTemplateResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -87,15 +84,11 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 
 	private final UploadRequestBusinessService uploadRequestBusinessService;
 
-	private final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService;
-
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
 
 	private final MailBuildingService mailBuildingService;
 
 	private final NotifierService notifierService;
-
-	private final UploadRequestTemplateResourceAccessControl templateRac;
 
 	private final LogEntryService logEntryService;
 
@@ -104,23 +97,19 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	public UploadRequestServiceImpl(
 			final AccountRepository<Account> accountRepository,
 			final UploadRequestBusinessService uploadRequestBusinessService,
-			final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestResourceAccessControl rac,
-			final UploadRequestTemplateResourceAccessControl templateRac,
 			final LogEntryService logEntryService,
 			final UploadRequestEntryService uploadRequestEntryService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
-		this.uploadRequestTemplateBusinessService = uploadRequestTemplateBusinessService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
-		this.templateRac = templateRac;
 		this.logEntryService = logEntryService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
 	}
@@ -305,47 +294,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 				.getMyAdministredDomains(actor);
 		return new HashSet<UploadRequest>(uploadRequestBusinessService.findAll(
 				myAdministredDomains, status, afterDate, beforeDate));
-	}
-
-	@Override
-	public UploadRequestTemplate findTemplateByUuid(Account actor, Account owner,
-			String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "Template uuid must be set.");
-		preChecks(actor, owner);
-		UploadRequestTemplate ret = uploadRequestTemplateBusinessService.findByUuid(uuid);
-		if (ret == null) {
-			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "UploadRequestTemplate with uuid: " + uuid + " not found.");
-		}
-		templateRac.checkCreatePermission(actor, ret.getOwner(), UploadRequestTemplate.class,
-				BusinessErrorCode.UPLOAD_REQUEST_TEMPLATE_FORBIDDEN, ret);
-		return ret;
-	}
-
-	@Override
-	public UploadRequestTemplate createTemplate(Account actor, Account owner,
-			UploadRequestTemplate template) throws BusinessException {
-		UploadRequestTemplate temp = uploadRequestTemplateBusinessService.create(actor, template);
-		templateRac.checkCreatePermission(actor, temp.getOwner(), UploadRequestTemplate.class, BusinessErrorCode.UPLOAD_REQUEST_TEMPLATE_FORBIDDEN, temp);
-		return temp;
-	}
-
-	@Override
-	public UploadRequestTemplate updateTemplate(Account actor, Account owner, String uuid,
-			UploadRequestTemplate template) throws BusinessException {
-		Validate.notEmpty(uuid, "Template uuid must be set.");
-		Validate.notNull(template, "Template must be set.");
-		UploadRequestTemplate temp = findTemplateByUuid(actor, owner, uuid);
-		templateRac.checkUpdatePermission(actor, temp.getOwner(), UploadRequestTemplate.class, BusinessErrorCode.UPLOAD_REQUEST_TEMPLATE_FORBIDDEN, temp);
-		return uploadRequestTemplateBusinessService.update(temp, template);
-	}
-
-	@Override
-	public UploadRequestTemplate deleteTemplate(Account actor, Account owner, String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "Template uuid must be set.");
-		UploadRequestTemplate template = findTemplateByUuid(actor, owner, uuid);
-		templateRac.checkDeletePermission(actor, template.getOwner(), UploadRequestTemplate.class, BusinessErrorCode.UPLOAD_REQUEST_TEMPLATE_FORBIDDEN, template);
-		uploadRequestTemplateBusinessService.delete(template);
-		return template;
 	}
 
 	@Override
