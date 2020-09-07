@@ -123,8 +123,6 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 
 	private User recipient;
 
-	private User anonymousRecipient;
-
 	public NotifyUpcomingOutdatedSharesBatchImplTest() {
 		super();
 	}
@@ -134,8 +132,6 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		owner = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		recipient = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
-		// TODO : FixMe, anonymousRecipient must not be an internal account
-		anonymousRecipient = userRepository.findByMail(LinShareTestConstants.FOO_ACCOUNT);
 		actor = (Account) owner;
 		initShares();
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -166,7 +162,7 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 		shareContainer.setExpiryDate(expirationDate.getTime());
 		shareContainer.addShareRecipient(recipient);
 		shareContainer.addDocumentEntry(documentEntry);
-		shareContainer.addAnonymousShareRecipient(new Recipient(anonymousRecipient));
+		shareContainer.addAnonymousShareRecipient(new Recipient("anonymous@linshare.org"));
 		shareService.create(actor, owner, shareContainer);
 	}
 
