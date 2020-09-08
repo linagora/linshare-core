@@ -85,7 +85,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		this.mongoRepository = mongoRepository;
 		// Users
 		excludesForUsers.add(FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION.toString());
-		excludesForUsers.add(FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString());
 		excludesForUsers.add(FunctionalityNames.DOMAIN__MAIL.toString());
 		excludesForUsers.add(FunctionalityNames.ANTIVIRUS.toString());
 		excludesForUsers.add(FunctionalityNames.TIME_STAMPING.toString());
