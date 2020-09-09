@@ -33,81 +33,38 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
+
 package org.linagora.linshare.core.facade.webservice.user.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import org.linagora.linshare.core.domain.constants.Language;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({ @Type(value = FunctionalityStringDto.class, name = "string"),
-		@Type(value = FunctionalityIntegerDto.class, name = "integer"),
-		@Type(value = FunctionalityBooleanDto.class, name = "boolean"),
-		@Type(value = FunctionalityTimeDto.class, name = "time"),
-		@Type(value = FunctionalitySizeDto.class, name = "size"),
-		@Type(value = FunctionalityEnumLangDto.class, name = "enum"),
-		@Type(value = FunctionalityDto.class, name = "simple"),
-		})
-@XmlRootElement(name = "Functionality")
-@XmlSeeAlso({ FunctionalityStringDto.class,
-	FunctionalityIntegerDto.class,
-	FunctionalityBooleanDto.class,
-	FunctionalityTimeDto.class,
-	FunctionalitySizeDto.class,
-	FunctionalityEnumLangDto.class})
-public class FunctionalityDto {
+public class FunctionalityEnumLangDto extends FunctionalityDto {
 
-	/**
-	 * the functionality identifier.
-	 */
-	protected String identifier;
-	/**
-	 * if the functionality is enable/available.
-	 */
-	protected boolean enable;
-	/**
-	 * if the user can override the default parameters.
-	 */
-	protected Boolean canOverride;
+	protected Language value;
 
-	public FunctionalityDto() {
+	protected List<Language> units = new ArrayList<Language>();
+
+	public FunctionalityEnumLangDto() {
 		super();
 	}
 
-	public FunctionalityDto(String identifier, boolean enable,
-			Boolean  canOverride) {
-		super();
-		this.identifier = identifier;
-		this.enable = enable;
-		this.canOverride = canOverride;
+	public Language getValue() {
+		return value;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public void setValue(Language value) {
+		this.value = value;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public List<Language> getUnits() {
+		return units;
 	}
 
-	public boolean isEnable() {
-		return enable;
+	public void setUnits(List<Language> units) {
+		this.units = units;
 	}
 
-	public void setEnable(boolean enable) {
-		this.enable = enable;
-	}
-
-	public Boolean isCanOverride() {
-		return canOverride;
-	}
-
-	public void setCanOverride(Boolean canOverride) {
-		this.canOverride = canOverride;
-	}
 }

@@ -36,12 +36,15 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityEnumLangDto;
 
 public class LanguageEnumValueFunctionality extends OneValueFunctionality<Language> {
 
@@ -99,5 +102,15 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		res.add(new ParameterDto(this.getValue()));
 		return res;
+	}
+
+	@Override
+	protected FunctionalityDto getUserDto(boolean enable) {
+		FunctionalityEnumLangDto f = new FunctionalityEnumLangDto();
+		if (enable) {
+			f.setValue(value);
+			f.setUnits(Arrays.asList(Language.values()));
+		}
+		return f;
 	}
 }
