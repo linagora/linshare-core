@@ -50,7 +50,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 		@Type(value = FunctionalityBooleanDto.class, name = "boolean"),
 		@Type(value = FunctionalityTimeDto.class, name = "time"),
 		@Type(value = FunctionalitySizeDto.class, name = "size"),
-		@Type(value = FunctionalityEnumLangDto.class, name = "enum"),
+		@Type(value = FunctionalityEnumLangDto.class, name = "language"),
 		@Type(value = FunctionalityDto.class, name = "simple"),
 		})
 @XmlRootElement(name = "Functionality")
