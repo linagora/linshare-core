@@ -311,11 +311,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public BooleanValueFunctionality getUploadRequestCollectiveFunctionality(AbstractDomain domain) {
-		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__GROUPED_MODE);
-	}
-
-	@Override
 	public IntegerValueFunctionality getUploadRequestMaxFileCountFunctionality(
 			AbstractDomain domain) {
 		return (IntegerValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_FILE_COUNT);
@@ -349,12 +344,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public BooleanValueFunctionality getUploadRequestCanCloseFunctionality(
 			AbstractDomain domain) {
 		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__CAN_CLOSE);
-	}
-
-	@Override
-	public BooleanValueFunctionality getUploadRequestProlongationFunctionality(
-			AbstractDomain domain) {
-		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__PROLONGATION);
 	}
 
 	@Override

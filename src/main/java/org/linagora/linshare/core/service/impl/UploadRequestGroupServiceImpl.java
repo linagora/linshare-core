@@ -53,7 +53,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -138,11 +137,13 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			List<Contact> contacts, String subject, String body, Boolean collectiveMode) throws BusinessException {
 		checkCreatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
 		AbstractDomain domain = owner.getDomain();
-		boolean collectiveModeLocal = checkCollectiveModeCreation(collectiveMode, domain);
+		if (collectiveMode == null) {
+			collectiveMode = false;
+		}
 		UploadRequest req = initUploadRequest(owner, inputRequest);
 		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup(owner, domain, subject, body,
 				req.getActivationDate(), req.isCanDelete(), req.isCanClose(), req.isCanEditExpiryDate(),
-				req.getLocale(), req.isSecured(), req.getEnableNotification(), !collectiveModeLocal, req.getStatus(),
+				req.getLocale(), req.isSecured(), req.getEnableNotification(), !collectiveMode, req.getStatus(),
 				req.getExpiryDate(), req.getNotificationDate(), req.getMaxFileCount(), req.getMaxDepositSize(),
 				req.getMaxFileSize());
 		uploadRequestGroup = uploadRequestGroupBusinessService.create(uploadRequestGroup);
@@ -152,7 +153,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				uploadRequestGroup.getUuid(), uploadRequestGroup);
 		container.addLog(groupLog);
 		req.setUploadRequestGroup(uploadRequestGroup);
-		if (collectiveModeLocal) {
+		if (collectiveMode) {
 			container = uploadRequestService.create(actor, owner, req, container);
 			for (Contact contact : contacts) {
 				container = uploadRequestUrlService.create(container.getUploadRequests().iterator().next(), contact, container);
@@ -170,30 +171,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		return uploadRequestGroup;
 	}
 
-	private boolean checkCollectiveModeCreation(Boolean collectiveMode, AbstractDomain domain) {
-		BooleanValueFunctionality collectiveFunc = functionalityService.getUploadRequestCollectiveFunctionality(domain);
-		boolean collectiveModeLocal = collectiveFunc.getValue();
-		boolean funcStatus = collectiveFunc.getActivationPolicy().getStatus();
-		if (!funcStatus && collectiveMode) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
-					"You can not create a collective upload request, functionality is disabled");
-		}
-		if (funcStatus) {
-			if (collectiveFunc.getDelegationPolicy().getStatus()) {
-				if (collectiveMode != null) {
-					collectiveModeLocal = collectiveMode;
-				}
-			}
-		} else {
-			if (collectiveMode != null && collectiveMode) {
-				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
-						"You can not create a collective upload request, please check the domain's admin to enable the functionality");
-			}
-			collectiveModeLocal = false;
-		}
-		return collectiveModeLocal;
-	}
-
 	private UploadRequest initUploadRequest(User owner, UploadRequest req) {
 		AbstractDomain domain = owner.getDomain();
 		checkActivationDate(domain, req);
@@ -207,8 +184,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		checkSecuredUrl(domain, req);
 		UploadRequestStatus status = req.getActivationDate().after(new Date())?UploadRequestStatus.CREATED:UploadRequestStatus.ENABLED;
 		req.setStatus(status);
-		Functionality func = functionalityService.getUploadRequestProlongationFunctionality(domain);
-		req.setCanEditExpiryDate(func.getActivationPolicy().getStatus());
+		req.setCanEditExpiryDate(true);
 		return req;
 	}
 
