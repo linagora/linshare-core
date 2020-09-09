@@ -52,6 +52,8 @@ import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
@@ -104,26 +106,31 @@ public class FunctionalityReadOnlyTest {
 	public void testUploadRequestMaxFileCountFunctionality_GetIntegerValue() {
 		IntegerValueFunctionality func = functionalityService
 				.getUploadRequestMaxFileCountFunctionality(domain);
-		// the user value is over the maximum value, we need to keep the default value
-		Integer integerValue = functionalityService.getIntegerValue(func, func.getValue() + 1);
-		Assertions.assertEquals(func.getDefaultValue(), integerValue);
+		// the user value is over the maximum value, we need to throws business exception
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			functionalityService.getIntegerValue(func, func.getValue() + 1,
+					BusinessErrorCode.UPLOAD_REQUEST_INTEGER_VALUE_INVALID);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_INTEGER_VALUE_INVALID, exception.getErrorCode());
 		// the user value is > 0 and < maximum value, so we need to keep the user value.
-		integerValue = functionalityService.getIntegerValue(func, func.getValue() - 1);
+		Integer integerValue = functionalityService.getIntegerValue(func, func.getValue() - 1,
+				BusinessErrorCode.UPLOAD_REQUEST_INTEGER_VALUE_INVALID);
 		Assertions.assertEquals(integerValue, func.getValue() - 1);
 	}
 
 	@Test
 	public void testUploadRequestMaxFileSizeFunctionality_GetSizeValue() {
-		SizeUnitValueFunctionality func = functionalityService
-				.getUploadRequestMaxFileSizeFunctionality(domain);
-		// the user value is over the maximum value, we need to keep the default value
-		long currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue() + 1L);
-		long defaultValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getDefaultValue());
-		Long sizeValue = functionalityService.getSizeValue(func, currentValue);
-		Assertions.assertEquals(defaultValue, sizeValue);
+		SizeUnitValueFunctionality func = functionalityService.getUploadRequestMaxFileSizeFunctionality(domain);
+		// the user value is over the maximum value, we need to throws business exception
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			long currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue() + 1L);
+			functionalityService.getSizeValue(func, currentValue, BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID, exception.getErrorCode());
 		// the user value is > 0 and < maximum value, so we need to keep the user value.
-		currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue() - 1L);
-		sizeValue = functionalityService.getSizeValue(func, currentValue);
+		long currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue() - 1L);
+		long sizeValue = functionalityService.getSizeValue(func, currentValue,
+				BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
 		Assertions.assertEquals(sizeValue, currentValue);
 	}
 
@@ -132,14 +139,15 @@ public class FunctionalityReadOnlyTest {
 	public void testUploadRequestMaxDepositSizeFunctionality_GetSizeValue() {
 		SizeUnitValueFunctionality func = functionalityService
 				.getUploadRequestMaxDepositSizeFunctionality(domain);
-		// the user value is over the maximum value, we need to keep the default value
-		long currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue() + 1L);
-		long defaultValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getDefaultValue());
-		Long sizeValue = functionalityService.getSizeValue(func, currentValue);
-		Assertions.assertEquals(defaultValue, sizeValue);
+		// the user value is over the maximum value, we need to throws business exception
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			long currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue() + 1L);
+			functionalityService.getSizeValue(func, currentValue, BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID, exception.getErrorCode());
 		// the user value is > 0 and < maximum value, so we need to keep the user value.
-		currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue() - 1L);
-		sizeValue = functionalityService.getSizeValue(func, currentValue);
+		long currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue() - 1L);
+		long sizeValue = functionalityService.getSizeValue(func, currentValue, BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
 		Assertions.assertEquals(sizeValue, currentValue);
 	}
 
@@ -149,20 +157,14 @@ public class FunctionalityReadOnlyTest {
 		TimeUnitValueFunctionality func = functionalityService
 				.getUploadRequestActivationTimeFunctionality(domain);
 		// Case 1:
-		// the user activation date is out of range, we need to keep the default date
+		// the user activation date is out of range, we need to throws business exception
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.DATE, -1);
-		Date userActivationDate = c.getTime();
-		Date activationDate = functionalityService.getDateValue(func, userActivationDate);
-		// defaultDate
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		cal.add(Calendar.DATE, func.getDefaultValue());
-		Date defaultActivationDate = cal.getTime();
-		Assertions.assertEquals(defaultActivationDate, activationDate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			Date userActivationDate = c.getTime();
+			functionalityService.getDateValue(func, userActivationDate, BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID, exception.getErrorCode());
 		// Case 2: 
 		// the user activation date is > 0 and < maximum value, so we need to keep the user value.
 		c.add(Calendar.DATE, +2);
@@ -170,8 +172,8 @@ public class FunctionalityReadOnlyTest {
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);
-		userActivationDate = c.getTime();
-		activationDate = functionalityService.getDateValue(func, userActivationDate);
+		Date userActivationDate = c.getTime();
+		Date activationDate = functionalityService.getDateValue(func, userActivationDate, BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID);
 		Assertions.assertEquals(userActivationDate, activationDate);
 	}
 
@@ -181,20 +183,15 @@ public class FunctionalityReadOnlyTest {
 		TimeUnitValueFunctionality funcExpiry = functionalityService
 				.getUploadRequestExpiryTimeFunctionality(domain);
 		// Case 1:
-		// the user expiration date is out of range, we need to keep the default expiration date
+		// the user expiration date is out of range, we need to throws business exception
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.MONTH, + 11); // Maximum value of expiration date is 10
-		Date userExpirationDate = c.getTime();
-		Date expirationDate = functionalityService.getDateValue(funcExpiry, userExpirationDate);
-		// defaultDate
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		cal.add(Calendar.MONTH, funcExpiry.getDefaultValue());
-		Date defaultExpirationDate = cal.getTime();
-		Assertions.assertEquals(defaultExpirationDate, expirationDate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			Date userExpirationDate = c.getTime();
+			functionalityService.getDateValue(funcExpiry, userExpirationDate, BusinessErrorCode.UPLOAD_REQUEST_EXPIRY_DATE_INVALID);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_EXPIRY_DATE_INVALID, exception.getErrorCode());
+
 		// Case 2: 
 		// the user expiration date is > 0 and < maximum value, so we need to keep the user value.
 		Calendar calendar = Calendar.getInstance();
@@ -203,8 +200,8 @@ public class FunctionalityReadOnlyTest {
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
-		userExpirationDate = calendar.getTime();
-		expirationDate = functionalityService.getDateValue(funcExpiry, userExpirationDate);
+		Date userExpirationDate = calendar.getTime();
+		Date expirationDate = functionalityService.getDateValue(funcExpiry, userExpirationDate, BusinessErrorCode.UPLOAD_REQUEST_EXPIRY_DATE_INVALID);
 		Assertions.assertEquals(userExpirationDate, expirationDate);
 	}
 
@@ -217,22 +214,16 @@ public class FunctionalityReadOnlyTest {
 		c1.add(Calendar.MONTH, + 3);
 		Date userExpirationDate = c1.getTime();
 		// Case 1:
-		// the user notification date is out of range, we need to keep the default expiration date
+		// the user notification date is out of range, we need to throws business exception
 		Calendar c = Calendar.getInstance();
 		c.setTime(userExpirationDate);
 		c.add(Calendar.DATE, - 10); // Maximum value allowed is 7
-		Date userNotificationDate = c.getTime();
-		Date notificationDate = functionalityService.getNotificationDateValue(funcNotify, userNotificationDate, userExpirationDate);
-		// defaultDate
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(userExpirationDate);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		cal.add(Calendar.DATE, - funcNotify.getDefaultValue());
-		Date defaultNotificationDate = cal.getTime();
-		Assertions.assertEquals(defaultNotificationDate, notificationDate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			Date userNotificationDate = c.getTime();
+			functionalityService.getNotificationDateValue(funcNotify, userNotificationDate, userExpirationDate,
+					BusinessErrorCode.UPLOAD_REQUEST_NOTIFICATION_DATE_INVALID);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_NOTIFICATION_DATE_INVALID, exception.getErrorCode());
 		// Case 2: 
 		// the user notification date is > 0 and < maximum value, so we need to keep the user value.
 		Calendar calendar = Calendar.getInstance();
@@ -242,8 +233,9 @@ public class FunctionalityReadOnlyTest {
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
-		userNotificationDate = calendar.getTime();
-		notificationDate = functionalityService.getNotificationDateValue(funcNotify, userNotificationDate, userExpirationDate);
+		Date userNotificationDate = calendar.getTime();
+		Date notificationDate = functionalityService.getNotificationDateValue(funcNotify, userNotificationDate,
+				userExpirationDate, BusinessErrorCode.UPLOAD_REQUEST_NOTIFICATION_DATE_INVALID);
 		Assertions.assertEquals(userNotificationDate, notificationDate);
 	}
 

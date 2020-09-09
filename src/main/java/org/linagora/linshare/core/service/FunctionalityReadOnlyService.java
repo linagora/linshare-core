@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FunctionalityReadOnlyService {
@@ -133,11 +134,12 @@ public interface FunctionalityReadOnlyService {
 
 	BooleanValueFunctionality getSecondFactorAuthenticationFunctionality(AbstractDomain domain);
 
-	Integer getIntegerValue(IntegerValueFunctionality func, Integer maxFileCount);
+	Integer getIntegerValue(IntegerValueFunctionality func, Integer maxFileCount, BusinessErrorCode errorCode);
 
-	Date getDateValue(TimeUnitValueFunctionality func, Date currentDate);
+	Date getDateValue(TimeUnitValueFunctionality func, Date currentDate, BusinessErrorCode errorCode);
 
-	Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize);
+	Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize, BusinessErrorCode errorCode);
 
-	Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate);
+	Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate, BusinessErrorCode errorCode);
+
 }

@@ -53,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -426,29 +427,33 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Integer getIntegerValue(IntegerValueFunctionality func, Integer currentSize) {
+	public Integer getIntegerValue(IntegerValueFunctionality func, Integer currentSize, BusinessErrorCode errorCode) {
 		if (func.getActivationPolicy().getStatus()) {
 			int defaultSize = func.getDefaultValue();
-			if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
-				logger.debug(func.getIdentifier() + " has a delegation policy");
-				if (currentSize != null) {
+			if (currentSize != null) {
+				if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
+					logger.debug(func.getIdentifier() + " has a delegation policy");
 					int maxSize = func.getValue();
 					if (!(currentSize > 0 && currentSize <= maxSize)) {
 						logger.warn("the current value " + currentSize.toString() + " is out of range : "
 								+ func.toString());
-						return defaultSize;
+						throw new BusinessException(errorCode, "the current value " + currentSize.toString()
+								+ " is out of range : " + func.toString());
 					}
 					return currentSize;
+				} else {
+					// there is no delegation, the current value should be the
+					// system value or null
+					logger.debug(func.getIdentifier() + " does not have a delegation policy");
+					if (currentSize != null && !currentSize.equals(defaultSize)) {
+						logger.warn("the current value " + currentSize.toString() + " is different than system value "
+								+ defaultSize);
+						throw new BusinessException(errorCode, "the current value " + currentSize.toString()
+								+ " is different than system value " + defaultSize);
+					}
+					return defaultSize;
 				}
-				return defaultSize;
 			} else {
-				// there is no delegation, the current value should be the
-				// system value or null
-				logger.debug(func.getIdentifier() + " does not have a delegation policy");
-				if (currentSize != null && !currentSize.equals(defaultSize)) {
-					logger.warn("the current value " + currentSize.toString() + " is different than system value "
-							+ defaultSize);
-				}
 				return defaultSize;
 			}
 		} else {
@@ -472,7 +477,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	 * configuration policy and others checks.
 	 */
 	@Override
-	public Date getDateValue(TimeUnitValueFunctionality func, Date currentDate) {
+	public Date getDateValue(TimeUnitValueFunctionality func, Date currentDate, BusinessErrorCode errorCode) {
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
 			Calendar calendar = getCalendarWithoutTime(new Date());
@@ -485,16 +490,18 @@ public class FunctionalityReadOnlyServiceImpl implements
 				if (currentDate != null) {
 					// check if there is limitation of maximum value
 					// -1 mean no limit
-					if (func.getValue() == -1 && currentDate.after(new Date())) {
+					Date now = getCalendarWithoutTime(new Date()).getTime();
+					if (func.getValue() == -1 && (currentDate.after(now) || currentDate.equals(now))) {
 						return currentDate;
 					} else {
 						Calendar c = new GregorianCalendar();
 						c.add(func.toCalendarValue(), func.getValue());
 						Date maxDate = c.getTime(); // Maximum value allowed
-						if (currentDate.before(new Date()) || currentDate.after(maxDate)) {
+						if (currentDate.before(now) || currentDate.after(maxDate)) {
 							logger.warn("the current value " + currentDate.toString() + " is out of range : "
-									+ func.toString() + " : " + defaultDate.toString());
-							return defaultDate;
+									+ func.toString() + " : " + maxDate.toString());
+							throw new BusinessException(errorCode, "the current value " + currentDate.toString()
+									+ " is out of range : " + func.toString() + " : " + maxDate.toString());
 						} else {
 							return currentDate;
 						}
@@ -510,6 +517,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 					if (!currentDate.equals(defaultDate)) {
 						logger.warn("the current value "
 								+ currentDate.toString()
+								+ " is different than system value " + defaultDate);
+						throw new BusinessException(errorCode, "the current value " + currentDate.toString()
 								+ " is different than system value " + defaultDate);
 					}
 				}
@@ -527,30 +536,34 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize) {
+	public Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize, BusinessErrorCode errorCode) {
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
 			long defaultSize = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getDefaultValue());
-			if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
-				logger.debug(func.getIdentifier() + " has a delegation policy");
-				if (currentSize != null) {
+			if (currentSize != null) {
+				if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
+					logger.debug(func.getIdentifier() + " has a delegation policy");
 					long maxSize = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue());
 					if (!(currentSize > 0 && currentSize <= maxSize)) {
 						logger.warn("the current value " + currentSize.toString() + " is out of range : "
 								+ func.toString());
-						return defaultSize;
+						throw new BusinessException(errorCode, "the current value " + currentSize.toString()
+								+ " is out of range : " + func.toString());
 					}
 					return currentSize;
+				} else {
+					// there is no delegation, the current value should be the
+					// system value or null
+					logger.debug(func.getIdentifier() + " does not have a delegation policy");
+					if (currentSize != null && !currentSize.equals(defaultSize)) {
+						logger.warn("the current value " + currentSize.toString() + " is different than system value "
+								+ defaultSize);
+						throw new BusinessException(errorCode, "the current value " + currentSize.toString()
+								+ " is different than system value: " + defaultSize);
+					}
+					return defaultSize;
 				}
-				return defaultSize;
 			} else {
-				// there is no delegation, the current value should be the
-				// system value or null
-				logger.debug(func.getIdentifier() + " does not have a delegation policy");
-				if (currentSize != null && !currentSize.equals(defaultSize)) {
-					logger.warn("the current value " + currentSize.toString() + " is different than system value "
-							+ defaultSize);
-				}
 				return defaultSize;
 			}
 		} else {
@@ -575,36 +588,45 @@ public class FunctionalityReadOnlyServiceImpl implements
 	 * configuration policy and others checks.
 	 */
 	@Override
-	public Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate) {
+	public Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate, BusinessErrorCode errorCode) {
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
+			Date now = getCalendarWithoutTime(new Date()).getTime();
 			Calendar c = getCalendarWithoutTime(expirationDate);
 			c.add(func.toCalendarValue(), - func.getDefaultValue());
 			Date defaultDate = c.getTime();
-			currentDate = getCalendarWithoutTime(currentDate).getTime();
-			if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
-				logger.debug(func.getIdentifier() + " has a delegation policy");
-				if (currentDate != null) {
+			if (defaultDate.before(now)) {
+				defaultDate = now;
+			}
+			if (currentDate != null) {
+				currentDate = getCalendarWithoutTime(currentDate).getTime();
+				if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
 					Calendar cal = getCalendarWithoutTime(expirationDate);
 					cal.add(func.toCalendarValue(), - func.getValue());
 					Date minDate = cal.getTime();
-					if (!(currentDate.before(expirationDate) && currentDate.after(minDate))) {
+					if (minDate.before(now)) {
+						minDate = now;
+					}
+					if (currentDate.after(expirationDate) || currentDate.before(minDate)) {
 						logger.warn("the current value " + currentDate.toString() + " is out of range : "
 								+ func.toString());
-						return defaultDate;
+						throw new BusinessException(errorCode, "the current value " + currentDate.toString()
+						+ " is out of range : " + func.toString());
 					}
 					return currentDate;
 				} else {
+					// there is no delegation, the current value should be the
+					// system value or null
+					logger.debug(func.getIdentifier() + " does not have a delegation policy");
+					if (currentDate != null && !currentDate.equals(defaultDate)) {
+						logger.warn("the current value " + currentDate.toString() + " is different than the system value "
+								+ defaultDate);
+						throw new BusinessException(errorCode, "the current value " + currentDate.toString()
+						+ " is different than system value " + defaultDate);
+					}
 					return defaultDate;
 				}
 			} else {
-				// there is no delegation, the current value should be the
-				// system value or null
-				logger.debug(func.getIdentifier() + " does not have a delegation policy");
-				if (currentDate != null && !currentDate.equals(defaultDate)) {
-					logger.warn("the current value " + currentDate.toString() + " is different than the system value "
-							+ defaultDate);
-				}
 				return defaultDate;
 			}
 		} else {

@@ -208,7 +208,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private void checkActivationDate(AbstractDomain domain, UploadRequest req) {
 		TimeUnitValueFunctionality func = functionalityService
 				.getUploadRequestActivationTimeFunctionality(domain);
-		Date checkDate = functionalityService.getDateValue(func, req.getActivationDate());
+		Date checkDate = functionalityService.getDateValue(func, req.getActivationDate(),
+				BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID);
 		if (checkDate == null) {
 			checkDate = new Date();
 		}
@@ -221,9 +222,11 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				.getUploadRequestExpiryTimeFunctionality(domain);
 		TimeUnitValueFunctionality funcNotify = functionalityService
 				.getUploadRequestNotificationTimeFunctionality(domain);
-		Date expiryDate = functionalityService.getDateValue(funcExpiry, req.getExpiryDate());
+		Date expiryDate = functionalityService.getDateValue(funcExpiry, req.getExpiryDate(),
+				BusinessErrorCode.UPLOAD_REQUEST_EXPIRY_DATE_INVALID);
 		req.setExpiryDate(expiryDate);
-		Date notifDate =  functionalityService.getNotificationDateValue(funcNotify, req.getNotificationDate(), req.getExpiryDate()); // Must have a setted value in order to return a value not null
+		Date notifDate = functionalityService.getNotificationDateValue(funcNotify, req.getNotificationDate(),
+				req.getExpiryDate(), BusinessErrorCode.UPLOAD_REQUEST_NOTIFICATION_DATE_INVALID); // Must have a setted value in order to return a value not null
 		req.setNotificationDate(notifDate);
 	}
 
@@ -239,21 +242,22 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private void checkMaxFileSize(AbstractDomain domain, UploadRequest req) {
 		SizeUnitValueFunctionality func = functionalityService
 				.getUploadRequestMaxFileSizeFunctionality(domain);
-		Long checkSize = functionalityService.getSizeValue(func, req.getMaxFileSize());
+		Long checkSize = functionalityService.getSizeValue(func, req.getMaxFileSize(), BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
 		req.setMaxFileSize(checkSize);
 	}
 
 	private void checkMaxFileCount(AbstractDomain domain, UploadRequest req) {
 		IntegerValueFunctionality func = functionalityService
 				.getUploadRequestMaxFileCountFunctionality(domain);
-		Integer checkInteger = functionalityService.getIntegerValue(func, req.getMaxFileCount());
+		Integer checkInteger = functionalityService.getIntegerValue(func, req.getMaxFileCount(),
+				BusinessErrorCode.UPLOAD_REQUEST_INTEGER_VALUE_INVALID);
 		req.setMaxFileCount(checkInteger);
 	}
 
 	private void checkMaxDepositSize(AbstractDomain domain, UploadRequest req) {
 		SizeUnitValueFunctionality func = functionalityService
 				.getUploadRequestMaxDepositSizeFunctionality(domain);
-		Long checkSize = functionalityService.getSizeValue(func, req.getMaxDepositSize());
+		Long checkSize = functionalityService.getSizeValue(func, req.getMaxDepositSize(), BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
 		req.setMaxDepositSize(checkSize);
 	}
 

@@ -499,7 +499,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	private Date calculateGuestExpiryDate(Account owner, Date currentGuestExpirationDate) {
 			TimeUnitValueFunctionality func = functionalityReadOnlyService
 					.getGuestsExpiration(owner.getDomain());
-			return functionalityReadOnlyService.getDateValue(func, currentGuestExpirationDate);
+			return functionalityReadOnlyService.getDateValue(func, currentGuestExpirationDate, BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID);
 	}
 
 	@Override
