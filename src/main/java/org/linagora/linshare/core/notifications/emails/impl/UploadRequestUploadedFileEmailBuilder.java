@@ -66,7 +66,8 @@ public class UploadRequestUploadedFileEmailBuilder extends GenericUploadRequestE
 		UploadRequestEntry entry = emailCtx.getEntry();
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		Context ctx = newTmlContext(emailCtx);
-		String href = getOwnerDocumentLink(getUrlTemplateForUploadRequestEntries(), entry.getUuid());
+		String linshareURL = getLinShareUrlForUploadRequest(owner);
+		String href = getUploadRequestEntryLink(linshareURL, entry.getUuid());
 		Document document = new Document(entry);
 		document.setHref(href);
 		ctx.setVariable("document", document);
@@ -80,7 +81,7 @@ public class UploadRequestUploadedFileEmailBuilder extends GenericUploadRequestE
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language, true);
-		Document document = getNewFakeDocument("a-upload-request-file.txt", fakeLinshareURL);
+		Document document = getNewFakeUploadRequestEntry("a-upload-request-file.txt", fakeLinshareURL);
 		document.setSize(65985L);
 		document.setCreationDate(new Date());
 		ctx.setVariable("document", document);

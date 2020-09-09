@@ -346,6 +346,11 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return value;
 	}
 
+	protected String getLinShareUrlForUploadRequest(Account recipient) {
+		String value = functionalityReadOnlyService.getUploadRequestFunctionality(recipient.getDomain()).getValue();
+		return value;
+	}
+
 	protected String getLinShareAnonymousURL(Account sender) {
 		StringValueFunctionality notificationUrl = functionalityReadOnlyService
 				.getAnonymousURLNotificationUrl(sender.getDomain());
@@ -635,6 +640,15 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return sb.toString();
 	}
 
+	protected String getUploadRequestEntryLink(String linshareURL, String documentUuid) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlTemplateForUploadRequestEntries, documentUuid);
+		formatter.close();
+		return sb.toString();
+	}
+
 	protected String getRecipientShareLink(String linshareURL, String shareUuid) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(linshareURL);
@@ -687,6 +701,14 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		Document document = new Document(name);
 		if (linshareURL != null) {
 			document.setHref(getOwnerDocumentLink(linshareURL, document.getUuid()));
+		}
+		return document;
+	}
+
+	protected Document getNewFakeUploadRequestEntry(String name, String linshareURL) {
+		Document document = new Document(name);
+		if (linshareURL != null) {
+			document.setHref(getUploadRequestEntryLink(linshareURL, document.getUuid()));
 		}
 		return document;
 	}

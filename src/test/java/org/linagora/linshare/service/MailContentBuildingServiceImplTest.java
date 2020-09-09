@@ -159,6 +159,35 @@ public class MailContentBuildingServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testUploadRequetUploadedEntryMail() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
+		MailContentType type = MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
+		logger.info("Building mail {} ", type);
+		List<TestMailResult> findErrors = Lists.newArrayList();
+		List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
+		for (int flavor = 0; flavor < contexts.size(); flavor++) {
+			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.FRENCH, flavor);
+			findErrors.addAll(testMailGenerate(type, build));
+			String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + Language.FRENCH + " : ";
+			build.setSubject(subject + build.getSubject());
+			sendMail(build);
+		}
+		if (!findErrors.isEmpty()) {
+			for (TestMailResult result : findErrors) {
+				logger.error(result.toString());
+				logger.error(result.toString());
+				if (logger.isTraceEnabled()) {
+					logger.trace("StrPattern : {}", result.getStrPattern());
+					logger.trace("Data : {}", result.getData());
+				}
+			}
+		}
+		Assertions.assertTrue(findErrors.isEmpty());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	private void sendMail(MailContainerWithRecipient mail) {
 		if (sendMail) {
 			mail.setRecipient(recipientForSendMail);
