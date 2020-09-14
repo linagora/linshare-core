@@ -68,11 +68,22 @@ public class EnumResourceUtils {
 	@SuppressWarnings("rawtypes")
 	public List<String> getAllEnumsName() {
 		List<String> res = Lists.newArrayList();
-
+		List<String> excludedEnums = Lists.newArrayList();
+		excludedEnums.add("log_action_v1");
+		excludedEnums.add("upload_proposition_action_type");
+		excludedEnums.add("upload_proposition_exception_rule_type");
+		excludedEnums.add("upload_proposition_match_type");
+		excludedEnums.add("upload_proposition_rule_field_type");
+		excludedEnums.add("upload_proposition_rule_operator_type");
+		excludedEnums.add("upload_proposition_status");
+		excludedEnums.add("upload_request_history_event_type");
 		// Iterate over all enums under ENUMS_PATH package
 		for (final Class<? extends Enum> e : new Reflections(ENUMS_PATH)
 				.getSubTypesOf(Enum.class)) {
-			res.add(toUnderscore(e.getSimpleName()));
+			String enumIn = toUnderscore(e.getSimpleName());
+			if (!excludedEnums.contains(enumIn)) {
+				res.add(enumIn);
+			}
 		}
 		return res;
 	}
