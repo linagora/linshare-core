@@ -55,7 +55,8 @@
 		</jaxrs:features>
 		<jaxrs:inInterceptors>
 			<!-- For debug only : print input message -->
-			<!-- <ref bean="logInbound" /> -->
+<!-- 			<ref bean="logInbound" /> -->
+			<ref bean="contentTypeInterceptor" />
 			<!-- This interceptor is designed to store some context properties in 
 				message exchange context for timingOutInterceptor -->
 			<!-- This interceptor is designed compute request execution time. -->
@@ -63,7 +64,7 @@
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
 			<!-- For debug only : print output message -->
-			<!-- <ref bean="logOutbound" /> -->
+<!-- 			<ref bean="logOutbound" /> -->
 			<!-- This interceptor is designed compute request execution time. -->
 			<ref bean="timingOutInterceptor" />
 		</jaxrs:outInterceptors>

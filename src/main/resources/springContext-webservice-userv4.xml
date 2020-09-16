@@ -90,6 +90,7 @@
 		<jaxrs:inInterceptors>
 			<!-- For debug only : print input message -->
 <!-- 			<ref bean="logInbound" /> -->
+			<ref bean="contentTypeInterceptor" />
 			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
 			<ref bean="timingInInterceptor" />
 		</jaxrs:inInterceptors>

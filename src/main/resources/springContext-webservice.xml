@@ -46,6 +46,8 @@
 	<bean id="timingInInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingInInterceptor" />
 	<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />
 
+	<bean id="contentTypeInterceptor" class="org.linagora.linshare.webservice.interceptor.ContentTypeInterceptor" />
+
 	<bean id="jaxrsNoCacheFilter" class="org.linagora.linshare.webservice.filters.NoCacheFilter"/>
 	
 	<!-- Code legacy -->
@@ -80,6 +82,7 @@
 		<jaxrs:inInterceptors>
 			<!-- For debug only : print input message -->
 <!-- 			<ref bean="logInbound" /> -->
+			<ref bean="contentTypeInterceptor" />
 			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
 			<ref bean="timingInInterceptor" />
 		</jaxrs:inInterceptors>

@@ -54,6 +54,7 @@
 <!-- 			<ref bean="logInbound" /> -->
 			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
 			<ref bean="timingInInterceptor" />
+			<ref bean="contentTypeInterceptor" />
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
 			<!-- For debug only : print output  message -->
