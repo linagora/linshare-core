@@ -110,6 +110,7 @@ public class UploadRequestEntryDto {
 		this.uuid = entry.getUuid();
 		this.metaData = entry.getMetaData();
 		this.cmisSync = entry.isCmisSync();
+		this.size = entry.getSize();
 	}
 
 	public AccountDto getEntryOwner() {
