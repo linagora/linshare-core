@@ -111,6 +111,7 @@ public class UploadRequestEntryDto {
 		this.metaData = entry.getMetaData();
 		this.cmisSync = entry.isCmisSync();
 		this.size = entry.getSize();
+		this.type = entry.getType();
 	}
 
 	public AccountDto getEntryOwner() {
