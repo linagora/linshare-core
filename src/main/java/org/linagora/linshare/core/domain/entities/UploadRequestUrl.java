@@ -62,6 +62,8 @@ public class UploadRequestUrl {
 
 	private Set<UploadRequestEntry> uploadRequestEntries = Sets.newHashSet();
 
+	private Boolean passwordChanged;
+
 	public UploadRequestUrl() {
 		super();
 	}
@@ -73,6 +75,7 @@ public class UploadRequestUrl {
 		this.password = null;
 		this.temporaryPlainTextPassword = "";
 		this.contact = contact;
+		this.passwordChanged = false;
 	}
 
 	public long getId() {
@@ -158,6 +161,14 @@ public class UploadRequestUrl {
 
 	public void setTemporaryPlainTextPassword(String temporaryPlainTextPassword) {
 		this.temporaryPlainTextPassword = temporaryPlainTextPassword;
+	}
+
+	public Boolean getPasswordChanged() {
+		return passwordChanged;
+	}
+
+	public void setPasswordChanged(Boolean passwordChanged) {
+		this.passwordChanged = passwordChanged;
 	}
 
 	public String getFullUrl(String baseUrl) {

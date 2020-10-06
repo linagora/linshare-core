@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
@@ -88,6 +89,10 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 	public UploadRequestDto find(String uploadRequestUrlUuid, String password) throws BusinessException {
 		Validate.notEmpty(uploadRequestUrlUuid, "Upload request url uuid must be set");
 		UploadRequestUrl requestUrl = uploadRequestUrlService.find(uploadRequestUrlUuid, password);
+		if (requestUrl.isProtectedByPassword() && !requestUrl.getPasswordChanged()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_URL_FORBIDDEN,
+					"The password of the upload request url has not been changed yet. You need to reset your password to be able to access to this url.");
+		}
 		UploadRequestDto dto = transform(requestUrl);
 		return dto;
 	}

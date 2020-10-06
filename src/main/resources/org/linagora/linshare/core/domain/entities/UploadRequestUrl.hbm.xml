@@ -26,6 +26,8 @@
 			length="6" not-null="true" lazy="false" />
 		<property name="modificationDate" column="modification_date"
 			type="timestamp" length="6" not-null="true" lazy="false" />
+		<property name="passwordChanged" column="password_changed" type="boolean"
+			lazy="false" />
 		<set name="uploadRequestEntries" lazy="true" cascade="lock"
 			inverse="true">
 			<key column="upload_request_url_id" not-null="true" />
