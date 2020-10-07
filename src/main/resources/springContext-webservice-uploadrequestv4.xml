@@ -19,9 +19,13 @@
 	<bean id="uploadRequestv4RestService" class="org.linagora.linshare.webservice.uploadrequestv4.impl.UploadRequestRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestUrlFacade" />
 	</bean>
+	<bean id="resetUploadRequestUrlPwdv4RestService" class="org.linagora.linshare.webservice.external.impl.ResetUploadRequestUrlPasswordRestServiceImpl">
+		<constructor-arg ref="wsUploadRequestUrlFacade" />
+	</bean>
 	<jaxrs:server id="restUploadRequestV4Container" address="/rest/uploadrequest/v4">
 		<jaxrs:serviceBeans>
 			<ref bean="uploadRequestv4FlowUploaderRestService"/>
+			<ref bean="resetUploadRequestUrlPwdv4RestService"/>
 			<ref bean="uploadRequestv4RestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>

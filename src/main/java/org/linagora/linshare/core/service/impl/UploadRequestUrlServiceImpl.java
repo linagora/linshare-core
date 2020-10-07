@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
@@ -68,6 +69,7 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.mongo.entities.ResetUploadRequestUrlPassword;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestUrlAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
@@ -281,5 +283,29 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	@Override
 	public Long computeEntriesSize(UploadRequest request) {
 		return uploadRequestEntryService.computeEntriesSize(request);
+	}
+
+	@Override
+	public SystemAccount getUploadRequestSystemAccount() {
+		return accountRepository.getUploadRequestSystemAccount();
+	}
+
+	@Override
+	public void resetPassword(Account authUser, Account actor, String requestUrlUuid,
+			ResetUploadRequestUrlPassword reset) {
+		Validate.notNull(reset);
+		Validate.notEmpty(requestUrlUuid, "Missing request url uuid");
+		Validate.notEmpty(reset.getNewPassword(), "Missing new password");
+		Validate.notEmpty(reset.getOldPassword(), "Missing old password");
+		UploadRequestUrl uploadRequestUrl = find(requestUrlUuid, reset.getOldPassword());
+		validateAndStorePassword(reset.getNewPassword(), uploadRequestUrl);
+	}
+
+	private void validateAndStorePassword(String newPassword, UploadRequestUrl uploadRequestUrl) {
+		passwordService.validatePassword(newPassword);
+		passwordService.verifyPasswordMatches(newPassword, uploadRequestUrl.getPassword());
+		uploadRequestUrl.setPassword(passwordService.encode(newPassword));
+		uploadRequestUrl.setPasswordChanged(true);
+		uploadRequestUrlBusinessService.update(uploadRequestUrl);
 	}
 }

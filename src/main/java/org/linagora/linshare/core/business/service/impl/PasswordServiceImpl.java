@@ -182,7 +182,8 @@ public class PasswordServiceImpl implements PasswordService {
 		userRepository.update(user);
 	}
 
-	private void verifyPasswordMatches(String newPassword, String oldPassword) {
+	@Override
+	public void verifyPasswordMatches(String newPassword, String oldPassword) {
 		if (matches(newPassword, oldPassword)) {
 			throw new BusinessException(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED,
 					"The new password you entered is the same as your old passwords, Enter a different password please");

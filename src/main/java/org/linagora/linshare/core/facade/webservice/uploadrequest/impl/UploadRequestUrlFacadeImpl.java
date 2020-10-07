@@ -44,6 +44,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.MimeType;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -58,6 +59,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.mongo.entities.ResetUploadRequestUrlPassword;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -135,6 +137,17 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 		UploadRequestUrl requestUrl = uploadRequestUrlService.find(uuid, password);
 		List<UploadRequestEntry> uploadRequestEntries = uploadRequestService.findAllExtEntries(requestUrl);
 		return ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto()));
+	}
+
+
+	@Override
+	public void resetPassword(String uuid, ResetUploadRequestUrlPassword reset) {
+		Validate.notEmpty(uuid, "Upload request url uuid must be set");
+		Validate.notNull(reset);
+		Validate.notEmpty(reset.getNewPassword(), "Missing new password");
+		Validate.notEmpty(reset.getOldPassword(), "Missing old password");
+		SystemAccount authUser = uploadRequestUrlService.getUploadRequestSystemAccount();
+		uploadRequestUrlService.resetPassword(authUser, authUser, uuid, reset);
 	}
 
 	/*

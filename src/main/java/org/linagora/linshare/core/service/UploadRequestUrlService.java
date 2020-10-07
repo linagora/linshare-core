@@ -38,12 +38,15 @@ package org.linagora.linshare.core.service;
 
 import java.io.File;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.ResetUploadRequestUrlPassword;
 
 public interface UploadRequestUrlService {
 
@@ -59,4 +62,9 @@ public interface UploadRequestUrlService {
 			throws BusinessException;
 
 	Long computeEntriesSize(UploadRequest request);
+
+	SystemAccount getUploadRequestSystemAccount();
+
+	void resetPassword(Account authUser, Account actor, String requestUrlUuid,
+			ResetUploadRequestUrlPassword reset);
 }

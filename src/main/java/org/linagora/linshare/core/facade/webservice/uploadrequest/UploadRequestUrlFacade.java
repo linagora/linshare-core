@@ -42,6 +42,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
+import org.linagora.linshare.mongo.entities.ResetUploadRequestUrlPassword;
 
 public interface UploadRequestUrlFacade {
 
@@ -57,4 +58,6 @@ public interface UploadRequestUrlFacade {
 			EntryDto entry) throws BusinessException;
 
 	List<UploadRequestEntryDto> findAllExtEntries(String uuid, String password);
+
+	void resetPassword(String uuid, ResetUploadRequestUrlPassword reset);
 }

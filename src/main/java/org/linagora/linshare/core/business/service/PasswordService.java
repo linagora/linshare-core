@@ -62,4 +62,6 @@ public interface PasswordService {
 	Map<String, Integer> getPasswordRules();
 
 	void validateAndStorePassword(User user, String newPassword);
+
+	void verifyPasswordMatches(String newPassword, String oldPassword);
 }
