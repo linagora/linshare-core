@@ -42,6 +42,8 @@ public class FunctionalityIntegerDto extends FunctionalityDto {
 
 	protected Integer value;
 
+	protected Integer defaultValue;
+
 	public FunctionalityIntegerDto() {
 		super();
 	}
@@ -59,4 +61,13 @@ public class FunctionalityIntegerDto extends FunctionalityDto {
 	public void setValue(Integer value) {
 		this.value = value;
 	}
+
+	public Integer getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(Integer defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
 }

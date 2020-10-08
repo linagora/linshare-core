@@ -47,6 +47,8 @@ public class FunctionalityTimeDto extends FunctionalityDto {
 
 	protected Integer value;
 
+	protected Integer defaultValue;
+
 	protected String unit;
 
 	protected List<String> units = new ArrayList<String>();
@@ -95,4 +97,13 @@ public class FunctionalityTimeDto extends FunctionalityDto {
 	public void setUnits(List<String> units) {
 		this.units = units;
 	}
+
+	public Integer getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(Integer defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
 }

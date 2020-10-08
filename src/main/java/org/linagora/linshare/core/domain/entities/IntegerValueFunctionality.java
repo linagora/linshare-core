@@ -109,6 +109,7 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		FunctionalityIntegerDto f = new FunctionalityIntegerDto();
 		if (enable) {
 			f.setValue(value);
+			f.setDefaultValue(defaultValue);
 		}
 		return f;
 	}

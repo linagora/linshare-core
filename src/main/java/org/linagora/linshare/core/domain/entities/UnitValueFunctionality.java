@@ -169,6 +169,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
 				f.setUnit(sizeUnit.getUnitValue().toString());
 				f.setValue(value);
+				f.setDefaultValue(defaultValue);
 			}
 			return f;
 		} else if (getUnit() instanceof TimeUnitClass) {
@@ -177,6 +178,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
 				f.setUnit(timeUnit.getUnitValue().toString());
 				f.setValue(value);
+				f.setDefaultValue(defaultValue);
 			}
 			return f;
 		}
