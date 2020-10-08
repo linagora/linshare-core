@@ -46,7 +46,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.ResetUploadRequestUrlPassword;
+import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
 
 public interface UploadRequestUrlService {
 
@@ -65,6 +65,6 @@ public interface UploadRequestUrlService {
 
 	SystemAccount getUploadRequestSystemAccount();
 
-	void resetPassword(Account authUser, Account actor, String requestUrlUuid,
-			ResetUploadRequestUrlPassword reset);
+	void changePassword(Account authUser, Account actor, String requestUrlUuid,
+			ChangeUploadRequestUrlPassword reset);
 }

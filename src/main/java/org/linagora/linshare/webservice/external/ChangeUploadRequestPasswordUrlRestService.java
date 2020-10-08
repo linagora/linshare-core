@@ -31,43 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.external.impl;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+package org.linagora.linshare.webservice.external;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
-import org.linagora.linshare.mongo.entities.ResetUploadRequestUrlPassword;
-import org.linagora.linshare.webservice.external.ResetUploadRequestPasswordUrlRestService;
+import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
 
-import io.swagger.v3.oas.annotations.Parameter;
+public interface ChangeUploadRequestPasswordUrlRestService {
 
-
-@Path("/reset_upload_request_password")
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class ResetUploadRequestUrlPasswordRestServiceImpl implements ResetUploadRequestPasswordUrlRestService {
-
-	protected UploadRequestUrlFacade requestUrlFacade;
-
-	public ResetUploadRequestUrlPasswordRestServiceImpl(
-			UploadRequestUrlFacade requestUrlFacade) {
-		super();
-		this.requestUrlFacade = requestUrlFacade;
-	}
-
-	@PUT
-	@Path("/{uuid}")
-	@Override
-	public void update(
-			@Parameter(description = "Uplaod request url uuid to update", required = true) @PathParam(value = "uuid") String uuid,
-			ResetUploadRequestUrlPassword reset) throws BusinessException {
-		requestUrlFacade.resetPassword(uuid, reset);
-	}
-
+	void changePassword(String uuid, ChangeUploadRequestUrlPassword reset) throws BusinessException;
 }

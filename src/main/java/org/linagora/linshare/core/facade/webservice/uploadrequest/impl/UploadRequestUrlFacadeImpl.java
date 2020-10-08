@@ -47,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
@@ -59,7 +58,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
-import org.linagora.linshare.mongo.entities.ResetUploadRequestUrlPassword;
+import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -91,10 +90,6 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 	public UploadRequestDto find(String uploadRequestUrlUuid, String password) throws BusinessException {
 		Validate.notEmpty(uploadRequestUrlUuid, "Upload request url uuid must be set");
 		UploadRequestUrl requestUrl = uploadRequestUrlService.find(uploadRequestUrlUuid, password);
-		if (requestUrl.isProtectedByPassword() && !requestUrl.getPasswordChanged()) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_URL_FORBIDDEN,
-					"The password of the upload request url has not been changed yet. You need to reset your password to be able to access to this url.");
-		}
 		UploadRequestDto dto = transform(requestUrl);
 		return dto;
 	}
@@ -141,13 +136,13 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 
 
 	@Override
-	public void resetPassword(String uuid, ResetUploadRequestUrlPassword reset) {
+	public void changePassword(String uuid, ChangeUploadRequestUrlPassword reset) {
 		Validate.notEmpty(uuid, "Upload request url uuid must be set");
 		Validate.notNull(reset);
 		Validate.notEmpty(reset.getNewPassword(), "Missing new password");
 		Validate.notEmpty(reset.getOldPassword(), "Missing old password");
 		SystemAccount authUser = uploadRequestUrlService.getUploadRequestSystemAccount();
-		uploadRequestUrlService.resetPassword(authUser, authUser, uuid, reset);
+		uploadRequestUrlService.changePassword(authUser, authUser, uuid, reset);
 	}
 
 	/*

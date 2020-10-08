@@ -50,6 +50,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -58,9 +59,11 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -72,6 +75,8 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +119,12 @@ public class UploadRequestServiceImplTest {
 
 	@Autowired
 	private UploadRequestService service;
+
+	@Autowired
+	private UploadRequestUrlService requestUrlService;
+
+	@Autowired
+	private PasswordService passwordService;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
@@ -251,6 +262,22 @@ public class UploadRequestServiceImplTest {
 		tmp = service.closeRequestByRecipient(eJohn.getUploadRequestURLs().iterator().next());
 		Assertions.assertEquals(tmp.getStatus(), UploadRequestStatus.CLOSED);
 		Assertions.assertEquals(john, (User) eJohn.getUploadRequestGroup().getOwner());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void changeUploadRequestUrlPwd() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		String oldPwd = "Linsh@re2020";
+		String newPwd = "Linsh@re2021";
+		UploadRequestUrl requestUrl = eJohn.getUploadRequestURLs().iterator().next();
+		requestUrl.setPassword(passwordService.encode(oldPwd));
+		ChangeUploadRequestUrlPassword resetURUrlPassword = new ChangeUploadRequestUrlPassword(newPwd,oldPwd);
+		SystemAccount uploadRequestSysAccount = requestUrlService.getUploadRequestSystemAccount();
+		requestUrlService.changePassword(uploadRequestSysAccount, uploadRequestSysAccount, requestUrl.getUuid(),
+				resetURUrlPassword);
+		Assertions.assertTrue(passwordService.matches(newPwd, requestUrl.getPassword()));
+		Assertions.assertFalse(requestUrl.isDefaultPassword());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

@@ -33,54 +33,20 @@
  */
 package org.linagora.linshare.mongo.entities;
 
-import javax.persistence.GeneratedValue;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+public class ChangeUploadRequestUrlPassword {
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-
-
-@XmlRootElement(name = "ResetUploadRequestURLPassword")
-@Document(collection = "reset_upload_request_url_password")
-public class ResetUploadRequestUrlPassword {
-
-	@JsonIgnore
-	@Id @GeneratedValue
-	protected String id;
-
-	@Schema(description = "Uuid")
-	protected String uuid;
-
-	@Schema(description = "New password.")
 	protected String newPassword;
 
-	@Schema(description = "Old password.")
 	protected String oldPassword;
 
-	public ResetUploadRequestUrlPassword() {
+	public ChangeUploadRequestUrlPassword() {
 		super();
 	}
 
-	@XmlTransient
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public ChangeUploadRequestUrlPassword(String newPassword, String oldPassword) {
+		super();
+		this.newPassword = newPassword;
+		this.oldPassword = oldPassword;
 	}
 
 	public String getNewPassword() {
@@ -97,10 +63,5 @@ public class ResetUploadRequestUrlPassword {
 
 	public void setOldPassword(String oldPassword) {
 		this.oldPassword = oldPassword;
-	}
-
-	@Override
-	public String toString() {
-		return "ResetUploadRequestPassword [uuid=" + uuid + "]";
 	}
 }

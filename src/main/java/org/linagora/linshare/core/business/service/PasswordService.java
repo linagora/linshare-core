@@ -38,6 +38,7 @@ package org.linagora.linshare.core.business.service;
 import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface PasswordService {
@@ -63,5 +64,5 @@ public interface PasswordService {
 
 	void validateAndStorePassword(User user, String newPassword);
 
-	void verifyPasswordMatches(String newPassword, String oldPassword);
+	void verifyPasswordMatches(String newPassword, String oldPassword, BusinessErrorCode error, String errorMsg);
 }

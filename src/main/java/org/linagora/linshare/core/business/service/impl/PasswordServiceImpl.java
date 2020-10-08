@@ -169,8 +169,9 @@ public class PasswordServiceImpl implements PasswordService {
 	public void validateAndStorePassword(User user, String newPassword) {
 		validatePassword(newPassword);
 		List<PasswordHistory> histories = passwordHistoryRepository.findAllByAccount(user);
+		String errorMsg = "The new password you entered is the same as your old passwords, Enter a different password please";
 		for (PasswordHistory password : histories) {
-			verifyPasswordMatches(newPassword, password.getPassword());
+			verifyPasswordMatches(newPassword, password.getPassword(), BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED, errorMsg);
 		}
 		if (histories.size() >= maxSavedPasswordsNumber) {
 			PasswordHistory oldest = passwordHistoryRepository.findOldestByAccount(user);
@@ -183,10 +184,10 @@ public class PasswordServiceImpl implements PasswordService {
 	}
 
 	@Override
-	public void verifyPasswordMatches(String newPassword, String oldPassword) {
+	public void verifyPasswordMatches(String newPassword, String oldPassword, BusinessErrorCode error,
+			String errorMsg) {
 		if (matches(newPassword, oldPassword)) {
-			throw new BusinessException(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED,
-					"The new password you entered is the same as your old passwords, Enter a different password please");
+			throw new BusinessException(error, errorMsg);
 		}
 	}
 }

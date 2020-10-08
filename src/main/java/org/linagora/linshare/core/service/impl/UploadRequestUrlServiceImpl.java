@@ -44,6 +44,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -69,7 +70,7 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
-import org.linagora.linshare.mongo.entities.ResetUploadRequestUrlPassword;
+import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestUrlAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
@@ -197,6 +198,14 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	private void accessBusinessCheck(UploadRequestUrl requestUrl,
 			String password) throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();
+		if (requestUrl.isProtectedByPassword() && requestUrl.isDefaultPassword()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_URL_ACCESS_FORBIDDEN,
+					"The password of the upload request url has not been changed yet. You need to reset your password to be able to access to this url.");
+		}
+		accessBusinessCheckForChangePwd(requestUrl, password, request);
+	}
+
+	private void accessBusinessCheckForChangePwd(UploadRequestUrl requestUrl, String password, UploadRequest request) {
 		if (!isValidPassword(requestUrl, password)) {
 			throw new BusinessException(
 					BusinessErrorCode.UPLOAD_REQUEST_URL_FORBIDDEN,
@@ -291,21 +300,36 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	}
 
 	@Override
-	public void resetPassword(Account authUser, Account actor, String requestUrlUuid,
-			ResetUploadRequestUrlPassword reset) {
+	public void changePassword(Account authUser, Account actor, String requestUrlUuid,
+			ChangeUploadRequestUrlPassword reset) {
 		Validate.notNull(reset);
 		Validate.notEmpty(requestUrlUuid, "Missing request url uuid");
 		Validate.notEmpty(reset.getNewPassword(), "Missing new password");
 		Validate.notEmpty(reset.getOldPassword(), "Missing old password");
-		UploadRequestUrl uploadRequestUrl = find(requestUrlUuid, reset.getOldPassword());
+		UploadRequestUrl uploadRequestUrl = findForChangePassword(authUser, requestUrlUuid, reset.getOldPassword());
 		validateAndStorePassword(reset.getNewPassword(), uploadRequestUrl);
+	}
+
+	private UploadRequestUrl findForChangePassword(Account authUser, String requestUrlUuid, String oldPassword) {
+		if (authUser.getAccountType().equals(AccountType.SYSTEM)) {
+			Validate.notEmpty(requestUrlUuid);
+			UploadRequestUrl requestUrl = uploadRequestUrlBusinessService.findByUuid(requestUrlUuid);
+			if (requestUrl != null) {
+				accessBusinessCheckForChangePwd(requestUrl, oldPassword, requestUrl.getUploadRequest());
+				return requestUrl;
+			}
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"You do not have the right to get this upload request url : " + requestUrlUuid);
+		}
+		return find(requestUrlUuid, oldPassword);
 	}
 
 	private void validateAndStorePassword(String newPassword, UploadRequestUrl uploadRequestUrl) {
 		passwordService.validatePassword(newPassword);
-		passwordService.verifyPasswordMatches(newPassword, uploadRequestUrl.getPassword());
+		String errorMsg = "The new password is alreaady used, enter a new one please";
+		passwordService.verifyPasswordMatches(newPassword, uploadRequestUrl.getPassword(), BusinessErrorCode.UPLOAD_REQUEST_URL_PASSWORD_ALREADY_USED, errorMsg);
 		uploadRequestUrl.setPassword(passwordService.encode(newPassword));
-		uploadRequestUrl.setPasswordChanged(true);
+		uploadRequestUrl.setDefaultPassword(false);
 		uploadRequestUrlBusinessService.update(uploadRequestUrl);
 	}
 }
