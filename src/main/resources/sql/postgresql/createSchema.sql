@@ -475,6 +475,7 @@ CREATE TABLE upload_request_url (
   creation_date     timestamp(6) NOT NULL,
   modification_date timestamp(6) NOT NULL,
   default_password  bool NOT NULL,
+  original_password varchar(255),
   PRIMARY KEY (id));
 CREATE TABLE upload_request_group (
   id                              int8 NOT NULL,

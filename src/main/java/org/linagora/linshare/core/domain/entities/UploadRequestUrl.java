@@ -64,6 +64,8 @@ public class UploadRequestUrl {
 
 	private Boolean defaultPassword;
 
+	private String originalPassword;
+
 	public UploadRequestUrl() {
 		super();
 	}
@@ -169,6 +171,14 @@ public class UploadRequestUrl {
 
 	public void setDefaultPassword(Boolean defaultPassword) {
 		this.defaultPassword = defaultPassword;
+	}
+
+	public String getOriginalPassword() {
+		return originalPassword;
+	}
+
+	public void setOriginalPassword(String originalPassword) {
+		this.originalPassword = originalPassword;
 	}
 
 	public String getFullUrl(String baseUrl) {

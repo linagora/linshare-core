@@ -44,6 +44,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -180,12 +181,12 @@ public class UploadRequestServiceImplTest {
 		ure.setMaxFileCount(Integer.valueOf(3));
 		ure.setMaxFileSize((long) 50);
 		ure.setStatus(UploadRequestStatus.CREATED);
-		ure.setExpiryDate(new Date());
 		ure.setSecured(false);
 		ure.setCanEditExpiryDate(true);
 		ure.setCanDelete(true);
 		ure.setLocale("en");
 		ure.setActivationDate(new Date());
+		ure.setExpiryDate(DateUtils.addMonths(ure.getActivationDate(), 1));
 		UploadRequestGroup uploadRequestGroupJohn = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		eJohn = uploadRequestGroupJohn.getUploadRequests().iterator().next();
@@ -272,12 +273,13 @@ public class UploadRequestServiceImplTest {
 		String newPwd = "Linsh@re2021";
 		UploadRequestUrl requestUrl = eJohn.getUploadRequestURLs().iterator().next();
 		requestUrl.setPassword(passwordService.encode(oldPwd));
-		ChangeUploadRequestUrlPassword resetURUrlPassword = new ChangeUploadRequestUrlPassword(newPwd,oldPwd);
+		ChangeUploadRequestUrlPassword resetURUrlPassword = new ChangeUploadRequestUrlPassword(newPwd, oldPwd);
 		SystemAccount uploadRequestSysAccount = requestUrlService.getUploadRequestSystemAccount();
 		requestUrlService.changePassword(uploadRequestSysAccount, uploadRequestSysAccount, requestUrl.getUuid(),
 				resetURUrlPassword);
 		Assertions.assertTrue(passwordService.matches(newPwd, requestUrl.getPassword()));
 		Assertions.assertFalse(requestUrl.isDefaultPassword());
+		Assertions.assertTrue(passwordService.matches(resetURUrlPassword.getOldPassword(), requestUrl.getOriginalPassword()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

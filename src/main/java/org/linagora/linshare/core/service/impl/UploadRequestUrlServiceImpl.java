@@ -39,6 +39,7 @@ package org.linagora.linshare.core.service.impl;
 import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.PasswordService;
@@ -199,7 +200,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 			String password) throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();
 		if (requestUrl.isProtectedByPassword() && requestUrl.isDefaultPassword()) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_URL_ACCESS_FORBIDDEN,
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_URL_FORBIDDEN_DEFAULT_PASSWORD_NOT_UPDATED,
 					"The password of the upload request url has not been changed yet. You need to reset your password to be able to access to this url.");
 		}
 		accessBusinessCheckForChangePwd(requestUrl, password, request);
@@ -324,11 +325,15 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 		return find(requestUrlUuid, oldPassword);
 	}
 
-	private void validateAndStorePassword(String newPassword, UploadRequestUrl uploadRequestUrl) {
-		passwordService.validatePassword(newPassword);
+	private void validateAndStorePassword(String newPwd, UploadRequestUrl uploadRequestUrl) {
+		passwordService.validatePassword(newPwd);
 		String errorMsg = "The new password is alreaady used, enter a new one please";
-		passwordService.verifyPasswordMatches(newPassword, uploadRequestUrl.getPassword(), BusinessErrorCode.UPLOAD_REQUEST_URL_PASSWORD_ALREADY_USED, errorMsg);
-		uploadRequestUrl.setPassword(passwordService.encode(newPassword));
+		passwordService.verifyPasswordMatches(newPwd, uploadRequestUrl.getPassword(),
+				BusinessErrorCode.UPLOAD_REQUEST_URL_PASSWORD_ALREADY_USED, errorMsg);
+		if (Objects.isNull(uploadRequestUrl.getOriginalPassword()) && uploadRequestUrl.isDefaultPassword()) {
+			uploadRequestUrl.setOriginalPassword(uploadRequestUrl.getPassword());
+		}
+		uploadRequestUrl.setPassword(passwordService.encode(newPwd));
 		uploadRequestUrl.setDefaultPassword(false);
 		uploadRequestUrlBusinessService.update(uploadRequestUrl);
 	}

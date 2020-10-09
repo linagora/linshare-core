@@ -119,6 +119,11 @@ UPDATE functionality_unit SET integer_default_value = 50, integer_value = 100 WH
 UPDATE functionality_unit SET integer_default_value = 7, integer_value = 7 WHERE functionality_id = 42;      -- UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
 
 
+
+-- Add new fields for default pwd and store original pwd of an URU
+ALTER TABLE upload_request_url ADD COLUMN default_Password bool DEFAULT true NOT NULL;
+ALTER TABLE upload_request_url ADD COLUMN original_password character varying(255)
+
 -- End of your requests
 
 -- LinShare version
