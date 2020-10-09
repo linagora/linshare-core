@@ -156,12 +156,6 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="uploadRequestService" />
 	</bean>
-	<bean id="wsAdminUploadPropositionFilterFacade"
-		class="org.linagora.linshare.core.facade.webservice.admin.impl.UploadPropositionFilterFacadeImpl">
-		<constructor-arg ref="accountService" />
-		<constructor-arg ref="uploadPropositionFilterService" />
-		<constructor-arg ref="abstractDomainService" />
-	</bean>
 	<bean id="wsAdminWelcomeMessagesFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.WelcomeMessagesFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="welcomeMessagesService" />

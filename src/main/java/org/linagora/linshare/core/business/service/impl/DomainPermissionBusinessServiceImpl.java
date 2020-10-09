@@ -83,11 +83,6 @@ public class DomainPermissionBusinessServiceImpl implements
 	}
 
 	@Override
-	public boolean isAdminToCreateUploadProposition(Account actor) {
-		return actor.hasSuperAdminRole() || actor.hasUploadPropositionRole();
-	}
-
-	@Override
 	public List<String> getAdministredDomainsIdentifiers(Account actor, String domainUuid) {
 		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
 			return Lists.newArrayList();

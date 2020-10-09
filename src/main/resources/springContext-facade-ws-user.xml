@@ -146,16 +146,6 @@
 		<constructor-arg ref="safeDetailService" />
 	</bean>
 
-	<bean id="wsUploadPropositionExceptionRuleFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadPropositionExceptionRuleFacadeImpl">
-		<constructor-arg ref="accountService" />
-		<constructor-arg ref="uploadPropositionExceptionRuleService" />
-	</bean>
-
-	<bean id="wsUploadPropositionFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadPropositionFacadeImpl">
-		<constructor-arg ref="accountService" />
-		<constructor-arg ref="uploadPropositionService" />
-	</bean>
-
 	<bean id="wsJwtLongTimeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.JwtLongTimeFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="jwtLongTimeService" />

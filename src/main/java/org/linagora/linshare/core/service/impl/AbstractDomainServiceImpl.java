@@ -50,8 +50,6 @@ import org.linagora.linshare.core.business.service.MailFooterBusinessService;
 import org.linagora.linshare.core.business.service.MailLayoutBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
-import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
-import org.linagora.linshare.core.business.service.UploadPropositionFilterBusinessService;
 import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -119,8 +117,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final FunctionalityService functionalityService;
 	private final MailFooterBusinessService mailFooterBusinessService;
 	private final MailContentBusinessService mailContentBusinessService;
-	private final UploadPropositionFilterBusinessService uploadPropositionFilterBusinessService;
-	private final UploadPropositionBusinessService uploadPropositionBusinessService;
 	private final MimeTypeService mimeTypeService;
 	private final MailLayoutBusinessService mailLayoutBusinessService;
 	private final GroupProviderService groupProviderService;
@@ -144,8 +140,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final FunctionalityService functionalityService,
 			final MailFooterBusinessService mailFooterBusinessService,
 			final MailContentBusinessService mailContentBusinessService,
-			final UploadPropositionFilterBusinessService  uploadPropositionFilterBusinessService,
-			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final MimeTypeService mimeTypeService,
 			final MailLayoutBusinessService mailLayoutBusinessService,
 			final GroupProviderService groupProviderService, 
@@ -169,8 +163,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.functionalityService = functionalityService;
 		this.mailFooterBusinessService = mailFooterBusinessService;
 		this.mailContentBusinessService = mailContentBusinessService;
-		this.uploadPropositionFilterBusinessService = uploadPropositionFilterBusinessService;
-		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.mimeTypeService = mimeTypeService;
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
 		this.groupProviderService = groupProviderService;
@@ -901,14 +893,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 						mp.getMimeTypes().forEach(mt -> mimeTypeService.delete(actor, mt));
 						mimePolicyBusinessService.delete(mp);
 					});
-				}
-				if (uploadPropositionFilterBusinessService.findByDomainUuid(domain.getUuid()) != null) {
-					uploadPropositionFilterBusinessService.findByDomainUuid(domain.getUuid())
-							.forEach(upf -> uploadPropositionFilterBusinessService.delete(upf));
-				}
-				if (uploadPropositionBusinessService.findByDomainUuid(domain.getUuid()) != null) {
-					uploadPropositionBusinessService.findByDomainUuid(domain.getUuid())
-							.forEach(up -> uploadPropositionBusinessService.delete(up));
 				}
 				if (domain.getUserProvider() != null) {
 					userProviderService.delete(domain.getUserProvider());

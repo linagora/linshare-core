@@ -141,23 +141,6 @@
 					<constructor-arg ref="mimeTypeMagicNumberDao" />
 					<constructor-arg ref="mimeTypeRepository" />
 				</bean>
-				<!-- Upgrade Task to 2.2  -->
-				<bean class="org.linagora.linshare.core.upgrade.v2_2.MigrateUploadPropositionToMongoUpgradeTaskImpl">
-					<constructor-arg ref="accountRepository" />
-					<constructor-arg ref="upgradeTaskLogMongoRepository" />
-					<constructor-arg ref="userRepository" />
-					<constructor-arg ref="abstractDomainRepository" />
-					<constructor-arg ref="uploadPropositionRepository" />
-					<constructor-arg ref="uploadPropositionMongoRepository" />
-					<constructor-arg ref="technicalAccountService" />
-					<constructor-arg ref="logEntryService" />
-				</bean>
-				<bean class="org.linagora.linshare.core.upgrade.v2_2.MigrateUploadPropositionFilterToMongoUpgradeTaskImpl">
-					<constructor-arg ref="accountRepository" />
-					<constructor-arg ref="upgradeTaskLogMongoRepository" />
-					<constructor-arg ref="uploadPropositionFilterRepository" />
-					<constructor-arg ref="uploadPropositionFilterMongoRepository" />
-				</bean>
 				<bean class="org.linagora.linshare.core.upgrade.v2_2.MigrateHistoryToMongoUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />

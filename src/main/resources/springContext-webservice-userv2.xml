@@ -152,14 +152,6 @@
 		<constructor-arg ref="wsSafeDetailFacade" />
 	</bean>
 
-	<bean id="userv2UploadPropositionExceptionRuleRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadPropositionExceptionRuleRestServiceImpl">
-		<constructor-arg ref="wsUploadPropositionExceptionRuleFacade" />
-	</bean>
-
-	<bean id="userv2UploadPropositionRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadPropositionRestServiceImpl">
-		<constructor-arg ref="wsUploadPropositionFacade" />
-	</bean>
-
 	<bean id="userv2JwtPermanentTokenRestService" class="org.linagora.linshare.webservice.userv2.impl.JwtPermanentTokenRestServiceImpl">
 		<constructor-arg ref="wsJwtLongTimeFacade" />
 	</bean>
@@ -226,8 +218,6 @@
 			<ref bean="userv2UploadRequestGroupRestService" />
 			<ref bean="userv2UploadRequestEntryRestService" />
 			<ref bean="userv2SafeDetailRestService" />
-			<ref bean="userv2UploadPropositionExceptionRuleRestService" />
-			<ref bean="userv2UploadPropositionRestService" />
 			<ref bean="userv2JwtPermanentTokenRestService" />
 			<ref bean="userv2SharedSpaceRestService" />
 			<ref bean="userv2SharedSpaceLegacyNodeRestService" />

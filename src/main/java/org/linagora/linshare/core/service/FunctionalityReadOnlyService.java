@@ -112,9 +112,6 @@ public interface FunctionalityReadOnlyService {
 	TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality(AbstractDomain domain);
 	Functionality getUploadRequestEnableTemplateFunctionality(AbstractDomain domain);
 
-	// UPLOAD PROPOSITION
-	Functionality getUploadPropositionFunctionality(AbstractDomain domain);
-
 	/**
 	 * Return the status of the custom Notification URL in root domain
 	 * @return the status

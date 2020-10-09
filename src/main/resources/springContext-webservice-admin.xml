@@ -113,10 +113,6 @@
 		<constructor-arg ref="wsAdminUploadRequestFacade" />
 	</bean>
 
-	<bean id="adminUploadPropositionFilterRestService" class="org.linagora.linshare.webservice.admin.impl.UploadPropositionFilterRestServiceImpl">
-		<constructor-arg ref="wsAdminUploadPropositionFilterFacade" />
-	</bean>
-
 	<bean id="adminWelcomeMessagesRestService" class="org.linagora.linshare.webservice.admin.impl.WelcomeMessagesRestServiceImpl">
 		<constructor-arg ref="wsAdminWelcomeMessagesFacade" />
 	</bean>
@@ -220,7 +216,6 @@
 			<ref bean="adminTechnicalAccountRestService" />
 			<ref bean="adminTechnicalAccountPermissionRestService" />
 			<ref bean="adminUploadRequestRestService" />
-			<ref bean="adminUploadPropositionFilterRestService" />
 			<ref bean="adminWelcomeMessagesRestService" />
 			<ref bean="adminSystemConfigurationRestService" />
 			<ref bean="adminMailActivationRestService" />

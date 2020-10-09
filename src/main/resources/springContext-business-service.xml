@@ -178,21 +178,6 @@
 	<bean id="technicalAccountPermissionBusinessService" class="org.linagora.linshare.core.business.service.impl.TechnicalAccountPermissionBusinessServiceImpl">
 		<constructor-arg ref="technicalAccountPermissionRepository" />
 	</bean>
-
-	<bean id="uploadPropositionExceptionRuleBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadPropositionExceptionRuleBusinessServiceImpl">
-		<constructor-arg ref="uploadPropositionExceptionRuleMongoRepository" />
-	</bean>
-
-	<bean id="uploadPropositionBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadPropositionBusinessServiceImpl">
-		<constructor-arg ref="uploadPropositionMongoRepository" />
-	</bean>
-
-	<bean id="uploadPropositionFilterBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadPropositionFilterBusinessServiceImpl">
-		<constructor-arg ref="uploadPropositionFilterRepository" />
-		<constructor-arg ref="uploadPropositionActionRepository" />
-		<constructor-arg ref="uploadPropositionRuleRepository" />
-		<constructor-arg ref="uploadPropositionFilterMongoRepository" />
-	</bean>
 	<bean id="entryBusinessService" class="org.linagora.linshare.core.business.service.impl.EntryBusinessServiceImpl">
 		<constructor-arg ref="entryRepository" />
 		<constructor-arg ref="shareEntryRepository" />

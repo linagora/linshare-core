@@ -72,16 +72,6 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.MimePolicy"/>
 		</set>
 
-		<set name="uploadPropositionFilters" lazy="true" cascade="lock" inverse="true">
-			<key column="domain_abstract_id" not-null="true"/>
-			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD"/>
-		</set>
-
-		<set name="uploadPropositions" lazy="true" cascade="lock" inverse="true">
-			<key column="domain_abstract_id" not-null="true"/>
-			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadPropositionOLD"/>
-		</set>
-
 		<many-to-one name="userProvider" column="user_provider_id" class="org.linagora.linshare.core.domain.entities.UserProvider"
 			unique="true" not-null="false" lazy="proxy">
 		</many-to-one>

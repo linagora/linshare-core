@@ -50,8 +50,6 @@
 			<ref bean="userv2UploadRequestGroupRestService" />
 			<ref bean="userv2UploadRequestEntryRestService" />
 			<ref bean="userv2SafeDetailRestService" />
-			<ref bean="userv2UploadPropositionExceptionRuleRestService" />
-			<ref bean="userv2UploadPropositionRestService" />
 			<ref bean="userv2JwtPermanentTokenRestService" />
 			<ref bean="userv2SharedSpaceRestService" />
 			<ref bean="userv2SharedSpaceRoleRestService" />

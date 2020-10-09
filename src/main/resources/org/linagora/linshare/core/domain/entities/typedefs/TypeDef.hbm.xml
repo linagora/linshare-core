@@ -134,35 +134,6 @@
 			<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskGroup</param>
 			<param name="valueOfMethod">fromString</param>
 		</typedef>
-		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionStatus">
-			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionStatus</param>
-			<param name="identifierMethod">name</param>
-			<param name="valueOfMethod">fromString</param>
-		</typedef>
-		<typedef
-			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionActionType">
-			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionActionType</param>
-			<param name="identifierMethod">name</param>
-			<param name="valueOfMethod">fromString</param>
-		</typedef>
-		<typedef
-			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionMatchType">
-			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionMatchType</param>
-			<param name="identifierMethod">name</param>
-			<param name="valueOfMethod">fromString</param>
-		</typedef>
-		<typedef
-			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionRuleOperatorType">
-			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType</param>
-			<param name="identifierMethod">name</param>
-			<param name="valueOfMethod">fromString</param>
-		</typedef>
-		<typedef
-			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionRuleFieldType">
-			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType</param>
-			<param name="identifierMethod">name</param>
-			<param name="valueOfMethod">fromString</param>
-		</typedef>
 		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadRequestStatus">
 			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadRequestStatus</param>
 			<param name="identifierMethod">name</param>

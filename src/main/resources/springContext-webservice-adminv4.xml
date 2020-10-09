@@ -57,7 +57,6 @@
 			<ref bean="adminv4TechnicalAccountRestService" />
 			<ref bean="adminTechnicalAccountPermissionRestService" />
 			<ref bean="adminUploadRequestRestService" />
-			<ref bean="adminUploadPropositionFilterRestService" />
 			<ref bean="adminWelcomeMessagesRestService" />
 			<ref bean="adminSystemConfigurationRestService" />
 			<ref bean="adminMailActivationRestService" />

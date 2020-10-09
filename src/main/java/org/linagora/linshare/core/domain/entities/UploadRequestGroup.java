@@ -144,12 +144,6 @@ public class UploadRequestGroup {
 		this.maxFileSize = maxFileSize;
 	}
 
-	public UploadRequestGroup(UploadPropositionOLD proposition) {
-		super();
-		subject = proposition.getSubject();
-		body = proposition.getBody();
-	}
-
 	public void setId(long id) {
 		this.id = id;
 	}

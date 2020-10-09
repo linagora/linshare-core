@@ -53,7 +53,5 @@ public interface DomainPermissionBusinessService {
 
 	List<AbstractDomain> getMyAdministredDomains(Account actor);
 
-	boolean isAdminToCreateUploadProposition(Account actor);
-
 	List<String> getAdministredDomainsIdentifiers(Account actor, String domainUuid);
 }

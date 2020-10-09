@@ -384,11 +384,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST_ENABLE_TEMPLATE);
 	}
 
-	@Override
-	public Functionality getUploadPropositionFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.UPLOAD_PROPOSITION);
-	}
-
 	private Functionality getForbiddenFunctionnality(Functionality functionality) {
 		if (functionality == null) {
 			Policy activation = new Policy(Policies.FORBIDDEN, false, true);

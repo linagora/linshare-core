@@ -75,10 +75,7 @@ public class RoleProvider {
 			}
 		} else if (account.hasDelegationRole()) {
 			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_DELEGATION));
-		} else if (account.hasUploadPropositionRole()) {
-			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_UPLOAD_PROPOSTION));
-		}
-		else if (account.hasSafeRole()) {
+		} else if (account.hasSafeRole()) {
 			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_SAFE));
 		}
 		return grantedAuthorities;
