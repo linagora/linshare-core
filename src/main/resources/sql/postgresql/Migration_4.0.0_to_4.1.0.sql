@@ -123,6 +123,13 @@ UPDATE functionality_unit SET integer_default_value = 7, integer_max_value = 7 W
 ALTER TABLE upload_request_url ADD COLUMN default_Password bool DEFAULT true NOT NULL;
 ALTER TABLE upload_request_url ADD COLUMN original_password character varying(255)
 
+
+--Drop upload proposition tables
+DROP TABLE upload_proposition;
+DROP TABLE upload_proposition_action;
+DROP TABLE upload_proposition_rule;
+DROP TABLE upload_proposition_filter;
+
 -- End of your requests
 
 -- LinShare version

@@ -536,36 +536,6 @@ CREATE TABLE upload_request_entry (
   ls_type                 varchar(255),
   sha256sum               varchar(255),
   PRIMARY KEY (entry_id));
-CREATE TABLE upload_proposition_filter (
-  id                  int8 NOT NULL,
-  domain_abstract_id int8 NOT NULL,
-  uuid               varchar(255) NOT NULL,
-  name               varchar(255) NOT NULL,
-  ls_match           varchar(255) NOT NULL,
-  enable             bool NOT NULL,
-  creation_date      timestamp(6) NOT NULL,
-  modification_date  timestamp(6) NOT NULL,
-  sort_order         int4 NOT NULL,
-  PRIMARY KEY (id));
-CREATE TABLE upload_proposition_rule (
-  id                            int8 NOT NULL,
-  uuid                         varchar(255) NOT NULL,
-  upload_proposition_filter_id int8 NOT NULL,
-  operator                     varchar(255) NOT NULL,
-  field                        varchar(255) NOT NULL,
-  value                        varchar(255),
-  creation_date                timestamp(6) NOT NULL,
-  modification_date            timestamp(6) NOT NULL,
-  PRIMARY KEY (id));
-CREATE TABLE upload_proposition_action (
-  id                            int8 NOT NULL,
-  uuid                         varchar(255) NOT NULL,
-  upload_proposition_filter_id int8 NOT NULL,
-  action_type                  varchar(255) NOT NULL,
-  data                         text,
-  creation_date                timestamp(6) NOT NULL,
-  modification_date            timestamp(6) NOT NULL,
-  PRIMARY KEY (id));
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL,
   domain_abstract_id int8 NOT NULL,
@@ -609,21 +579,6 @@ CREATE TABLE upload_request_template (
   prolongation_mode          bool,
   creation_date              timestamp(6) NOT NULL,
   modification_date          timestamp(6) NOT NULL,
-  PRIMARY KEY (id));
-CREATE TABLE upload_proposition (
-  id                  int8 NOT NULL,
-  uuid               varchar(255) NOT NULL,
-  domain_abstract_id int8 NOT NULL,
-  status             varchar(255) NOT NULL,
-  subject            varchar(255) NOT NULL,
-  body               text,
-  mail               varchar(255) NOT NULL,
-  first_name         varchar(255) NOT NULL,
-  last_name          varchar(255) NOT NULL,
-  domain_source      varchar(255),
-  recipient_mail     varchar(255) NOT NULL,
-  creation_date      timestamp(6) NOT NULL,
-  modification_date  timestamp(6) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mime_policy (
   id                 int8 NOT NULL,
@@ -1020,22 +975,18 @@ ALTER TABLE upload_request_entry ADD CONSTRAINT upload_request_entry_fk_url FORE
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11782 FOREIGN KEY (document_id) REFERENCES document (id);
-ALTER TABLE upload_proposition_rule ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
-ALTER TABLE upload_proposition_action ADD CONSTRAINT FKupload_pro841666 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES account (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingListContact FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
 ALTER TABLE upload_request_template ADD CONSTRAINT FKupload_req618325 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif791766 FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
-ALTER TABLE upload_proposition ADD CONSTRAINT FKupload_pro226633 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mime_type ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
 ALTER TABLE mime_policy ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
 ALTER TABLE account_permission ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 ALTER TABLE upload_request_group ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE upload_request_group ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE upload_proposition_filter ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE functionality_enum_lang ADD CONSTRAINT FKfunctional140416 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr166740 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
