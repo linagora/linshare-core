@@ -100,20 +100,23 @@ UPDATE policy SET system = false, status = true, default_status = true WHERE id 
 ALTER TABLE functionality_unit ADD integer_default_value int8 NULL;
 ALTER TABLE functionality_integer ADD integer_default_value int8 NULL;
 
+ALTER TABLE functionality_unit RENAME COLUMN integer_value TO integer_max_value;
+ALTER TABLE functionality_integer RENAME COLUMN integer_value TO integer_max_value;
+
 
 -- Set the default value for the new field on functionality_unit and functionality_integer tables
-UPDATE functionality_integer SET integer_default_value = 3, integer_value = 3 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'COMPLETION');   -- COMPLETION
-UPDATE functionality_integer SET integer_default_value = 3, integer_value = 3 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION');   -- UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION
-UPDATE functionality_integer SET integer_default_value = 5, integer_value = 10 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT');  -- UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
-UPDATE functionality_unit SET integer_default_value = 3, integer_value = 4 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'GUESTS__EXPIRATION');      -- GUESTS__EXPIRATION
-UPDATE functionality_unit SET integer_default_value = 3, integer_value = 4 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'DOCUMENT_EXPIRATION');      -- DOCUMENT_EXPIRATION
-UPDATE functionality_unit SET integer_default_value = 3, integer_value = 4 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'SHARE_EXPIRATION');      -- SHARE_EXPIRATION
-UPDATE functionality_unit SET integer_default_value = NULL, integer_value = 900 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'WORK_GROUP__DOWNLOAD_ARCHIVE'); -- WORK_GROUP__DOWNLOAD_ARCHIVE
-UPDATE functionality_unit SET integer_default_value = 0, integer_value = -1 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION');     -- UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
-UPDATE functionality_unit SET integer_default_value = 7, integer_value = 7 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION');      -- UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
-UPDATE functionality_unit SET integer_default_value = 10, integer_value = 20 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE');    -- UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
-UPDATE functionality_unit SET integer_default_value = 50, integer_value = 100 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE');   -- UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
-UPDATE functionality_unit SET integer_default_value = 7, integer_value = 7 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION');      -- UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
+UPDATE functionality_integer SET integer_default_value = 3, integer_max_value = 3 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'COMPLETION');   -- COMPLETION
+UPDATE functionality_integer SET integer_default_value = 3, integer_max_value = 3 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION');   -- UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION
+UPDATE functionality_integer SET integer_default_value = 5, integer_max_value = 10 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT');  -- UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
+UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'GUESTS__EXPIRATION');      -- GUESTS__EXPIRATION
+UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'DOCUMENT_EXPIRATION');      -- DOCUMENT_EXPIRATION
+UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'SHARE_EXPIRATION');      -- SHARE_EXPIRATION
+UPDATE functionality_unit SET integer_default_value = NULL, integer_max_value = 900 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'WORK_GROUP__DOWNLOAD_ARCHIVE'); -- WORK_GROUP__DOWNLOAD_ARCHIVE
+UPDATE functionality_unit SET integer_default_value = 0, integer_max_value = -1 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION');     -- UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
+UPDATE functionality_unit SET integer_default_value = 7, integer_max_value = 7 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION');      -- UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
+UPDATE functionality_unit SET integer_default_value = 10, integer_max_value = 20 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE');    -- UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
+UPDATE functionality_unit SET integer_default_value = 50, integer_max_value = 100 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE');   -- UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
+UPDATE functionality_unit SET integer_default_value = 7, integer_max_value = 7 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION');      -- UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
 
 
 -- Add new fields for default pwd and store original pwd of an URU

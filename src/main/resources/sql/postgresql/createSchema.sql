@@ -168,7 +168,7 @@ CREATE TABLE functionality (
     PRIMARY KEY (id));
 CREATE TABLE functionality_integer (
   functionality_id int8 NOT NULL,
-  integer_value    int4,
+  integer_max_value    int4,
   integer_default_value    int4,
   CONSTRAINT linshare_functionality_integer_pkey
     PRIMARY KEY (functionality_id));
@@ -179,7 +179,7 @@ CREATE TABLE functionality_string (
     PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_unit (
   functionality_id      int8 NOT NULL,
-  integer_value         int8,
+  integer_max_value         int8,
   unit_id               int8 NOT NULL,
   integer_default_value int8 NOT NULL,
   CONSTRAINT linshare_functionality_unit_pkey
