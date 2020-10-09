@@ -325,7 +325,7 @@ INSERT INTO functionality_string(functionality_id, string_value)
 
 -- Functionality : UPLOAD_REQUEST
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (63, true, true, 2, true);
+	VALUES (63, true, true, 2, false);
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (64, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date)
