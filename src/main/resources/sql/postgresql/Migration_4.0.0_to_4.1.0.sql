@@ -97,8 +97,8 @@ UPDATE policy SET system = false, status = true, default_status = true WHERE id 
 
 -- Add new field to Functionality_integer and Functionality_unit
 
-ALTER TABLE functionality_unit ADD integer_default_value int8 NULL;
-ALTER TABLE functionality_integer ADD integer_default_value int8 NULL;
+ALTER TABLE functionality_unit ADD integer_default_value int4 NULL;
+ALTER TABLE functionality_integer ADD integer_default_value int4 NULL;
 
 ALTER TABLE functionality_unit RENAME COLUMN integer_value TO integer_max_value;
 ALTER TABLE functionality_integer RENAME COLUMN integer_value TO integer_max_value;

@@ -179,9 +179,9 @@ CREATE TABLE functionality_string (
     PRIMARY KEY (functionality_id));
 CREATE TABLE functionality_unit (
   functionality_id      int8 NOT NULL,
-  integer_max_value         int8,
+  integer_max_value         int4,
   unit_id               int8 NOT NULL,
-  integer_default_value int8 NOT NULL,
+  integer_default_value int4 NOT NULL,
   CONSTRAINT linshare_functionality_unit_pkey
     PRIMARY KEY (functionality_id));
 CREATE TABLE ldap_connection (
