@@ -310,19 +310,23 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 	}
 
 	@Override
-	public ContactList duplicate(Account actor, Account owner, ContactList list, String identifier) throws BusinessException {
+	public ContactList duplicate(Account actor, Account owner, ContactList list, String identifier)
+			throws BusinessException {
 		Validate.notNull(list, "Mailing list must be set.");
 		Validate.notNull(identifier, "identifier must be set.");
 		preChecks(actor, owner);
-		checkCreatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, list);
+		if (!list.isPublic() && !list.isOwner(actor)) {
+			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DUPLICATION_FORBIDDEN,
+					"The contact list is not public, you are not allowed to duplicate it");
+		}
 		ContactList duplicateMailingList = new ContactList();
-		duplicateMailingList.setIdentifier(identifier);
+		duplicateMailingList.setIdentifier(sanitize(identifier));
 		duplicateMailingList.setOwner(list.getOwner());
 		duplicateMailingList.setDomain(list.getDomain());
 		duplicateMailingList.setPublic(list.isPublic());
-		duplicateMailingList.setDescription(list.getDescription());
+		duplicateMailingList.setDescription(sanitize(list.getDescription()));
 		duplicateMailingList.setMailingListContact(new ArrayList<ContactListContact>());
-		duplicateMailingList = create(actor, owner, duplicateMailingList);
+		duplicateMailingList = contactListBusinessService.createList(duplicateMailingList, (User) owner);
 		for (ContactListContact contact : list.getMailingListContact()) {
 			ContactListContact duplicateContact = new ContactListContact();
 			duplicateContact.setFirstName(contact.getFirstName());
