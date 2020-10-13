@@ -62,6 +62,7 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.ContactListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +106,10 @@ public class ContactListServiceTest {
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
+	
+	@Autowired
+	@Qualifier("userRepository")
+	private UserRepository<User> userRepository;
 
 	@Autowired
 	private MailingListRepository mailingListRepository;
@@ -120,7 +125,7 @@ public class ContactListServiceTest {
 
 	private AbstractDomain domain;
 
-	private User internal;
+	private User internal, john;
 
 	private static String identifier1 = "TestContactList1";
 
@@ -137,7 +142,7 @@ public class ContactListServiceTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
-
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		internal = new Internal(FIRST_NAME, LAST_NAME, MAIL, UID);
 		internal.setLocale(domain.getDefaultTapestryLocale());
@@ -256,6 +261,30 @@ public class ContactListServiceTest {
 		});
 		Assertions.assertEquals(BusinessErrorCode.FORBIDDEN, exception.getErrorCode());
 		Assertions.assertEquals("You are not authorized to create an entry.", exception.getMessage());
+	}
+
+	/**
+	 * Test a duplication of public contact_list 
+	 */
+	@Test
+	public void testDuplicate() {
+		Functionality canCreateContactListFunctionality = functionalityRepository
+				.findById(CONTACT_CAN_CREATE_FUNCTIONALITY_ID);
+		canCreateContactListFunctionality.getActivationPolicy().setStatus(false);
+		functionalityRepository.update(canCreateContactListFunctionality);
+		ContactList duplicatedContactList = contactListService.duplicate(internal, internal, contactList1, "Copy");
+		Assertions.assertAll("Duplication fails", () -> {
+			Assertions.assertEquals(duplicatedContactList.getDomain(), contactList1.getDomain());
+			Assertions.assertEquals(duplicatedContactList.getDescription(), contactList1.getDescription());
+			Assertions.assertEquals(duplicatedContactList.getOwner(), contactList1.getOwner());
+			Assertions.assertEquals(duplicatedContactList.isPublic(), contactList1.isPublic());
+		});
+		// When the list is private and the actor is not the owner of original list
+		contactList1.setPublic(false);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			contactListService.duplicate(john, john, contactList1, "Copy");
+		});
+		Assertions.assertEquals(BusinessErrorCode.CONTACT_LIST_DUPLICATION_FORBIDDEN, exception.getErrorCode());
 	}
 
 	// helpers
