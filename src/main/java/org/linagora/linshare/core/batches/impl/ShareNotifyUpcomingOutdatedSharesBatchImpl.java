@@ -87,7 +87,7 @@ public class ShareNotifyUpcomingOutdatedSharesBatchImpl extends GenericBatchImpl
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		StringValueFunctionality notificationBeforeExpirationFunctionality = functionalityReadOnlyService
 				.getShareNotificationBeforeExpirationFunctionality(systemAccount.getDomain());
-		String[] dates = notificationBeforeExpirationFunctionality.getMaxValue().split(",");
+		String[] dates = notificationBeforeExpirationFunctionality.getValueT().split(",");
 		List<String> shares = new ArrayList<String>();
 		for (String date : dates) {
 			shares.addAll(shareEntryRepository.findUpcomingExpiredEntries(Integer.parseInt(date)));

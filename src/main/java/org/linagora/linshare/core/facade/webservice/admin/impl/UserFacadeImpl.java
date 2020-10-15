@@ -390,7 +390,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			if (twofaFunc.getActivationPolicy().getStatus()) {
 				userDto.setSecondFAUuid(user.getLsUuid());
 				userDto.setSecondFAEnabled(user.isUsing2FA());
-				userDto.setSecondFARequired(twofaFunc.getMaxValue());
+				userDto.setSecondFARequired(twofaFunc.getValueT());
 			} else {
 				userDto.setSecondFAEnabled(false);
 				userDto.setSecondFARequired(false);

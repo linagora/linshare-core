@@ -396,7 +396,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public String getCustomNotificationURLInRootDomain() throws BusinessException {
-		return this.getCustomNotificationUrlFunctionality(getRootDomain()).getMaxValue();
+		return this.getCustomNotificationUrlFunctionality(getRootDomain()).getValueT();
 	}
 
 	@Override

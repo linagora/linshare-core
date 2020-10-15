@@ -40,8 +40,6 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 
 	protected U value;
 
-	protected U maxValue;
-
 	public OneValueFunctionality() {
 		super();
 	}
@@ -55,14 +53,6 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 
 	public boolean hasSomeParam() {
 		return true;
-	}
-
-	public U getMaxValue() {
-		return value;
-	}
-
-	public void setMaxValue(U value) {
-		this.value = value;
 	}
 
 	public U getValueT() {
@@ -82,7 +72,7 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 	 * @return integer
 	 */
 	public U getFinalValue(U userValue) {
-		U result = getMaxValue();
+		U result = getValueT();
 		if (getDelegationPolicy() != null && getDelegationPolicy().getStatus()) {
 			if (userValue != null) {
 				result = userValue;

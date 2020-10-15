@@ -217,7 +217,7 @@ public class DocumentEntryServiceImpl
 			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
 					.getTimeStampingFunctionality(owner.getDomain());
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
-				timeStampingUrl = timeStampingFunctionality.getMaxValue();
+				timeStampingUrl = timeStampingFunctionality.getValueT();
 			}
 
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
@@ -317,7 +317,7 @@ public class DocumentEntryServiceImpl
 			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
 					.getTimeStampingFunctionality(owner.getDomain());
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
-				timeStampingUrl = timeStampingFunctionality.getMaxValue();
+				timeStampingUrl = timeStampingFunctionality.getValueT();
 			}
 
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
@@ -596,7 +596,7 @@ public class DocumentEntryServiceImpl
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) == 0 ) {
 				BooleanValueFunctionality deleteShareFunc= functionalityReadOnlyService.getDefaultShareExpiryTimeDeletionFunctionality(domain);
 				// Test if we have to remove the document now.
-				if (deleteShareFunc.getMaxValue()) {
+				if (deleteShareFunc.getValueT()) {
 					logger.debug("Current document entry " + documentEntry.getRepresentation() + " need to be deleted.");
 					deleteExpiredDocumentEntry(actor, documentEntry);
 				} else {

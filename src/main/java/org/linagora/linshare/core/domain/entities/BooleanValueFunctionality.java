@@ -64,7 +64,7 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			BooleanValueFunctionality o = (BooleanValueFunctionality) obj;
-			if (value.equals(o.getMaxValue())) {
+			if (value.equals(o.getValueT())) {
 				logger.debug("BooleanValueFunctionality : " + this.toString() + " is equal to BooleanValueFunctionality "
 						+ obj.toString());
 				return true;
@@ -84,7 +84,7 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		BooleanValueFunctionality f = (BooleanValueFunctionality) functionality;
-		this.value = f.getMaxValue();
+		this.value = f.getValueT();
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 	@Override
 	public List<ParameterDto> getParameters() {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
-		res.add(new ParameterDto(this.getMaxValue()));
+		res.add(new ParameterDto(this.getValueT()));
 		return res;
 	}
 
@@ -122,7 +122,7 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 	 */
 	@Override
 	public Boolean getFinalValue(Boolean userValue) {
-		boolean result = getMaxValue();
+		boolean result = getValueT();
 		if (getActivationPolicy().getStatus()) {
 			if (getDelegationPolicy() != null && getDelegationPolicy().getStatus()) {
 				if (userValue != null) {

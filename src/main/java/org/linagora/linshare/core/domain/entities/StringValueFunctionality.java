@@ -64,7 +64,7 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			StringValueFunctionality o = (StringValueFunctionality) obj;
-			if (value.equals(o.getMaxValue())) {
+			if (value.equals(o.getValueT())) {
 				logger.debug("StringValueFunctionality : " + this.toString() + " is equal to StringValueFunctionality "
 						+ obj.toString());
 				return true;
@@ -84,7 +84,7 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		StringValueFunctionality f = (StringValueFunctionality) functionality;
-		this.value = f.getMaxValue();
+		this.value = f.getValueT();
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	@Override
 	public List<ParameterDto> getParameters() {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
-		res.add(new ParameterDto(this.getMaxValue()));
+		res.add(new ParameterDto(this.getValueT()));
 		return res;
 	}
 

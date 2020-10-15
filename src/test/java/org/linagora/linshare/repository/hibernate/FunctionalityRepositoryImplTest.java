@@ -152,7 +152,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getMaxValue());
+		Assertions.assertEquals(value,entityFonc.getValueT());
 		functionalityRepository.delete(fonc);
 	}
 
@@ -287,7 +287,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getMaxValue());
+		Assertions.assertEquals(value,entityFonc.getValueT());
 
 
 
@@ -325,7 +325,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(entityFonc2.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc2.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName2,entityFonc2.getDomain().getUuid());
-		Assertions.assertEquals(value2,entityFonc2.getMaxValue());
+		Assertions.assertEquals(value2,entityFonc2.getValueT());
 
 		functionalityRepository.delete(fonc);
 		functionalityRepository.delete(fonc2);
@@ -354,7 +354,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getMaxValue());
+		Assertions.assertEquals(value,entityFonc.getValueT());
 
 
 
@@ -418,7 +418,7 @@ public class FunctionalityRepositoryImplTest {
 
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		String value2 = "http://server/service2";
-		fonc2.setMaxValue(value2);
+		fonc2.setValueT(value2);
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
@@ -562,7 +562,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(newFunc.businessEquals(func, true));
 		Assertions.assertNotNull(newFunc.getDomain());
 
-		func.setMaxValue("plop");
+		func.setValueT("plop");
 		Assertions.assertFalse(newFunc.businessEquals(func, true));
 
 		abstractDomainRepository.delete(otherDomain);

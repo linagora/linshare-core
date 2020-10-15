@@ -52,6 +52,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	protected Unit<?> unit;
 
 	protected Integer defaultValue;
+	
+	protected Integer maxValue;
 
 	public UnitValueFunctionality() {
 		super();
@@ -192,4 +194,14 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	public void setDefaultValue(Integer defaultValue) {
 		this.defaultValue = defaultValue;
 	}
+	
+
+	public Integer getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(Integer maxValue) {
+		this.maxValue = maxValue;
+	}
+
 }
