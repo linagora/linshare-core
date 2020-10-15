@@ -62,6 +62,13 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
 		this.unit = unit;
 	}
+	
+	public UnitValueFunctionality(String identifier, boolean system, Policy activationPolicy,
+			Policy configurationPolicy, AbstractDomain domain, Integer value, Unit<?> unit, Integer maxValue) {
+		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
+		this.unit = unit;
+		this.maxValue = maxValue;
+	}
 
 	@Override
 	public FunctionalityType getType() {
@@ -80,7 +87,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			UnitValueFunctionality o = (UnitValueFunctionality) obj;
-			if (value.equals(o.getMaxValue())) {
+			if (value.equals(o.getValueT()) && maxValue.equals(o.getMaxValue())) {
 				if (unit.businessEquals(o.getUnit())) {
 					logger.debug("UnitValueFunctionality : " + this.toString() + " is equal to UnitValueFunctionality "
 							+ obj.toString());
@@ -109,7 +116,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		UnitValueFunctionality f = (UnitValueFunctionality) functionality;
-		this.value = f.getMaxValue();
+		this.value = f.getValueT();
+		this.maxValue = f.getMaxValue();
 		this.unit.updateUnitFrom(f.getUnit());
 	}
 
@@ -157,7 +165,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				units.add(val.toString());
 			}
 		}
-		res.add(new ParameterDto(unitType, units, currentUnit, this.getMaxValue()));
+		res.add(new ParameterDto(unitType, units, currentUnit, this.getValueT()));
 		return res;
 	}
 

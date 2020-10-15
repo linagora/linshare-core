@@ -181,7 +181,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getMaxValue());
+		Assertions.assertEquals(value,entityFonc.getValueT());
 		Assertions.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
 		Assertions.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
 	}
@@ -207,7 +207,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getMaxValue());
+		Assertions.assertEquals(value,entityFonc.getValueT());
 		Assertions.assertEquals(UnitType.TIME, entityFonc.getUnit().getUnitType());
 		Assertions.assertEquals(TimeUnit.WEEK, entityFonc.getUnit().getUnitValue());
 	}
@@ -235,7 +235,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getMaxValue());
+		Assertions.assertEquals(value,entityFonc.getValueT());
 		Assertions.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
 		Assertions.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
 
@@ -259,7 +259,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertFalse(entityFonc2.getActivationPolicy().getStatus());
 		Assertions.assertFalse(entityFonc2.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc2.getDomain().getUuid());
-		Assertions.assertEquals(value2,entityFonc2.getMaxValue());
+		Assertions.assertEquals(value2,entityFonc2.getValueT());
 		Assertions.assertEquals(UnitType.TIME, entityFonc2.getUnit().getUnitType());
 		Assertions.assertEquals(TimeUnit.WEEK, entityFonc2.getUnit().getUnitValue());
 	}
@@ -426,19 +426,22 @@ public class FunctionalityRepositoryImplTest {
 	public void testEqualIntegerValueFunctionality() throws BusinessException{
 
 		Integer value=8;
+		Integer maxValue=0;
 		IntegerValueFunctionality fonc = new IntegerValueFunctionality(ID_FONC_1,
 				false,
 				new Policy(Policies.ALLOWED, true),
 				new Policy(Policies.ALLOWED, true),
 				currentDomain,
-				value);
+				value,
+				maxValue);
 
 		IntegerValueFunctionality fonc2 = new IntegerValueFunctionality(ID_FONC_1,
 				false,
 				new Policy(Policies.ALLOWED, true),
 				new Policy(Policies.ALLOWED, true),
 				currentDomain,
-				value);
+				value,
+				maxValue);
 
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setMaxValue(2);
@@ -449,14 +452,15 @@ public class FunctionalityRepositoryImplTest {
 	public void testEqualUnitValueFunctionality1() throws BusinessException{
 
 		Integer value = 1024;
+		Integer maxValue = 2048;
 		UnitValueFunctionality fonc = new UnitValueFunctionality(ID_FONC_2,
 				false,
 				new Policy(Policies.ALLOWED, false),
 				new Policy(Policies.ALLOWED, false),
 				currentDomain,
 				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-				);
+				new FileSizeUnitClass(FileSizeUnit.GIGA),
+				maxValue);
 
 		UnitValueFunctionality fonc2 = new UnitValueFunctionality(ID_FONC_2,
 				false,
@@ -464,8 +468,8 @@ public class FunctionalityRepositoryImplTest {
 				new Policy(Policies.ALLOWED, false),
 				currentDomain,
 				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-				);
+				new FileSizeUnitClass(FileSizeUnit.GIGA),
+				maxValue);
 
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setMaxValue(8);
@@ -476,14 +480,15 @@ public class FunctionalityRepositoryImplTest {
 	public void testEqualUnitValueFunctionality2() throws BusinessException{
 
 		Integer value = 1024;
+		Integer maxValue = 2048;
 		UnitValueFunctionality fonc = new UnitValueFunctionality(ID_FONC_2,
 				false,
 				new Policy(Policies.ALLOWED, false),
 				new Policy(Policies.ALLOWED, false),
 				currentDomain,
 				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-				);
+				new FileSizeUnitClass(FileSizeUnit.GIGA),
+				maxValue);
 
 		UnitValueFunctionality fonc2 = new UnitValueFunctionality(ID_FONC_2,
 				false,
@@ -491,8 +496,8 @@ public class FunctionalityRepositoryImplTest {
 				new Policy(Policies.ALLOWED, false),
 				currentDomain,
 				value,
-				new TimeUnitClass(TimeUnit.WEEK)
-				);
+				new TimeUnitClass(TimeUnit.WEEK),
+				maxValue);
 
 		UnitValueFunctionality fonc3 = new UnitValueFunctionality(ID_FONC_2,
 				false,
@@ -500,8 +505,8 @@ public class FunctionalityRepositoryImplTest {
 				new Policy(Policies.ALLOWED, false),
 				currentDomain,
 				value,
-				new TimeUnitClass(TimeUnit.DAY)
-				);
+				new TimeUnitClass(TimeUnit.DAY),
+				maxValue);
 
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 		Assertions.assertFalse(fonc2.businessEquals(fonc3, true));

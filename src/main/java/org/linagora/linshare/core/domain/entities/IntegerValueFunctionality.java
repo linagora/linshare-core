@@ -54,8 +54,9 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 
 	public IntegerValueFunctionality(String identifier, boolean system,
 			Policy activationPolicy, Policy configurationPolicy,
-			AbstractDomain domain, Integer value) {
+			AbstractDomain domain, Integer value, Integer maxValue) {
 		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
+		this.maxValue = maxValue;
 	}
 	
 	@Override
@@ -63,11 +64,12 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		return FunctionalityType.INTEGER;
 	}
 	
+	// TODO: Check if method is usefull ? 
 	@Override
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if(super.businessEquals(obj, checkPolicies)) {
 			IntegerValueFunctionality o = (IntegerValueFunctionality)obj;
-			if(value.equals(o.getMaxValue())) {
+			if(value.equals(o.getValueT()) && maxValue.equals(o.getMaxValue())) {
 				logger.debug("IntegerValueFunctionality : " + this.toString() + " is equal to IntegerValueFunctionality " + obj.toString());
 				return true;
 			}
@@ -85,7 +87,8 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		IntegerValueFunctionality f = (IntegerValueFunctionality)functionality;
-		this.value = f.getMaxValue();
+		this.value = f.getValueT();
+		this.maxValue = f.getMaxValue();
 	}
 
 	@Override
@@ -100,7 +103,7 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public List<ParameterDto> getParameters() {
 		 List<ParameterDto> res = new ArrayList<ParameterDto>();
-		 res.add(new ParameterDto(this.getMaxValue()));
+		 res.add(new ParameterDto(this.getValueT()));
 		 return res;
 	}
 
