@@ -59,6 +59,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.ShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
@@ -131,8 +132,9 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	public Response getDocumentStream(@PathParam("uuid") String shareUuid) throws BusinessException {
 		ShareDto shareDto = webServiceShareFacade.getReceivedShare(shareUuid);
 		ByteSource documentStream = webServiceShareFacade.getDocumentByteSource(shareUuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
-				shareDto.getName(), shareDto.getType(), shareDto.getSize());
+		FileAndMetaData data = new FileAndMetaData(documentStream, shareDto.getSize(),
+				shareDto.getName(), shareDto.getType());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return response.build();
 	}
 

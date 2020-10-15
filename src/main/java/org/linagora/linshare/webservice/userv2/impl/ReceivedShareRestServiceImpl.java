@@ -58,6 +58,7 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.ReceivedShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
@@ -186,8 +187,9 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 					throws BusinessException {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(uuid);
 		ByteSource receivedShareStream = shareFacade.getDocumentByteSource(uuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(receivedShareStream,
-				receivedShareDto.getName(), receivedShareDto.getType(), receivedShareDto.getSize());
+		FileAndMetaData data = new FileAndMetaData(receivedShareStream, receivedShareDto.getSize(),
+				receivedShareDto.getName(), receivedShareDto.getType());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return response.build();
 	}
 
