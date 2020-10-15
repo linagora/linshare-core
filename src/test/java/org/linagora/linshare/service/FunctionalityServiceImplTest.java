@@ -227,7 +227,7 @@ public class FunctionalityServiceImplTest {
 		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.find(actor, domain.getUuid(), FILESIZE_MAX);
 
 		Assertions.assertEquals(50,func.getMaxValue().intValue());
-		func.setValue(25);
+		func.setMaxValue(25);
 		functionalityService.update(actor, domain.getUuid(), func);
 
 		domain = abstractDomainRepository.findById(subDomainName1);
@@ -287,7 +287,7 @@ public class FunctionalityServiceImplTest {
 		StringValueFunctionality func_child = (StringValueFunctionality)functionalityService.find(actor, subDomain, TEST_TIME_STAMPING);
 
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality
-		func_child.setValue("plop");
+		func_child.setMaxValue("plop");
 		functionalityService.update(actor, subDomain, func_child);
 
 		String topDomain = rootDomainName;
@@ -305,7 +305,7 @@ public class FunctionalityServiceImplTest {
 
 		// we should not be able to update a functionality in subdomain where parent do not allowed it.
 		func_child = (StringValueFunctionality) func_parent.clone();
-		func_child.setValue("plop2");
+		func_child.setMaxValue("plop2");
 		try {
 			functionalityService.update(actor, subDomain, func_child);
 			Assertions.fail("This message should not be seen. An BusinessException was expected.");
@@ -331,7 +331,7 @@ public class FunctionalityServiceImplTest {
 		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getUuid(), TEST_TIME_STAMPING);
 
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality
-		func.setValue("plop");
+		func.setMaxValue("plop");
 		functionalityService.update(actor, domain.getUuid(), func);
 
 		StringValueFunctionality parent = (StringValueFunctionality)functionalityService.find(actor, topDomainName, TEST_TIME_STAMPING);
@@ -356,7 +356,7 @@ public class FunctionalityServiceImplTest {
 
 		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getUuid(), TEST_TIME_STAMPING);
 
-		func.setValue("plop");
+		func.setMaxValue("plop");
 		func.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 		functionalityService.update(actor, domain.getUuid(), func);
 
@@ -490,7 +490,7 @@ public class FunctionalityServiceImplTest {
 		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, topDomainName, TEST_TIME_STAMPING);
 
 		func.getConfigurationPolicy().setStatus(false);
-		func.setValue(valueFromTop);
+		func.setMaxValue(valueFromTop);
 		// modification of a functionality which belong to the root domain. This will lead to the creation of a new functionality for top domain
 		functionalityService.update(actor, topDomainName, func);
 		Assertions.assertEquals(2, countFunctionality(rootDomainId, TEST_TIME_STAMPING));
@@ -499,7 +499,7 @@ public class FunctionalityServiceImplTest {
 		// Step 2
 		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.find(actor, subDomainName1, TEST_TIME_STAMPING);
 		func2.getConfigurationPolicy().setPolicy(Policies.MANDATORY);
-		func2.setValue(valueFromSub);
+		func2.setMaxValue(valueFromSub);
 		// modification of a functionality which belong to the top domain. This will lead to the creation of a new functionality for sub domain
 		functionalityService.update(actor, subDomainName1, func2);
 		Assertions.assertEquals(3, countFunctionality(rootDomainId, TEST_TIME_STAMPING));

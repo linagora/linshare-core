@@ -418,7 +418,7 @@ public class FunctionalityRepositoryImplTest {
 
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		String value2 = "http://server/service2";
-		fonc2.setValue(value2);
+		fonc2.setMaxValue(value2);
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
@@ -441,7 +441,7 @@ public class FunctionalityRepositoryImplTest {
 				value);
 
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
-		fonc2.setValue(2);
+		fonc2.setMaxValue(2);
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
@@ -468,7 +468,7 @@ public class FunctionalityRepositoryImplTest {
 				);
 
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
-		fonc2.setValue(8);
+		fonc2.setMaxValue(8);
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
@@ -562,7 +562,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(newFunc.businessEquals(func, true));
 		Assertions.assertNotNull(newFunc.getDomain());
 
-		func.setValue("plop");
+		func.setMaxValue("plop");
 		Assertions.assertFalse(newFunc.businessEquals(func, true));
 
 		abstractDomainRepository.delete(otherDomain);
@@ -608,7 +608,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(newFunc.businessEquals(func, true));
 		Assertions.assertNotNull(newFunc.getDomain());
 
-		func.setValue(256);
+		func.setMaxValue(256);
 		Assertions.assertFalse(newFunc.businessEquals(func, true));
 		Assertions.assertTrue(newFunc instanceof UnitValueFunctionality);
 

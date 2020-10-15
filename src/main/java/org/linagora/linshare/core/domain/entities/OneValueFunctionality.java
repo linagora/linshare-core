@@ -61,7 +61,7 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 		return value;
 	}
 
-	public void setValue(U value) {
+	public void setMaxValue(U value) {
 		this.value = value;
 	}
 
