@@ -67,7 +67,7 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if(super.businessEquals(obj, checkPolicies)) {
 			IntegerValueFunctionality o = (IntegerValueFunctionality)obj;
-			if(value.equals(o.getValue())) {
+			if(value.equals(o.getMaxValue())) {
 				logger.debug("IntegerValueFunctionality : " + this.toString() + " is equal to IntegerValueFunctionality " + obj.toString());
 				return true;
 			}
@@ -85,7 +85,7 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		IntegerValueFunctionality f = (IntegerValueFunctionality)functionality;
-		this.value = f.getValue();
+		this.value = f.getMaxValue();
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public List<ParameterDto> getParameters() {
 		 List<ParameterDto> res = new ArrayList<ParameterDto>();
-		 res.add(new ParameterDto(this.getValue()));
+		 res.add(new ParameterDto(this.getMaxValue()));
 		 return res;
 	}
 

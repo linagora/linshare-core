@@ -285,7 +285,7 @@ public class GuestServiceImplTest {
 				.getGuestsExpiration(owner1.getDomain());
 		Calendar newExpiryDate = Calendar.getInstance();
 		newExpiryDate.setTime(guest.getCreationDate());
-		newExpiryDate.add(Calendar.MONTH, func.getValue() + 2); // the new expiration date is over the maximum value setted in the functionality.
+		newExpiryDate.add(Calendar.MONTH, func.getMaxValue() + 2); // the new expiration date is over the maximum value setted in the functionality.
 		guest.setExpirationDate(newExpiryDate.getTime());
 		Guest update = guestService.update(owner1, owner2, guest, null); // Owner1 is SuperAdmin and owner2 is a simple user
 		Assertions.assertEquals(newExpiryDate.getTime(), update.getExpirationDate());

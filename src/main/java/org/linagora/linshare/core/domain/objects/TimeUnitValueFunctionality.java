@@ -57,7 +57,7 @@ public class TimeUnitValueFunctionality extends UnitValueFunctionality {
 		setIdentifier(f.getIdentifier());
 		setSystem(f.isSystem());
 		setUnit(f.getUnit());
-		setValue(f.getValue());
+		setValue(f.getMaxValue());
 		setDefaultValue(f.getDefaultValue());
 	}
 

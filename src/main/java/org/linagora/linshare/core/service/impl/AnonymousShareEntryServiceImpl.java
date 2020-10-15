@@ -143,11 +143,11 @@ public class AnonymousShareEntryServiceImpl extends
 		BooleanValueFunctionality anonymousUrlFunc = functionalityService.getAnonymousUrl(owner.getDomain());
 		Boolean passwordProtected = sc.getSecured();
 		if (passwordProtected == null) {
-			passwordProtected = anonymousUrlFunc.getValue();
+			passwordProtected = anonymousUrlFunc.getMaxValue();
 		}
 		if (!anonymousUrlFunc.getDelegationPolicy().getStatus()) {
 			// User have not the right to override admin parameter.
-			passwordProtected = anonymousUrlFunc.getValue();
+			passwordProtected = anonymousUrlFunc.getMaxValue();
 		}
 		sc.setSecured(passwordProtected);
 		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
@@ -217,7 +217,7 @@ public class AnonymousShareEntryServiceImpl extends
 		} else {
 			// share entry was downloaded at least once.
 			Boolean send = functionalityService.getAnonymousUrlNotification(
-					shareEntry.getEntryOwner().getDomain()).getValue();
+					shareEntry.getEntryOwner().getDomain()).getMaxValue();
 			if (send) {
 				// send a notification by mail to the owner for every download
 				mail = mailBuildingService.build(context);

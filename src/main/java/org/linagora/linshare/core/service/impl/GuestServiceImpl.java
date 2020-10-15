@@ -311,7 +311,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 						.getGuestsExpiration(owner.getDomain());
 				Calendar expiryDate = Calendar.getInstance();
 				expiryDate.setTime(guest.getCreationDate());
-				expiryDate.add(Calendar.MONTH, func.getValue());
+				expiryDate.add(Calendar.MONTH, func.getMaxValue());
 				date = expiryDate.getTime();
 			}
 			if (dateToCheck.before(new Date()) || dateToCheck.after(date)) {

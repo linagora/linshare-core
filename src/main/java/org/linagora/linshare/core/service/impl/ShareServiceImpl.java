@@ -386,7 +386,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		}
 		Calendar expirationDate = Calendar.getInstance();
 		expirationDate.add(shareExpiration.toCalendarValue(),
-				shareExpiration.getValue());
+				shareExpiration.getMaxValue());
 		expirationDate.add(Calendar.DAY_OF_MONTH, 1);
 		expirationDate.set(Calendar.HOUR_OF_DAY, 0);
 		expirationDate.set(Calendar.MINUTE, 0);

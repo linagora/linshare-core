@@ -37,9 +37,11 @@ package org.linagora.linshare.core.domain.entities;
 
 
 public abstract class OneValueFunctionality<U> extends Functionality {
-	
+
 	protected U value;
-	
+
+	protected U maxValue;
+
 	public OneValueFunctionality() {
 		super();
 	}
@@ -55,11 +57,19 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 		return true;
 	}
 
-	public U getValue() {
+	public U getMaxValue() {
 		return value;
 	}
 
 	public void setValue(U value) {
+		this.value = value;
+	}
+
+	public U getValueT() {
+		return value;
+	}
+
+	public void setValueT(U value) {
 		this.value = value;
 	}
 
@@ -72,7 +82,7 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 	 * @return integer
 	 */
 	public U getFinalValue(U userValue) {
-		U result = getValue();
+		U result = getMaxValue();
 		if (getDelegationPolicy() != null && getDelegationPolicy().getStatus()) {
 			if (userValue != null) {
 				result = userValue;

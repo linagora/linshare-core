@@ -226,14 +226,14 @@ public class FunctionalityServiceImplTest {
 
 		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.find(actor, domain.getUuid(), FILESIZE_MAX);
 
-		Assertions.assertEquals(50,func.getValue().intValue());
+		Assertions.assertEquals(50,func.getMaxValue().intValue());
 		func.setValue(25);
 		functionalityService.update(actor, domain.getUuid(), func);
 
 		domain = abstractDomainRepository.findById(subDomainName1);
 		Assertions.assertEquals(1, domain.getFunctionalities().size());
 		for (Functionality it : domain.getFunctionalities()) {
-			Assertions.assertEquals(25, ((UnitValueFunctionality)it).getValue().intValue());
+			Assertions.assertEquals(25, ((UnitValueFunctionality)it).getMaxValue().intValue());
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -248,13 +248,13 @@ public class FunctionalityServiceImplTest {
 
 		UnitValueFunctionality func = (UnitValueFunctionality)functionalityService.find(actor, domain.getUuid(), FILESIZE_MAX);
 
-		Assertions.assertEquals(50,func.getValue().intValue());
+		Assertions.assertEquals(50,func.getMaxValue().intValue());
 		functionalityService.update(actor, domain.getUuid(), func);
 
 		domain = abstractDomainRepository.findById(subDomainName1);
 		Assertions.assertEquals(1, domain.getFunctionalities().size());
 		for (Functionality it : domain.getFunctionalities()) {
-			Assertions.assertEquals(50, ((UnitValueFunctionality)it).getValue().intValue());
+			Assertions.assertEquals(50, ((UnitValueFunctionality)it).getMaxValue().intValue());
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -269,7 +269,7 @@ public class FunctionalityServiceImplTest {
 
 		StringValueFunctionality func = (StringValueFunctionality)functionalityService.find(actor, domain.getUuid(), TEST_TIME_STAMPING);
 
-		Assertions.assertTrue(func.getValue().equals(LoadingServiceTestDatas.timeStampingUrl));
+		Assertions.assertTrue(func.getMaxValue().equals(LoadingServiceTestDatas.timeStampingUrl));
 		functionalityService.update(actor, domain.getUuid(), func);
 
 		domain = abstractDomainRepository.findById(subDomainName1);
@@ -507,7 +507,7 @@ public class FunctionalityServiceImplTest {
 
 		// Step 3
 		StringValueFunctionality func3 = (StringValueFunctionality)functionalityService.find(actor, rootDomainId, TEST_TIME_STAMPING);
-		Assertions.assertEquals(LoadingServiceTestDatas.timeStampingUrl, func3.getValue());
+		Assertions.assertEquals(LoadingServiceTestDatas.timeStampingUrl, func3.getMaxValue());
 		func3.getConfigurationPolicy().setPolicy(Policies.FORBIDDEN);
 
 		// root domain functionality is set with a forbidden policy, this should lead to the modification of all functionalities above rootDomain
@@ -519,8 +519,8 @@ public class FunctionalityServiceImplTest {
 		StringValueFunctionality func4 = (StringValueFunctionality)functionalityService.find(actor, subDomainName1, TEST_TIME_STAMPING);
 		logger.debug("func4.getConfigurationPolicy().getPolicy() : " + func4.getConfigurationPolicy().getPolicy());
 		Assertions.assertTrue(func4.getConfigurationPolicy().getPolicy().equals(Policies.FORBIDDEN));
-		logger.debug("func4.getValue()" + func4.getValue());
-		Assertions.assertEquals(LoadingServiceTestDatas.timeStampingUrl, func4.getValue());
+		logger.debug("func4.getValue()" + func4.getMaxValue());
+		Assertions.assertEquals(LoadingServiceTestDatas.timeStampingUrl, func4.getMaxValue());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

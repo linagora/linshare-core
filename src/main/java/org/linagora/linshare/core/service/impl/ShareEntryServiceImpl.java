@@ -332,7 +332,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			TimeUnitValueFunctionality guestFunctionality = functionalityService
 					.getGuestsExpiration(recipientOwner.getDomain());
 			guestExpiryDate.add(guestFunctionality.toCalendarValue(),
-					guestFunctionality.getValue());
+					guestFunctionality.getMaxValue());
 
 			Guest guest = guestRepository.findByMail(recipient.getLogin());
 			guest.setExpirationDate(guestExpiryDate.getTime());

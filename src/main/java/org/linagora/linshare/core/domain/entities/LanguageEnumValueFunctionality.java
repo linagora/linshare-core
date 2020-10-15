@@ -65,7 +65,7 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			LanguageEnumValueFunctionality o = (LanguageEnumValueFunctionality) obj;
-			if (value.equals(o.getValue())) {
+			if (value.equals(o.getMaxValue())) {
 				logger.debug("EnumValueFunctionality : " + this.toString() + " is equal to EnumValueFunctionality "
 						+ obj.toString());
 				return true;
@@ -85,7 +85,7 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		LanguageEnumValueFunctionality f = (LanguageEnumValueFunctionality) functionality;
-		this.value = f.getValue();
+		this.value = f.getMaxValue();
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 	@Override
 	public List<ParameterDto> getParameters() {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
-		res.add(new ParameterDto(this.getValue()));
+		res.add(new ParameterDto(this.getMaxValue()));
 		return res;
 	}
 

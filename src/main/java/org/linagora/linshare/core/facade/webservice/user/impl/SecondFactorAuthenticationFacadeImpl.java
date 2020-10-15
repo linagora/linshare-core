@@ -124,7 +124,7 @@ public class SecondFactorAuthenticationFacadeImpl extends UserGenericFacadeImp i
 		SecondFactorDto dto = new SecondFactorDto(authUser.getLsUuid(), authUser.getSecondFACreationDate(), authUser.isUsing2FA());
 		BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
 		if (twofaFunc.getActivationPolicy().getStatus()) {
-			dto.setRequired(twofaFunc.getValue());
+			dto.setRequired(twofaFunc.getMaxValue());
 			dto.setCanDeleteIt(twofaFunc.getDelegationPolicy().getStatus());
 		}
 		return dto;
