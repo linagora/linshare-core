@@ -48,7 +48,7 @@ public class FunctionalitySizeDto extends FunctionalityDto {
 
 	protected Integer value;
 
-	protected Integer defaultValue;
+	protected Integer maxValue;
 
 	protected String unit;
 
@@ -108,12 +108,12 @@ public class FunctionalitySizeDto extends FunctionalityDto {
 		this.units = units;
 	}
 
-	public Integer getDefaultValue() {
-		return defaultValue;
+	public Integer getMaxValue() {
+		return maxValue;
 	}
 
-	public void setDefaultValue(Integer defaultValue) {
-		this.defaultValue = defaultValue;
+	public void setMaxValue(Integer defaultValue) {
+		this.maxValue = defaultValue;
 	}
 
 }

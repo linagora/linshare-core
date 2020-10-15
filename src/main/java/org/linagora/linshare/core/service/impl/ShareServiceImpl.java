@@ -229,7 +229,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		Date defaultUsdaNotificationDate = null;
 		IntegerValueFunctionality usdaDurationFunc = funcService
 				.getUndownloadedSharedDocumentsAlertDuration(owner.getDomain());
-		Integer usdaDuration = usdaDurationFunc.getDefaultValue();
+		Integer usdaDuration = usdaDurationFunc.getValueT();
 		Calendar c = Calendar.getInstance();
 		int day = c.get(Calendar.DAY_OF_WEEK);
 		int nbWeek = (day -2 + usdaDuration) / 5;
@@ -395,7 +395,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(shareExpiration.toCalendarValue(),
-				shareExpiration.getDefaultValue());
+				shareExpiration.getValueT());
 		calendar.add(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);

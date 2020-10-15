@@ -51,8 +51,6 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	protected Unit<?> unit;
 
-	protected Integer defaultValue;
-	
 	protected Integer maxValue;
 
 	public UnitValueFunctionality() {
@@ -171,7 +169,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
 				f.setUnit(sizeUnit.getUnitValue().toString());
 				f.setValue(value);
-				f.setDefaultValue(defaultValue);
+				f.setMaxValue(maxValue);
 			}
 			return f;
 		} else if (getUnit() instanceof TimeUnitClass) {
@@ -180,21 +178,12 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
 				f.setUnit(timeUnit.getUnitValue().toString());
 				f.setValue(value);
-				f.setDefaultValue(defaultValue);
+				f.setMaxValue(maxValue);
 			}
 			return f;
 		}
 		return null;
 	}
-
-	public Integer getDefaultValue() {
-		return defaultValue;
-	}
-
-	public void setDefaultValue(Integer defaultValue) {
-		this.defaultValue = defaultValue;
-	}
-	
 
 	public Integer getMaxValue() {
 		return maxValue;

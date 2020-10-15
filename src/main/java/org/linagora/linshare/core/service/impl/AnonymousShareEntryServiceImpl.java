@@ -186,7 +186,7 @@ public class AnonymousShareEntryServiceImpl extends
 			DocumentEntry documentEntry = share.getDocumentEntry();
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) == 0 ) {
 				Calendar deletionDate = Calendar.getInstance();
-				deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getDefaultValue());
+				deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getValueT());
 				documentEntry.setExpirationDate(deletionDate);
 				documentEntryBusinessService.update(documentEntry);
 			}

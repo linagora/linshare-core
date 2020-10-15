@@ -57,12 +57,12 @@ public class SizeUnitValueFunctionality extends UnitValueFunctionality {
 		setSystem(f.isSystem());
 		setUnit(f.getUnit());
 		setMaxValue(f.getMaxValue());
-		setDefaultValue(f.getDefaultValue());
+		setValueT(f.getValueT());
 	}
 	
 	public long getPlainSize() {
 		FileSizeUnitClass sizeUnit = (FileSizeUnitClass)getUnit();
-		return sizeUnit.getPlainSize(getDefaultValue());
+		return sizeUnit.getPlainSize(getValueT());
 	}
 	
 }

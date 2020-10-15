@@ -33,8 +33,8 @@
     	<key>
      		<column name="functionality_id" not-null="true" index="index_functionality_integer_id"/>
     	</key>
-        <property name="value" column="integer_max_value" type="integer"/>
-        <property name="defaultValue" column="integer_default_value" type="integer"/>
+        <property name="value" column="integer_default_value" type="integer"/>
+        <property name="maxValue" column="integer_max_value" type="integer"/>
     </joined-subclass>
     
     <joined-subclass name="BooleanValueFunctionality" table="functionality_boolean">
@@ -48,8 +48,8 @@
     	<key>
      		<column name="functionality_id" not-null="true" index="index_functionality_unit_id"/>
     	</key>
-        <property name="value" column="integer_max_value" type="integer"/>
-        <property name="defaultValue" column="integer_default_value" type="integer"/>
+        <property name="value" column="integer_default_value" type="integer"/>
+        <property name="maxValue" column="integer_max_value" type="integer"/>
         <many-to-one name="unit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_id" unique="true" cascade="all" lazy="false" />
     </joined-subclass>
 

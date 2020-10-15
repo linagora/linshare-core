@@ -424,7 +424,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public Integer getIntegerValue(IntegerValueFunctionality func, Integer currentSize, BusinessErrorCode errorCode) {
 		if (func.getActivationPolicy().getStatus()) {
-			int defaultSize = func.getDefaultValue();
+			int defaultSize = func.getValueT();
 			if (currentSize != null) {
 				if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
 					logger.debug(func.getIdentifier() + " has a delegation policy");
@@ -476,7 +476,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
 			Calendar calendar = getCalendarWithoutTime(new Date());
-			calendar.add(func.toCalendarValue(), func.getDefaultValue());
+			calendar.add(func.toCalendarValue(), func.getValueT());
 			Date defaultDate = calendar.getTime();
 			currentDate = getCalendarWithoutTime(currentDate).getTime();
 			if (func.getDelegationPolicy() != null
@@ -534,7 +534,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize, BusinessErrorCode errorCode) {
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
-			long defaultSize = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getDefaultValue());
+			long defaultSize = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValueT());
 			if (currentSize != null) {
 				if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
 					logger.debug(func.getIdentifier() + " has a delegation policy");
@@ -588,7 +588,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 			logger.debug(func.getIdentifier() + " is activated");
 			Date now = getCalendarWithoutTime(new Date()).getTime();
 			Calendar c = getCalendarWithoutTime(expirationDate);
-			c.add(func.toCalendarValue(), - func.getDefaultValue());
+			c.add(func.toCalendarValue(), - func.getValueT());
 			Date defaultDate = c.getTime();
 			if (defaultDate.before(now)) {
 				defaultDate = now;

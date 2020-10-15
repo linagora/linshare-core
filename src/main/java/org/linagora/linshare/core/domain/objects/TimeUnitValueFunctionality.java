@@ -58,7 +58,7 @@ public class TimeUnitValueFunctionality extends UnitValueFunctionality {
 		setSystem(f.isSystem());
 		setUnit(f.getUnit());
 		setMaxValue(f.getMaxValue());
-		setDefaultValue(f.getDefaultValue());
+		setValueT(f.getValueT());
 	}
 
 	public int toCalendarValue() {

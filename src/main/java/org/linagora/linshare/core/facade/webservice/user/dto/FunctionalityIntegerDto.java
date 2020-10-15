@@ -42,7 +42,7 @@ public class FunctionalityIntegerDto extends FunctionalityDto {
 
 	protected Integer value;
 
-	protected Integer defaultValue;
+	protected Integer maxValue;
 
 	public FunctionalityIntegerDto() {
 		super();
@@ -62,12 +62,12 @@ public class FunctionalityIntegerDto extends FunctionalityDto {
 		this.value = value;
 	}
 
-	public Integer getDefaultValue() {
-		return defaultValue;
+	public Integer getMaxValue() {
+		return maxValue;
 	}
 
-	public void setDefaultValue(Integer defaultValue) {
-		this.defaultValue = defaultValue;
+	public void setMaxValue(Integer maxValue) {
+		this.maxValue = maxValue;
 	}
 
 }
