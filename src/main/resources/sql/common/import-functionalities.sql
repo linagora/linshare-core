@@ -275,7 +275,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (12, 1, 1);
 INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, integer_default_value) 
-	VALUES (66, 0, 12, 900);
+	VALUES (66, 900, 12, 0);
 
 -- Functionality : CONTACTS_LIST
 INSERT INTO policy(id, status, default_status, policy, system)
