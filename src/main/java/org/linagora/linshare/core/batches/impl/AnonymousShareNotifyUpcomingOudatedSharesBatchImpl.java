@@ -87,7 +87,7 @@ public class AnonymousShareNotifyUpcomingOudatedSharesBatchImpl extends GenericB
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		StringValueFunctionality notificationBeforeExpirationFunctionality = functionalityReadOnlyService
 				.getShareNotificationBeforeExpirationFunctionality(systemAccount.getDomain());
-		String[] dates = notificationBeforeExpirationFunctionality.getValueT().split(",");
+		String[] dates = notificationBeforeExpirationFunctionality.getValue().split(",");
 		List<String> shares = new ArrayList<String>();
 		for (String date : dates) {
 			shares.addAll(anonymousShareEntryRepository.findUpcomingExpiredEntries(Integer.parseInt(date)));

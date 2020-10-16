@@ -152,7 +152,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getValueT());
+		Assertions.assertEquals(value,entityFonc.getValue());
 		functionalityRepository.delete(fonc);
 	}
 
@@ -181,7 +181,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getValueT());
+		Assertions.assertEquals(value,entityFonc.getValue());
 		Assertions.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
 		Assertions.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
 	}
@@ -207,7 +207,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getValueT());
+		Assertions.assertEquals(value,entityFonc.getValue());
 		Assertions.assertEquals(UnitType.TIME, entityFonc.getUnit().getUnitType());
 		Assertions.assertEquals(TimeUnit.WEEK, entityFonc.getUnit().getUnitValue());
 	}
@@ -235,7 +235,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertFalse(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertFalse(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getValueT());
+		Assertions.assertEquals(value,entityFonc.getValue());
 		Assertions.assertEquals(UnitType.SIZE, entityFonc.getUnit().getUnitType());
 		Assertions.assertEquals(FileSizeUnit.GIGA, entityFonc.getUnit().getUnitValue());
 
@@ -259,7 +259,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertFalse(entityFonc2.getActivationPolicy().getStatus());
 		Assertions.assertFalse(entityFonc2.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc2.getDomain().getUuid());
-		Assertions.assertEquals(value2,entityFonc2.getValueT());
+		Assertions.assertEquals(value2,entityFonc2.getValue());
 		Assertions.assertEquals(UnitType.TIME, entityFonc2.getUnit().getUnitType());
 		Assertions.assertEquals(TimeUnit.WEEK, entityFonc2.getUnit().getUnitValue());
 	}
@@ -287,7 +287,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getValueT());
+		Assertions.assertEquals(value,entityFonc.getValue());
 
 
 
@@ -325,7 +325,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(entityFonc2.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc2.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName2,entityFonc2.getDomain().getUuid());
-		Assertions.assertEquals(value2,entityFonc2.getValueT());
+		Assertions.assertEquals(value2,entityFonc2.getValue());
 
 		functionalityRepository.delete(fonc);
 		functionalityRepository.delete(fonc2);
@@ -354,7 +354,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(entityFonc.getActivationPolicy().getStatus());
 		Assertions.assertTrue(entityFonc.getConfigurationPolicy().getStatus());
 		Assertions.assertEquals(rootDomaineName,entityFonc.getDomain().getUuid());
-		Assertions.assertEquals(value,entityFonc.getValueT());
+		Assertions.assertEquals(value,entityFonc.getValue());
 
 
 
@@ -418,7 +418,7 @@ public class FunctionalityRepositoryImplTest {
 
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		String value2 = "http://server/service2";
-		fonc2.setValueT(value2);
+		fonc2.setValue(value2);
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
@@ -567,7 +567,7 @@ public class FunctionalityRepositoryImplTest {
 		Assertions.assertTrue(newFunc.businessEquals(func, true));
 		Assertions.assertNotNull(newFunc.getDomain());
 
-		func.setValueT("plop");
+		func.setValue("plop");
 		Assertions.assertFalse(newFunc.businessEquals(func, true));
 
 		abstractDomainRepository.delete(otherDomain);

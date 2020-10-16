@@ -166,7 +166,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	protected String getTimeStampingUrl(AbstractDomain domain) {
 		StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
 		if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
-			return timeStampingFunctionality.getValueT();
+			return timeStampingFunctionality.getValue();
 		}
 		return null;
 	}

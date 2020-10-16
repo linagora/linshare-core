@@ -124,7 +124,7 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 	}
 
 	protected String getLinShareUploadRequestUrl(AbstractDomain domain) {
-		return functionalityReadOnlyService.getUploadRequestFunctionality(domain).getValueT();
+		return functionalityReadOnlyService.getUploadRequestFunctionality(domain).getValue();
 	}
 
 	protected String getUploadRequestUrl(GenericUploadRequestEmailContext emailCtx) {

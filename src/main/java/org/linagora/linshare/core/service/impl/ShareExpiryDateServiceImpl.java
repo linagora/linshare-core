@@ -73,9 +73,9 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 			List<ShareExpiryRule> shareRules = owner.getDomain().getShareExpiryRules();
 
 			// set the default exp time
-			if (shareExpirationTimeFunctionality.getValueT() != null) {
+			if (shareExpirationTimeFunctionality.getValue() != null) {
 				defaultExpiration = GregorianCalendar.getInstance();
-				defaultExpiration.add(shareExpirationTimeFunctionality.toCalendarValue(), shareExpirationTimeFunctionality.getValueT());
+				defaultExpiration.add(shareExpirationTimeFunctionality.toCalendarValue(), shareExpirationTimeFunctionality.getValue());
 			}
 			if ((shareRules == null) || (shareRules.size() == 0)) {
 				return defaultExpiration;

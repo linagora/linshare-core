@@ -212,7 +212,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			DocumentEntry documentEntry = share.getDocumentEntry();
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) == 0 ) {
 				Calendar deletionDate = Calendar.getInstance();
-				deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getValueT());
+				deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getValue());
 				documentEntry.setExpirationDate(deletionDate);
 				documentEntryBusinessService.update(documentEntry);
 			}

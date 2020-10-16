@@ -87,7 +87,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			UnitValueFunctionality o = (UnitValueFunctionality) obj;
-			if (value.equals(o.getValueT()) && maxValue.equals(o.getMaxValue())) {
+			if (value.equals(o.getValue()) && maxValue.equals(o.getMaxValue())) {
 				if (unit.businessEquals(o.getUnit())) {
 					logger.debug("UnitValueFunctionality : " + this.toString() + " is equal to UnitValueFunctionality "
 							+ obj.toString());
@@ -116,7 +116,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		UnitValueFunctionality f = (UnitValueFunctionality) functionality;
-		this.value = f.getValueT();
+		this.value = f.getValue();
 		this.maxValue = f.getMaxValue();
 		this.unit.updateUnitFrom(f.getUnit());
 	}
@@ -165,7 +165,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				units.add(val.toString());
 			}
 		}
-		res.add(new ParameterDto(unitType, units, currentUnit, this.getValueT()));
+		res.add(new ParameterDto(unitType, units, currentUnit, this.getValue()));
 		return res;
 	}
 

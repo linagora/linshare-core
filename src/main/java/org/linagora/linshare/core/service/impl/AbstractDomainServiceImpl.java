@@ -761,7 +761,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			return null;
 		}
 		return functionalityReadOnlyService.getDomainMailFunctionality(domain)
-				.getValueT();
+				.getValue();
 	}
 
 	@Override

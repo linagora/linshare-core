@@ -217,7 +217,7 @@ public class DocumentEntryServiceImpl
 			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
 					.getTimeStampingFunctionality(owner.getDomain());
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
-				timeStampingUrl = timeStampingFunctionality.getValueT();
+				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
@@ -317,7 +317,7 @@ public class DocumentEntryServiceImpl
 			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
 					.getTimeStampingFunctionality(owner.getDomain());
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
-				timeStampingUrl = timeStampingFunctionality.getValueT();
+				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
@@ -596,13 +596,13 @@ public class DocumentEntryServiceImpl
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) == 0 ) {
 				BooleanValueFunctionality deleteShareFunc= functionalityReadOnlyService.getDefaultShareExpiryTimeDeletionFunctionality(domain);
 				// Test if we have to remove the document now.
-				if (deleteShareFunc.getValueT()) {
+				if (deleteShareFunc.getValue()) {
 					logger.debug("Current document entry " + documentEntry.getRepresentation() + " need to be deleted.");
 					deleteExpiredDocumentEntry(actor, documentEntry);
 				} else {
 					TimeUnitValueFunctionality fileExpirationFunc = functionalityReadOnlyService.getDefaultFileExpiryTimeFunctionality(domain);
 					Calendar deletionDate = Calendar.getInstance();
-					deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getValueT());
+					deletionDate.add(fileExpirationFunc.toCalendarValue(), fileExpirationFunc.getValue());
 					documentEntry.setExpirationDate(deletionDate);
 					documentEntryBusinessService.update(documentEntry);
 				}

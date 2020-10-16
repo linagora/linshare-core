@@ -104,7 +104,7 @@ public class ComputeNewExpirationUnsharedDocumentBatchImpl extends GenericBatchI
 			TimeUnitValueFunctionality functionality = functionalityReadOnlyService
 					.getDefaultFileExpiryTimeFunctionality(domain);
 			Calendar calendar = (Calendar) documentEntry.getCreationDate().clone();
-			calendar.add(functionality.toCalendarValue(), functionality.getValueT());
+			calendar.add(functionality.toCalendarValue(), functionality.getValue());
 			documentEntry.setExpirationDate(calendar);
 			documentEntryRepository.update(documentEntry);
 			context.setProcessed(true);

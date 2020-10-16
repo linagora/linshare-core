@@ -55,11 +55,11 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 		return true;
 	}
 
-	public U getValueT() {
+	public U getValue() {
 		return value;
 	}
 
-	public void setValueT(U value) {
+	public void setValue(U value) {
 		this.value = value;
 	}
 
@@ -72,7 +72,7 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 	 * @return integer
 	 */
 	public U getFinalValue(U userValue) {
-		U result = getValueT();
+		U result = getValue();
 		if (getDelegationPolicy() != null && getDelegationPolicy().getStatus()) {
 			if (userValue != null) {
 				result = userValue;

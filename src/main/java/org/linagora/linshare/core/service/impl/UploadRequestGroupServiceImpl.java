@@ -264,7 +264,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private boolean checkBoolean(BooleanValueFunctionality func, Boolean current) {
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
-			Boolean defaultValue = func.getValueT();
+			Boolean defaultValue = func.getValue();
 			if (func.getDelegationPolicy() != null
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");
@@ -298,7 +298,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	}
 
 	private Language checkLanguage(LanguageEnumValueFunctionality func, Language current) {
-		Language defaultValue = func.getValueT();
+		Language defaultValue = func.getValue();
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
 			if (func.getDelegationPolicy() != null

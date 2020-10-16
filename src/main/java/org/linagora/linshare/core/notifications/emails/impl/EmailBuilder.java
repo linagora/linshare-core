@@ -336,32 +336,32 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected String getLinShareUrl(Account recipient) {
 		String value = functionalityReadOnlyService.getCustomNotificationUrlFunctionality(recipient.getDomain())
-				.getValueT();
+				.getValue();
 		return value;
 	}
 
 	protected String getLinShareUrlForExternals(Account recipient) {
 		String value = functionalityReadOnlyService.getCustomNotificationUrlForExternalsFunctionality(recipient.getDomain())
-				.getValueT();
+				.getValue();
 		return value;
 	}
 
 	protected String getLinShareUrlForUploadRequest(Account recipient) {
-		String value = functionalityReadOnlyService.getUploadRequestFunctionality(recipient.getDomain()).getValueT();
+		String value = functionalityReadOnlyService.getUploadRequestFunctionality(recipient.getDomain()).getValue();
 		return value;
 	}
 
 	protected String getLinShareAnonymousURL(Account sender) {
 		StringValueFunctionality notificationUrl = functionalityReadOnlyService
 				.getAnonymousURLNotificationUrl(sender.getDomain());
-		return notificationUrl.getValueT();
+		return notificationUrl.getValue();
 	}
 
 	protected String getFromMailAddress(AbstractDomain domain) {
 		if (domain == null) {
 			return null;
 		}
-		String fromMail = functionalityReadOnlyService.getDomainMailFunctionality(domain).getValueT();
+		String fromMail = functionalityReadOnlyService.getDomainMailFunctionality(domain).getValue();
 		return fromMail;
 	}
 

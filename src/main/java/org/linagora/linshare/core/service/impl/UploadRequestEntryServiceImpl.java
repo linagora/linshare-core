@@ -169,7 +169,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
 					.getTimeStampingFunctionality(actor.getDomain());
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
-				timeStampingUrl = timeStampingFunctionality.getValueT();
+				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
 					.getEnciphermentFunctionality(actor.getDomain());

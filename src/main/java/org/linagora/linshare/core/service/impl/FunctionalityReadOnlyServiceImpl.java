@@ -396,7 +396,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public String getCustomNotificationURLInRootDomain() throws BusinessException {
-		return this.getCustomNotificationUrlFunctionality(getRootDomain()).getValueT();
+		return this.getCustomNotificationUrlFunctionality(getRootDomain()).getValue();
 	}
 
 	@Override
@@ -424,7 +424,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public Integer getIntegerValue(IntegerValueFunctionality func, Integer currentSize, BusinessErrorCode errorCode) {
 		if (func.getActivationPolicy().getStatus()) {
-			int defaultSize = func.getValueT();
+			int defaultSize = func.getValue();
 			if (currentSize != null) {
 				if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
 					logger.debug(func.getIdentifier() + " has a delegation policy");
@@ -476,7 +476,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
 			Calendar calendar = getCalendarWithoutTime(new Date());
-			calendar.add(func.toCalendarValue(), func.getValueT());
+			calendar.add(func.toCalendarValue(), func.getValue());
 			Date defaultDate = calendar.getTime();
 			currentDate = getCalendarWithoutTime(currentDate).getTime();
 			if (func.getDelegationPolicy() != null
@@ -534,7 +534,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize, BusinessErrorCode errorCode) {
 		if (func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is activated");
-			long defaultSize = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValueT());
+			long defaultSize = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue());
 			if (currentSize != null) {
 				if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
 					logger.debug(func.getIdentifier() + " has a delegation policy");
@@ -588,7 +588,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 			logger.debug(func.getIdentifier() + " is activated");
 			Date now = getCalendarWithoutTime(new Date()).getTime();
 			Calendar c = getCalendarWithoutTime(expirationDate);
-			c.add(func.toCalendarValue(), - func.getValueT());
+			c.add(func.toCalendarValue(), - func.getValue());
 			Date defaultDate = c.getTime();
 			if (defaultDate.before(now)) {
 				defaultDate = now;
