@@ -138,6 +138,13 @@ DELETE FROM policy WHERE id= 89;
 DELETE FROM policy WHERE id= 90;
 DELETE FROM policy WHERE id= 91;
 
+
+-- Delete UPLOAD_REQUEST__GROUPED_MODE functionality
+DELETE FROM functionality_boolean WHERE functionality_id= 34;
+DELETE FROM functionality WHERE identifier='UPLOAD_REQUEST__GROUPED_MODE';
+DELETE FROM policy WHERE id= 71;
+DELETE FROM policy WHERE id= 72;
+DELETE FROM policy WHERE id= 73;
 -- End of your requests
 
 -- LinShare version

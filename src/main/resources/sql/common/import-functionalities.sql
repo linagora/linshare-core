@@ -363,18 +363,6 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, integer_default_value)
 	VALUES (33, 7, 8, 7);
 
--- Functionality : UPLOAD_REQUEST__GROUPED_MODE
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (71, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (72, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (73, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
- 	VALUES(34, false, 'UPLOAD_REQUEST__GROUPED_MODE', 71, 72, 73, 1, 'UPLOAD_REQUEST', true, now(), now());
-INSERT INTO functionality_boolean(functionality_id, boolean_value)
-	VALUES (34, false);
-
 -- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (74, true, true, 1, false);
