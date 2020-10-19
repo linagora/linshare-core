@@ -320,7 +320,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 					"The contact list is not public, you are not allowed to duplicate it");
 		}
 		ContactList duplicateMailingList = new ContactList();
-		duplicateMailingList.setIdentifier(sanitize(identifier));
+		duplicateMailingList.setIdentifier(sanitizeDuplicatedContactListName(identifier));
 		duplicateMailingList.setOwner(list.getOwner());
 		duplicateMailingList.setDomain(list.getDomain());
 		duplicateMailingList.setPublic(list.isPublic());

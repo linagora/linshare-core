@@ -44,4 +44,6 @@ public interface SanitizerInputHtmlBusinessService {
 
 	String sanitizeFileName(String fileName) throws BusinessException;
 
+	String sanitizeDuplicatedContactListName(String contactListName) throws BusinessException;
+
 }
