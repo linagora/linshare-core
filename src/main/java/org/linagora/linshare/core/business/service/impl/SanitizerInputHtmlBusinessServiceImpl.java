@@ -81,6 +81,13 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 	 */
 	@Override
 	public String sanitizeFileName(String fileName) throws BusinessException {
+		fileName = sanitizeSpecialChar(fileName);
+		// The OWASP HTMl sanitizer does not allows the "@" character. But on our policy
+		// we need to use "@" on some documents name.
+		return strictClean(fileName).replace("&#64;", "@");
+	}
+
+	private String sanitizeSpecialChar(String fileName) {
 		fileName = fileName.replace("\\", "_")
 		.replace(":", "_")
 		.replace("?", "_")
@@ -92,9 +99,13 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 		.replace("/", "_")
 		.replace("\"", "_")
 		.replace("|", "_");
-		// The OWASP HTMl sanitizer does not allows the "@" character. But on our policy
-		// we need to use "@" on some documents name.
-		return strictClean(fileName).replace("&#64;", "@");
+		return fileName;
+	}
+
+	@Override
+	public String sanitizeDuplicatedContactListName(String contactListName) throws BusinessException {
+		contactListName = sanitizeSpecialChar(contactListName);
+		return strictClean(contactListName).replace(";", "_");
 	}
 
 }

@@ -316,7 +316,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		preChecks(actor, owner);
 		checkCreatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, list);
 		ContactList duplicateMailingList = new ContactList();
-		duplicateMailingList.setIdentifier(identifier);
+		duplicateMailingList.setIdentifier(sanitizeDuplicatedContactListName(identifier));
 		duplicateMailingList.setOwner(list.getOwner());
 		duplicateMailingList.setDomain(list.getDomain());
 		duplicateMailingList.setPublic(list.isPublic());

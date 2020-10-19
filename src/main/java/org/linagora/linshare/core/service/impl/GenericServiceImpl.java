@@ -131,4 +131,11 @@ public class GenericServiceImpl<R, E> {
 		}
 		return input;
 	}
+
+	protected String sanitizeDuplicatedContactListName(String input) {
+		if (!Strings.isNullOrEmpty(input)) {
+			return sanitizerInputHtmlBusinessService.sanitizeDuplicatedContactListName(input);
+		}
+		return input;
+	}
 }
