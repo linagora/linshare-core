@@ -89,7 +89,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		excludesForUsers.add(FunctionalityNames.ANTIVIRUS.toString());
 		excludesForUsers.add(FunctionalityNames.TIME_STAMPING.toString());
 		excludesForUsers.add(FunctionalityNames.UPLOAD_REQUEST__GROUPED_MODE.toString());
-		excludesForUsers.add(FunctionalityNames.UPLOAD_REQUEST__PROLONGATION.toString());
 	}
 
 	@Override

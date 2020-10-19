@@ -130,6 +130,14 @@ DROP TABLE upload_proposition_action;
 DROP TABLE upload_proposition_rule;
 DROP TABLE upload_proposition_filter;
 
+
+--Delete UPLOAD_REQUEST__PROLONGATION functionality
+DELETE FROM functionality_boolean WHERE functionality_id= 40;
+DELETE FROM functionality WHERE identifier='UPLOAD_REQUEST__PROLONGATION';
+DELETE FROM policy WHERE id= 89;
+DELETE FROM policy WHERE id= 90;
+DELETE FROM policy WHERE id= 91;
+
 -- End of your requests
 
 -- LinShare version

@@ -443,18 +443,6 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_boolean(functionality_id, boolean_value)
 	VALUES (39, false);
 
--- Functionality : UPLOAD_REQUEST__PROLONGATION
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (89, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (90, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (91, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
-	VALUES(40, false, 'UPLOAD_REQUEST__PROLONGATION', 89, 90, 91, 1, 'UPLOAD_REQUEST', true, now(), now());
-INSERT INTO functionality_boolean(functionality_id, boolean_value)
-	VALUES (40, false);
-
 -- Functionality : UPLOAD_REQUEST__CAN_DELETE
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (92, true, true, 1, false);
