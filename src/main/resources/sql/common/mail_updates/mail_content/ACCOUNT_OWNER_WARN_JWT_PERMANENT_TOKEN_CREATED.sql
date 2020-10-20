@@ -16,8 +16,14 @@ UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
                   <!--/* End of Greetings for external or internal recipient */-->
                   <!--/* Main email  message content*/-->
                   <p>
-                     <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}">
-                 Peter WILSON has created a new permanent authentication token for your account
+                      <span th:if="(${owner.firstName} !=null AND ${owner.lastName} !=null)
+                       AND (${owner.firstName} != ${recipient.firstName} AND ${recipient.lastName} != ${owner.lastName})"
+                                      data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}">
+                      </span>
+                       <span th:if="(${owner.firstName} !=null AND ${owner.lastName} !=null)
+                       AND (${owner.firstName} == ${recipient.firstName} AND ${recipient.lastName} == ${owner.lastName})"
+                                      data-th-utext="#{mainMsgOwner(${owner.firstName},${owner.lastName},${workGroupName})}">
+                      </span>
                      </span>
                   </p>
                   <!--/* End of Main email message content*/-->
@@ -40,14 +46,17 @@ UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
    </body>
 </html>',messages_french='subject = Création d''''un jeton d''''accès permanent
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> a créé un jeton d''''accès permanent pour votre compte.
+mainMsgOwner = Vous vous avez créé un jeton d''''accès permanent pour votre compte.
 tokenCreationDate = Date de création
 tokenLabel = Nom
 tokenDescription = Description',messages_english='subject = Creation of a permanent authentication token
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a permanent authentication token for your account.
+mainMsgOwner = You have created a permanent authentication token for your account.
 tokenCreationDate = Creation date
 tokenLabel = Name
 tokenDescription = Description',messages_russian='subject = Создание постоянного токена аутентификации
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> создал постоянный токен аутентификации для вашей учетной записи.
+mainMsgOwner = You have created a permanent authentication token for your account.
 tokenCreationDate = Дата создания
 tokenLabel = Имя
 tokenDescription = Описание' WHERE id=32;
