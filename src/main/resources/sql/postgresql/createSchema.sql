@@ -166,24 +166,28 @@ CREATE TABLE functionality (
   parent_identifier       varchar(255),
   CONSTRAINT linshare_functionality_pkey
     PRIMARY KEY (id));
+
 CREATE TABLE functionality_integer (
   functionality_id int8 NOT NULL,
   integer_max_value    int4,
   integer_default_value    int4,
   CONSTRAINT linshare_functionality_integer_pkey
     PRIMARY KEY (functionality_id));
+
 CREATE TABLE functionality_string (
   functionality_id int8 NOT NULL,
   string_value     varchar(255),
   CONSTRAINT linshare_functionality_string_pkey
     PRIMARY KEY (functionality_id));
+
 CREATE TABLE functionality_unit (
   functionality_id      int8 NOT NULL,
   integer_max_value         int4,
   unit_id               int8 NOT NULL,
-  integer_default_value int4 NOT NULL,
+  integer_default_value int4,
   CONSTRAINT linshare_functionality_unit_pkey
     PRIMARY KEY (functionality_id));
+
 CREATE TABLE ldap_connection (
   id                    int8 NOT NULL,
   uuid                 varchar(255) NOT NULL UNIQUE,
