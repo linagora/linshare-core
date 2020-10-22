@@ -97,27 +97,28 @@ UPDATE policy SET system = false, status = true, default_status = true WHERE id 
 
 -- Add new field to Functionality_integer and Functionality_unit
 
-ALTER TABLE functionality_unit ADD integer_default_value int4 NULL;
-ALTER TABLE functionality_integer ADD integer_default_value int4 NULL;
-
-ALTER TABLE functionality_unit RENAME COLUMN integer_value TO integer_max_value;
-ALTER TABLE functionality_integer RENAME COLUMN integer_value TO integer_max_value;
+ALTER TABLE functionality_unit ADD integer_max_value int4 NULL;
+ALTER TABLE functionality_integer ADD integer_max_value int4 NULL;
 
 
--- Set the default value for the new field on functionality_unit and functionality_integer tables
+ALTER TABLE functionality_unit RENAME COLUMN integer_value TO integer_default_value;
+ALTER TABLE functionality_integer RENAME COLUMN integer_value TO integer_default_value;
+
+
+-- Set the max value and max unit for the new field on functionality_unit and functionality_integer tables
+
 UPDATE functionality_integer SET integer_default_value = 3, integer_max_value = 3 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'COMPLETION');   -- COMPLETION
 UPDATE functionality_integer SET integer_default_value = 3, integer_max_value = 3 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION');   -- UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION
 UPDATE functionality_integer SET integer_default_value = 5, integer_max_value = 10 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT');  -- UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
 UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'GUESTS__EXPIRATION');      -- GUESTS__EXPIRATION
 UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'DOCUMENT_EXPIRATION');      -- DOCUMENT_EXPIRATION
 UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'SHARE_EXPIRATION');      -- SHARE_EXPIRATION
-UPDATE functionality_unit SET integer_default_value = 0, integer_max_value = 900 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'WORK_GROUP__DOWNLOAD_ARCHIVE'); -- WORK_GROUP__DOWNLOAD_ARCHIVE
+UPDATE functionality_unit SET integer_default_value = 0, integer_max_value = 900  WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'WORK_GROUP__DOWNLOAD_ARCHIVE'); -- WORK_GROUP__DOWNLOAD_ARCHIVE
 UPDATE functionality_unit SET integer_default_value = 0, integer_max_value = -1 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION');     -- UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
 UPDATE functionality_unit SET integer_default_value = 7, integer_max_value = 7 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION');      -- UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
 UPDATE functionality_unit SET integer_default_value = 10, integer_max_value = 20 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE');    -- UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
 UPDATE functionality_unit SET integer_default_value = 50, integer_max_value = 100 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE');   -- UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
 UPDATE functionality_unit SET integer_default_value = 7, integer_max_value = 7 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION');      -- UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
-
 
 -- Add new fields for default pwd and store original pwd of an URU
 ALTER TABLE upload_request_url ADD COLUMN default_Password bool DEFAULT true NOT NULL;
