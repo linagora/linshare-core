@@ -42,8 +42,8 @@ import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 
 public interface FunctionalityFacade extends GenericFacade {
 
-	FunctionalityDto find(String identifier) throws BusinessException;
+	FunctionalityDto find(String identifier, Integer version) throws BusinessException;
 
-	List<FunctionalityDto> findAll() throws BusinessException;
+	List<FunctionalityDto> findAll(Integer version) throws BusinessException;
 
 }

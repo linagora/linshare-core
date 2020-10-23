@@ -139,7 +139,7 @@ public class Functionality extends AbstractFunctionality {
 	 * @param enable TODO
 	 * @return FunctionalityDto
 	 */
-	protected FunctionalityDto getUserDto(boolean enable) {
+	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
 		return new FunctionalityDto();
 	}
 
@@ -147,9 +147,9 @@ public class Functionality extends AbstractFunctionality {
 	 * Call it to transform your entity to a DTO.
 	 * @return FunctionalityDto
 	 */
-	public FunctionalityDto toUserDto() {
+	public FunctionalityDto toUserDto(Integer version) {
 		boolean enable = activationPolicy.getStatus();
-		FunctionalityDto f = getUserDto(enable);
+		FunctionalityDto f = getUserDto(enable, version);
 		f.setIdentifier(identifier);
 		f.setCanOverride(null);
 		f.setEnable(enable);

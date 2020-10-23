@@ -42,11 +42,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "FunctionalityTime")
+@Schema(description = "Dto representing a Time unit functionality type")
 public class FunctionalityTimeDto extends FunctionalityDto {
 
+	@Schema(description = "default value parameter")
 	protected Integer value;
 
+	@Schema(description = "maximum value parameter")
 	protected Integer maxValue;
 
 	protected String unit;

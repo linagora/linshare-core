@@ -24,6 +24,9 @@
 		<constructor-arg ref="wsGuestFacade" />
 		<constructor-arg ref="wsSecondFactorAuthenticationFacade" />
 	</bean>
+	<bean id="userv4FunctionalityRestService" class="org.linagora.linshare.webservice.userv4.impl.FuntionalityRestServiceImpl">
+		<constructor-arg ref="wsFunctionalityFacade" />
+	</bean>
 
 	<jaxrs:server id="userv4RestContainer" address="/rest/user/v4">
 		<jaxrs:serviceBeans>
@@ -36,7 +39,7 @@
 			<ref bean="userv2RestService" />
 			<ref bean="userv2ReceivedShareRestService" />
 			<ref bean="userv2LogRestService" />
-			<ref bean="userv2FunctionalityRestService" />
+			<ref bean="userv4FunctionalityRestService" />
 			<ref bean="userv2FlowDocumentUploaderRestService" />
 			<ref bean="userv2ShareEntryGroupRestService" />
 			<ref bean="userv2ContactListRestService" />

@@ -104,7 +104,7 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto(boolean enable) {
+	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
 		FunctionalityStringDto f = new FunctionalityStringDto();
 		if (enable) {
 			f.setValue(value);

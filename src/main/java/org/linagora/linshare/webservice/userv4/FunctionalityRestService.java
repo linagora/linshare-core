@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2020 LINAGORA
+ * Copyright (C) 2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,46 +33,8 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user.dto;
+package org.linagora.linshare.webservice.userv4;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-
-@XmlRootElement(name = "FunctionalityInteger")
-@Schema(description = "Dto representing an Integer functionality type")
-public class FunctionalityIntegerDto extends FunctionalityDto {
-
-	@Schema(description = "default value parameter")
-	protected Integer value;
-
-	@Schema(description = "maximum value parameter")
-	protected Integer maxValue;
-
-	public FunctionalityIntegerDto() {
-		super();
-	}
-
-	public FunctionalityIntegerDto(String identifier, boolean enable,
-			boolean canOverride, Integer value, Integer maxValue) {
-		super(identifier, enable, canOverride);
-		this.value = value;
-	}
-
-	public Integer getValue() {
-		return value;
-	}
-
-	public void setValue(Integer value) {
-		this.value = value;
-	}
-
-	public Integer getMaxValue() {
-		return maxValue;
-	}
-
-	public void setMaxValue(Integer maxValue) {
-		this.maxValue = maxValue;
-	}
+public interface FunctionalityRestService extends org.linagora.linshare.webservice.userv2.FunctionalityRestService {
 
 }

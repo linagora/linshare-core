@@ -105,7 +105,7 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto(boolean enable) {
+	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
 		FunctionalityEnumLangDto f = new FunctionalityEnumLangDto();
 		if (enable) {
 			f.setValue(value);

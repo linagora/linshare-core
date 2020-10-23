@@ -39,8 +39,11 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.Language;
 
+@XmlRootElement(name = "FunctionalityEnumLangDto")
 public class FunctionalityEnumLangDto extends FunctionalityDto {
 
 	protected Language value;

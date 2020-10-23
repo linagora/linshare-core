@@ -109,11 +109,13 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto(boolean enable) {
+	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
 		FunctionalityIntegerDto f = new FunctionalityIntegerDto();
 		if (enable) {
+			if (version >= 4) {
+				f.setMaxValue(maxValue);
+			}
 			f.setValue(value);
-			f.setMaxValue(maxValue);
 		}
 		return f;
 	}

@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2020 LINAGORA
+ * Copyright (C) 2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,41 +33,32 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2.impl;
+package org.linagora.linshare.webservice.userv4.impl;
 
 import java.util.List;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.userv2.FunctionalityRestService;
+import org.linagora.linshare.webservice.userv2.impl.FunctionalityRestServiceImpl;
+import org.linagora.linshare.webservice.userv4.FunctionalityRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
-
-//Class created to generate the swagger documentation of v1 RestServices
 @Path("/functionalities")
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class FunctionalityRestServiceImpl extends WebserviceBase implements FunctionalityRestService {
+public class FuntionalityRestServiceImpl extends FunctionalityRestServiceImpl implements FunctionalityRestService {
 
-	protected FunctionalityFacade functionalityFacade;
-
-	public FunctionalityRestServiceImpl(FunctionalityFacade functionalityFacade) {
-		super();
-		this.functionalityFacade = functionalityFacade;
+	public FuntionalityRestServiceImpl(FunctionalityFacade functionalityFacade) {
+		super(functionalityFacade);
 	}
+
 
 	@Path("/")
 	@GET
@@ -79,27 +70,13 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements Func
 	})
 	@Override
 	public List<FunctionalityDto> findAll() throws BusinessException {
-		return functionalityFacade.findAll(2);
+		return functionalityFacade.findAll(4);
 	}
 
-	@Path("/{funcId}")
-	@GET
-	@Operation(summary = "Find a functionality.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = FunctionalityDto.class))),
-			responseCode = "200"
-		)
-	})
 	@Override
-	public FunctionalityDto find(@PathParam(value = "funcId") String funcId) throws BusinessException {
-		return functionalityFacade.find(funcId, 2);
+	public FunctionalityDto find(String funcId) throws BusinessException {
+		return functionalityFacade.find(funcId, 4);
 	}
-
-	@Path("/{funcId}")
-	@HEAD
-	@Operation(summary = "Find a functionality.")
-	@Override
-	public void head(@PathParam(value = "funcId") String identifier) throws BusinessException {
-		functionalityFacade.find(identifier, 2);
-	}
+	
+	
 }
