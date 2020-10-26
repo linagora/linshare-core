@@ -458,7 +458,7 @@
 		<dependency>
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-parsers</artifactId>
-			<version>1.24</version>
+			<version>1.24.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.jai-imageio</groupId>
@@ -468,7 +468,7 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.6.1</version>
+			<version>2.8.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jclouds</groupId>
@@ -558,7 +558,7 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.6.1</version>
+			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -570,24 +570,24 @@
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-commons</artifactId>
-			<version>1.6.1</version>
+			<version>1.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
-			<version>1.6.1</version>
+			<version>1.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>3.4.0</version>
+			<version>3.5.15</version>
 			<scope>test</scope>
 		</dependency>
 <!-- 		Mockito Extension -->
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-junit-jupiter</artifactId>
-			<version>3.4.0</version>
+			<version>3.5.15</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -1557,26 +1557,26 @@
 	<properties>
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
 		<cxf.version>3.3.6</cxf.version>
-		<cxf.swagger.ui.version>3.25.0</cxf.swagger.ui.version>
-		<guava.version>28.2-jre</guava.version>
+		<cxf.swagger.ui.version>3.35.2</cxf.swagger.ui.version>
+		<guava.version>30.0-jre</guava.version>
 		<h2.version>1.4.200</h2.version>
-		<hibernate.version>5.4.13.Final</hibernate.version>
-		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
+		<hibernate.version>5.4.22.Final</hibernate.version>
+		<hibernate.validator.version>6.1.6.Final</hibernate.validator.version>
 		<jackson.version>2.10.0</jackson.version>
 		<jclouds.version>2.2.0</jclouds.version>
 		<jjwt.version>0.11.1</jjwt.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
-		<mongo.java.server>1.26.0</mongo.java.server>
-		<mozilla.rhino.version>1.7.12</mozilla.rhino.version>
+		<mongo.java.server>1.36.0</mongo.java.server>
+		<mozilla.rhino.version>1.7.13</mozilla.rhino.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<slf4j-release-version>1.7.30</slf4j-release-version>
 		<spring-data.version>Moore-SR5</spring-data.version>
-		<spring.mvc.version>5.1.14.RELEASE</spring.mvc.version>
-		<spring-release-version>5.1.14.RELEASE</spring-release-version>
-		<spring-security-release-version>5.1.9.RELEASE</spring-security-release-version>
-		<sql.driver.postgresql>42.2.12</sql.driver.postgresql>
+		<spring.mvc.version>5.2.9.RELEASE</spring.mvc.version>
+		<spring-release-version>5.2.9.RELEASE</spring-release-version>
+		<spring-security-release-version>5.4.1</spring-security-release-version>
+		<sql.driver.postgresql>42.2.18</sql.driver.postgresql>
 		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 	</properties>
 </project>
