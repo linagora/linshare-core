@@ -37,6 +37,7 @@
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -168,7 +169,9 @@ public class UploadRequestGroupDto {
 		uploadRequestGroup.setSecured(isSecured());
 		uploadRequestGroup.setMailMessageId(getMailMessageId());
 		uploadRequestGroup.setEnableNotification(getEnableNotification());
-		uploadRequestGroup.setRestricted(!getCollective());
+		if (Objects.nonNull(getCollective())) {
+			uploadRequestGroup.setRestricted(!getCollective());
+		}
 		uploadRequestGroup.setStatus(getStatus());
 		return uploadRequestGroup;
 	}
