@@ -132,8 +132,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	protected void updateFunctionality(String type, ParameterDto parameterDto) {
 		this.value = parameterDto.getInteger();
+		this.maxValue = parameterDto.getMaxInteger();
 		String unit = parameterDto.getString().trim().toUpperCase();
-
 		if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
 			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
 			sizeUnit.setUnitValue(FileSizeUnit.valueOf(unit));
@@ -165,7 +165,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				units.add(val.toString());
 			}
 		}
-		res.add(new ParameterDto(unitType, units, currentUnit, this.getValue()));
+		res.add(new ParameterDto(unitType, units, currentUnit, this.getValue(), this.getMaxValue()));
 		return res;
 	}
 

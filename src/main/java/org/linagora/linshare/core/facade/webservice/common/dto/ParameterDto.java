@@ -50,6 +50,9 @@ public class ParameterDto {
 
     @Schema(description = "Integer")
 	private int integer;
+    
+    @Schema(description = "Max Integer value")
+	private int maxInteger;
 
     @Schema(description = "String")
 	private String string;
@@ -73,13 +76,15 @@ public class ParameterDto {
 		this.type = "STRING";
 	}
 
-	public ParameterDto(int i) {
+	public ParameterDto(int i, int maxInteger) {
 		this.integer = i;
+		this.maxInteger = maxInteger;
 		this.type = "INTEGER";
 	}
 
-	public ParameterDto(String type, List<String> listUnit, String unit, int integer) {
+	public ParameterDto(String type, List<String> listUnit, String unit, int integer, int maxInteger) {
 		this.string = unit;
+		this.maxInteger = maxInteger;
 		this.integer = integer;
 		this.type = type;
 		this.select = new ArrayList<String>(listUnit);
@@ -104,6 +109,14 @@ public class ParameterDto {
 
 	public void setInteger(int integer) {
 		this.integer = integer;
+	}
+	
+	public int getMaxInteger() {
+		return maxInteger;
+	}
+
+	public void setMaxInteger(int maxInteger) {
+		this.maxInteger = maxInteger;
 	}
 
 	public String getString() {

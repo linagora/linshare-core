@@ -97,13 +97,14 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
 			this.value = parameterDto.getInteger();
+			this.maxValue = parameterDto.getMaxInteger();
 		}
 	}
 
 	@Override
 	public List<ParameterDto> getParameters() {
 		 List<ParameterDto> res = new ArrayList<ParameterDto>();
-		 res.add(new ParameterDto(this.getValue()));
+		 res.add(new ParameterDto(this.getValue(), this.getMaxValue()));
 		 return res;
 	}
 
