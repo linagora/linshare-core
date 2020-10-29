@@ -64,7 +64,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public FunctionalityAdminDto find(String domainId, String funcId, boolean tree)
+	public FunctionalityAdminDto find(Integer version, String domainId, String funcId, boolean tree)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
@@ -74,7 +74,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<FunctionalityAdminDto> findAll(String domainId, String parentId, boolean tree, boolean withSubFunctionalities)
+	public List<FunctionalityAdminDto> findAll(Integer version, String domainId, String parentId, boolean tree, boolean withSubFunctionalities)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
@@ -85,7 +85,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public FunctionalityAdminDto update(FunctionalityAdminDto func)
+	public FunctionalityAdminDto update(Integer version, FunctionalityAdminDto func)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 
@@ -125,7 +125,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(FunctionalityAdminDto func) throws BusinessException {
+	public void delete(Integer version, FunctionalityAdminDto func) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),

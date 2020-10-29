@@ -90,7 +90,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 			@QueryParam("tree") @DefaultValue("false") boolean tree,
 			@QueryParam("subs") @DefaultValue("false") boolean withSubFunctionalities)
 			throws BusinessException {
-		return functionalityFacade.findAll(domainId, parentId, tree, withSubFunctionalities);
+		return functionalityFacade.findAll(1, domainId, parentId, tree, withSubFunctionalities);
 	}
 
 	@Path("/{funcId}")
@@ -107,7 +107,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 			@PathParam(value = "funcId") String funcId,
 			@QueryParam("tree") @DefaultValue("false") boolean tree)
 			throws BusinessException {
-		return functionalityFacade.find(domainId, funcId, tree);
+		return functionalityFacade.find(1, domainId, funcId, tree);
 	}
 
 	@Path("/")
@@ -116,7 +116,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 	@Override
 	public FunctionalityAdminDto update(FunctionalityAdminDto func)
 			throws BusinessException {
-		return functionalityFacade.update(func);
+		return functionalityFacade.update(1, func);
 	}
 
 	@Path("/")
@@ -124,6 +124,6 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements
 	@Operation(summary = "Delete a domain's functionality.")
 	@Override
 	public void delete(FunctionalityAdminDto func) throws BusinessException {
-		functionalityFacade.delete(func);
+		functionalityFacade.delete(1, func);
 	}
 }

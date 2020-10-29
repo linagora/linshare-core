@@ -43,13 +43,13 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdmin
 
 public interface FunctionalityFacade extends AdminGenericFacade {
 
-	FunctionalityAdminDto find(String domainId, String funcId, boolean tree)
+	FunctionalityAdminDto find(Integer version, String domainId, String funcId, boolean tree)
 			throws BusinessException;
 
-	List<FunctionalityAdminDto> findAll(String domainId, String parentId, boolean tree, boolean withSubFunctionalities) throws BusinessException;
+	List<FunctionalityAdminDto> findAll(Integer version, String domainId, String parentId, boolean tree, boolean withSubFunctionalities) throws BusinessException;
 
-	FunctionalityAdminDto update(FunctionalityAdminDto func) throws BusinessException;
+	FunctionalityAdminDto update(Integer version, FunctionalityAdminDto func) throws BusinessException;
 
-	void delete(FunctionalityAdminDto func) throws BusinessException;
+	void delete(Integer version, FunctionalityAdminDto func) throws BusinessException;
 
 }
