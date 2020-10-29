@@ -97,7 +97,7 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 	}
 
 	@Override
-	public List<ParameterDto> getParameters() {
+	public List<ParameterDto> getParameters(Integer version) {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		res.add(new ParameterDto(this.getValue()));
 		return res;

@@ -64,7 +64,6 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		return FunctionalityType.INTEGER;
 	}
 	
-	// TODO: Check if method is usefull ? 
 	@Override
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if(super.businessEquals(obj, checkPolicies)) {
@@ -102,10 +101,14 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public List<ParameterDto> getParameters() {
-		 List<ParameterDto> res = new ArrayList<ParameterDto>();
-		 res.add(new ParameterDto(this.getValue(), this.getMaxValue()));
-		 return res;
+	public List<ParameterDto> getParameters(Integer version) {
+		List<ParameterDto> res = new ArrayList<ParameterDto>();
+		ParameterDto parameterDto = new ParameterDto(this.getValue());
+		if (version >= 4) {
+			parameterDto.setMaxInteger(this.getMaxValue());
+		}
+		res.add(parameterDto);
+		return res;
 	}
 
 	@Override

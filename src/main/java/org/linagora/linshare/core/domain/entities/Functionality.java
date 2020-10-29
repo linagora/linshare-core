@@ -81,7 +81,7 @@ public class Functionality extends AbstractFunctionality {
 		return FunctionalityType.DEFAULT;
 	}
 
-	public List<ParameterDto> getParameters() {
+	public List<ParameterDto> getParameters(Integer version) {
 		return new ArrayList<ParameterDto>();
 	}
 

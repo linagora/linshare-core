@@ -42,6 +42,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.Language;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Parameter")
@@ -51,8 +53,9 @@ public class ParameterDto {
     @Schema(description = "Integer")
 	private int integer;
     
-    @Schema(description = "Max Integer value")
-	private int maxInteger;
+    @Schema(description = "Integer")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+	private Integer maxInteger;
 
     @Schema(description = "String")
 	private String string;
@@ -75,16 +78,14 @@ public class ParameterDto {
 		this.string = s;
 		this.type = "STRING";
 	}
-
-	public ParameterDto(int i, int maxInteger) {
+	
+	public ParameterDto(int i) {
 		this.integer = i;
-		this.maxInteger = maxInteger;
 		this.type = "INTEGER";
 	}
 
-	public ParameterDto(String type, List<String> listUnit, String unit, int integer, int maxInteger) {
+	public ParameterDto(String type, List<String> listUnit, String unit, int integer) {
 		this.string = unit;
-		this.maxInteger = maxInteger;
 		this.integer = integer;
 		this.type = type;
 		this.select = new ArrayList<String>(listUnit);
@@ -111,14 +112,6 @@ public class ParameterDto {
 		this.integer = integer;
 	}
 	
-	public int getMaxInteger() {
-		return maxInteger;
-	}
-
-	public void setMaxInteger(int maxInteger) {
-		this.maxInteger = maxInteger;
-	}
-
 	public String getString() {
 		return string;
 	}
@@ -150,4 +143,13 @@ public class ParameterDto {
 	public void setSelect(List<String> select) {
 		this.select = select;
 	}
+
+	public Integer getMaxInteger() {
+		return maxInteger;
+	}
+
+	public void setMaxInteger(Integer maxInteger) {
+		this.maxInteger = maxInteger;
+	}
+	
 }

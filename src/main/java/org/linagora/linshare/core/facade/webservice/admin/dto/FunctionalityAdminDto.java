@@ -102,7 +102,7 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 		super();
 	}
 
-	public FunctionalityAdminDto(Functionality f) {
+	public FunctionalityAdminDto(Integer version, Functionality f) {
 		super();
 		// System returned only for development purpose.
 		this.system = f.isSystem();
@@ -118,14 +118,14 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 		}
 		// Parameters
 		this.parentAllowParametersUpdate = f.getParentAllowParametersUpdate();
-		this.parameters = f.getParameters();
+		this.parameters = f.getParameters(version);
 		this.type = f.getType().toString();
 		this.parentIdentifier = f.getParentIdentifier();
 		this.displayable = true;
 		this.displayable = f.getDisplayable();
 		functionalities = new ArrayList<FunctionalityAdminDto>();
 		for (AbstractFunctionality child : f.getChildren()) {
-			functionalities.add(new FunctionalityAdminDto((Functionality)child));
+			functionalities.add(new FunctionalityAdminDto(version, (Functionality)child));
 		}
 	}
 
@@ -254,11 +254,11 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 	/**
 	 * Transformers
 	 */
-	public static Function<Functionality, FunctionalityAdminDto> toDto() {
+	public static Function<Functionality, FunctionalityAdminDto> toDto(Integer version) {
 		return new Function<Functionality, FunctionalityAdminDto>() {
 			@Override
 			public FunctionalityAdminDto apply(Functionality arg0) {
-				return new FunctionalityAdminDto(arg0);
+				return new FunctionalityAdminDto(version, arg0);
 			}
 		};
 	}

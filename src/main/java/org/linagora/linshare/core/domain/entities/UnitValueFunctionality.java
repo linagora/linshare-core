@@ -144,7 +144,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public List<ParameterDto> getParameters() {
+	public List<ParameterDto> getParameters(Integer version) {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		String unitType = null;
 		String currentUnit = null;
@@ -165,7 +165,11 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				units.add(val.toString());
 			}
 		}
-		res.add(new ParameterDto(unitType, units, currentUnit, this.getValue(), this.getMaxValue()));
+		ParameterDto parameterDto = new ParameterDto(unitType, units, currentUnit, this.getValue());
+		if (version >= 4) {
+			parameterDto.setMaxInteger(this.getMaxValue());
+		}
+		res.add(parameterDto);
 		return res;
 	}
 

@@ -70,7 +70,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(domainId, "domain identifier must be set.");
 		Validate.notEmpty(funcId, "functionality identifier must be set.");
 		Functionality func = service.find(authUser, domainId, funcId, tree);
-		return FunctionalityAdminDto.toDto().apply(func);
+		return FunctionalityAdminDto.toDto(version).apply(func);
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
 		Iterable<Functionality> entities = service.findAll(authUser, domainId, parentId, tree, withSubFunctionalities);
-		Iterable<FunctionalityAdminDto> transform = Iterables.transform(entities, FunctionalityAdminDto.toDto());
+		Iterable<FunctionalityAdminDto> transform = Iterables.transform(entities, FunctionalityAdminDto.toDto(version));
 		// Copy is made because the transaction is closed at the end of every method in facade classes.
 		return Ordering.natural().immutableSortedCopy(transform);
 	}
@@ -121,7 +121,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		entity.updateFunctionalityValuesOnlyFromDto(func);
 		Functionality update = service.update(authUser,
 				func.getDomain(), entity);
-		return new FunctionalityAdminDto(update);
+		return new FunctionalityAdminDto(version, update);
 	}
 
 	@Override

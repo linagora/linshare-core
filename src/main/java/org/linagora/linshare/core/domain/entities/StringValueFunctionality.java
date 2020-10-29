@@ -97,7 +97,7 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	}
 
 	@Override
-	public List<ParameterDto> getParameters() {
+	public List<ParameterDto> getParameters(Integer version) {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		res.add(new ParameterDto(this.getValue()));
 		return res;
