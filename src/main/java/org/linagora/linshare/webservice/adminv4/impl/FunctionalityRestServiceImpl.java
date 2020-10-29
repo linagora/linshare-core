@@ -33,46 +33,34 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-
-package org.linagora.linshare.webservice.admin.impl;
+package org.linagora.linshare.webservice.adminv4.impl;
 
 import java.util.List;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.admin.FunctionalityRestService;
+import org.linagora.linshare.webservice.adminv4.FunctionalityRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
+public class FunctionalityRestServiceImpl extends
+		org.linagora.linshare.webservice.admin.impl.FunctionalityRestServiceImpl implements FunctionalityRestService {
 
-@Path("/functionalities")
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class FunctionalityRestServiceImpl extends WebserviceBase implements
-		FunctionalityRestService {
-
-	protected final FunctionalityFacade functionalityFacade;
-
-	public FunctionalityRestServiceImpl(
-			final FunctionalityFacade functionalityFacade) {
-		this.functionalityFacade = functionalityFacade;
+	public FunctionalityRestServiceImpl(FunctionalityFacade functionalityFacade) {
+		super(functionalityFacade);
 	}
 
 	@Path("/")

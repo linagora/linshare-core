@@ -31,6 +31,11 @@
 	<bean id="adminv4TechnicalAccountRestService" class="org.linagora.linshare.webservice.adminv4.impl.TechnicalAccountRestServiceImpl">
 		<constructor-arg ref="wsAdminTechnicalAccountFacade" />
 	</bean>
+	
+	<bean id="adminv4FunctionalityRestService" class="org.linagora.linshare.webservice.adminv4.impl.FunctionalityRestServiceImpl">
+		<constructor-arg ref="wsAdminFunctionalityFacade" />
+	</bean>
+	
 
 	<jaxrs:server id="restAdminV4Container" address="/rest/admin/v4">
 		<jaxrs:serviceBeans>
@@ -39,7 +44,7 @@
 			<ref bean="adminDomainPatternRestService" />
 			<ref bean="adminDomainPolicyRestService" />
 			<ref bean="adminDomainRestService" />
-			<ref bean="adminFunctionalityRestService" />
+			<ref bean="adminv4FunctionalityRestService" />
 			<ref bean="adminThreadRestService" />
 			<ref bean="adminMailingListRestService" />
 			<ref bean="adminThreadMemberRestService" />
