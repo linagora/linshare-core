@@ -148,10 +148,11 @@ DELETE FROM policy WHERE id= 72;
 DELETE FROM policy WHERE id= 73;
 
 
--- Drop not null constraint for notification date for upload_request and upload_request_group
+-- Drop not null constraint for notification date and expiry date for upload_request and upload_request_group to accept null value if func is disabled
 alter table upload_request alter column notification_date drop not null;
 alter table upload_request_group alter column notification_date drop not null;
-
+alter table upload_request_group alter column expiry_date drop not null;
+alter table upload_request alter column expiry_date drop not null;
 -- End of your requests
 
 -- LinShare version
