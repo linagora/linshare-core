@@ -146,6 +146,12 @@ DELETE FROM functionality WHERE identifier='UPLOAD_REQUEST__GROUPED_MODE';
 DELETE FROM policy WHERE id= 71;
 DELETE FROM policy WHERE id= 72;
 DELETE FROM policy WHERE id= 73;
+
+
+-- Drop not null constraint for notification date for upload_request and upload_request_group
+alter table upload_request alter column notification_date drop not null;
+alter table upload_request_group alter column notification_date drop not null;
+
 -- End of your requests
 
 -- LinShare version
