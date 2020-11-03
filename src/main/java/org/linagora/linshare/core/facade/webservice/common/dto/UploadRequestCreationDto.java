@@ -38,6 +38,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -98,8 +99,8 @@ public class UploadRequestCreationDto {
 	public UploadRequest toObject() {
 		UploadRequest e = new UploadRequest();
 		e.setActivationDate(getActivationDate());
-		e.setCanClose(isCanClose());
-		e.setCanDelete(isCanDelete());
+		e.setCanClose(checkCanCloseCanDelete(canClose));
+		e.setCanDelete(checkCanCloseCanDelete(canDelete));
 		e.setSecured(isSecured());
 		e.setMaxDepositSize(getMaxDepositSize());
 		e.setMaxFileCount(getMaxFileCount());
@@ -111,6 +112,10 @@ public class UploadRequestCreationDto {
 		e.setEnableNotification(getEnableNotification());
 		e.setCanEditExpiryDate(getCanEditExpiryDate());
 		return e;
+	}
+
+	private Boolean checkCanCloseCanDelete(Boolean input) {
+		return Objects.isNull(input) ? false : input;
 	}
 
 	public Date getExpiryDate() {
