@@ -478,7 +478,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 			Calendar calendar = getCalendarWithoutTime(new Date());
 			calendar.add(func.toCalendarValue(), func.getValue());
 			Date defaultDate = calendar.getTime();
-			currentDate = getCalendarWithoutTime(currentDate).getTime();
 			if (func.getDelegationPolicy() != null
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");
