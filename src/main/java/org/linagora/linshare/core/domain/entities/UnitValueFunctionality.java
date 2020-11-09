@@ -51,6 +51,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	protected Unit<?> unit;
 
+	protected Unit<?> maxUnit;
+
 	protected Integer maxValue;
 
 	public UnitValueFunctionality() {
@@ -77,6 +79,14 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	public Unit<?> getUnit() {
 		return unit;
+	}
+	
+	public Unit<?> getMaxUnit() {
+		return maxUnit;
+	}
+
+	public void setMaxUnit(Unit<?> maxUnit) {
+		this.maxUnit = maxUnit;
 	}
 
 	public void setUnit(Unit<?> unit) {
@@ -209,4 +219,10 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		this.maxValue = maxValue;
 	}
 
+
+	@Override
+	public String toString() {
+		return "UnitValueFunctionality [unit=" + unit + ", maxUnit=" + maxUnit + ", maxValue=" + maxValue + "]";
+	}
+	
 }
