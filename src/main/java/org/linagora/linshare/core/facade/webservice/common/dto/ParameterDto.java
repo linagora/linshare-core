@@ -58,7 +58,10 @@ public class ParameterDto {
 	private Integer maxInteger;
 
     @Schema(description = "String")
-	private String string;
+    private String string;
+
+    @Schema(description = "max unit field, define the unit of the max value")
+	private String maxString;
 
     @Schema(description = "Type")
 	private String type;
@@ -151,5 +154,13 @@ public class ParameterDto {
 	public void setMaxInteger(Integer maxInteger) {
 		this.maxInteger = maxInteger;
 	}
-	
+
+
+	public String getMaxString() {
+		return maxString;
+	}
+
+	public void setMaxString(String maxString) {
+		this.maxString = maxString;
+	}
 }

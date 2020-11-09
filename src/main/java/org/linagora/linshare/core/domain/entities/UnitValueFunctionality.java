@@ -98,7 +98,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		if (super.businessEquals(obj, checkPolicies)) {
 			UnitValueFunctionality o = (UnitValueFunctionality) obj;
 			if (value.equals(o.getValue()) && maxValue.equals(o.getMaxValue())) {
-				if (unit.businessEquals(o.getUnit())) {
+				if (unit.businessEquals(o.getUnit()) && maxUnit.businessEquals(o.getMaxUnit())) {
 					logger.debug("UnitValueFunctionality : " + this.toString() + " is equal to UnitValueFunctionality "
 							+ obj.toString());
 					return true;
@@ -129,6 +129,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		this.value = f.getValue();
 		this.maxValue = f.getMaxValue();
 		this.unit.updateUnitFrom(f.getUnit());
+		this.maxUnit.updateUnitFrom(f.getMaxUnit());
 	}
 
 	@Override
@@ -144,12 +145,17 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		this.value = parameterDto.getInteger();
 		this.maxValue = parameterDto.getMaxInteger();
 		String unit = parameterDto.getString().trim().toUpperCase();
+		String maxUnit = parameterDto.getMaxString().trim().toUpperCase();
 		if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
 			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
+			FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
 			sizeUnit.setUnitValue(FileSizeUnit.valueOf(unit));
+			sizeMaxUnit.setUnitValue(FileSizeUnit.valueOf(maxUnit));
 		} else if (type.equals(FunctionalityType.UNIT_TIME.toString())) {
 			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+			TimeUnitClass timeMaxUnit = (TimeUnitClass) getMaxUnit();
 			timeUnit.setUnitValue(TimeUnit.valueOf(unit));
+			timeMaxUnit.setUnitValue(TimeUnit.valueOf(maxUnit));
 		}
 	}
 
@@ -158,19 +164,23 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		String unitType = null;
 		String currentUnit = null;
+		String maxCurrentUnit = null;
 		List<String> units = new ArrayList<String>();
-		
-		if (getUnit() instanceof FileSizeUnitClass) {
+		if (getUnit() instanceof FileSizeUnitClass && getMaxUnit() instanceof FileSizeUnitClass) {
 			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
+			FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
 			unitType = FunctionalityType.UNIT_SIZE.toString();
 			currentUnit = sizeUnit.getUnitValue().toString();
+			maxCurrentUnit = sizeMaxUnit.getUnitValue().toString();
 			for (FileSizeUnit val : FileSizeUnit.values()) {
 				units.add(val.toString());
 			}
-		} else if (getUnit() instanceof TimeUnitClass) {
+		} else if (getUnit() instanceof TimeUnitClass && getMaxUnit() instanceof TimeUnitClass) {
 			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+			TimeUnitClass maxTimeUnit = (TimeUnitClass) getMaxUnit();
 			unitType = FunctionalityType.UNIT_TIME.toString();
 			currentUnit = timeUnit.getUnitValue().toString();
+			maxCurrentUnit = maxTimeUnit.getUnitValue().toString();
 			for (TimeUnit val : TimeUnit.values()) {
 				units.add(val.toString());
 			}
@@ -178,6 +188,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		ParameterDto parameterDto = new ParameterDto(unitType, units, currentUnit, this.getValue());
 		if (version >= 4) {
 			parameterDto.setMaxInteger(this.getMaxValue());
+			parameterDto.setMaxString(maxCurrentUnit);
 		}
 		res.add(parameterDto);
 		return res;
@@ -185,24 +196,28 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	@Override
 	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
-		if (getUnit() instanceof FileSizeUnitClass) {
+		if (getUnit() instanceof FileSizeUnitClass && getMaxUnit() instanceof FileSizeUnitClass) {
+			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
+			FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
 			FunctionalitySizeDto f = new FunctionalitySizeDto();
 			if (enable) {
 				if (version >= 4) {
 					f.setMaxValue(maxValue);
+					f.setMaxUnit(sizeMaxUnit.getUnitValue().toString());
 				}
-				FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
 				f.setUnit(sizeUnit.getUnitValue().toString());
 				f.setValue(value);
 			}
 			return f;
-		} else if (getUnit() instanceof TimeUnitClass) {
+		} else if (getUnit() instanceof TimeUnitClass && getMaxUnit() instanceof TimeUnitClass) {
 			FunctionalityTimeDto f = new FunctionalityTimeDto();
+			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+			TimeUnitClass maxTimeUnit = (TimeUnitClass) getMaxUnit();
 			if (enable) {
 				if (version >= 4) {
 					f.setMaxValue(maxValue);
+					f.setMaxUnit(maxTimeUnit.getUnitValue().toString());
 				}
-				TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
 				f.setUnit(timeUnit.getUnitValue().toString());
 				f.setValue(value);
 			}

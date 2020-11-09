@@ -52,6 +52,8 @@ public class FunctionalitySizeDto extends FunctionalityDto {
 
 	protected String unit;
 
+	protected String maxUnit;
+
 	protected List<String> units = new ArrayList<String>();
 
 	public FunctionalitySizeDto(FileSizeUnit... units) {
@@ -98,6 +100,14 @@ public class FunctionalitySizeDto extends FunctionalityDto {
 
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+
+	public String getMaxUnit() {
+		return maxUnit;
+	}
+
+	public void setMaxUnit(String maxUnit) {
+		this.maxUnit = maxUnit;
 	}
 
 	public List<String> getUnits() {

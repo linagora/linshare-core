@@ -56,6 +56,8 @@ public class FunctionalityTimeDto extends FunctionalityDto {
 
 	protected String unit;
 
+	protected String maxUnit;
+
 	protected List<String> units = new ArrayList<String>();
 
 	public FunctionalityTimeDto(TimeUnit... units) {
@@ -93,6 +95,14 @@ public class FunctionalityTimeDto extends FunctionalityDto {
 
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+
+	public String getMaxUnit() {
+		return maxUnit;
+	}
+
+	public void setMaxUnit(String maxUnit) {
+		this.maxUnit = maxUnit;
 	}
 
 	public List<String> getUnits() {
