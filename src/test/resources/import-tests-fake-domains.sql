@@ -56,10 +56,10 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (110001, t
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110002, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date) VALUES (110001, false, 'TEST_FILESIZE_MAX', 110001, 110002, 100001, now(), now());
 -- Size : MEGA
-INSERT INTO unit(id, unit_type, unit_value) VALUES (110001, 1, 1);
+INSERT INTO unit(id, unit_type, unit_value) VALUES (110001, 1, 1),(110101, 1, 1);
 -- maxValue : 200
 -- deafaultVAlue : 0
-INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id) VALUES (110001,100 ,200, 110001);
+INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id, max_unit_id ) VALUES (110001,100 ,200, 110001, 110101);
 
 
 -- Functionality : TEST_QUOTA_GLOBAL
@@ -67,9 +67,9 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (110003, t
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110004, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date) VALUES (110002, true, 'TEST_QUOTA_GLOBAL', 110003, 110004, 100001, now(), now());
 -- Size : GIGA
-INSERT INTO unit(id, unit_type, unit_value) VALUES (110002, 1, 2);
+INSERT INTO unit(id, unit_type, unit_value) VALUES (110002, 1, 2),(110102, 1, 2);
 -- Value : 1
-INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id) VALUES (110002, 1, 0, 110002);
+INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id, max_unit_id ) VALUES (110002, 1, 0, 110002, 110102);
 
 
 -- Functionality : TEST_QUOTA_USER
@@ -77,9 +77,9 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (110005, t
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110006, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date) VALUES (110003, false, 'TEST_QUOTA_USER', 110005, 110006, 100001, now(), now());
 -- Size : GIGA
-INSERT INTO unit(id, unit_type, unit_value) VALUES (110003, 1, 1);
+INSERT INTO unit(id, unit_type, unit_value) VALUES (110003, 1, 1),(110100, 1, 1);
 -- Value : 500
-INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id) VALUES (110003, 500, 0, 110003);
+INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id, max_unit_id) VALUES (110003, 500, 0, 110100, 110003);
 
 
 -- Functionality : GUESTS
@@ -136,9 +136,9 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (111001, t
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (111002, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date) VALUES (111001, false, 'TEST_FILESIZE_MAX', 111001, 111002, 100002, now(), now());
 -- Size : MEGA
-INSERT INTO unit(id, unit_type, unit_value) VALUES (111001, 1, 1);
+INSERT INTO unit(id, unit_type, unit_value) VALUES (111001, 1, 1),(111101, 1, 1);
 -- Value : 200
-INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id) VALUES (111001, 0, 100, 111001);
+INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id, max_unit_id ) VALUES (111001, 0, 100, 111001, 111101);
 
 
 -- Functionality : TEST_QUOTA_USER
@@ -146,9 +146,9 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (111005, t
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (111006, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date) VALUES (111003, false, 'TEST_QUOTA_USER', 111005, 111006, 100002, now(), now());
 -- Size : GIGA
-INSERT INTO unit(id, unit_type, unit_value) VALUES (111003, 1, 1);
+INSERT INTO unit(id, unit_type, unit_value) VALUES (111003, 1, 1),(111103, 1, 1);
 -- Value : 500
-INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id) VALUES (111003, 250, 0, 111003);
+INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id, max_unit_id ) VALUES (111003, 250, 0, 111003, 111103);
 
 
 
@@ -161,9 +161,9 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (112001, t
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (112002, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date) VALUES (112001, false, 'TEST_FILESIZE_MAX', 112001, 112002, 100004, now(), now());
 -- Size : MEGA
-INSERT INTO unit(id, unit_type, unit_value) VALUES (112001, 1, 1);
+INSERT INTO unit(id, unit_type, unit_value) VALUES (112001, 1, 1),(112101, 1, 1);
 -- Value : 200
-INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id) VALUES (112001, 0, 50, 112001);
+INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id, max_unit_id ) VALUES (112001, 0, 50, 112001, 112101);
 
 -- subDomainName 2
 -- Functionality : TEST_QUOTA_USER
@@ -171,8 +171,8 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (113005, t
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (113006, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date) VALUES (113003, false, 'TEST_QUOTA_USER', 113005, 113006, 100005, now(), now());
 -- Size : GIGA
-INSERT INTO unit(id, unit_type, unit_value) VALUES (113003, 1, 1);
+INSERT INTO unit(id, unit_type, unit_value) VALUES (113003, 1, 1), (113103, 1, 1);
 -- Value : 500
-INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id) VALUES (113003, 125, 0, 113003);
+INSERT INTO functionality_unit(functionality_id, integer_default_value, integer_max_value, unit_id, max_unit_id ) VALUES (113003, 125, 0, 113003, 113103);
 
 UPDATE domain_abstract SET mailconfig_id = 1;

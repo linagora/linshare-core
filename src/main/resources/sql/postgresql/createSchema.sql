@@ -185,6 +185,7 @@ CREATE TABLE functionality_unit (
   integer_max_value         int4,
   unit_id               int8 NOT NULL,
   integer_default_value int4,
+  max_unit_id			int8 NOT NULL,
   CONSTRAINT linshare_functionality_unit_pkey
     PRIMARY KEY (functionality_id));
 

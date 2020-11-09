@@ -66,10 +66,11 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 	
 	public UnitValueFunctionality(String identifier, boolean system, Policy activationPolicy,
-			Policy configurationPolicy, AbstractDomain domain, Integer value, Unit<?> unit, Integer maxValue) {
+			Policy configurationPolicy, AbstractDomain domain, Integer value, Unit<?> unit, Unit<?> maxUnit, Integer maxValue) {
 		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
 		this.unit = unit;
 		this.maxValue = maxValue;
+		this.maxUnit = maxUnit;
 	}
 
 	@Override

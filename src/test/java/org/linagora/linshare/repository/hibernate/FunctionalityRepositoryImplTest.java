@@ -460,6 +460,7 @@ public class FunctionalityRepositoryImplTest {
 				currentDomain,
 				value,
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
+				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				maxValue);
 
 		UnitValueFunctionality fonc2 = new UnitValueFunctionality(ID_FONC_2,
@@ -468,6 +469,7 @@ public class FunctionalityRepositoryImplTest {
 				new Policy(Policies.ALLOWED, false),
 				currentDomain,
 				value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				maxValue);
 
@@ -488,6 +490,7 @@ public class FunctionalityRepositoryImplTest {
 				currentDomain,
 				value,
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
+				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				maxValue);
 
 		UnitValueFunctionality fonc2 = new UnitValueFunctionality(ID_FONC_2,
@@ -497,6 +500,7 @@ public class FunctionalityRepositoryImplTest {
 				currentDomain,
 				value,
 				new TimeUnitClass(TimeUnit.WEEK),
+				new TimeUnitClass(TimeUnit.WEEK),
 				maxValue);
 
 		UnitValueFunctionality fonc3 = new UnitValueFunctionality(ID_FONC_2,
@@ -505,6 +509,7 @@ public class FunctionalityRepositoryImplTest {
 				new Policy(Policies.ALLOWED, false),
 				currentDomain,
 				value,
+				new TimeUnitClass(TimeUnit.DAY),
 				new TimeUnitClass(TimeUnit.DAY),
 				maxValue);
 
