@@ -198,7 +198,7 @@ welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 <div style="margin-bottom:17px;" data-th-fragment="infoEditedDateArea(titleInfo,oldValue,newValue)">
      <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
     <br/>
- <th:block  th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue,df)}"/> -> 
+ <th:block  th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue,df)}"/> ->
  <th:block  th:with="df=#{date.format}" data-th-text="${#dates.format(newValue,df)}"/>
 </div>
 <!--/* Common header template */-->
@@ -340,44 +340,44 @@ data-th-text="${labelBtn}"  th:href="@{${urlLink}}">Button label</a>
 <!--/* Lists all recpients download states per file   */-->
 <div   style="margin-bottom:17px;"  data-th-fragment="infoFileListRecipientUpload(titleInfo,arrayFileLinks)">
      <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
-   <ul style="padding: 5px 0px; margin: 0;list-style-type:none;">
-<li style="color:#787878;font-size:10px;margin-top:10px;"  th:each="shareLink : ${arrayFileLinks}" >
-    <span style="border-bottom: 1px solid #e3e3e3;display: inline-block;width: 100%;margin-bottom: 3px;">
-  <a target="_blank" style="color:#1294dc;text-decoration:none;font-size:13px" th:href="@{${shareLink.href}}">
-    <span align="left" style="display: inline-block; width: 96%;"  data-th-utext="${shareLink.name}">
-test-file.jpg</span></a>
-    <span data-th-if="(${!shareLink.allDownloaded})" align="right" style="text-align: right; display: inline-block;height: 0;width: 6px;height: 6px;border-radius: 50%;background-color: #787878;"></span>
-    <span data-th-if="(${shareLink.allDownloaded})" align="right" style="text-align: right; display: inline-block;height: 0;width: 6px;height: 6px;border-radius: 50%;background-color: #00b800;"></span>
-    </span>
-    <ul style="padding: 5px 17px; margin: 0;list-style-type:disc;" >
- <th:block  th:each="recipientData: ${shareLink.shares}">
-   <th:block data-th-if="(${!recipientData.downloaded})" >
-      <li style="color:#787878;font-size:15px"  >
-      <th:block data-th-if="(${!#strings.isEmpty(recipientData.lastName)})" >
-        <span style="color:#7f7f7f;font-size:13px;">
-          <th:block  data-th-utext="${recipientData.firstName}"/>
-          <th:block data-th-utext="${recipientData.lastName}"/>
-       </span>
-     </th:block>
-      <span style="color:#7f7f7f;font-size:13px;" data-th-utext="${recipientData.mail}"
-           data-th-if="(${#strings.isEmpty(recipientData.lastName)})">able.cornell@linshare.com </span>
-      </li>
-   </th:block>
-<th:block data-th-if="(${recipientData.downloaded})">
-   <li style="color:#00b800;font-size:15px" >
-      <th:block data-th-if="(${!#strings.isEmpty(recipientData.lastName)})" >
-        <span  style="color:#7f7f7f;font-size:13px;">
-          <th:block  data-th-utext="${recipientData.firstName}"/>
-          <th:block data-th-utext="${recipientData.lastName}"/>
-       </span>
-     </th:block>
-<th:block  data-th-if="(${#strings.isEmpty(recipientData.lastName)})">
-  <span style="color:#7f7f7f;font-size:13px;" data-th-utext="${recipientData.mail}"> able.cornell@linshare.com </span>
-  </th:block>
-      </li>
-   </th:block>
+		<th:block style="color; #787878; font-size:10px;margin-top:10px; display: inline-block;" th:each="shareLink : ${arrayFileLinks}" >
+    		<div style="border-bottom: 1px solid #e3e3e3;display: inline-block;width: 100%;margin-bottom: 3px;">
+				<!--[if mso]>
+					&nbsp;&nbsp;
+				<![endif]-->
+				<a target="_blank" style="color:#1294dc;text-decoration:none;font-size:13px" th:href="@{${shareLink.href}}">
+    				<span align="left" style="display: inline-block; width: 96%;"  data-th-utext="${shareLink.name}">test-file.jpg</span>
+				</a>
+    			<span data-th-if="(${!shareLink.allDownloaded})" align="right" style="text-align: right; display: inline-block;height: 0;width: 6px;height: 6px;border-radius: 50%;background-color: #787878;"></span>
+    			<span data-th-if="(${shareLink.allDownloaded})" align="right" style="text-align: right; display: inline-block;height: 0;width: 6px;height: 6px;border-radius: 50%;background-color: #00b800;"></span>
+			</div>
+    		<ul style="padding: 5px 17px; margin: 0;list-style-type:disc;" >
+ 				<th:block  th:each="recipientData: ${shareLink.shares}">
+   					<th:block data-th-if="(${!recipientData.downloaded})" >
+      					<li style="color:#787878;font-size:15px;"  >
+      						<th:block data-th-if="(${!#strings.isEmpty(recipientData.lastName)})" >
+        						<span style="color:#7f7f7f;font-size:13px;">
+          							<th:block  data-th-utext="${recipientData.firstName}"/>
+      								<th:block data-th-utext="${recipientData.lastName}"/>
+       							</span>
+     						</th:block>
+      						<span style="color:#7f7f7f;font-size:13px;" data-th-utext="${recipientData.mail}"data-th-if="(${#strings.isEmpty(recipientData.lastName)})">able.cornell@linshare.com </span>
+      					</li>
+   					</th:block>
+					<th:block data-th-if="(${recipientData.downloaded})">
+   						<li style="color:#00b800;font-size:15px;" >
+     						 <th:block data-th-if="(${!#strings.isEmpty(recipientData.lastName)})" >
+						        <span  style="color:#7f7f7f;font-size:13px;">
+						          <th:block  data-th-utext="${recipientData.firstName}"/>
+						          <th:block data-th-utext="${recipientData.lastName}"/>
+						       </span>
+     						</th:block>
+							<th:block  data-th-if="(${#strings.isEmpty(recipientData.lastName)})">
+  								<span style="color:#7f7f7f;font-size:13px;" data-th-utext="${recipientData.mail}"> able.cornell@linshare.com </span>
+  							</th:block>
+  						</li>
+   					</th:block>
+				</th:block>
+			</ul>
 </th:block>
-    </ul>
-</li>
-   </ul>
 </div>' WHERE id=1;
