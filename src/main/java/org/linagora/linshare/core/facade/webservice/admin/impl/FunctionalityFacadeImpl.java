@@ -118,7 +118,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 
 		// copy of parameters.
-		entity.updateFunctionalityValuesOnlyFromDto(func);
+		entity.updateFunctionalityValuesOnlyFromDto(version, func);
 		Functionality update = service.update(authUser,
 				func.getDomain(), entity);
 		return new FunctionalityAdminDto(version, update);

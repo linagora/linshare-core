@@ -61,6 +61,7 @@ public class ParameterDto {
     private String string;
 
     @Schema(description = "max unit field, define the unit of the max value")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
 	private String maxString;
 
     @Schema(description = "Type")

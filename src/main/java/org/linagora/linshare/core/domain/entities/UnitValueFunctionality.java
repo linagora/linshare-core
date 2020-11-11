@@ -98,8 +98,16 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			UnitValueFunctionality o = (UnitValueFunctionality) obj;
-			if (value.equals(o.getValue()) && maxValue.equals(o.getMaxValue())) {
-				if (unit.businessEquals(o.getUnit()) && maxUnit.businessEquals(o.getMaxUnit())) {
+			if (maxValue != null && maxUnit != null) {
+				if (value.equals(o.getValue()) && maxValue.equals(o.getMaxValue())) {
+					if (unit.businessEquals(o.getUnit()) && maxUnit.businessEquals(o.getMaxUnit())) {
+						logger.debug("UnitValueFunctionality : " + this.toString()
+								+ " is equal to UnitValueFunctionality " + obj.toString());
+						return true;
+					}
+				}
+			} else {
+				if (value.equals(o.getValue()) && unit.businessEquals(o.getUnit())) {
 					logger.debug("UnitValueFunctionality : " + this.toString() + " is equal to UnitValueFunctionality "
 							+ obj.toString());
 					return true;
@@ -134,29 +142,36 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(FunctionalityAdminDto functionalityDto) {
+	public void updateFunctionalityValuesOnlyFromDto(Integer version, FunctionalityAdminDto functionalityDto) {
 		List<ParameterDto> parameters = functionalityDto.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
-			updateFunctionality(parameterDto.getType(), parameterDto);
+			updateFunctionality(version, parameterDto.getType(), parameterDto);
 		}
 	}
 
-	protected void updateFunctionality(String type, ParameterDto parameterDto) {
+	protected void updateFunctionality(Integer version, String type, ParameterDto parameterDto) {
 		this.value = parameterDto.getInteger();
 		this.maxValue = parameterDto.getMaxInteger();
 		String unit = parameterDto.getString().trim().toUpperCase();
-		String maxUnit = parameterDto.getMaxString().trim().toUpperCase();
+		String unitMax = null;
+		if (version >= 4) {
+			unitMax = parameterDto.getMaxString().trim().toUpperCase();
+		}
 		if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
 			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
 			FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
 			sizeUnit.setUnitValue(FileSizeUnit.valueOf(unit));
-			sizeMaxUnit.setUnitValue(FileSizeUnit.valueOf(maxUnit));
+			if (version >= 4) {
+				sizeMaxUnit.setUnitValue(FileSizeUnit.valueOf(unitMax));
+			}
 		} else if (type.equals(FunctionalityType.UNIT_TIME.toString())) {
 			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
 			TimeUnitClass timeMaxUnit = (TimeUnitClass) getMaxUnit();
 			timeUnit.setUnitValue(TimeUnit.valueOf(unit));
-			timeMaxUnit.setUnitValue(TimeUnit.valueOf(maxUnit));
+			if (version >= 4) {
+				timeMaxUnit.setUnitValue(TimeUnit.valueOf(unitMax));
+			}
 		}
 	}
 

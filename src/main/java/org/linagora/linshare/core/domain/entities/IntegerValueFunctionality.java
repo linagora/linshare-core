@@ -66,16 +66,27 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	
 	@Override
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
-		if(super.businessEquals(obj, checkPolicies)) {
-			IntegerValueFunctionality o = (IntegerValueFunctionality)obj;
-			if(value.equals(o.getValue()) && maxValue.equals(o.getMaxValue())) {
-				logger.debug("IntegerValueFunctionality : " + this.toString() + " is equal to IntegerValueFunctionality " + obj.toString());
-				return true;
+		if (super.businessEquals(obj, checkPolicies)) {
+			IntegerValueFunctionality o = (IntegerValueFunctionality) obj;
+			if (maxValue != null) {
+				if (value.equals(o.getValue()) && maxValue.equals(o.getMaxValue())) {
+					logger.debug("IntegerValueFunctionality : " + this.toString()
+							+ " is equal to IntegerValueFunctionality " + obj.toString());
+					return true;
+				}
+			} else {
+				if (value.equals(o.getValue())) {
+					logger.debug("IntegerValueFunctionality : " + this.toString()
+							+ " is equal to IntegerValueFunctionality " + obj.toString());
+					return true;
+				}
 			}
 		}
-		logger.debug("IntegerValueFunctionality : " + this.toString() + " is not equal to IntegerValueFunctionality " + obj.toString());
+		logger.debug("IntegerValueFunctionality : " + this.toString() + " is not equal to IntegerValueFunctionality "
+				+ obj.toString());
 		return false;
 	}
+
 	
 	@Override
 	public void updateFunctionalityFrom(AbstractFunctionality functionality) {
@@ -91,12 +102,14 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(FunctionalityAdminDto functionality) {
+	public void updateFunctionalityValuesOnlyFromDto(Integer version, FunctionalityAdminDto functionality) {
 		List<ParameterDto> parameters = functionality.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
 			this.value = parameterDto.getInteger();
-			this.maxValue = parameterDto.getMaxInteger();
+			if (version >= 4) {
+				this.maxValue = parameterDto.getMaxInteger();
+			}
 		}
 	}
 

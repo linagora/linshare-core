@@ -130,7 +130,7 @@ public class Functionality extends AbstractFunctionality {
 		this.param = param;
 	}
 
-	public void updateFunctionalityValuesOnlyFromDto(FunctionalityAdminDto functionality) {
+	public void updateFunctionalityValuesOnlyFromDto(Integer version, FunctionalityAdminDto functionality) {
 		// no data in this class.
 	}
 

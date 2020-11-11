@@ -89,7 +89,7 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(FunctionalityAdminDto functionality) {
+	public void updateFunctionalityValuesOnlyFromDto(Integer version, FunctionalityAdminDto functionality) {
 		List<ParameterDto> parameters = functionality.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
