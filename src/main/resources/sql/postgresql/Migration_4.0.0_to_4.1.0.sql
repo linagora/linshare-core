@@ -103,6 +103,7 @@ ALTER TABLE functionality_integer ADD integer_max_value int4 NULL;
 
 ALTER TABLE functionality_unit RENAME COLUMN integer_value TO integer_default_value;
 ALTER TABLE functionality_integer RENAME COLUMN integer_value TO integer_default_value;
+ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced0169f329edc1 FOREIGN KEY (max_unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
 
 -- Set the max value and max unit for the new field on functionality_unit and functionality_integer tables
 INSERT INTO unit(id, unit_type, unit_value) 

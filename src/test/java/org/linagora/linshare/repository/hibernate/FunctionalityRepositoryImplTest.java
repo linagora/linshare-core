@@ -442,15 +442,41 @@ public class FunctionalityRepositoryImplTest {
 				currentDomain,
 				value,
 				maxValue);
-
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setMaxValue(2);
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 	}
+	
+	/**
+	 * For API Admin v1 maxValue is null
+	 * @throws BusinessException
+	 */
+	@Test
+	public void testEqualIntegerValueFunctionalityNullMaxValue() throws BusinessException{
+		Integer value = 8;
+		IntegerValueFunctionality integerValueFunctionality = new IntegerValueFunctionality(ID_FONC_1,
+				false,
+				new Policy(Policies.ALLOWED, true),
+				new Policy(Policies.ALLOWED, true),
+				currentDomain,
+				value,
+				null);
+
+		IntegerValueFunctionality integerValueFunctionality_2 = new IntegerValueFunctionality(ID_FONC_1,
+				false,
+				new Policy(Policies.ALLOWED, true),
+				new Policy(Policies.ALLOWED, true),
+				currentDomain,
+				value,
+				null);
+		Assertions.assertTrue(integerValueFunctionality.businessEquals(integerValueFunctionality_2, true));
+		integerValueFunctionality_2.setValue(2);
+		Assertions.assertFalse(integerValueFunctionality.businessEquals(integerValueFunctionality_2, true), "Expected to be not Equal");
+	}
 
 	@Test
 	public void testEqualUnitValueFunctionality1() throws BusinessException{
-
+		
 		Integer value = 1024;
 		Integer maxValue = 2048;
 		UnitValueFunctionality fonc = new UnitValueFunctionality(ID_FONC_2,
@@ -462,7 +488,7 @@ public class FunctionalityRepositoryImplTest {
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				maxValue);
-
+		
 		UnitValueFunctionality fonc2 = new UnitValueFunctionality(ID_FONC_2,
 				false,
 				new Policy(Policies.ALLOWED, false),
@@ -472,10 +498,41 @@ public class FunctionalityRepositoryImplTest {
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				maxValue);
-
+		
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setMaxValue(8);
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
+	}
+	/**
+	 * For API Admin v1 maxValue and maxUnit are null
+	 * @throws BusinessException
+	 */
+	@Test
+	public void testEqualUnitValueFunctionality1NullMaxValueMaxUnit() throws BusinessException{
+		Integer value = 1024;
+		UnitValueFunctionality unitValueFunctionality = new UnitValueFunctionality(ID_FONC_2,
+				false,
+				new Policy(Policies.ALLOWED, false),
+				new Policy(Policies.ALLOWED, false),
+				currentDomain,
+				value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA),
+				null,
+				null);
+
+		UnitValueFunctionality unitValueFunctionality_2 = new UnitValueFunctionality(ID_FONC_2,
+				false,
+				new Policy(Policies.ALLOWED, false),
+				new Policy(Policies.ALLOWED, false),
+				currentDomain,
+				value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA),
+				null,
+				null);
+
+		Assertions.assertTrue(unitValueFunctionality.businessEquals(unitValueFunctionality_2, true));
+		unitValueFunctionality_2.setValue(8);
+		Assertions.assertFalse(unitValueFunctionality.businessEquals(unitValueFunctionality_2, true));
 	}
 
 	@Test

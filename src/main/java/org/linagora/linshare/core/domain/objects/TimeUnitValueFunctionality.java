@@ -65,4 +65,9 @@ public class TimeUnitValueFunctionality extends UnitValueFunctionality {
 		TimeUnitClass timeUnit = (TimeUnitClass)getUnit();
 		return timeUnit.toCalendarValue();
 	}
+
+	public int toCalendarMaxValue() {
+		TimeUnitClass timeUnit = (TimeUnitClass)getMaxUnit();
+		return timeUnit.toCalendarValue();
+	}
 }

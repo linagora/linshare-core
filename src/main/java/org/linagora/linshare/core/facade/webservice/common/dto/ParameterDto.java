@@ -156,7 +156,6 @@ public class ParameterDto {
 		this.maxInteger = maxInteger;
 	}
 
-
 	public String getMaxString() {
 		return maxString;
 	}
