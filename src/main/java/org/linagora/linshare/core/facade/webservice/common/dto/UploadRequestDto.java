@@ -67,6 +67,9 @@ public class UploadRequestDto {
 	@Schema(description = "Activation date")
 	private Date activationDate;
 
+	@Schema(description = "Modification date")
+	private Date modificationDate;
+
 	@Schema(description = "Creation date")
 	private Date creationDate;
 
@@ -124,6 +127,8 @@ public class UploadRequestDto {
 		super();
 		this.uuid = entity.getUuid();
 		this.owner = new ContactDto(entity.getUploadRequestGroup().getOwner());
+		this.creationDate = entity.getCreationDate();
+		this.modificationDate = entity.getModificationDate();
 		this.activationDate = entity.getActivationDate();
 		this.expiryDate = entity.getExpiryDate();
 		this.label = entity.getUploadRequestGroup().getSubject();
@@ -153,6 +158,8 @@ public class UploadRequestDto {
 	public UploadRequest toObject() {
 		UploadRequest e = new UploadRequest();
 		e.setActivationDate(getActivationDate());
+		e.setCreationDate(getCreationDate());
+		e.setModificationDate(getModificationDate());
 		e.setCanClose(isCanClose());
 		e.setCanDelete(isCanDeleteDocument());
 		e.setSecured(isProtectedByPassword());
@@ -351,6 +358,14 @@ public class UploadRequestDto {
 
 	public void setCanEditExpiryDate(Boolean canEditExpiryDate) {
 		this.canEditExpiryDate = canEditExpiryDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 	/*
