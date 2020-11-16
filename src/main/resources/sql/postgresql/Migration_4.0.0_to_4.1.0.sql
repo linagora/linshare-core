@@ -96,18 +96,17 @@ UPDATE policy SET status = true, default_status = true WHERE id = 71;
 UPDATE policy SET system = false, status = true, default_status = true WHERE id IN (63);
 
 -- Add new field to Functionality_integer and Functionality_unit
+-- Set the max value and max unit for the new field on functionality_unit and functionality_integer tables
+INSERT INTO unit(id, unit_type, unit_value) 
+	VALUES (13, 0, 2), (14, 0, 2), (15, 0, 2),(16, 1, 1), (17, 0, 2), (18, 0, 2), (19, 1, 1), (20, 1, 1), (21, 0, 0);
 
 ALTER TABLE functionality_unit ADD integer_max_value int4 NULL;
-ALTER TABLE functionality_unit ADD max_unit_id int8 NOT NULL;
+ALTER TABLE functionality_unit ADD max_unit_id int8 NOT NULL DEFAULT 13;
 ALTER TABLE functionality_integer ADD integer_max_value int4 NULL;
 
 ALTER TABLE functionality_unit RENAME COLUMN integer_value TO integer_default_value;
 ALTER TABLE functionality_integer RENAME COLUMN integer_value TO integer_default_value;
 ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced0169f329edc1 FOREIGN KEY (max_unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
-
--- Set the max value and max unit for the new field on functionality_unit and functionality_integer tables
-INSERT INTO unit(id, unit_type, unit_value) 
-	VALUES (13, 0, 2), (14, 0, 2), (15, 0, 2),(16, 1, 1), (17, 0, 2), (18, 0, 2), (19, 1, 1), (20, 1, 1), (21, 0, 0);
 
 UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4, max_unit_id = 13 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'GUESTS__EXPIRATION');      -- GUESTS__EXPIRATION
 UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4, max_unit_id = 14 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'DOCUMENT_EXPIRATION');      -- DOCUMENT_EXPIRATION
@@ -121,8 +120,7 @@ UPDATE functionality_unit SET integer_default_value = 7, integer_max_value = 7, 
 
 -- Add new fields for default pwd and store original pwd of an URU
 ALTER TABLE upload_request_url ADD COLUMN default_Password bool DEFAULT true NOT NULL;
-ALTER TABLE upload_request_url ADD COLUMN original_password character varying(255)
-
+ALTER TABLE upload_request_url ADD COLUMN original_password character varying(255);
 
 --Drop upload proposition tables
 DROP TABLE upload_proposition;
