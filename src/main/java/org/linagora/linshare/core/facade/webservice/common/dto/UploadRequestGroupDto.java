@@ -43,10 +43,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
+import org.linagora.linshare.core.domain.entities.User;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -111,7 +112,7 @@ public class UploadRequestGroupDto {
 	private Boolean collective;
 
 	@Schema(description = "Owner")
-	private ContactDto owner;
+	private GenericUserDto owner;
 
 	@Schema(description = "Abstract Domain")
 	private DomainDto domainDto;
@@ -144,7 +145,7 @@ public class UploadRequestGroupDto {
 		this.mailMessageId = entity.getMailMessageId();
 		this.enableNotification = entity.getEnableNotification();
 		this.collective = !entity.getRestricted();
-		this.owner = new ContactDto(entity.getOwner());
+		this.owner = new GenericUserDto((User) entity.getOwner());
 		this.domainDto = new DomainDto(entity.getAbstractDomain(), true);
 		this.status = entity.getStatus();
 	}
@@ -328,11 +329,11 @@ public class UploadRequestGroupDto {
 		this.collective = collective;
 	}
 
-	public ContactDto getOwner() {
+	public GenericUserDto getOwner() {
 		return owner;
 	}
 
-	public void setOwner(ContactDto owner) {
+	public void setOwner(GenericUserDto owner) {
 		this.owner = owner;
 	}
 
