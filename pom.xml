@@ -138,7 +138,7 @@
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
-				<version>1.4.12</version>
+				<version>1.4.14-jdk7</version>
 			</dependency>
 			<dependency>
 				<groupId>io.netty</groupId>
@@ -1036,20 +1036,20 @@
 							<phase>prepare-package</phase>
 							<configuration>
 								<target>
-									<mkdir dir="target/generated-sources" />
+									<mkdir dir="target/generated-sources"/>
 									<concat destfile="target/generated-sources/import-postgresql.sql">
-										<fileset file="src/main/resources/sql/common/import-header.sql" />
-										<fileset file="src/main/resources/sql/common/import-domains.sql" />
-										<fileset file="src/main/resources/sql/common/import-quota.sql" />
-										<fileset file="src/main/resources/sql/common/import-welcome-messages.sql" />
-										<fileset file="src/main/resources/sql/common/import-functionalities.sql" />
-										<fileset file="src/main/resources/sql/common/import-mail-activation.sql" />
-										<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-										<fileset file="src/main/resources/sql/common/import-settings.sql" />
-										<fileset file="src/main/resources/sql/common/import-alias.sql" />
+										<fileset file="src/main/resources/sql/common/import-header.sql"/>
+										<fileset file="src/main/resources/sql/common/import-domains.sql"/>
+										<fileset file="src/main/resources/sql/common/import-quota.sql"/>
+										<fileset file="src/main/resources/sql/common/import-welcome-messages.sql"/>
+										<fileset file="src/main/resources/sql/common/import-functionalities.sql"/>
+										<fileset file="src/main/resources/sql/common/import-mail-activation.sql"/>
+										<fileset file="src/main/resources/sql/common/import_mail_structure.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql"/>
+										<fileset file="src/main/resources/sql/common/import-settings.sql"/>
+										<fileset file="src/main/resources/sql/common/import-alias.sql"/>
 									</concat>
 								</target>
 							</configuration>
@@ -1334,7 +1334,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -1407,7 +1407,7 @@
 								<phase>compile</phase>
 								<configuration>
 									<target name="copySql">
-										<copy file="${basedir}/src/test/resources/DISABLED-springContext-datasource-integration.xml" tofile="${project.build.outputDirectory}/springContext-datasource.xml" overwrite="true" />
+										<copy file="${basedir}/src/test/resources/DISABLED-springContext-datasource-integration.xml" tofile="${project.build.outputDirectory}/springContext-datasource.xml" overwrite="true"/>
 									</target>
 								</configuration>
 								<goals>
@@ -1556,12 +1556,12 @@
 
 	<properties>
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
-		<cxf.version>3.3.6</cxf.version>
+		<cxf.version>3.4.0</cxf.version>
 		<cxf.swagger.ui.version>3.35.2</cxf.swagger.ui.version>
 		<guava.version>30.0-jre</guava.version>
 		<h2.version>1.4.200</h2.version>
 		<hibernate.version>5.4.22.Final</hibernate.version>
-		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
+		<hibernate.validator.version>6.0.19.Final</hibernate.validator.version>
 		<jackson.version>2.10.0</jackson.version>
 		<jclouds.version>2.2.0</jclouds.version>
 		<jjwt.version>0.11.1</jjwt.version>
