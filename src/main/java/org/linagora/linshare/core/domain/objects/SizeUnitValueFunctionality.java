@@ -56,6 +56,7 @@ public class SizeUnitValueFunctionality extends UnitValueFunctionality {
 		setIdentifier(f.getIdentifier());
 		setSystem(f.isSystem());
 		setUnit(f.getUnit());
+		setMaxUnit(f.getUnit());
 		setMaxValue(f.getMaxValue());
 		setValue(f.getValue());
 	}

@@ -489,7 +489,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 						return currentDate;
 					} else {
 						Calendar c = new GregorianCalendar();
-						c.add(func.toCalendarValue(), func.getMaxValue());
+						c.add(func.toCalendarMaxValue(), func.getMaxValue());
 						Date maxDate = c.getTime(); // Maximum value allowed
 						if (currentDate.before(now) || currentDate.after(maxDate)) {
 							logger.warn("the current value " + currentDate.toString() + " is out of range : "
@@ -537,7 +537,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 			if (currentSize != null) {
 				if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
 					logger.debug(func.getIdentifier() + " has a delegation policy");
-					long maxSize = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getMaxValue());
+					long maxSize = ((FileSizeUnitClass) func.getMaxUnit()).getPlainSize(func.getMaxValue());
 					if (!(currentSize > 0 && currentSize <= maxSize)) {
 						logger.warn("the current value " + currentSize.toString() + " is out of range : "
 								+ func.toString());
@@ -596,7 +596,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 				currentDate = getCalendarWithoutTime(currentDate).getTime();
 				if (func.getDelegationPolicy() != null && func.getDelegationPolicy().getStatus()) {
 					Calendar cal = getCalendarWithoutTime(expirationDate);
-					cal.add(func.toCalendarValue(), - func.getMaxValue());
+					cal.add(func.toCalendarMaxValue(), - func.getMaxValue());
 					Date minDate = cal.getTime();
 					if (minDate.before(now)) {
 						minDate = now;
