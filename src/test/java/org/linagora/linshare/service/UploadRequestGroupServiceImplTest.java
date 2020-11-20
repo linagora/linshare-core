@@ -55,6 +55,7 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
@@ -171,7 +172,8 @@ public class UploadRequestGroupServiceImplTest {
 	public void updateStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequest uploadRequest = initUploadRequest();
-		UploadRequestGroup group = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		UploadRequestGroup group = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda),
+				"This is a subject", "This is a body", false);
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
 		// Update upload request group status
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
@@ -180,6 +182,10 @@ public class UploadRequestGroupServiceImplTest {
 		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.DELETED, false);
 		Assertions.assertEquals(UploadRequestStatus.DELETED, group.getStatus());
+		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.DELETED, false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_STATUS_BAD_TRANSITON, e.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

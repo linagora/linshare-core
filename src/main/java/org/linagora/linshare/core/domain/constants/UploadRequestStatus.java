@@ -37,6 +37,7 @@
 package org.linagora.linshare.core.domain.constants;
 
 import org.apache.commons.lang3.StringUtils;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
@@ -58,11 +59,10 @@ public enum UploadRequestStatus {
 		this.next = next;
 	}
 
-	public UploadRequestStatus transition(final UploadRequestStatus status)
-			throws BusinessException {
+	public UploadRequestStatus transition(final UploadRequestStatus status) throws BusinessException {
 		if (!Arrays.asList(next).contains(status)) {
-			throw new BusinessException("Cannot transition from " + name()
-					+ " to " + status.name() + '.');
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_STATUS_BAD_TRANSITON,
+					"Cannot transition from " + name() + " to " + status.name() + '.');
 		}
 		return status;
 	}
