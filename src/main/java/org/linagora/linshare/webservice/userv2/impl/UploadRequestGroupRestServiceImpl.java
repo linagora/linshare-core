@@ -49,6 +49,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -62,12 +63,12 @@ import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacad
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.UploadRequestGroupRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/upload_request_groups")
@@ -222,4 +223,22 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 				@QueryParam("status") List<UploadRequestStatus> status) {
 		return uploadRequestGroupFacade.findAllUploadRequests(null, uuid, status);
 	}
+
+	@Path("/{uuid}/download")
+	@GET
+	@Operation(summary = "Archive download of the upload request entries.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public Response downloadEntries(
+			@Parameter(description = "Upload request group uuid.", required = true)
+				@PathParam(value = "uuid") String uuid,
+			@Parameter(description = "UploadRequestUuid to download its entries if the uploadRequestGroup is not collective", required = false)
+				@QueryParam("requestUuid") String requestUuid) throws BusinessException {
+		return uploadRequestGroupFacade.downloadEntries(null, uuid, requestUuid);
+	}
+
 }

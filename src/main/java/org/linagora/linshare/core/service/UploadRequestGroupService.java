@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 
 public interface UploadRequestGroupService {
 
@@ -65,4 +66,6 @@ public interface UploadRequestGroupService {
 
 	UploadRequestGroup addNewRecipients(User authUser, User actor, UploadRequestGroup uploadRequestGroup,
 			List<ContactDto> recipientEmail);
+
+	FileAndMetaData downloadEntries(Account authUser, Account actor, UploadRequestGroup uploadRequestGroup, String requestUuid);
 }

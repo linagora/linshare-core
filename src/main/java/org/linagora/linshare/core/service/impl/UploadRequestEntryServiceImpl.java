@@ -37,10 +37,21 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -60,6 +71,7 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -77,6 +89,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
@@ -85,6 +98,7 @@ import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Account, UploadRequestEntry>
 		implements UploadRequestEntryService {
@@ -114,6 +128,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	private DocumentEntryBusinessService documentEntryBusinessService;
 
 	private LogEntryService logEntryService;
+
+	private final static String ARCHIVE_MIME_TYPE = "application/zip";
+	private final static String ARCHIVE_EXTENTION = ".zip";
 
 	public UploadRequestEntryServiceImpl(
 			UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
@@ -329,5 +346,70 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	@Override
 	public Long computeEntriesSize(UploadRequest request) {
 		return uploadRequestEntryBusinessService.computeEntriesSize(request);
+	}
+
+	@Override
+	public FileAndMetaData downloadEntries(Account authUser, Account actor, UploadRequestGroup uploadRequestGroup,
+			List<UploadRequestEntry> entries) {
+			FileAndMetaData fileAndMetaData = null;
+			try {
+				File zipFile = File.createTempFile("linshare-download-upload-request-entries-", ARCHIVE_EXTENTION);
+				zipFile.deleteOnExit();
+				try (FileOutputStream fos = new FileOutputStream(zipFile);
+						ZipOutputStream zos = new ZipOutputStream(fos);) {
+					for (UploadRequestEntry entry : entries) {
+						String entryName = computeEntryName(entry);
+						try (InputStream stream = download(authUser, actor, entry.getUuid()).openBufferedStream();) {
+							addFileToZip(stream, zos, entryName, entry.getSize());
+						} catch (IOException ioException) {
+							logger.error("Download upload request entry with UUID {} was failed.", entry.getUuid(), ioException);
+							throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_DOWNLOAD_INTERNAL_ERROR,
+									"Can not generate the archive for this directory");
+						}
+					}
+					zos.close();
+					fileAndMetaData = new FileAndMetaData(Files.asByteSource(zipFile), zipFile.length(),
+							uploadRequestGroup.getSubject().concat(ARCHIVE_EXTENTION), ARCHIVE_MIME_TYPE);
+					fileAndMetaData.setFile(zipFile);
+				} catch (IOException ioException) {
+					logger.error("Download entries of the upload request group with UUID: {} failed.", uploadRequestGroup.getUuid(), ioException);
+					throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_DOWNLOAD_INTERNAL_ERROR,
+							"Can not generate the archive for this directory");
+				}
+			} catch (IOException ioException) {
+				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_DOWNLOAD_INTERNAL_ERROR,
+						"Can not generate a temp file");
+			}
+			return fileAndMetaData;
+		}
+
+	private void addFileToZip(InputStream stream, ZipOutputStream zos, String documentName, Long size)
+			throws IOException {
+		ZipEntry zipEntry = new ZipEntry(documentName);
+		zos.putNextEntry(zipEntry);
+		IOUtils.copy(stream, zos);
+		zos.closeEntry();
+	}
+
+	private String computeEntryName(UploadRequestEntry entry) {
+		String computedName = null;
+		MimeTypes types = MimeTypes.getDefaultMimeTypes();
+		MimeType entryType = null;
+		String extension = FilenameUtils.getExtension(entry.getName());
+		if (!mimeTypeIdentifier.isKnownExtension(extension)) {
+			try {
+				entryType = types.forName(entry.getDocument().getType());
+				extension = entryType.getExtension();
+			} catch (MimeTypeException e) {
+				logger.debug("Error when trying to get the extension of the upload request entry with UUID: {}",
+						entry.getUuid(), e.getMessage());
+				throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND,
+						"Unable to find the upload request entry's type");
+			}
+		}
+		SimpleDateFormat formatter = new SimpleDateFormat("YYYYMMdd-HHmmss");
+		computedName = entry.getName() + "-ure-"
+				+ formatter.format(entry.getCreationDate().getTime()).concat(extension);
+		return computedName;
 	}
 }

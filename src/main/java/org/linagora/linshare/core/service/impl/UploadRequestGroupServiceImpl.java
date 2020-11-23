@@ -53,7 +53,9 @@ import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -65,14 +67,18 @@ import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestGroupAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.UploadRequestGroupMto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, UploadRequestGroup> implements UploadRequestGroupService {
 
@@ -91,6 +97,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	private final UploadRequestService uploadRequestService;
 
+	private final UploadRequestEntryService requestEntryService;
+
 	public UploadRequestGroupServiceImpl(
 			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
 			final UploadRequestGroupResourceAccessControl groupRac,
@@ -99,7 +107,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final NotifierService notifierService,
 			final LogEntryService logEntryService,
 			final UploadRequestService uploadRequestService,
-			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			final UploadRequestEntryService requestEntryService) {
 		super(groupRac, sanitizerInputHtmlBusinessService);
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 		this.functionalityService = functionalityService;
@@ -107,6 +116,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		this.notifierService = notifierService;
 		this.logEntryService = logEntryService;
 		this.uploadRequestService = uploadRequestService;
+		this.requestEntryService = requestEntryService;
 	}
 
 	@Override
@@ -442,5 +452,46 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		notifierService.sendNotification(container.getMailContainers());
 		logEntryService.insert(container.getLogs());
 		return uploadRequestGroup;
+	}
+
+	@Override
+	public FileAndMetaData downloadEntries(Account authUser, Account actor, UploadRequestGroup uploadRequestGroup,
+			String requestUuid) {
+		preChecks(authUser, actor);
+		if (!Lists.newArrayList(UploadRequestStatus.ENABLED, UploadRequestStatus.CLOSED)
+				.contains(uploadRequestGroup.getStatus())) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_GROUP_ENTRIES_ARCHIVE_DOWNLOAD_FORBIDDEN,
+					"You are not authorized to archive download the entries of this upload request group: "
+							+ uploadRequestGroup.getUuid() + "it's status must be ENABLED or CLOSED");
+		}
+		List<UploadRequestEntry> entries = getEntriesToDownload(authUser, actor, uploadRequestGroup, requestUuid);
+		FileAndMetaData dataFile = requestEntryService.downloadEntries(authUser, actor, uploadRequestGroup, entries);
+		return dataFile;
+	}
+
+	private List<UploadRequestEntry> getEntriesToDownload(Account authUser, Account actor,
+			UploadRequestGroup uploadRequestGroup, String requestUuid) {
+		List<UploadRequestEntry> entries = Lists.newArrayList();
+		if (!uploadRequestGroup.getRestricted()) {
+			for (UploadRequest request : uploadRequestGroup.getUploadRequests()) {
+				for (UploadRequestUrl requestUrl : request.getUploadRequestURLs()) {
+					entries.addAll(requestEntryService.findAllExtEntries(requestUrl));
+				}
+			}
+		} else {
+			Validate.notEmpty(requestUuid,
+					"The upload request group is not collective, the upload request uuid must be set");
+			UploadRequest request = uploadRequestService.find(authUser, actor, requestUuid);
+			if (!uploadRequestGroup.getUploadRequests().contains(request)) {
+				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+						"The upload request which you are trying to download it s entry does not exist on the upload request group with uuid: "
+								+ uploadRequestGroup.getUuid());
+			} else {
+				for (UploadRequestUrl requestUrl : request.getUploadRequestURLs()) {
+					entries.addAll(requestEntryService.findAllExtEntries(requestUrl));
+				}
+			}
+		}
+		return entries;
 	}
 }

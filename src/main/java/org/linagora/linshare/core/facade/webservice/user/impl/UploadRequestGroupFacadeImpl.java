@@ -39,6 +39,9 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -58,7 +61,9 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -167,5 +172,16 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.find(authUser, actor, groupUuid);
 		List<UploadRequest> requests = uploadRequestService.findAll(authUser, actor, uploadRequestGroup, status);
 		return ImmutableList.copyOf(Lists.transform(requests, UploadRequestDto.toDto(false)));
+	}
+
+	@Override
+	public Response downloadEntries(String actorUuid, String groupUuid, String requestUuid) {
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notEmpty(groupUuid, "Upload request group uuid must be set");
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.find(authUser, actor, groupUuid);
+		FileAndMetaData data = uploadRequestGroupService.downloadEntries(authUser, actor, uploadRequestGroup, requestUuid);
+		ResponseBuilder builder = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
+		return builder.build();
 	}
 }

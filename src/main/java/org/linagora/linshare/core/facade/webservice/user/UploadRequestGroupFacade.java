@@ -39,6 +39,8 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -69,4 +71,6 @@ public interface UploadRequestGroupFacade {
 			List<LogAction> actions, List<AuditLogEntryType> type);
 
 	List<UploadRequestDto> findAllUploadRequests(String actorUuid, String uuid, List<UploadRequestStatus> status);
+
+	Response downloadEntries(String actorUuid, String uuid, String requestUuid);
 }

@@ -39,6 +39,8 @@ package org.linagora.linshare.webservice.userv2;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -67,4 +69,6 @@ public interface UploadRequestGroupRestService {
 	UploadRequestGroupDto update(String uuid, UploadRequestGroupDto uploadRequestGroupDto);
 
 	List<UploadRequestDto> findAllUploadRequests(String uuid, List<UploadRequestStatus> status);
+
+	Response downloadEntries(String uuid, String requestUuid) throws BusinessException;
 }
