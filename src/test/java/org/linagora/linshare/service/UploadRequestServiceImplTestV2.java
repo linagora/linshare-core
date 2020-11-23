@@ -374,6 +374,27 @@ public class UploadRequestServiceImplTestV2 {
 	}
 
 	@Test
+	public void testEnabledUploadRequestCopyUploadRequestEntry() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		UploadRequestUrl requestUrl = ureJane.getUploadRequestURLs().iterator().next();
+		Assertions.assertNotNull(requestUrl);
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
+				requestUrl);
+		Assertions.assertNotNull(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()));
+		Assertions.assertTrue(requestUrl.getUploadRequest().getStatus().equals(UploadRequestStatus.ENABLED));
+		DocumentEntry documentEntry = uploadRequestEntryService.copy(jane, jane, uploadRequestEntry);
+		Assertions.assertNotNull(documentEntry);
+		Document aDocument = uploadRequestEntry.getDocument();
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
+		metadata.setUuid(aDocument.getUuid());
+		fileDataStore.remove(metadata);
+		documentRepository.delete(aDocument);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testUploadRequestCopyUploadRequestEntrySpecialCharacters() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;

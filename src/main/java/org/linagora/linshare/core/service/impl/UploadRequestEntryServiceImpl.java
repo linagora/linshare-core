@@ -97,6 +97,7 @@ import org.linagora.linshare.mongo.entities.logs.UploadRequestEntryAuditLogEntry
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
@@ -231,7 +232,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		checkCreatePermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
 		checkSpace(owner, uploadRequestEntry.getSize());
 		UploadRequest uploadRequest = uploadRequestEntry.getUploadRequestUrl().getUploadRequest();
-		if (uploadRequest.getStatus().compareTo(UploadRequestStatus.CLOSED) > 0) {
+		if (!Lists.newArrayList(UploadRequestStatus.ENABLED, UploadRequestStatus.CLOSED)
+				.contains(uploadRequest.getStatus())) {
+
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_BE_COPIED,
 					"You need first close the current upload request before copying file");
 		}
