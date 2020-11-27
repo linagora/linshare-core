@@ -211,15 +211,19 @@ public class UploadRequestEntryServiceImplTest {
 				uploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
+		Assertions.assertEquals(UploadRequestStatus.ENABLED,
+				uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getStatus());
+		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.PURGED, false);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		});
-		Assertions.assertEquals("Cannot delete file when upload request is not closed or archived", exception.getMessage());
+		Assertions.assertEquals("Cannot delete file when upload request if its status is not enabled, closed or archived", exception.getMessage());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void deleteUploadRequestEntry() throws BusinessException, IOException {
+	public void deleteUploadRequestEntryClosedUR() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
@@ -227,6 +231,22 @@ public class UploadRequestEntryServiceImplTest {
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
 		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
+		UploadRequestEntry deletedEntry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
+		Assertions.assertNull(deletedEntry);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteUploadRequestEntryEnabledUR() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
+				uploadRequest.getUploadRequestURLs().iterator().next());
+		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
+		Assertions.assertNotNull(entry);
+		Assertions.assertEquals(UploadRequestStatus.ENABLED,
+				uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getStatus());
 		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		UploadRequestEntry deletedEntry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNull(deletedEntry);
