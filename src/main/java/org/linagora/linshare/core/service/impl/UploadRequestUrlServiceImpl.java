@@ -149,10 +149,6 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	public UploadRequestEntry deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid)
 			throws BusinessException {
 		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
-		if (requestUrl.getUploadRequest().getStatus() != UploadRequestStatus.ENABLED) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED,
-					"Cannot delete file when upload request is not enabled");
-		}
 		deleteBusinessCheck(requestUrl);
 		User owner = (User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 		UploadRequestEntry entry = uploadRequestEntryService.deleteEntryByRecipients(requestUrl, entryUuid);
