@@ -218,7 +218,7 @@ public class UploadRequestEntryServiceImplTest {
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		});
-		Assertions.assertEquals("Cannot delete file when upload request if its status is not enabled, closed or archived", exception.getMessage());
+		Assertions.assertEquals("Cannot delete file if the upload request's status is not enabled, closed or archived", exception.getMessage());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

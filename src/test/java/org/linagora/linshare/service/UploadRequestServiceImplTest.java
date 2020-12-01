@@ -191,7 +191,7 @@ public class UploadRequestServiceImplTest {
 				"This is a body", false);
 		eJohn = uploadRequestGroupJohn.getUploadRequests().iterator().next();
 		UploadRequestGroup uploadRequestGroupJane = uploadRequestGroupService.create(jane, jane, ure, Lists.newArrayList(yoda), "This is a subject",
-				"This is a body", false);
+				"This is a body", true);
 		eJane = uploadRequestGroupJane.getUploadRequests().iterator().next();
 //		END OF UPLOAD REQUEST CREATE
 		Assertions.assertEquals(john, (User) eJohn.getUploadRequestGroup().getOwner());
@@ -257,12 +257,23 @@ public class UploadRequestServiceImplTest {
 	}
 
 	@Test
+	public void closeUploadRequestByOwner() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequest uploadRequest = eJane.clone();
+		uploadRequest = service.updateStatus(jane, jane, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		Assertions.assertEquals(uploadRequest.getStatus(), UploadRequestStatus.CLOSED);
+		Assertions.assertEquals(uploadRequest.getUploadRequestGroup().getStatus(), UploadRequestStatus.CLOSED);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void closeRequestByRecipient() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest tmp = eJohn.clone();
-		tmp = service.closeRequestByRecipient(eJohn.getUploadRequestURLs().iterator().next());
-		Assertions.assertEquals(tmp.getStatus(), UploadRequestStatus.CLOSED);
-		Assertions.assertEquals(john, (User) eJohn.getUploadRequestGroup().getOwner());
+		UploadRequest uploadRequest = eJane.clone();
+		uploadRequest = service.closeRequestByRecipient(eJane.getUploadRequestURLs().iterator().next());
+		Assertions.assertEquals(uploadRequest.getStatus(), UploadRequestStatus.CLOSED);
+		Assertions.assertEquals(uploadRequest.getUploadRequestGroup().getStatus(), UploadRequestStatus.CLOSED);
+		Assertions.assertEquals(jane, (User) eJane.getUploadRequestGroup().getOwner());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

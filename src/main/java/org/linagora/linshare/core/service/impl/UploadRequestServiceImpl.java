@@ -45,6 +45,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -94,6 +95,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 
 	private final UploadRequestEntryService uploadRequestEntryService;
 
+	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
+
 	public UploadRequestServiceImpl(
 			final AccountRepository<Account> accountRepository,
 			final UploadRequestBusinessService uploadRequestBusinessService,
@@ -103,7 +106,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			final UploadRequestResourceAccessControl rac,
 			final LogEntryService logEntryService,
 			final UploadRequestEntryService uploadRequestEntryService,
-			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
@@ -112,6 +116,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		this.notifierService = notifierService;
 		this.logEntryService = logEntryService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
+		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 	}
 
 	@Override
@@ -155,15 +160,12 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		UploadRequest req = find(authUser, actor, uuid);
 		Validate.notNull(req);
 		checkUpdatePermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
-		if (!req.getUploadRequestGroup().getRestricted() && !status.equals(req.getUploadRequestGroup().getStatus())) {
-			// if is grouped mode and the new status is not equal
-			// to the current status of uploadRequestGroup
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_GROUP_STATUS,
-					"You can not edit an uploadRequest : " + req.getUuid());
-		}
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(authUser), new AccountMto(actor),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
 		req = uploadRequestBusinessService.updateStatus(req, status);
+		if (UploadRequestStatus.CLOSED.equals(req.getStatus())) {
+			checkAndCloseCollectiveUploadRequestGroup(req.getUploadRequestGroup());
+		}
 		archiveEntries(req, authUser, actor, status.equals(UploadRequestStatus.PURGED),
 				(status.compareTo(UploadRequestStatus.CLOSED) <= 0) && copy);
 		sendNotification(req, actor);
@@ -256,12 +258,19 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		checkUpdatePermission(actor, req.getUploadRequestGroup().getOwner(), UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		req.updateStatus(UploadRequestStatus.CLOSED);
 		UploadRequest update = updateRequest(actor, actor, req);
+		checkAndCloseCollectiveUploadRequestGroup(req.getUploadRequestGroup());
 		EmailContext ctx = new UploadRequestClosedByRecipientEmailContext((User)req.getUploadRequestGroup().getOwner(), req, url);
 		MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 		notifierService.sendNotification(mail);
 		log.setResourceUpdated(new UploadRequestMto(update, true));
 		logEntryService.insert(log);
 		return update;
+	}
+
+	private void checkAndCloseCollectiveUploadRequestGroup(UploadRequestGroup requestGroup) {
+		if (!requestGroup.getRestricted()) {
+			uploadRequestGroupBusinessService.updateStatus(requestGroup, UploadRequestStatus.CLOSED);
+		}
 	}
 
 	@Override

@@ -312,7 +312,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		if (!Lists.newArrayList(UploadRequestStatus.CLOSED, UploadRequestStatus.ARCHIVED, UploadRequestStatus.ENABLED)
 				.contains(uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getStatus())) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED,
-					"Cannot delete file when upload request if its status is not enabled, closed or archived");
+					"Cannot delete file if the upload request's status is not enabled, closed or archived");
 		}
 		if (!uploadRequestEntry.getCopied()) {
 			documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(uploadRequestEntry.getDocument().getUuid()));
