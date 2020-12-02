@@ -232,12 +232,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		checkCreatePermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
 		checkSpace(owner, uploadRequestEntry.getSize());
 		UploadRequest uploadRequest = uploadRequestEntry.getUploadRequestUrl().getUploadRequest();
-		if (!Lists.newArrayList(UploadRequestStatus.ENABLED, UploadRequestStatus.CLOSED)
-				.contains(uploadRequest.getStatus())) {
-
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_BE_COPIED,
-					"You need first close the current upload request before copying file");
-		}
+		checkURStatusBeforeCopyAndDelete(uploadRequest, BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_BE_COPIED);
 		uploadRequestEntry.setName(sanitizeFileName(uploadRequestEntry.getName()));
 		entity = documentEntryBusinessService.copy(owner, uploadRequestEntry);
 		uploadRequestEntry.setDocumentEntry(entity);
@@ -246,6 +241,14 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		log.setFromResourceUuid(uploadRequestEntry.getUuid());
 		logEntryService.insert(log);
 		return entity;
+	}
+
+	private void checkURStatusBeforeCopyAndDelete(UploadRequest uploadRequest, BusinessErrorCode error) {
+		if (!Lists.newArrayList(UploadRequestStatus.ENABLED, UploadRequestStatus.CLOSED, UploadRequestStatus.ARCHIVED)
+				.contains(uploadRequest.getStatus())) {
+			throw new BusinessException(error,
+					"You Cannot cannot perform the requested action if upload request's status is not enabled, closed or archived");
+		}
 	}
 
 	protected void checkSpace(Account owner, long size) throws BusinessException {
@@ -309,11 +312,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		UploadRequestEntry uploadRequestEntry = find(authUser, actor, uuid);
 		checkDeletePermission(authUser, actor, UploadRequestEntry.class,
 				BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN, uploadRequestEntry);
-		if (!Lists.newArrayList(UploadRequestStatus.CLOSED, UploadRequestStatus.ARCHIVED, UploadRequestStatus.ENABLED)
-				.contains(uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getStatus())) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED,
-					"Cannot delete file if the upload request's status is not enabled, closed or archived");
-		}
+		checkURStatusBeforeCopyAndDelete(uploadRequestEntry.getUploadRequestUrl().getUploadRequest(),
+				BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED);
 		if (!uploadRequestEntry.getCopied()) {
 			documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(uploadRequestEntry.getDocument().getUuid()));
 		}
