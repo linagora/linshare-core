@@ -1,4 +1,5 @@
 INSERT INTO contact(id, mail) VALUES (2, 'yoda@linshare.org');
+INSERT INTO contact(id, mail) VALUES (3, 'external2@linshare.org');
 
 -- ENABLE UPLOAD REQUEST FUNCTIONALITY
 UPDATE policy SET status = true where id = 63;

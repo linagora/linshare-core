@@ -160,17 +160,22 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		UploadRequest req = find(authUser, actor, uuid);
 		Validate.notNull(req);
 		checkUpdatePermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
-		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(authUser), new AccountMto(actor),
-				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
-		req = uploadRequestBusinessService.updateStatus(req, status);
-		if (UploadRequestStatus.CLOSED.equals(req.getStatus())) {
-			checkAndCloseCollectiveUploadRequestGroup(req.getUploadRequestGroup());
+		if (status.equals(req.getStatus())) {
+			logger.debug("The new status {} is the same with current one {}, no operation was performed", status,
+					req.getStatus());
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_STATUS_NOT_MODIFIED,
+					"The new status is the same, no operation was performed");
+		} else {
+			UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(authUser),
+					new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
+			req = uploadRequestBusinessService.updateStatus(req, status);
+			log.setResourceUpdated(new UploadRequestMto(req, true));
+			logEntryService.insert(log);
+			sendNotification(req, actor);
+			archiveEntries(req, authUser, actor, status.equals(UploadRequestStatus.PURGED),
+					(status.compareTo(UploadRequestStatus.CLOSED) <= 0) && copy);
+			checkAndUpdateCollectiveUploadRequest(req.getUploadRequestGroup(), status);
 		}
-		archiveEntries(req, authUser, actor, status.equals(UploadRequestStatus.PURGED),
-				(status.compareTo(UploadRequestStatus.CLOSED) <= 0) && copy);
-		sendNotification(req, actor);
-		log.setResourceUpdated(new UploadRequestMto(req, true));
-		logEntryService.insert(log);
 		return req;
 	}
 
@@ -258,7 +263,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		checkUpdatePermission(actor, req.getUploadRequestGroup().getOwner(), UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		req.updateStatus(UploadRequestStatus.CLOSED);
 		UploadRequest update = updateRequest(actor, actor, req);
-		checkAndCloseCollectiveUploadRequestGroup(req.getUploadRequestGroup());
+		checkAndUpdateCollectiveUploadRequest(req.getUploadRequestGroup(), update.getStatus());
 		EmailContext ctx = new UploadRequestClosedByRecipientEmailContext((User)req.getUploadRequestGroup().getOwner(), req, url);
 		MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 		notifierService.sendNotification(mail);
@@ -267,9 +272,16 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		return update;
 	}
 
-	private void checkAndCloseCollectiveUploadRequestGroup(UploadRequestGroup requestGroup) {
-		if (requestGroup.isCollective()) {
-			uploadRequestGroupBusinessService.updateStatus(requestGroup, UploadRequestStatus.CLOSED);
+	/**
+	 * In case of URG in collective mode This URG should be closed
+	 * @param requestGroup The parent URG
+	 * @param status The input status
+	 */
+	private void checkAndUpdateCollectiveUploadRequest(UploadRequestGroup requestGroup,
+			UploadRequestStatus status) {
+		if (requestGroup.isCollective() && !status.equals(requestGroup.getStatus())) {
+			logger.debug("The URG {} is in collective mode so it should be changed to the same status of the UR that has been updated", requestGroup);
+			uploadRequestGroupBusinessService.updateStatus(requestGroup, status);
 		}
 	}
 

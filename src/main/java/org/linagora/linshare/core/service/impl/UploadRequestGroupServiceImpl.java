@@ -349,15 +349,23 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		preChecks(authUser, actor);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(requestGroupUuid);
 		checkUpdatePermission(authUser, actor, UploadRequestGroup.class,
-				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestGroup);
+				BusinessErrorCode.UPLOAD_REQUEST_GROUP_FORBIDDEN, uploadRequestGroup);
+		if (status.equals(uploadRequestGroup.getStatus())) {
+			logger.debug("The new status {} is the same with current one {}, no operation was performed", status,
+					uploadRequestGroup.getStatus());
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_GROUP_STATUS_NOT_MODIFIED,
+					"The new status is the same, no operation was performed");
+		}
+		if (uploadRequestGroup.isCollective() && uploadRequestGroup.getUploadRequests().size() > 1) {
+			logger.error("Collective URG {} should have only one element {}", uploadRequestGroup.getUuid(),
+					uploadRequestGroup.getUploadRequests().size());
+		}
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(authUser),
 				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				uploadRequestGroup.getUuid(), uploadRequestGroup);
 		uploadRequestGroup = uploadRequestGroupBusinessService.updateStatus(uploadRequestGroup, status);
 		for (UploadRequest uploadRequest : uploadRequestGroup.getUploadRequests()) {
-			if (status.compareTo(uploadRequest.getStatus()) < 0) {
-				uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status, copy);
-			}
+			uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status, copy);
 		}
 		groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
 		logEntryService.insert(groupLog);
