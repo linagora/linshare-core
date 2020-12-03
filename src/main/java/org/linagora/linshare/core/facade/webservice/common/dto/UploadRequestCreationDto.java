@@ -86,8 +86,6 @@ public class UploadRequestCreationDto {
 
 	private String locale;
 
-	private Boolean dirty;
-
 	private Boolean enableNotification;
 
 	private Boolean canEditExpiryDate;
@@ -108,7 +106,6 @@ public class UploadRequestCreationDto {
 		e.setExpiryDate(getExpiryDate());
 		e.setMaxFileSize(getMaxFileSize());
 		e.setNotificationDate(getNotificationDate());
-		e.setDirty(getDirty());
 		e.setEnableNotification(getEnableNotification());
 		e.setCanEditExpiryDate(getCanEditExpiryDate());
 		return e;
@@ -196,14 +193,6 @@ public class UploadRequestCreationDto {
 
 	public void setNotificationDate(Date notificationDate) {
 		this.notificationDate = notificationDate;
-	}
-
-	public Boolean getDirty() {
-		return dirty;
-	}
-
-	public void setDirty(Boolean dirty) {
-		this.dirty = dirty;
 	}
 
 	public Boolean getEnableNotification() {

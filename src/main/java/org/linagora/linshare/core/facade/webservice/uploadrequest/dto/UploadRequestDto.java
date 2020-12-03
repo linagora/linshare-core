@@ -103,7 +103,6 @@ public class UploadRequestDto {
 
 	public UploadRequestDto(UploadRequestUrl requestUrl) {
 		this.owner = new ContactDto(requestUrl.getUploadRequest().getUploadRequestGroup().getOwner());
-		this.recipient = null;
 		this.maxFileCount = requestUrl.getUploadRequest().getMaxFileCount();
 		this.maxDepositSize = requestUrl.getUploadRequest().getMaxDepositSize();
 		this.maxFileSize = requestUrl.getUploadRequest().getMaxFileSize();

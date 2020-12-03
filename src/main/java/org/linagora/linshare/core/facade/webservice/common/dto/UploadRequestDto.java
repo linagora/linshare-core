@@ -111,8 +111,6 @@ public class UploadRequestDto {
 
 	private String locale;
 
-	private Boolean dirty;
-
 	private Boolean enableNotification;
 
 	private Boolean canEditExpiryDate;
@@ -134,7 +132,6 @@ public class UploadRequestDto {
 		this.label = entity.getUploadRequestGroup().getSubject();
 		this.status = entity.getStatus();
 		this.notificationDate = entity.getNotificationDate();
-		this.dirty = entity.getDirty();
 		this.enableNotification = entity.getEnableNotification();
 		if (full) {
 			this.maxFileCount = entity.getMaxFileCount();
@@ -169,7 +166,6 @@ public class UploadRequestDto {
 		e.setExpiryDate(getExpiryDate());
 		e.setMaxFileSize(getMaxFileSize());
 		e.setNotificationDate(getNotificationDate());
-		e.setDirty(getDirty());
 		e.setEnableNotification(getEnableNotification());
 		e.setCanEditExpiryDate(getCanEditExpiryDate());
 		return e;
@@ -334,14 +330,6 @@ public class UploadRequestDto {
 
 	public void setNotificationDate(Date notificationDate) {
 		this.notificationDate = notificationDate;
-	}
-
-	public Boolean getDirty() {
-		return dirty;
-	}
-
-	public void setDirty(Boolean dirty) {
-		this.dirty = dirty;
 	}
 
 	public Boolean getEnableNotification() {
