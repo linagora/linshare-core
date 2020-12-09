@@ -19,8 +19,8 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"]
           <!--/* End of Greetings  */-->
           <!--/* Main email  message content*/-->
           <p>
-            <span  data-th-if="(${isRestricted})"   data-th-utext="#{beginningMainMsgUnGrouped}"></span>
-            <span  data-th-if="!(${isRestricted})"   data-th-utext="#{beginningMainMsgGrouped}"></span>
+            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgUnGrouped}"></span>
+            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgGrouped}"></span>
             <span data-th-if="(${documentsCount} ==  1)"   data-th-utext="#{endingMainMsgSingular}" ></span>
             <span  data-th-if="(${documentsCount} >  1)"   data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
           </p>
@@ -65,11 +65,11 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"]
     <!--/*Lower message content for the owner of the upload request */-->
     <!--/*Lower message content for recipients of the upload request */-->
     <th:block  data-th-if="(${!warnOwner})">
-      <th:block  data-th-if="!(${isRestricted})">
+      <th:block  data-th-if="(${isCollective})">
         <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
         <th:block data-th-replace="layout :: infoFileListWithMyUploadRefs(#{filesInURDepot},${documents})"/>
       </th:block>
-      <th:block  data-th-if="(${isRestricted})">
+      <th:block  data-th-if="!(${isCollective})">
         <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, true)"/>
       </th:block>
     </th:block>

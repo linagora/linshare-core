@@ -66,7 +66,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
            <div data-th-if="(${totalMaxDepotSize})">
                     <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>
             </div>
-            <div data-th-if="!(${isRestricted})">
+            <div data-th-if="(${isCollective})">
                <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
             </div>
          </section>

@@ -78,7 +78,7 @@ public class UploadRequestGroupMto {
 
 	private Boolean enableNotification;
 
-	private Boolean restricted;
+	private Boolean collective;
 
 	private AccountMto owner;
 
@@ -110,7 +110,7 @@ public class UploadRequestGroupMto {
 		this.secured = group.isSecured();
 		this.mailMessageId = group.getMailMessageId();
 		this.enableNotification = group.getEnableNotification();
-		this.restricted = group.getRestricted();
+		this.collective = group.isCollective();
 		this.owner = new AccountMto(group.getOwner());
 		this.domain = new DomainMto(group.getAbstractDomain());
 		this.status = group.getStatus();
@@ -136,7 +136,7 @@ public class UploadRequestGroupMto {
 		this.secured = group.isSecured();
 		this.mailMessageId = group.getMailMessageId();
 		this.enableNotification = group.getEnableNotification();
-		this.restricted = group.getRestricted();
+		this.collective = group.isCollective();
 		this.owner = new AccountMto(group.getOwner());
 		this.domain = new DomainMto(group.getAbstractDomain());
 		this.status = group.getStatus();
@@ -287,12 +287,12 @@ public class UploadRequestGroupMto {
 		this.enableNotification = enableNotification;
 	}
 
-	public Boolean getRestricted() {
-		return restricted;
+	public Boolean isCollective() {
+		return collective;
 	}
 
-	public void setRestricted(Boolean restricted) {
-		this.restricted = restricted;
+	public void setCollective(Boolean collective) {
+		this.collective = collective;
 	}
 
 	public AccountMto getOwner() {

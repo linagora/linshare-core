@@ -1065,8 +1065,8 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
           <!--/* End of Greetings  */-->
           <!--/* Main email  message content*/-->
           <p>
-            <span  data-th-if="(${isRestricted})"   data-th-utext="#{beginningMainMsgUnGrouped(${remainingDays})}"></span>
-            <span  data-th-if="!(${isRestricted})"   data-th-utext="#{beginningMainMsgGrouped(${remainingDays})}"></span>
+            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgUnGrouped(${remainingDays})}"></span>
+            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgGrouped(${remainingDays})}"></span>
             <span data-th-if="(${documentsCount} ==  1)"   data-th-utext="#{endingMainMsgSingular}" ></span>
             <span  data-th-if="(${documentsCount} >  1)"   data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
           </p>
@@ -1112,11 +1112,11 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
     <!--/*Lower message content for the owner of the upload request */-->
     <!--/*Lower message content for recipients of the upload request */-->
     <th:block  data-th-if="(${!warnOwner})">
-      <th:block  data-th-if="!(${isRestricted})">
+      <th:block  data-th-if="(${isCollective})">
         <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
         <th:block data-th-replace="layout :: infoFileListWithMyUploadRefs(#{filesInURDepot},${documents})"/>
       </th:block>
-      <th:block  data-th-if="(${isRestricted})">
+      <th:block  data-th-if="!(${isCollective})">
         <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, true)"/>
       </th:block>
     </th:block>
@@ -1182,8 +1182,8 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
           <!--/* End of Greetings  */-->
           <!--/* Main email  message content*/-->
           <p>
-            <span  data-th-if="(${isRestricted})"   data-th-utext="#{beginningMainMsgUnGrouped}"></span>
-            <span  data-th-if="!(${isRestricted})"   data-th-utext="#{beginningMainMsgGrouped}"></span>
+            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgUnGrouped}"></span>
+            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgGrouped}"></span>
             <span data-th-if="(${documentsCount} ==  1)"   data-th-utext="#{endingMainMsgSingular}" ></span>
             <span  data-th-if="(${documentsCount} >  1)"   data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
           </p>
@@ -1228,11 +1228,11 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
     <!--/*Lower message content for the owner of the upload request */-->
     <!--/*Lower message content for recipients of the upload request */-->
     <th:block  data-th-if="(${!warnOwner})">
-      <th:block  data-th-if="!(${isRestricted})">
+      <th:block  data-th-if="(${isCollective})">
         <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
         <th:block data-th-replace="layout :: infoFileListWithMyUploadRefs(#{filesInURDepot},${documents})"/>
       </th:block>
-      <th:block  data-th-if="(${isRestricted})">
+      <th:block  data-th-if="!(${isCollective})">
         <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, true)"/>
       </th:block>
     </th:block>
@@ -1286,8 +1286,8 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-          <span data-th-if="!(${isRestricted})" data-th-utext="#{groupedBeginningMainMsg(${requestRecipient.mail})}"></span>
-          <span data-th-if="(${isRestricted})"
+          <span data-th-if="(${isCollective})" data-th-utext="#{groupedBeginningMainMsg(${requestRecipient.mail})}"></span>
+          <span data-th-if="!(${isCollective})"
                 data-th-utext="#{ungroupedBeginningMainMsg(${requestRecipient.mail})}"></span>
           <span data-th-if="(${documentsCount} == 1)" data-th-utext="#{endingMainMsgSingular}"></span>
           <span data-th-if="(${documentsCount} > 1)" data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
@@ -1309,7 +1309,7 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
-    <th:block data-th-if="!(${isRestricted})">
+    <th:block data-th-if="(${isCollective})">
        <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
     </th:block>
     <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>
@@ -1470,7 +1470,7 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
            <div data-th-if="(${totalMaxDepotSize})">
                     <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>
             </div>
-            <div data-th-if="!(${isRestricted})">
+            <div data-th-if="(${isCollective})">
                <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
             </div>
          </section>
@@ -1536,7 +1536,7 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
             <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
                <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
             </div>
-            <div data-th-if="!(${isRestricted})">
+            <div data-th-if="(${isCollective})">
                <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
             </div>
              <div data-th-if="(${totalMaxDepotSize})">
@@ -1617,7 +1617,7 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
             <div data-th-if="(${totalMaxDepotSize})">
                  <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>
             </div>
-            <div data-th-if="!(${isRestricted})">
+            <div data-th-if="(${isCollective})">
                <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
             </div>
          </section>

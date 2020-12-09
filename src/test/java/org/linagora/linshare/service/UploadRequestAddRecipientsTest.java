@@ -126,7 +126,7 @@ public class UploadRequestAddRecipientsTest {
 	}
 
 	@Test
-	public void addNewRecipientInRestrictedMode() throws BusinessException {
+	public void addNewRecipientInIndividualMode() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<UploadRequestGroup> uploadRequestGroups = uploadRequestGroupService.findAll(john, john, null);
 		Assertions.assertEquals(uploadRequestGroups.size(), 3);

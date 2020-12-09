@@ -70,9 +70,9 @@ public class UploadRequestUrlResourceAccessControlImpl
 		UploadRequest uploadRequest = uploadRequestUrl.getUploadRequest();
 		Set<UploadRequestUrl> uploadRequestURLs = uploadRequest.getUploadRequestURLs();
 		UploadRequestGroup uploadRequestGroup = uploadRequest.getUploadRequestGroup();
-		if (uploadRequestGroup.getRestricted()) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_DELETE_RECIPIENT_FROM_RESTRICTED_REQUEST,
-					"Cannot delete a recipient of an upload request in mode restricted");
+		if (!uploadRequestGroup.isCollective()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_DELETE_RECIPIENT_FROM_INDIVIDUAL_REQUEST,
+					"Cannot delete a recipient of an individual upload request.");
 		}
 		if (uploadRequestURLs.size() < 2) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_DELETE_LAST_RECIPIENT,

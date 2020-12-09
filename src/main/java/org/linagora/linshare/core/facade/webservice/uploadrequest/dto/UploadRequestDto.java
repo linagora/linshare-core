@@ -122,7 +122,7 @@ public class UploadRequestDto {
 		this.recipient = new ContactDto(requestUrl.getContact());
 		this.protectedByPassword = requestUrl.isProtectedByPassword();
 		this.locale = requestUrl.getUploadRequest().getLocale();
-		this.collective = !requestUrl.getUploadRequest().getUploadRequestGroup().getRestricted();
+		this.collective = requestUrl.getUploadRequest().getUploadRequestGroup().isCollective();
 	}
 
 	public UploadRequest toObject() {

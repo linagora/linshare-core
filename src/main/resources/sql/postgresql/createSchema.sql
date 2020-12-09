@@ -504,7 +504,7 @@ CREATE TABLE upload_request_group (
   can_edit_expiry_date            bool NOT NULL,
   locale                          varchar(255) NOT NULL,
   enable_notification             bool NOT NULL,
-  restricted                      bool NOT NULL,
+  collective                      bool NOT NULL,
   status                          varchar(255) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request_history (

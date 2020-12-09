@@ -149,7 +149,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		UploadRequest req = initUploadRequest(owner, inputRequest);
 		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup(owner, domain, subject, body,
 				req.getActivationDate(), req.isCanDelete(), req.isCanClose(), req.isCanEditExpiryDate(),
-				req.getLocale(), req.isSecured(), req.getEnableNotification(), !collectiveMode, req.getStatus(),
+				req.getLocale(), req.isSecured(), req.getEnableNotification(), collectiveMode, req.getStatus(),
 				req.getExpiryDate(), req.getNotificationDate(), req.getMaxFileCount(), req.getMaxDepositSize(),
 				req.getMaxFileSize());
 		uploadRequestGroup = uploadRequestGroupBusinessService.create(uploadRequestGroup);
@@ -441,7 +441,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			Validate.notEmpty(recipient.getMail(), "Mail must be set");
 			Contact contact = new Contact(recipient.getMail());
 			UploadRequest uploadRequest = new UploadRequest(uploadRequestGroup);
-			if (uploadRequestGroup.getRestricted()) {
+			if (!uploadRequestGroup.isCollective()) {
 				container = uploadRequestService.create(authUser, actor, uploadRequest, container);
 				uploadRequestGroup.getUploadRequests().add(uploadRequest);
 			} else {
@@ -472,7 +472,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private List<UploadRequestEntry> getEntriesToDownload(Account authUser, Account actor,
 			UploadRequestGroup uploadRequestGroup, String requestUuid) {
 		List<UploadRequestEntry> entries = Lists.newArrayList();
-		if (!uploadRequestGroup.getRestricted()) {
+		if (uploadRequestGroup.isCollective()) {
 			for (UploadRequest request : uploadRequestGroup.getUploadRequests()) {
 				for (UploadRequestUrl requestUrl : request.getUploadRequestURLs()) {
 					entries.addAll(requestEntryService.findAllExtEntries(requestUrl));

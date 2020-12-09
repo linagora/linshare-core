@@ -50,7 +50,7 @@
 				length="255" not-null="false" lazy="false" />
 		<property name="enableNotification" column="enable_notification" type="boolean"
 			lazy="false" />
-		<property access="field" name="restricted" column="restricted"
+		<property access="field" name="collective" column="collective"
 			not-null="true" lazy="false" type="boolean" />
 		<property access="field" name="status" column="status"
 			not-null="true" lazy="false" type="uploadRequestStatus" />

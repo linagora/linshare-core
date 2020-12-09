@@ -144,7 +144,7 @@ public class UploadRequestGroupDto {
 		this.secured = entity.isSecured();
 		this.mailMessageId = entity.getMailMessageId();
 		this.enableNotification = entity.getEnableNotification();
-		this.collective = !entity.getRestricted();
+		this.collective = entity.isCollective();
 		this.owner = new GenericUserDto((User) entity.getOwner());
 		this.domainDto = new DomainDto(entity.getAbstractDomain(), true);
 		this.status = entity.getStatus();
@@ -170,8 +170,8 @@ public class UploadRequestGroupDto {
 		uploadRequestGroup.setSecured(isSecured());
 		uploadRequestGroup.setMailMessageId(getMailMessageId());
 		uploadRequestGroup.setEnableNotification(getEnableNotification());
-		if (Objects.nonNull(getCollective())) {
-			uploadRequestGroup.setRestricted(!getCollective());
+		if (Objects.nonNull(isCollective())) {
+			uploadRequestGroup.setCollective(isCollective());
 		}
 		uploadRequestGroup.setStatus(getStatus());
 		return uploadRequestGroup;
@@ -321,7 +321,7 @@ public class UploadRequestGroupDto {
 		this.enableNotification = enableNotification;
 	}
 
-	public Boolean getCollective() {
+	public Boolean isCollective() {
 		return collective;
 	}
 

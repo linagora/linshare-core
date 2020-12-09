@@ -85,7 +85,7 @@ public class UploadRequestGroup {
 
 	private Boolean enableNotification;
 
-	private Boolean restricted;
+	private Boolean collective;
 
 	private Account owner;
 
@@ -114,7 +114,7 @@ public class UploadRequestGroup {
 			String locale,
 			Boolean secured,
 			Boolean enableNotification,
-			Boolean restricted,
+			Boolean collective,
 			UploadRequestStatus status,
 			Date expiryDate,
 			Date notificationDate,
@@ -135,7 +135,7 @@ public class UploadRequestGroup {
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.enableNotification = enableNotification;
-		this.restricted = restricted;
+		this.collective = collective;
 		this.status = status;
 		this.expiryDate = expiryDate;
 		this.notificationDate = notificationDate;
@@ -304,12 +304,12 @@ public class UploadRequestGroup {
 		this.enableNotification = enableNotification;
 	}
 
-	public Boolean getRestricted() {
-		return restricted;
+	public Boolean isCollective() {
+		return collective;
 	}
 
-	public void setRestricted(Boolean restricted) {
-		this.restricted = restricted;
+	public void setCollective(Boolean collective) {
+		this.collective = collective;
 	}
 
 	public Account getOwner() {
@@ -436,6 +436,6 @@ public class UploadRequestGroup {
 				+ activationDate + ", notificationDate=" + notificationDate + ", expiryDate=" + expiryDate
 				+ ", canDelete=" + canDelete + ", canClose=" + canClose + ", canEditExpiryDate=" + canEditExpiryDate
 				+ ", locale=" + locale + ", secured=" + secured + ", enableNotification=" + enableNotification
-				+ ", restricted=" + restricted + ", status=" + status + "]";
+				+ ", collective=" + collective + ", status=" + status + "]";
 	}
 }

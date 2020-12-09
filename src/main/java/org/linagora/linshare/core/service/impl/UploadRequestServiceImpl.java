@@ -219,9 +219,9 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, uploadRequest.getUuid(), uploadRequest);
 		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				uploadRequest);
-		if (!uploadRequest.getUploadRequestGroup().getRestricted()) {
+		if (uploadRequest.getUploadRequestGroup().isCollective()) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_NOT_UPDATABLE_GROUP_MODE,
-					"Connot update upload request in grouped mode, try to update the upload request group");
+					"Connot update a collective upload request, try to update the upload request group");
 		}
 		UploadRequest res = uploadRequestBusinessService.update(uploadRequest, object);
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
@@ -268,7 +268,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	private void checkAndCloseCollectiveUploadRequestGroup(UploadRequestGroup requestGroup) {
-		if (!requestGroup.getRestricted()) {
+		if (requestGroup.isCollective()) {
 			uploadRequestGroupBusinessService.updateStatus(requestGroup, UploadRequestStatus.CLOSED);
 		}
 	}

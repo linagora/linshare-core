@@ -13,8 +13,8 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-          <span data-th-if="!(${isRestricted})" data-th-utext="#{groupedBeginningMainMsg(${requestRecipient.mail})}"></span>
-          <span data-th-if="(${isRestricted})"
+          <span data-th-if="(${isCollective})" data-th-utext="#{groupedBeginningMainMsg(${requestRecipient.mail})}"></span>
+          <span data-th-if="!(${isCollective})"
                 data-th-utext="#{ungroupedBeginningMainMsg(${requestRecipient.mail})}"></span>
           <span data-th-if="(${documentsCount} == 1)" data-th-utext="#{endingMainMsgSingular}"></span>
           <span data-th-if="(${documentsCount} > 1)" data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
@@ -36,7 +36,7 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
-    <th:block data-th-if="!(${isRestricted})">
+    <th:block data-th-if="(${isCollective})">
        <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
     </th:block>
     <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>

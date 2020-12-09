@@ -149,7 +149,7 @@ public class UploadRequestDto {
 		}
 		this.protectedByPassword = false;
 		this.locale = entity.getLocale();
-		this.collective = !entity.getUploadRequestGroup().getRestricted();
+		this.collective = entity.getUploadRequestGroup().isCollective();
 	}
 
 	public UploadRequest toObject() {

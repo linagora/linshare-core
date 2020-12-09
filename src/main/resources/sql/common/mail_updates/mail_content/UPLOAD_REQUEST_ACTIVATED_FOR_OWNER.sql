@@ -34,7 +34,7 @@ UPDATE mail_content SET subject='[(#{subject(${subject})})]',body='<!DOCTYPE htm
             <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
                <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
             </div>
-            <div data-th-if="!(${isRestricted})">
+            <div data-th-if="(${isCollective})">
                <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
             </div>
              <div data-th-if="(${totalMaxDepotSize})">

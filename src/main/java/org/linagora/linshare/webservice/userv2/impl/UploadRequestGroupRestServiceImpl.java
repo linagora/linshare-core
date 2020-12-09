@@ -127,8 +127,8 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 			@Parameter(description = "Upload request.", required = true)
 				UploadRequestCreationDto uploadRequestCreationDto,
 			@Parameter(description = "Group mode.", required = false)
-				@QueryParam(value = "groupMode") Boolean groupMode) {
-		return uploadRequestGroupFacade.create(null, uploadRequestCreationDto, groupMode);
+				@QueryParam(value = "collective") Boolean collective) {
+		return uploadRequestGroupFacade.create(null, uploadRequestCreationDto, collective);
 	}
 
 	@PUT

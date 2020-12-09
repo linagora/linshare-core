@@ -71,7 +71,7 @@ public class UploadRequestActivationForOwnerEmailBuilder extends GenericUploadRe
 
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
-		ctx.setVariable("isRestricted", request.getUploadRequestGroup().getRestricted());
+		ctx.setVariable("isCollective", request.getUploadRequestGroup().isCollective());
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 
@@ -95,7 +95,7 @@ public class UploadRequestActivationForOwnerEmailBuilder extends GenericUploadRe
 
 		Context ctx = newFakeContext(language, true, false);
 		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("isRestricted", false);
+		ctx.setVariable("isCollective", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("protected", true);
 		ctx.setVariable("password", "a generated password");
@@ -111,7 +111,7 @@ public class UploadRequestActivationForOwnerEmailBuilder extends GenericUploadRe
 
 		Context ctx = newFakeContext(language, true, false);
 		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("isRestricted", true);
+		ctx.setVariable("isCollective", false);
 		ctx.setVariable("protected", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("totalMaxDepotSize", null);

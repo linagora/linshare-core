@@ -70,7 +70,7 @@ public class UploadRequestCreatedEmailBuilder extends GenericUploadRequestEmailB
 
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
-		ctx.setVariable("isRestricted", request.getUploadRequestGroup().getRestricted());
+		ctx.setVariable("isCollective", request.getUploadRequestGroup().isCollective());
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
@@ -93,7 +93,7 @@ public class UploadRequestCreatedEmailBuilder extends GenericUploadRequestEmailB
 
 		Context ctx = newFakeContext(language, false, true);
 		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("isRestricted", false);
+		ctx.setVariable("isCollective", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("totalMaxDepotSize", Long.valueOf(45687656));
 		ctx.setVariable("recipientsCount", recipients.size());
@@ -107,7 +107,7 @@ public class UploadRequestCreatedEmailBuilder extends GenericUploadRequestEmailB
 
 		Context ctx = newFakeContext(language, false, true);
 		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("isRestricted", true);
+		ctx.setVariable("isCollective", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("totalMaxDepotSize", null);
 		ctx.setVariable("recipientsCount", recipients.size());
