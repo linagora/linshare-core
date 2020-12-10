@@ -15,3 +15,5 @@
 *.swp
 /src/main/webapp/applet/signature-client.jar
 src/test/resources/linshare-test.extra.properties
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
