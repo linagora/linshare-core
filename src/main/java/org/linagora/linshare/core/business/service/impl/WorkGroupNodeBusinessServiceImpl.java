@@ -196,14 +196,11 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 				zos.close();
 				fileAndMetaData = new FileAndMetaData(Files.asByteSource(zipFile), zipFile.length(),
 						rootNode.getName().concat(ARCHIVE_EXTENTION), ARCHIVE_MIME_TYPE);
+				fileAndMetaData.setFile(zipFile);
 			} catch (IOException ioException) {
 				logger.error("Download folder {} failed.", rootNode.getUuid(), ioException);
 				throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_INTERNAL_ERROR,
 						"Can not generate the archive for this directory");
-			} finally {
-				if (zipFile != null) {
-					zipFile.delete();
-				}
 			}
 		} catch (IOException ioException) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_INTERNAL_ERROR,
@@ -237,14 +234,11 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 				zos.close();
 				fileAndMetaData = new FileAndMetaData(Files.asByteSource(zipFile), zipFile.length(),
 						rootNode.getName().concat(ARCHIVE_EXTENTION), ARCHIVE_MIME_TYPE);
+				fileAndMetaData.setFile(zipFile);
 			} catch (IOException ioException) {
 				logger.error("Download document {} with its revisions failed.", rootNode.getUuid(), ioException);
 				throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_INTERNAL_ERROR,
 						"Can not generate the archive for this directory");
-			} finally {
-				if (zipFile != null) {
-					zipFile.delete();
-				}
 			}
 		} catch (IOException ioException) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_INTERNAL_ERROR,

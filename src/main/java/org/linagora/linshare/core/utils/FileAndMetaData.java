@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.core.utils;
 
+import java.io.File;
+
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 
 import com.google.common.io.ByteSource;
@@ -49,12 +51,17 @@ public class FileAndMetaData {
 
 	protected String mimeType;
 
+	protected Boolean tempFileDeleted;
+
+	protected File file;
+
 	public FileAndMetaData(WorkGroupDocument document, ByteSource byteSource) {
 		super();
 		this.size = document.getSize();
 		this.name = document.getName();
 		this.mimeType = document.getMimeType();
 		this.byteSource = byteSource;
+		this.tempFileDeleted = false;
 	}
 
 	public FileAndMetaData(ByteSource byteSource, Long size, String name, String mimeType) {
@@ -63,6 +70,15 @@ public class FileAndMetaData {
 		this.size = size;
 		this.name = name;
 		this.mimeType = mimeType;
+		this.tempFileDeleted = false;
+	}
+
+	public FileAndMetaData(ByteSource byteSource, String name, String mimeType) {
+		super();
+		this.byteSource = byteSource;
+		this.name = name;
+		this.mimeType = mimeType;
+		this.tempFileDeleted = false;
 	}
 
 	public ByteSource getByteSource() {
@@ -95,5 +111,21 @@ public class FileAndMetaData {
 
 	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
+	}
+
+	public Boolean isTempFileDeleted() {
+		return tempFileDeleted;
+	}
+
+	public void setTempFileDeleted(Boolean tempFileDeleted) {
+		this.tempFileDeleted = tempFileDeleted;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
 	}
 }

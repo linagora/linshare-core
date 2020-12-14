@@ -53,6 +53,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestEntryFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.webservice.userv2.UploadRequestEntryRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
@@ -96,8 +97,8 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 				@PathParam("uuid") String uuid) throws BusinessException {
 		UploadRequestEntryDto uploadRequestEntryDto = uploadRequestEntryFacade.find(null, uuid);
 		ByteSource documentStream = uploadRequestEntryFacade.download(null, uuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
-				uploadRequestEntryDto.getName(), uploadRequestEntryDto.getType(), uploadRequestEntryDto.getSize());
+		FileAndMetaData data = new FileAndMetaData(documentStream, uploadRequestEntryDto.getSize(), uploadRequestEntryDto.getName(), uploadRequestEntryDto.getType());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return response.build();
 	}
 

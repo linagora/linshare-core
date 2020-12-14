@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -65,7 +66,8 @@ public class DocumentStreamReponseBuilder {
 	private static Logger logger = LoggerFactory.getLogger(DocumentStreamReponseBuilder.class);
 
 	public static ResponseBuilder getDocumentResponseBuilder(ByteSource byteSource, String fileName, String mimeType) {
-		return getDocumentResponseBuilder(byteSource, fileName, mimeType, null);
+		FileAndMetaData data = new FileAndMetaData(byteSource, fileName, mimeType);
+		return getDocumentResponseBuilder(data);
 	}
 
 	public static ResponseBuilder getThumbnailResponseBuilder(FileAndMetaData data, boolean base64, ThumbnailType kind) {
@@ -78,34 +80,34 @@ public class DocumentStreamReponseBuilder {
 			response = getDocumentResponseBuilderBase64(byteSource, fileName,
 					ThumbnailType.getFileMimeType(kind), null);
 		} else {
-			response = getDocumentResponseBuilder(byteSource, fileName,
-					ThumbnailType.getFileMimeType(kind), null);
+			FileAndMetaData data = new FileAndMetaData(byteSource, fileName, ThumbnailType.getFileMimeType(kind));
+			response = getDocumentResponseBuilder(data);
 		}
-		return response;
-	}
-
-	public static ResponseBuilder getDocumentResponseBuilder(ByteSource byteSource, String fileName, String mimeType,
-			Long fileSize) {
-		if (byteSource == null) {
-			throw new TechnicalException(TechnicalErrorCode.MISSING_DOCUMENT_IN_FILEDATASTORE, "Can not download file : " + fileName);
-		}
-		StreamingOutput stream = new StreamingOutput() {
-			@Override
-			public void write(OutputStream out) throws IOException, WebApplicationException {
-				try (InputStream inputStream = byteSource.openBufferedStream()) {
-					ByteStreams.copy(inputStream, out);
-				} finally {
-					out.close();
-				}
-			}
-		};
-		ResponseBuilder response = Response.ok(stream);
-		setHeaderToResponse(response, fileName, mimeType, fileSize);
 		return response;
 	}
 
 	public static ResponseBuilder getDocumentResponseBuilder(FileAndMetaData data) {
-		return getDocumentResponseBuilder(data.getByteSource(), data.getName(), data.getMimeType(), data.getSize());
+		if (data.getByteSource() == null) {
+			throw new TechnicalException(TechnicalErrorCode.MISSING_DOCUMENT_IN_FILEDATASTORE,
+					"Can not download file : " + data.getName());
+		}
+		StreamingOutput stream = new StreamingOutput() {
+			@Override
+			public void write(OutputStream out) throws IOException, WebApplicationException {
+				try (InputStream inputStream = data.getByteSource().openBufferedStream()) {
+					ByteStreams.copy(inputStream, out);
+				} finally {
+					out.close();
+					if (Objects.nonNull(data.getFile()) && !data.isTempFileDeleted()) {
+						data.getFile().delete();
+						data.setTempFileDeleted(true);
+					}
+				}
+			}
+		};
+		ResponseBuilder response = Response.ok(stream);
+		setHeaderToResponse(response, data.getName(), data.getMimeType(), data.getSize());
+		return response;
 	}
 
 	public static ResponseBuilder getDocumentResponseBuilderBase64(

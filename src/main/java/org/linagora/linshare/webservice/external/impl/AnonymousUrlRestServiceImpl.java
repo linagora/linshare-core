@@ -55,6 +55,7 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.facade.webservice.external.AnonymousUrlFacade;
 import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto;
 import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.webservice.external.AnonymousUrlRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
@@ -127,10 +128,10 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 				shareEntryUuid, password);
 		ByteSource documentStream = anonymousUrlFacade.download(urlUuid,
 				shareEntryUuid, password);
+		FileAndMetaData data = new FileAndMetaData(documentStream, shareEntry.getSize(),
+				shareEntry.getName(), shareEntry.getType());
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(documentStream,
-						shareEntry.getName(), shareEntry.getType(),
-						shareEntry.getSize());
+				.getDocumentResponseBuilder(data);
 		return response.build();
 	}
 

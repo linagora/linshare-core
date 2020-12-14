@@ -52,6 +52,7 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.collect.ImmutableList;
@@ -146,9 +147,10 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 
 		ByteSource file = documentEntryService.getByteSource(authUser, actor,
 				documentUuid);
+		FileAndMetaData data = new FileAndMetaData(file, doc.getSize(), doc.getName(), doc.getType());
+
 		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getDocumentResponseBuilder(file, doc.getName(), doc.getType(),
-						doc.getSize());
+				.getDocumentResponseBuilder(data);
 		return response.build();
 	}
 

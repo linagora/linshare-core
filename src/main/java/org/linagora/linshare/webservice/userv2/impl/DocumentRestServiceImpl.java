@@ -76,6 +76,7 @@ import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.annotations.NoCache;
@@ -297,8 +298,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	public Response download(@PathParam("uuid") String uuid) throws BusinessException {
 		DocumentDto documentDto = documentFacade.find(uuid, false);
 		ByteSource byteSource = documentFacade.getByteSource(uuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(byteSource,
-				documentDto.getName(), documentDto.getType(), documentDto.getSize());
+		FileAndMetaData data = new FileAndMetaData(byteSource, documentDto.getSize(),
+				documentDto.getName(), documentDto.getType());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return response.build();
 	}
 
