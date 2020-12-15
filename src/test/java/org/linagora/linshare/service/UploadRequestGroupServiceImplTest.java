@@ -299,7 +299,7 @@ public class UploadRequestGroupServiceImplTest {
 	public void closeGroupStatusIndividualWhenallNestedClosed() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit,
-				Lists.newArrayList(yoda, external2), "This is a subject", "This is a body", false);
+				contactList, "This is a subject", "This is a body", false);
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
 		Set<UploadRequest> urs = group.getUploadRequests();
 		assertStatus(urs, UploadRequestStatus.ENABLED);
@@ -323,7 +323,7 @@ public class UploadRequestGroupServiceImplTest {
 	public void closeGroupStatusIndividualWhenOneNestedClosed() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit,
-				Lists.newArrayList(yoda, external2), "This is a subject", "This is a body", false);
+				contactList, "This is a subject", "This is a body", false);
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
 		Set<UploadRequest> urs = group.getUploadRequests();
 		assertStatus(urs, UploadRequestStatus.ENABLED);
