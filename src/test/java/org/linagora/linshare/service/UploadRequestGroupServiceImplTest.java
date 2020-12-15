@@ -289,6 +289,54 @@ public class UploadRequestGroupServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	/**
+	 * Test ability to close (not automcatical) an URG in individual mode when all
+	 * nested UR are closed
+	 * 
+	 * @throws BusinessException
+	 */
+	@Test
+	public void closeGroupStatusIndividualWhenallNestedClosed() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit,
+				Lists.newArrayList(yoda, external2), "This is a subject", "This is a body", false);
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
+		Set<UploadRequest> urs = group.getUploadRequests();
+		assertStatus(urs, UploadRequestStatus.ENABLED);
+		// Close all nested URs
+		for (UploadRequest uploadRequest : urs) {
+			uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(),
+					UploadRequestStatus.CLOSED, false);
+		}
+		assertStatus(urs, UploadRequestStatus.CLOSED);
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
+		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	/**
+	 * Test ability to close URG individual with only one closed UR
+	 * 
+	 * @throws BusinessException
+	 */
+	@Test
+	public void closeGroupStatusIndividualWhenOneNestedClosed() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit,
+				Lists.newArrayList(yoda, external2), "This is a subject", "This is a body", false);
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
+		Set<UploadRequest> urs = group.getUploadRequests();
+		assertStatus(urs, UploadRequestStatus.ENABLED);
+		// Close one nested UR
+		UploadRequest uploadRequest_1 = group.getUploadRequests().iterator().next();
+		uploadRequestService.updateStatus(john, john, uploadRequest_1.getUuid(),UploadRequestStatus.CLOSED,false);
+		Assertions.assertEquals(UploadRequestStatus.CLOSED, uploadRequest_1.getStatus());
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
+		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		assertStatus(urs, UploadRequestStatus.CLOSED);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void update() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);

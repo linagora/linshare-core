@@ -365,6 +365,12 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				uploadRequestGroup.getUuid(), uploadRequestGroup);
 		uploadRequestGroup = uploadRequestGroupBusinessService.updateStatus(uploadRequestGroup, status);
 		for (UploadRequest uploadRequest : uploadRequestGroup.getUploadRequests()) {
+			if (!uploadRequest.getUploadRequestGroup().isCollective() && status.equals(uploadRequest.getStatus())) {
+				logger.debug(
+						"The group is individual ==> skip already updated UR's that had same status, Group status {} | UR status {}",
+						uploadRequest.getUploadRequestGroup().getStatus(), uploadRequest.getStatus());
+				continue;
+			}
 			uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status, copy);
 		}
 		groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
