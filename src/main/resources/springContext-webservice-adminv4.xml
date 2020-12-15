@@ -19,8 +19,9 @@
 
 	<!-- REST -->
 	<bean id="adminv4AuthenticationRestService" class="org.linagora.linshare.webservice.adminv4.impl.AuthenticationRestServiceImpl">
-		<constructor-arg ref="wsAdminGenericFacade" />
 		<constructor-arg ref="wsAdminUserFacade" />
+		<!--  weird: user facade -->
+		<constructor-arg ref="wsSecondFactorAuthenticationFacade" />
 	</bean>
 	
 	<bean id="adminv4UserRestService" class="org.linagora.linshare.webservice.adminv4.impl.UserRestServiceImpl">

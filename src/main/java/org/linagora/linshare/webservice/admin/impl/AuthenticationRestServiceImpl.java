@@ -44,7 +44,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
@@ -63,12 +62,9 @@ import io.swagger.v3.oas.annotations.Operation;
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
-	private final AdminGenericFacade adminFacade;
-
 	private final UserFacade userFacade;
 
-	public AuthenticationRestServiceImpl(final AdminGenericFacade adminFacade, final UserFacade userFacade) {
-		this.adminFacade = adminFacade;
+	public AuthenticationRestServiceImpl(final UserFacade userFacade) {
 		this.userFacade = userFacade;
 	}
 
@@ -90,7 +86,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	})
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return adminFacade.isAuthorized(Role.ADMIN);
+		return userFacade.isAuthorized(Role.ADMIN, 1);
 	}
 
 	@Path("/change_password")

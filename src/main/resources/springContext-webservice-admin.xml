@@ -16,7 +16,6 @@
 
 	<!-- REST -->
 	<bean id="adminAuthenticationRestService" class="org.linagora.linshare.webservice.admin.impl.AuthenticationRestServiceImpl">
-		<constructor-arg ref="wsAdminGenericFacade" />
 		<constructor-arg ref="wsAdminUserFacade" />
 	</bean>
 
@@ -118,7 +117,7 @@
 	</bean>
 
 	<bean id="adminSystemConfigurationRestService" class="org.linagora.linshare.webservice.admin.impl.SystemConfigurationRestServiceImpl">
-		<constructor-arg ref="wsAdminGenericFacade" />
+		<constructor-arg ref="wsAdminUserFacade" />
 	</bean>
 
 	<bean id="adminMailActivationRestService" class="org.linagora.linshare.webservice.admin.impl.MailActivationRestServiceImpl">

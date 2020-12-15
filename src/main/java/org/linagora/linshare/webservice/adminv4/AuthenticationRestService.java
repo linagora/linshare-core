@@ -38,6 +38,7 @@ package org.linagora.linshare.webservice.adminv4;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 
 public interface AuthenticationRestService {
 
@@ -50,4 +51,10 @@ public interface AuthenticationRestService {
 	void logout();
 
 	String getVersion();
+
+	SecondFactorDto get2FA(String uuid);
+
+	SecondFactorDto create2FA(SecondFactorDto sfd);
+
+	SecondFactorDto delete2FA(String uuid, SecondFactorDto sfd);
 }

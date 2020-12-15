@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 
@@ -74,10 +73,5 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 			}
 		}
 		return authUser;
-	}
-
-	@Override
-	public UserDto isAuthorized(Role role) throws BusinessException {
-		return UserDto.getFull(checkAuthentication(role));
 	}
 }

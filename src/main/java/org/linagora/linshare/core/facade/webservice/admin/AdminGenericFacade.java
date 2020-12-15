@@ -42,5 +42,4 @@ import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
 
 public interface AdminGenericFacade extends GenericFacade {
 
-	UserDto isAuthorized(Role role) throws BusinessException;
 }

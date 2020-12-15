@@ -440,4 +440,23 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		logger.info("End of email migration...");
 		return hasBeenUpdated;
 	}
+
+	@Override
+	public UserDto isAuthorized(Role role, Integer version) throws BusinessException {
+		User authUser = checkAuthentication(role);
+		UserDto dto = UserDto.getFull(authUser);
+		if (version >= 4) {
+			BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
+			if (twofaFunc.getActivationPolicy().getStatus()) {
+				dto.setSecondFAUuid(authUser.getLsUuid());
+				dto.setSecondFAEnabled(authUser.isUsing2FA());
+				dto.setSecondFARequired(twofaFunc.getValue());
+			} else {
+				dto.setSecondFAUuid(null);
+				dto.setSecondFAEnabled(false);
+				dto.setSecondFARequired(false);
+			}
+		}
+		return dto;
+	}
 }

@@ -39,6 +39,7 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.InconsistentSearchDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
@@ -79,4 +80,6 @@ public interface UserFacade extends AdminGenericFacade {
 	SecondFactorDto delete2FA(String userUuid, String secondFactorUuid, SecondFactorDto dto) throws BusinessException;
 
 	SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException;
+
+	UserDto isAuthorized(Role role, Integer version) throws BusinessException;
 }

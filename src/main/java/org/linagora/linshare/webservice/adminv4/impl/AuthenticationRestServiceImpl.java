@@ -36,22 +36,26 @@
 package org.linagora.linshare.webservice.adminv4.impl;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.SecondFactorAuthenticationFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv4.AuthenticationRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -64,13 +68,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
-	private final AdminGenericFacade adminFacade;
-
 	private final UserFacade userFacade;
 
-	public AuthenticationRestServiceImpl(final AdminGenericFacade adminFacade, final UserFacade userFacade) {
-		this.adminFacade = adminFacade;
+	// weird: using user facade.
+	protected final SecondFactorAuthenticationFacade secondFactorAuthenticationFacade;
+
+	public AuthenticationRestServiceImpl(
+			final UserFacade userFacade,
+			final SecondFactorAuthenticationFacade secondFactorAuthenticationFacade) {
 		this.userFacade = userFacade;
+		this.secondFactorAuthenticationFacade = secondFactorAuthenticationFacade;
 	}
 
 	@Path("/")
@@ -94,7 +101,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	)
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return adminFacade.isAuthorized(Role.ADMIN);
+		return userFacade.isAuthorized(Role.ADMIN, 4);
 	}
 
 	@Path("/change_password")
@@ -121,5 +128,51 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@Override
 	public String getVersion() {
 		return getCoreVersion();
+	}
+
+	@Path("/2fa/{uuid}")
+	@GET
+	@Operation(summary = "Get current 2FA state. use account uuid as 2FA uuid.", responses = {
+		@ApiResponse(
+			content = @Content(schema = @Schema(implementation = SecondFactorDto.class)),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public SecondFactorDto get2FA(
+			@Parameter(description = "Required 2FA's uuid to get (aka account uuid).", required = true)
+			@PathParam("uuid") String uuid
+			) {
+		return secondFactorAuthenticationFacade.find(uuid);
+	}
+
+	@Path("/2fa")
+	@POST
+	@Operation(summary = "Enable 2FA. A shared key will be computend and returned. This is the one and only time the shared key will be returned.", responses = {
+			@ApiResponse(
+				content = @Content(schema = @Schema(implementation = SecondFactorDto.class)),
+				responseCode = "200"
+			)
+		})
+	@Override
+	public SecondFactorDto create2FA(SecondFactorDto sfd) {
+		return secondFactorAuthenticationFacade.create(sfd);
+	}
+
+	@Path("/2fa/{uuid : .*}")
+	@DELETE
+	@Operation(summary = "Disable 2FA. Shared key will be remvoved.", responses = {
+			@ApiResponse(
+				content = @Content(schema = @Schema(implementation = SecondFactorDto.class)),
+				responseCode = "200"
+			)
+		})
+	@Override
+	public SecondFactorDto delete2FA(
+			@Parameter(description = "Optional 2FA 's uuid to delete.", required = true)
+			@PathParam("uuid") String uuid,
+			@Parameter(description = "Optional 2FA object to delete.", required = true)
+			SecondFactorDto sfd) {
+		return secondFactorAuthenticationFacade.delete(uuid, sfd);
 	}
 }
