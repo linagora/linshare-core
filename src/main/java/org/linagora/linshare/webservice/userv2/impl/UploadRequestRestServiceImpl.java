@@ -37,6 +37,7 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -49,11 +50,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.UploadRequestRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +77,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 
 	protected final Logger logger = LoggerFactory.getLogger(UploadRequestRestServiceImpl.class);
 
-	private final UploadRequestFacade uploadRequestFacade;
+	protected final UploadRequestFacade uploadRequestFacade;
 
 	public UploadRequestRestServiceImpl(UploadRequestFacade uploadRequestFacade) {
 		super();
@@ -146,6 +150,25 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 				@PathParam("uuid") String uploadRequestuuid)
 			throws BusinessException {
 		return uploadRequestFacade.findAllEntries(null, uploadRequestuuid);
+	}
+
+	@GET
+	@Path("/{uploadRequestUuid}/audit")
+	@Operation(summary = "Get all traces for a given Upload Request.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public Set<AuditLogEntryUser> findAllAudits(
+			@Parameter(description = "The upload request uuid.", required = true)
+				@PathParam("uploadRequestUuid") String uploadRequestUuid,
+			@Parameter(description = "List of actions", required = false)
+				@QueryParam("actions") List<LogAction> actions,
+			@Parameter(description = "Filter by type of resource's types", required = false)
+				@QueryParam("types") List<AuditLogEntryType> types) {
+		return uploadRequestFacade.findAllAudits(null, uploadRequestUuid, actions, types);
 	}
 
 }

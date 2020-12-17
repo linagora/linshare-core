@@ -37,11 +37,15 @@
 package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface UploadRequestRestService {
 
@@ -52,4 +56,7 @@ public interface UploadRequestRestService {
 	UploadRequestDto update(String uuid, UploadRequestDto uploadRequestDto);
 
 	List<UploadRequestEntryDto> findAllEntries(String uploadRequestuuid) throws BusinessException;
+	
+	Set<AuditLogEntryUser> findAllAudits(String actorUuid, List<LogAction> actions,
+			List<AuditLogEntryType> types);
 }

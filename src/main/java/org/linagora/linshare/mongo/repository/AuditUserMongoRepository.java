@@ -93,5 +93,11 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	// jwt LongTime
 	@Query("{ $or: [ {'resource.actorUuid' : ?0 } , {'resource.domainUuid' : ?1}], 'action' : { '$in' : ?2 }, 'type' :  ?3 }")
 	Set<AuditLogEntryUser> findAll(String actorUuid, String domainUuid, List<LogAction> action, AuditLogEntryType type, Sort sort);
+	
+	// Get audit traces of the given upload Request and related upload requests urls and upload request entries
+	// with ability to filter by actions (CREATE, UPDATE, ...) and types (UPLOAD_REQUEST, UPLOAD_REQUEST_URL, UPLOAD_REQUEST_ENRTY)
+	@Query("{'actor.uuid' : ?0, $or: [ {'resourceUuid' : ?1} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?1 }} } ], 'action' : {'$in' : ?2},'type' :  {'$in' : ?3}} ")
+	Set<AuditLogEntryUser> findAllUploadRequestAuditTraces(String actorUuid, String uploadRequestUuid,
+			List<LogAction> action, List<AuditLogEntryType> types, Sort sort);
 
 }

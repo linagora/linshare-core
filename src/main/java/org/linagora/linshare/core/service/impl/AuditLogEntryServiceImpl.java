@@ -54,7 +54,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -353,6 +352,17 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		List<LogAction> actionsList = getMailAttachmentActions(actions);
 		return auditMongoRepository.findAllAuditsByRoot(actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAllUploadRequestAudits(Account authUser, Account actor, String uploadRequestUuid,
+			List<LogAction> actions, List<AuditLogEntryType> types) {
+		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
+		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST);
+		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
+		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);
+		return userMongoRepository.findAllUploadRequestAuditTraces(actor.getLsUuid(), uploadRequestUuid,
+				getActions(actions), getEntryTypes(types, supportedTypes, true), Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
 }

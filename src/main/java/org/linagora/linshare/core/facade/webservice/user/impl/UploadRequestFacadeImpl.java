@@ -37,8 +37,11 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -49,7 +52,9 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -58,11 +63,15 @@ import com.google.common.collect.Lists;
 public class UploadRequestFacadeImpl extends GenericFacadeImpl implements UploadRequestFacade {
 
 	private final UploadRequestService uploadRequestService;
-
+	
+	private final AuditLogEntryService auditLogEntryService;
+	
 	public UploadRequestFacadeImpl(final AccountService accountService,
-			final UploadRequestService uploadRequestService) {
+			final UploadRequestService uploadRequestService,
+			final AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.uploadRequestService = uploadRequestService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -122,4 +131,14 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		List<UploadRequestEntry> uploadRequestEntries = uploadRequestService.findAllEntries(authUser, actor, uuid);
 		return  ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto()));
 	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAllAudits(String actorUuid, String uploadRequestUuid, List<LogAction> actions,
+			List<AuditLogEntryType> types) {
+		Account authUser = checkAuthentication();
+		Validate.notEmpty(uploadRequestUuid, "Upload request uuid must be set");
+		Account actor = getActor(authUser, actorUuid);
+		return auditLogEntryService.findAllUploadRequestAudits(authUser, actor, uploadRequestUuid, actions, types);
+	}
+
 }
