@@ -45,14 +45,6 @@ public class UploadRequestUrlMto {
 
 	private String uploadRequestUuid;
 
-	private String uuid;
-
-	private String path;
-
-	private String password;
-
-	private String temporaryPlainTextPassword;
-
 	private Date creationDate;
 
 	private Date modificationDate;
@@ -64,12 +56,8 @@ public class UploadRequestUrlMto {
 	}
 
 	public UploadRequestUrlMto(UploadRequestUrl url) {
-		this.uuid = url.getUuid();
 		this.contactMail = url.getContact().getMail();
 		this.uploadRequestUuid = url.getUploadRequest().getUuid();
-		this.path = url.getPath();
-		this.password = url.getPassword();
-		this.temporaryPlainTextPassword = url.getTemporaryPlainTextPassword();
 		this.uploadRequestGroupUuid = url.getUploadRequest().getUploadRequestGroup().getUuid();
 	}
 
@@ -87,38 +75,6 @@ public class UploadRequestUrlMto {
 
 	public void setUploadRequestUuid(String uploadRequestUuid) {
 		this.uploadRequestUuid = uploadRequestUuid;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getTemporaryPlainTextPassword() {
-		return temporaryPlainTextPassword;
-	}
-
-	public void setTemporaryPlainTextPassword(String temporaryPlainTextPassword) {
-		this.temporaryPlainTextPassword = temporaryPlainTextPassword;
 	}
 
 	public Date getCreationDate() {
