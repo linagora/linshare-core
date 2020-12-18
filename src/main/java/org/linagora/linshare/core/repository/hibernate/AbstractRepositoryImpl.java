@@ -39,6 +39,7 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.TransientObjectException;
 import org.hibernate.criterion.Criterion;
@@ -46,6 +47,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.HibernateTemplate;
@@ -232,4 +234,11 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
     	return hibernateTemplate.getSessionFactory().getCurrentSession();
     }
 
+	public PageContainer<T> findAll(DetachedCriteria crit, Long countElements, PageContainer<T> container) {
+		Criteria executableCriteria = crit.getExecutableCriteria(getCurrentSession());
+		executableCriteria.setFirstResult(container.getPageNumber() * container.getPageSize());
+		executableCriteria.setMaxResults(container.getPageSize());
+		List<T> list = listByCriteria(crit);
+		return new PageContainer<T>(container.getPageNumber(), container.getPageSize(), countElements, list);
+	}
 }

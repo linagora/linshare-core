@@ -84,6 +84,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.UserMto;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -1071,4 +1072,9 @@ public class UserServiceImpl implements UserService {
 		return accountToUnlock;
 	}
 
+	@Override
+	public PageContainer<User> findAll(User authUser, User actor, AbstractDomain domain,
+			PageContainer<User> container) {
+		return userRepository.findAll(domain, container);
+	}
 }

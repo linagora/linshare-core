@@ -46,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface UserFacade extends AdminGenericFacade {
 
@@ -82,4 +83,6 @@ public interface UserFacade extends AdminGenericFacade {
 	SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException;
 
 	UserDto isAuthorized(Role role, Integer version) throws BusinessException;
+
+	PageContainer<UserDto> findAll(String actorUuid, String domainUuid, Integer pageNumber, Integer pageSize);
 }

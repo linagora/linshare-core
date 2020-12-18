@@ -71,6 +71,8 @@ import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
+import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -96,6 +98,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	private final LogEntryService logEntryService;
 
 	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
+
+	PageContainerAdaptor<User, UserDto> pageConverterAdaptor = new PageContainerAdaptor<>();
 
 	public UserFacadeImpl(final AccountService accountService,
 			final UserService userService,
@@ -457,6 +461,20 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 				dto.setSecondFARequired(false);
 			}
 		}
+		return dto;
+	}
+
+	@Override
+	public PageContainer<UserDto> findAll(String actorUuid, String domainUuid, Integer pageNumber, Integer pageSize) {
+		User authUser = checkAuthentication(Role.ADMIN);
+		User actor = getActor(authUser, actorUuid);
+		PageContainer<User> container = new PageContainer<>(pageNumber, pageSize);
+		AbstractDomain domain = null;
+		if (!Strings.isNullOrEmpty(domainUuid)) {
+			domain = abstractDomainService.findById(domainUuid);
+		}
+		container = userService.findAll(authUser, actor, domain, container);
+		PageContainer<UserDto> dto = pageConverterAdaptor.convert(container, UserDto.toDto());
 		return dto;
 	}
 }

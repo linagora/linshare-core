@@ -49,7 +49,9 @@ import org.linagora.linshare.core.domain.entities.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -309,5 +311,17 @@ public class UserDto extends AccountDto {
 		} else if (!mail.equals(other.mail))
 			return false;
 		return true;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<User, UserDto> toDto() {
+		return new Function<User, UserDto>() {
+			@Override
+			public UserDto apply(User arg0) {
+				return new UserDto(arg0);
+			}
+		};
 	}
 }

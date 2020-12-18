@@ -33,45 +33,48 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.webservice.adminv5.impl;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.webservice.adminv5.UserRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
 
-public interface UserRepository<T extends User> extends AccountRepository<T> {
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-    /** Find a user using its mail.
-     * @param mail
-     * @return  user, null if not found.
-     */
-    T findByMail(String mail);
-    
-    /**
-     * Return a list of mails beginning with the text
-     * @param beginWith
-     * @return List<String>
-     */
-    List<String> findMails(String beginWith);
-    
-	List<T> findByCriteria(AccountOccupationCriteriaBean criteria);
+@Path("/users")
+public class UserRestServiceImpl implements UserRestService {
 
-	/** Find a user using its login.
-	 * @param login : ie mail or ldap uid.
-     * @return  user, null if not found.
-     */
-	T findByLogin(String login);
+	private final UserFacade userFacade;
 
-	/** Find a user using its domain and login.
-     * @param domain : domain identifier
-     * @param login : ie mail or ldap uid.
-     * @return  user, null if not found.
-     */
-	T findByLoginAndDomain(String domain, String login);
+	private PagingResponseBuilder<UserDto> pageResponseBuilder= new PagingResponseBuilder<>();
 
-	PageContainer<T> findAll(AbstractDomain domain, PageContainer<T> container);
-} 
+	public UserRestServiceImpl(
+			UserFacade userFacade) {
+		this.userFacade = userFacade;
+	}
+
+	@Path("/")
+	@GET
+	@Operation(summary = "Find all users.", responses = { @ApiResponse(responseCode = "200") })
+	@Override
+	public Response findAll(
+			@Parameter(description = "If the admin specify the domain he will retrieve the list of this domain, else all users of all domains will be returned.", required = false)
+				@QueryParam("domain") String domainUuid,
+			@Parameter(description = "The admin can choose the page number to visualize.", required = false)
+				@QueryParam("page") Integer pageNumber,
+			@Parameter(description = "The admin can choose the number of elements to visualize.", required = false)
+				@QueryParam("size") Integer pageSize) throws BusinessException {
+		PageContainer<UserDto> container = userFacade.findAll(null, domainUuid, pageNumber, pageSize);
+		return pageResponseBuilder.build(container);
+	}
+}

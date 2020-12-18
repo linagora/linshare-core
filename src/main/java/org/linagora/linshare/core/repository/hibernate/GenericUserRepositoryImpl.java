@@ -37,16 +37,20 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
 abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountRepositoryImpl<U> implements UserRepository<U> {
@@ -119,5 +123,27 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 				.setProjection(Projections.property("mail"));
 
 		return listByCriteria(crit);
+	}
+
+	@Override
+	public PageContainer<U> findAll(AbstractDomain domain, PageContainer<U> container) {
+		DetachedCriteria detachedCrit = getAllCriteria(domain);
+		detachedCrit.addOrder(Order.desc("modificationDate"));
+		return findAll(detachedCrit, count(domain), container);
+	}
+
+	private Long count(AbstractDomain domain) {
+		DetachedCriteria detachedCrit = getAllCriteria(domain);
+		detachedCrit.setProjection(Projections.rowCount());
+		return (Long) detachedCrit.getExecutableCriteria(getCurrentSession()).uniqueResult();
+	}
+
+	private DetachedCriteria getAllCriteria(AbstractDomain domain) {
+		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
+		detachedCrit.add(Restrictions.eq("destroyed", 0L));
+		if(!Objects.isNull(domain)) {
+			detachedCrit.add(Restrictions.eq("domain", domain));
+		}
+		return detachedCrit;
 	}
 }

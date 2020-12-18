@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2020 LINAGORA
+ * Copyright (C) 2020 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,45 +33,13 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.webservice.adminv5;
 
+import javax.ws.rs.core.Response;
 
-import java.util.List;
+import org.linagora.linshare.core.exception.BusinessException;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
-import org.linagora.linshare.webservice.utils.PageContainer;
+public interface UserRestService {
 
-public interface UserRepository<T extends User> extends AccountRepository<T> {
-
-    /** Find a user using its mail.
-     * @param mail
-     * @return  user, null if not found.
-     */
-    T findByMail(String mail);
-    
-    /**
-     * Return a list of mails beginning with the text
-     * @param beginWith
-     * @return List<String>
-     */
-    List<String> findMails(String beginWith);
-    
-	List<T> findByCriteria(AccountOccupationCriteriaBean criteria);
-
-	/** Find a user using its login.
-	 * @param login : ie mail or ldap uid.
-     * @return  user, null if not found.
-     */
-	T findByLogin(String login);
-
-	/** Find a user using its domain and login.
-     * @param domain : domain identifier
-     * @param login : ie mail or ldap uid.
-     * @return  user, null if not found.
-     */
-	T findByLoginAndDomain(String domain, String login);
-
-	PageContainer<T> findAll(AbstractDomain domain, PageContainer<T> container);
-} 
+	Response findAll(String domainUuid, Integer pageNumber, Integer pageSize) throws BusinessException;
+}
