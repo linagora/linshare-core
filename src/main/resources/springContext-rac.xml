@@ -98,4 +98,7 @@
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 	</bean>
 
+	<bean name="userResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UserResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 </beans>

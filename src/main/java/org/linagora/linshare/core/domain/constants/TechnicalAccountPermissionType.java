@@ -183,7 +183,9 @@ public enum TechnicalAccountPermissionType {
 	SAFE_DETAIL_CREATE,
 	SAFE_DETAIL_DELETE,
 	SAFE_DETAIL_GET,
-	SAFE_DETAIL_LIST;
+	SAFE_DETAIL_LIST,
+
+	USERS_LIST;
 
 	public static TechnicalAccountPermissionType fromString(String s) {
 		try {

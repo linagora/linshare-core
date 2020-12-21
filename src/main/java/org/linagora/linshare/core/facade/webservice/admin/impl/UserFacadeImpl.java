@@ -70,6 +70,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.UserService2;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
@@ -85,6 +86,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final UserService userService;
 
+	private final UserService2 userService2;
+
 	private final GuestService guestService;
 
 	protected final QuotaService quotaService;
@@ -99,7 +102,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	PageContainerAdaptor<User, UserDto> pageConverterAdaptor = new PageContainerAdaptor<>();
+	private final PageContainerAdaptor<User, UserDto> pageConverterAdaptor = new PageContainerAdaptor<>();
 
 	public UserFacadeImpl(final AccountService accountService,
 			final UserService userService,
@@ -110,7 +113,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			final UserProviderService userProviderService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
-			final LogEntryService logEntryService) {
+			final LogEntryService logEntryService,
+			final UserService2 userService2) {
 		super(accountService);
 		this.userService = userService;
 		this.inconsistentUserService = inconsistentUserService;
@@ -120,6 +124,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.logEntryService = logEntryService;
+		this.userService2 = userService2;
 	}
 
 	@Override
@@ -473,7 +478,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		if (!Strings.isNullOrEmpty(domainUuid)) {
 			domain = abstractDomainService.findById(domainUuid);
 		}
-		container = userService.findAll(authUser, actor, domain, container);
+		container = userService2.findAll(authUser, actor, domain, container);
 		PageContainer<UserDto> dto = pageConverterAdaptor.convert(container, UserDto.toDto());
 		return dto;
 	}

@@ -33,6 +33,12 @@
 		<constructor-arg ref="jwtLongTimeBusinessService"/>
 	</bean>
 
+	<bean name="userService2" class="org.linagora.linshare.core.service.impl.UserService2Impl">
+		<constructor-arg ref="userResourceAccessControl" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
+		<constructor-arg ref="userRepository" />
+	</bean>
+
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
 		<constructor-arg ref="internalRepository" />
 		<constructor-arg ref="abstractDomainService" />
