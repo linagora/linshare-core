@@ -53,7 +53,7 @@ public class PagingResponseBuilder<T> {
 	}
 
 	public Response build(PageContainer<T> container) {
-		ResponseBuilder response = Response.ok(container.getContentList());
+		ResponseBuilder response = Response.ok(container.getPageResponse().getContent());
 		setPagingHeaderToResponse(response, container);
 		return response.build();
 	}

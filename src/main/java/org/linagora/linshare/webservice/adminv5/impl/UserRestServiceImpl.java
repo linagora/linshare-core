@@ -70,11 +70,22 @@ public class UserRestServiceImpl implements UserRestService {
 	public Response findAll(
 			@Parameter(description = "If the admin specify the domain he will retrieve the list of this domain, else all users of all domains will be returned.", required = false)
 				@QueryParam("domain") String domainUuid,
+			@Parameter(description = "The admin can choose the creation date of the users' list to filter.", required = false)
+				@QueryParam("creationDate") String creationDate,
+			@Parameter(description = "The admin can choose the modification date of the users' list to filter.", required = false)
+				@QueryParam("modificationDate") String modificationDate,
+			@Parameter(description = "The admin can filter the users' list by mail adress.", required = false)
+				@QueryParam("mail") String mail,
+			@Parameter(description = "The admin can filter the users' list by first name.", required = false)
+				@QueryParam("firstName") String firstName,
+			@Parameter(description = "The admin can filter the users' list by last name.", required = false)
+				@QueryParam("lastName") String lastName,
 			@Parameter(description = "The admin can choose the page number to visualize.", required = false)
 				@QueryParam("page") Integer pageNumber,
 			@Parameter(description = "The admin can choose the number of elements to visualize.", required = false)
 				@QueryParam("size") Integer pageSize) throws BusinessException {
-		PageContainer<UserDto> container = userFacade.findAll(null, domainUuid, pageNumber, pageSize);
+		PageContainer<UserDto> container = userFacade.findAll(null, domainUuid, creationDate, modificationDate, mail,
+				firstName, lastName, pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}
 }

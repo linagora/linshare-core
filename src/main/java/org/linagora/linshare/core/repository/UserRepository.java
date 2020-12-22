@@ -73,5 +73,6 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
      */
 	T findByLoginAndDomain(String domain, String login);
 
-	PageContainer<T> findAll(AbstractDomain domain, PageContainer<T> container);
+	PageContainer<T> findAll(AbstractDomain domain, String creationDate, String modificationDate, String mail,
+			String firstName, String lastName, PageContainer<T> container);
 } 

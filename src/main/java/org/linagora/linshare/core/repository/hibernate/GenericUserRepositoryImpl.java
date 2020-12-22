@@ -53,6 +53,8 @@ import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
+import com.google.common.base.Strings;
+
 abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountRepositoryImpl<U> implements UserRepository<U> {
 
 	public GenericUserRepositoryImpl(HibernateTemplate hibernateTemplate) {
@@ -126,8 +128,18 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	}
 
 	@Override
-	public PageContainer<U> findAll(AbstractDomain domain, PageContainer<U> container) {
+	public PageContainer<U> findAll(AbstractDomain domain, String creationDate, String modificationDate, String mail,
+			String firstName, String lastName, PageContainer<U> container) {
 		DetachedCriteria detachedCrit = getAllCriteria(domain);
+		if (!Strings.isNullOrEmpty(mail)) {
+			detachedCrit.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
+		}
+		if (!Strings.isNullOrEmpty(firstName)) {
+			detachedCrit.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
+		}
+		if (!Strings.isNullOrEmpty(lastName)) {
+			detachedCrit.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
+		}
 		detachedCrit.addOrder(Order.desc("modificationDate"));
 		return findAll(detachedCrit, count(domain), container);
 	}

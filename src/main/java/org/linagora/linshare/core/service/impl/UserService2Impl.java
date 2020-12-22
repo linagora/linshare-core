@@ -57,9 +57,9 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 
 	@Override
 	public PageContainer<User> findAll(User authUser, User actor, AbstractDomain domain,
-			PageContainer<User> container) {
+			String creationDate, String modificationDate, String mail, String firstName, String lastName, PageContainer<User> container) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
-		return userRepository.findAll(domain, container);
+		return userRepository.findAll(domain, creationDate, modificationDate, mail, firstName, lastName, container);
 	}
 }

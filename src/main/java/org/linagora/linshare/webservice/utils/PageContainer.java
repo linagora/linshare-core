@@ -35,8 +35,6 @@ package org.linagora.linshare.webservice.utils;
 
 import java.util.List;
 
-import javax.ws.rs.core.GenericEntity;
-
 import org.jclouds.rest.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -165,10 +163,5 @@ public class PageContainer<T> {
 		this.pageNumber = page.getNumber();
 		this.pageSize = page.getNumberOfElements();
 		this.pageResponse.update(page);
-	}
-
-	public GenericEntity<List<T>> getContentList() {
-		return new GenericEntity<List<T>>(this.getPageResponse().getContent()) {
-		};
 	}
 }
