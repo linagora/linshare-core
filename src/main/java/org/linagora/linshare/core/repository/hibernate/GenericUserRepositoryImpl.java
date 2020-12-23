@@ -45,6 +45,8 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -129,7 +131,8 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 
 	@Override
 	public PageContainer<U> findAll(AbstractDomain domain, String creationDate, String modificationDate, String mail,
-			String firstName, String lastName, PageContainer<U> container) {
+			String firstName, String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role,
+			AccountType type, PageContainer<U> container) {
 		DetachedCriteria detachedCrit = getAllCriteria(domain);
 		if (!Strings.isNullOrEmpty(mail)) {
 			detachedCrit.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
@@ -139,6 +142,21 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		}
 		if (!Strings.isNullOrEmpty(lastName)) {
 			detachedCrit.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
+		}
+		if (Objects.nonNull(restricted)) {
+			detachedCrit.add(Restrictions.eq("restricted", restricted));
+		}
+		if (Objects.nonNull(canCreateGuest)) {
+			detachedCrit.add(Restrictions.eq("canCreateGuest", canCreateGuest));
+		}
+		if (Objects.nonNull(canUpload)) {
+			detachedCrit.add(Restrictions.eq("canUpload", canUpload));
+		}
+		if (Objects.nonNull(role)) {
+			detachedCrit.add(Restrictions.eq("role", role));
+		}
+		if (Objects.nonNull(type)) {
+			// to be added
 		}
 		detachedCrit.addOrder(Order.desc("modificationDate"));
 		return findAll(detachedCrit, count(domain), container);

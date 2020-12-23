@@ -41,6 +41,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UserRestService {
 
-	Response findAll(String domainUuid, String creationDate,
-			String modificationDate, String mail, String firstName, String lastName, Integer pageNumber, Integer pageSize) throws BusinessException;
+	Response findAll(String domainUuid, String creationDate, String modificationDate, String mail, String firstName,
+			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, String role, String type,
+			Integer pageNumber, Integer pageSize) throws BusinessException;
 }

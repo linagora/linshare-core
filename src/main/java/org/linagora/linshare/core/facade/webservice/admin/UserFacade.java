@@ -85,5 +85,6 @@ public interface UserFacade extends AdminGenericFacade {
 	UserDto isAuthorized(Role role, Integer version) throws BusinessException;
 
 	PageContainer<UserDto> findAll(String actorUuid, String domainUuid, String creationDate, String modificationDate,
-			String mail, String firstName, String lastName, Integer pageNumber, Integer pageSize);
+			String mail, String firstName, String lastName, Boolean restricted, Boolean canCreateGuest,
+			Boolean canUpload, String role, String type, Integer pageNumber, Integer pageSize);
 }

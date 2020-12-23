@@ -80,12 +80,22 @@ public class UserRestServiceImpl implements UserRestService {
 				@QueryParam("firstName") String firstName,
 			@Parameter(description = "The admin can filter the users' list by last name.", required = false)
 				@QueryParam("lastName") String lastName,
+			@Parameter(description = "The admin can filter the restricted users' list.", required = false)
+				@QueryParam("restricted") Boolean restricted,
+			@Parameter(description = "The admin can retrieve the users whose can create guest.", required = false)
+				@QueryParam("canCreateGuest") Boolean canCreateGuest,
+			@Parameter(description = "The admin can retrieve the users whose can upload.", required = false)
+				@QueryParam("canUpload") Boolean canUpload,
+			@Parameter(description = "The admin can retrieve the users with a choosen role.", required = false)
+				@QueryParam("role") String role,
+			@Parameter(description = "The admin can retrieve the users with a choosen type.", required = false)
+				@QueryParam("type") String type,
 			@Parameter(description = "The admin can choose the page number to visualize.", required = false)
 				@QueryParam("page") Integer pageNumber,
 			@Parameter(description = "The admin can choose the number of elements to visualize.", required = false)
 				@QueryParam("size") Integer pageSize) throws BusinessException {
 		PageContainer<UserDto> container = userFacade.findAll(null, domainUuid, creationDate, modificationDate, mail,
-				firstName, lastName, pageNumber, pageSize);
+				firstName, lastName, restricted, canCreateGuest, canUpload, role, type, pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}
 }

@@ -38,6 +38,8 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
@@ -74,5 +76,6 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
 	T findByLoginAndDomain(String domain, String login);
 
 	PageContainer<T> findAll(AbstractDomain domain, String creationDate, String modificationDate, String mail,
-			String firstName, String lastName, PageContainer<T> container);
+			String firstName, String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role,
+			AccountType type, PageContainer<T> container);
 } 

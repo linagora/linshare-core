@@ -40,5 +40,6 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 public interface UserService2 {
 
 	public PageContainer<User> findAll(User authUser, User actor, AbstractDomain domain, String creationDate,
-			String modificationDate, String mail, String firstName, String lastName, PageContainer<User> container);
+			String modificationDate, String mail, String firstName, String lastName, Boolean restricted,
+			Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container);
 }
