@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2020 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2021. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.List;
-
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -43,59 +41,68 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.rac.UserResourceAccessControl;
+import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.UserService2;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 public class UserService2Impl extends GenericServiceImpl<Account, User> implements UserService2 {
 
 	private final UserRepository<User> userRepository;
 
+	private final UserService userService;
+
 	public UserService2Impl(
-			UserResourceAccessControl rac,
+			AbstractResourceAccessControl<Account, Account, User> rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			UserRepository<User> userRepository) {
+			UserRepository<User> userRepository,
+			UserService userService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.userRepository = userRepository;
+		this.userService = userService;
 	}
 
 	@Override
-	public PageContainer<User> findAll(User authUser, User actor, AbstractDomain domain, String creationDate,
+	public PageContainer<User> findAll(Account authUser, Account actor, AbstractDomain domain, String creationDate,
 			String modificationDate, String mail, String firstName, String lastName, Boolean restricted,
 			Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
-		Role checkedRole = checkEnteredRole(role);
-		AccountType checkedAccountType = checkEnteredType(type);
+		Role checkedRole = !Strings.isNullOrEmpty(role) ? Role.valueOf(role) : null;
+		AccountType checkedAccountType = !Strings.isNullOrEmpty(type) ? AccountType.valueOf(type) : null;
 		return userRepository.findAll(domain, creationDate, modificationDate, mail, firstName, lastName, restricted,
 				canCreateGuest, canUpload, checkedRole, checkedAccountType, container);
 	}
 
-	private Role checkEnteredRole(String input) {
-		List<Role> roles = Lists.newArrayList(Role.values());
-		Role role = null;
-		if (!Strings.isNullOrEmpty(input) && !roles.contains(Role.valueOf(input))) {
-			throw new BusinessException(BusinessErrorCode.ROLE_NOT_FOUND,
-					"Role not found, please check the entered role.");
-		} else if (!Strings.isNullOrEmpty(input)) {
-			role = Role.valueOf(input);
-		}
-		return role;
+	@Override
+	public User findByLsUuid(Account authUser, Account actor, String lsUuid) {
+		preChecks(authUser, actor);
+		checkReadPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
+		return userService.findByLsUuid(lsUuid);
 	}
 
-	private AccountType checkEnteredType(String input) {
-		List<AccountType> types = Lists.newArrayList(AccountType.values());
-		AccountType type = null;
-		if (!Strings.isNullOrEmpty(input) && !types.contains(AccountType.valueOf(input))) {
-			throw new BusinessException(BusinessErrorCode.TYPE_NOT_FOUND,
-					"Account type not found, please check the entered type.");
-		} else if (!Strings.isNullOrEmpty(input)) {
-			type = AccountType.valueOf(input);
-		}
-		return type;
+	@Override
+	public User unlockUser(Account authUser, Account actor, User accountToUnlock) throws BusinessException {
+		preChecks(authUser, actor);
+		checkUpdatePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
+		return userService.unlockUser(authUser, accountToUnlock);
+	}
+
+	@Override
+	public User updateUser(Account authUser, Account actor, User enteredUser, String domainId)
+			throws BusinessException {
+		preChecks(authUser, actor);
+		checkUpdatePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
+		return userService.updateUser(actor, enteredUser, domainId);
+	}
+
+	@Override
+	public User deleteUser(Account authUser, Account actor, String lsUuid) throws BusinessException {
+		preChecks(authUser, actor);
+		checkDeletePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
+		return userService.deleteUser(actor, lsUuid);
 	}
 }

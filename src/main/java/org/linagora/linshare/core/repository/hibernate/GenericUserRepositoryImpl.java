@@ -156,7 +156,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 			detachedCrit.add(Restrictions.eq("role", role));
 		}
 		if (Objects.nonNull(type)) {
-			// to be added
+			detachedCrit.add(Restrictions.in("class", type.toInt()));
 		}
 		detachedCrit.addOrder(Order.desc("modificationDate"));
 		return findAll(detachedCrit, count(domain), container);

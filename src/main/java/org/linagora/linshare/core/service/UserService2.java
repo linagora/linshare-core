@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2020 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2021. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -34,12 +34,22 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface UserService2 {
 
-	public PageContainer<User> findAll(User authUser, User actor, AbstractDomain domain, String creationDate,
+	public PageContainer<User> findAll(Account authUser, Account actor, AbstractDomain domain, String creationDate,
 			String modificationDate, String mail, String firstName, String lastName, Boolean restricted,
 			Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container);
+
+	public User findByLsUuid(Account authUser, Account actor, String lsUuid);
+
+	public User updateUser(Account authUser, Account actor, User enteredUser, String domainId) throws BusinessException;
+
+	public User deleteUser(Account authUser, Account actor, String uuid);
+
+	public User unlockUser(Account authUser, Account actor, User accountToUnlock) throws BusinessException;
 }

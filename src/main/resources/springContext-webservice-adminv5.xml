@@ -17,7 +17,7 @@
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
 	<bean id="adminv5UserRestService" class="org.linagora.linshare.webservice.adminv5.impl.UserRestServiceImpl">
-		<constructor-arg ref="wsAdminUserFacade" />
+		<constructor-arg ref="wsAdminV5UserFacade" />
 	</bean>
 
 	<jaxrs:server id="restAdminV5Container" address="/rest/admin/v5">

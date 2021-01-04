@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2020 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2021. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -34,8 +34,11 @@
 package org.linagora.linshare.webservice.utils;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.jclouds.rest.ResourceNotFoundException;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,19 +62,20 @@ public class PageContainer<T> {
 	}
 
 	public PageContainer(Integer pageNumber, Integer pageSize) {
-		this.pageSize = pageSize;
-		this.pageNumber = pageNumber;
-		this.enabled = !(pageNumber == -1 && pageSize == -1);
+		this.pageSize = Objects.nonNull(pageSize) ? pageSize : DEFAULT_PAGE_REQUEST.getPageSize();
+		this.pageNumber = Objects.nonNull(pageNumber) ? pageNumber : DEFAULT_PAGE_REQUEST.getPageNumber();
+		this.enabled = getPagingStatus(pageNumber, pageSize);
 		this.pageResponse = new PageResponse<>();
 	}
 
 	public PageContainer(Integer pageNumber, Integer pageSize, Long totalElements, List<T> list) {
 		super();
-		// Pagination feature is enabled if all pagination attributes equal -1
-		this.enabled = !(pageNumber == -1 && pageSize == -1);
+		// Pagination feature is disabled if all pagination attributes equal -1
+		this.enabled = getPagingStatus(pageNumber, pageSize);
 		if (enabled) {
 			if (pageNumber < 0) {
-				throw new ResourceNotFoundException("Page number can not be less than 0");
+				throw new BusinessException(BusinessErrorCode.PAGE_PARAMETERS_FORBIDDEN,
+						"Page number can not be less than 0");
 			}
 			this.pageNumber = pageNumber;
 			if (pageSize <= 0) {
@@ -83,8 +87,10 @@ public class PageContainer<T> {
 			Boolean isFirst = isFirst(this.pageNumber, this.pageSize, totalPage, totalElements);
 			Boolean isLast = isLast(totalPage, totalElements.intValue());
 			this.pageResponse = new PageResponse<T>(totalElements, totalPage, list, isFirst, isLast);
-			if ((pageNumber + 1 > this.pageResponse.getTotalPages()) || (pageSize > totalElements) && (!list.isEmpty()) && !this.pageResponse.isLast()) {
-				throw new ResourceNotFoundException("Please check the number of the requested page");
+			if ((pageNumber + 1 > this.pageResponse.getTotalPages())
+					|| (pageSize > totalElements) && (!list.isEmpty()) && !this.pageResponse.isLast()) {
+				throw new BusinessException(BusinessErrorCode.PAGE_PARAMETERS_FORBIDDEN,
+						"Please check the number of the requested page");
 			}
 		}
 	}
@@ -163,5 +169,11 @@ public class PageContainer<T> {
 		this.pageNumber = page.getNumber();
 		this.pageSize = page.getNumberOfElements();
 		this.pageResponse.update(page);
+	}
+
+	public Boolean getPagingStatus(Integer pageNumber, Integer pageSize) {
+		return ((Objects.isNull(pageNumber) && Objects.isNull(pageSize)) || (pageNumber == -1 && pageSize == -1))
+				? false
+				: true;
 	}
 }

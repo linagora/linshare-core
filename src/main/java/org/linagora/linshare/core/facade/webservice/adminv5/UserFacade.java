@@ -31,22 +31,22 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.utils;
+package org.linagora.linshare.core.facade.webservice.adminv5;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
-public class PageContainerAdaptor <T, U> {
+public interface UserFacade extends AdminGenericFacade {
 
-	public PageContainer<U> convert(PageContainer<T> pc, Function<T, U> convert) {
-		ImmutableList<U> list = ImmutableList.copyOf(Lists.transform(pc.getPageResponse().getContent(), convert));
-		PageContainer<U> container = new PageContainer<U>();
-		container.setPageSize(pc.getPageSize());
-		container.setPageNumber(pc.getPageNumber());
-		container.setPageResponse(
-				new PageResponse<>(pc.getPageResponse().getTotalElements(), pc.getPageResponse().getTotalPages(), list,
-						pc.getPageResponse().isFirst(), pc.getPageResponse().isLast()));
-		return container;
-	}
+	PageContainer<UserDto> findAll(String actorUuid, String domainUuid, String creationDate, String modificationDate,
+			String mail, String firstName, String lastName, Boolean restricted, Boolean canCreateGuest,
+			Boolean canUpload, String role, String type, Integer pageNumber, Integer pageSize);
+
+	UserDto findUser(String actorUuid, String uuid);
+
+	UserDto update(String actorUuid, UserDto userDto, String uuid) throws BusinessException;
+
+	UserDto delete(String actorUuid, UserDto userDto, String uuid) throws BusinessException;
 }

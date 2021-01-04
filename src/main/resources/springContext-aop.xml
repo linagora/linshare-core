@@ -15,6 +15,7 @@
     <aop:pointcut id="linshareCoreServiceFacadeMethods"
                   expression="execution(* org.linagora.linshare.core.facade.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.webservice.admin.*.*(..))
+                              or execution(* org.linagora.linshare.core.facade.webservice.adminv5.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.webservice.user.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.webservice.uploadrequest.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.webservice.delegation.*.*(..))

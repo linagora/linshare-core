@@ -382,8 +382,8 @@ public enum BusinessErrorCode implements ErrorCode {
 	MAIL_ATTACHMENT_NOT_FOUND(56404, Status.NOT_FOUND),
 	MAIL_ATTACHMENT_CAN_NOT_READ(56403,Status.FORBIDDEN),
 
-	ROLE_NOT_FOUND(57000, Status.NOT_FOUND),
-	TYPE_NOT_FOUND(57001, Status.NOT_FOUND);
+	PAGE_PARAMETERS_FORBIDDEN(57000, Status.FORBIDDEN);
+
 
 	private final int code;
 

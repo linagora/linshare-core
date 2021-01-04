@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2020 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -11,7 +11,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display in the interface of the “LinShare™”
  * trademark/logo, the "Libre & Free" mention, the words “You are using the Free
- * and Open Source version of LinShare™, powered by Linagora © 2009–2020.
+ * and Open Source version of LinShare™, powered by Linagora © 2009–2021.
  * Contribute to Linshare R&D by subscribing to an Enterprise offer!”. You must
  * also retain the latter notice in all asynchronous messages such as e-mails
  * sent with the Program, (ii) retain all hypertext links between LinShare and
@@ -35,13 +35,16 @@
  */
 package org.linagora.linshare.webservice.adminv5.impl;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.webservice.adminv5.UserRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
@@ -49,6 +52,9 @@ import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/users")
@@ -68,7 +74,7 @@ public class UserRestServiceImpl implements UserRestService {
 	@Operation(summary = "Find all users.", responses = { @ApiResponse(responseCode = "200") })
 	@Override
 	public Response findAll(
-			@Parameter(description = "If the admin specify the domain he will retrieve the list of this domain, else all users of all domains will be returned.", required = false)
+			@Parameter(description = "If the admin specify the domain he will retrieve the list of the choosen domain, else all users of all domains will be returned.", required = false)
 				@QueryParam("domain") String domainUuid,
 			@Parameter(description = "The admin can choose the creation date of the users' list to filter.", required = false)
 				@QueryParam("creationDate") String creationDate,
@@ -97,5 +103,52 @@ public class UserRestServiceImpl implements UserRestService {
 		PageContainer<UserDto> container = userFacade.findAll(null, domainUuid, creationDate, modificationDate, mail,
 				firstName, lastName, restricted, canCreateGuest, canUpload, role, type, pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
+	}
+
+	@Path("/{uuid}")
+	@GET
+	@Operation(summary = "Find a user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public UserDto find(
+			@Parameter(description = "The admin can find a user with the entered uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
+		return userFacade.findUser(null, uuid);
+	}
+
+	@Path("/{uuid: .*}")
+	@PUT
+	@Operation(summary = "Update a user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public UserDto update(
+			@Parameter(description = "User to update", required = false) UserDto userDto,
+			@Parameter(description = "User's uuid to update, if null object is used", required = false)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return userFacade.update(null, userDto, uuid);
+	}
+
+	@Path("/{uuid: .*}")
+	@DELETE
+	@Operation(summary = "Delete an user.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public UserDto delete(
+			@Parameter(description = "User to delete.", required = false) UserDto userDto,
+			@Parameter(description = "User's uuid to delete, if null object is used", required = false)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return userFacade.delete(null, userDto, uuid);
 	}
 }

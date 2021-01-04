@@ -70,10 +70,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.core.service.UserService2;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
-import org.linagora.linshare.webservice.utils.PageContainer;
-import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -85,8 +82,6 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	final private static int AUTO_COMPLETE_LIMIT = 20;
 
 	private final UserService userService;
-
-	private final UserService2 userService2;
 
 	private final GuestService guestService;
 
@@ -102,8 +97,6 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	private final PageContainerAdaptor<User, UserDto> pageConverterAdaptor = new PageContainerAdaptor<>();
-
 	public UserFacadeImpl(final AccountService accountService,
 			final UserService userService,
 			final InconsistentUserService inconsistentUserService,
@@ -113,8 +106,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			final UserProviderService userProviderService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
-			final LogEntryService logEntryService,
-			final UserService2 userService2) {
+			final LogEntryService logEntryService) {
 		super(accountService);
 		this.userService = userService;
 		this.inconsistentUserService = inconsistentUserService;
@@ -124,7 +116,6 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.logEntryService = logEntryService;
-		this.userService2 = userService2;
 	}
 
 	@Override
@@ -466,23 +457,6 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 				dto.setSecondFARequired(false);
 			}
 		}
-		return dto;
-	}
-
-	@Override
-	public PageContainer<UserDto> findAll(String actorUuid, String domainUuid, String creationDate,
-			String modificationDate, String mail, String firstName, String lastName, Boolean restricted,
-			Boolean canCreateGuest, Boolean canUpload, String role, String type, Integer pageNumber, Integer pageSize) {
-		User authUser = checkAuthentication(Role.ADMIN);
-		User actor = getActor(authUser, actorUuid);
-		PageContainer<User> container = new PageContainer<>(pageNumber, pageSize);
-		AbstractDomain domain = null;
-		if (!Strings.isNullOrEmpty(domainUuid)) {
-			domain = abstractDomainService.findById(domainUuid);
-		}
-		container = userService2.findAll(authUser, actor, domain, creationDate, modificationDate, mail, firstName,
-				lastName, restricted, canCreateGuest, canUpload, role, type, container);
-		PageContainer<UserDto> dto = pageConverterAdaptor.convert(container, UserDto.toDto());
 		return dto;
 	}
 }
