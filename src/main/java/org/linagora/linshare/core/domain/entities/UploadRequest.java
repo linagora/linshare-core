@@ -89,7 +89,7 @@ public class UploadRequest implements Cloneable {
 
 	private Boolean notified = Boolean.valueOf(false);
 
-	private Boolean dirty = Boolean.valueOf(false);
+	private Boolean pristine = Boolean.valueOf(true);
 
 	private Boolean enableNotification = Boolean.valueOf(true);
 
@@ -314,12 +314,12 @@ public class UploadRequest implements Cloneable {
 		return req;
 	}
 
-	public Boolean getDirty() {
-		return dirty;
+	public Boolean isPristine() {
+		return pristine;
 	}
 
-	public void setDirty(Boolean dirty) {
-		this.dirty = dirty;
+	public void setPristine(Boolean pristine) {
+		this.pristine = pristine;
 	}
 
 	public Boolean getEnableNotification() {
@@ -415,7 +415,7 @@ public class UploadRequest implements Cloneable {
 				+ ", expiryDate=" + expiryDate + ", canDelete=" + canDelete + ", canClose=" + canClose
 				+ ", canEditExpiryDate=" + canEditExpiryDate + ", locale=" + locale + ", secured=" + secured
 				+ ", mailMessageId=" + mailMessageId + ", uploadRequestURLs=" + uploadRequestURLs
-				+ ", uploadRequestHistory=" + uploadRequestHistory + ", notified=" + notified + ", dirty=" + dirty
+				+ ", uploadRequestHistory=" + uploadRequestHistory + ", notified=" + notified + ", pristine=" + pristine
 				+ ", enableNotification=" + enableNotification + "]";
 	}
 	

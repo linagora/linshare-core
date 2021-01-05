@@ -88,6 +88,9 @@ DROP VIEW IF EXISTS alias_threads_list_active;
 DROP VIEW IF EXISTS alias_threads_list_destroyed;
 -- Here your request
 
+-- Rename dirty to pristine in upload_request table
+ALTER TABLE upload_request RENAME COLUMN dirty TO pristine;
+
 -- Activation of Upload_Request Functionality
 UPDATE policy SET system = false, status = true, default_status = true WHERE id = 63;
 

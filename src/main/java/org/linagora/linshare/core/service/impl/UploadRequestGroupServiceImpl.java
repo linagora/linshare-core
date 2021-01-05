@@ -400,7 +400,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		group.setBusinessLocale(uploadRequestGroup.getLocale());
 		group.setBusinessEnableNotification(uploadRequestGroup.getEnableNotification());
 		for (UploadRequest uploadRequest : group.getUploadRequests()) {
-			if (!uploadRequest.getDirty()) {
+			if (uploadRequest.isPristine()) {
 				setUploadRequest(uploadRequest, group);
 				uploadRequestService.updateRequest(authUser, actor, uploadRequest);
 			}

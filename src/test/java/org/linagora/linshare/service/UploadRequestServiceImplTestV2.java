@@ -259,7 +259,7 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertEquals(uRequest.isCanClose(), false);
 		Assertions.assertEquals(uRequest.getMaxDepositSize(), Long.valueOf(150));
 		Assertions.assertEquals(uRequest.getEnableNotification(), true);
-		Assertions.assertEquals(uRequest.getDirty(), true);
+		Assertions.assertEquals(uRequest.isPristine(), false);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

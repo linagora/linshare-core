@@ -116,7 +116,7 @@ public class UploadRequestMto {
 		this.canClose = request.isCanClose();
 		this.canDelete = request.isCanDelete();
 		this.canEditExpiryDate = request.isCanEditExpiryDate();
-		this.dirtyLocalConf = request.getDirty();
+		this.dirtyLocalConf = !request.isPristine();
 		this.enableNotification = request.getEnableNotification();
 		this.statusUpdated = false;
 	}
@@ -139,7 +139,7 @@ public class UploadRequestMto {
 		this.canClose = request.isCanClose();
 		this.canDelete = request.isCanDelete();
 		this.canEditExpiryDate = request.isCanEditExpiryDate();
-		this.dirtyLocalConf = request.getDirty();
+		this.dirtyLocalConf = !request.isPristine();
 		this.enableNotification = request.getEnableNotification();
 		this.statusUpdated = statusUpdated;
 	}

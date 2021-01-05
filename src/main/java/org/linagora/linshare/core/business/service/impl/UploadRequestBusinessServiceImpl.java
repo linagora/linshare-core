@@ -86,8 +86,8 @@ public class UploadRequestBusinessServiceImpl implements
 
 	@Override
 	public UploadRequest updateStatus(UploadRequest req, UploadRequestStatus status) throws BusinessException {
-		if (req.getDirty() == false) {
-			req.setDirty(true);
+		if (req.isPristine()) {
+			req.setPristine(false);
 		}
 		req.updateStatus(status);
 		req = uploadRequestRepository.update(req);
@@ -107,7 +107,7 @@ public class UploadRequestBusinessServiceImpl implements
 		req.setBusinessEnableNotification(object.getEnableNotification());
 		req.setBusinessCanEditExpiryDate(object.isCanEditExpiryDate());
 		req.setBusinessNotificationDate(object.getNotificationDate());
-		req.setDirty(true);
+		req.setPristine(false);
 		req.setModificationDate(new Date());
 		return uploadRequestRepository.update(req);
 	}

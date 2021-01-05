@@ -467,7 +467,7 @@ CREATE TABLE upload_request (
   can_close                       bool NOT NULL,
   can_edit_expiry_date            bool NOT NULL,
   locale                          varchar(255) NOT NULL,
-  dirty                           bool NOT NULL,
+  pristine                        bool NOT NULL,
   enable_notification             bool NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request_url (
