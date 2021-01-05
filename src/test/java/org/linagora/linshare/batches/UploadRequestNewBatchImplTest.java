@@ -158,6 +158,9 @@ public class UploadRequestNewBatchImplTest {
 			Assertions.assertEquals(u.getUuid(), l.get(i));
 			Assertions.assertEquals(u.getStatus(), UploadRequestStatus.ENABLED);
 		}
+		// Test that if the first UR is enabled the related group will be enabled
+		UploadRequest uploadRequest = uploadRequestRepository.findByUuid(l.get(0));
+		Assertions.assertEquals(uploadRequest.getUploadRequestGroup().getStatus(), UploadRequestStatus.ENABLED);
 		l = notifyBeforeExpirationUploadResquestBatch.getAll(batchRunContext);
 		Assertions.assertEquals(l.size(), 3);
 		for (i = 0; i < l.size(); i++) {

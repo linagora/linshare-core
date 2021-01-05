@@ -39,10 +39,12 @@ package org.linagora.linshare.core.batches.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.EnableUploadRequestBatch;
+import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
@@ -55,11 +57,15 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 
 	private final UploadRequestService uploadRequestService;
 
+	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
+
 	public EnableUploadRequestBatchImpl(
 			AccountRepository<Account> accountRepository,
-			final UploadRequestService uploadRequestService) {
+			final UploadRequestService uploadRequestService,
+			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService) {
 		super(accountRepository);
 		this.uploadRequestService = uploadRequestService;
+		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 	}
 
 	@Override
@@ -81,6 +87,12 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 		console.logInfo(batchRunContext, total, position, "processing upload request : ", uploadRequest.getUuid());
 		uploadRequest = uploadRequestService.updateStatus(account, uploadRequest.getUploadRequestGroup().getOwner(),
 				identifier, UploadRequestStatus.ENABLED, false);
+		UploadRequestGroup group = uploadRequest.getUploadRequestGroup();
+		if (group.getStatus().equals(UploadRequestStatus.ENABLED)) {
+			logger.debug("The URG {} is already enabled", group);
+		} else {
+			uploadRequestGroupBusinessService.updateStatus(group, UploadRequestStatus.ENABLED);
+		}
 		context.setProcessed(true);
 		return context;
 	}
