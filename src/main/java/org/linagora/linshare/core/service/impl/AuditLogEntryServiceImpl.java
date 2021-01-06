@@ -48,6 +48,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -365,4 +366,10 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 				getActions(actions), getEntryTypes(types, supportedTypes, true), Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
+	@Override
+	public Set<AuditLogEntryUser> findAllUploadRequestEntryAudits(Account authUser, Account actor,
+			String uploadRequestEntryUuid, List<LogAction> actions) {
+		return userMongoRepository.findAllUploadRequestEntryAuditTraces(actor.getLsUuid(), uploadRequestEntryUuid,
+				getActions(actions), Sort.by(Sort.Direction.DESC, CREATION_DATE));
+	}
 }

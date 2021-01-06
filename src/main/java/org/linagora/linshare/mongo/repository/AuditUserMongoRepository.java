@@ -99,5 +99,17 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	@Query("{'actor.uuid' : ?0, $or: [ {'resourceUuid' : ?1} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?1 }} } ], 'action' : {'$in' : ?2},'type' :  {'$in' : ?3}} ")
 	Set<AuditLogEntryUser> findAllUploadRequestAuditTraces(String actorUuid, String uploadRequestUuid,
 			List<LogAction> action, List<AuditLogEntryType> types, Sort sort);
+	
+	/**
+	 * Get audit traces of a given upload request entry with ability to filter by actions
+	 * @param actorUuid 
+	 * @param uploadRequestEntryUuid
+	 * @param actions
+	 * @param sort by default with creation Date in DESC order
+	 * @return a Set of AuditLogEntryUser
+	 */
+	@Query("{'actor.uuid' : ?0 , 'resourceUuid' : ?1 , 'action' : {'$in' : ?2}}")
+	Set<AuditLogEntryUser> findAllUploadRequestEntryAuditTraces(String actorUuid, String uploadRequestEntryUuid,
+			List<LogAction> actions, Sort sort);
 
 }
