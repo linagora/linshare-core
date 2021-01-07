@@ -60,11 +60,10 @@ public class NullPointerExceptionMapper implements ExceptionMapper<NullPointerEx
 
 	@Override
 	public Response toResponse(NullPointerException exception) {
-		logger.error("Bad data format : " + exception.getLocalizedMessage() + ". ",
-				exception);
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_BAD_REQUEST_NULL_POINTER_EXCEPTION.getCode(),
-				"Bad data format : " + exception.toString()
-				+ ", " + exception.getClass().toString());
+				"Bad data format : " + exception.getMessage()
+				+ ". Exception: " + exception.toString());
+		logger.debug(errorDto.toString());
 		ResponseBuilder response = Response.status(Status.BAD_REQUEST);
 		exceptionStatisticFacade.createExceptionStatistic(null, exception.getStackTrace(), ExceptionType.NULL_POINTER_EXCEPTION);
 		response.entity(errorDto);

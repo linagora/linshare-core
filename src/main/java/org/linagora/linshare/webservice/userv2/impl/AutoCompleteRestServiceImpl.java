@@ -88,7 +88,7 @@ public class AutoCompleteRestServiceImpl implements AutoCompleteRestService {
 				@QueryParam("type") String type,
 			@Parameter(description = "If your are looking for thread members, you must fill this parameter.", required = false)
 				@QueryParam("threadUuid") String threadUuid) {
-		Validate.notEmpty(type, "Type must be set.");
+		Validate.notEmpty(type, "Query param named type is required.");
 		Validate.notEmpty(pattern, "Pattern must be set.");
 		return autoCompleteFacade.search(pattern, type, threadUuid);
 	}

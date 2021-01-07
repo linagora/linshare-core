@@ -43,10 +43,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(name = "Error", description = "An error")
 public class ErrorDto {
 
-    @Schema(description = "Message")
+	@Schema(description = "Message")
 	protected String message;
 
-    @Schema(description = "ErrCode")
+	@Schema(description = "Error code")
 	protected int errCode;
 
 	public ErrorDto(int errCode, String message) {
@@ -73,4 +73,10 @@ public class ErrorDto {
 	public void setErrCode(int errCode) {
 		this.errCode = errCode;
 	}
+
+	@Override
+	public String toString() {
+		return "ErrorDto [message=" + message + ", errCode=" + errCode + "]";
+	}
+
 }
