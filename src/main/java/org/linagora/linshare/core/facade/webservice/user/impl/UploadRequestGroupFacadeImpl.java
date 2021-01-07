@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
@@ -162,6 +163,21 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);
 		return auditLogEntryService.findAll(authUser, actor, groupUuid, detail, entriesLogsOnly, actions, types);
+	}
+	
+	@Override
+	public Set<AuditLogEntryUser> findAllAuditsForUploadRequest(String actorUuid, String groupUuid,
+			String uploadRequestUuid, List<LogAction> actions, List<AuditLogEntryType> types) {
+		Account authUser = checkAuthentication();
+		Validate.notEmpty(groupUuid, "Upload request group Uuid must be set");
+		Validate.notEmpty(groupUuid, "Upload request Uuid must be set");
+		Account actor = getActor(authUser, null);
+		UploadRequest ur = uploadRequestService.find(authUser, actor, uploadRequestUuid);
+		if (!ur.getUploadRequestGroup().getUuid().equals(groupUuid)) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_NOT_FOUND,
+					"The upload request with uuid: " + ur.getUuid() + "is not part of the group with uuid: " + groupUuid);
+		}
+		return auditLogEntryService.findAllUploadRequestAudits(authUser, actor, uploadRequestUuid, actions, types);
 	}
 
 	@Override

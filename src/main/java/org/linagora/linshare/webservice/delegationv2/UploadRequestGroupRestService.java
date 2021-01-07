@@ -68,4 +68,7 @@ public interface UploadRequestGroupRestService {
 	UploadRequestGroupDto update(String actorUuid, String uuid, UploadRequestGroupDto uploadRequestGroupDto);
 
 	List<UploadRequestDto> findAllUploadRequests(String actorUuid, String uuid, List<UploadRequestStatus> status);
+
+	Set<AuditLogEntryUser> findAllAuditsForUploadRequest(String actorUuid, String groupUuid, String uploadRequestUuid,
+			List<LogAction> actions, List<AuditLogEntryType> types);
 }

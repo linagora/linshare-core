@@ -73,4 +73,7 @@ public interface UploadRequestGroupFacade {
 	List<UploadRequestDto> findAllUploadRequests(String actorUuid, String uuid, List<UploadRequestStatus> status);
 
 	Response downloadEntries(String actorUuid, String uuid, String requestUuid);
+
+	Set<AuditLogEntryUser> findAllAuditsForUploadRequest(String actorUuid, String groupUuid, String uploadRequestUuid,
+			List<LogAction> actions, List<AuditLogEntryType> types);
 }

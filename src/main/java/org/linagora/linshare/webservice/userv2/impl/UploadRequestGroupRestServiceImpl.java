@@ -206,6 +206,27 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 				@QueryParam("types") List<AuditLogEntryType> types) {
 		return uploadRequestGroupFacade.findAll(null, uuid, detail, entriesLogsOnly, actions, types);
 	}
+	
+	@GET
+	@Path("/{groupUuid}/upload_requests/{uploadRequestUuid}/audit")
+	@Operation(summary = "Get all traces for a given Upload Request inside a given Uplaod Request Group.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public Set<AuditLogEntryUser> findAllAuditsForUploadRequest(
+			@Parameter(description = "The upload request uuid.", required = true)
+				@PathParam("groupUuid") String groupUuid,
+			@Parameter(description = "The upload request group uuid.", required = true)
+				@PathParam("uploadRequestUuid") String uploadRequestUuid,
+			@Parameter(description = "Optional. If you want to filter the result by action", required = false)
+				@QueryParam("actions") List<LogAction> actions,
+			@Parameter(description = "Optional, If you want to filter the result by type of resource", required = false)
+				@QueryParam("types") List<AuditLogEntryType> types) {
+		return uploadRequestGroupFacade.findAllAuditsForUploadRequest(null, groupUuid ,uploadRequestUuid, actions, types);
+	}
 
 	@GET
 	@Path("/{uuid}/upload_requests")

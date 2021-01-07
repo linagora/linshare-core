@@ -66,9 +66,13 @@ public interface UploadRequestGroupRestService {
 	Set<AuditLogEntryUser> findAll(String uuid, boolean detail, boolean entriesLogsOnly, List<LogAction> actions,
 			List<AuditLogEntryType> types);
 
+	Set<AuditLogEntryUser> findAllAuditsForUploadRequest(String groupUuid, String uploadRequestUuid,
+			List<LogAction> actions, List<AuditLogEntryType> types) throws BusinessException;
+
 	UploadRequestGroupDto update(String uuid, UploadRequestGroupDto uploadRequestGroupDto);
 
 	List<UploadRequestDto> findAllUploadRequests(String uuid, List<UploadRequestStatus> status);
 
 	Response downloadEntries(String uuid, String requestUuid) throws BusinessException;
+
 }
