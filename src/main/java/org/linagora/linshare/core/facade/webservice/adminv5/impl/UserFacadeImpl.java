@@ -43,6 +43,8 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
@@ -71,7 +73,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	private final PageContainerAdaptor<User, UserDto> pageConverterAdaptor = new PageContainerAdaptor<>();
+	private final PageContainerAdaptor<User, UserDto> pageContainerAdaptor = new PageContainerAdaptor<>();
 
 	public UserFacadeImpl(
 			AccountService accountService,
@@ -89,8 +91,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	}
 
 	@Override
-	public PageContainer<UserDto> findAll(String actorUuid, String domainUuid, String creationDate,
-			String modificationDate, String mail, String firstName, String lastName, Boolean restricted,
+	public PageContainer<UserDto> findAll(String actorUuid, String domainUuid, SortOrder sortOrder,
+			UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
 			Boolean canCreateGuest, Boolean canUpload, String role, String type, Integer pageNumber, Integer pageSize) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		User actor = getActor(authUser, actorUuid);
@@ -99,18 +101,18 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		if (!Strings.isNullOrEmpty(domainUuid)) {
 			domain = abstractDomainService.findById(domainUuid);
 		}
-		container = userService2.findAll(authUser, actor, domain, creationDate, modificationDate, mail, firstName,
-				lastName, restricted, canCreateGuest, canUpload, role, type, container);
-		PageContainer<UserDto> dto = pageConverterAdaptor.convert(container, UserDto.toDto());
+		container = userService2.findAll(authUser, actor, domain, sortOrder, sortField, mail, firstName, lastName,
+				restricted, canCreateGuest, canUpload, role, type, container);
+		PageContainer<UserDto> dto = pageContainerAdaptor.convert(container, UserDto.toDto());
 		return dto;
 	}
 
 	@Override
-	public UserDto findUser(String actorUuid, String uuid) {
+	public UserDto find(String actorUuid, String uuid) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		User actor = getActor(authUser, actorUuid);
 		Validate.notEmpty(uuid, "User uuid must be set.");
-		User user = userService2.findByLsUuid(authUser, actor, uuid);
+		User user = userService2.find(authUser, actor, uuid);
 		UserDto userDto = null;
 		if (user.isGuest() && user.isRestricted()) {
 			Guest guest = guestService.find(authUser, actor, uuid);
@@ -147,18 +149,18 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		}
 		Validate.notEmpty(userDto.getUuid(), "user uuid must be set");
 		Validate.notNull(userDto.isLocked(), "isLocked parameter should be set");
-		User entity = userService2.findByLsUuid(authUser, actor, userDto.getUuid());
+		User entity = userService2.find(authUser, actor, userDto.getUuid());
 		User userToUpdate = userDto.toUserObject(entity.isGuest());
 		if (!userDto.isLocked() && entity.isLocked()) {
-			entity = userService2.unlockUser(authUser, actor, entity);
+			entity = userService2.unlock(authUser, actor, entity);
 		}
-		User update = checkAccountTypeToUpdate(authUser, actor, userDto, entity, userToUpdate);
+		User update = checkAccountTypeAndUpdate(authUser, actor, userDto, entity, userToUpdate);
 		UserDto updatedDto = UserDto.getFull(update);
 		updatedDto.setLocked(update.isLocked());
 		return updatedDto;
 	}
 
-	private User checkAccountTypeToUpdate(Account authUser, Account actor, UserDto userDto, User entity,
+	private User checkAccountTypeAndUpdate(Account authUser, Account actor, UserDto userDto, User entity,
 			User userToUpdate) {
 		User update = null;
 		if (entity.isGuest()) {
@@ -171,7 +173,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			}
 			update = guestService.update(authUser, (User) entity.getOwner(), (Guest) userToUpdate, ac);
 		} else {
-			update = userService2.updateUser(authUser, actor, userToUpdate, userDto.getDomain());
+			update = userService2.update(authUser, actor, userToUpdate, userDto.getDomain());
 		}
 		return update;
 	}
@@ -184,7 +186,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			userDto.setUuid(uuid);
 		}
 		Validate.notEmpty(userDto.getUuid(), "user uuid must be set");
-		User user = userService2.deleteUser(authUser, actor, userDto.getUuid());
+		User user = userService2.delete(authUser, actor, userDto.getUuid());
 		return UserDto.getFull(user);
 	}
 }

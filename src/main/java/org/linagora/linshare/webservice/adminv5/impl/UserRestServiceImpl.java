@@ -36,6 +36,7 @@
 package org.linagora.linshare.webservice.adminv5.impl;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -43,6 +44,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
@@ -71,62 +74,62 @@ public class UserRestServiceImpl implements UserRestService {
 
 	@Path("/")
 	@GET
-	@Operation(summary = "Find all users.", responses = { @ApiResponse(responseCode = "200") })
-	@Override
-	public Response findAll(
-			@Parameter(description = "If the admin specify the domain he will retrieve the list of the choosen domain, else all users of all domains will be returned.", required = false)
-				@QueryParam("domain") String domainUuid,
-			@Parameter(description = "The admin can choose the creation date of the users' list to filter.", required = false)
-				@QueryParam("creationDate") String creationDate,
-			@Parameter(description = "The admin can choose the modification date of the users' list to filter.", required = false)
-				@QueryParam("modificationDate") String modificationDate,
-			@Parameter(description = "The admin can filter the users' list by mail adress.", required = false)
-				@QueryParam("mail") String mail,
-			@Parameter(description = "The admin can filter the users' list by first name.", required = false)
-				@QueryParam("firstName") String firstName,
-			@Parameter(description = "The admin can filter the users' list by last name.", required = false)
-				@QueryParam("lastName") String lastName,
-			@Parameter(description = "The admin can filter the restricted users' list.", required = false)
-				@QueryParam("restricted") Boolean restricted,
-			@Parameter(description = "The admin can retrieve the users whose can create guest.", required = false)
-				@QueryParam("canCreateGuest") Boolean canCreateGuest,
-			@Parameter(description = "The admin can retrieve the users whose can upload.", required = false)
-				@QueryParam("canUpload") Boolean canUpload,
-			@Parameter(description = "The admin can retrieve the users with a choosen role.", required = false)
-				@QueryParam("role") String role,
-			@Parameter(description = "The admin can retrieve the users with a choosen type.", required = false)
-				@QueryParam("type") String type,
-			@Parameter(description = "The admin can choose the page number to visualize.", required = false)
-				@QueryParam("page") Integer pageNumber,
-			@Parameter(description = "The admin can choose the number of elements to visualize.", required = false)
-				@QueryParam("size") Integer pageSize) throws BusinessException {
-		PageContainer<UserDto> container = userFacade.findAll(null, domainUuid, creationDate, modificationDate, mail,
-				firstName, lastName, restricted, canCreateGuest, canUpload, role, type, pageNumber, pageSize);
-		return pageResponseBuilder.build(container);
-	}
-
-	@Path("/{uuid}")
-	@GET
-	@Operation(summary = "Find a user.", responses = {
+	@Operation(summary = "Find all users user.", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
 			responseCode = "200"
 		)
 	})
 	@Override
+	public Response findAll(
+			@Parameter(description = "If the admin specify the domain he will retrieve the list of the choosen domain, else all users of all domains will be returned.", required = false)
+				@QueryParam("domain") String domainUuid,
+			@Parameter(description = "The admin can choose the order of sorting the user's list to retrieve, if not set the ascending order will be applied by default.", required = false)
+				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
+			@Parameter(description = "The admin can choose the field to sort with the user's list to retrieve, if not set the modification date order will be choosen by default.", required = false)
+				@QueryParam("sortField") @DefaultValue("modificationDate") String sortField,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to filter the users' list by mail adress, en email pattern is expected like `@linshare.org`.", required = false)
+				@QueryParam("mail") String mail,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to filter the users' list by first name.", required = false)
+				@QueryParam("firstName") String firstName,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to filter the users' list by last name.", required = false)
+				@QueryParam("lastName") String lastName,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to filter the restricted users' list.", required = false)
+				@QueryParam("restricted") Boolean restricted,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users whose can create guest.", required = false)
+				@QueryParam("canCreateGuest") Boolean canCreateGuest,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users whose can upload.", required = false)
+				@QueryParam("canUpload") Boolean canUpload,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users with a choosen role.", required = false)
+				@QueryParam("role") String role,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users with a choosen type.", required = false)
+				@QueryParam("type") String type,
+			@Parameter(description = "The admin can choose the page number to get.", required = false)
+				@QueryParam("page") Integer pageNumber,
+			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
+				@QueryParam("size") Integer pageSize) throws BusinessException {
+		PageContainer<UserDto> container = userFacade.findAll(null, domainUuid, SortOrder.valueOf(sortOrder),
+				UserFields.valueOf(sortField), mail, firstName, lastName, restricted, canCreateGuest, canUpload, role,
+				type, pageNumber, pageSize);
+		return pageResponseBuilder.build(container);
+	}
+
+	@Path("/{uuid}")
+	@GET
+	@Operation(summary = "Find a user.", responses = {
+		@ApiResponse(content = @Content(schema = @Schema(implementation = UserDto.class)), responseCode = "200")
+	})
+	@Override
 	public UserDto find(
 			@Parameter(description = "The admin can find a user with the entered uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return userFacade.findUser(null, uuid);
+		return userFacade.find(null, uuid);
 	}
 
 	@Path("/{uuid: .*}")
 	@PUT
 	@Operation(summary = "Update a user.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
-			responseCode = "200"
-		)
+		@ApiResponse(content = @Content(schema = @Schema(implementation = UserDto.class)), responseCode = "200")
 	})
 	@Override
 	public UserDto update(
@@ -139,10 +142,7 @@ public class UserRestServiceImpl implements UserRestService {
 	@Path("/{uuid: .*}")
 	@DELETE
 	@Operation(summary = "Delete an user.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
-			responseCode = "200"
-		)
+		@ApiResponse(content = @Content(schema = @Schema(implementation = UserDto.class)), responseCode = "200")
 	})
 	@Override
 	public UserDto delete(

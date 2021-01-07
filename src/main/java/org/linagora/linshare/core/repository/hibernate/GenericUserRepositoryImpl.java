@@ -130,9 +130,9 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	}
 
 	@Override
-	public PageContainer<U> findAll(AbstractDomain domain, String creationDate, String modificationDate, String mail,
-			String firstName, String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role,
-			AccountType type, PageContainer<U> container) {
+	public PageContainer<U> findAll(AbstractDomain domain, Order sortOrder, String mail, String firstName,
+			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,
+			PageContainer<U> container) {
 		DetachedCriteria detachedCrit = getAllCriteria(domain);
 		if (!Strings.isNullOrEmpty(mail)) {
 			detachedCrit.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
@@ -158,7 +158,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		if (Objects.nonNull(type)) {
 			detachedCrit.add(Restrictions.in("class", type.toInt()));
 		}
-		detachedCrit.addOrder(Order.desc("modificationDate"));
+		detachedCrit.addOrder(sortOrder);
 		return findAll(detachedCrit, count(domain), container);
 	}
 

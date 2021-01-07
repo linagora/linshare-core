@@ -42,7 +42,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public interface UserRestService {
 
-	Response findAll(String domainUuid, String creationDate, String modificationDate, String mail, String firstName,
+	Response findAll(String domainUuid, String sortOrder, String sortField, String mail, String firstName,
 			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, String role, String type,
 			Integer pageNumber, Integer pageSize) throws BusinessException;
 

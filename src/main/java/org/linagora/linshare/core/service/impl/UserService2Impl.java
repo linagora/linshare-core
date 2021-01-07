@@ -33,12 +33,15 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import org.hibernate.criterion.Order;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
@@ -66,41 +69,52 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 	}
 
 	@Override
-	public PageContainer<User> findAll(Account authUser, Account actor, AbstractDomain domain, String creationDate,
-			String modificationDate, String mail, String firstName, String lastName, Boolean restricted,
+	public PageContainer<User> findAll(Account authUser, Account actor, AbstractDomain domain, SortOrder sortOrder,
+			UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
 			Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
-		Role checkedRole = !Strings.isNullOrEmpty(role) ? Role.valueOf(role) : null;
-		AccountType checkedAccountType = !Strings.isNullOrEmpty(type) ? AccountType.valueOf(type) : null;
-		return userRepository.findAll(domain, creationDate, modificationDate, mail, firstName, lastName, restricted,
-				canCreateGuest, canUpload, checkedRole, checkedAccountType, container);
+		Role checkedRole = Strings.isNullOrEmpty(role) ? null : Role.valueOf(role);
+		AccountType checkedAccountType = Strings.isNullOrEmpty(type) ? null : AccountType.valueOf(type);
+		Order order = checkSortOrderAndField(sortOrder, sortField);
+		return userRepository.findAll(domain, order, mail, firstName, lastName, restricted, canCreateGuest, canUpload,
+				checkedRole, checkedAccountType, container);
+	}
+
+	private Order checkSortOrderAndField(SortOrder sortOrder, UserFields sortField) {
+		Order order = null;
+		if (UserFields.accountType.equals(sortField)) {
+			order = SortOrder.addAccountTypeSortOrder(sortOrder);
+		} else {
+			order = SortOrder.addOrder(sortOrder, sortField);
+		}
+		return order;
 	}
 
 	@Override
-	public User findByLsUuid(Account authUser, Account actor, String lsUuid) {
+	public User find(Account authUser, Account actor, String lsUuid) {
 		preChecks(authUser, actor);
 		checkReadPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
 		return userService.findByLsUuid(lsUuid);
 	}
 
 	@Override
-	public User unlockUser(Account authUser, Account actor, User accountToUnlock) throws BusinessException {
+	public User unlock(Account authUser, Account actor, User accountToUnlock) throws BusinessException {
 		preChecks(authUser, actor);
 		checkUpdatePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
 		return userService.unlockUser(authUser, accountToUnlock);
 	}
 
 	@Override
-	public User updateUser(Account authUser, Account actor, User enteredUser, String domainId)
+	public User update(Account authUser, Account actor, User userToUpdate, String domainId)
 			throws BusinessException {
 		preChecks(authUser, actor);
 		checkUpdatePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
-		return userService.updateUser(actor, enteredUser, domainId);
+		return userService.updateUser(actor, userToUpdate, domainId);
 	}
 
 	@Override
-	public User deleteUser(Account authUser, Account actor, String lsUuid) throws BusinessException {
+	public User delete(Account authUser, Account actor, String lsUuid) throws BusinessException {
 		preChecks(authUser, actor);
 		checkDeletePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
 		return userService.deleteUser(actor, lsUuid);

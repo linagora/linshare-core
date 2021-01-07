@@ -31,27 +31,20 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.domain.entities.fields;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.fields.SortOrder;
-import org.linagora.linshare.core.domain.entities.fields.UserFields;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.utils.PageContainer;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Property;
 
-public interface UserService2 {
+public enum SortOrder {
 
-	public PageContainer<User> findAll(Account authUser, Account actor, AbstractDomain domain, SortOrder sortOrder,
-			UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
-			Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container);
+	ASC, DESC;
 
-	public User find(Account authUser, Account actor, String lsUuid);
+	public static Order addOrder(SortOrder order, UserFields sortField) {
+		return SortOrder.ASC.equals(order) ? Order.asc(sortField.toString()) : Order.desc(sortField.toString());
+	}
 
-	public User update(Account authUser, Account actor, User userToUpdate, String domainId) throws BusinessException;
-
-	public User delete(Account authUser, Account actor, String uuid);
-
-	public User unlock(Account authUser, Account actor, User accountToUnlock) throws BusinessException;
+	public static Order addAccountTypeSortOrder(SortOrder order) {
+		return SortOrder.ASC.equals(order) ? Property.forName("class").asc() : Property.forName("class").desc();
+	}
 }

@@ -320,7 +320,7 @@ public class UserDto extends AccountDto {
 		return new Function<User, UserDto>() {
 			@Override
 			public UserDto apply(User arg0) {
-				return new UserDto(arg0);
+				return getFull(arg0);
 			}
 		};
 	}

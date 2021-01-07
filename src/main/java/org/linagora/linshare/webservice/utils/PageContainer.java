@@ -74,7 +74,7 @@ public class PageContainer<T> {
 		this.enabled = getPagingStatus(pageNumber, pageSize);
 		if (enabled) {
 			if (pageNumber < 0) {
-				throw new BusinessException(BusinessErrorCode.PAGE_PARAMETERS_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.WRONG_PAGE_PARAMETERS,
 						"Page number can not be less than 0");
 			}
 			this.pageNumber = pageNumber;
@@ -89,7 +89,7 @@ public class PageContainer<T> {
 			this.pageResponse = new PageResponse<T>(totalElements, totalPage, list, isFirst, isLast);
 			if ((pageNumber + 1 > this.pageResponse.getTotalPages())
 					|| (pageSize > totalElements) && (!list.isEmpty()) && !this.pageResponse.isLast()) {
-				throw new BusinessException(BusinessErrorCode.PAGE_PARAMETERS_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.WRONG_PAGE_PARAMETERS,
 						"Please check the number of the requested page");
 			}
 		}

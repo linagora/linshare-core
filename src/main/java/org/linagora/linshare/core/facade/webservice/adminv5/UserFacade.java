@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5;
 
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
@@ -40,11 +42,11 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface UserFacade extends AdminGenericFacade {
 
-	PageContainer<UserDto> findAll(String actorUuid, String domainUuid, String creationDate, String modificationDate,
+	PageContainer<UserDto> findAll(String actorUuid, String domainUuid, SortOrder sortOrder, UserFields sortField,
 			String mail, String firstName, String lastName, Boolean restricted, Boolean canCreateGuest,
 			Boolean canUpload, String role, String type, Integer pageNumber, Integer pageSize);
 
-	UserDto findUser(String actorUuid, String uuid);
+	UserDto find(String actorUuid, String uuid);
 
 	UserDto update(String actorUuid, UserDto userDto, String uuid) throws BusinessException;
 
