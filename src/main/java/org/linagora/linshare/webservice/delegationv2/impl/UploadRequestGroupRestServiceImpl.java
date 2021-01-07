@@ -222,7 +222,7 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 
 	@GET
 	@Path("/{groupUuid}/upload_requests/{uploadRequestUuid}/audit")
-	@Operation(summary = "Get all traces for a given Upload Request inside a given Uplaod Request Group.", responses = {
+	@Operation(summary = "Get all traces for a given Upload Request inside a given Upload Request Group.", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
 			responseCode = "200"

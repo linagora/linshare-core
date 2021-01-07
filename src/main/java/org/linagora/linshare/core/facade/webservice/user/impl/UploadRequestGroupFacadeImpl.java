@@ -170,12 +170,13 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 			String uploadRequestUuid, List<LogAction> actions, List<AuditLogEntryType> types) {
 		Account authUser = checkAuthentication();
 		Validate.notEmpty(groupUuid, "Upload request group Uuid must be set");
-		Validate.notEmpty(groupUuid, "Upload request Uuid must be set");
+		Validate.notEmpty(uploadRequestUuid, "Upload request Uuid must be set");
 		Account actor = getActor(authUser, null);
+		UploadRequestGroup group = uploadRequestGroupService.find(authUser, actor, groupUuid);
 		UploadRequest ur = uploadRequestService.find(authUser, actor, uploadRequestUuid);
-		if (!ur.getUploadRequestGroup().getUuid().equals(groupUuid)) {
+		if (!group.getUuid().equals(ur.getUploadRequestGroup().getUuid())) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_NOT_FOUND,
-					"The upload request with uuid: " + ur.getUuid() + "is not part of the group with uuid: " + groupUuid);
+					"The upload request with uuid: " + ur.getUuid() + "does not belong to the group with uuid: " + groupUuid);
 		}
 		return auditLogEntryService.findAllUploadRequestAudits(authUser, actor, uploadRequestUuid, actions, types);
 	}
