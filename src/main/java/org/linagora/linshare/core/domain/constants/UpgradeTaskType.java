@@ -218,7 +218,14 @@ public enum UpgradeTaskType {
 	/**
 	 * Send mail notification that contains new generated password for anonymous shares  
 	 */
-	UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_ANONYMOUS;
+	UPGRADE_4_0_PASSWORD_ENCODING_STRATEGY_CHANGES_FOR_ANONYMOUS,
+
+	/*
+	 * When we upgraded apache tika (1.25) we have new mimeType
+	 * We have to update our database
+	 *
+	 */
+	UPGRADE_4_1_ADD_ALL_NEW_MIME_TYPE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

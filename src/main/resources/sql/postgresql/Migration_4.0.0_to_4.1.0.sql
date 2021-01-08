@@ -95,6 +95,37 @@ UPDATE policy SET system = false, status = true, default_status = true WHERE id 
 UPDATE policy SET status = true, default_status = true WHERE id = 71;
 UPDATE policy SET system = false, status = true, default_status = true WHERE id IN (63);
 
+
+-- Upgrade Task
+-- TASK: UPGRADE_4_1_ADD_ALL_NEW_MIME_TYPE
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (35,
+ 'UNDEFINED',
+ 'UPGRADE_4_1_ADD_ALL_NEW_MIME_TYPE',
+ 'UPGRADE_4_1',
+  null,
+  null,
+  35,
+ 'NEW',
+ 'REQUIRED',
+  now(),
+  now(),
+  null);
+  -- End Upgrade Task
+    
 -- Add new field to Functionality_integer and Functionality_unit
 -- Set the max value and max unit for the new field on functionality_unit and functionality_integer tables
 INSERT INTO unit(id, unit_type, unit_value) 
