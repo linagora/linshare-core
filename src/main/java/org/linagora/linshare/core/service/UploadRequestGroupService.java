@@ -58,7 +58,7 @@ public interface UploadRequestGroupService {
 	UploadRequestGroup create(Account actor, User owner, UploadRequest req, List<Contact> contacts,
 			String subject, String body, Boolean collectiveMode) throws BusinessException;
 
-	UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup, boolean force);
+	UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup, Boolean force);
 
 	List<String> findOutdatedRequestsGroup(SystemAccount account);
 

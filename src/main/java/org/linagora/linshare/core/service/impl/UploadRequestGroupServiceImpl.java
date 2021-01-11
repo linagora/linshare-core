@@ -378,7 +378,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		return uploadRequestGroup;
 	}
 
-	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup, boolean force) {
+	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup, Boolean force) {
 		UploadRequestGroup group = uploadRequestGroupBusinessService.findByUuid(uploadRequestGroup.getUuid());
 		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				group);
@@ -400,10 +400,14 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		group.setBusinessLocale(uploadRequestGroup.getLocale());
 		group.setBusinessEnableNotification(uploadRequestGroup.getEnableNotification());
 		for (UploadRequest uploadRequest : group.getUploadRequests()) {
-			if (uploadRequest.isPristine() || force) {
-				setUploadRequest(uploadRequest, group);
+			if (force) {
+				uploadRequest.setPristine(true);
+				updateRequestObjectFromGroup(uploadRequest, group);
 				uploadRequestService.updateRequest(authUser, actor, uploadRequest);
-			} 
+			} else if (uploadRequest.isPristine()) {
+				updateRequestObjectFromGroup(uploadRequest, group);
+				uploadRequestService.updateRequest(authUser, actor, uploadRequest);
+			}
 		}
 		uploadRequestGroup = uploadRequestGroupBusinessService.update(group);
 		groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
@@ -411,7 +415,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		return group;
 	}
 
-	private void setUploadRequest(UploadRequest uploadRequest, UploadRequestGroup group) {
+	private void updateRequestObjectFromGroup(UploadRequest uploadRequest, UploadRequestGroup group) {
 		uploadRequest.setModificationDate(new Date());
 		uploadRequest.setMaxFileCount(group.getMaxFileCount());
 		uploadRequest.setMaxDepositSize(group.getMaxDepositSize());

@@ -103,6 +103,7 @@ public class UploadRequestDto {
 
 	private boolean isClosed;
 
+	@Schema(description = "Define if the Upload Request has the same upload request group parameters")
 	private boolean pristine;
 
 	private boolean protectedByPassword;
