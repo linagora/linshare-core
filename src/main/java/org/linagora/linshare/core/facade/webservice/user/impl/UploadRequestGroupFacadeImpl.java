@@ -133,7 +133,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		return new UploadRequestGroupDto(uploadRequestGroup);
 	}
 
-	public UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto, String uuid) {
+	public UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto, String uuid, boolean force) {
 		Validate.notNull(uploadRequestGroupDto, "Upload request group must be set.");
 		if (!Strings.isNullOrEmpty(uuid)) {
 			uploadRequestGroupDto.setUuid(uuid);
@@ -142,7 +142,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupDto.toObject();
-		return new UploadRequestGroupDto(uploadRequestGroupService.update(authUser, actor, uploadRequestGroup));
+		return new UploadRequestGroupDto(uploadRequestGroupService.update(authUser, actor, uploadRequestGroup, force));
 	}
 
 	@Override

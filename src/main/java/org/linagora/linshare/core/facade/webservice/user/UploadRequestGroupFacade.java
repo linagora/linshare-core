@@ -63,7 +63,7 @@ public interface UploadRequestGroupFacade {
 	UploadRequestGroupDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status, boolean copy)
 			throws BusinessException;
 
-	UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto, String uuid) throws BusinessException;
+	UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto, String uuid, boolean force) throws BusinessException;
 
 	UploadRequestGroupDto addRecipients(String actorUuid, String uuid, List<ContactDto> recipientEmail);
 

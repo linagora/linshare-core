@@ -69,7 +69,7 @@ public interface UploadRequestGroupRestService {
 	Set<AuditLogEntryUser> findAllAuditsForUploadRequest(String groupUuid, String uploadRequestUuid,
 			List<LogAction> actions, List<AuditLogEntryType> types) throws BusinessException;
 
-	UploadRequestGroupDto update(String uuid, UploadRequestGroupDto uploadRequestGroupDto);
+	UploadRequestGroupDto update(String uuid, UploadRequestGroupDto uploadRequestGroupDto, boolean force);
 
 	List<UploadRequestDto> findAllUploadRequests(String uuid, List<UploadRequestStatus> status);
 

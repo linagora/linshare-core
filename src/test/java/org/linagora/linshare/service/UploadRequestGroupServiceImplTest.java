@@ -345,7 +345,7 @@ public class UploadRequestGroupServiceImplTest {
 		group.setUploadRequests(uploadRequests.stream().collect(Collectors.toSet()));
 		group.setCanClose(false);
 		group.setMaxFileCount(Integer.valueOf(5));
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.update(john, john, group);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.update(john, john, group, false);
 		Assertions.assertEquals(false, uploadRequestGroup.getCanClose());
 		Assertions.assertEquals(Integer.valueOf(5), uploadRequestGroup.getMaxFileCount());
 		UploadRequest uploadRequest = uploadRequests.get(0);

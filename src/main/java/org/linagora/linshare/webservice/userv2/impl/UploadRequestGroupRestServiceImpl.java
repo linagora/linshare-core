@@ -163,8 +163,10 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 			@Parameter(description = "Upload request group uuid, if null uploadRequestGroupDto.uuid is used.", required = false) 
 				@PathParam("uuid") String uuid,
 			@Parameter(description = "Upload request group", required = true)
-				UploadRequestGroupDto uploadRequestGroupDto) {
-		return uploadRequestGroupFacade.update(null, uploadRequestGroupDto, uuid);
+				UploadRequestGroupDto uploadRequestGroupDto, 
+			@Parameter(description = "If set to true, force update the dirty upload requests inside the given group", required = false) 
+				@QueryParam("force") boolean force) {
+		return uploadRequestGroupFacade.update(null, uploadRequestGroupDto, uuid, force);
 	}
 
 	@POST

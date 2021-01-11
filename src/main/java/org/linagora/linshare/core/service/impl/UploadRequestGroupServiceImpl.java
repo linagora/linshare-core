@@ -378,7 +378,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		return uploadRequestGroup;
 	}
 
-	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup) {
+	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup, boolean force) {
 		UploadRequestGroup group = uploadRequestGroupBusinessService.findByUuid(uploadRequestGroup.getUuid());
 		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				group);
@@ -400,10 +400,10 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		group.setBusinessLocale(uploadRequestGroup.getLocale());
 		group.setBusinessEnableNotification(uploadRequestGroup.getEnableNotification());
 		for (UploadRequest uploadRequest : group.getUploadRequests()) {
-			if (uploadRequest.isPristine()) {
+			if (uploadRequest.isPristine() || force) {
 				setUploadRequest(uploadRequest, group);
 				uploadRequestService.updateRequest(authUser, actor, uploadRequest);
-			}
+			} 
 		}
 		uploadRequestGroup = uploadRequestGroupBusinessService.update(group);
 		groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
