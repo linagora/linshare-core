@@ -103,6 +103,8 @@ public class UploadRequestDto {
 
 	private boolean isClosed;
 
+	private boolean pristine;
+
 	private boolean protectedByPassword;
 
 	private long usedSpace = 0;
@@ -133,6 +135,7 @@ public class UploadRequestDto {
 		this.status = entity.getStatus();
 		this.notificationDate = entity.getNotificationDate();
 		this.enableNotification = entity.getEnableNotification();
+		this.pristine = entity.isPristine();
 		if (full) {
 			this.maxFileCount = entity.getMaxFileCount();
 			this.maxDepositSize = entity.getMaxDepositSize();
@@ -354,6 +357,14 @@ public class UploadRequestDto {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public boolean isPristine() {
+		return pristine;
+	}
+
+	public void setPristine(boolean pristine) {
+		this.pristine = pristine;
 	}
 
 	/*
