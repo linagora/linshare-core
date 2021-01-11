@@ -355,6 +355,72 @@ public class UploadRequestGroupServiceImplTest {
 	}
 
 	@Test
+	public void updateCollectiveGroup() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup urg = uploadRequestGroupService.create(john, john, urInit, contactList, "This is a subject",
+				"This is a body", true);
+		UploadRequest uploadRequest = urg.getUploadRequests().iterator().next();
+		// in Collective mode the UR is always pristine
+		Assertions.assertTrue(uploadRequest.isPristine());
+		Assertions.assertEquals(3, urg.getMaxFileCount());
+		Assertions.assertEquals(3, uploadRequest.getMaxFileCount());
+		// update from UploadRequestService should raise an exception
+		uploadRequest.setMaxFileCount(2);
+		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestService.update(john, john, uploadRequest.getUuid(), uploadRequest);
+		});
+		Assertions.assertEquals(e.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_NOT_UPDATABLE_GROUP_MODE);
+		urg.setMaxFileCount(2);
+		// No matter value of force always update the UR
+		urg = uploadRequestGroupService.update(john, john, urg, false);
+		Assertions.assertEquals(2, uploadRequest.getMaxFileCount());
+		urg.setMaxFileCount(5);
+		urg = uploadRequestGroupService.update(john, john, urg, true);
+		Assertions.assertEquals(5, uploadRequest.getMaxFileCount());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void updateWithForceIndividualGroup() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup urg = uploadRequestGroupService.create(john, john, urInit, contactList, "This is a subject",
+				"This is a body", false);
+		List<UploadRequest> uploadRequests = uploadRequestService.findAll(john, john, urg, null);
+		// assert initial conditions 
+		for (UploadRequest uploadRequest : uploadRequests) {
+			Assertions.assertTrue(uploadRequest.isPristine());
+			Assertions.assertEquals(3, uploadRequest.getMaxFileCount());
+		}
+		// update the group without force | expected pristine URs will be changed
+		urg.setMaxFileCount(Integer.valueOf(2));
+		urg = uploadRequestGroupService.update(john, john, urg, false);
+		for (UploadRequest uploadRequest : uploadRequests) {
+			Assertions.assertTrue(uploadRequest.isPristine());
+			Assertions.assertEquals(2, uploadRequest.getMaxFileCount());
+		}
+		// update one nested UR
+		UploadRequest uploadRequest1 = uploadRequests.get(0);
+		UploadRequest uploadRequest2 = uploadRequests.get(1);
+		uploadRequest1.setMaxFileCount(5);
+		// update via the uploadRequestService endpoint
+		uploadRequest1 = uploadRequestService.update(john, john, uploadRequest1.getUuid(), uploadRequest1);
+		Assertions.assertEquals(Integer.valueOf(5), uploadRequest1.getMaxFileCount());
+		// expected | UR should be dirty (not pristine) 
+		Assertions.assertFalse(uploadRequest1.isPristine());
+		// update the group without force | expected only pristine URs should be changed
+		urg.setMaxFileCount(7);
+		urg = uploadRequestGroupService.update(john, john, urg, false);
+		Assertions.assertEquals(Integer.valueOf(5), uploadRequest1.getMaxFileCount());
+		Assertions.assertEquals(Integer.valueOf(7), uploadRequest2.getMaxFileCount());
+		// update the group with force | expected all URs should be changed
+		urg.setMaxFileCount(6);
+		urg = uploadRequestGroupService.update(john, john, urg, true);
+		Assertions.assertEquals(Integer.valueOf(6), uploadRequest1.getMaxFileCount());
+		Assertions.assertEquals(Integer.valueOf(6), uploadRequest2.getMaxFileCount());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void updateStatusToPurged() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
