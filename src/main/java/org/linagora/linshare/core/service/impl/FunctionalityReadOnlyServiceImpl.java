@@ -436,9 +436,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 		logger.debug(func.getIdentifier() + " has a delegation policy");
 		Integer maxInteger = func.getMaxValue();
 		if (currentInteger > maxInteger) {
-			logger.warn("the current value " + currentInteger.toString() + " is out of range : " + func.toString());
-			throw new BusinessException(errorCode,
-					"the current value " + currentInteger.toString() + " is out of range : " + func.toString());
+			String errorMessage = buildErrorMessage(func, currentInteger.toString(), maxInteger.toString());
+			logger.warn(errorMessage);
+			throw new BusinessException(errorCode, errorMessage);
 		}
 		return currentInteger;
 	}
@@ -478,10 +478,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 		c.add(func.toCalendarMaxValue(), func.getMaxValue());
 		Date maxDate = c.getTime(); // Maximum value allowed
 		if (currentDate.before(now) || currentDate.after(maxDate)) {
-			logger.warn("the current value " + currentDate.toString() + " is out of range : " + func.toString() + " : "
-					+ maxDate.toString());
-			throw new BusinessException(errorCode, "the current value " + currentDate.toString() + " is out of range : "
-					+ func.toString() + " : " + maxDate.toString());
+			String errorMessage = buildErrorMessage(func, currentDate.toString(), now.toString(), maxDate.toString());
+			logger.warn(errorMessage);
+			throw new BusinessException(errorCode, errorMessage);
 		}
 		return currentDate;
 	}
@@ -501,9 +500,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 		logger.debug(func.getIdentifier() + " has a delegation policy");
 		Long maxSize = ((FileSizeUnitClass) func.getMaxUnit()).getPlainSize(func.getMaxValue());
 		if (currentSize > maxSize) {
-			logger.warn("the current value " + currentSize.toString() + " is out of range : " + func.toString());
-			throw new BusinessException(errorCode,
-					"the current value " + currentSize.toString() + " is out of range : " + func.toString());
+			String errorMessage = buildErrorMessage(func, currentSize.toString(), maxSize.toString());
+			logger.warn(errorMessage);
+			throw new BusinessException(errorCode, errorMessage);
 		}
 		return currentSize;
 	}
@@ -546,9 +545,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 			minDate = now;
 		}
 		if (currentDate.after(expirationDate) || currentDate.before(minDate)) {
-			logger.warn("the current value " + currentDate.toString() + " is out of range : " + func.toString());
-			throw new BusinessException(errorCode,
-					"the current value " + currentDate.toString() + " is out of range : " + func.toString());
+			String errorMessage = buildErrorMessage(func, currentDate.toString(), minDate.toString(), expirationDate.toString());
+			logger.warn(errorMessage);
+			throw new BusinessException(errorCode, errorMessage);
 		}
 		return currentDate;
 	}
@@ -599,6 +598,16 @@ public class FunctionalityReadOnlyServiceImpl implements
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar;
+	}
+	
+	private String buildErrorMessage(Functionality func, String valueToCompare, String minValue, String maxValue) {
+		return "Identifier : " + func.getIdentifier() + " - the current value " + valueToCompare + " is out of range : "
+				+ " should be between \"" + minValue + "\" and \"" + maxValue + "\"";
+	}
+
+	private String buildErrorMessage(Functionality func, String valueToCompare, String maxValue) {
+		return "Identifier : " + func.getIdentifier() + " - the current value " + valueToCompare + " is out of range : "
+				+ " should be inferior to \"" + maxValue + "\"";
 	}
 
 }
