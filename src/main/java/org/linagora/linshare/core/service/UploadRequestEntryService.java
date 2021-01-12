@@ -74,4 +74,6 @@ public interface UploadRequestEntryService {
 
 	FileAndMetaData downloadEntries(Account authUser, Account actor, UploadRequestGroup uploadRequestGroup,
 			List<UploadRequestEntry> entries);
+
+	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
 }

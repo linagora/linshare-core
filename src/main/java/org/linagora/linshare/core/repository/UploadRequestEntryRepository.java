@@ -62,4 +62,6 @@ public interface UploadRequestEntryRepository extends
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
 
 	Long computeEntriesSize(UploadRequestUrl url);
+
+	Integer countNbrUploadedFiles(UploadRequestUrl url);
 }

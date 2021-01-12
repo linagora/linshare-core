@@ -97,6 +97,9 @@ public class UploadRequestDto {
 
 	private Boolean collective;
 
+	@Schema(description = "Number of uploaded files")
+	private Integer nbrUploadedFiles;
+
 	public UploadRequestDto() {
 		super();
 	}
@@ -308,5 +311,13 @@ public class UploadRequestDto {
 
 	public void setCollective(Boolean collective) {
 		this.collective = collective;
+	}
+
+	public Integer getNbrUploadedFiles() {
+		return nbrUploadedFiles;
+	}
+
+	public void setNbrUploadedFiles(Integer nbrUploadedFiles) {
+		this.nbrUploadedFiles = nbrUploadedFiles;
 	}
 }

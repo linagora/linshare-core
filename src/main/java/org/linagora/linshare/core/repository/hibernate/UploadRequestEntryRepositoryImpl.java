@@ -148,4 +148,13 @@ public class UploadRequestEntryRepositoryImpl extends
 		Long result = getHibernateTemplate().execute(action);
 		return result;
 	}
+
+	@Override
+	public Integer countNbrUploadedFiles(UploadRequestUrl url) {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.add(Restrictions.eq("uploadRequestUrl", url));
+		crit.setProjection(Projections.rowCount());
+		Number nbrUploadedFiles = (Number) crit.getExecutableCriteria(getCurrentSession()).uniqueResult();
+		return nbrUploadedFiles.intValue();
+	}
 }

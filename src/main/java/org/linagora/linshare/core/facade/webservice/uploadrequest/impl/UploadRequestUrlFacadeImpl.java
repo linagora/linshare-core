@@ -170,7 +170,8 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 				}
 			}
 		}
-		dto.setUsedSpace(uploadRequestUrlService.computeEntriesSize(requestUrl.getUploadRequest()));
+		dto.setUsedSpace(uploadRequestService.computeEntriesSize(requestUrl.getUploadRequest()));
+		dto.setNbrUploadedFiles(uploadRequestService.countNbrUploadedFiles(requestUrl.getUploadRequest()));
 		return dto;
 	}
 

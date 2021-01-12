@@ -61,8 +61,6 @@ public interface UploadRequestUrlService {
 	UploadRequestEntry deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid)
 			throws BusinessException;
 
-	Long computeEntriesSize(UploadRequest request);
-
 	SystemAccount getUploadRequestSystemAccount();
 
 	void changePassword(Account authUser, Account actor, String requestUrlUuid,

@@ -287,11 +287,6 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	}
 
 	@Override
-	public Long computeEntriesSize(UploadRequest request) {
-		return uploadRequestEntryService.computeEntriesSize(request);
-	}
-
-	@Override
 	public SystemAccount getUploadRequestSystemAccount() {
 		return accountRepository.getUploadRequestSystemAccount();
 	}

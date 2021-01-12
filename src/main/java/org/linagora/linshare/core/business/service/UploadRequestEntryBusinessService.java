@@ -79,4 +79,6 @@ public interface UploadRequestEntryBusinessService {
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
 
 	Long computeEntriesSize(UploadRequest request);
+
+	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
 }

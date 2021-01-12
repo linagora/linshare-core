@@ -415,4 +415,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 				+ formatter.format(entry.getCreationDate().getTime()).concat(extension);
 		return computedName;
 	}
+
+	@Override
+	public Integer countNbrUploadedFiles(UploadRequest uploadRequest) {
+		return uploadRequestEntryBusinessService.countNbrUploadedFiles(uploadRequest);
+	}
 }

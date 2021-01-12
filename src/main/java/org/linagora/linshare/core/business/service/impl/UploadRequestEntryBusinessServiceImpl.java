@@ -347,9 +347,34 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	@Override
 	public Long computeEntriesSize(UploadRequest request) {
 		Long totalSize = 0L;
-		for (UploadRequestUrl url : request.getUploadRequestURLs()) {
-			totalSize += uploadRequestEntryRepository.computeEntriesSize(url);
+		if (request.getUploadRequestGroup().isCollective()) {
+			for (UploadRequest uploadRequest : request.getUploadRequestGroup().getUploadRequests()) {
+				for (UploadRequestUrl url : uploadRequest.getUploadRequestURLs()) {
+					totalSize += uploadRequestEntryRepository.computeEntriesSize(url);
+				}
+			}
+		} else {
+			for (UploadRequestUrl url : request.getUploadRequestURLs()) {
+				totalSize += uploadRequestEntryRepository.computeEntriesSize(url);
+			}
 		}
 		return totalSize;
+	}
+
+	@Override
+	public Integer countNbrUploadedFiles(UploadRequest uploadRequest) {
+		Integer nbrUploadedFiles = 0;
+		if (uploadRequest.getUploadRequestGroup().isCollective()) {
+			for (UploadRequest request : uploadRequest.getUploadRequestGroup().getUploadRequests()) {
+				for (UploadRequestUrl url : request.getUploadRequestURLs()) {
+					nbrUploadedFiles += uploadRequestEntryRepository.countNbrUploadedFiles(url);
+				}
+			}
+		} else {
+			for (UploadRequestUrl url : uploadRequest.getUploadRequestURLs()) {
+				nbrUploadedFiles += uploadRequestEntryRepository.countNbrUploadedFiles(url);
+			}
+		}
+		return nbrUploadedFiles;
 	}
 }
