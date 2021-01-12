@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import javax.transaction.Transactional;
 
@@ -65,6 +66,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
@@ -73,6 +75,7 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -127,6 +130,9 @@ public class UploadRequestServiceImplTestV2 {
 
 	@Autowired
 	private UploadRequestEntryRepository uploadRequestEntryRepository;
+
+	@Autowired
+	private FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	@Qualifier("jcloudFileDataStore")
 	@Autowired
@@ -454,5 +460,77 @@ public class UploadRequestServiceImplTestV2 {
 		fileDataStore.remove(metadata);
 		documentRepository.delete(aDocument);
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void activateUploadRequestOnDefaultActivationDate() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequest uploadRequest = new UploadRequest();
+		uploadRequest.setCanClose(true);
+		uploadRequest.setMaxDepositSize((long) 100);
+		uploadRequest.setMaxFileCount(Integer.valueOf(3));
+		uploadRequest.setMaxFileSize((long) 50);
+		uploadRequest.setStatus(UploadRequestStatus.CREATED);
+		uploadRequest.setExpiryDate(new Date());
+		uploadRequest.setSecured(false);
+		uploadRequest.setCanEditExpiryDate(true);
+		uploadRequest.setCanDelete(true);
+		uploadRequest.setLocale("en");
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertNotNull(uploadRequest);
+		TimeUnitValueFunctionality func = functionalityReadOnlyService
+				.getUploadRequestActivationTimeFunctionality(uploadRequestGroup.getOwner().getDomain());
+		Calendar calendar = getCalendarWithoutTime(new Date());
+		calendar.add(uploadRequest.getCreationDate().getDate(), func.getValue());
+		Date defaultActivationDate = calendar.getTime();
+		Assertions.assertEquals(defaultActivationDate, uploadRequest.getActivationDate());
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void activateUploadRequestOnMaxDelayofActivation() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Calendar calendar = getCalendarWithoutTime(new Date());
+		calendar.add(new Date().getDate(), 7);
+		Date activationDate = calendar.getTime();
+		UploadRequest uploadRequest = new UploadRequest();
+		uploadRequest.setCanClose(true);
+		uploadRequest.setMaxDepositSize((long) 100);
+		uploadRequest.setMaxFileCount(Integer.valueOf(3));
+		uploadRequest.setMaxFileSize((long) 50);
+		uploadRequest.setStatus(UploadRequestStatus.CREATED);
+		uploadRequest.setExpiryDate(new Date());
+		uploadRequest.setSecured(false);
+		uploadRequest.setCanEditExpiryDate(true);
+		uploadRequest.setCanDelete(true);
+		uploadRequest.setLocale("en");
+		uploadRequest.setActivationDate(activationDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertNotNull(uploadRequest);
+		TimeUnitValueFunctionality func = functionalityReadOnlyService
+				.getUploadRequestActivationTimeFunctionality(uploadRequestGroup.getOwner().getDomain());
+		Calendar funcCalendar = getCalendarWithoutTime(new Date());
+		funcCalendar.add(uploadRequest.getCreationDate().getDate(), func.getMaxValue());
+		Date maxActivationDate = calendar.getTime();
+		Assertions.assertEquals(maxActivationDate, uploadRequest.getActivationDate());
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	private Calendar getCalendarWithoutTime(Date date) {
+		Calendar calendar = new GregorianCalendar();
+		if (date != null) {
+			calendar.setTime(date);
+		}
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar;
 	}
 }
