@@ -162,10 +162,14 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		if (collectiveMode) {
 			container = uploadRequestService.create(actor, owner, req, container);
 			for (Contact contact : contacts) {
+				Validate.notNull(contact, "contact must be set");
+				Validate.notEmpty(contact.getMail(), "mail of the contact must be set");
 				container = uploadRequestUrlService.create(container.getUploadRequests().iterator().next(), contact, container);
 			}
 		} else {
 			for (Contact contact : contacts) {
+				Validate.notNull(contact, "contact must be set");
+				Validate.notEmpty(contact.getMail(), "mail of the contact must be set");
 				UploadRequest clone = req.clone();
 				container = uploadRequestService.create(actor, owner, clone, container);
 				container = uploadRequestUrlService.create(clone, contact, container);

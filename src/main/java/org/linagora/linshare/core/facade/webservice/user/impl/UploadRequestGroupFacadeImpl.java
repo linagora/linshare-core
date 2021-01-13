@@ -116,6 +116,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		UploadRequest req = uploadRequesCreationtDto.toObject();
 		List<Contact> contacts = Lists.newArrayList();
 		for (String mail : uploadRequesCreationtDto.getContactList()) {
+			Validate.notEmpty(mail, "Mail of the contact must be set");
 			contacts.add(new Contact(mail));
 		}
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(authUser, actor, req, contacts,
