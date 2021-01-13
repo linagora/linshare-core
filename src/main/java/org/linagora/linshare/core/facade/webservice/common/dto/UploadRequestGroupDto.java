@@ -165,18 +165,16 @@ public class UploadRequestGroupDto {
 		uploadRequestGroup.setExpiryDate(getExpiryDate());
 		uploadRequestGroup.setCanDelete(isCanDelete());
 		uploadRequestGroup.setCanClose(isCanClose());
-		uploadRequestGroup.setCanEditExpiryDate(getCanEditExpiryDate());
+		uploadRequestGroup.setCanEditExpiryDate(isCanEditExpiryDate());
 		uploadRequestGroup.setLocale(getLocale());
 		uploadRequestGroup.setSecured(isSecured());
 		uploadRequestGroup.setMailMessageId(getMailMessageId());
-		uploadRequestGroup.setEnableNotification(getEnableNotification());
-		if (Objects.nonNull(isCollective())) {
-			uploadRequestGroup.setCollective(isCollective());
-		}
+		uploadRequestGroup.setEnableNotification(isEnableNotification());
+		uploadRequestGroup.setCollective(isCollective());
 		uploadRequestGroup.setStatus(getStatus());
 		return uploadRequestGroup;
 	}
-
+	
 	public String getUuid() {
 		return uuid;
 	}
@@ -189,8 +187,8 @@ public class UploadRequestGroupDto {
 		return label;
 	}
 
-	public void setLabel(String subject) {
-		this.label = subject;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public String getBody() {
@@ -265,7 +263,7 @@ public class UploadRequestGroupDto {
 		this.expiryDate = expiryDate;
 	}
 
-	public boolean isCanDelete() {
+	public Boolean isCanDelete() {
 		return canDelete;
 	}
 
@@ -273,7 +271,7 @@ public class UploadRequestGroupDto {
 		this.canDelete = canDelete;
 	}
 
-	public boolean isCanClose() {
+	public Boolean isCanClose() {
 		return canClose;
 	}
 
@@ -281,7 +279,7 @@ public class UploadRequestGroupDto {
 		this.canClose = canClose;
 	}
 
-	public Boolean getCanEditExpiryDate() {
+	public Boolean isCanEditExpiryDate() {
 		return canEditExpiryDate;
 	}
 
@@ -313,7 +311,7 @@ public class UploadRequestGroupDto {
 		this.mailMessageId = mailMessageId;
 	}
 
-	public Boolean getEnableNotification() {
+	public Boolean isEnableNotification() {
 		return enableNotification;
 	}
 
