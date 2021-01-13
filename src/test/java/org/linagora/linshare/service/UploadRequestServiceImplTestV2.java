@@ -39,9 +39,11 @@ package org.linagora.linshare.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import javax.transaction.Transactional;
 
@@ -66,7 +68,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
-import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
@@ -76,9 +78,11 @@ import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,7 +136,7 @@ public class UploadRequestServiceImplTestV2 {
 	private UploadRequestEntryRepository uploadRequestEntryRepository;
 
 	@Autowired
-	private FunctionalityReadOnlyService functionalityReadOnlyService;
+	private FunctionalityReadOnlyService funcReadOnlyService;
 
 	@Qualifier("jcloudFileDataStore")
 	@Autowired
@@ -140,6 +144,9 @@ public class UploadRequestServiceImplTestV2 {
 
 	@Autowired
 	private DocumentRepository documentRepository;
+
+	@Autowired
+	private TimeService timeService;
 
 	@Autowired
 	private DocumentEntryRepository documentEntryRepository;
@@ -196,6 +203,7 @@ public class UploadRequestServiceImplTestV2 {
 				"This is a body", false);
 		ureJohn = uploadRequestGroup.getUploadRequests().iterator().next();
 		ureJane = uploadRequestGroupJane.getUploadRequests().iterator().next();
+		timeService = Mockito.mock(TimeService.class);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -462,75 +470,74 @@ public class UploadRequestServiceImplTestV2 {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	private Date parseDate(String inputDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return formatter.parse(inputDate);
+	}
+
 	@Test
-	public void activateUploadRequestOnDefaultActivationDate() throws BusinessException {
+	public void activateUploadRequestOnDefaultActivationDate() throws BusinessException, ParseException {
+		// In this test when the user does not enter an activation date, the upload
+		// request's activation will take the default one defined on the functionality
+		// UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest uploadRequest = new UploadRequest();
-		uploadRequest.setCanClose(true);
-		uploadRequest.setMaxDepositSize((long) 100);
-		uploadRequest.setMaxFileCount(Integer.valueOf(3));
-		uploadRequest.setMaxFileSize((long) 50);
-		uploadRequest.setStatus(UploadRequestStatus.CREATED);
-		uploadRequest.setExpiryDate(new Date());
-		uploadRequest.setSecured(false);
-		uploadRequest.setCanEditExpiryDate(true);
-		uploadRequest.setCanDelete(true);
-		uploadRequest.setLocale("en");
+		Calendar activationDate = funcReadOnlyService.getCalendarWithoutTime(new Date());
+		Mockito.when(timeService.dateNow()).thenReturn(activationDate.getTime());
+		UploadRequest uploadRequest = createSimpleUploadRequest(null);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assertions.assertNotNull(uploadRequest);
-		TimeUnitValueFunctionality func = functionalityReadOnlyService
-				.getUploadRequestActivationTimeFunctionality(uploadRequestGroup.getOwner().getDomain());
-		Calendar calendar = getCalendarWithoutTime(new Date());
-		calendar.add(uploadRequest.getCreationDate().getDate(), func.getValue());
-		Date defaultActivationDate = calendar.getTime();
-		Assertions.assertEquals(defaultActivationDate, uploadRequest.getActivationDate());
+		Assertions.assertEquals(funcReadOnlyService.getCalendarWithoutTime(new Date()).getTime(), uploadRequest.getActivationDate());
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void activateUploadRequestOnMaxDelayofActivation() throws BusinessException {
+	public void activateUploadRequestOnMaxDelayofActivation() throws BusinessException, ParseException {
+		// In this test the user will choose to activate the UR on the deadline defined
+		// on the functionality UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Calendar calendar = getCalendarWithoutTime(new Date());
-		calendar.add(new Date().getDate(), 7);
-		Date activationDate = calendar.getTime();
-		UploadRequest uploadRequest = new UploadRequest();
-		uploadRequest.setCanClose(true);
-		uploadRequest.setMaxDepositSize((long) 100);
-		uploadRequest.setMaxFileCount(Integer.valueOf(3));
-		uploadRequest.setMaxFileSize((long) 50);
-		uploadRequest.setStatus(UploadRequestStatus.CREATED);
-		uploadRequest.setExpiryDate(new Date());
-		uploadRequest.setSecured(false);
-		uploadRequest.setCanEditExpiryDate(true);
-		uploadRequest.setCanDelete(true);
-		uploadRequest.setLocale("en");
-		uploadRequest.setActivationDate(activationDate);
+		Date activationDate = parseDate("2021-08-13 00:00:00");
+		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2021-08-13 00:00:00"));
+		UploadRequest uploadRequest = createSimpleUploadRequest(activationDate);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assertions.assertNotNull(uploadRequest);
-		TimeUnitValueFunctionality func = functionalityReadOnlyService
-				.getUploadRequestActivationTimeFunctionality(uploadRequestGroup.getOwner().getDomain());
-		Calendar funcCalendar = getCalendarWithoutTime(new Date());
-		funcCalendar.add(uploadRequest.getCreationDate().getDate(), func.getMaxValue());
-		Date maxActivationDate = calendar.getTime();
-		Assertions.assertEquals(maxActivationDate, uploadRequest.getActivationDate());
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus());
+		Assertions.assertEquals(parseDate("2021-08-13 00:00:00"), uploadRequest.getActivationDate());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	private Calendar getCalendarWithoutTime(Date date) {
-		Calendar calendar = new GregorianCalendar();
-		if (date != null) {
-			calendar.setTime(date);
-		}
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar;
+	@Test
+	public void activateUploadRequestAfterMaxDelayofActivation() throws BusinessException, ParseException {
+		// In this test the user will choose to activate the UR after the deadline
+		// defined on the functionality UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date activationDate = parseDate("2023-08-13 00:00:00");
+		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2023-08-13 00:00:00"));
+		UploadRequest uploadRequest = createSimpleUploadRequest(activationDate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
+					"This is a body", false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void activateUploadRequestBeforeDefaultActivationDate() throws BusinessException, ParseException {
+		// In this test the user will choose to activate the UR before the default date
+		// defined on the functionality UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date activationDate = parseDate("2020-08-13 00:00:00");
+		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2020-08-13 00:00:00"));
+		UploadRequest uploadRequest = createSimpleUploadRequest(activationDate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
+					"This is a body", false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

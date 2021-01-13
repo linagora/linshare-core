@@ -588,7 +588,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 		}
 	}
 
-	private Calendar getCalendarWithoutTime(Date date) {
+	@Override
+	public Calendar getCalendarWithoutTime(Date date) {
 		Calendar calendar = new GregorianCalendar();
 		if (date != null) {
 			calendar.setTime(date);

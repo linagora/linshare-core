@@ -139,4 +139,6 @@ public interface FunctionalityReadOnlyService {
 
 	Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate, BusinessErrorCode errorCode);
 
+	Calendar getCalendarWithoutTime(Date date);
+
 }

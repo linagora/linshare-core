@@ -67,6 +67,7 @@ import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -99,6 +100,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	private final UploadRequestEntryService requestEntryService;
 
+	private final TimeService timeService;
+
 	public UploadRequestGroupServiceImpl(
 			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
 			final UploadRequestGroupResourceAccessControl groupRac,
@@ -108,7 +111,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final LogEntryService logEntryService,
 			final UploadRequestService uploadRequestService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			final UploadRequestEntryService requestEntryService) {
+			final UploadRequestEntryService requestEntryService,
+			final TimeService timeService) {
 		super(groupRac, sanitizerInputHtmlBusinessService);
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 		this.functionalityService = functionalityService;
@@ -117,6 +121,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		this.logEntryService = logEntryService;
 		this.uploadRequestService = uploadRequestService;
 		this.requestEntryService = requestEntryService;
+		this.timeService = timeService;
 	}
 
 	@Override
@@ -225,7 +230,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		Date checkDate = functionalityService.getDateValue(func, req.getActivationDate(),
 				BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID);
 		if (checkDate == null) {
-			checkDate = new Date();
+			checkDate = timeService.dateNow();
 		}
 		req.setActivationDate(checkDate);
 	}
