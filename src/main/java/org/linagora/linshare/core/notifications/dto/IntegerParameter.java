@@ -47,7 +47,13 @@ public class IntegerParameter implements Parameter {
 		super();
 		this.value = value;
 		this.oldValue = oldValue;
-		this.modified = !(value.equals(oldValue));
+		if (value == null && oldValue == null) {
+			this.modified = false;
+		} else if (value == null && oldValue != null || (value != null && oldValue == null)) {
+			this.modified = true;
+		} else {
+			this.modified = !(value.equals(oldValue));
+		}
 	}
 
 	public IntegerParameter(Integer value, boolean modified) {

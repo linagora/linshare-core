@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -81,7 +82,7 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 		ctx.setVariable("totalMaxDepotSize", new LongParameter(request.getMaxDepositSize(), oldRequest.getMaxDepositSize()));
 		ctx.setVariable("maxFileNum", new IntegerParameter(request.getMaxFileCount(), oldRequest.getMaxFileCount()));
-		ctx.setVariable("maxFileSize", new LongParameter(request.getMaxFileSize(), request.getMaxFileSize()));
+		ctx.setVariable("maxFileSize", new LongParameter(request.getMaxFileSize(), oldRequest.getMaxFileSize()));
 
 		ctx.setVariable("subject", new StringParameter(request.getUploadRequestGroup().getSubject(), oldRequest.getUploadRequestGroup().getSubject()));
 		ctx.setVariable("message", new StringParameter(request.getUploadRequestGroup().getBody(), oldRequest.getUploadRequestGroup().getBody()));
@@ -124,9 +125,9 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 		ctx.setVariable("subject", new StringParameter("a subject", false));
 		ctx.setVariable("message", new StringParameter("a message", false));
 
-		ctx.setVariable("totalMaxDepotSize", new IntegerParameter(8, 30));
+		ctx.setVariable("totalMaxDepotSize", new LongParameter(8L, 30L));
 		ctx.setVariable("maxFileNum", new IntegerParameter(50, 48));
-		ctx.setVariable("maxFileSize", new IntegerParameter(70, 69));
+		ctx.setVariable("maxFileSize", new LongParameter(70L, 69L));
 
 		ctx.setVariable("expiryDate", new DateParameter(new Date(), getFakeExpirationDate()));
 		ctx.setVariable("activationDate", new DateParameter(new Date(), false));
@@ -149,21 +150,24 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 
-		ctx.setVariable("totalMaxDepotSize", new IntegerParameter(8, 30));
-		ctx.setVariable("maxFileNum", new IntegerParameter(50, false));
-		ctx.setVariable("maxFileSize", new IntegerParameter(70, false));
+		ctx.setVariable("totalMaxDepotSize", new IntegerParameter(8, null));
+		ctx.setVariable("maxFileNum", new LongParameter(null, 60L));
+		ctx.setVariable("maxFileSize", new LongParameter(70L, null));
 
-		ctx.setVariable("subject", new StringParameter("a subject", false));
-		ctx.setVariable("message", new StringParameter("a message", false));
-
-		ctx.setVariable("expiryDate", new DateParameter(new Date(), false));
-		ctx.setVariable("activationDate", new DateParameter(new Date(), false));
-
-		ctx.setVariable("deletionRight", new BooleanParameter(false, false));
-		ctx.setVariable("closureRight", new BooleanParameter(false, false));
+		ctx.setVariable("subject", new StringParameter("new subject ", "old subject"));
+		ctx.setVariable("message", new StringParameter("not changed message", false));
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.MONTH, 1);
+		// old: now => new: now +1 month
+		ctx.setVariable("expiryDate", new DateParameter(calendar.getTime(), new Date()));
+		ctx.setVariable("activationDate", new DateParameter(new Date(), null));
+		// old: Forbidden => new: Allowed
+		ctx.setVariable("deletionRight", new BooleanParameter(Boolean.valueOf(true), Boolean.valueOf(false)));
+		ctx.setVariable("closureRight", new BooleanParameter(Boolean.valueOf(true), Boolean.valueOf(false)));
 		ctx.setVariable("local", new StringParameter("fr", "en"));
 
-		ctx.setVariable("enableNotification", new BooleanParameter(true, false));
+		ctx.setVariable("enableNotification", new BooleanParameter(Boolean.valueOf(true), Boolean.valueOf(false)));
 
 		return ctx;
 	}

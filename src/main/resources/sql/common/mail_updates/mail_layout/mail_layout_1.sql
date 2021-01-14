@@ -190,16 +190,42 @@ welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 </html>
 <!--/* Common lower info title style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoEditedItem(titleInfo,oldValue,newValue)">
-     <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
-    <br/>
-      <th:block th:replace="${oldValue}" />  -> <th:block th:replace="${newValue}" />
+    <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
+   <br/>
+    <span>
+        <th:block th:if="${oldValue == null}">
+            null 
+        </th:block>
+        <th:block th:unless="${oldValue == null}">
+            <th:block th:replace="${oldValue}" />
+        </th:block>
+        =>
+        <th:block th:if="${newValue == null}">
+            null 
+        </th:block>
+        <th:block th:unless="${newValue == null}">
+            <th:block th:replace="${newValue}" />
+        </th:block>
+    </span>
 </div>
+
 <!--/* Edited  date  display settings  style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoEditedDateArea(titleInfo,oldValue,newValue)">
-     <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
-    <br/>
- <th:block  th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue,df)}"/> ->
- <th:block  th:with="df=#{date.format}" data-th-text="${#dates.format(newValue,df)}"/>
+    <span style="font-weight:bold;" data-th-text="${titleInfo}"></span>
+    <br />
+    <th:block th:if="${oldValue == null}">
+        null
+    </th:block>
+    <th:block th:unless="${oldValue == null}">
+        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue,df)}" /> 
+    </th:block>
+    =>
+    <th:block th:if="${newValue == null}">
+        null
+    </th:block>
+    <th:block th:unless="${newValue == null}">
+        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(newValue,df)}" /> 
+    </th:block>
 </div>
 <!--/* Common header template */-->
 <head  data-th-fragment="header">

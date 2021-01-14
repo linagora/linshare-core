@@ -220,6 +220,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		Validate.notEmpty(uuid, "Uuid must be set.");
 		Validate.notNull(object, "Object must be set.");
 		UploadRequest uploadRequest = find(actor, owner, uuid);
+		UploadRequest oldRequest = uploadRequest.clone();
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, uploadRequest.getUuid(), uploadRequest);
 		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
@@ -232,7 +233,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		if (res.getEnableNotification()) {
 			for (UploadRequestUrl urUrl : res.getUploadRequestURLs()) {
-				EmailContext context = new UploadRequestUpdateSettingsEmailContext((User) res.getUploadRequestGroup().getOwner(), urUrl, res, uploadRequest);
+				EmailContext context = new UploadRequestUpdateSettingsEmailContext((User) res.getUploadRequestGroup().getOwner(), urUrl, res, oldRequest);
 				mails.add(mailBuildingService.build(context));
 			}
 			notifierService.sendNotification(mails);
