@@ -41,7 +41,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
@@ -70,10 +69,6 @@ public interface UploadRequestEntryService {
 
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
 
-	Long computeEntriesSize(UploadRequest request);
-
 	FileAndMetaData downloadEntries(Account authUser, Account actor, UploadRequestGroup uploadRequestGroup,
 			List<UploadRequestEntry> entries);
-
-	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
 }

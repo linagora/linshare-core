@@ -380,11 +380,11 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 
 	@Override
 	public Integer countNbrUploadedFiles(UploadRequest uploadRequest) {
-		return uploadRequestEntryService.countNbrUploadedFiles(uploadRequest);
+		return uploadRequestBusinessService.countNbrUploadedFiles(uploadRequest);
 	}
 
 	@Override
 	public Long computeEntriesSize(UploadRequest request) {
-		return uploadRequestEntryService.computeEntriesSize(request);
+		return uploadRequestBusinessService.computeEntriesSize(request);
 	}
 }

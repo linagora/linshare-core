@@ -80,4 +80,8 @@ public interface UploadRequestRepository extends
 	List<String> findAllRequestsToBeNotified();
 
 	List<UploadRequest> findAll(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList);
+
+	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
+
+	Long computeEntriesSize(UploadRequest request);
 }

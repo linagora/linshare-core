@@ -68,4 +68,8 @@ public interface UploadRequestBusinessService {
 	List<String> findAllRequestsToBeNotified() throws BusinessException;
 
 	UploadRequest updateStatus(UploadRequest req, UploadRequestStatus status) throws BusinessException;
+
+	Long computeEntriesSize(UploadRequest request);
+
+	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
 }

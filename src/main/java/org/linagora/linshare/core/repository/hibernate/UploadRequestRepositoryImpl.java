@@ -159,4 +159,29 @@ public class UploadRequestRepositoryImpl extends
 		List<String> list = listByCriteria(crit);
 		return list;
 	}
+
+	@Override
+	public Integer countNbrUploadedFiles(UploadRequest uploadRequest) {
+		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequest");
+		urCrit.createAlias("uploadRequest.uploadRequestURLs", "urls");
+		urCrit.add(Restrictions.eq("urls.uploadRequest", uploadRequest));
+		urCrit.createAlias("urls.uploadRequestEntries", "entries");
+		urCrit.setProjection(Projections.rowCount());
+		Number nbrUploadedFiles = (Number) urCrit.getExecutableCriteria(getCurrentSession()).uniqueResult();
+		return nbrUploadedFiles.intValue();
+	}
+
+	@Override
+	public Long computeEntriesSize(UploadRequest uploadRequest) {
+		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequest");
+		urCrit.createAlias("uploadRequest.uploadRequestURLs", "urls");
+		urCrit.add(Restrictions.eq("urls.uploadRequest", uploadRequest));
+		urCrit.createAlias("urls.uploadRequestEntries", "entries");
+		urCrit.setProjection(Projections.sum("entries.size"));
+		List<UploadRequest> list = findByCriteria(urCrit);
+		if (list.size() > 0 && list.get(0) != null) {
+			return DataAccessUtils.longResult(list);
+		}
+		return 0L;
+	}
 }

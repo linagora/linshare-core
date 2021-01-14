@@ -347,11 +347,6 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	}
 
 	@Override
-	public Long computeEntriesSize(UploadRequest request) {
-		return uploadRequestEntryBusinessService.computeEntriesSize(request);
-	}
-
-	@Override
 	public FileAndMetaData downloadEntries(Account authUser, Account actor, UploadRequestGroup uploadRequestGroup,
 			List<UploadRequestEntry> entries) {
 			FileAndMetaData fileAndMetaData = null;
@@ -414,10 +409,5 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		computedName = entry.getName() + "-ure-"
 				+ formatter.format(entry.getCreationDate().getTime()).concat(extension);
 		return computedName;
-	}
-
-	@Override
-	public Integer countNbrUploadedFiles(UploadRequest uploadRequest) {
-		return uploadRequestEntryBusinessService.countNbrUploadedFiles(uploadRequest);
 	}
 }

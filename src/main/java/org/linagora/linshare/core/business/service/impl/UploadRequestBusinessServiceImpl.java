@@ -130,4 +130,15 @@ public class UploadRequestBusinessServiceImpl implements
 	public List<String> findAllRequestsToBeNotified() throws BusinessException {
 		return uploadRequestRepository.findAllRequestsToBeNotified();
 	}
+
+	@Override
+	public Integer countNbrUploadedFiles(UploadRequest uploadRequest) {
+		return uploadRequestRepository.countNbrUploadedFiles(uploadRequest);
+	}
+
+
+	@Override
+	public Long computeEntriesSize(UploadRequest request) {
+		return uploadRequestRepository.computeEntriesSize(request);
+	}
 }

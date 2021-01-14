@@ -43,7 +43,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -77,8 +76,4 @@ public interface UploadRequestEntryBusinessService {
 	ByteSource  download(UploadRequestEntry entry);
 
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
-
-	Long computeEntriesSize(UploadRequest request);
-
-	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
 }
