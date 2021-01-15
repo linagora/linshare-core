@@ -77,7 +77,6 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
@@ -134,9 +133,6 @@ public class UploadRequestServiceImplTestV2 {
 
 	@Autowired
 	private UploadRequestEntryRepository uploadRequestEntryRepository;
-
-	@Autowired
-	private FunctionalityReadOnlyService funcReadOnlyService;
 
 	@Qualifier("jcloudFileDataStore")
 	@Autowired
@@ -482,14 +478,13 @@ public class UploadRequestServiceImplTestV2 {
 		// request's activation will take the default one defined on the functionality
 		// UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Calendar activationDate = funcReadOnlyService.getCalendarWithoutTime(new Date());
-		Mockito.when(timeService.dateNow()).thenReturn(activationDate.getTime());
+		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2021-02-14 01:00:00"));
 		UploadRequest uploadRequest = createSimpleUploadRequest(null);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assertions.assertNotNull(uploadRequest);
-		Assertions.assertEquals(funcReadOnlyService.getCalendarWithoutTime(new Date()).getTime(), uploadRequest.getActivationDate());
+		Assertions.assertEquals(parseDate("2021-02-14 01:00:00"), uploadRequest.getActivationDate());
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -499,9 +494,8 @@ public class UploadRequestServiceImplTestV2 {
 		// In this test the user will choose to activate the UR on the deadline defined
 		// on the functionality UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Date activationDate = parseDate("2021-08-13 00:00:00");
 		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2021-08-13 00:00:00"));
-		UploadRequest uploadRequest = createSimpleUploadRequest(activationDate);
+		UploadRequest uploadRequest = createSimpleUploadRequest(parseDate("2021-08-13 00:00:00"));
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -514,9 +508,8 @@ public class UploadRequestServiceImplTestV2 {
 		// In this test the user will choose to activate the UR after the deadline
 		// defined on the functionality UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Date activationDate = parseDate("2023-08-13 00:00:00");
 		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2023-08-13 00:00:00"));
-		UploadRequest uploadRequest = createSimpleUploadRequest(activationDate);
+		UploadRequest uploadRequest = createSimpleUploadRequest(parseDate("2023-08-13 00:00:00"));
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
 					"This is a body", false);
@@ -530,9 +523,8 @@ public class UploadRequestServiceImplTestV2 {
 		// In this test the user will choose to activate the UR before the default date
 		// defined on the functionality UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Date activationDate = parseDate("2020-08-13 00:00:00");
 		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2020-08-13 00:00:00"));
-		UploadRequest uploadRequest = createSimpleUploadRequest(activationDate);
+		UploadRequest uploadRequest = createSimpleUploadRequest(parseDate("2020-08-13 00:00:00"));
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
 					"This is a body", false);

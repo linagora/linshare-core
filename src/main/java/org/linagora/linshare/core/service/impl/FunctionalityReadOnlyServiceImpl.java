@@ -57,6 +57,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.TimeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,12 +70,16 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	private final FunctionalityRepository functionalityRepository;
 
+	private final TimeService timeService;
+
 	public FunctionalityReadOnlyServiceImpl(
 			DomainBusinessService domainBusinessService,
-			FunctionalityRepository functionalityRepository) {
+			FunctionalityRepository functionalityRepository,
+			TimeService timeService) {
 		super();
 		this.domainBusinessService = domainBusinessService;
 		this.functionalityRepository = functionalityRepository;
+		this.timeService = timeService;
 	}
 
 
@@ -460,7 +465,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return null;
 		}
 		logger.debug(func.getIdentifier() + " is activated");
-		Calendar calendar = getCalendarWithoutTime(new Date());
+		Calendar calendar = getCalendarWithoutTime(timeService.dateNow());
 		calendar.add(func.toCalendarValue(), func.getValue());
 		Date defaultDate = calendar.getTime();
 		if (func.getDelegationPolicy() == null || !func.getDelegationPolicy().getStatus() || currentDate == null) {
@@ -470,7 +475,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		logger.debug(func.getIdentifier() + " has a delegation policy");
 		// check if there is limitation of maximum value
 		// -1 mean no limit
-		Date now = getCalendarWithoutTime(new Date()).getTime();
+		Date now = getCalendarWithoutTime(timeService.dateNow()).getTime();
 		if (func.getMaxValue() == -1 && (currentDate.after(now) || currentDate.equals(now))) {
 			return currentDate;
 		}
@@ -588,8 +593,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		}
 	}
 
-	@Override
-	public Calendar getCalendarWithoutTime(Date date) {
+	private Calendar getCalendarWithoutTime(Date date) {
 		Calendar calendar = new GregorianCalendar();
 		if (date != null) {
 			calendar.setTime(date);

@@ -18,10 +18,15 @@
 		<constructor-arg ref="basicStatisticMongoRepository" />
 	</bean>
 
+	<bean name="timeService"
+		class="org.linagora.linshare.core.service.impl.TimeServiceImpl">
+	</bean>
+
 	<bean name="functionalityReadOnlyService"
 		class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
 		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="timeService" />
 	</bean>
 
 	<bean name="functionalityService"

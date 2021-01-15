@@ -138,7 +138,4 @@ public interface FunctionalityReadOnlyService {
 	Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize, BusinessErrorCode errorCode);
 
 	Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate, BusinessErrorCode errorCode);
-
-	Calendar getCalendarWithoutTime(Date date);
-
 }

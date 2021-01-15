@@ -169,10 +169,6 @@
 		<constructor-arg ref="uploadRequestService" />
 	</bean>
 
-	<bean name="timeService"
-		class="org.linagora.linshare.core.service.impl.TimeServiceImpl">
-	</bean>
-
 	<bean name="guestService" class="org.linagora.linshare.core.service.impl.GuestServiceImpl">
 		<constructor-arg ref="guestBusinessService" />
 		<constructor-arg ref="abstractDomainService" />
