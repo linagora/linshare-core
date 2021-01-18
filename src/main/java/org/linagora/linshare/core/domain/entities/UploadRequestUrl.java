@@ -182,7 +182,7 @@ public class UploadRequestUrl {
 	}
 
 	public String getFullUrl(String baseUrl) {
-		// compose the secured url to give in mail
+		// compose the protected by password url to give in mail
 		StringBuffer httpUrlBase = new StringBuffer();
 		httpUrlBase.append(baseUrl);
 		if (!baseUrl.endsWith("/")) {

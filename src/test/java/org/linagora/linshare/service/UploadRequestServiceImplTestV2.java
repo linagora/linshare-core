@@ -188,7 +188,7 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequest.setMaxFileSize((long) 50);
 		uploadRequest.setStatus(UploadRequestStatus.CREATED);
 		uploadRequest.setExpiryDate(new Date());
-		uploadRequest.setSecured(false);
+		uploadRequest.setProtectedByPassword(false);
 		uploadRequest.setCanEditExpiryDate(true);
 		uploadRequest.setCanDelete(true);
 		uploadRequest.setLocale("en");
@@ -310,7 +310,7 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequest.setMaxFileSize((long) 50);
 		uploadRequest.setStatus(UploadRequestStatus.CREATED);
 		uploadRequest.setExpiryDate(new Date());
-		uploadRequest.setSecured(false);
+		uploadRequest.setProtectedByPassword(false);
 		uploadRequest.setCanEditExpiryDate(true);
 		uploadRequest.setCanDelete(true);
 		uploadRequest.setLocale("fr");

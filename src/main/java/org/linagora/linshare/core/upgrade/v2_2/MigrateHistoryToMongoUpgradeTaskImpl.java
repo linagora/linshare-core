@@ -126,7 +126,7 @@ public class MigrateHistoryToMongoUpgradeTaskImpl extends GenericUpgradeTaskImpl
 			uploadRequest.setActivationDate(uploadRequestHistory.getActivationDate());
 			uploadRequest.setCanDelete(uploadRequestHistory.isCanDelete());
 			uploadRequest.setExpiryDate(uploadRequestHistory.getExpiryDate());
-			uploadRequest.setSecured(uploadRequestHistory.isSecured());
+			uploadRequest.setProtectedByPassword(uploadRequestHistory.isProtectedByPassword());
 			uploadRequest.setCanClose(uploadRequestHistory.isCanClose());
 			uploadRequest.setCanEditExpiryDate(uploadRequestHistory.isCanEditExpiryDate());
 			uploadRequest.setNotificationDate(uploadRequestHistory.getNotificationDate());

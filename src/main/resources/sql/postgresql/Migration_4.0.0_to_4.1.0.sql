@@ -687,6 +687,10 @@ subject = {0} {1}  пригласил вас в свой запрос загру
 
 ALTER TABLE upload_request_group RENAME COLUMN restricted TO collective;
 
+-- Change secured to protected_by_password in Upload requests
+ALTER TABLE upload_request RENAME COLUMN secured TO protected_by_password;
+ALTER TABLE upload_request_group RENAME COLUMN secured TO protected_by_password;
+ALTER TABLE upload_request_history RENAME COLUMN secured TO protected_by_password;
 
 -- Update UPLOAD_REQUEST_ACTIVATED_FOR_OWNER.sql (isCollective field)
 

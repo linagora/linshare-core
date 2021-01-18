@@ -92,8 +92,8 @@ public class UploadRequestHistoryDto {
 	@Schema(description = "Locale")
 	private String locale;
 
-	@Schema(description = "Secured")
-	private boolean secured;
+	@Schema(description = "Define if the upload request is protected by a password")
+	private boolean protectedByPassword;
 
 	@Schema(description = "Creation date")
 	private Date creationDate;
@@ -123,7 +123,7 @@ public class UploadRequestHistoryDto {
 		this.canClose = u.isCanClose();
 		this.canEditExpiryDate = u.isCanEditExpiryDate();
 		this.locale = u.getLocale();
-		this.secured = u.isSecured();
+		this.protectedByPassword = u.isProtectedByPassword();
 		this.creationDate = u.getCreationDate();
 		this.modificationDate = u.getModificationDate();
 		this.mailMessageID = u.getMailMessageID();
@@ -249,12 +249,12 @@ public class UploadRequestHistoryDto {
 		this.locale = locale;
 	}
 
-	public boolean isSecured() {
-		return secured;
+	public boolean isProtectedByPassword() {
+		return protectedByPassword;
 	}
 
-	public void setSecured(boolean secured) {
-		this.secured = secured;
+	public void setProtectedByPassword(boolean protectedByPassword) {
+		this.protectedByPassword = protectedByPassword;
 	}
 
 	public Date getCreationDate() {

@@ -455,7 +455,7 @@ CREATE TABLE upload_request (
   modification_date               timestamp(6) NOT NULL,
   upload_proposition_request_uuid varchar(255),
   notified                        bool DEFAULT 'FALSE' NOT NULL,
-  secured                         bool NOT NULL,
+  protected_by_password           bool NOT NULL,
   mail_message_id                 varchar(255),
   activation_date                 timestamp(6) NOT NULL,
   expiry_date                     timestamp(6),
@@ -491,7 +491,7 @@ CREATE TABLE upload_request_group (
   uuid                            varchar(255) NOT NULL,
   creation_date                   timestamp(6) NOT NULL,
   modification_date               timestamp(6) NOT NULL,
-  secured                         bool NOT NULL,
+  protected_by_password           bool NOT NULL,
   mail_message_id                 varchar(255),
   activation_date                 timestamp(6) NOT NULL,
   expiry_date                     timestamp(6),
@@ -525,7 +525,7 @@ CREATE TABLE upload_request_history (
   can_close                       bool NOT NULL,
   can_edit_expiry_date            bool NOT NULL,
   locale                          varchar(255) NOT NULL,
-  secured                         bool NOT NULL,
+  protected_by_password           bool NOT NULL,
   creation_date                   timestamp(6) NOT NULL,
   modification_date               timestamp(6) NOT NULL,
   mail_message_id                 varchar(255),
@@ -563,6 +563,7 @@ CREATE TABLE mailing_list_contact (
   modification_date          timestamp(6) NOT NULL,
   mailing_list_contact_index int4 NOT NULL,
   PRIMARY KEY (id));
+-- is it still usefull ?
 CREATE TABLE upload_request_template (
   id                          int8 NOT NULL,
   uuid                       varchar(255) NOT NULL,
@@ -579,7 +580,7 @@ CREATE TABLE upload_request_template (
   max_file_size              int8,
   max_deposit_size           int8,
   locale                     varchar(255),
-  secured                    bool,
+  protected_by_password      bool,
   day_before_notification    int8,
   prolongation_mode          bool,
   creation_date              timestamp(6) NOT NULL,

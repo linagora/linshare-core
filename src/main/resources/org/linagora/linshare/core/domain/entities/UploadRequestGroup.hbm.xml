@@ -44,7 +44,7 @@
 			type="boolean" lazy="false" />
 		<property name="locale" column="locale" type="string" length="255"
 			not-null="false" lazy="false" />
-		<property name="secured" column="secured" type="boolean"
+		<property name="protectedByPassword" column="protected_by_password" type="boolean"
 			lazy="false" />
 		<property name="mailMessageId" column="mail_message_id" type="string"
 				length="255" not-null="false" lazy="false" />

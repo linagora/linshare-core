@@ -130,7 +130,7 @@ public class UploadRequestDto {
 		e.setActivationDate(getActivationDate());
 		e.setCanClose(isCanClose());
 		e.setCanDelete(isCanDeleteDocument());
-		e.setSecured(isProtectedByPassword());
+		e.setProtectedByPassword(isProtectedByPassword());
 		e.setMaxDepositSize(getMaxDepositSize());
 		e.setMaxFileCount(getMaxFileCount());
 		e.setLocale(getLocale());

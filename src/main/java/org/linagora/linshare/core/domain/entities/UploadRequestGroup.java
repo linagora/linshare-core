@@ -79,7 +79,7 @@ public class UploadRequestGroup {
 
 	private String locale;
 
-	private boolean secured;
+	private boolean protectedByPassword;
 
 	private String mailMessageId;
 
@@ -112,7 +112,7 @@ public class UploadRequestGroup {
 			Boolean canClose,
 			Boolean canEditExpiryDate,
 			String locale,
-			Boolean secured,
+			Boolean protectedByPassword,
 			Boolean enableNotification,
 			Boolean collective,
 			UploadRequestStatus status,
@@ -131,7 +131,7 @@ public class UploadRequestGroup {
 		this.canClose = canClose;
 		this.canEditExpiryDate = canEditExpiryDate;
 		this.locale = locale;
-		this.secured = secured;
+		this.protectedByPassword = protectedByPassword;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.enableNotification = enableNotification;
@@ -280,12 +280,12 @@ public class UploadRequestGroup {
 		this.locale = locale;
 	}
 
-	public boolean isSecured() {
-		return secured;
+	public boolean isProtectedByPassword() {
+		return protectedByPassword;
 	}
 
-	public void setSecured(boolean secured) {
-		this.secured = secured;
+	public void setProtectedByPassword(boolean protectedByPassword) {
+		this.protectedByPassword = protectedByPassword;
 	}
 
 	public String getMailMessageId() {
@@ -386,9 +386,9 @@ public class UploadRequestGroup {
 		}
 	}
 
-	public void setBusinessSecured(Boolean secured) {
-		if (secured != null) {
-			this.secured = secured;
+	public void setBusinessSecured(Boolean protectedByPassword) {
+		if (protectedByPassword != null) {
+			this.protectedByPassword = protectedByPassword;
 		}
 	}
 
@@ -435,7 +435,7 @@ public class UploadRequestGroup {
 				+ ", maxDepositSize=" + maxDepositSize + ", maxFileSize=" + maxFileSize + ", activationDate="
 				+ activationDate + ", notificationDate=" + notificationDate + ", expiryDate=" + expiryDate
 				+ ", canDelete=" + canDelete + ", canClose=" + canClose + ", canEditExpiryDate=" + canEditExpiryDate
-				+ ", locale=" + locale + ", secured=" + secured + ", enableNotification=" + enableNotification
+				+ ", locale=" + locale + ", protectedByPassword=" + protectedByPassword + ", enableNotification=" + enableNotification
 				+ ", collective=" + collective + ", status=" + status + "]";
 	}
 }

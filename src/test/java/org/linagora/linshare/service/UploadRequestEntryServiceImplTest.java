@@ -167,7 +167,7 @@ public class UploadRequestEntryServiceImplTest {
 		ure.setMaxFileSize((long) 50);
 		ure.setStatus(UploadRequestStatus.CREATED);
 		ure.setExpiryDate(new Date());
-		ure.setSecured(false);
+		ure.setProtectedByPassword(false);
 		ure.setCanEditExpiryDate(true);
 		ure.setCanDelete(true);
 		ure.setLocale("en");

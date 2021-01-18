@@ -126,7 +126,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	@Override
 	public UploadRequestContainer create(UploadRequest request, Contact contact, UploadRequestContainer container)
 			throws BusinessException {
-		UploadRequestUrl requestUrl = uploadRequestUrlBusinessService.create(request, request.isSecured(), contact);
+		UploadRequestUrl requestUrl = uploadRequestUrlBusinessService.create(request, request.isProtectedByPassword(), contact);
 		User owner = (User) request.getUploadRequestGroup().getOwner();
 		if (UploadRequestStatus.CREATED.equals(request.getStatus())) {
 			if (request.getEnableNotification()) {

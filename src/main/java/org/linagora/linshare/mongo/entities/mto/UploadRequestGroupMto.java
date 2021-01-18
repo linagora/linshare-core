@@ -72,7 +72,7 @@ public class UploadRequestGroupMto {
 
 	private String locale;
 
-	private boolean secured;
+	private boolean protectedByPassword;
 
 	private String mailMessageId;
 
@@ -107,7 +107,7 @@ public class UploadRequestGroupMto {
 		this.canClose = group.getCanClose();
 		this.canEditExpiryDate = group.getCanEditExpiryDate();
 		this.locale = group.getLocale();
-		this.secured = group.isSecured();
+		this.protectedByPassword = group.isProtectedByPassword();
 		this.mailMessageId = group.getMailMessageId();
 		this.enableNotification = group.getEnableNotification();
 		this.collective = group.isCollective();
@@ -133,7 +133,7 @@ public class UploadRequestGroupMto {
 		this.canClose = group.getCanClose();
 		this.canEditExpiryDate = group.getCanEditExpiryDate();
 		this.locale = group.getLocale();
-		this.secured = group.isSecured();
+		this.protectedByPassword = group.isProtectedByPassword();
 		this.mailMessageId = group.getMailMessageId();
 		this.enableNotification = group.getEnableNotification();
 		this.collective = group.isCollective();
@@ -263,12 +263,12 @@ public class UploadRequestGroupMto {
 		this.locale = locale;
 	}
 
-	public boolean isSecured() {
-		return secured;
+	public boolean isProtectedByPassword() {
+		return protectedByPassword;
 	}
 
-	public void setSecured(boolean secured) {
-		this.secured = secured;
+	public void setProtectedByPassword(boolean protectedByPassword) {
+		this.protectedByPassword = protectedByPassword;
 	}
 
 	public String getMailMessageId() {

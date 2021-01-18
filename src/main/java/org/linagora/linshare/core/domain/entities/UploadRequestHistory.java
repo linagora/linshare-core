@@ -77,7 +77,7 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	private String locale;
 
-	private boolean secured;
+	private boolean protectedByPassword;
 
 	private Date creationDate;
 
@@ -117,7 +117,7 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 		this.canClose = update.isCanClose();
 		this.canEditExpiryDate = update.isCanEditExpiryDate();
 		this.locale = update.getLocale();
-		this.secured = update.isSecured();
+		this.protectedByPassword = update.isProtectedByPassword();
 		this.mailMessageID = update.getMailMessageId();
 	}
 
@@ -250,12 +250,12 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 		this.locale = locale;
 	}
 
-	public boolean isSecured() {
-		return secured;
+	public boolean isProtectedByPassword() {
+		return protectedByPassword;
 	}
 
-	public void setSecured(boolean secured) {
-		this.secured = secured;
+	public void setProtectedByPassword(boolean protectedByPassword) {
+		this.protectedByPassword = protectedByPassword;
 	}
 
 	public Date getCreationDate() {

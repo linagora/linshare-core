@@ -477,7 +477,7 @@ public class UploadRequestGroupServiceImplTest {
 		uploadRequest.setMaxFileSize((long) 50);
 		uploadRequest.setStatus(UploadRequestStatus.CREATED);
 		uploadRequest.setExpiryDate(new Date());
-		uploadRequest.setSecured(false);
+		uploadRequest.setProtectedByPassword(false);
 		uploadRequest.setCanEditExpiryDate(true);
 		uploadRequest.setCanDelete(true);
 		uploadRequest.setLocale("en");

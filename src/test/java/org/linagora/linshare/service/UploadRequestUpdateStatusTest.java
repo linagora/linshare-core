@@ -132,7 +132,7 @@ public class UploadRequestUpdateStatusTest {
 		referenceUploadRequest.setMaxFileSize((long) 5000000);
 		referenceUploadRequest.setStatus(UploadRequestStatus.CREATED);
 		referenceUploadRequest.setExpiryDate(expiryDate);
-		referenceUploadRequest.setSecured(false);
+		referenceUploadRequest.setProtectedByPassword(false);
 		referenceUploadRequest.setCanEditExpiryDate(true);
 		referenceUploadRequest.setCanDelete(true);
 		referenceUploadRequest.setLocale("en");

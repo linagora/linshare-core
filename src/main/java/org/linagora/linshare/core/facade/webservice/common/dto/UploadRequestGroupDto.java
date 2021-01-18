@@ -99,8 +99,8 @@ public class UploadRequestGroupDto {
 	@Schema(description = "Locale")
 	private String locale;
 
-	@Schema(description = "Is secured with password")
-	private boolean secured;
+	@Schema(description = "Define if the upload request is protected with a password")
+	private boolean protectedByPassword;
 
 	@Schema(description = "Mail message id")
 	private String mailMessageId;
@@ -141,7 +141,7 @@ public class UploadRequestGroupDto {
 		this.canClose = entity.getCanClose();
 		this.canEditExpiryDate = entity.getCanEditExpiryDate();
 		this.locale = entity.getLocale();
-		this.secured = entity.isSecured();
+		this.protectedByPassword = entity.isProtectedByPassword();
 		this.mailMessageId = entity.getMailMessageId();
 		this.enableNotification = entity.getEnableNotification();
 		this.collective = entity.isCollective();
@@ -167,7 +167,7 @@ public class UploadRequestGroupDto {
 		uploadRequestGroup.setCanClose(isCanClose());
 		uploadRequestGroup.setCanEditExpiryDate(isCanEditExpiryDate());
 		uploadRequestGroup.setLocale(getLocale());
-		uploadRequestGroup.setSecured(isSecured());
+		uploadRequestGroup.setProtectedByPassword(isProtectedByPassword());
 		uploadRequestGroup.setMailMessageId(getMailMessageId());
 		uploadRequestGroup.setEnableNotification(isEnableNotification());
 		uploadRequestGroup.setCollective(isCollective());
@@ -295,12 +295,12 @@ public class UploadRequestGroupDto {
 		this.locale = locale;
 	}
 
-	public boolean isSecured() {
-		return secured;
+	public boolean isProtectedByPassword() {
+		return protectedByPassword;
 	}
 
-	public void setSecured(boolean secured) {
-		this.secured = secured;
+	public void setProtectedByPassword(boolean protectedByPassword) {
+		this.protectedByPassword = protectedByPassword;
 	}
 
 	public String getMailMessageId() {

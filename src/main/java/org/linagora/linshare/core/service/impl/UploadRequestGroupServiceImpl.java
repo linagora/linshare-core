@@ -154,7 +154,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		UploadRequest req = initUploadRequest(owner, inputRequest);
 		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup(owner, domain, subject, body,
 				req.getActivationDate(), req.isCanDelete(), req.isCanClose(), req.isCanEditExpiryDate(),
-				req.getLocale(), req.isSecured(), req.getEnableNotification(), collectiveMode, req.getStatus(),
+				req.getLocale(), req.isProtectedByPassword(), req.getEnableNotification(), collectiveMode, req.getStatus(),
 				req.getExpiryDate(), req.getNotificationDate(), req.getMaxFileCount(), req.getMaxDepositSize(),
 				req.getMaxFileSize());
 		uploadRequestGroup = uploadRequestGroupBusinessService.create(uploadRequestGroup);
@@ -206,8 +206,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private void checkSecuredUrl(AbstractDomain domain, UploadRequest req) {
 		BooleanValueFunctionality func = functionalityService
 				.getUploadRequestSecureUrlFunctionality(domain);
-		boolean secure = checkBoolean(func, req.isSecured());
-		req.setSecured(secure);
+		boolean secure = checkBoolean(func, req.isProtectedByPassword());
+		req.setProtectedByPassword(secure);
 	}
 
 	private void checkCanDelete(AbstractDomain domain, UploadRequest req) {

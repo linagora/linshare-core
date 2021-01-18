@@ -78,7 +78,7 @@ public class UploadRequestMto {
 
 	private String locale;
 
-	private Boolean secured;
+	private Boolean protectedByPassword;
 
 	private String mailMessageId;
 
@@ -105,7 +105,7 @@ public class UploadRequestMto {
 		this.uploadRequestGroupUuid = request.getUploadRequestGroup().getUuid();
 		this.domain = new DomainMto(request.getUploadRequestGroup().getAbstractDomain());
 		this.maxFileCount = request.getMaxFileCount();
-		this.secured = request.isSecured();
+		this.protectedByPassword = request.isProtectedByPassword();
 		this.owner = new AccountMto(request.getUploadRequestGroup().getOwner());
 		this.notified = request.isNotified();
 		this.locale = request.getLocale();
@@ -128,7 +128,7 @@ public class UploadRequestMto {
 		this.uploadRequestGroupUuid = request.getUploadRequestGroup().getUuid();
 		this.domain = new DomainMto(request.getUploadRequestGroup().getAbstractDomain());
 		this.maxFileCount = request.getMaxFileCount();
-		this.secured = request.isSecured();
+		this.protectedByPassword = request.isProtectedByPassword();
 		this.owner = new AccountMto(request.getUploadRequestGroup().getOwner());
 		this.notified = request.isNotified();
 		this.locale = request.getLocale();
@@ -264,12 +264,12 @@ public class UploadRequestMto {
 		this.locale = locale;
 	}
 
-	public Boolean isSecured() {
-		return secured;
+	public Boolean isProtectedByPassword() {
+		return protectedByPassword;
 	}
 
-	public void setSecured(Boolean secured) {
-		this.secured = secured;
+	public void setProtectedByPassword(Boolean protectedByPassword) {
+		this.protectedByPassword = protectedByPassword;
 	}
 
 	public String getMailMessageId() {

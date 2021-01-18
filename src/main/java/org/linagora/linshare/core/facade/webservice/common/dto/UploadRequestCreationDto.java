@@ -82,7 +82,7 @@ public class UploadRequestCreationDto {
 	// could be null
 	private String body;
 
-	private boolean secured;
+	private boolean protectedByPassword;
 
 	private String locale;
 
@@ -99,7 +99,7 @@ public class UploadRequestCreationDto {
 		e.setActivationDate(getActivationDate());
 		e.setCanClose(checkCanCloseCanDelete(canClose));
 		e.setCanDelete(checkCanCloseCanDelete(canDelete));
-		e.setSecured(isSecured());
+		e.setProtectedByPassword(isProtectedByPassword());
 		e.setMaxDepositSize(getMaxDepositSize());
 		e.setMaxFileCount(getMaxFileCount());
 		e.setLocale(getLocale());
@@ -227,11 +227,11 @@ public class UploadRequestCreationDto {
 		this.canDelete = canDelete;
 	}
 
-	public boolean isSecured() {
-		return secured;
+	public boolean isProtectedByPassword() {
+		return protectedByPassword;
 	}
 
-	public void setSecured(boolean secured) {
-		this.secured = secured;
+	public void setProtectedByPassword(boolean protectedByPassword) {
+		this.protectedByPassword = protectedByPassword;
 	}
 }

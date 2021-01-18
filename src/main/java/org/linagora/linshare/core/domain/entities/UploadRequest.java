@@ -79,7 +79,7 @@ public class UploadRequest implements Cloneable {
 
 	private String locale;
 
-	private boolean secured;
+	private boolean protectedByPassword;
 
 	private String mailMessageId;
 
@@ -107,7 +107,7 @@ public class UploadRequest implements Cloneable {
 		this.setCanClose(urg.getCanClose());
 		this.setCanEditExpiryDate(urg.getCanEditExpiryDate());
 		this.setLocale(urg.getLocale());
-		this.setSecured(urg.isSecured());
+		this.setProtectedByPassword(urg.isProtectedByPassword());
 		this.setEnableNotification(urg.getEnableNotification());
 		this.setExpiryDate(urg.getExpiryDate());
 		this.setNotificationDate(urg.getNotificationDate());
@@ -284,12 +284,12 @@ public class UploadRequest implements Cloneable {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public boolean isSecured() {
-		return secured;
+	public boolean isProtectedByPassword() {
+		return protectedByPassword;
 	}
 
-	public void setSecured(boolean secured) {
-		this.secured = secured;
+	public void setProtectedByPassword(boolean protectedByPassword) {
+		this.protectedByPassword = protectedByPassword;
 	}
 
 	public Boolean isNotified() {
@@ -358,9 +358,9 @@ public class UploadRequest implements Cloneable {
 		}
 	}
 
-	public void setBusinessSecured(Boolean secured) {
-		if (secured != null) {
-			this.secured = secured;
+	public void setBusinessSecured(Boolean protectedByPassword) {
+		if (protectedByPassword != null) {
+			this.protectedByPassword = protectedByPassword;
 		}
 	}
 
@@ -413,7 +413,7 @@ public class UploadRequest implements Cloneable {
 				+ maxFileSize + ", status=" + status + ", activationDate=" + activationDate + ", creationDate="
 				+ creationDate + ", modificationDate=" + modificationDate + ", notificationDate=" + notificationDate
 				+ ", expiryDate=" + expiryDate + ", canDelete=" + canDelete + ", canClose=" + canClose
-				+ ", canEditExpiryDate=" + canEditExpiryDate + ", locale=" + locale + ", secured=" + secured
+				+ ", canEditExpiryDate=" + canEditExpiryDate + ", locale=" + locale + ", protectedByPassword=" + protectedByPassword
 				+ ", mailMessageId=" + mailMessageId + ", uploadRequestURLs=" + uploadRequestURLs
 				+ ", uploadRequestHistory=" + uploadRequestHistory + ", notified=" + notified + ", pristine=" + pristine
 				+ ", enableNotification=" + enableNotification + "]";

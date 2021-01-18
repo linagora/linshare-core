@@ -71,7 +71,7 @@ public class UploadRequestActivationForRecipientEmailBuilder extends GenericUplo
 
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
-		ctx.setVariable("protected", request.isSecured());
+		ctx.setVariable("protected", request.isProtectedByPassword());
 		ctx.setVariable("password", emailCtx.getRequestUrl().getTemporaryPlainTextPassword());
 		ctx.setVariable("isCollective", request.getUploadRequestGroup().isCollective());
 		if (request.getUploadRequestGroup().isCollective()) {

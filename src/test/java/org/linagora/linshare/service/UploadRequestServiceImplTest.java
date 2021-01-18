@@ -181,7 +181,7 @@ public class UploadRequestServiceImplTest {
 		ure.setMaxFileCount(Integer.valueOf(3));
 		ure.setMaxFileSize((long) 50);
 		ure.setStatus(UploadRequestStatus.CREATED);
-		ure.setSecured(false);
+		ure.setProtectedByPassword(false);
 		ure.setCanEditExpiryDate(true);
 		ure.setCanDelete(true);
 		ure.setLocale("en");
@@ -215,7 +215,7 @@ public class UploadRequestServiceImplTest {
 		Assertions.assertEquals(tmp.getMaxDepositSize(), eJohn.getMaxDepositSize());
 		Assertions.assertEquals(tmp.getMaxFileCount(), eJohn.getMaxFileCount());
 		Assertions.assertEquals(tmp.getMaxFileSize(), eJohn.getMaxFileSize());
-		Assertions.assertEquals(tmp.isSecured(), eJohn.isSecured());
+		Assertions.assertEquals(tmp.isProtectedByPassword(), eJohn.isProtectedByPassword());
 		Assertions.assertEquals(tmp.isCanClose(), eJohn.isCanClose());
 		Assertions.assertEquals(tmp.isCanDelete(), eJohn.isCanDelete());
 		Assertions.assertEquals(tmp.getUploadRequestGroup().getAbstractDomain(), eJohn.getUploadRequestGroup().getAbstractDomain());
