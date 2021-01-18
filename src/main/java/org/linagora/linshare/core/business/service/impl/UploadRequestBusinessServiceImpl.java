@@ -107,7 +107,6 @@ public class UploadRequestBusinessServiceImpl implements
 		req.setBusinessEnableNotification(object.getEnableNotification());
 		req.setBusinessCanEditExpiryDate(object.isCanEditExpiryDate());
 		req.setBusinessNotificationDate(object.getNotificationDate());
-		req.setPristine(false);
 		req.setModificationDate(new Date());
 		return uploadRequestRepository.update(req);
 	}

@@ -212,24 +212,40 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		}
 	}
 
+	/**
+	 * @param fromGroup check if the method is used from upload request group service
+	 */
 	@Override
-	public UploadRequest update(Account actor, Account owner, String uuid, UploadRequest object)
+	public UploadRequest update(Account actor, Account owner, String uuid, UploadRequest object, boolean fromGroup)
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(owner, "Owner must be set.");
 		Validate.notEmpty(uuid, "Uuid must be set.");
 		Validate.notNull(object, "Object must be set.");
 		UploadRequest uploadRequest = find(actor, owner, uuid);
+		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+				uploadRequest);
 		UploadRequest oldRequest = uploadRequest.clone();
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, uploadRequest.getUuid(), uploadRequest);
-		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
-				uploadRequest);
-		if (uploadRequest.getUploadRequestGroup().isCollective()) {
+		// if called from upload request service ad the group is collective raise an error
+		if (!fromGroup && uploadRequest.getUploadRequestGroup().isCollective()) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_NOT_UPDATABLE_GROUP_MODE,
 					"Connot update a collective upload request, try to update the upload request group");
 		}
+		// when UR updated from uploadRequestService
+		if (!fromGroup) {
+			uploadRequest.setPristine(false);
+		} else {
+		// URs that are updated from the group are changed to pristine
+			uploadRequest.setPristine(true);
+		}
 		UploadRequest res = uploadRequestBusinessService.update(uploadRequest, object);
+		// No audit record when UR beyond a group in collective mode 
+		if (!uploadRequest.getUploadRequestGroup().isCollective()) {
+			log.setResourceUpdated(new UploadRequestMto(res));
+			logEntryService.insert(log);
+		}
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		if (res.getEnableNotification()) {
 			for (UploadRequestUrl urUrl : res.getUploadRequestURLs()) {
@@ -238,8 +254,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			}
 			notifierService.sendNotification(mails);
 		}
-		log.setResourceUpdated(new UploadRequestMto(res));
-		logEntryService.insert(log);
 		return res;
 	}
 

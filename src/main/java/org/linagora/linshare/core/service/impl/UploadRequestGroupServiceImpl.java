@@ -411,32 +411,15 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		for (UploadRequest uploadRequest : group.getUploadRequests()) {
 			if (force) {
 				uploadRequest.setPristine(true);
-				updateRequestObjectFromGroup(uploadRequest, group);
-				uploadRequestService.updateRequest(authUser, actor, uploadRequest);
+				uploadRequestService.update(authUser, actor, uploadRequest.getUuid(), new UploadRequest(group), true);
 			} else if (uploadRequest.isPristine()) {
-				updateRequestObjectFromGroup(uploadRequest, group);
-				uploadRequestService.updateRequest(authUser, actor, uploadRequest);
+				uploadRequestService.update(authUser, actor, uploadRequest.getUuid(), new UploadRequest(group), true);
 			}
 		}
 		uploadRequestGroup = uploadRequestGroupBusinessService.update(group);
 		groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
 		logEntryService.insert(groupLog);
 		return group;
-	}
-
-	private void updateRequestObjectFromGroup(UploadRequest uploadRequest, UploadRequestGroup group) {
-		uploadRequest.setModificationDate(new Date());
-		uploadRequest.setMaxFileCount(group.getMaxFileCount());
-		uploadRequest.setMaxDepositSize(group.getMaxDepositSize());
-		uploadRequest.setMaxFileSize(group.getMaxFileSize());
-		uploadRequest.setNotificationDate(group.getNotificationDate());
-		uploadRequest.setExpiryDate(group.getExpiryDate());
-		uploadRequest.setCanDelete(group.getCanDelete());
-		uploadRequest.setCanClose(group.getCanClose());
-		uploadRequest.setCanEditExpiryDate(group.getCanEditExpiryDate());
-		uploadRequest.setLocale(group.getLocale());
-		uploadRequest.setEnableNotification(group.getEnableNotification());
-		uploadRequest.setActivationDate(group.getActivationDate());
 	}
 
 	@Override

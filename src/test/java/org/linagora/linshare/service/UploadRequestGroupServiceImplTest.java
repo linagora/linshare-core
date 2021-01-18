@@ -361,13 +361,14 @@ public class UploadRequestGroupServiceImplTest {
 				"This is a body", true);
 		UploadRequest uploadRequest = urg.getUploadRequests().iterator().next();
 		// in Collective mode the UR is always pristine
+		Assertions.assertTrue(urg.isCollective());
 		Assertions.assertTrue(uploadRequest.isPristine());
 		Assertions.assertEquals(3, urg.getMaxFileCount());
 		Assertions.assertEquals(3, uploadRequest.getMaxFileCount());
 		// update from UploadRequestService should raise an exception
 		uploadRequest.setMaxFileCount(2);
 		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
-			uploadRequestService.update(john, john, uploadRequest.getUuid(), uploadRequest);
+			uploadRequestService.update(john, john, uploadRequest.getUuid(), uploadRequest, false);
 		});
 		Assertions.assertEquals(e.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_NOT_UPDATABLE_GROUP_MODE);
 		urg.setMaxFileCount(2);
@@ -387,6 +388,7 @@ public class UploadRequestGroupServiceImplTest {
 				"This is a body", false);
 		List<UploadRequest> uploadRequests = uploadRequestService.findAll(john, john, urg, null);
 		// assert initial conditions 
+		Assertions.assertFalse(urg.isCollective());
 		for (UploadRequest uploadRequest : uploadRequests) {
 			Assertions.assertTrue(uploadRequest.isPristine());
 			Assertions.assertEquals(3, uploadRequest.getMaxFileCount());
@@ -403,7 +405,7 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequest uploadRequest2 = uploadRequests.get(1);
 		uploadRequest1.setMaxFileCount(5);
 		// update via the uploadRequestService endpoint
-		uploadRequest1 = uploadRequestService.update(john, john, uploadRequest1.getUuid(), uploadRequest1);
+		uploadRequest1 = uploadRequestService.update(john, john, uploadRequest1.getUuid(), uploadRequest1, false);
 		Assertions.assertEquals(Integer.valueOf(5), uploadRequest1.getMaxFileCount());
 		// expected | UR should be dirty (not pristine) 
 		Assertions.assertFalse(uploadRequest1.isPristine());

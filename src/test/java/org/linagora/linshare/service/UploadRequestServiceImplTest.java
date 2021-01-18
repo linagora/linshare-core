@@ -230,7 +230,7 @@ public class UploadRequestServiceImplTest {
 		tmp.setCanDelete(false);
 		tmp.setCanEditExpiryDate(false);
 		tmp.setMaxFileCount(Integer.valueOf(2));
-		tmp = service.update(john, john, tmp.getUuid(), tmp);
+		tmp = service.update(john, john, tmp.getUuid(), tmp, false);
 		Assertions.assertEquals(tmp.isCanClose(), false);
 		Assertions.assertEquals(tmp.isCanDelete(), false);
 		Assertions.assertEquals(tmp.isCanEditExpiryDate(), false);

@@ -265,7 +265,7 @@ public class UploadRequestServiceImplTestV2 {
 		uRequest.setCanClose(false);
 		uRequest.setMaxDepositSize((long)150);
 		uRequest.setEnableNotification(true);
-		uRequest = uploadRequestService.update(john, john, uRequest.getUuid(), uRequest);
+		uRequest = uploadRequestService.update(john, john, uRequest.getUuid(), uRequest, false);
 		Assertions.assertEquals(uRequest.isCanClose(), false);
 		Assertions.assertEquals(uRequest.getMaxDepositSize(), Long.valueOf(150));
 		Assertions.assertEquals(uRequest.getEnableNotification(), true);

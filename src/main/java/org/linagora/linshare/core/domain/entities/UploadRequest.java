@@ -98,11 +98,7 @@ public class UploadRequest implements Cloneable {
 	}
 
 	public UploadRequest(UploadRequestGroup urg) {
-		if (urg.getActivationDate().before(new Date())) {
-			this.setActivationDate(new Date());
-		} else {
-			this.setActivationDate(urg.getActivationDate());
-		}
+		this.setActivationDate(urg.getActivationDate());
 		this.setCanDelete(urg.getCanDelete());
 		this.setCanClose(urg.getCanClose());
 		this.setCanEditExpiryDate(urg.getCanEditExpiryDate());
