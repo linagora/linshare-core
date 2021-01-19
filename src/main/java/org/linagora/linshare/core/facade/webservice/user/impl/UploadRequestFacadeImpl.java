@@ -74,15 +74,20 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		this.auditLogEntryService = auditLogEntryService;
 	}
 
+	private UploadRequestDto toDto(UploadRequest ur, boolean full) {
+		UploadRequestDto requestDto = UploadRequestDto.toDto(ur, true);
+		requestDto.setNbrUploadedFiles(uploadRequestService.countNbrUploadedFiles(ur));
+		requestDto.setUsedSpace(uploadRequestService.computeEntriesSize(ur));
+		return requestDto;
+	}
+
 	@Override
 	public UploadRequestDto find(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Upload request uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequest ur = uploadRequestService.find(authUser, actor, uuid);
-		UploadRequestDto requestDto = UploadRequestDto.toDto(ur, true);
-		requestDto.setNbrUploadedFiles(uploadRequestService.countNbrUploadedFiles(ur));
-		requestDto.setUsedSpace(uploadRequestService.computeEntriesSize(ur));
+		UploadRequestDto requestDto = toDto(ur, true);
 		return requestDto;
 	}
 
@@ -97,7 +102,8 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		User actor = getActor(authUser, actorUuid);
 		UploadRequest e = req.toObject();
 		e = uploadRequestService.update(authUser, actor, req.getUuid(), e, false);
-		return new UploadRequestDto(e, true);
+		UploadRequestDto requestDto = toDto(e, true);
+		return requestDto;
 	}
 
 	@Override
@@ -107,7 +113,8 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequest uploadRequest = uploadRequestService.updateStatus(authUser, actor, requestUuid, status, copy);
-		return new UploadRequestDto(uploadRequest, false);
+		UploadRequestDto requestDto = toDto(uploadRequest, false);
+		return requestDto;
 	}
 
 	@Override
@@ -116,7 +123,8 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequest e = uploadRequestService.deleteRequest(authUser, actor, uuid);
-		return new UploadRequestDto(e, false);
+		UploadRequestDto requestDto = toDto(e, false);
+		return requestDto;
 	}
 
 	@Override
@@ -132,7 +140,7 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		Account authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		List<UploadRequestEntry> uploadRequestEntries = uploadRequestService.findAllEntries(authUser, actor, uuid);
-		return  ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto()));
+		return ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto()));
 	}
 
 	@Override
