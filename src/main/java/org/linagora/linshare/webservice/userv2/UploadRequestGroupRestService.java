@@ -63,7 +63,7 @@ public interface UploadRequestGroupRestService {
 
 	UploadRequestGroupDto addRecipient(String uuid, List<ContactDto> recipientEmail);
 
-	Set<AuditLogEntryUser> findAll(String uuid, boolean detail, boolean entriesLogsOnly, List<LogAction> actions,
+	Set<AuditLogEntryUser> findAllAuditsOfGroup(String uuid, boolean all, List<LogAction> actions,
 			List<AuditLogEntryType> types);
 
 	Set<AuditLogEntryUser> findAllAuditsForUploadRequest(String groupUuid, String uploadRequestUuid,

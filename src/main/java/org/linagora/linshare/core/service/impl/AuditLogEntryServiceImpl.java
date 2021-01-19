@@ -48,7 +48,6 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -273,8 +272,8 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account authUser, Account actor, String requestUuid, boolean detail,
-			boolean entriesLogsOnly, List<LogAction> action, List<AuditLogEntryType> types) {
+	public Set<AuditLogEntryUser> findAllAuditsOfGroup(Account authUser, Account actor, String uploadRequestGroupUuid, boolean all,
+			List<LogAction> action, List<AuditLogEntryType> types) {
 		Validate.notNull(authUser);
 		Validate.notNull(actor);
 		Set<AuditLogEntryUser> res = Sets.newHashSet();
@@ -282,30 +281,12 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
 		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST);
 		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
-		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);
-		List<AuditLogEntryType> entriesTypes = getEntryTypes(types, supportedTypes, false);
-		if (entriesTypes == null || entriesTypes.isEmpty()) {
-			entriesTypes = getUploadRequestDefaultTypes(detail, entriesLogsOnly);
+		if (all) {
+			supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);
 		}
-		action = getActions(action);
-		res = userMongoRepository.findUploadRequestHistoryForUser(actor.getLsUuid(), requestUuid, action,
-				entriesTypes, Sort.by(Sort.Direction.DESC, CREATION_DATE));
+		res = userMongoRepository.findUploadRequestHistoryForUser(actor.getLsUuid(), uploadRequestGroupUuid, getActions(action),
+				getEntryTypes(types, supportedTypes, true), Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		return res;
-	}
-
-	protected List<AuditLogEntryType> getUploadRequestDefaultTypes(boolean detail, boolean entriesLogsOnly) {
-		List<AuditLogEntryType> types = Lists.newArrayList();
-		if (entriesLogsOnly) {
-			types.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);
-		} else if (detail) {
-			types.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
-			types.add(AuditLogEntryType.UPLOAD_REQUEST);
-			types.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
-		} else {
-			types.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
-			types.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
-		}
-		return types;
 	}
 
 	@Override

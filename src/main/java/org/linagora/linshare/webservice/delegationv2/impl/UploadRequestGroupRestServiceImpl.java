@@ -199,27 +199,26 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 
 	@GET
 	@Path("/{uuid}/audit")
-	@Operation(summary = "Get all traces for upload request.", responses = {
+	@Operation(summary = "Get all traces of an upload request group, with no optional parameters it returns list of audit traces with"
+			+ " UPLOAD_REQUEST_GROUP (only for individual URG) type, UPLOAD_REQUEST and UPLOAD_REQUEST_URL type.", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
 			responseCode = "200"
 		)
 	})
 	@Override
-	public Set<AuditLogEntryUser> findAll(
+	public Set<AuditLogEntryUser> findAllAuditsOfGroup(
 			@Parameter(description = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
-			@Parameter(description = "The request uuid.", required = true)
-				@PathParam("uuid") String uuid,
-			@Parameter(description =  "This parameter allow you to find all logs relative to upload request, upload request group and recipients (can be activated if type is empty and entriesLogsOnly has false value)")
-				@QueryParam("detail") boolean detail,
-			@Parameter(description = "This parameter allow you to find all logs relative to upload request entry only (can be activated if type is empty)", required = false)
-				@QueryParam("entriesLogsOnly") boolean entriesLogsOnly,
+			@Parameter(description = "The upload request group uuid.", required = true)
+				@PathParam("uuid") String uploadRequestGroupUuid,
+			@Parameter(description =  "If true return traces add to the default list UPLOAD_REQUEST_ENTRY audit types")
+				@QueryParam("all") boolean all,
 			@Parameter(description = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions,
-			@Parameter(description = "Filter by type of resource's types (If the type is not empty, the entriesLogsType and detail parameter are ignored)", required = false)
+			@Parameter(description = "Filter by type of resource's types", required = false)
 				@QueryParam("types") List<AuditLogEntryType> types) {
-		return uploadRequestGroupFacade.findAll(actorUuid, uuid, detail, entriesLogsOnly, actions, types);
+		return uploadRequestGroupFacade.findAllAuditsOfGroup(actorUuid, uploadRequestGroupUuid, all, actions, types);
 	}
 
 	@GET

@@ -159,14 +159,13 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String actorUuid, String groupUuid, boolean detail, boolean entriesLogsOnly,
-			List<LogAction> actions, List<AuditLogEntryType> types) {
+	public Set<AuditLogEntryUser> findAllAuditsOfGroup(String actorUuid, String groupUuid, boolean all,	List<LogAction> actions, List<AuditLogEntryType> types) {
 		Validate.notEmpty(groupUuid, "Upload request group uuid must be set");
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);
-		return auditLogEntryService.findAll(authUser, actor, groupUuid, detail, entriesLogsOnly, actions, types);
+		return auditLogEntryService.findAllAuditsOfGroup(authUser, actor, groupUuid, all, actions, types);
 	}
-	
+
 	@Override
 	public Set<AuditLogEntryUser> findAllAuditsForUploadRequest(String actorUuid, String groupUuid,
 			String uploadRequestUuid, List<LogAction> actions, List<AuditLogEntryType> types) {
@@ -177,8 +176,8 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		UploadRequestGroup group = uploadRequestGroupService.find(authUser, actor, groupUuid);
 		UploadRequest ur = uploadRequestService.find(authUser, actor, uploadRequestUuid);
 		if (!group.getUuid().equals(ur.getUploadRequestGroup().getUuid())) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_NOT_FOUND,
-					"The upload request with uuid: " + ur.getUuid() + "does not belong to the group with uuid: " + groupUuid);
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_NOT_FOUND, "The upload request with uuid: "
+					+ ur.getUuid() + "does not belong to the group with uuid: " + groupUuid);
 		}
 		return auditLogEntryService.findAllUploadRequestAudits(authUser, actor, uploadRequestUuid, actions, types);
 	}
