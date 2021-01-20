@@ -241,11 +241,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			uploadRequest.setPristine(true);
 		}
 		UploadRequest res = uploadRequestBusinessService.update(uploadRequest, object);
-		// No audit record when UR beyond a group in collective mode 
-		if (!uploadRequest.getUploadRequestGroup().isCollective()) {
-			log.setResourceUpdated(new UploadRequestMto(res));
-			logEntryService.insert(log);
-		}
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		if (res.getEnableNotification()) {
 			for (UploadRequestUrl urUrl : res.getUploadRequestURLs()) {
@@ -254,6 +249,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			}
 			notifierService.sendNotification(mails);
 		}
+		log.setResourceUpdated(new UploadRequestMto(res));
+		logEntryService.insert(log);
 		return res;
 	}
 

@@ -162,7 +162,9 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(actor),
 				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				uploadRequestGroup.getUuid(), uploadRequestGroup);
-		container.addLog(groupLog);
+		if (!uploadRequestGroup.isCollective()) {
+			container.addLog(groupLog);
+		}
 		req.setUploadRequestGroup(uploadRequestGroup);
 		if (collectiveMode) {
 			container = uploadRequestService.create(actor, owner, req, container);
@@ -382,8 +384,11 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			}
 			uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status, copy);
 		}
-		groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
-		logEntryService.insert(groupLog);
+		if (!uploadRequestGroup.isCollective()) {
+			// Insert only audit trace for UPLOAD_REQUEST type when the group is collective
+			groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
+			logEntryService.insert(groupLog);
+		}
 		return uploadRequestGroup;
 	}
 
@@ -417,8 +422,11 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			}
 		}
 		uploadRequestGroup = uploadRequestGroupBusinessService.update(group);
-		groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
-		logEntryService.insert(groupLog);
+		if (!group.isCollective()) {
+			// Insert only audit trace for UPLOAD_REQUEST type when the group is collective
+			groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
+			logEntryService.insert(groupLog);
+		}
 		return group;
 	}
 
