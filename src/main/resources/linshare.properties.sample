@@ -164,11 +164,13 @@ linshare.mongo.bigfiles.credentials=
 # Batches are launched every days at 0a.m
 # This cron is responsible of :
 #   - deleting expired Guest and Internal Users and domains
+#   - warning owner about guest expiration
 # job.users.cron.expression=0 0 0 * * ?
 
 # Batches are launched every days at 6a.m
-# This cron is responsible for sending a notification for undownloaded
-# shared documents.
+# This cron is responsible of :
+#   - sending a notification for undownloaded shared documents.
+#   - warning sender about expiration of shares with undownloaded documents
 # job.shares.undownloaded.notification.cron.expression=0 0 6 * * ?
 
 # This key is the number of days between the
@@ -184,6 +186,8 @@ linshare.mongo.bigfiles.credentials=
 #   - deleting expired DocumentEntries if it is activated. See job.document.cleaner.activation.
 #   - deleting physically unused files (removing files from the file system, the object storage, ...)
 #     aka the File Garbage Collector.
+#   - notifying about upcoming outdated shares
+#   - notifying about upcoming outdated anonymous shares
 # job.shares.cron.expression=0 30 0 * * ?
 
 # There is a fail safe preventing to delete expired personal space documents, aka DocumentEntries.
@@ -193,8 +197,22 @@ linshare.mongo.bigfiles.credentials=
 # Batches are launched every days at 0a.m
 # This cron is responsible of :
 #   - checking and update MIME type of Documents with check flag on
-# job.mimetype.cron.expression=0 30 0 * * ?
+# job.mimetype.cron.expression=0 0 0 * * ?
 
+# Fetching consistency batch is launched at 2a.m every day
+# This cron is responsible of :
+#   - deleting missing documents in jack rabbit.
+#   - detecting inconsistent users (users there are not anymore in its domain)
+#   - detecting users that are still inconsistent after being flagged as such
+# job.consistency.cron.expression=0 0 2 * * ?
+
+# Batches are launched every day at 0a.m
+# This cron is responsible of :
+#   - update upload request status
+#   - close expired upload request
+#   - close expired upload request group
+#   - notify users about upload requests about to expiring
+job.uploadrequest.cron.expression=0 0 0 * * ?
 
 # Batches are launched every weeks at 0a.m
 # This cron is responsible of :
