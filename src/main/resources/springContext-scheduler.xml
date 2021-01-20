@@ -57,6 +57,7 @@
 					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
 <!-- 						<ref bean="deleteMissingDocumentsBatch" /> -->
 						<ref bean="inconsistentUserBatch" />
+						<ref bean="checkIfUserStillInconsistentBatch" />
 					</list>
 				</entry>
 				<entry key="batchRunner" value-ref="batchRunner" />
