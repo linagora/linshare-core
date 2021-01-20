@@ -46,7 +46,6 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -369,13 +368,6 @@ public class UploadRequestDto {
 
 	public void setPristine(boolean pristine) {
 		this.pristine = pristine;
-	}
-
-	/*
-	 * Transformers
-	 */
-	public static Function<UploadRequest, UploadRequestDto> toDto(Boolean full) {
-		return uploadRequest -> toDto(uploadRequest, full);
 	}
 
 	public Boolean getCollective() {

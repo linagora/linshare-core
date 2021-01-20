@@ -36,6 +36,7 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -189,7 +190,14 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.find(authUser, actor, groupUuid);
 		List<UploadRequest> requests = uploadRequestService.findAll(authUser, actor, uploadRequestGroup, status);
-		return ImmutableList.copyOf(Lists.transform(requests, UploadRequestDto.toDto(false)));
+		List<UploadRequestDto> requestDtos = new ArrayList<UploadRequestDto>();
+		requests.forEach(ur -> {
+			UploadRequestDto requestDto = UploadRequestDto.toDto(ur, false);
+			requestDto.setNbrUploadedFiles(uploadRequestService.countNbrUploadedFiles(ur));
+			requestDto.setUsedSpace(uploadRequestService.computeEntriesSize(ur));
+			requestDtos.add(requestDto);
+		});
+		return ImmutableList.copyOf(requestDtos);
 	}
 
 	@Override
