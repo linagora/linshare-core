@@ -16,6 +16,7 @@
 						<ref bean="markUserToPurgeBatch" />
 						<ref bean="purgeUserBatch" />
 						<ref bean="purgeDomainBatch" />
+						<ref bean="warnOwnerAboutGuestExpirationBatch"/>
 					</list>
 				</entry>
 				<entry key="batchRunner" value-ref="batchRunner" />
