@@ -152,6 +152,18 @@ public class FunctionalityReadOnlyTest {
 		Assertions.assertEquals(size, defaultSize);
 	}
 
+	@Test
+	public void testUploadRequestMaxDepositSizeFunctionalityUnlimited_GetSizeValue() {
+		SizeUnitValueFunctionality func = functionalityService.getUploadRequestMaxDepositSizeFunctionality(domain);
+		func.getActivationPolicy().setStatus(true);
+		func.setMaxValue(-1);
+		// the user value is the greatest integer possible and is returned.
+		long currentValue = Integer.MAX_VALUE;
+		long sizeValue = functionalityService.getSizeValue(func, currentValue,
+				BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
+		Assertions.assertEquals(sizeValue, currentValue);
+	}
+
 	@Sql("/import-tests-fake-functionality.sql")
 	@Test
 	public void testUploadRequestMaxDepositSizeFunctionality_GetSizeValue() {

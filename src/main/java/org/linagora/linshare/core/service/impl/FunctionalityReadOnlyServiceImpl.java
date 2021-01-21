@@ -503,8 +503,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return defaultSize;
 		}
 		logger.debug(func.getIdentifier() + " has a delegation policy");
-		Long maxSize = ((FileSizeUnitClass) func.getMaxUnit()).getPlainSize(func.getMaxValue());
-		if (currentSize > maxSize) {
+		Integer rawMaxValue = func.getMaxValue();
+		Long maxSize = ((FileSizeUnitClass) func.getMaxUnit()).getPlainSize(rawMaxValue);
+		if (rawMaxValue != -1 && currentSize > maxSize) {
 			String errorMessage = buildErrorMessage(func, currentSize.toString(), maxSize.toString());
 			logger.warn(errorMessage);
 			throw new BusinessException(errorCode, errorMessage);
