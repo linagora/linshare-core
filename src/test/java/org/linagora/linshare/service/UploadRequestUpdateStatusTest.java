@@ -49,6 +49,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -135,7 +136,7 @@ public class UploadRequestUpdateStatusTest {
 		referenceUploadRequest.setProtectedByPassword(false);
 		referenceUploadRequest.setCanEditExpiryDate(true);
 		referenceUploadRequest.setCanDelete(true);
-		referenceUploadRequest.setLocale("en");
+		referenceUploadRequest.setLocale(Language.FRENCH);
 		referenceUploadRequest.setActivationDate(new Date());
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

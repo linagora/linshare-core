@@ -41,6 +41,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
@@ -111,7 +112,7 @@ public class UploadRequestDto {
 
 	Set<String> extensions = Sets.newHashSet();
 
-	private String locale;
+	private Language locale;
 
 	private Boolean enableNotification;
 
@@ -314,11 +315,11 @@ public class UploadRequestDto {
 		this.usedSpace = usedSpace;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 

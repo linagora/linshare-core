@@ -55,6 +55,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -191,7 +192,7 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequest.setProtectedByPassword(false);
 		uploadRequest.setCanEditExpiryDate(true);
 		uploadRequest.setCanDelete(true);
-		uploadRequest.setLocale("en");
+		uploadRequest.setLocale(Language.ENGLISH);
 		uploadRequest.setActivationDate(new Date());
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
@@ -274,6 +275,17 @@ public class UploadRequestServiceImplTestV2 {
 	}
 
 	@Test
+	public void updateUploadRequestCorrectLocale() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequest uRequest = uploadRequestService.find(john, john, ureJohn.getUuid());
+		Language rightLocale = Language.FRENCH;
+		uRequest.setLocale(rightLocale);
+		uRequest = uploadRequestService.update(john, john, uRequest.getUuid(), uRequest, false);
+		Assertions.assertEquals(rightLocale, uRequest.getLocale());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testCreateNewUploadRequestActivatedNow() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequest ureActivated = createSimpleUploadRequest(new Date());
@@ -313,7 +325,7 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequest.setProtectedByPassword(false);
 		uploadRequest.setCanEditExpiryDate(true);
 		uploadRequest.setCanDelete(true);
-		uploadRequest.setLocale("fr");
+		uploadRequest.setLocale(Language.FRENCH);
 		uploadRequest.setActivationDate(activationDate);
 		uploadRequest.setCreationDate(new Date());
 		uploadRequest.setModificationDate(new Date());

@@ -38,6 +38,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.Language;
+
 import com.google.common.collect.Sets;
 
 public class UploadRequestUrl {
@@ -200,7 +202,7 @@ public class UploadRequestUrl {
 	 * Helpers
 	 */
 
-	public String getLocale() {
+	public Language getLocale() {
 		return this.getUploadRequest().getLocale();
 	}
 

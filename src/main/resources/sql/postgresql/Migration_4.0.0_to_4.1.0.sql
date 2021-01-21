@@ -1956,6 +1956,13 @@ nameOfDepot: Название загрузки
 secondaryMsg = Список обновленных настроек доступен ниже.
 subject = Обновленные настройки для запроса загрузки {0}' WHERE id=23;
 
+UPDATE  upload_request_group SET locale = 'ENGLISH' WHERE locale = 'en';
+UPDATE  upload_request_group SET locale = 'RUSSIAN' WHERE locale = 'ru';
+UPDATE  upload_request_group SET locale ='FRENCH' WHERE locale = 'fr';
+
+UPDATE  upload_request SET locale = 'ENGLISH' WHERE locale = 'en';
+UPDATE  upload_request SET locale = 'RUSSIAN' WHERE locale = 'ru';
+UPDATE  upload_request SET locale = 'FRENCH' WHERE locale = 'fr';
 
 -- End of your requests
 

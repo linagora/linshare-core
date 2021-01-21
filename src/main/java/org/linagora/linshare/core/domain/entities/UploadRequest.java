@@ -38,6 +38,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -77,7 +78,7 @@ public class UploadRequest implements Cloneable {
 
 	private Boolean canEditExpiryDate;
 
-	private String locale;
+	private Language locale;
 
 	private boolean protectedByPassword;
 
@@ -199,11 +200,11 @@ public class UploadRequest implements Cloneable {
 		this.uploadPropositionRequestUuid = uploadPropositionRequestUuid;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 
@@ -378,8 +379,8 @@ public class UploadRequest implements Cloneable {
 		}
 	}
 
-	public void setBusinessLocale(String locale) {
-		if (locale != null && !locale.isEmpty()) {
+	public void setBusinessLocale(Language locale) {
+		if (locale != null) {
 			this.locale = locale;
 		}
 	}

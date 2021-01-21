@@ -52,6 +52,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -220,7 +221,7 @@ public class AdvancedStatisticBatchTest {
 		ure.setProtectedByPassword(false);
 		ure.setCanEditExpiryDate(true);
 		ure.setCanDelete(true);
-		ure.setLocale("en");
+		ure.setLocale(Language.ENGLISH);
 		ure.setActivationDate(new Date());
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);

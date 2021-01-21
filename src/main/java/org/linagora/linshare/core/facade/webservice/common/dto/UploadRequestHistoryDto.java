@@ -39,6 +39,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -90,7 +91,7 @@ public class UploadRequestHistoryDto {
 	private Boolean canEditExpiryDate;
 
 	@Schema(description = "Locale")
-	private String locale;
+	private Language locale;
 
 	@Schema(description = "Define if the upload request is protected by a password")
 	private boolean protectedByPassword;
@@ -241,11 +242,11 @@ public class UploadRequestHistoryDto {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 

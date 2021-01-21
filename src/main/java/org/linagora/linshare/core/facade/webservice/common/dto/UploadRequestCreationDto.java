@@ -42,6 +42,7 @@ import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -84,7 +85,7 @@ public class UploadRequestCreationDto {
 
 	private boolean protectedByPassword;
 
-	private String locale;
+	private Language locale;
 
 	private Boolean enableNotification;
 
@@ -179,11 +180,11 @@ public class UploadRequestCreationDto {
 		this.body = body;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 

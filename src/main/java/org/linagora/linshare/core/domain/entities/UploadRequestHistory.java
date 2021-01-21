@@ -38,6 +38,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.UUID;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 
@@ -75,7 +76,7 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	private Boolean canEditExpiryDate;
 
-	private String locale;
+	private Language locale;
 
 	private boolean protectedByPassword;
 
@@ -242,11 +243,11 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 

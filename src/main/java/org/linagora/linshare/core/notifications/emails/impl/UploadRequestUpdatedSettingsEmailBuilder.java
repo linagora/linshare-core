@@ -95,7 +95,7 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 		ctx.setVariable("closureRight", new BooleanParameter(request.isCanClose(), oldRequest.isCanClose()));
 		ctx.setVariable("deletionRight", new BooleanParameter(request.isCanDelete(), oldRequest.isCanDelete()));
-		ctx.setVariable("local", new StringParameter(request.getLocale(), oldRequest.getLocale()));
+		ctx.setVariable("local", new StringParameter(request.getLocale().toString(), oldRequest.getLocale().toString()));
 
 		ctx.setVariable("enableNotification", new BooleanParameter(request.getEnableNotification(), oldRequest.getEnableNotification()));
 

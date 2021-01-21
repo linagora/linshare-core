@@ -255,9 +255,9 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			UploadRequest req) {
 		LanguageEnumValueFunctionality func = functionalityService
 				.getUploadRequestNotificationLanguageFunctionality(domain);
-		Language userLocale = Language.fromTapestryLocale(req.getLocale());
+		Language userLocale = req.getLocale();
 		Language checkLanguage = checkLanguage(func, userLocale);
-		req.setLocale(checkLanguage.getTapestryLocale());
+		req.setLocale(checkLanguage);
 	}
 
 	private void checkMaxFileSize(AbstractDomain domain, UploadRequest req) {

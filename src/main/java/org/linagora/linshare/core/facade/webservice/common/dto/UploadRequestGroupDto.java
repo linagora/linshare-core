@@ -41,6 +41,7 @@ import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
@@ -96,8 +97,8 @@ public class UploadRequestGroupDto {
 	@Schema(description = "Can Edit Expiry Date")
 	private Boolean canEditExpiryDate;
 
-	@Schema(description = "Locale")
-	private String locale;
+	@Schema(description = "Locale used in notification emails sent to the recipients. Please refert to OPTION on /enum endpoints to list available values")
+	private Language locale;
 
 	@Schema(description = "Define if the upload request is protected with a password")
 	private boolean protectedByPassword;
@@ -287,11 +288,11 @@ public class UploadRequestGroupDto {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 

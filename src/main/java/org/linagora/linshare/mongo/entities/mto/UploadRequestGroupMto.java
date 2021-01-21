@@ -37,6 +37,7 @@ package org.linagora.linshare.mongo.entities.mto;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 
@@ -70,7 +71,7 @@ public class UploadRequestGroupMto {
 
 	private Boolean canEditExpiryDate;
 
-	private String locale;
+	private Language locale;
 
 	private boolean protectedByPassword;
 
@@ -255,11 +256,11 @@ public class UploadRequestGroupMto {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public String getLocale() {
+	public Language getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Language locale) {
 		this.locale = locale;
 	}
 

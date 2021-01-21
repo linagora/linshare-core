@@ -54,6 +54,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -184,7 +185,7 @@ public class UploadRequestServiceImplTest {
 		ure.setProtectedByPassword(false);
 		ure.setCanEditExpiryDate(true);
 		ure.setCanDelete(true);
-		ure.setLocale("en");
+		ure.setLocale(Language.ENGLISH);
 		ure.setActivationDate(new Date());
 		ure.setExpiryDate(DateUtils.addMonths(ure.getActivationDate(), 1));
 		UploadRequestGroup uploadRequestGroupJohn = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
