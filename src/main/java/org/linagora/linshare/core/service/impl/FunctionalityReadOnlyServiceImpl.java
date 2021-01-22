@@ -70,7 +70,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	private final FunctionalityRepository functionalityRepository;
 
-	private final TimeService timeService;
+	private TimeService timeService;
 
 	public FunctionalityReadOnlyServiceImpl(
 			DomainBusinessService domainBusinessService,
@@ -480,8 +480,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return currentDate;
 		}
 		Calendar c = new GregorianCalendar();
+		c.setTime(now);
 		c.add(func.toCalendarMaxValue(), func.getMaxValue());
-		Date maxDate = c.getTime(); // Maximum value allowed
+		Date maxDate = getCalendarWithoutTime(c.getTime()).getTime(); // Maximum value allowed
 		if (currentDate.before(now) || currentDate.after(maxDate)) {
 			String errorMessage = buildErrorMessage(func, currentDate.toString(), now.toString(), maxDate.toString());
 			logger.warn(errorMessage);
