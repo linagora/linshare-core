@@ -73,6 +73,7 @@
 		<constructor-arg value="${linshare.user.url.fragment.param.file.uuid}" />
 		<constructor-arg value="${linshare.user.url.workgroup.link}" />
 		<constructor-arg value="${linshare.user.url.download.uploadrequests.entries}"/>
+		<constructor-arg value="${linshare.user.url.download.uploadrequests.upload.file}"/>
 	</bean>
 
 	<bean name="ldapConnectionService"

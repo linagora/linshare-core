@@ -131,7 +131,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			boolean templatingSubjectPrefix,
 			String urlFragmentQueryParamFileUuid,
 			String urlTemplateForWorkgroup,
-			String urlTemplateForUploadRequestEntries
+			String urlTemplateForUploadRequestEntries,
+			String urlTemplateForUploadRequestUploadedFile
 			) throws Exception {
 		this.domainBusinessService = domainBusinessService;
 		this.templateEngine = new TemplateEngine();
@@ -197,7 +198,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
 				mailActivationBusinessService, fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments,
-				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForUploadRequestEntries);
+				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -216,7 +217,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		String urlTemplateForAnonymousUrl,
 		String paramFilesUuid,
 		String urlTemplateForWorkgroup,
-		String urlTemplateForUploadRequestEntries
+		String urlTemplateForUploadRequestEntries,
+		String urlTemplateForUploadRequestUploadedFile
 	) {
 		Collection<EmailBuilder> values = emailBuilders.values();
 		for (EmailBuilder emailBuilder : values) {
@@ -232,6 +234,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setUrlFragmentQueryParamFileUuid(paramFilesUuid);
 			emailBuilder.setUrlTemplateForWorkgroup(urlTemplateForWorkgroup);
 			emailBuilder.setUrlTemplateForUploadRequestEntries(urlTemplateForUploadRequestEntries);
+			emailBuilder.setUrlTemplateForUploadRequestUploadedFile(urlTemplateForUploadRequestUploadedFile);
 		}
 	}
 

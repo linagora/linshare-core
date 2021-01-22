@@ -69,6 +69,9 @@ import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
@@ -142,6 +145,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	protected String urlTemplateForWorkgroup;
 
 	protected String urlTemplateForUploadRequestEntries;
+
+	protected String urlTemplateForUploadRequestUploadedFile;
 
 	public EmailBuilder() {
 		initSupportedTypes();
@@ -257,6 +262,14 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	public void setUrlTemplateForUploadRequestEntries(String urlTemplateForUploadRequestEntries) {
 		this.urlTemplateForUploadRequestEntries = urlTemplateForUploadRequestEntries;
+	}
+
+	public String getUrlTemplateForUploadRequestUploadedFile() {
+		return urlTemplateForUploadRequestUploadedFile;
+	}
+
+	public void setUrlTemplateForUploadRequestUploadedFile(String urlTemplateForUploadRequestUploadedFile) {
+		this.urlTemplateForUploadRequestUploadedFile = urlTemplateForUploadRequestUploadedFile;
 	}
 
 	@Override
@@ -649,6 +662,16 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return sb.toString();
 	}
 
+	protected String getUploadRequestUploadedFileLink(String linshareURL, String groupUuid, String requestUuid, String entryUuid) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlTemplateForUploadRequestUploadedFile, groupUuid,
+				requestUuid, entryUuid);
+		formatter.close();
+		return sb.toString();
+	}
+
 	protected String getRecipientShareLink(String linshareURL, String shareUuid) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(linshareURL);
@@ -709,6 +732,18 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		Document document = new Document(name);
 		if (linshareURL != null) {
 			document.setHref(getUploadRequestEntryLink(linshareURL, document.getUuid()));
+		}
+		return document;
+	}
+
+	protected Document getNewFakeUploadRequestUploadedFileLink(String name, String linshareURL) {
+		UploadRequestGroup group = new UploadRequestGroup("Upload request subject", "Upload request body");
+		UploadRequest request = new UploadRequest(group);
+		UploadRequestEntry entry = new UploadRequestEntry();
+		Document document = new Document(name);
+		if (linshareURL != null) {
+			document.setHref(
+					getUploadRequestUploadedFileLink(linshareURL, group.getUuid(), request.getUuid(), entry.getUuid()));
 		}
 		return document;
 	}

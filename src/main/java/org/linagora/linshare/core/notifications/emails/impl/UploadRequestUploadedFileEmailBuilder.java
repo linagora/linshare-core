@@ -41,6 +41,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -64,13 +65,16 @@ public class UploadRequestUploadedFileEmailBuilder extends GenericUploadRequestE
 		UploadRequestUploadedFileEmailContext emailCtx = (UploadRequestUploadedFileEmailContext) context;
 		User owner = emailCtx.getOwner();
 		UploadRequestEntry entry = emailCtx.getEntry();
+		UploadRequest request = emailCtx.getUploadRequest();
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		Context ctx = newTmlContext(emailCtx);
 		String linshareURL = getLinShareUrlForUploadRequest(owner);
-		String href = getUploadRequestEntryLink(linshareURL, entry.getUuid());
+		String href = getUploadRequestUploadedFileLink(linshareURL, request.getUploadRequestGroup().getUuid(),
+				request.getUuid(), entry.getUuid());
 		Document document = new Document(entry);
 		document.setHref(href);
 		ctx.setVariable("document", document);
+		ctx.setVariable("requestUrl", href);
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
@@ -81,7 +85,7 @@ public class UploadRequestUploadedFileEmailBuilder extends GenericUploadRequestE
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language, true);
-		Document document = getNewFakeUploadRequestEntry("a-upload-request-file.txt", fakeLinshareURL);
+		Document document = getNewFakeUploadRequestUploadedFileLink("a-upload-request-file.txt", fakeLinshareURL);
 		document.setSize(65985L);
 		document.setCreationDate(new Date());
 		ctx.setVariable("document", document);
