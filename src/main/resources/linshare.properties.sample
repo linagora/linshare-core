@@ -206,13 +206,13 @@ linshare.mongo.bigfiles.credentials=
 #   - detecting users that are still inconsistent after being flagged as such
 # job.consistency.cron.expression=0 0 2 * * ?
 
-# Batches are launched every day at 0a.m
+# Batches are launched every hour
 # This cron is responsible of :
 #   - update upload request status
 #   - close expired upload request
 #   - close expired upload request group
 #   - notify users about upload requests about to expiring
-job.uploadrequest.cron.expression=0 0 0 * * ?
+job.uploadrequest.cron.expression=0 0 * ? * *
 
 # Batches are launched every weeks at 0a.m
 # This cron is responsible of :
