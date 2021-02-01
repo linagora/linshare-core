@@ -240,6 +240,11 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		log.setCause(LogActionCause.COPY);
 		log.setFromResourceUuid(uploadRequestEntry.getUuid());
 		logEntryService.insert(log);
+		AuditLogEntryUser logUREntry = new UploadRequestEntryAuditLogEntry(new AccountMto(owner), new AccountMto(actor),
+				LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_ENTRY, uploadRequestEntry.getUuid(), uploadRequestEntry);
+		logUREntry.setCause(LogActionCause.COPY);
+		logUREntry.addRelatedResources(uploadRequestEntry.getDocumentEntry().getUuid());
+		logEntryService.insert(logUREntry);
 		return entity;
 	}
 

@@ -68,7 +68,7 @@ public class UploadRequestEntryMto {
 		this.size = reqEntry.getSize();
 		this.sha256sum = reqEntry.getSha256sum();
 		this.ciphered = reqEntry.getCiphered();
-		this.copied = false;
+		this.copied = reqEntry.getCopied();
 		this.uploadRequestUuid = reqEntry.getUploadRequestUrl().getUploadRequest().getUuid();
 		this.uploadRequestGroupUuid = reqEntry.getUploadRequestUrl().getUploadRequest().getUploadRequestGroup().getUuid();
 	}
