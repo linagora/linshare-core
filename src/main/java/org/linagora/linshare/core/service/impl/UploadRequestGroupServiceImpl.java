@@ -512,4 +512,14 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		}
 		return entries;
 	}
+
+	@Override
+	public Integer countNbrUploadedFiles(UploadRequestGroup uploadRequestGroup) {
+		return uploadRequestGroupBusinessService.countNbrUploadedFiles(uploadRequestGroup);
+	}
+
+	@Override
+	public Long computeEntriesSize(UploadRequestGroup uploadRequestGroup) {
+		return uploadRequestGroupBusinessService.computeEntriesSize(uploadRequestGroup);
+	}
 }

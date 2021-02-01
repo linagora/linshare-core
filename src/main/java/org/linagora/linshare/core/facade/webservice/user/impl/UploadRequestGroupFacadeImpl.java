@@ -89,8 +89,16 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		this.uploadRequestService = uploadRequestService;
 	}
 
+	private UploadRequestGroupDto toDto(UploadRequestGroup uploadRequestGroup) {
+		UploadRequestGroupDto uploadRequestGroupDto = new UploadRequestGroupDto(uploadRequestGroup);
+		uploadRequestGroupDto.setNbrUploadedFiles(uploadRequestGroupService.countNbrUploadedFiles(uploadRequestGroup));
+		uploadRequestGroupDto.setUsedSpace(uploadRequestGroupService.computeEntriesSize(uploadRequestGroup));
+		return uploadRequestGroupDto;
+	}
+
 	@Override
-	public List<UploadRequestGroupDto> findAll(String actorUuid, List<UploadRequestStatus> status) throws BusinessException {
+	public List<UploadRequestGroupDto> findAll(String actorUuid, List<UploadRequestStatus> status)
+			throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		List<UploadRequestGroup> list = uploadRequestGroupService.findAll(authUser, actor, status);
@@ -103,7 +111,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		UploadRequestGroup group = uploadRequestGroupService.find(authUser, actor, uuid);
-		return new UploadRequestGroupDto(group);
+		return toDto(group);
 	}
 
 	@Override
@@ -132,7 +140,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.updateStatus(authUser, actor, requestGroupUuid, status, copy);
-		return new UploadRequestGroupDto(uploadRequestGroup);
+		return toDto(uploadRequestGroup);
 	}
 
 	public UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto, String uuid, boolean force) {
@@ -144,7 +152,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupDto.toObject();
-		return new UploadRequestGroupDto(uploadRequestGroupService.update(authUser, actor, uploadRequestGroup, force));
+		return toDto(uploadRequestGroupService.update(authUser, actor, uploadRequestGroup, force));
 	}
 
 	@Override

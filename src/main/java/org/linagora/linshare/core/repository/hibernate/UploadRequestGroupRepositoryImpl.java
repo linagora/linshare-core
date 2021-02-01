@@ -45,6 +45,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
@@ -108,5 +109,32 @@ public class UploadRequestGroupRepositoryImpl extends
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);
 		return list;
+	}
+
+	@Override
+	public Integer countNbrUploadedFiles(UploadRequestGroup uploadRequestGroup) {
+		DetachedCriteria urgCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequestGroup");
+		urgCrit.createAlias("uploadRequestGroup.uploadRequests", "uploadRequests");
+		urgCrit.add(Restrictions.eq("uploadRequests.uploadRequestGroup", uploadRequestGroup));
+		urgCrit.createAlias("uploadRequests.uploadRequestURLs", "urls");
+		urgCrit.createAlias("urls.uploadRequestEntries", "entries");
+		urgCrit.setProjection(Projections.rowCount());
+		Number nbrUploadedFiles = (Number) urgCrit.getExecutableCriteria(getCurrentSession()).uniqueResult();
+		return nbrUploadedFiles.intValue();
+	}
+
+	@Override
+	public Long computeEntriesSize(UploadRequestGroup uploadRequestGroup) {
+		DetachedCriteria urgCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequestGroup");
+		urgCrit.createAlias("uploadRequestGroup.uploadRequests", "uploadRequests");
+		urgCrit.add(Restrictions.eq("uploadRequests.uploadRequestGroup", uploadRequestGroup));
+		urgCrit.createAlias("uploadRequests.uploadRequestURLs", "urls");
+		urgCrit.createAlias("urls.uploadRequestEntries", "entries");
+		urgCrit.setProjection(Projections.sum("entries.size"));
+		List<UploadRequestGroup> list = findByCriteria(urgCrit);
+		if (list.size() > 0 && list.get(0) != null) {
+			return DataAccessUtils.longResult(list);
+		}
+		return 0L;
 	}
 }

@@ -59,4 +59,8 @@ public interface UploadRequestGroupBusinessService {
 	UploadRequestGroup updateStatus(UploadRequestGroup uploadRequestGroup, UploadRequestStatus status);
 
 	List<String> findOutdatedRequests();
+
+	Integer countNbrUploadedFiles(UploadRequestGroup uploadRequestGroup);
+
+	Long computeEntriesSize(UploadRequestGroup uploadRequestGroup);
 }

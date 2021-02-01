@@ -37,7 +37,6 @@
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
-import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -120,6 +119,14 @@ public class UploadRequestGroupDto {
 
 	@Schema(description = "Status")
 	private UploadRequestStatus status;
+
+	@Schema(description = "Total Size of the uploaded files in the uploadRequestGroup")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private Long usedSpace;
+
+	@Schema(description = "Number of uploaded files in the uploadRequestGroup")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private Integer nbrUploadedFiles;
 
 	public UploadRequestGroupDto() {
 		super();
@@ -350,6 +357,22 @@ public class UploadRequestGroupDto {
 
 	public void setStatus(UploadRequestStatus status) {
 		this.status = status;
+	}
+
+	public Long getUsedSpace() {
+		return usedSpace;
+	}
+
+	public void setUsedSpace(Long usedSpace) {
+		this.usedSpace = usedSpace;
+	}
+
+	public Integer getNbrUploadedFiles() {
+		return nbrUploadedFiles;
+	}
+
+	public void setNbrUploadedFiles(Integer nbrUploadedFiles) {
+		this.nbrUploadedFiles = nbrUploadedFiles;
 	}
 
 	/*

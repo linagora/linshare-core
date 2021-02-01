@@ -55,4 +55,8 @@ public interface UploadRequestGroupRepository extends
 	public List<UploadRequestGroup> findAllByOwner(Account owner, List<UploadRequestStatus> uploadRequestStatus);
 
 	public List<String> findOutDateRequests();
+
+	public Integer countNbrUploadedFiles(UploadRequestGroup uploadRequestGroup);
+
+	public Long computeEntriesSize(UploadRequestGroup uploadRequestGroup);
 }

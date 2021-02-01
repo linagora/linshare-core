@@ -93,4 +93,14 @@ public class UploadRequestGroupBusinessServiceImpl implements
 	public List<String> findOutdatedRequests() {
 		return uploadRequestGroupRepository.findOutDateRequests();
 	}
+
+	@Override
+	public Integer countNbrUploadedFiles(UploadRequestGroup uploadRequestGroup) {
+		return uploadRequestGroupRepository.countNbrUploadedFiles(uploadRequestGroup);
+	}
+
+	@Override
+	public Long computeEntriesSize(UploadRequestGroup uploadRequestGroup) {
+		return uploadRequestGroupRepository.computeEntriesSize(uploadRequestGroup);
+	}
 }

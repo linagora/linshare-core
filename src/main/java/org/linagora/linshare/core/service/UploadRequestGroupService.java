@@ -68,4 +68,8 @@ public interface UploadRequestGroupService {
 			List<ContactDto> recipientEmail);
 
 	FileAndMetaData downloadEntries(Account authUser, Account actor, UploadRequestGroup uploadRequestGroup, String requestUuid);
+
+	Integer countNbrUploadedFiles(UploadRequestGroup uploadRequestGroup);
+
+	Long computeEntriesSize(UploadRequestGroup uploadRequestGroup);
 }
