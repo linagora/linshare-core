@@ -154,7 +154,7 @@ public class UploadRequestDto {
 			this.canDeleteDocument = false;
 			this.canClose = false;
 		}
-		this.protectedByPassword = false;
+		this.protectedByPassword = entity.isProtectedByPassword();
 		this.locale = entity.getLocale();
 		this.collective = entity.getUploadRequestGroup().isCollective();
 	}
