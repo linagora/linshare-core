@@ -87,7 +87,7 @@ import org.linagora.linshare.core.service.UploadRequestService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +98,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.Lists;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({ SpringExtension.class, MockitoExtension.class })
 @Sql({
 	
 	"/import-tests-upload-request.sql" })
@@ -160,8 +160,6 @@ public class UploadRequestServiceImplTestV2 {
 	@Autowired
 	private DocumentEntryService documentEntryService;
 	
-	private AutoCloseable closeable;
-
 	private UploadRequest uploadRequest;
 
 	private UploadRequest ureJohn;
@@ -187,7 +185,6 @@ public class UploadRequestServiceImplTestV2 {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		closeable = MockitoAnnotations.openMocks(this);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		AbstractDomain subDomain = abstractDomainRepository.findById(LinShareTestConstants.SUB_DOMAIN);
@@ -218,7 +215,6 @@ public class UploadRequestServiceImplTestV2 {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		closeable.close();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
