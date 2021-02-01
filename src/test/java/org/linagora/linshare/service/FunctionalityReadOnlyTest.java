@@ -132,12 +132,12 @@ public class FunctionalityReadOnlyTest {
 		SizeUnitValueFunctionality func = functionalityService.getUploadRequestMaxFileSizeFunctionality(domain);
 		// the user value is over the maximum value, we need to throws business exception
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			long currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getMaxValue() + 1L);
+			long currentValue = ((FileSizeUnitClass) func.getUnit()).getSiSize(func.getMaxValue() + 1L);
 			functionalityService.getSizeValue(func, currentValue, BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
 		});
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID, exception.getErrorCode());
 		// the user value is > 0 and < maximum value, so we need to keep the user value.
-		long currentValue = ((FileSizeUnitClass) func.getMaxUnit()).getPlainSize(func.getMaxValue() - 1L);
+		long currentValue = ((FileSizeUnitClass) func.getMaxUnit()).getSiSize(func.getMaxValue() - 1L);
 		long sizeValue = functionalityService.getSizeValue(func, currentValue,
 				BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
 		Assertions.assertEquals(sizeValue, currentValue);
@@ -146,7 +146,7 @@ public class FunctionalityReadOnlyTest {
 		policy.setStatus(false);
 		func.setDelegationPolicy(policy);
 		functionalityBusinessService.update(domain.getUuid(), func);
-		long defaultSize = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue());
+		long defaultSize = ((FileSizeUnitClass) func.getUnit()).getSiSize(func.getValue());
 		long size = functionalityService.getSizeValue(func, 1L,
 				BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
 		Assertions.assertEquals(size, defaultSize);
@@ -171,12 +171,12 @@ public class FunctionalityReadOnlyTest {
 				.getUploadRequestMaxDepositSizeFunctionality(domain);
 		// the user value is over the maximum value, we need to throws business exception
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			long currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getMaxValue() + 1L);
+			long currentValue = ((FileSizeUnitClass) func.getUnit()).getSiSize(func.getMaxValue() + 1L);
 			functionalityService.getSizeValue(func, currentValue, BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
 		});
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID, exception.getErrorCode());
 		// the user value is > 0 and < maximum value, so we need to keep the user value.
-		long currentValue = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getMaxValue() - 1L);
+		long currentValue = ((FileSizeUnitClass) func.getUnit()).getSiSize(func.getMaxValue() - 1L);
 		long sizeValue = functionalityService.getSizeValue(func, currentValue, BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
 		Assertions.assertEquals(sizeValue, currentValue);
 	}

@@ -498,14 +498,14 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return null;
 		}
 		logger.debug(func.getIdentifier() + " is activated");
-		Long defaultSize = ((FileSizeUnitClass) func.getUnit()).getPlainSize(func.getValue());
+		Long defaultSize = ((FileSizeUnitClass) func.getUnit()).getSiSize(func.getValue());
 		if (func.getDelegationPolicy() == null || !func.getDelegationPolicy().getStatus() || currentSize == null) {
 			debuggerSize(func, currentSize, defaultSize);
 			return defaultSize;
 		}
 		logger.debug(func.getIdentifier() + " has a delegation policy");
 		Integer rawMaxValue = func.getMaxValue();
-		Long maxSize = ((FileSizeUnitClass) func.getMaxUnit()).getPlainSize(rawMaxValue);
+		Long maxSize = ((FileSizeUnitClass) func.getMaxUnit()).getSiSize(rawMaxValue);
 		if (rawMaxValue != -1 && currentSize > maxSize) {
 			String errorMessage = buildErrorMessage(func, currentSize.toString(), maxSize.toString());
 			logger.warn(errorMessage);

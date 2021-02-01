@@ -58,8 +58,8 @@ public class FileSizeUnitClass extends Unit<FileSizeUnit> {
 	public FileSizeUnitClass(FileSizeUnit unitvalue) {
 		super(unitvalue);
 	}
-	
-	public long getPlainSize(long size) {
-		return unitValue.getPlainSize(size);
+
+	public long getSiSize(long size) {
+		return unitValue.getSiSize(size);
 	}
 }

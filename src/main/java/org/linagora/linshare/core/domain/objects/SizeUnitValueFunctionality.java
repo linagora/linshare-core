@@ -60,10 +60,10 @@ public class SizeUnitValueFunctionality extends UnitValueFunctionality {
 		setMaxValue(f.getMaxValue());
 		setValue(f.getValue());
 	}
-	
-	public long getPlainSize() {
+
+	public long getSiSize() {
 		FileSizeUnitClass sizeUnit = (FileSizeUnitClass)getUnit();
-		return sizeUnit.getPlainSize(getValue());
+		return sizeUnit.getSiSize(getValue());
 	}
 	
 }
