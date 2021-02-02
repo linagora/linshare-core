@@ -182,16 +182,16 @@ public class UploadRequestServiceImplTest {
 		ure.setMaxDepositSize((long) 100);
 		ure.setMaxFileCount(Integer.valueOf(3));
 		ure.setMaxFileSize((long) 50);
-		ure.setStatus(UploadRequestStatus.CREATED);
 		ure.setProtectedByPassword(false);
 		ure.setCanEditExpiryDate(true);
 		ure.setCanDelete(true);
 		ure.setLocale(Language.ENGLISH);
-		ure.setActivationDate(new Date());
-		ure.setExpiryDate(DateUtils.addMonths(ure.getActivationDate(), 1));
+		ure.setActivationDate(null);
+		ure.setExpiryDate(DateUtils.addMonths(new Date(), 1));
 		UploadRequestGroup uploadRequestGroupJohn = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		eJohn = uploadRequestGroupJohn.getUploadRequests().iterator().next();
+		ure.setActivationDate(null);
 		UploadRequestGroup uploadRequestGroupJane = uploadRequestGroupService.create(jane, jane, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", true);
 		eJane = uploadRequestGroupJane.getUploadRequests().iterator().next();

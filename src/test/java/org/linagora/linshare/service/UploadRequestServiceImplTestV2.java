@@ -43,7 +43,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import javax.transaction.Transactional;
@@ -129,6 +128,7 @@ public class UploadRequestServiceImplTestV2 {
 	private UploadRequestService uploadRequestService;
 	
 	@Autowired
+	@InjectMocks
 	private UploadRequestGroupService uploadRequestGroupService;
 	
 	@Autowired
@@ -159,12 +159,12 @@ public class UploadRequestServiceImplTestV2 {
 
 	@Autowired
 	private DocumentEntryService documentEntryService;
-	
+
 	private UploadRequest uploadRequest;
 
 	private UploadRequest ureJohn;
 
-	private UploadRequest ureJane;
+	private UploadRequest enabledUreJane;
 
 	private User john;
 
@@ -196,7 +196,6 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequest.setMaxDepositSize((long) 100);
 		uploadRequest.setMaxFileCount(Integer.valueOf(3));
 		uploadRequest.setMaxFileSize((long) 50);
-		uploadRequest.setStatus(UploadRequestStatus.CREATED);
 		uploadRequest.setExpiryDate(new Date());
 		uploadRequest.setProtectedByPassword(false);
 		uploadRequest.setCanEditExpiryDate(true);
@@ -205,10 +204,11 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequest.setActivationDate(new Date());
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
-		UploadRequestGroup uploadRequestGroupJane = uploadRequestGroupService.create(jane, jane, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
+		uploadRequest.setActivationDate(null);
+		UploadRequestGroup enabledUploadRequestGroupJane = uploadRequestGroupService.create(jane, jane, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		ureJohn = uploadRequestGroup.getUploadRequests().iterator().next();
-		ureJane = uploadRequestGroupJane.getUploadRequests().iterator().next();
+		enabledUreJane = enabledUploadRequestGroupJane.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -243,6 +243,7 @@ public class UploadRequestServiceImplTestV2 {
 	public void findFiltredUploadRequests() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequest request = uploadRequest.clone();
+		request.setActivationDate(null);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		int initSize = uploadRequestService.findAll(john, john, uploadRequestGroup, Lists.newArrayList(UploadRequestStatus.CREATED)).size();
 		int finalSize = uploadRequestService.findAll(john, john, uploadRequestGroup, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
@@ -254,6 +255,7 @@ public class UploadRequestServiceImplTestV2 {
 	public void updateStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequest request = uploadRequest.clone();
+		request.setActivationDate(null);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		request = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -299,7 +301,7 @@ public class UploadRequestServiceImplTestV2 {
 	@Test
 	public void testCreateNewUploadRequestActivatedNow() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest ureActivated = createSimpleUploadRequest(new Date());
+		UploadRequest ureActivated = createSimpleUploadRequest(null);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ureActivated, Lists.newArrayList(yoda),
 				"This is the subject of a new Upload Request",
 				"This is a body sent after the creation of the Upload Request", false);
@@ -331,7 +333,6 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequest.setMaxDepositSize((long) 100);
 		uploadRequest.setMaxFileCount(Integer.valueOf(3));
 		uploadRequest.setMaxFileSize((long) 50);
-		uploadRequest.setStatus(UploadRequestStatus.CREATED);
 		uploadRequest.setProtectedByPassword(false);
 		uploadRequest.setCanEditExpiryDate(true);
 		uploadRequest.setCanDelete(true);
@@ -384,7 +385,7 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = ureJane.getUploadRequestURLs().iterator().next();
+		UploadRequestUrl requestUrl = enabledUreJane.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
 		UploadRequest uploadRequest = requestUrl.getUploadRequest();
 		Assertions.assertNotNull(uploadRequest);
@@ -410,7 +411,7 @@ public class UploadRequestServiceImplTestV2 {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = ureJane.getUploadRequestURLs().iterator().next();
+		UploadRequestUrl requestUrl = enabledUreJane.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
 		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				requestUrl);
@@ -433,7 +434,7 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = ureJane.getUploadRequestURLs().iterator().next();
+		UploadRequestUrl requestUrl = enabledUreJane.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
 		UploadRequest uploadRequest = requestUrl.getUploadRequest();
 		Assertions.assertNotNull(uploadRequest);
@@ -463,7 +464,7 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = ureJane.getUploadRequestURLs().iterator().next();
+		UploadRequestUrl requestUrl = enabledUreJane.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
 		UploadRequest uploadRequest = requestUrl.getUploadRequest();
 		Assertions.assertNotNull(uploadRequest);
@@ -471,7 +472,7 @@ public class UploadRequestServiceImplTestV2 {
 				requestUrl);
 		Assertions.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
 
-		uploadRequestService.updateStatus(actor, actor, ureJane.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestService.updateStatus(actor, actor, enabledUreJane.getUuid(), UploadRequestStatus.CLOSED, false);
 		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, uploadRequestEntry);
 		Assertions.assertNotNull(documentEntry);
 		Assertions.assertNotNull(uploadRequestEntry.getDocumentEntry());
@@ -506,7 +507,11 @@ public class UploadRequestServiceImplTestV2 {
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assertions.assertNotNull(uploadRequest);
-		Assertions.assertEquals(getCalendarWithoutTime(parseDate("2021-02-14 01:00:00")).getTime(), uploadRequest.getActivationDate());
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequestGroup.getStatus(),
+				"No activation date has been set meaning the upload request is directly enabled");
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequest.getStatus(),
+				"No activation date has been set meaning the upload request is directly enabled");
+		Assertions.assertEquals(parseDate("2021-02-14 01:00:00"), uploadRequest.getActivationDate());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -560,16 +565,4 @@ public class UploadRequestServiceImplTestV2 {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	private Calendar getCalendarWithoutTime(Date date) {
-		Calendar calendar = new GregorianCalendar();
-		if (date != null) {
-			calendar.setTime(date);
-		}
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar;
-	}
-	
 }

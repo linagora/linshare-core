@@ -135,6 +135,8 @@ public class UploadRequestEntryServiceImplTest {
 
 	private UploadRequest uploadRequest;
 
+	private UploadRequest enabledUploadRequest;
+
 	private User john;
 
 	private User jane;
@@ -167,7 +169,6 @@ public class UploadRequestEntryServiceImplTest {
 		ure.setMaxDepositSize((long) 100);
 		ure.setMaxFileCount(Integer.valueOf(3));
 		ure.setMaxFileSize((long) 50);
-		ure.setStatus(UploadRequestStatus.CREATED);
 		ure.setExpiryDate(new Date());
 		ure.setProtectedByPassword(false);
 		ure.setCanEditExpiryDate(true);
@@ -177,6 +178,10 @@ public class UploadRequestEntryServiceImplTest {
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		ure.setActivationDate(null);
+		UploadRequestGroup enabledUploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		enabledUploadRequest = enabledUploadRequestGroup.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -210,13 +215,13 @@ public class UploadRequestEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
-				uploadRequest.getUploadRequestURLs().iterator().next());
+				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
 		Assertions.assertEquals(UploadRequestStatus.ENABLED,
 				uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getStatus());
-		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
-		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.PURGED, false);
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.PURGED, false);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		});
@@ -229,10 +234,10 @@ public class UploadRequestEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
-				uploadRequest.getUploadRequestURLs().iterator().next());
+				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
-		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
 		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
@@ -246,7 +251,7 @@ public class UploadRequestEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
-				uploadRequest.getUploadRequestURLs().iterator().next());
+				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
 		Assertions.assertEquals(UploadRequestStatus.ENABLED,

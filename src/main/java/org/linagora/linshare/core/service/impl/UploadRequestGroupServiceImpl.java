@@ -100,7 +100,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	private final UploadRequestEntryService requestEntryService;
 
-	private final TimeService timeService;
+	private TimeService timeService;
 
 	public UploadRequestGroupServiceImpl(
 			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
@@ -112,7 +112,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final UploadRequestService uploadRequestService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			final UploadRequestEntryService requestEntryService,
-			final TimeService timeService) {
+			TimeService timeService) {
 		super(groupRac, sanitizerInputHtmlBusinessService);
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 		this.functionalityService = functionalityService;
@@ -190,6 +190,12 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	private UploadRequest initUploadRequest(User owner, UploadRequest req) {
 		AbstractDomain domain = owner.getDomain();
+		if (null == req.getActivationDate()) {
+			req.setActivationDate(timeService.dateNow());
+			req.setStatus(UploadRequestStatus.ENABLED);
+		} else {
+			req.setStatus(UploadRequestStatus.CREATED);
+		}
 		checkActivationDate(domain, req);
 		checkExpiryAndNoticationDate(domain, req);
 		checkMaxDepositSize(domain, req);
@@ -199,8 +205,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		checkCanDelete(domain, req);
 		checkCanClose(domain, req);
 		checkSecuredUrl(domain, req);
-		UploadRequestStatus status = req.getActivationDate().after(new Date())?UploadRequestStatus.CREATED:UploadRequestStatus.ENABLED;
-		req.setStatus(status);
 		req.setCanEditExpiryDate(true);
 		return req;
 	}

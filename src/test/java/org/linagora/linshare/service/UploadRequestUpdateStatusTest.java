@@ -131,13 +131,12 @@ public class UploadRequestUpdateStatusTest {
 		referenceUploadRequest.setMaxDepositSize((long) 100);
 		referenceUploadRequest.setMaxFileCount(Integer.valueOf(3));
 		referenceUploadRequest.setMaxFileSize((long) 5000000);
-		referenceUploadRequest.setStatus(UploadRequestStatus.CREATED);
 		referenceUploadRequest.setExpiryDate(expiryDate);
 		referenceUploadRequest.setProtectedByPassword(false);
 		referenceUploadRequest.setCanEditExpiryDate(true);
 		referenceUploadRequest.setCanDelete(true);
 		referenceUploadRequest.setLocale(Language.FRENCH);
-		referenceUploadRequest.setActivationDate(new Date());
+		referenceUploadRequest.setActivationDate(null);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

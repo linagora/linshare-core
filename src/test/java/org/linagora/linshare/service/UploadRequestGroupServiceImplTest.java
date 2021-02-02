@@ -437,11 +437,9 @@ public class UploadRequestGroupServiceImplTest {
 	@Test
 	public void updateStatusToPurged() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, urInit, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		UploadRequest createdUploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		uploadRequestGroupService.create(john, john, createdUploadRequest, Lists.newArrayList(yoda), "This is a subject",
-				"This is a body", false);
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		// Update upload request group status
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
@@ -461,11 +459,9 @@ public class UploadRequestGroupServiceImplTest {
 	@Test
 	public void updateStatusToPurgedAndCopy() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, urInit, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		UploadRequest createdUploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		uploadRequestGroupService.create(john, john, createdUploadRequest, Lists.newArrayList(yoda),
-				"This is a subject", "This is a body", false);
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		// Update upload request group status
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
@@ -512,13 +508,12 @@ public class UploadRequestGroupServiceImplTest {
 		uploadRequest.setMaxDepositSize((long) 100);
 		uploadRequest.setMaxFileCount(Integer.valueOf(3));
 		uploadRequest.setMaxFileSize((long) 50);
-		uploadRequest.setStatus(UploadRequestStatus.CREATED);
 		uploadRequest.setExpiryDate(new Date());
 		uploadRequest.setProtectedByPassword(false);
 		uploadRequest.setCanEditExpiryDate(true);
 		uploadRequest.setCanDelete(true);
 		uploadRequest.setLocale(Language.ENGLISH);
-		uploadRequest.setActivationDate(new Date());
+		uploadRequest.setActivationDate(null);
 		return uploadRequest;
 	}
 	
