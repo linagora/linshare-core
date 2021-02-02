@@ -36,6 +36,9 @@
 
 package org.linagora.linshare.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +48,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,6 +60,7 @@ import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -63,6 +68,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.slf4j.Logger;
@@ -110,6 +116,9 @@ public class UploadRequestGroupServiceImplTest {
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
+	@Autowired
+	private UploadRequestEntryService uploadRequestEntryService;
+
 	private UploadRequest urInit;
 
 	private UploadRequest ure = new UploadRequest();
@@ -119,6 +128,8 @@ public class UploadRequestGroupServiceImplTest {
 	private Contact yoda, external2;
 	
 	private List<Contact> contactList;
+
+	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 
 	public UploadRequestGroupServiceImplTest() {
 		super();
@@ -467,6 +478,29 @@ public class UploadRequestGroupServiceImplTest {
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
 				UploadRequestStatus.PURGED, true);
 		Assertions.assertEquals(UploadRequestStatus.PURGED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testReturnURGDetails() throws BusinessException, IOException {
+		// On this test we will return the nbr of uploaded files and used space on an
+		// URG
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(john, john, tempFile,
+				"First Upload request entry", "First URE", false, null,
+				uploadRequest.getUploadRequestURLs().iterator().next());
+		UploadRequestEntry uploadRequestEntry2 = uploadRequestEntryService.create(john, john, tempFile2,
+				"Second Upload request entry", "Second URE", false, null,
+				uploadRequest.getUploadRequestURLs().iterator().next());
+		Assertions.assertEquals(2, uploadRequestGroupService.countNbrUploadedFiles(uploadRequestGroup));
+		Assertions.assertEquals(uploadRequestEntry.getSize() + uploadRequestEntry2.getSize(),
+				uploadRequestGroupService.computeEntriesSize(uploadRequestGroup));
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
