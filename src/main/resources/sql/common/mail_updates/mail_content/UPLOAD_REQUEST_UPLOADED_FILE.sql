@@ -19,7 +19,7 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${documen
              </a>
           </span>
           <span data-th-utext="#{endingMainMsg(${requestRecipient.mail})}"></span>
-          <th:block   data-th-replace="layout :: actionButtonLink(#{common.download},${requestUrl})"/>
+          <th:block   data-th-replace="layout :: actionButtonLink(#{buttonLabel},${requestUrl})"/>
         </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
     </div><!--/* End of main-content container*/-->
@@ -43,6 +43,7 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${documen
 </body>
 </html>',messages_french='endingMainMsg = dans votre Invitation de Dépôt.
 fileSize =  Taille du fichier
+buttonLabel = Voir
 fileUploadedThe= Fichier déposé le
 invitationClosureDate = Date de clôture
 invitationCreationDate = Date d''activation
@@ -52,6 +53,7 @@ subject =  {0}  vous a déposé {1}  dans votre Invitation de Dépôt
 uploadedOverTotal = {0} / {1} fichiers
 totalUploaded = {0} fichiers',messages_english='endingMainMsg = in your Upload Request
 fileSize =  File size
+buttonLabel = View
 fileUploadedThe = Upload date
 invitationClosureDate = Closure date
 invitationCreationDate = Activation date
@@ -61,6 +63,7 @@ subject =  {0}  has uploaded {1}  in your Upload Request
 uploadedOverTotal = {0} / {1} files
 totalUploaded = {0} files',messages_russian='endingMainMsg = в вашем запросе загрузки
 fileSize = Размер файла
+buttonLabel = View
 fileUploadedThe = Дата загрузки
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации

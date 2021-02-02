@@ -68,7 +68,7 @@ public class UploadRequestUploadedFileEmailBuilder extends GenericUploadRequestE
 		UploadRequest request = emailCtx.getUploadRequest();
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		Context ctx = newTmlContext(emailCtx);
-		String linshareURL = getLinShareUrlForUploadRequest(owner);
+		String linshareURL = getLinShareUrl(owner);
 		String href = getUploadRequestUploadedFileLink(linshareURL, request.getUploadRequestGroup().getUuid(),
 				request.getUuid(), entry.getUuid());
 		Document document = new Document(entry);
