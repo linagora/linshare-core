@@ -19,8 +19,8 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"]
           <!--/* End of Greetings  */-->
           <!--/* Main email  message content*/-->
           <p>
-            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgUnGrouped}"></span>
-            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgGrouped}"></span>
+            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgIndividual}"></span>
+            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgCollective}"></span>
             <span data-th-if="(${documentsCount} ==  1)"   data-th-utext="#{endingMainMsgSingular}" ></span>
             <span  data-th-if="(${documentsCount} >  1)"   data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
           </p>
@@ -80,8 +80,8 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"]
 </div>
 </body>
 </html>',messages_french='beginningMainMsgForRecipient = L''''invitation de Dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a expiré.
-beginningMainMsgGrouped = Votre Invitation de Dépôt groupée a expiré.
-beginningMainMsgUnGrouped = Votre Invitation de Dépôt a expiré.
+beginningMainMsgCollective = Votre Invitation de Dépôt collective a expiré.
+beginningMainMsgIndividual = Votre Invitation de Dépôt a expiré.
 endingMainMsgPlural = et vous avez reçu un total  de <b>{0} fichiers</b>.
 endingMainMsgPluralForRecipient = et vous avez  envoyé  <b> {0} fichiers </b>.
 endingMainMsgSingular = et vous avez  reçu au total <b>1 fichier</b>.
@@ -94,8 +94,8 @@ msgTitle = Message lié à l''''Invitation de Dépôt :
 recipientsURequest = Destinataires
 subjectForOwner = Votre Invitation de Dépôt {0} est clôturée
 subjectForRecipient = L'''' Invitation de Dépôt de {0} {1} intitulée {2} est clôturée',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Upload Request has expired
-beginningMainMsgGrouped = Your grouped Upload Request has expired
-beginningMainMsgUnGrouped = Your Upload Request has expired
+beginningMainMsgCollective = Your collective Upload Request has expired
+beginningMainMsgIndividual = Your Upload Request has expired
 endingMainMsgPlural = and you have received a total of <b>{0} files</b>.
 endingMainMsgPluralForRecipient = and you currently have sent  <b> {0} files </b>.
 endingMainMsgSingular = and you have received a total of <b>1 file</b>.
@@ -108,8 +108,8 @@ msgTitle = Upload Request''''s  attached message :
 recipientsURequest = Recipients
 subjectForOwner = Your invitation {0} is now closed
 subjectForRecipient =  {0} {1}''''s  invitation {2} is now closed',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Срок действия загрузки закончился
-beginningMainMsgGrouped = Срок действия вашего группового запроса загрузки закончился
-beginningMainMsgUnGrouped = Срок действия загрузки закончился.
+beginningMainMsgCollective = Срок действия вашего группового запроса загрузки закончился
+beginningMainMsgIndividual = Срок действия загрузки закончился.
 endingMainMsgPlural = Вы получили <b>{0} файлов</b>.
 endingMainMsgPluralForRecipient = вы отправили всего <b> {0} файлов </b>.
 endingMainMsgSingular = всего вы получили <b>1 файлов</b>.

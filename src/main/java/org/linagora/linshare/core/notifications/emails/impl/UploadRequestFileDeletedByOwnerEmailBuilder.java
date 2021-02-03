@@ -87,12 +87,12 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		res.add(getFakeSingleForRecipient(language));
-		res.add(getFakeGroupedForRecipient(language));
+		res.add(getFakeIndividualForRecipient(language));
+		res.add(getFakeCollectiveForRecipient(language));
 		return res;
 	}
 
-	private Context getFakeGroupedForRecipient(Language language) {
+	private Context getFakeCollectiveForRecipient(Language language) {
 		Document document = new Document("a-upload-request-file.txt");
 		document.setSize(65985L);
 		document.setCreationDate(new Date());
@@ -106,7 +106,7 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 		return ctx;
 	}
 
-	private Context getFakeSingleForRecipient(Language language) {
+	private Context getFakeIndividualForRecipient(Language language) {
 		Document document = new Document("a-upload-request-file.txt");
 		document.setSize(65985L);
 		document.setCreationDate(new Date());

@@ -79,19 +79,19 @@ public class UploadRequestRecipientRemovedEmailBuilder extends GenericUploadRequ
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		res.add(getFakeSingleForRecipient(language));
-		res.add(getFakeGroupedForRecipient(language));
+		res.add(getFakeIndividualForRecipient(language));
+		res.add(getFakeCollectiveForRecipient(language));
 		return res;
 	}
 
-	private Context getFakeGroupedForRecipient(Language language) {
+	private Context getFakeCollectiveForRecipient(Language language) {
 		Context ctx = newFakeContext(language, false, true);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("deletionDate", new Date());
 		return ctx;
 	}
 
-	private Context getFakeSingleForRecipient(Language language) {
+	private Context getFakeIndividualForRecipient(Language language) {
 		Context ctx = newFakeContext(language, false, true);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("deletionDate", new Date());

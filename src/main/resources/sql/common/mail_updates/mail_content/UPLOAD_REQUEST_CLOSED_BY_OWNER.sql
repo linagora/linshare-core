@@ -29,7 +29,7 @@ UPDATE mail_content SET subject='[( #{subject(${requestOwner.firstName}, ${reque
          <!--/* End of upper main-content*/-->
          <!--/* Secondary content for  bottom email section */-->
          <section id="secondary-content">
-            <div data-th-if="(${isgrouped})">
+            <div data-th-if="(${isCollective})">
                <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>
                <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
             </div>

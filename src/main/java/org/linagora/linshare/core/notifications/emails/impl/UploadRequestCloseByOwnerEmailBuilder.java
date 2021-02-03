@@ -84,12 +84,12 @@ public class UploadRequestCloseByOwnerEmailBuilder extends GenericUploadRequestE
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		res.add(getFakeSingleForRecipient(language));
-		res.add(getFakeGroupedForRecipient(language));
+		res.add(getFakeIndividualForRecipient(language));
+		res.add(getFakeCollectiveForRecipient(language));
 		return res;
 	}
 
-	private Context getFakeGroupedForRecipient(Language language) {
+	private Context getFakeCollectiveForRecipient(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 		recipients.add(new MailContact("unknown2@linshare.org"));
@@ -115,11 +115,10 @@ public class UploadRequestCloseByOwnerEmailBuilder extends GenericUploadRequestE
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("totalSize", Long.valueOf(5682642));
-
 		return ctx;
 	}
 
-	private Context getFakeSingleForRecipient(Language language) {
+	private Context getFakeIndividualForRecipient(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 

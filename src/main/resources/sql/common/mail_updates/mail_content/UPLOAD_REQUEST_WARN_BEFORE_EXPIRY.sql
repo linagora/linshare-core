@@ -21,8 +21,8 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
           <!--/* End of Greetings  */-->
           <!--/* Main email  message content*/-->
           <p>
-            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgUnGrouped(${remainingDays})}"></span>
-            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgGrouped(${remainingDays})}"></span>
+            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgIndividual(${remainingDays})}"></span>
+            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgCollective(${remainingDays})}"></span>
             <span data-th-if="(${documentsCount} ==  1)"   data-th-utext="#{endingMainMsgSingular}" ></span>
             <span  data-th-if="(${documentsCount} >  1)"   data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
           </p>
@@ -83,8 +83,8 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
 </div>
 </body>
 </html>',messages_french='beginningMainMsgForRecipient =   L''''invitation dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> va expirer dans <b>{2} jours</b>
-beginningMainMsgGrouped =   Votre invitation groupée sera clôturée dans  <b>{0} jours</b>.
-beginningMainMsgUnGrouped =   Votre invitation au dépôt sera clôturée dans  <b>{0} jours</b>.
+beginningMainMsgCollective =   Votre invitation collective sera clôturée dans  <b>{0} jours</b>.
+beginningMainMsgIndividual =   Votre invitation au dépôt sera clôturée dans  <b>{0} jours</b>.
 endingMainMsgPlural = et vous avez actuellement reçu <b>{0} fichiers</b>.
 endingMainMsgPlural = Il y a un total de <b> {0} fichiers </b> dans le dépôt.
 endingMainMsgPluralForRecipient = et vous avez actuellement envoyé  <b> {0} fichiers </b> dans le dépôt.
@@ -100,8 +100,8 @@ recipientsURequest = Destinataires
 subjectForOwner =  Votre invitation de dépôt sera bientôt clôturée
 subjectForRecipient = L''''invitation au dépôt de {0} {1} sera bientôt clôturée
 uploadFileBtn = Déposer un fichier',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s The Upload Request is about to reach it''''s end date in <b>{2} days</b>
-beginningMainMsgGrouped = Your invitation will be closed in  <b>{0} days</b>.
-beginningMainMsgUnGrouped =  Your invitation is about to be closed in <b>{0} days</b>.
+beginningMainMsgCollective = Your invitation will be closed in  <b>{0} days</b>.
+beginningMainMsgIndividual =  Your invitation is about to be closed in <b>{0} days</b>.
 endingMainMsgPlural =  and you currently have received<b>{0} files</b>.
 endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
 endingMainMsgPluralForRecipient = and so far you have sent <b> {0} files </b> in the depot.
@@ -117,8 +117,8 @@ recipientsURequest = Recipients
 subjectForOwner =  Your invitation is about to be closed.
 subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
 uploadFileBtn = Upload a file',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Действие запроса на загрузку закончится через <b>{2} дней</b>
-beginningMainMsgGrouped = Действие вашего приглашения закончится через <b>{0} дней</b>.
-beginningMainMsgUnGrouped =  Действие вашего приглашения закончится через <b>{0} дней</b>.
+beginningMainMsgCollective = Действие вашего приглашения закончится через <b>{0} дней</b>.
+beginningMainMsgIndividual =  Действие вашего приглашения закончится через <b>{0} дней</b>.
 endingMainMsgPlural =  вы получили <b>{0} файлов</b>.
 endingMainMsgPlural = Всего загрузка содержит <b> {0} файлов </b>.
 endingMainMsgPluralForRecipient = вы отправили <b> {0} файлов </b> в загрузку.

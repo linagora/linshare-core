@@ -872,8 +872,7 @@ password = Пароль
 recipientsOfDepot = Получатель
 subject = {0} {1}  пригласил вас в свой запрос загрузки {2}' WHERE id=16;
 
--- Update UPLOAD_REQUEST_CLOSED_BY_RECIPIENT.sql (isCollective field)
-
+-- Update UPLOAD_REQUEST_CLOSED_BY_RECIPIENT.sql
 UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -889,9 +888,9 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-          <span data-th-if="(${isCollective})" data-th-utext="#{groupedBeginningMainMsg(${requestRecipient.mail})}"></span>
+          <span data-th-if="(${isCollective})" data-th-utext="#{collectiveBeginningMainMsg(${requestRecipient.mail})}"></span>
           <span data-th-if="!(${isCollective})"
-                data-th-utext="#{ungroupedBeginningMainMsg(${requestRecipient.mail})}"></span>
+                data-th-utext="#{individualBeginningMainMsg(${requestRecipient.mail})}"></span>
           <span data-th-if="(${documentsCount} == 1)" data-th-utext="#{endingMainMsgSingular}"></span>
           <span data-th-if="(${documentsCount} > 1)" data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
         </p> <!--/* End of Main email  message content*/-->
@@ -934,40 +933,40 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
 endingMainMsgSingular = Il y a  <b>1 fichier </b> dans le dépôt.
 filesInURDepot =  Fichiers déposés
 fileSize =  Taille
-groupedBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt.
+collectiveBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt.
 invitationClosureDate = Date de clôture
 invitationCreationDate = Date d''activation
 msgTitle = Message lié à l''invitation :
 numFilesInDepot = Nombre de fichiers déposés
 recipientsURequest = Destinataires
 subject = {0} a clôturé votre invitation de dépôt : {1}
-ungroupedBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt.
+individualBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt.
 uploadedOverTotal = {0} / {1} fichiers
 totalUploaded = {0} files',messages_english='endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
 endingMainMsgSingular =  There is a total <b>1 file </b> in the depot.
 filesInURDepot = Files uploaded
 fileSize =  Total filesize
-groupedBeginningMainMsg = <b>{0}</b> has closed your grouped Upload Request depot.
+collectiveBeginningMainMsg = <b>{0}</b> has closed your collective Upload Request depot.
 invitationClosureDate = Closure date
 invitationCreationDate = Activation date
 msgTitle =  Upload request''s  attached message :
 numFilesInDepot = Total uploaded files
 recipientsURequest = Recipients
 subject =  {0}  has closed  your Upload Request depot : {1}
-ungroupedBeginningMainMsg  = <b>{0}</b> has closed your Upload Request depot.
+individualBeginningMainMsg  = <b>{0}</b> has closed your Upload Request depot.
 uploadedOverTotal = {0} / {1} files
 totalUploaded = {0} files',messages_russian='endingMainMsgPlural = Всего в хранилище <b> {0} файлов </b>.
 endingMainMsgSingular =  Всего в хранилище <b>1 файл </b.
 filesInURDepot = Файлы загружены
 fileSize =  Общий размер файла
-groupedBeginningMainMsg = <b>{0}</b> закрыл ваше групповое хранилище для файлов запроса загрузки.
+collectiveBeginningMainMsg = <b>{0}</b> закрыл ваше групповое хранилище для файлов запроса загрузки.
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
 msgTitle =  Запрос загрузки содержит сообщение:
 numFilesInDepot = Всего загруженных файлов
 recipientsURequest = Получатели
 subject =  {0} закрыл ваше хранилище для файлов запроса загрузки {1}
-ungroupedBeginningMainMsg  = <b>{0}</b> закрыл ваше хранилище для файлов запроса загрузки.
+individualBeginningMainMsg  = <b>{0}</b> закрыл ваше хранилище для файлов запроса загрузки.
 uploadedOverTotal = {0} / {1} файлов
 totalUploaded = {0} файлов' WHERE id=14;
 
@@ -1057,8 +1056,7 @@ name = {0} {1}
 recipientsOfDepot = Получатели
 subject = {0} {1} открыл для вас доступ к его запросу загрузки.' WHERE id=20;
 
--- Update UPLOAD_REQUEST_WARN_BEFORE_EXPIRY.sql (isCollective field)
-
+-- Update UPLOAD_REQUEST_WARN_BEFORE_EXPIRY.sql
 UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})]
 [/]
 [# th:if="${!warnOwner}"]
@@ -1082,8 +1080,8 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
           <!--/* End of Greetings  */-->
           <!--/* Main email  message content*/-->
           <p>
-            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgUnGrouped(${remainingDays})}"></span>
-            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgGrouped(${remainingDays})}"></span>
+            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgIndividual(${remainingDays})}"></span>
+            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgCollective(${remainingDays})}"></span>
             <span data-th-if="(${documentsCount} ==  1)"   data-th-utext="#{endingMainMsgSingular}" ></span>
             <span  data-th-if="(${documentsCount} >  1)"   data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
           </p>
@@ -1144,8 +1142,8 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
 </div>
 </body>
 </html>',messages_french='beginningMainMsgForRecipient =   L''''invitation dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> va expirer dans <b>{2} jours</b>
-beginningMainMsgGrouped =   Votre invitation groupée sera clôturée dans  <b>{0} jours</b>.
-beginningMainMsgUnGrouped =   Votre invitation au dépôt sera clôturée dans  <b>{0} jours</b>.
+beginningMainMsgCollective =   Votre invitation collective sera clôturée dans  <b>{0} jours</b>.
+beginningMainMsgIndividual =   Votre invitation au dépôt sera clôturée dans  <b>{0} jours</b>.
 endingMainMsgPlural = et vous avez actuellement reçu <b>{0} fichiers</b>.
 endingMainMsgPlural = Il y a un total de <b> {0} fichiers </b> dans le dépôt.
 endingMainMsgPluralForRecipient = et vous avez actuellement envoyé  <b> {0} fichiers </b> dans le dépôt.
@@ -1161,8 +1159,8 @@ recipientsURequest = Destinataires
 subjectForOwner =  Votre invitation de dépôt sera bientôt clôturée
 subjectForRecipient = L''''invitation au dépôt de {0} {1} sera bientôt clôturée
 uploadFileBtn = Déposer un fichier',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s The Upload Request is about to reach it''''s end date in <b>{2} days</b>
-beginningMainMsgGrouped = Your invitation will be closed in  <b>{0} days</b>.
-beginningMainMsgUnGrouped =  Your invitation is about to be closed in <b>{0} days</b>.
+beginningMainMsgCollective = Your invitation will be closed in  <b>{0} days</b>.
+beginningMainMsgIndividual =  Your invitation is about to be closed in <b>{0} days</b>.
 endingMainMsgPlural =  and you currently have received<b>{0} files</b>.
 endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
 endingMainMsgPluralForRecipient = and so far you have sent <b> {0} files </b> in the depot.
@@ -1178,8 +1176,8 @@ recipientsURequest = Recipients
 subjectForOwner =  Your invitation is about to be closed.
 subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
 uploadFileBtn = Upload a file',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Действие запроса на загрузку закончится через <b>{2} дней</b>
-beginningMainMsgGrouped = Действие вашего приглашения закончится через <b>{0} дней</b>.
-beginningMainMsgUnGrouped =  Действие вашего приглашения закончится через <b>{0} дней</b>.
+beginningMainMsgCollective = Действие вашего приглашения закончится через <b>{0} дней</b>.
+beginningMainMsgIndividual =  Действие вашего приглашения закончится через <b>{0} дней</b>.
 endingMainMsgPlural =  вы получили <b>{0} файлов</b>.
 endingMainMsgPlural = Всего загрузка содержит <b> {0} файлов </b>.
 endingMainMsgPluralForRecipient = вы отправили <b> {0} файлов </b> в загрузку.
@@ -1292,8 +1290,7 @@ name = {0} {1}
 recipientsOfDepot = Получатели
 subject = {0} {1} ожидает ваши файлы' WHERE id=18;
 
--- Update UPLOAD_REQUEST_WARN_EXPIRY.sql (isCollective field)
-
+-- Update UPLOAD_REQUEST_WARN_EXPIRY.sql
 UPDATE mail_content SET subject='[# th:if="${warnOwner}"] 
            [( #{subjectForOwner(${subject})})]
        [/]
@@ -1315,8 +1312,8 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"]
           <!--/* End of Greetings  */-->
           <!--/* Main email  message content*/-->
           <p>
-            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgUnGrouped}"></span>
-            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgGrouped}"></span>
+            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgIndividual}"></span>
+            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgCollective}"></span>
             <span data-th-if="(${documentsCount} ==  1)"   data-th-utext="#{endingMainMsgSingular}" ></span>
             <span  data-th-if="(${documentsCount} >  1)"   data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
           </p>
@@ -1376,8 +1373,8 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"]
 </div>
 </body>
 </html>',messages_french='beginningMainMsgForRecipient = L''''invitation de Dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a expiré.
-beginningMainMsgGrouped = Votre Invitation de Dépôt groupée a expiré.
-beginningMainMsgUnGrouped = Votre Invitation de Dépôt a expiré.
+beginningMainMsgCollective = Votre Invitation de Dépôt collective a expiré.
+beginningMainMsgIndividual = Votre Invitation de Dépôt a expiré.
 endingMainMsgPlural = et vous avez reçu un total  de <b>{0} fichiers</b>.
 endingMainMsgPluralForRecipient = et vous avez  envoyé  <b> {0} fichiers </b>.
 endingMainMsgSingular = et vous avez  reçu au total <b>1 fichier</b>.
@@ -1390,8 +1387,8 @@ msgTitle = Message lié à l''''Invitation de Dépôt :
 recipientsURequest = Destinataires
 subjectForOwner = Votre Invitation de Dépôt {0} est clôturée
 subjectForRecipient = L'''' Invitation de Dépôt de {0} {1} intitulée {2} est clôturée',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Upload Request has expired
-beginningMainMsgGrouped = Your grouped Upload Request has expired
-beginningMainMsgUnGrouped = Your Upload Request has expired
+beginningMainMsgCollective = Your collective Upload Request has expired
+beginningMainMsgIndividual = Your Upload Request has expired
 endingMainMsgPlural = and you have received a total of <b>{0} files</b>.
 endingMainMsgPluralForRecipient = and you currently have sent  <b> {0} files </b>.
 endingMainMsgSingular = and you have received a total of <b>1 file</b>.
@@ -1404,8 +1401,8 @@ msgTitle = Upload Request''''s  attached message :
 recipientsURequest = Recipients
 subjectForOwner = Your invitation {0} is now closed
 subjectForRecipient =  {0} {1}''''s  invitation {2} is now closed',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Срок действия загрузки закончился
-beginningMainMsgGrouped = Срок действия вашего группового запроса загрузки закончился
-beginningMainMsgUnGrouped = Срок действия загрузки закончился.
+beginningMainMsgCollective = Срок действия вашего группового запроса загрузки закончился
+beginningMainMsgIndividual = Срок действия загрузки закончился.
 endingMainMsgPlural = Вы получили <b>{0} файлов</b>.
 endingMainMsgPluralForRecipient = вы отправили всего <b> {0} файлов </b>.
 endingMainMsgSingular = всего вы получили <b>1 файлов</b>.
@@ -1495,6 +1492,63 @@ numFilesInDepot = Всего загруженных файлов
 subject =  {0}  загрузил {1}  в ваш запрос загрузки
 uploadedOverTotal = {0} / {1} файлы
 totalUploaded = {0} файлы' WHERE id=10;
+
+-- UPLOAD_REQUEST_CLOSED_BY_OWNER.sql
+UPDATE mail_content SET subject='[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection(~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
+                     Peter WILSON has closed prematurely his Upload Request Depot labeled : subject.
+                     </span>
+                  </p>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <div data-th-if="(${isCollective})">
+               <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>
+               <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
+            </div>
+            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>',messages_french='closureDate = Date de clôture
+filesInURDepot = Fichiers
+mainMsg = <b>{0} {1}</b> a fermé son invitation de dépôt : {2}.
+recipientsOfDepot = Destinataires
+subject = {0} {1} a fermé l''''invitation de dépôt : {2}',messages_english='closureDate = Closure date
+filesInURDepot = Files
+mainMsg = <b>{0} {1}</b> has closed the upload request labeled : {2}.
+recipientsOfDepot = Recipients
+subject = {0} {1} has closed his upload request : {2}',messages_russian='closureDate = Дата закрытия
+filesInURDepot = Файлы
+mainMsg = <b>{0} {1}</b> закрыл запрос загрузки {2}.
+recipientsOfDepot = Получатели
+subject = {0} {1} закрыл запрос загрузки {2}' WHERE id=21;
 
 -- Update mail layout
 UPDATE mail_layout SET messages_french='common.availableUntil = Expire le
