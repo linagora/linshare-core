@@ -257,6 +257,7 @@ public class UploadRequestServiceImplTestV2 {
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertTrue(request.isPristine());
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, request.getUploadRequestGroup().getStatus());
 		// Update upload request status
 		uploadRequestService.updateStatus(john, john, request.getUuid(), UploadRequestStatus.CLOSED, false);
@@ -265,6 +266,8 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, request.getStatus());
 		uploadRequestService.updateStatus(john, john, request.getUuid(), UploadRequestStatus.DELETED, false);
 		Assertions.assertEquals(UploadRequestStatus.DELETED, request.getStatus());
+		Assertions.assertTrue(request.isPristine());
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test

@@ -86,9 +86,6 @@ public class UploadRequestBusinessServiceImpl implements
 
 	@Override
 	public UploadRequest updateStatus(UploadRequest req, UploadRequestStatus status) throws BusinessException {
-		if (req.isPristine()) {
-			req.setPristine(false);
-		}
 		req.updateStatus(status);
 		req = uploadRequestRepository.update(req);
 		return req;
