@@ -62,6 +62,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private Integer opaqueTokenThreshold;
 
+	private Boolean useOIDC;
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -81,10 +83,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		if (authenticationIsRequired(token, currentAuthentication)) {
 			AbstractAuthenticationToken authentication = null;
 			// FIXME: it is a very dirty workaround to differentiate Opaque Token for JWT token. 
-			if (token.length() > opaqueTokenThreshold) {
-				authentication = new JwtAuthenticationToken(token);
-			} else {
+			if (useOIDC && token.length() <= opaqueTokenThreshold) {
 				authentication = new OidcOpaqueAuthenticationToken(token);
+			} else {
+				authentication = new JwtAuthenticationToken(token);
 			}
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -106,6 +108,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	public void setOpaqueTokenThreshold(Integer opaqueTokenThreshold) {
 		this.opaqueTokenThreshold = opaqueTokenThreshold;
+	}
+
+	public void setUseOIDC(Boolean useOIDC) {
+		this.useOIDC = useOIDC;
 	}
 
 }

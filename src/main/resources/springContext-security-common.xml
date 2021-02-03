@@ -121,6 +121,7 @@
 	<!-- JWT authentication provider -->
 	<b:bean name="jwtAuthenticationFilter" class="org.linagora.linshare.auth.jwt.JwtAuthenticationFilter">
 		<b:property name="opaqueTokenThreshold" value="${oidc.opaqueToken.lengh}" />
+		<b:property name="useOIDC" value="${oidc.on}" />
 	</b:bean>
 
 	<b:bean id="opaqueTokenIntrospector" class="org.springframework.security.oauth2.server.resource.introspection.NimbusOpaqueTokenIntrospector" >
