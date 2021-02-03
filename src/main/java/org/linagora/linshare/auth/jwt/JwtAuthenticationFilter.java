@@ -42,8 +42,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -57,6 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	// Do not remove trailer space.
 	private static final String AUTH_METHOD = "Bearer ";
+
+	private Integer opaqueTokenThreshold;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -75,7 +79,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 		Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authenticationIsRequired(token, currentAuthentication)) {
-			JwtAuthenticationToken authentication = new JwtAuthenticationToken(token);
+			AbstractAuthenticationToken authentication = null;
+			// FIXME: it is a very dirty workaround to differentiate Opaque Token for JWT token. 
+			if (token.length() > opaqueTokenThreshold) {
+				authentication = new JwtAuthenticationToken(token);
+			} else {
+				authentication = new OidcOpaqueAuthenticationToken(token);
+			}
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
@@ -92,6 +102,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 		}
 		return true;
+	}
+
+	public void setOpaqueTokenThreshold(Integer opaqueTokenThreshold) {
+		this.opaqueTokenThreshold = opaqueTokenThreshold;
 	}
 
 }

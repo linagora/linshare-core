@@ -302,3 +302,7 @@ linshare.mode.production=true
 
 # Maximum Number of stored passwords
 # password.history.max.number=10
+
+oidc.introspectionUri=http://auth.linshare.local/oauth2/introspect
+oidc.client.id=linshare
+oidc.client.secret=linshare
