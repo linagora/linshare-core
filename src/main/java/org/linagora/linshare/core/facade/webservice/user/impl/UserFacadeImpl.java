@@ -116,12 +116,11 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 				dto.setSecondFAEnabled(false);
 				dto.setSecondFARequired(false);
 			}
-		}
-		Authentication auth = SecurityContextHolder.getContext()
-				.getAuthentication();
-		dto.setAuthWithOIDC(false);
-		if (auth.getAuthorities().contains(new SimpleGrantedAuthority(AuthRole.ROLE_AUTH_OIDC))) {
-			dto.setAuthWithOIDC(true);
+			dto.setAuthWithOIDC(false);
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (auth.getAuthorities().contains(new SimpleGrantedAuthority(AuthRole.ROLE_AUTH_OIDC))) {
+				dto.setAuthWithOIDC(true);
+			}
 		}
 		return dto;
 	}
