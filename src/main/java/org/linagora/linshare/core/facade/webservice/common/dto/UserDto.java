@@ -95,6 +95,10 @@ public class UserDto extends AccountDto {
 	@Schema(description = "user's quota uuid, only available in v2.")
 	private String quotaUuid;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@Schema(description = "authWithOIDC")
+	private Boolean authWithOIDC;
+
 	public UserDto() {
 		super();
 	}
@@ -272,6 +276,14 @@ public class UserDto extends AccountDto {
 
 	public void setQuotaUuid(String quotaUuid) {
 		this.quotaUuid = quotaUuid;
+	}
+
+	public Boolean isAuthWithOIDC() {
+		return authWithOIDC;
+	}
+
+	public void setAuthWithOIDC(Boolean authWithOIDC) {
+		this.authWithOIDC = authWithOIDC;
 	}
 
 	@Override

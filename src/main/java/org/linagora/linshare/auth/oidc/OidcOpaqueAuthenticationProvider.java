@@ -37,6 +37,7 @@ package org.linagora.linshare.auth.oidc;
 
 import java.util.List;
 
+import org.linagora.linshare.auth.AuthRole;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -49,6 +50,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
@@ -125,6 +127,7 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 
 		logger.info(String.format("Successful authentication of  %1$s with OIDC opaque token : %2$s", foundUser.getLsUuid(), authenticate.getTokenAttributes().toString()));
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
+		grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_AUTH_OIDC));
 		UserDetails userDetail = new org.springframework.security.core.userdetails.User(foundUser.getLsUuid(), "", true,
 				true, true, true, grantedAuthorities);
 

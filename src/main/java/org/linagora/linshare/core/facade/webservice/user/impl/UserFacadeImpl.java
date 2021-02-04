@@ -38,6 +38,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.auth.AuthRole;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
@@ -50,6 +51,9 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 
@@ -112,6 +116,12 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 				dto.setSecondFAEnabled(false);
 				dto.setSecondFARequired(false);
 			}
+		}
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		dto.setAuthWithOIDC(false);
+		if (auth.getAuthorities().contains(new SimpleGrantedAuthority(AuthRole.ROLE_AUTH_OIDC))) {
+			dto.setAuthWithOIDC(true);
 		}
 		return dto;
 	}

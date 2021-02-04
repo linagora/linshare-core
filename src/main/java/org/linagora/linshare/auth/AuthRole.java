@@ -41,6 +41,7 @@ package org.linagora.linshare.auth;
  */
 public interface AuthRole {
 	static final String ROLE_AUTH = "ROLE_AUTH";
+	static final String ROLE_AUTH_OIDC = "ROLE_AUTH_OIDC";
 	static final String ROLE_USER = "ROLE_USER";
 	static final String ROLE_DELEGATION = "ROLE_DELEGATION";
 	static final String ROLE_ADMIN = "ROLE_ADMIN";
