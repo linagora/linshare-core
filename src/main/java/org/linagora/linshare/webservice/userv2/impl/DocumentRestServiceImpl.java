@@ -185,7 +185,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 
 	@Path("/copy")
 	@POST
-	@Operation(summary = "Create a document from an existing workgroup document or a received share.", responses = {
+	@Operation(summary = "Create a document from an existing workgroup document, personal space,received share or upload request.", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
 			responseCode = "200"

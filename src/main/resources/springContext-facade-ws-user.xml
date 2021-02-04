@@ -17,6 +17,7 @@
 		<constructor-arg ref="auditLogEntryService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="workGroupNodeService" />
+		<constructor-arg ref="uploadRequestEntryService" />
 	</bean>
 	<bean id="wsLogEntryFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.LogEntryFacadeImpl">
 		<constructor-arg ref="accountService" />

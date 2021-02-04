@@ -61,6 +61,7 @@ import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
@@ -79,6 +80,7 @@ import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
@@ -111,6 +113,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 
 	protected final WorkGroupDocumentRevisionService revisionService;
 
+	protected final UploadRequestEntryService requestEntryService;
+
 	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
 			final MimePolicyService mimePolicyService,
@@ -120,7 +124,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			final ThreadService threadService,
 			final WorkGroupNodeService workGroupNodeService,
 			final SignatureService signatureService,
-			final WorkGroupDocumentRevisionService revisionService) {
+			final WorkGroupDocumentRevisionService revisionService,
+			final UploadRequestEntryService requestEntryService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
 		this.mimePolicyService = mimePolicyService;
@@ -131,6 +136,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		this.threadService = threadService;
 		this.workGroupNodeService = workGroupNodeService;
 		this.revisionService = revisionService;
+		this.requestEntryService = requestEntryService;
 	}
 
 	@Override
@@ -361,6 +367,11 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			CopyResource cr = new CopyResource(resourceKind, documentEntry);
 			DocumentEntry newDocumentEntry = documentEntryService.copy(authUser, actor, cr);
 			documentEntryService.markAsCopied(authUser, actor, documentEntry, new CopyMto(newDocumentEntry));
+			return Lists.newArrayList(new DocumentDto(newDocumentEntry));
+		} else if (TargetKind.UPLOAD_REQUEST.equals(resourceKind)) {
+			UploadRequestEntry requestEntry = requestEntryService.find(authUser, actor, resourceUuid);
+			CopyResource cr = new CopyResource(resourceKind, requestEntry);
+			DocumentEntry newDocumentEntry = requestEntryService.copyUre(authUser, actor, cr);
 			return Lists.newArrayList(new DocumentDto(newDocumentEntry));
 		}
 		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "This action is not supported.");

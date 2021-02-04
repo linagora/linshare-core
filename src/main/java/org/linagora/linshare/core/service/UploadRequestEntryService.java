@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 
@@ -71,4 +72,6 @@ public interface UploadRequestEntryService {
 
 	FileAndMetaData downloadEntries(Account authUser, Account actor, UploadRequestGroup uploadRequestGroup,
 			List<UploadRequestEntry> entries);
+
+	DocumentEntry copyUre(Account actor, Account owner, CopyResource cr) throws BusinessException;
 }

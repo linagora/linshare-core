@@ -234,8 +234,10 @@ public class UploadRequestEntryServiceImplTest {
 		Assertions.assertNotNull(entry);
 		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
 		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
-		UploadRequestEntry deletedEntry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
-		Assertions.assertNull(deletedEntry);
+		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_NOT_FOUND, e.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -250,8 +252,10 @@ public class UploadRequestEntryServiceImplTest {
 		Assertions.assertEquals(UploadRequestStatus.ENABLED,
 				uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getStatus());
 		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
-		UploadRequestEntry deletedEntry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
-		Assertions.assertNull(deletedEntry);
+		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_NOT_FOUND, e.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

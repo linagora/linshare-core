@@ -38,6 +38,7 @@ package org.linagora.linshare.core.domain.objects;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
@@ -107,6 +108,21 @@ public class CopyResource {
 		this.metaData = entry.getMetaData();
 		// there is no need to recipients to know the name of the source workgroup.
 		this.copyFrom = new CopyMto(entry, workGroup);
+	}
+
+	public CopyResource(TargetKind resourceKind, UploadRequestEntry entry) {
+		this.kind = resourceKind;
+		this.resourceUuid = entry.getUuid();
+		this.size = entry.getSize();
+		this.documentUuid = entry.getDocument().getUuid();
+		this.ciphered = entry.getCiphered();
+		this.name = entry.getName();
+		this.comment = entry.getComment();
+		this.metaData = entry.getMetaData();
+		this.copyFrom = new CopyMto(entry);
+		this.mimeType = entry.getType();
+		this.contextUuid = entry.getUploadRequestUrl().getUploadRequest().getUuid();
+		this.contextName = entry.getUploadRequestUrl().getUploadRequest().getUploadRequestGroup().getSubject();
 	}
 
 	public TargetKind getKind() {

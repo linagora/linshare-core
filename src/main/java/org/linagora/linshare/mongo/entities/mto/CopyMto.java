@@ -39,6 +39,7 @@ import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
@@ -57,7 +58,7 @@ public class CopyMto {
 	@Schema(description = "Kind")
 	protected TargetKind kind;
 
-	@Schema(description = "contextUuid")
+	@Schema(description = "contextUuid | if TargetKind = UPLOAD_REQUEST it's upload request uuid , if TargetKind = SHARED_SPACE it's shared space uuid ")
 	protected String contextUuid;
 
 	@Schema(description = "contextName")
@@ -98,6 +99,14 @@ public class CopyMto {
 		this.name = node.getName();
 		this.contextUuid = workGroup.getLsUuid();
 		this.nodeType = node.getNodeType();
+	}
+
+	public CopyMto(UploadRequestEntry entry) {
+		this.kind = TargetKind.UPLOAD_REQUEST;
+		this.uuid = entry.getUuid();
+		this.name = entry.getName();
+		this.contextUuid = entry.getUploadRequestUrl().getUploadRequest().getUuid();
+		this.contextName = entry.getUploadRequestUrl().getUploadRequest().getUploadRequestGroup().getSubject();
 	}
 
 	public String getUuid() {

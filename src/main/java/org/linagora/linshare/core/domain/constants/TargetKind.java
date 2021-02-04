@@ -37,5 +37,5 @@ package org.linagora.linshare.core.domain.constants;
 
 public enum TargetKind {
 
-	PERSONAL_SPACE, RECEIVED_SHARE, SHARED_SPACE;
+	PERSONAL_SPACE, RECEIVED_SHARE, SHARED_SPACE, UPLOAD_REQUEST;
 }

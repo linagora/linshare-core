@@ -74,6 +74,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -95,6 +96,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 
 import com.google.common.collect.Lists;
@@ -248,6 +250,42 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		return entity;
 	}
 
+	@Override
+	public DocumentEntry copyUre(Account authUser, Account owner, CopyResource cr) throws BusinessException {
+		preChecks(authUser, owner);
+		Validate.notEmpty(cr.getDocumentUuid(), "documentUuid is required.");
+		Validate.notEmpty(cr.getName(), "fileName is required.");
+		Validate.notNull(cr.getSize(), "size is required.");
+		checkCreatePermission(authUser, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
+		UploadRequestEntry uploadRequestEntry = find(authUser, owner, cr.getResourceUuid());
+		UploadRequest uploadRequest = uploadRequestEntry.getUploadRequestUrl().getUploadRequest();
+		checkURStatusBeforeCopyAndDelete(uploadRequest, BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_BE_COPIED);
+		checkSpace(owner, cr.getSize());
+		if (uploadRequestEntry.getComment() == null) {
+			cr.setComment("");
+		}
+		// What will be expiration date of the document if URE expiration is null ?
+		DocumentEntry documentEntry = documentEntryBusinessService.copy(owner, cr.getDocumentUuid(), cr.getName(),
+				cr.getComment(), cr.getMetaData(), uploadRequestEntry.getExpirationDate(), cr.getCiphered());
+		addToQuota(owner, cr.getSize());
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(authUser, owner, documentEntry, LogAction.CREATE);
+		log.setCause(LogActionCause.COPY);
+		log.setFromResourceUuid(cr.getResourceUuid());
+		log.setCopiedFrom(cr.getCopyFrom());
+		logEntryService.insert(log);
+		if (!uploadRequestEntry.getCopied()) {
+			uploadRequestEntry.setCopied(true);
+		}
+		UploadRequestEntryAuditLogEntry logUREntry = new UploadRequestEntryAuditLogEntry(new AccountMto(authUser),
+				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_ENTRY,
+				uploadRequestEntry.getUuid(), uploadRequestEntry);
+		logUREntry.setCause(LogActionCause.COPY);
+		logUREntry.setCopiedTo(new CopyMto(documentEntry));
+		logEntryService.insert(logUREntry);
+		return documentEntry;
+	}
+
 	private void checkURStatusBeforeCopyAndDelete(UploadRequest uploadRequest, BusinessErrorCode error) {
 		if (!Lists.newArrayList(UploadRequestStatus.ENABLED, UploadRequestStatus.CLOSED, UploadRequestStatus.ARCHIVED)
 				.contains(uploadRequest.getStatus())) {
@@ -273,7 +311,11 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	@Override
 	public UploadRequestEntry find(Account authUser, Account actor, String uuid) {
 		preChecks(authUser, actor);
-		return uploadRequestEntryBusinessService.findByUuid(uuid);
+		UploadRequestEntry entry = uploadRequestEntryBusinessService.findByUuid(uuid);
+		if (entry == null) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_NOT_FOUND, "The upload request entry does not exists");
+		}
+		return entry;
 	}
 
 	@Override

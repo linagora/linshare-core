@@ -42,12 +42,18 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.UploadRequestEntryMto;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @XmlRootElement
 public class UploadRequestEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected UploadRequestEntryMto resource;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected CopyMto copiedTo;
 
 	public UploadRequestEntryAuditLogEntry() {
 		super();
@@ -67,4 +73,13 @@ public class UploadRequestEntryAuditLogEntry extends AuditLogEntryUser {
 	public void setResource(UploadRequestEntryMto resource) {
 		this.resource = resource;
 	}
+
+	public CopyMto getCopiedTo() {
+		return copiedTo;
+	}
+
+	public void setCopiedTo(CopyMto copiedTo) {
+		this.copiedTo = copiedTo;
+	}
+
 }
