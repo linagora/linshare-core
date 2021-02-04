@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
@@ -68,6 +69,7 @@ import org.linagora.linshare.core.notifications.context.UploadRequestUpdateSetti
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
@@ -97,6 +99,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 
 	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
 
+	private final FunctionalityReadOnlyService functionalityService;
+
 	public UploadRequestServiceImpl(
 			final AccountRepository<Account> accountRepository,
 			final UploadRequestBusinessService uploadRequestBusinessService,
@@ -107,7 +111,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			final LogEntryService logEntryService,
 			final UploadRequestEntryService uploadRequestEntryService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService) {
+			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
+			final FunctionalityReadOnlyService functionalityService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
@@ -117,6 +122,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		this.logEntryService = logEntryService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
+		this.functionalityService = functionalityService;
 	}
 
 	@Override
@@ -263,6 +269,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	@Override
 	public UploadRequest closeRequestByRecipient(UploadRequestUrl url)
 			throws BusinessException {
+		checkClosureRight(url.getUploadRequest().getUploadRequestGroup().getAbstractDomain());
 		Account actor = accountRepository.getUploadRequestSystemAccount();
 		UploadRequest req = url.getUploadRequest();
 		if (req.getStatus().equals(UploadRequestStatus.CLOSED)) {
@@ -282,6 +289,14 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		log.setResourceUpdated(new UploadRequestMto(update, true));
 		logEntryService.insert(log);
 		return update;
+	}
+
+	private void checkClosureRight(AbstractDomain domain) {
+		BooleanValueFunctionality func = functionalityService.getUploadRequestCanCloseFunctionality(domain);
+		if (!func.getActivationPolicy().getStatus()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_CLOSURE_FORBIDDEN,
+					"Upload request closure right functionality is disabled.");
+		}
 	}
 
 	/**
