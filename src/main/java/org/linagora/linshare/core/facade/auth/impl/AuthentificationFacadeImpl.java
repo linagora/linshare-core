@@ -158,7 +158,11 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	public User ldapSearchForAuth(String domainIdentifier, String login)
 			throws BusinessException {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-		return userProviderService.searchForAuth(domain.getUserProvider(), login);
+		User user = userProviderService.searchForAuth(domain.getUserProvider(), login);
+		if (user != null) {
+			user.setDomain(domain);
+		}
+		return user;
 	}
 
 	@Override
