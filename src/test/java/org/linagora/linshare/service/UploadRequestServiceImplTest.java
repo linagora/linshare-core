@@ -59,7 +59,6 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -76,8 +75,6 @@ import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -148,12 +145,6 @@ public class UploadRequestServiceImplTest {
 	@Autowired
 	private DocumentRepository documentRepository;
 
-	@Autowired
-	private FunctionalityReadOnlyService functionalityROService;
-
-	@Autowired
-	private FunctionalityService functionalityService;
-
 	private UploadRequestEntry uploadRequestEntry;
 
 	private UploadRequest ure = new UploadRequest();
@@ -174,8 +165,6 @@ public class UploadRequestServiceImplTest {
 
 	private Contact yoda;
 
-	private Account root;
-
 	public UploadRequestServiceImplTest() {
 		super();
 	}
@@ -185,8 +174,6 @@ public class UploadRequestServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
-		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN,
-				LinShareTestConstants.ROOT_ACCOUNT);
 		AbstractDomain subDomain = abstractDomainRepository.findById(LinShareTestConstants.SUB_DOMAIN);
 		yoda = repository.findByMail("yoda@linshare.org");
 		john.setDomain(subDomain);
@@ -295,9 +282,10 @@ public class UploadRequestServiceImplTest {
 	@Test
 	public void testForbidCloseRequestByRecipient() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		BooleanValueFunctionality func = functionalityROService.getUploadRequestCanCloseFunctionality(jane.getDomain());
-		func.getActivationPolicy().setStatus(false);
-		functionalityService.update(root, jane.getDomainId(), func);
+		UploadRequest uploadRequest = eJane.clone();
+		uploadRequest.setCanClose(false);
+		service.update(jane, jane, uploadRequest.getUuid(), uploadRequest, true);
+		Assertions.assertFalse(uploadRequest.isCanClose());
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			service.closeRequestByRecipient(eJane.getUploadRequestURLs().iterator().next());
 		});

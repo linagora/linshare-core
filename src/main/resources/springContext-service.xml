@@ -156,7 +156,6 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="uploadRequestEntryService" />
 		<constructor-arg ref="uploadRequestGroupBusinessService" />
-		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
 	<bean name="uploadRequestGroupService"
