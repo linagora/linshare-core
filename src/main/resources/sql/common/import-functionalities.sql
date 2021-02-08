@@ -419,7 +419,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_enum_lang(functionality_id, lang_value)
 	VALUES (38, 'en');
 
--- Functionality : UPLOAD_REQUEST__SECURED_URL
+-- Functionality : UPLOAD_REQUEST__PROTECTED_BY_PASSWORD
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (86, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -427,7 +427,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (88, false, false, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
-	VALUES(39, false, 'UPLOAD_REQUEST__SECURED_URL', 86, 87, 88, 1, 'UPLOAD_REQUEST', true, now(), now());
+	VALUES(39, false, 'UPLOAD_REQUEST__PROTECTED_BY_PASSWORD', 86, 87, 88, 1, 'UPLOAD_REQUEST', true, now(), now());
 INSERT INTO functionality_boolean(functionality_id, boolean_value)
 	VALUES (39, false);
 

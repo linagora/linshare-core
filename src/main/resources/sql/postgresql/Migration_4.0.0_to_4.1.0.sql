@@ -692,6 +692,8 @@ ALTER TABLE upload_request RENAME COLUMN secured TO protected_by_password;
 ALTER TABLE upload_request_group RENAME COLUMN secured TO protected_by_password;
 ALTER TABLE upload_request_history RENAME COLUMN secured TO protected_by_password;
 
+UPDATE functionality SET identifier = 'UPLOAD_REQUEST__PROTECTED_BY_PASSWORD' WHERE identifier = 'UPLOAD_REQUEST__SECURED_URL';
+
 -- Update UPLOAD_REQUEST_ACTIVATED_FOR_OWNER.sql (isCollective field)
 
 UPDATE mail_content SET subject='[(#{subject(${subject})})]',body='<!DOCTYPE html>

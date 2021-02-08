@@ -346,7 +346,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public BooleanValueFunctionality getUploadRequestSecureUrlFunctionality(
 			AbstractDomain domain) {
-		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__SECURED_URL);
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__PROTECTED_BY_PASSWORD);
 	}
 
 	@Override
