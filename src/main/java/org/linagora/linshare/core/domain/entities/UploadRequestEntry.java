@@ -45,8 +45,6 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	protected Document document;
 
-	protected DocumentEntry documentEntry;
-
 	protected UploadRequestUrl uploadRequestUrl;
 
 	protected Long size;
@@ -76,14 +74,6 @@ public class UploadRequestEntry extends Entry implements Serializable {
 		this.hasThumbnail = document.getHasThumbnail();
 		this.copied = false;
 		this.ciphered = false;
-	}
-
-	public DocumentEntry getDocumentEntry() {
-		return documentEntry;
-	}
-
-	public void setDocumentEntry(DocumentEntry documentEntry) {
-		this.documentEntry = documentEntry;
 	}
 
 	public static long getSerialversionuid() {

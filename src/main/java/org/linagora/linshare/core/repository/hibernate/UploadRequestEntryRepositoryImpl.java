@@ -46,7 +46,6 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -91,12 +90,6 @@ public class UploadRequestEntryRepositoryImpl extends
 			throws BusinessException {
 		entity.setModificationDate(new GregorianCalendar());
 		return super.update(entity);
-	}
-
-	@Override
-	public UploadRequestEntry findRelative(DocumentEntry entry) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"documentEntry", entry)));
 	}
 
 	@SuppressWarnings("unchecked")

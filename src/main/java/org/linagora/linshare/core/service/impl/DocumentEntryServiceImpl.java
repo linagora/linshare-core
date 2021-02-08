@@ -107,8 +107,6 @@ public class DocumentEntryServiceImpl
 
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
-	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
-
 	private final NotifierService notifierService;
 
 	private final QuotaService quotaService;
@@ -136,7 +134,6 @@ public class DocumentEntryServiceImpl
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
-		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.notifierService = notifierService;
 		this.quotaService = quotaService;
 	}

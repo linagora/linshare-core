@@ -52,7 +52,6 @@ import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.SignatureBusinessService;
 import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
@@ -62,7 +61,6 @@ import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.Thumbnail;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -94,7 +92,6 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 
 	private final DocumentEntryRepository documentEntryRepository;
 	private final SignatureBusinessService signatureBusinessService;
-	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 	protected final WorkGroupNodeMongoRepository repository;
 	protected final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
 	protected final ThumbnailRepository thumbnailRepository;
@@ -107,7 +104,6 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 			ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService,
 			boolean deduplication,
 			DocumentEntryRepository documentEntryRepository,
-			UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			WorkGroupNodeMongoRepository repository,
 			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
 			ThumbnailRepository thumbnailRepository) {
@@ -115,7 +111,6 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 				thumbnailGeneratorBusinessService, deduplication);
 		this.documentEntryRepository = documentEntryRepository;
 		this.signatureBusinessService = signatureBusinessService;
-		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.repository = repository;
 		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
 		this.thumbnailRepository = thumbnailRepository;
@@ -295,11 +290,6 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 
 	@Override
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException {
-		UploadRequestEntry uploadRequestEntry = uploadRequestEntryBusinessService.findRelative(documentEntry);
-		if (uploadRequestEntry != null) {
-			uploadRequestEntry.setDocumentEntry(null);
-			uploadRequestEntryBusinessService.update(uploadRequestEntry);
-		}
 		logger.debug("Deleting document entry: " + documentEntry.getUuid());
 		Account owner = documentEntry.getEntryOwner();
 		owner.getEntries().remove(documentEntry);

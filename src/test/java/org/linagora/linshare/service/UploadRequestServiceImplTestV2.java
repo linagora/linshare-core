@@ -477,7 +477,6 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequestService.updateStatus(actor, actor, enabledUreJane.getUuid(), UploadRequestStatus.CLOSED, false);
 		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, uploadRequestEntry));
 		Assertions.assertNotNull(documentEntry);
-		Assertions.assertNotNull(uploadRequestEntry.getDocumentEntry());
 
 		documentEntryService.delete(actor, actor, documentEntry.getUuid());
 		Assertions.assertTrue(documentEntryRepository.findById(documentEntry.getUuid()) == null);

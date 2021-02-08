@@ -42,7 +42,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -60,8 +59,6 @@ public interface UploadRequestEntryBusinessService {
 			throws BusinessException;
 
 	void delete(UploadRequestEntry entry) throws BusinessException;
-
-	UploadRequestEntry findRelative(DocumentEntry entry);
 
 	UploadRequestEntry createUploadRequestEntryDocument(Account owner, File myFile, Long size, String fileName,
 			String comment, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate,

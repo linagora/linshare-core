@@ -24,7 +24,6 @@
 		<constructor-arg ref="thumbnailGeneratorBusinessService" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="documentEntryRepository" />
-		<constructor-arg ref="uploadRequestEntryBusinessService" />	
 		<constructor-arg ref="workGroupNodeMongoRepository" />
 		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 		<constructor-arg ref="thumbnailRepository" />
