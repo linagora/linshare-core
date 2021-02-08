@@ -57,6 +57,7 @@ import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -68,6 +69,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -395,7 +397,7 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
 
 		uploadRequestService.updateStatus(actor, actor, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
-		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, uploadRequestEntry);
+		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, uploadRequestEntry));
 		Assertions.assertNotNull(documentEntry);
 
 		Document aDocument = uploadRequestEntry.getDocument();
@@ -418,7 +420,7 @@ public class UploadRequestServiceImplTestV2 {
 				requestUrl);
 		Assertions.assertNotNull(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()));
 		Assertions.assertTrue(requestUrl.getUploadRequest().getStatus().equals(UploadRequestStatus.ENABLED));
-		DocumentEntry documentEntry = uploadRequestEntryService.copy(jane, jane, uploadRequestEntry);
+		DocumentEntry documentEntry = uploadRequestEntryService.copy(jane, jane, new CopyResource(TargetKind.UPLOAD_REQUEST, uploadRequestEntry));
 		Assertions.assertNotNull(documentEntry);
 		Document aDocument = uploadRequestEntry.getDocument();
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
@@ -446,7 +448,7 @@ public class UploadRequestServiceImplTestV2 {
 		uploadRequestEntryRepository.update(uploadRequestEntry);
 		Assertions.assertEquals(uploadRequestEntry.getName(), "EP_TEST_v233<script>alert(document.cookie)</script>");
 		uploadRequestService.updateStatus(actor, actor, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
-		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, uploadRequestEntry);
+		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, uploadRequestEntry));
 		Assertions.assertNotNull(documentEntry);
 		Assertions.assertEquals(documentEntry.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
 		Document aDocument = uploadRequestEntry.getDocument();
@@ -472,9 +474,8 @@ public class UploadRequestServiceImplTestV2 {
 		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
 				requestUrl);
 		Assertions.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
-
 		uploadRequestService.updateStatus(actor, actor, enabledUreJane.getUuid(), UploadRequestStatus.CLOSED, false);
-		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, uploadRequestEntry);
+		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, uploadRequestEntry));
 		Assertions.assertNotNull(documentEntry);
 		Assertions.assertNotNull(uploadRequestEntry.getDocumentEntry());
 

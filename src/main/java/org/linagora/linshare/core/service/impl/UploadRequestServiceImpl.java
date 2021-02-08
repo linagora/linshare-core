@@ -48,6 +48,7 @@ import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -56,6 +57,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -202,7 +204,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			for (UploadRequestUrl uploadRequestUrl : req.getUploadRequestURLs()) {
 				for (UploadRequestEntry requestEntry : uploadRequestUrl.getUploadRequestEntries()) {
 					if (!requestEntry.getCopied() && copy) {
-						uploadRequestEntryService.copy(authUser, actor, requestEntry);
+						uploadRequestEntryService.copy(authUser, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, requestEntry));
 					}
 					if (purge) {
 						uploadRequestEntryService.delete((User) authUser, (User) actor, requestEntry.getUuid());

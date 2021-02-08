@@ -64,8 +64,6 @@ public interface UploadRequestEntryService {
 
 	UploadRequestEntry delete(User authUser, User actor, String uuid);
 
-	DocumentEntry copy(Account actor, Account owner, UploadRequestEntry uploadRequestEntry) throws BusinessException;
-
 	UploadRequestEntry deleteEntryByRecipients(UploadRequestUrl uploadRequestUrl, String entryUuid) throws BusinessException;
 
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
@@ -73,5 +71,5 @@ public interface UploadRequestEntryService {
 	FileAndMetaData downloadEntries(Account authUser, Account actor, UploadRequestGroup uploadRequestGroup,
 			List<UploadRequestEntry> entries);
 
-	DocumentEntry copyUre(Account actor, Account owner, CopyResource cr) throws BusinessException;
+	DocumentEntry copy(Account actor, Account owner, CopyResource cr) throws BusinessException;
 }

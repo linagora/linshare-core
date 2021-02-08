@@ -639,26 +639,4 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 		return (nodes != null && !nodes.isEmpty()) ? true : false;
 	}
 
-	@Override
-	public DocumentEntry copy(Account owner, UploadRequestEntry uploadRequestEntry) {
-		DocumentEntry entity = null;
-		DocumentEntry docEntry = new DocumentEntry(owner, uploadRequestEntry.getName(), uploadRequestEntry.getComment(),
-				uploadRequestEntry.getDocument());
-		// We need to set an expiration date in case of file cleaner activation.
-		if (uploadRequestEntry.getComment() == null) {
-			docEntry.setComment("");
-		}
-		docEntry.setSize(uploadRequestEntry.getSize());
-		docEntry.setSha256sum(uploadRequestEntry.getSha256sum());
-		docEntry.setExpirationDate(uploadRequestEntry.getExpirationDate());
-		docEntry.setMetaData(uploadRequestEntry.getMetaData());
-		docEntry.setCmisSync(uploadRequestEntry.isCmisSync());
-		docEntry.setHasThumbnail(uploadRequestEntry.isHasThumbnail());
-		entity = documentEntryRepository.create(docEntry);
-		if (uploadRequestEntry.getCopied() == false) {
-			uploadRequestEntry.setCopied(true);
-		}
-		return entity;
-	}
-
 }

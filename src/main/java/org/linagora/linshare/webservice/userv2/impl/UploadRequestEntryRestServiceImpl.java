@@ -118,23 +118,6 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 		return uploadRequestEntryFacade.delete(null, uuid);
 	}
 
-	@Path("/{uuid}/copy")
-	@POST
-	@Operation(summary = "Copy a document from an existing upload resquest.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
-			responseCode = "200"
-		)
-	})
-	@Override
-	public List<DocumentDto> copy(
-			@Parameter(description = "Copy document.", required = true)
-				@PathParam("uuid") String uuid)
-			throws BusinessException {
-		return uploadRequestEntryFacade.copy(null, uuid);
-	}
-	
-
 	@GET
 	@Path("/{uploadRequestEntryUuid}/audit")
 	@Operation(summary = "Get all traces for a given Upload Request entry.", responses = {

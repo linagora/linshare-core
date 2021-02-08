@@ -42,19 +42,16 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestEntryFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements UploadRequestEntryFacade {
@@ -94,17 +91,6 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestEntry uploadRequestEntry =  uploadRequestEntryService.delete(authUser, actor, uuid);
 		return new UploadRequestEntryDto(uploadRequestEntry);
-	}
-
-	@Override
-	public List<DocumentDto> copy(String actorUuid, String uuid) throws BusinessException {
-		Account authUser = checkAuthentication();
-		Validate.notEmpty(uuid, "Upload request entry uuid must be set");
-		User actor = (User) getActor(authUser, actorUuid);
-		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.find(authUser, actor, uuid);
-		Validate.notNull(uploadRequestEntry);
-		DocumentEntry newDocumentEntry = uploadRequestEntryService.copy(authUser, actor, uploadRequestEntry);
-		return Lists.newArrayList(new DocumentDto(newDocumentEntry));
 	}
 
 	@Override

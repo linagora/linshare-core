@@ -42,7 +42,6 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -55,7 +54,6 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestEntryFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.delegationv2.UploadRequestEntryRestService;
@@ -65,12 +63,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/{actorUuid}/upload_request_entries")
@@ -126,24 +124,6 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return uploadRequestEntryFacade.delete(actorUuid, uuid);
-	}
-
-	@Path("/{uuid}/copy")
-	@POST
-	@Operation(summary = "Copy a document from an existing upload resquest.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DocumentDto.class))),
-			responseCode = "200"
-		)
-	})
-	@Override
-	public List<DocumentDto> copy(
-			@Parameter(description = "The actor (user) uuid.", required = true)
-				@PathParam("actorUuid") String actorUuid,
-			@Parameter(description = "Copy document.", required = true)
-				@PathParam("uuid") String uuid)
-			throws BusinessException {
-		return uploadRequestEntryFacade.copy(null, uuid);
 	}
 
 	@GET

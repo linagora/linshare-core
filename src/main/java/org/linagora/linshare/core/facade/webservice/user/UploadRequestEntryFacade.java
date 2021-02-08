@@ -42,7 +42,6 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.io.ByteSource;
@@ -54,8 +53,6 @@ public interface UploadRequestEntryFacade {
 	ByteSource download(String actorUuid, String uuid) throws BusinessException;
 
 	UploadRequestEntryDto delete(String actorUuid, String uuid);
-
-	List<DocumentDto> copy(String actorUuid, String uuid) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAllAudits(String actorUuid, String uploadRequestEntryUuid, List<LogAction> actions);
 }

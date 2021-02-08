@@ -371,7 +371,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		} else if (TargetKind.UPLOAD_REQUEST.equals(resourceKind)) {
 			UploadRequestEntry requestEntry = requestEntryService.find(authUser, actor, resourceUuid);
 			CopyResource cr = new CopyResource(resourceKind, requestEntry);
-			DocumentEntry newDocumentEntry = requestEntryService.copyUre(authUser, actor, cr);
+			DocumentEntry newDocumentEntry = requestEntryService.copy(authUser, actor, cr);
 			return Lists.newArrayList(new DocumentDto(newDocumentEntry));
 		}
 		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "This action is not supported.");
