@@ -135,6 +135,8 @@ public interface FunctionalityReadOnlyService {
 
 	Date getDateValue(TimeUnitValueFunctionality func, Date currentDate, BusinessErrorCode errorCode);
 
+	Date getUploadRequestDateValue(TimeUnitValueFunctionality func, Date currentDate, BusinessErrorCode errorCode);
+
 	Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize, BusinessErrorCode errorCode);
 
 	Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate, BusinessErrorCode errorCode);

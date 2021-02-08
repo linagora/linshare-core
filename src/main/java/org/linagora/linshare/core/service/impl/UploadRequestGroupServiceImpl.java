@@ -35,10 +35,12 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.time.DateUtils;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -195,8 +197,11 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			req.setStatus(UploadRequestStatus.ENABLED);
 		} else {
 			req.setStatus(UploadRequestStatus.CREATED);
+			req.setActivationDate(roundToUpperHour(req.getActivationDate()));
+			checkActivationDate(domain, req);
 		}
-		checkActivationDate(domain, req);
+		req.setExpiryDate(roundToUpperHour(req.getExpiryDate()));
+		req.setNotificationDate(roundToUpperHour(req.getNotificationDate()));
 		checkExpiryAndNoticationDate(domain, req);
 		checkMaxDepositSize(domain, req);
 		checkMaxFileCount(domain, req);
@@ -233,7 +238,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private void checkActivationDate(AbstractDomain domain, UploadRequest req) {
 		TimeUnitValueFunctionality func = functionalityService
 				.getUploadRequestActivationTimeFunctionality(domain);
-		Date checkDate = functionalityService.getDateValue(func, req.getActivationDate(),
+		Date checkDate = functionalityService.getUploadRequestDateValue(func, req.getActivationDate(),
 				BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID);
 		if (checkDate == null) {
 			checkDate = timeService.dateNow();
@@ -247,7 +252,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				.getUploadRequestExpiryTimeFunctionality(domain);
 		TimeUnitValueFunctionality funcNotify = functionalityService
 				.getUploadRequestNotificationTimeFunctionality(domain);
-		Date expiryDate = functionalityService.getDateValue(funcExpiry, req.getExpiryDate(),
+		Date expiryDate = functionalityService.getUploadRequestDateValue(funcExpiry, req.getExpiryDate(),
 				BusinessErrorCode.UPLOAD_REQUEST_EXPIRY_DATE_INVALID);
 		req.setExpiryDate(expiryDate);
 		Date notifDate = functionalityService.getNotificationDateValue(funcNotify, req.getNotificationDate(),
@@ -525,5 +530,21 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	@Override
 	public Long computeEntriesSize(UploadRequestGroup uploadRequestGroup) {
 		return uploadRequestGroupBusinessService.computeEntriesSize(uploadRequestGroup);
+	}
+
+	private Date roundToUpperHour(Date dateToRound) {
+		if (null == dateToRound)
+			return null;
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateToRound);
+		// If it is not a full hour we get to the next hour
+		if (calendar.get(Calendar.SECOND) != 0 || calendar.get(Calendar.MILLISECOND) != 0
+				|| calendar.get(Calendar.MINUTE) != 0) {
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.add(Calendar.HOUR, 1);
+		}
+		return calendar.getTime();
 	}
 }

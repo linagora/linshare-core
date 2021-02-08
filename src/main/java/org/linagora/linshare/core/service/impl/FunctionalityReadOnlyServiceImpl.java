@@ -492,6 +492,37 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public Date getUploadRequestDateValue(TimeUnitValueFunctionality func, Date currentDate, BusinessErrorCode errorCode) {
+		if (!func.getActivationPolicy().getStatus()) {
+			logger.debug(func.getIdentifier() + " is not activated");
+			return null;
+		}
+		logger.debug(func.getIdentifier() + " is activated");
+		Calendar calendar = getCalendarTime(timeService.dateNow());
+		calendar.add(func.toCalendarValue(), func.getValue());
+		Date defaultDate = calendar.getTime();
+		if (func.getDelegationPolicy() == null || !func.getDelegationPolicy().getStatus() || currentDate == null) {
+			debuggerTime(func, currentDate, defaultDate);
+			return defaultDate;
+		}
+		// check if there is limitation of maximum value
+		// -1 mean no limit
+		Date now = getCalendarTime(timeService.dateNow()).getTime();
+		if (func.getMaxValue() == -1 && (currentDate.after(now) || currentDate.equals(now))) {
+			return currentDate;
+		}
+		Calendar c = getCalendarTime(now);
+		c.add(func.toCalendarMaxValue(), func.getMaxValue());
+		Date maxDate = c.getTime(); // Maximum value allowed
+		if (currentDate.before(now) || currentDate.after(maxDate)) {
+			String errorMessage = buildErrorMessage(func, currentDate.toString(), now.toString(), maxDate.toString());
+			logger.warn(errorMessage);
+			throw new BusinessException(errorCode, errorMessage);
+		}
+		return currentDate;
+	}
+
+	@Override
 	public Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize, BusinessErrorCode errorCode) {
 		if (!func.getActivationPolicy().getStatus()) {
 			logger.debug(func.getIdentifier() + " is not activated");
@@ -606,7 +637,15 @@ public class FunctionalityReadOnlyServiceImpl implements
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar;
 	}
-	
+
+	private Calendar getCalendarTime(Date date) {
+		Calendar calendar = new GregorianCalendar();
+		if (date != null) {
+			calendar.setTime(date);
+		}
+		return calendar;
+	}
+
 	private String buildErrorMessage(Functionality func, String valueToCompare, String minValue, String maxValue) {
 		return "Identifier : " + func.getIdentifier() + " - the current value " + valueToCompare + " is out of range : "
 				+ " should be between \"" + minValue + "\" and \"" + maxValue + "\"";

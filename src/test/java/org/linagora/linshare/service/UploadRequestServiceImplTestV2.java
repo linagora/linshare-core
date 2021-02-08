@@ -205,6 +205,7 @@ public class UploadRequestServiceImplTestV2 {
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		uploadRequest.setActivationDate(null);
+		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2020-08-12 15:25:00"));
 		UploadRequestGroup enabledUploadRequestGroupJane = uploadRequestGroupService.create(jane, jane, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		ureJohn = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -315,7 +316,7 @@ public class UploadRequestServiceImplTestV2 {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// UPLOAD REQUEST CREATE
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
+		calendar.setTime(timeService.dateNow());
 		calendar.add(Calendar.MONTH, 2);
 		Date ulteriorActivationDate = calendar.getTime();
 		UploadRequest ureActivatedLater = createSimpleUploadRequest(ulteriorActivationDate);
@@ -562,6 +563,23 @@ public class UploadRequestServiceImplTestV2 {
 					"This is a body", false);
 		});
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testRoundActivateDateWhenCreateUploadRequest() throws BusinessException, ParseException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2020-08-12 15:25:00"));
+		Date activationDateAfterMockedDate = parseDate("2020-08-13 16:34:00");
+		UploadRequest uploadRequest = createSimpleUploadRequest(activationDateAfterMockedDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Date expectedDate = parseDate("2020-08-13 17:00:00");
+		Assertions.assertEquals(expectedDate, uploadRequestGroup.getActivationDate(),
+				"The activation date has not been rounded");
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(expectedDate, uploadRequest.getActivationDate(),
+				"The activation date has not been rounded");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
