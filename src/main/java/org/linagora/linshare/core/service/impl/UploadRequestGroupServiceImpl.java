@@ -40,7 +40,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.time.DateUtils;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -198,97 +197,164 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		} else {
 			req.setStatus(UploadRequestStatus.CREATED);
 			req.setActivationDate(roundToUpperHour(req.getActivationDate()));
-			checkActivationDate(domain, req);
+			applyBusinessRuleForActivationDate(domain, req);
 		}
 		req.setExpiryDate(roundToUpperHour(req.getExpiryDate()));
 		req.setNotificationDate(roundToUpperHour(req.getNotificationDate()));
-		checkExpiryAndNoticationDate(domain, req);
-		checkMaxDepositSize(domain, req);
-		checkMaxFileCount(domain, req);
-		checkMaxFileSize(domain, req);
-		checkNotificationLanguage(domain, req);
-		checkCanDelete(domain, req);
-		checkCanClose(domain, req);
-		checkSecuredUrl(domain, req);
+		applyBusinessRuleForExpiryAndNoticationDate(domain, req);
+		applyBusinessRuleForMaxDepositSize(domain, req);
+		applyBusinessRuleForMaxFileCount(domain, req);
+		applyBusinessRuleForMaxFileSize(domain, req);
+		applyBusinessRuleForNotificationLanguage(domain, req);
+		applyBusinessRuleForCanDelete(domain, req);
+		applyBusinessRuleForCanClose(domain, req);
+		applyBusinessRuleForSecuredUrl(domain, req);
 		req.setCanEditExpiryDate(true);
 		return req;
 	}
 
-	private void checkSecuredUrl(AbstractDomain domain, UploadRequest req) {
-		BooleanValueFunctionality func = functionalityService
-				.getUploadRequestSecureUrlFunctionality(domain);
-		boolean secure = checkBoolean(func, req.isProtectedByPassword());
-		req.setProtectedByPassword(secure);
+	private UploadRequestGroup checkUploadRequestGroupData(User owner, UploadRequestGroup group) {
+		AbstractDomain domain = owner.getDomain();
+		applyBusinessRuleForExpiryAndNoticationDate(domain, group);
+		applyBusinessRuleForMaxDepositSize(domain, group);
+		applyBusinessRuleForMaxFileCount(domain, group);
+		applyBusinessRuleForMaxFileSize(domain, group);
+		applyBusinessRuleForNotificationLanguage(domain, group);
+		applyBusinessRuleForCanDelete(domain, group);
+		applyBusinessRuleForCanClose(domain, group);
+		return group;
 	}
 
-	private void checkCanDelete(AbstractDomain domain, UploadRequest req) {
-		BooleanValueFunctionality func = functionalityService
-				.getUploadRequestCandDeleteFileFunctionality(domain);
-		boolean canDelete = checkBoolean(func, req.isCanDelete());
-		req.setCanDelete(canDelete);
+	private Boolean applyBusinessRuleForSecuredUrl(AbstractDomain domain, Boolean isProtectedByPassword) {
+		BooleanValueFunctionality func = functionalityService.getUploadRequestSecureUrlFunctionality(domain);
+		return checkBoolean(func, isProtectedByPassword);
 	}
 
-	private void checkCanClose(AbstractDomain domain, UploadRequest req) {
-		BooleanValueFunctionality func = functionalityService
-				.getUploadRequestCanCloseFunctionality(domain);
-		boolean canClose = checkBoolean(func, req.isCanClose());
-		req.setCanClose(canClose);
+	private void applyBusinessRuleForSecuredUrl(AbstractDomain domain, UploadRequest req) {
+		req.setProtectedByPassword(applyBusinessRuleForSecuredUrl(domain, req.isProtectedByPassword()));
 	}
 
-	private void checkActivationDate(AbstractDomain domain, UploadRequest req) {
+	private Boolean applyBusinessRuleForCanDelete(AbstractDomain domain, Boolean canDeleteToCheck) {
+		BooleanValueFunctionality func = functionalityService.getUploadRequestCandDeleteFileFunctionality(domain);
+		return checkBoolean(func, canDeleteToCheck);
+	}
+
+	private void applyBusinessRuleForCanDelete(AbstractDomain domain, UploadRequest req) {
+		req.setCanDelete(applyBusinessRuleForCanDelete(domain, req.isCanDelete()));
+	}
+
+	private void applyBusinessRuleForCanDelete(AbstractDomain domain, UploadRequestGroup group) {
+		group.setCanDelete(applyBusinessRuleForCanDelete(domain, group.getCanDelete()));
+	}
+
+	private Boolean applyBusinessRuleForCanClose(AbstractDomain domain, Boolean canClose) {
+		BooleanValueFunctionality func = functionalityService.getUploadRequestCanCloseFunctionality(domain);
+		return checkBoolean(func, canClose);
+	}
+
+	private void applyBusinessRuleForCanClose(AbstractDomain domain, UploadRequest req) {
+		req.setCanClose(applyBusinessRuleForCanClose(domain, req.isCanClose()));
+	}
+
+	private void applyBusinessRuleForCanClose(AbstractDomain domain, UploadRequestGroup group) {
+		group.setCanClose(applyBusinessRuleForCanClose(domain, group.getCanClose()));
+	}
+
+	private Date applyBusinessRuleForActivationDate(AbstractDomain domain, Date dateToCheck) {
 		TimeUnitValueFunctionality func = functionalityService
 				.getUploadRequestActivationTimeFunctionality(domain);
-		Date checkDate = functionalityService.getUploadRequestDateValue(func, req.getActivationDate(),
+		Date checkDate = functionalityService.getUploadRequestDateValue(func, dateToCheck,
 				BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID);
 		if (checkDate == null) {
 			checkDate = timeService.dateNow();
 		}
-		req.setActivationDate(checkDate);
+		return checkDate;
 	}
 
-	private void checkExpiryAndNoticationDate(AbstractDomain domain,
-			UploadRequest req) {
-		TimeUnitValueFunctionality funcExpiry = functionalityService
-				.getUploadRequestExpiryTimeFunctionality(domain);
+	private void applyBusinessRuleForActivationDate(AbstractDomain domain, UploadRequest req) {
+		req.setActivationDate(applyBusinessRuleForActivationDate(domain, req.getActivationDate()));
+	}
+
+	private Date applyBusinessRuleForExpiryDate(AbstractDomain domain, Date expiryDate) {
+		TimeUnitValueFunctionality funcExpiry = functionalityService.getUploadRequestExpiryTimeFunctionality(domain);
+		return functionalityService.getDateValue(funcExpiry, expiryDate,
+				BusinessErrorCode.UPLOAD_REQUEST_EXPIRY_DATE_INVALID);
+	}
+
+
+	private Date applyBusinessRuleForNoticationDate(AbstractDomain domain, Date expiryDate, Date notifDate) {
 		TimeUnitValueFunctionality funcNotify = functionalityService
 				.getUploadRequestNotificationTimeFunctionality(domain);
-		Date expiryDate = functionalityService.getUploadRequestDateValue(funcExpiry, req.getExpiryDate(),
-				BusinessErrorCode.UPLOAD_REQUEST_EXPIRY_DATE_INVALID);
-		req.setExpiryDate(expiryDate);
-		Date notifDate = functionalityService.getNotificationDateValue(funcNotify, req.getNotificationDate(),
-				req.getExpiryDate(), BusinessErrorCode.UPLOAD_REQUEST_NOTIFICATION_DATE_INVALID); // Must have a setted value in order to return a value not null
-		req.setNotificationDate(notifDate);
+		return functionalityService.getNotificationDateValue(funcNotify, notifDate, expiryDate,
+				BusinessErrorCode.UPLOAD_REQUEST_NOTIFICATION_DATE_INVALID); // Must have a setted value in order to
+																				// return a value not null
 	}
 
-	private void checkNotificationLanguage(AbstractDomain domain,
-			UploadRequest req) {
+
+	private void applyBusinessRuleForExpiryAndNoticationDate(AbstractDomain domain, UploadRequest req) {
+		req.setExpiryDate(applyBusinessRuleForExpiryDate(domain, req.getExpiryDate()));
+		req.setNotificationDate(applyBusinessRuleForNoticationDate(domain, req.getExpiryDate(), req.getNotificationDate()));
+	}
+
+	private void applyBusinessRuleForExpiryAndNoticationDate(AbstractDomain domain, UploadRequestGroup group) {
+		group.setExpiryDate(applyBusinessRuleForExpiryDate(domain, group.getExpiryDate()));
+		group.setNotificationDate(applyBusinessRuleForNoticationDate(domain, group.getExpiryDate(), group.getNotificationDate()));
+	}
+
+
+	private Language applyBusinessRuleForNotificationLanguage(AbstractDomain domain, Language userLocale) {
 		LanguageEnumValueFunctionality func = functionalityService
 				.getUploadRequestNotificationLanguageFunctionality(domain);
-		Language userLocale = req.getLocale();
-		Language checkLanguage = checkLanguage(func, userLocale);
-		req.setLocale(checkLanguage);
+		return checkLanguage(func, userLocale);
 	}
 
-	private void checkMaxFileSize(AbstractDomain domain, UploadRequest req) {
-		SizeUnitValueFunctionality func = functionalityService
-				.getUploadRequestMaxFileSizeFunctionality(domain);
-		Long checkSize = functionalityService.getSizeValue(func, req.getMaxFileSize(), BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
-		req.setMaxFileSize(checkSize);
+	private void applyBusinessRuleForNotificationLanguage(AbstractDomain domain, UploadRequest req) {
+		req.setLocale(applyBusinessRuleForNotificationLanguage(domain, req.getLocale()));
 	}
 
-	private void checkMaxFileCount(AbstractDomain domain, UploadRequest req) {
-		IntegerValueFunctionality func = functionalityService
-				.getUploadRequestMaxFileCountFunctionality(domain);
-		Integer checkInteger = functionalityService.getIntegerValue(func, req.getMaxFileCount(),
+	private void applyBusinessRuleForNotificationLanguage(AbstractDomain domain, UploadRequestGroup group) {
+		group.setLocale(applyBusinessRuleForNotificationLanguage(domain, group.getLocale()));
+	}
+
+	private Long applyBusinessRuleForMaxFileSize(AbstractDomain domain, Long checkSize) {
+		SizeUnitValueFunctionality func = functionalityService.getUploadRequestMaxFileSizeFunctionality(domain);
+		return functionalityService.getSizeValue(func, checkSize, BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
+	}
+
+	private void applyBusinessRuleForMaxFileSize(AbstractDomain domain, UploadRequest req) {
+		req.setMaxFileSize(applyBusinessRuleForMaxFileSize(domain, req.getMaxFileSize()));
+	}
+
+	private void applyBusinessRuleForMaxFileSize(AbstractDomain domain, UploadRequestGroup group) {
+		group.setMaxFileSize(applyBusinessRuleForMaxFileSize(domain, group.getMaxFileSize()));
+	}
+
+	private Integer applyBusinessRuleForMaxFileCount(AbstractDomain domain, Integer checkInteger) {
+		IntegerValueFunctionality func = functionalityService.getUploadRequestMaxFileCountFunctionality(domain);
+		return functionalityService.getIntegerValue(func, checkInteger,
 				BusinessErrorCode.UPLOAD_REQUEST_INTEGER_VALUE_INVALID);
-		req.setMaxFileCount(checkInteger);
 	}
 
-	private void checkMaxDepositSize(AbstractDomain domain, UploadRequest req) {
-		SizeUnitValueFunctionality func = functionalityService
-				.getUploadRequestMaxDepositSizeFunctionality(domain);
-		Long checkSize = functionalityService.getSizeValue(func, req.getMaxDepositSize(), BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
-		req.setMaxDepositSize(checkSize);
+	private void applyBusinessRuleForMaxFileCount(AbstractDomain domain, UploadRequest req) {
+		req.setMaxFileCount(applyBusinessRuleForMaxFileCount(domain, req.getMaxFileCount()));
+	}
+
+	private void applyBusinessRuleForMaxFileCount(AbstractDomain domain, UploadRequestGroup group) {
+		group.setMaxFileCount(applyBusinessRuleForMaxFileCount(domain, group.getMaxFileCount()));
+	}
+
+	private Long applyBusinessRuleForMaxDepositSize(AbstractDomain domain, Long maxDepositSizeToCheck) {
+		SizeUnitValueFunctionality func = functionalityService.getUploadRequestMaxDepositSizeFunctionality(domain);
+		return functionalityService.getSizeValue(func, maxDepositSizeToCheck,
+				BusinessErrorCode.UPLOAD_REQUEST_SIZE_VALUE_INVALID);
+	}
+
+	private void applyBusinessRuleForMaxDepositSize(AbstractDomain domain, UploadRequest req) {
+		req.setMaxDepositSize(applyBusinessRuleForMaxDepositSize(domain, req.getMaxDepositSize()));
+	}
+
+	private void applyBusinessRuleForMaxDepositSize(AbstractDomain domain, UploadRequestGroup group) {
+		group.setMaxDepositSize(applyBusinessRuleForMaxDepositSize(domain, group.getMaxDepositSize()));
 	}
 
 	private boolean checkBoolean(BooleanValueFunctionality func, Boolean current) {
@@ -422,6 +488,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		group.setBusinessCanEditExpiryDate(uploadRequestGroup.getCanEditExpiryDate());
 		group.setBusinessLocale(uploadRequestGroup.getLocale());
 		group.setBusinessEnableNotification(uploadRequestGroup.getEnableNotification());
+		group = checkUploadRequestGroupData(authUser, group);
 		for (UploadRequest uploadRequest : group.getUploadRequests()) {
 			if (force) {
 				uploadRequest.setPristine(true);

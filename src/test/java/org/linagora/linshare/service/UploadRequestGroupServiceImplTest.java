@@ -367,6 +367,18 @@ public class UploadRequestGroupServiceImplTest {
 	}
 
 	@Test
+	public void updateWithMaxDepositSizeFuncDisabled() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup group = uploadRequestGroupService.find(john, john, ure.getUploadRequestGroup().getUuid());
+		group.setMaxDepositSize(Long.valueOf(0));
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.update(john, john, group, false);
+		Assertions.assertEquals(null, uploadRequestGroup.getMaxDepositSize());
+		UploadRequest uploadRequest = group.getUploadRequests().iterator().next();
+		Assertions.assertEquals(null, uploadRequest.getMaxDepositSize());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void updateCollectiveGroup() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup urg = uploadRequestGroupService.create(john, john, urInit, contactList, "This is a subject",
