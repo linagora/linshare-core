@@ -62,6 +62,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
@@ -251,6 +252,28 @@ public class UploadRequestEntryServiceImplTest {
 		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		UploadRequestEntry deletedEntry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNull(deletedEntry);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testForbidDeleteUploadRequestEntryByRecipient() throws BusinessException, IOException {
+		// In this test the deletion of URE is forbidden if the deletion right is
+		// disabled
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
+				uploadRequest.getUploadRequestURLs().iterator().next());
+		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
+		Assertions.assertNotNull(entry);
+		entry.getUploadRequestUrl().getUploadRequest().setCanDelete(false);
+		uploadRequestService.update(john, john, entry.getUploadRequestUrl().getUploadRequest().getUuid(),
+				entry.getUploadRequestUrl().getUploadRequest(), false);
+		Assertions.assertFalse(uploadRequest.isCanDelete());
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestEntryService.deleteEntryByRecipients(uploadRequest.getUploadRequestURLs().iterator().next(),
+					uploadRequestEntry.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

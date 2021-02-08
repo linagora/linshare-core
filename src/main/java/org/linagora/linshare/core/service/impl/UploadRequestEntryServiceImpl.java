@@ -291,6 +291,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 
 	@Override
 	public UploadRequestEntry deleteEntryByRecipients(UploadRequestUrl uploadRequestUrl, String entryUuid) throws BusinessException{
+		if (!uploadRequestUrl.getUploadRequest().isCanDelete()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED,
+					"Upload request entry can not be deleted, please check your deletion right.");
+		}
 		UploadRequestEntry entry = uploadRequestEntryBusinessService.findByUuid(entryUuid);
 		if (entry == null) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_NOT_FOUND,
