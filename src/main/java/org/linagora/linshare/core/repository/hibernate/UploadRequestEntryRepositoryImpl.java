@@ -46,6 +46,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -117,5 +118,13 @@ public class UploadRequestEntryRepositoryImpl extends
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("uploadRequestUrl", uploadRequestUrl));
 		return findByCriteria(det);
+	}
+
+	@Override
+	public long getRelatedUploadRequestEntryCount(Document document) {
+		DetachedCriteria det = DetachedCriteria.forClass(UploadRequestEntry.class);
+		det.add(Restrictions.eq("document", document));
+		det.setProjection(Projections.rowCount());
+		return DataAccessUtils.longResult(findByCriteria(det));
 	}
 }

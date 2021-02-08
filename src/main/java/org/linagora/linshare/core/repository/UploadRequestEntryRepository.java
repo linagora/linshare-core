@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
@@ -57,4 +58,6 @@ public interface UploadRequestEntryRepository extends
 	Map<String, Long> findByDomainsBetweenTwoDates(AbstractDomain domain, Calendar beginDate, Calendar endDate);
 
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
+
+	long getRelatedUploadRequestEntryCount(Document document);
 }
