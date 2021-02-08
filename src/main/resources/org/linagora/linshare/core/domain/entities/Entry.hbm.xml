@@ -89,9 +89,6 @@
 			</property>
 			<property name="type" column="ls_type" type="string" length="255" not-null="true" lazy="false"/>
 			<property name="sha256sum" column="sha256sum" type="string" length="255" lazy="false"/>
-			<many-to-one name="documentEntry" column="document_entry_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry"
-				unique="true" not-null="false" lazy="proxy">
-			</many-to-one>
 			<many-to-one name="uploadRequestUrl" cascade="lock" column="upload_request_url_id" class="org.linagora.linshare.core.domain.entities.UploadRequestUrl"
 				not-null="true" lazy="proxy">
 			</many-to-one>
