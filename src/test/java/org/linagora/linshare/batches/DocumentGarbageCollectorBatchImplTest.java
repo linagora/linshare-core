@@ -40,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.cxf.helpers.IOUtils;
@@ -50,14 +51,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
+import org.linagora.linshare.core.service.UploadRequestEntryService;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
+import org.linagora.linshare.core.service.impl.UploadRequestEntryServiceImpl;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.slf4j.Logger;
@@ -65,12 +76,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
+@Sql({
+"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -104,6 +118,15 @@ public class DocumentGarbageCollectorBatchImplTest {
 
 	@Autowired
 	private DocumentEntryBusinessService documentEntryBusinessService;
+	
+	@Autowired
+	private ContactRepository contactRepository;
+	
+	@Autowired
+	private UploadRequestGroupService uploadRequestGroupService;
+
+	@Autowired
+	private UploadRequestEntryService uploadRequestEntryService;
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -113,18 +136,40 @@ public class DocumentGarbageCollectorBatchImplTest {
 	private UserRepository<User> userRepository;
 
 	private Account john;
+	
+	private Contact yoda;
 
-	private File tempFile, tempFile2;
+	private File tempFile, tempFile2, tempFile3, tempFile4;
 
 	private InputStream stream;
+	
+	private UploadRequest ur, urEntity;
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		tempFile = File.createTempFile("linshare-test-1", ".tmp");
 		tempFile2 = File.createTempFile("linshare-test-2", ".tmp");
+		tempFile3 = File.createTempFile("linshare-test-3", ".tmp");
+		tempFile4 = File.createTempFile("linshare-test-4", ".tmp");
 		stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
+		yoda = contactRepository.findByMail("yoda@linshare.org");
+		ur = new UploadRequest();
+		ur.setCanClose(true);
+		ur.setMaxDepositSize((long) 100);
+		ur.setMaxFileCount(Integer.valueOf(3));
+		ur.setMaxFileSize((long) 50);
+		ur.setStatus(UploadRequestStatus.CREATED);
+		ur.setExpiryDate(new Date());
+		ur.setProtectedByPassword(false);
+		ur.setCanEditExpiryDate(true);
+		ur.setCanDelete(true);
+		ur.setLocale(Language.ENGLISH);
+		ur.setActivationDate(null);
+		UploadRequestGroup uploadRequestGroupIndiv = uploadRequestGroupService.create(john, (User) john, ur, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		urEntity = uploadRequestGroupIndiv.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -138,8 +183,6 @@ public class DocumentGarbageCollectorBatchImplTest {
 
 	@Test
 	public void testBatchExecution1() throws IOException {
-		InputStream stream = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("linshare-default.properties");
 		IOUtils.copy(stream, new FileOutputStream(tempFile));
 		Calendar cal = Calendar.getInstance();
 		DocumentEntry createDocumentEntry = documentEntryBusinessService.createDocumentEntry(john, tempFile,
@@ -148,8 +191,19 @@ public class DocumentGarbageCollectorBatchImplTest {
 		DocumentEntry createDocumentEntry2 = documentEntryBusinessService.createDocumentEntry(john, tempFile2,
 				tempFile2.length(), "file2.txt", null, false, null, "text/plain", cal, false, null);
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry);
+		// Create 2 upload request entries
+		IOUtils.copy(stream, new FileOutputStream(tempFile3));
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(john, john, tempFile3,
+				tempFile3.getName(), "comment", false, null, urEntity.getUploadRequestURLs().iterator().next());
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		IOUtils.copy(stream1, new FileOutputStream(tempFile4));
+		UploadRequestEntry uploadRequestEntry2 = uploadRequestEntryService.create(john, john, tempFile4,
+				tempFile4.getName(), "comment", false, null, urEntity.getUploadRequestURLs().iterator().next());
+		// delete one upload request entry
+		uploadRequestEntryService.delete((User) john, (User) john, uploadRequestEntry.getUuid());
 		List<DocumentGarbageCollecteur> garbageCollectors = documentGarbageRepository.findAll();
-		Assertions.assertEquals(1, garbageCollectors.size());
+		Assertions.assertEquals(2, garbageCollectors.size());
 		for (DocumentGarbageCollecteur documentGarbageCollector : garbageCollectors) {
 			Integer hourInterval = 0 - cal.getMinimum(Calendar.HOUR_OF_DAY);
 			cal.setTime(documentGarbageCollector.getCreationDate());
@@ -158,14 +212,15 @@ public class DocumentGarbageCollectorBatchImplTest {
 			documentGarbageRepository.save(documentGarbageCollector);
 		}
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry2);
-		Assertions.assertEquals(2, documentGarbageRepository.findAll().size());
+		uploadRequestEntryService.delete((User) john, (User) john, uploadRequestEntry2.getUuid());
+		Assertions.assertEquals(4, documentGarbageRepository.findAll().size());
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(documentGarbageCollectorBatchImpl);
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 		Assertions.assertEquals(0, documentEntryRepository.findAll().size());
 		// The garbage will not pick up this document because it's deleted in the same
 		// day with garbage execution time.
-		Assertions.assertEquals(2, documentGarbageRepository.findAll().size());
+		Assertions.assertEquals(4, documentGarbageRepository.findAll().size());
 	}
 
 	@Test
@@ -180,8 +235,18 @@ public class DocumentGarbageCollectorBatchImplTest {
 		DocumentEntry createDocumentEntry2 = documentEntryBusinessService.createDocumentEntry(john, tempFile2,
 				tempFile2.length(), "file2.txt", null, false, null, "text/plain", cal, false, null);
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry);
+		// Create 2 upload request entries
+		IOUtils.copy(stream, new FileOutputStream(tempFile3));
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(john, john, tempFile3,
+				tempFile3.getName(), "comment", false, null, urEntity.getUploadRequestURLs().iterator().next());
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		IOUtils.copy(stream1, new FileOutputStream(tempFile4));
+		UploadRequestEntry uploadRequestEntry2 = uploadRequestEntryService.create(john, john, tempFile4,
+				tempFile4.getName(), "comment", false, null, urEntity.getUploadRequestURLs().iterator().next());
+		uploadRequestEntryService.delete((User) john, (User) john, uploadRequestEntry.getUuid());
 		List<DocumentGarbageCollecteur> garbageCollectors = documentGarbageRepository.findAll();
-		Assertions.assertEquals(1, garbageCollectors.size());
+		Assertions.assertEquals(2, garbageCollectors.size());
 		for (DocumentGarbageCollecteur documentGarbageCollector : garbageCollectors) {
 			Integer hourInterval = 0 - cal.getMaximum(Calendar.HOUR_OF_DAY);
 			cal.setTime(documentGarbageCollector.getCreationDate());
@@ -190,14 +255,15 @@ public class DocumentGarbageCollectorBatchImplTest {
 			documentGarbageRepository.save(documentGarbageCollector);
 		}
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry2);
-		Assertions.assertEquals(2, documentGarbageRepository.findAll().size());
+		uploadRequestEntryService.delete((User) john, (User) john, uploadRequestEntry2.getUuid());
+		Assertions.assertEquals(4, documentGarbageRepository.findAll().size());
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(documentGarbageCollectorBatchImpl);
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 		Assertions.assertEquals(0, documentEntryRepository.findAll().size());
 		// The garbage will pick up this document because it's deleted at the day before
 		// with garbage execution time.
-		Assertions.assertEquals(1, documentGarbageRepository.findAll().size());
+		Assertions.assertEquals(2, documentGarbageRepository.findAll().size());
 	}
 
 }
