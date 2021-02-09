@@ -50,6 +50,7 @@ import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
+import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
@@ -72,6 +73,8 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 
 	protected DocumentEntryBusinessService documentEntryBusinessService;
 
+	protected UploadRequestEntryRepository uploadRequestEntryRepository;
+
 	protected MongoTemplate mongoTemplate;
 
 	protected DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
@@ -80,6 +83,7 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 			AccountRepository<Account> accountRepository,
 			DocumentRepository documentRepository,
 			DocumentEntryRepository documentEntryRepository,
+			UploadRequestEntryRepository uploadRequestEntryRepository,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			MongoTemplate mongoTemplate,
 			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
@@ -91,6 +95,7 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 		this.mongoTemplate = mongoTemplate;
 		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
 		this.workGroupNodeMongoRepository = workGroupNodeMongoRepository;
+		this.uploadRequestEntryRepository = uploadRequestEntryRepository;
 		this.operationKind = OperationKind.DELETED;
 	}
 
@@ -116,13 +121,15 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position) throws BatchBusinessException, BusinessException {
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
+			throws BatchBusinessException, BusinessException {
 		DocumentGarbageCollecteur dgc = mongoTemplate.findById(identifier, DocumentGarbageCollecteur.class);
 		if (dgc == null) {
 			return null;
 		}
 		Document document = documentRepository.findByUuid(dgc.getDocumentUuid());
-		List<WorkGroupDocument> workgroupDocuments = workGroupNodeMongoRepository.findByDocumentUuid(dgc.getDocumentUuid());
+		List<WorkGroupDocument> workgroupDocuments = workGroupNodeMongoRepository
+				.findByDocumentUuid(dgc.getDocumentUuid());
 		if (document == null && workgroupDocuments.isEmpty()) {
 			// it does not exists anymore. skipped.
 			documentGarbageCollectorRepository.delete(dgc);
@@ -134,8 +141,10 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 			query.addCriteria((Criteria.where("documentUuid").is(document.getUuid())));
 			if (mongoTemplate.count(query, WorkGroupDocumentRevision.class) <= 0) {
 				// document is not referenced now, we need to remove it.
-				context.setProcessed(true);
-				documentEntryBusinessService.deleteDocument(document);
+				if (uploadRequestEntryRepository.getRelatedUploadRequestEntryCount(document) <= 0) {
+					context.setProcessed(true);
+					documentEntryBusinessService.deleteDocument(document);
+				}
 			}
 		}
 		documentGarbageCollectorRepository.delete(dgc);

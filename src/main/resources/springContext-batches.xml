@@ -146,6 +146,7 @@
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="documentEntryRepository" />
+		<constructor-arg ref="uploadRequestEntryRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="mongoTemplate" />
 		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
