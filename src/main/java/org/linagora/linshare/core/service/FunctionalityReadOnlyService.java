@@ -111,6 +111,7 @@ public interface FunctionalityReadOnlyService {
 	BooleanValueFunctionality getUploadRequestCanCloseFunctionality(AbstractDomain domain);
 	TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality(AbstractDomain domain);
 	Functionality getUploadRequestEnableTemplateFunctionality(AbstractDomain domain);
+	Functionality getUploadRequestReminderNotificationFunctionality(AbstractDomain domain);
 
 	/**
 	 * Return the status of the custom Notification URL in root domain

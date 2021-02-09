@@ -308,6 +308,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public Functionality getUploadRequestReminderNotificationFunctionality(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__REMINDER_NOTIFICATION);
+	}
+
+	@Override
 	public TimeUnitValueFunctionality getUploadRequestActivationTimeFunctionality(
 			AbstractDomain domain) {
 		return new TimeUnitValueFunctionality((UnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION));

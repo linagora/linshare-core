@@ -2097,6 +2097,14 @@ UPDATE  upload_request SET locale = 'ENGLISH' WHERE locale = 'en';
 UPDATE  upload_request SET locale = 'RUSSIAN' WHERE locale = 'ru';
 UPDATE  upload_request SET locale = 'FRENCH' WHERE locale = 'fr';
 
+-- UPLOAD_REQUEST__REMINDER_NOTIFICATION
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (328, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (329, true, true, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES(69, false, 'UPLOAD_REQUEST__REMINDER_NOTIFICATION', 328, 329, null, 1, 'UPLOAD_REQUEST', true, now(), now());
+
 -- End of your requests
 
 -- LinShare version

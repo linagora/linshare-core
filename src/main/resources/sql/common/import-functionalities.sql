@@ -419,6 +419,14 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_enum_lang(functionality_id, lang_value)
 	VALUES (38, 'en');
 
+-- Functionality : UPLOAD_REQUEST__REMINDER_NOTIFICATION
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (328, true, true, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (329, true, true, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES(69, false, 'UPLOAD_REQUEST__REMINDER_NOTIFICATION', 328, 329, null, 1, 'UPLOAD_REQUEST', true, now(), now());
+
 -- Functionality : UPLOAD_REQUEST__PROTECTED_BY_PASSWORD
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (86, false, false, 1, false);
