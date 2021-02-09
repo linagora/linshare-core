@@ -325,7 +325,32 @@ public class UploadRequestGroupServiceImplTest {
 		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void archiveGroupStatusIndividualWhenAllNestedArchived() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit, contactList,
+				"This is a subject", "This is a body", false);
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
+		Set<UploadRequest> urs = group.getUploadRequests();
+		assertStatus(urs, UploadRequestStatus.ENABLED);
+		// Close all nested URs
+		for (UploadRequest uploadRequest : urs) {
+			uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		}
+		assertStatus(urs, UploadRequestStatus.CLOSED);
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
+		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		// Archive all nested URs
+		for (UploadRequest uploadRequest : urs) {
+			uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.ARCHIVED, false);
+		}
+		assertStatus(urs, UploadRequestStatus.ARCHIVED);
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.ARCHIVED, false);
+		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	/**
 	 * Test ability to close URG individual with only one closed UR
 	 * 
