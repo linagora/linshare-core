@@ -248,6 +248,8 @@
 					<constructor-arg ref="passwordService" />
 					<constructor-arg ref="mailBuildingService" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_1.UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl">
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
