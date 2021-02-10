@@ -112,6 +112,7 @@ public class UploadRequestEntryDto {
 		this.cmisSync = entry.isCmisSync();
 		this.size = entry.getSize();
 		this.type = entry.getType();
+		this.copied = entry.getCopied();
 	}
 
 	public AccountDto getEntryOwner() {
