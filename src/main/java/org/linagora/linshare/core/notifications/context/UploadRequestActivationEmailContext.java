@@ -35,14 +35,19 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
+import java.util.List;
+
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 
 public class UploadRequestActivationEmailContext extends GenericUploadRequestEmailContext {
+
+	private List<Contact> recipients;
 
 	/**
 	 * Warn the recipient.
@@ -55,12 +60,19 @@ public class UploadRequestActivationEmailContext extends GenericUploadRequestEma
 	}
 
 	/**
-	 * Warn the owner.
 	 * @param owner
-	 * @param uploadRequest
+	 * @param request
+	 * @param requestUrl
+	 * @param recipients
 	 */
-	public UploadRequestActivationEmailContext(User owner, UploadRequest uploadRequest) {
-		super(owner.getDomain(), false, owner, null, uploadRequest, true);
+	public UploadRequestActivationEmailContext(User owner, UploadRequest request, UploadRequestUrl requestUrl,
+			List<Contact> recipients) {
+		super(owner.getDomain(), false, owner, requestUrl, request, false);
+		this.recipients = recipients;
+	}
+
+	public List<Contact> getRecipients() {
+		return recipients;
 	}
 
 	@Override

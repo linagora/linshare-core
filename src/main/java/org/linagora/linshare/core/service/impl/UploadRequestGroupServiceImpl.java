@@ -168,6 +168,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		}
 		req.setUploadRequestGroup(uploadRequestGroup);
 		if (collectiveMode) {
+			// we need to add contacts to the container to be able to notify this list to every recipient in a collective upload request
+			container.setRecipients(contacts);
 			container = uploadRequestService.create(actor, owner, req, container);
 			for (Contact contact : contacts) {
 				Validate.notNull(contact, "contact must be set");

@@ -39,6 +39,7 @@ package org.linagora.linshare.core.domain.objects;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
@@ -48,6 +49,9 @@ import com.google.common.collect.Sets;
 public class UploadRequestContainer {
 
 	protected Set<UploadRequest> uploadRequests = Sets.newHashSet();
+
+	//used to have list of recipients of an upload request in email templates
+	protected List<Contact> recipients = Lists.newArrayList();
 
 	protected List<MailContainerWithRecipient> mailContainers = Lists
 			.newArrayList();
@@ -79,5 +83,13 @@ public class UploadRequestContainer {
 
 	public void addLog(AuditLogEntryUser log) {
 		this.logs.add(log);
+	}
+
+	public List<Contact> getRecipients() {
+		return recipients;
+	}
+
+	public void setRecipients(List<Contact> recipients) {
+		this.recipients = recipients;
 	}
 }

@@ -65,14 +65,15 @@ public class UploadRequestCreatedEmailBuilder extends GenericUploadRequestEmailB
 		UploadRequest request = emailCtx.getUploadRequest();
 
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-
-		List<MailContact> recipients = getRecipients(request);
+		List<MailContact> recipients = getRecipients(emailCtx.getRecipients());
 
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
 		ctx.setVariable("isCollective", request.getUploadRequestGroup().isCollective());
-		ctx.setVariable("recipients", recipients);
-		ctx.setVariable("recipientsCount", recipients.size());
+		if (request.getUploadRequestGroup().isCollective()) {
+			ctx.setVariable("recipients", recipients);
+			ctx.setVariable("recipientsCount", recipients.size());
+		}
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;

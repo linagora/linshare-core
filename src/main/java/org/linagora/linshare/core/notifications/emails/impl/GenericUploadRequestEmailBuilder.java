@@ -38,12 +38,14 @@ package org.linagora.linshare.core.notifications.emails.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
@@ -81,6 +83,10 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 			recipients.add(new MailContact(u.getContact()));
 		}
 		return recipients;
+	}
+
+	protected List<MailContact> getRecipients(List<Contact> contacts) {
+		return contacts.stream().map(c -> new MailContact(c)).collect(Collectors.toList());
 	}
 
 	protected List<MailContact> getRecipients(UploadRequestGroup uploadrequestGroup) {

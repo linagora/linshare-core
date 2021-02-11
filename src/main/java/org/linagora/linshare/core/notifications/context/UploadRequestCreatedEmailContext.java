@@ -36,17 +36,28 @@
 
 package org.linagora.linshare.core.notifications.context;
 
+import java.util.List;
+
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 
 public class UploadRequestCreatedEmailContext extends GenericUploadRequestEmailContext {
+	
+	protected List<Contact> recipients;
 
 	public UploadRequestCreatedEmailContext(User owner, UploadRequestUrl requestUrl, UploadRequest uploadRequest) {
 		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, false);
+	}
+
+	public UploadRequestCreatedEmailContext(User owner, UploadRequestUrl requestUrl, UploadRequest uploadRequest,
+			List<Contact> recipients) {
+		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, false);
+		this.recipients = recipients;
 	}
 
 	@Override
@@ -72,5 +83,9 @@ public class UploadRequestCreatedEmailContext extends GenericUploadRequestEmailC
 	@Override
 	public void validateRequiredField() {
 		Validate.notNull(requestUrl, "Missing Upload request url");
+	}
+
+	public List<Contact> getRecipients() {
+		return recipients;
 	}
 }
