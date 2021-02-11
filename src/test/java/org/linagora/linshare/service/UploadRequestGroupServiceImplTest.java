@@ -392,6 +392,25 @@ public class UploadRequestGroupServiceImplTest {
 	}
 
 	@Test
+	public void testForbidUpdateClosedAndArchivedURG() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup group = uploadRequestGroupService.find(john, john, ure.getUploadRequestGroup().getUuid());
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
+		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.update(john, john, group, false);
+		});
+		Assertions.assertEquals(exception.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_GROUP_UPDATE_FORBIDDEN);
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.ARCHIVED, false);
+		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
+		BusinessException exception2 = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.update(john, john, group, false);
+		});
+		Assertions.assertEquals(exception2.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_GROUP_UPDATE_FORBIDDEN);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void updateWithMaxDepositSizeFuncDisabled() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.find(john, john, ure.getUploadRequestGroup().getUuid());
