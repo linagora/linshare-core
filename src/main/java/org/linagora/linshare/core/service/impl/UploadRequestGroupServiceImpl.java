@@ -471,6 +471,10 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup, Boolean force) {
 		UploadRequestGroup group = uploadRequestGroupBusinessService.findByUuid(uploadRequestGroup.getUuid());
+		if (group.isClosed() || group.isArchived()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_GROUP_UPDATE_FORBIDDEN,
+					"Cannot update the current upload request group because it is: " + group.getStatus());
+		}
 		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				group);
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(authUser),
