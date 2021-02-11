@@ -72,4 +72,7 @@ public interface UploadRequestBusinessService {
 	Long computeEntriesSize(UploadRequest request);
 
 	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
+
+	List<UploadRequest> findUploadRequestsToUpdate(UploadRequestGroup uploadRequestGroup,
+			List<UploadRequestStatus> listAllowedStatusToUpdate);
 }

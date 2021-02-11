@@ -403,6 +403,34 @@ public class UploadRequest implements Cloneable {
 		}
 	}
 
+	public Boolean isCreated() {
+		return this.getStatus().equals(UploadRequestStatus.CREATED);
+	}
+
+	public Boolean isEnabled() {
+		return this.getStatus().equals(UploadRequestStatus.ENABLED);
+	}
+
+	public Boolean isCanceled() {
+		return this.getStatus().equals(UploadRequestStatus.CANCELED);
+	}
+
+	public Boolean isClosed() {
+		return this.getStatus().equals(UploadRequestStatus.CLOSED);
+	}
+
+	public Boolean isArchived() {
+		return this.getStatus().equals(UploadRequestStatus.ARCHIVED);
+	}
+
+	public Boolean isPurged() {
+		return this.getStatus().equals(UploadRequestStatus.PURGED);
+	}
+
+	public Boolean isDeleted() {
+		return this.getStatus().equals(UploadRequestStatus.DELETED);
+	}
+
 	@Override
 	public String toString() {
 		return "UploadRequest [id=" + id + ", uploadRequestGroup=" + uploadRequestGroup + ", uuid=" + uuid

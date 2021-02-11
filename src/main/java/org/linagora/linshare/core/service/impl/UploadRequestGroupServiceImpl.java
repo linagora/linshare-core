@@ -450,21 +450,21 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				uploadRequestGroup.getUuid(), uploadRequestGroup);
 		uploadRequestGroup = uploadRequestGroupBusinessService.updateStatus(uploadRequestGroup, status);
-		for (UploadRequest uploadRequest : uploadRequestGroup.getUploadRequests()) {
-			if (!uploadRequest.getUploadRequestGroup().isCollective() && status.equals(uploadRequest.getStatus())) {
-				logger.debug(
-						"The group is individual ==> skip already updated UR's that had same status, Group status {} | UR status {}",
-						uploadRequest.getUploadRequestGroup().getStatus(), uploadRequest.getStatus());
-				continue;
-			}
-			uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status, copy);
-		}
+		updateNestedUploadRequestStatus(authUser, actor, status, copy, uploadRequestGroup);
 		if (!uploadRequestGroup.isCollective()) {
 			// Insert only audit trace for UPLOAD_REQUEST type when the group is collective
 			groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
 			logEntryService.insert(groupLog);
 		}
 		return uploadRequestGroup;
+	}
+
+	private void updateNestedUploadRequestStatus(Account authUser, Account actor, UploadRequestStatus status,
+			boolean copy, UploadRequestGroup uploadRequestGroup) {
+		for (UploadRequest request : uploadRequestService.findUploadRequestsToUpdate(authUser, actor,
+				uploadRequestGroup, UploadRequestStatus.listAllowedStatusToUpdate(status))) {
+			uploadRequestService.updateStatus(authUser, actor, request.getUuid(), status, copy);
+		}
 	}
 
 	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup, Boolean force) {

@@ -138,4 +138,10 @@ public class UploadRequestBusinessServiceImpl implements
 	public Long computeEntriesSize(UploadRequest request) {
 		return uploadRequestRepository.computeEntriesSize(request);
 	}
+
+	@Override
+	public List<UploadRequest> findUploadRequestsToUpdate(UploadRequestGroup uploadRequestGroup,
+			List<UploadRequestStatus> listAllowedStatusToUpdate) {
+		return uploadRequestRepository.findUploadRequestsToUpdate(uploadRequestGroup, listAllowedStatusToUpdate);
+	}
 }

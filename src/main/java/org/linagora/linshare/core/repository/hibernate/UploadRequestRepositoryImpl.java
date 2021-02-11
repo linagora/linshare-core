@@ -184,4 +184,13 @@ public class UploadRequestRepositoryImpl extends
 		}
 		return 0L;
 	}
+
+	@Override
+	public List<UploadRequest> findUploadRequestsToUpdate(UploadRequestGroup uploadRequestGroup,
+			List<UploadRequestStatus> listAllowedStatusToUpdate) {
+		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass());
+		urCrit.add(Restrictions.eq("uploadRequestGroup", uploadRequestGroup));
+		urCrit.add(Restrictions.in("status", listAllowedStatusToUpdate));
+		return findByCriteria(urCrit);
+	}
 }

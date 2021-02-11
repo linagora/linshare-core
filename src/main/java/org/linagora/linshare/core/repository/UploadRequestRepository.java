@@ -84,4 +84,7 @@ public interface UploadRequestRepository extends
 	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
 
 	Long computeEntriesSize(UploadRequest request);
+
+	List<UploadRequest> findUploadRequestsToUpdate(UploadRequestGroup uploadRequestGroup,
+			List<UploadRequestStatus> listAllowedStatusToUpdate);
 }

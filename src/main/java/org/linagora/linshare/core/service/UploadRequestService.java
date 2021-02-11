@@ -86,4 +86,7 @@ public interface UploadRequestService {
 	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
 
 	Long computeEntriesSize(UploadRequest request);
+
+	List<UploadRequest> findUploadRequestsToUpdate(Account authUser, Account actor,
+			UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> listAllowedStatusToUpdate);
 }

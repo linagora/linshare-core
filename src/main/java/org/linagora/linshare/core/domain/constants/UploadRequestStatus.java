@@ -36,13 +36,16 @@
 
 package org.linagora.linshare.core.domain.constants;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 
-import java.util.Arrays;
+import com.google.common.collect.Lists;
 
 public enum UploadRequestStatus {
 	DELETED,
@@ -65,6 +68,23 @@ public enum UploadRequestStatus {
 					"Cannot transition from " + name() + " to " + status.name() + '.');
 		}
 		return status;
+	}
+
+	public static List<UploadRequestStatus> listAllowedStatusToUpdate(final UploadRequestStatus status) {
+		List<UploadRequestStatus> list = Lists.newArrayList();
+		if (CLOSED.equals(status)) {
+			list.add(ENABLED);
+		}
+		if (ARCHIVED.equals(status)) {
+			list.add(CLOSED);
+		}
+		if (DELETED.equals(status)) {
+			list.add(ARCHIVED);
+		}
+		if (PURGED.equals(status)) {
+			list.add(DELETED);
+		}
+		return list;
 	}
 
 	public static UploadRequestStatus fromString(String s) {

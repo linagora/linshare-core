@@ -393,4 +393,12 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	public Long computeEntriesSize(UploadRequest request) {
 		return uploadRequestBusinessService.computeEntriesSize(request);
 	}
+
+	@Override
+	public List<UploadRequest> findUploadRequestsToUpdate(Account authUser, Account actor,
+			UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> listAllowedStatusToUpdate) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
+		return uploadRequestBusinessService.findUploadRequestsToUpdate(uploadRequestGroup, listAllowedStatusToUpdate);
+	}
 }
