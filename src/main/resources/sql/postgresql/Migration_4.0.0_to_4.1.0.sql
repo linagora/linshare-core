@@ -2105,6 +2105,9 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
 	VALUES(69, false, 'UPLOAD_REQUEST__REMINDER_NOTIFICATION', 328, 329, null, 1, 'UPLOAD_REQUEST', true, now(), now());
 
+-- Update system-account-uploadrequest role to SYSTEM
+UPDATE account SET role_id = 6 WHERE ls_uuid = 'system-account-uploadrequest';
+
 -- End of your requests
 
 -- LinShare version
