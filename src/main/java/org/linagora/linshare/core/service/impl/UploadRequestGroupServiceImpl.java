@@ -137,11 +137,14 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	@Override
 	public UploadRequestGroup find(Account actor, Account owner, String uuid) {
 		preChecks(actor, owner);
-		UploadRequestGroup req = uploadRequestGroupBusinessService.findByUuid(uuid);
-		checkReadPermission(actor,
-				req.getOwner(), UploadRequestGroup.class,
-				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
-		return req;
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(uuid);
+		if (uploadRequestGroup == null) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_GROUP_NOT_FOUND,
+					"Can not find upload request with uuid : " + uuid);
+		}
+		checkReadPermission(actor, uploadRequestGroup.getOwner(), UploadRequestGroup.class,
+				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestGroup);
+		return uploadRequestGroup;
 	}
 
 	@Override
@@ -435,7 +438,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	public UploadRequestGroup updateStatus(Account authUser, Account actor, String requestGroupUuid,
 			UploadRequestStatus status, boolean copy) {
 		preChecks(authUser, actor);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(requestGroupUuid);
+		UploadRequestGroup uploadRequestGroup = find(authUser, actor, requestGroupUuid);
 		checkUpdatePermission(authUser, actor, UploadRequestGroup.class,
 				BusinessErrorCode.UPLOAD_REQUEST_GROUP_FORBIDDEN, uploadRequestGroup);
 		if (status.equals(uploadRequestGroup.getStatus())) {
@@ -470,13 +473,14 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	}
 
 	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup, Boolean force) {
-		UploadRequestGroup group = uploadRequestGroupBusinessService.findByUuid(uploadRequestGroup.getUuid());
+		UploadRequestGroup group = find(authUser, actor, uploadRequestGroup.getUuid());
 		if (group.isClosed() || group.isArchived()) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_GROUP_UPDATE_FORBIDDEN,
-					"Cannot update the current upload request group because it is: " + group.getStatus());
+					"Cannot update the current upload request group: " + group.getUuid() + " because it is: "
+							+ group.getStatus());
 		}
-		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
-				group);
+		checkUpdatePermission(authUser, actor, UploadRequestGroup.class,
+				BusinessErrorCode.UPLOAD_REQUEST_GROUP_FORBIDDEN, group);
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(authUser),
 				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				uploadRequestGroup.getUuid(), group);
