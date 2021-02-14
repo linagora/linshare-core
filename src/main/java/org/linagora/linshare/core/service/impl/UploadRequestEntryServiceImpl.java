@@ -41,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -80,6 +81,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileByOwnerEmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestUnavailableSpaceEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestEntryRessourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -176,7 +178,22 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		try {
 			fileName = sanitizeFileName(fileName);
 			Long size = tempFile.length();
-			checkSpace(actor, size);
+			try {
+				checkSpace(actor, size);
+			} catch (BusinessException e) {
+				// if no space available notify the owner
+				List<BusinessErrorCode> errCodes = Arrays.asList(BusinessErrorCode.QUOTA_FILE_FORBIDDEN_FILE_SIZE,
+						BusinessErrorCode.QUOTA_ACCOUNT_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
+						BusinessErrorCode.QUOTA_GLOBAL_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
+						BusinessErrorCode.QUOTA_CONTAINER_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE);
+				if (errCodes.contains(e.getErrorCode())) {
+					UploadRequestUnavailableSpaceEmailContext context = new UploadRequestUnavailableSpaceEmailContext(
+							(User) uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
+							uploadRequestUrl.getUploadRequest(), uploadRequestUrl);
+					notifierService.sendNotification(mailBuildingService.build(context));
+				}
+				throw e;
+			}
 			// detect file's mime type.
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 			// check if the file MimeType is allowed
