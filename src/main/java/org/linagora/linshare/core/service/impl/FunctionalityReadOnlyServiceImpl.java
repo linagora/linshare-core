@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -71,6 +72,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 	private final FunctionalityRepository functionalityRepository;
 
 	private TimeService timeService;
+
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 
 	public FunctionalityReadOnlyServiceImpl(
 			DomainBusinessService domainBusinessService,
@@ -489,7 +492,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		c.add(func.toCalendarMaxValue(), func.getMaxValue());
 		Date maxDate = getCalendarWithoutTime(c.getTime()).getTime(); // Maximum value allowed
 		if (currentDate.before(now) || currentDate.after(maxDate)) {
-			String errorMessage = buildErrorMessage(func, currentDate.toString(), now.toString(), maxDate.toString());
+			String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(now), dateFormat.format(maxDate));
 			logger.warn(errorMessage);
 			throw new BusinessException(errorCode, errorMessage);
 		}
@@ -520,7 +523,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		c.add(func.toCalendarMaxValue(), func.getMaxValue());
 		Date maxDate = c.getTime(); // Maximum value allowed
 		if (currentDate.before(now) || currentDate.after(maxDate)) {
-			String errorMessage = buildErrorMessage(func, currentDate.toString(), now.toString(), maxDate.toString());
+			String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(now), dateFormat.format(maxDate));
 			logger.warn(errorMessage);
 			throw new BusinessException(errorCode, errorMessage);
 		}
@@ -588,7 +591,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 			minDate = now;
 		}
 		if (currentDate.after(expirationDate) || currentDate.before(minDate)) {
-			String errorMessage = buildErrorMessage(func, currentDate.toString(), minDate.toString(), expirationDate.toString());
+			String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(minDate), dateFormat.format(expirationDate));
 			logger.warn(errorMessage);
 			throw new BusinessException(errorCode, errorMessage);
 		}
@@ -652,12 +655,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	private String buildErrorMessage(Functionality func, String valueToCompare, String minValue, String maxValue) {
-		return "Identifier : " + func.getIdentifier() + " - the current value " + valueToCompare + " is out of range : "
+		return "Identifier : " + func.getIdentifier() + " - the current value \"" + valueToCompare + "\" is out of range : "
 				+ " should be between \"" + minValue + "\" and \"" + maxValue + "\"";
 	}
 
 	private String buildErrorMessage(Functionality func, String valueToCompare, String maxValue) {
-		return "Identifier : " + func.getIdentifier() + " - the current value " + valueToCompare + " is out of range : "
+		return "Identifier : " + func.getIdentifier() + " - the current value \"" + valueToCompare + "\" is out of range : "
 				+ " should be inferior to \"" + maxValue + "\"";
 	}
 
