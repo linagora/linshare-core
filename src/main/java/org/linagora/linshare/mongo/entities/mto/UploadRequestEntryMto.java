@@ -39,9 +39,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 
 public class UploadRequestEntryMto {
 
-	protected String urlUuid;
-
-	protected DocumentMto document;
+	protected String name;
 
 	protected Long size;
 
@@ -62,31 +60,23 @@ public class UploadRequestEntryMto {
 	}
 
 	public UploadRequestEntryMto(UploadRequestEntry reqEntry) {
-		this.urlUuid = reqEntry.getUploadRequestUrl().getUuid();
-		this.document = new DocumentMto(reqEntry);
+		this.name = reqEntry.getName();
 		this.type = reqEntry.getType();
 		this.size = reqEntry.getSize();
 		this.sha256sum = reqEntry.getSha256sum();
 		this.ciphered = reqEntry.getCiphered();
 		this.copied = reqEntry.getCopied();
 		this.uploadRequestUuid = reqEntry.getUploadRequestUrl().getUploadRequest().getUuid();
-		this.uploadRequestGroupUuid = reqEntry.getUploadRequestUrl().getUploadRequest().getUploadRequestGroup().getUuid();
+		this.uploadRequestGroupUuid = reqEntry.getUploadRequestUrl().getUploadRequest().getUploadRequestGroup()
+				.getUuid();
 	}
 
-	public String getUrlUuid() {
-		return urlUuid;
+	public String getName() {
+		return name;
 	}
 
-	public void setUrlUuid(String urlUuid) {
-		this.urlUuid = urlUuid;
-	}
-
-	public DocumentMto getDocument() {
-		return document;
-	}
-
-	public void setDocument(DocumentMto document) {
-		this.document = document;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getType() {
