@@ -22,10 +22,8 @@ UPDATE mail_content SET subject='[# th:if="${subject.modified}"]
                   <!--/* Main email  message content*/-->
                   <p>
                      <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
-                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
                      </span>
                      <span data-th-utext="#{secondaryMsg}">
-                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
                      </span>
                   </p>
                   <!--/* If the sender has added a  customized message */-->
@@ -73,6 +71,9 @@ UPDATE mail_content SET subject='[# th:if="${subject.modified}"]
             </span>
             <span data-th-if="(${totalMaxDepotSize.modified})">
                <th:block data-th-replace="layout :: infoEditedItem(#{depotSize},${totalMaxDepotSize.oldValue},${totalMaxDepotSize.value})"/>
+            </span>
+            <span data-th-if="(${local.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{local},${local.oldValue},${local.value})"/>
             </span>
          </section>
          <!--/* End of Secondary content for bottom email section */-->
