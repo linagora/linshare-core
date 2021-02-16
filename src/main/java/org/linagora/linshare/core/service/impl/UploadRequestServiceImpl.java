@@ -244,7 +244,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		}
 		UploadRequest res = uploadRequestBusinessService.update(uploadRequest, object);
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
-		if (res.getEnableNotification()) {
+		if (res.getEnableNotification() && !res.businessEquals(oldRequest)) {
 			for (UploadRequestUrl urUrl : res.getUploadRequestURLs()) {
 				EmailContext context = new UploadRequestUpdateSettingsEmailContext((User) res.getUploadRequestGroup().getOwner(), urUrl, res, oldRequest);
 				mails.add(mailBuildingService.build(context));

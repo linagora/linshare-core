@@ -431,6 +431,74 @@ public class UploadRequest implements Cloneable {
 		return this.getStatus().equals(UploadRequestStatus.DELETED);
 	}
 
+	/**
+	 * used to check if there is changes in Upload request parameters in order to
+	 * sent an email notification
+	 * 
+	 * @param obj
+	 * @return boolean
+	 */
+	public boolean businessEquals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UploadRequest other = (UploadRequest) obj;
+		if (activationDate == null) {
+			if (other.activationDate != null)
+				return false;
+		} else if (!activationDate.equals(other.activationDate))
+			return false;
+		if (canClose == null) {
+			if (other.canClose != null)
+				return false;
+		} else if (!canClose.equals(other.canClose))
+			return false;
+		if (canDelete == null) {
+			if (other.canDelete != null)
+				return false;
+		} else if (!canDelete.equals(other.canDelete))
+			return false;
+		if (canEditExpiryDate == null) {
+			if (other.canEditExpiryDate != null)
+				return false;
+		} else if (!canEditExpiryDate.equals(other.canEditExpiryDate))
+			return false;
+		if (enableNotification == null) {
+			if (other.enableNotification != null)
+				return false;
+		} else if (!enableNotification.equals(other.enableNotification))
+			return false;
+		if (expiryDate == null) {
+			if (other.expiryDate != null)
+				return false;
+		} else if (!expiryDate.equals(other.expiryDate))
+			return false;
+		if (maxDepositSize == null) {
+			if (other.maxDepositSize != null)
+				return false;
+		} else if (!maxDepositSize.equals(other.maxDepositSize))
+			return false;
+		if (maxFileCount == null) {
+			if (other.maxFileCount != null)
+				return false;
+		} else if (!maxFileCount.equals(other.maxFileCount))
+			return false;
+		if (maxFileSize == null) {
+			if (other.maxFileSize != null)
+				return false;
+		} else if (!maxFileSize.equals(other.maxFileSize))
+			return false;
+		if (notificationDate == null) {
+			if (other.notificationDate != null)
+				return false;
+		} else if (!notificationDate.equals(other.notificationDate))
+			return false;
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		return "UploadRequest [id=" + id + ", uploadRequestGroup=" + uploadRequestGroup + ", uuid=" + uuid
@@ -443,6 +511,5 @@ public class UploadRequest implements Cloneable {
 				+ ", uploadRequestHistory=" + uploadRequestHistory + ", notified=" + notified + ", pristine=" + pristine
 				+ ", enableNotification=" + enableNotification + "]";
 	}
-	
-	
+
 }

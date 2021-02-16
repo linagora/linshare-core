@@ -72,9 +72,6 @@ UPDATE mail_content SET subject='[# th:if="${subject.modified}"]
             <span data-th-if="(${totalMaxDepotSize.modified})">
                <th:block data-th-replace="layout :: infoEditedItem(#{depotSize},${totalMaxDepotSize.oldValue},${totalMaxDepotSize.value})"/>
             </span>
-            <span data-th-if="(${local.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{local},${local.oldValue},${local.value})"/>
-            </span>
          </section>
          <!--/* End of Secondary content for bottom email section */-->
       </div>
@@ -84,7 +81,6 @@ closureRight = Droits de dépôt
 deletionRight = Droits de suppression
 depotSize = Taille du dépôt
 expiryDate = Date de clôture
-local = Langue
 enableNotification = Activation des notifications
 mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a modifié des paramètres liés au dépôt.
 maxFileNum = Nombre de Fichiers
@@ -98,7 +94,6 @@ closureRight = Closure rights
 deletionRight = Deletion rights
 depotSize = Repository size
 expiryDate = Closure date
-local = Local
 enableNotification = Enable notifications
 mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  has updated some settings related to the Upload Request.
 maxFileNum = File number
@@ -112,7 +107,6 @@ closureRight = Права закрытия
 deletionRight = Права удаления
 depotSize = Размер репозитория
 expiryDate = Дата закрытия
-local = Локальный
 enableNotification = Разрешить уведомления
 mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  обновил некоторые настройки запроса загрузки.
 maxFileNum = Номер файла
