@@ -694,6 +694,165 @@ ALTER TABLE upload_request_history RENAME COLUMN secured TO protected_by_passwor
 
 UPDATE functionality SET identifier = 'UPLOAD_REQUEST__PROTECTED_BY_PASSWORD' WHERE identifier = 'UPLOAD_REQUEST__SECURED_URL';
 
+-- UPLOAD_REQUEST_UNAVAILABLE_SPACE.sql
+UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head data-th-replace="layout :: header"></head>
+<body>
+<div
+  th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content */-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${requestOwner.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p style="font-size: 14px;font-weight: bold;color: #df5656;margin-bottom: 7px;" data-th-utext="#{mainMsgTitle}">
+          You have no available space.</p>
+        <p>
+          <span data-th-utext="#{mainMsg(${requestRecipient.mail})}"></span>
+        </p> <!--/* End of Main email  message content*/-->
+      <!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper  main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-if="(${maxDepositSize != null})">
+      <th:block data-th-replace="layout :: infoStandardArea(#{maxUploadDepotSize},${maxDepositSize})"/>
+    </th:block>
+    <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{invitationCreationDate},${request.activationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{invitationClosureDate},${request.expirationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',messages_french='invitationClosureDate = Date de clôture
+invitationCreationDate = Date d''''activation
+mainMsg =  <b>{0}</b>  n''''a pas pu déposer des fichiers dans le dépôt car il n''''y a plus d''''espace disponible dans votre Espace Personnel. Veuillez s''''il vous plait libérez de l''''espace.
+mainMsgTitle = Vous n''''avez plus d''''espace disponible.
+maxUploadDepotSize =  Taille total du dépôt
+recipientsURequest = Destinataires
+subject =  {0}  n''''a pu déposer un fichier car il n''''y a plus d''''espace disponible',messages_english='invitationClosureDate = Closure date
+invitationCreationDate = Activation date
+mainMsg =  <b>{0}</b> is not able to upload any file, since there is no more space available in your Personal Space. Please free up some space.
+mainMsgTitle = No more space available.
+maxUploadDepotSize = Maximum size of the Upload Request
+recipientsURequest = Recipients
+subject =  {0} could not upload a file since there is no more space available',messages_russian='invitationClosureDate = Дата закрытия
+invitationCreationDate = Дата активации
+mainMsg =  <b>{0}</b> не может загрузить файлы, так как в вашем личном пространстве недостаточно места. Пожалуйста, удалите некоторые файлы, чтобы освободить место.
+mainMsgTitle = Недостаточно свободного места.
+maxUploadDepotSize = Максимальный размер загрузки
+recipientsURequest = Получатели
+subject =  {0} не может загрузить файл, так как недостаточно свободного места' WHERE id=11;
+
+-- UPLOAD_REQUEST_PASSWORD_RENEWAL.sql
+UPDATE mail_content SET subject='[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection(~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
+                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
+                     </span>
+                     <br/>
+                     <span data-th-text="#{msgProtected}">In order to access it click the link below and enter the provided password.</span>
+                  </p>
+                  <th:block data-th-replace="layout :: actionButtonLink(#{buttonMsg},${requestUrl})"/>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <th:block data-th-replace="layout :: infoStandardArea(#{password},${password})"/>
+            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>',messages_french='buttonMsg = Accès au dépôt
+closureDate = Dépôt disponible jusqu''''au
+mainMsg = <b>{0} {1}</b> a modifié le mot de passe d''''accès à l''''Invitation de Dépôt : {2}.
+msgProtected = Vous trouverez ci-dessous le nouveau mot de passe ainsi que le lien d''''accès.
+password = Mot de passe
+subject = {0} {1} vous envoie le nouveau mot de passe du dépôt : {2}',messages_english='buttonMsg = Access to the depot
+closureDate = Depot closure date
+mainMsg = <b>{0} {1}</b> has changed the password of the Upload Request : {2}
+msgProtected = You may find the new password below as well as the access link.
+password = Password
+subject = {0} {1} sent you the new password for the Upload Request: {2}',messages_russian='buttonMsg = Доступ к загрузке
+closureDate = Дата закрытия загрузки
+mainMsg = <b>{0} {1}</b> изменил пароль к загрузке {2}
+msgProtected = Новый пароль и доступ к загрузке доступны ниже.
+password = Пароль
+subject = {0} {1} отправил вам новый пароль к загрузке {2}' WHERE id=19;
+
+-- UPLOAD_REQUEST_RECIPIENT_REMOVED.sql
+UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
+                     Peter WILSON has deleted your access to the depot : : subject.
+                     </span>
+                  </p>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <th:block data-th-replace="layout :: infoDateArea(#{deletionDate},${deletionDate})"/>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>',messages_french='deletionDate = Accès au dépôt retiré le
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a retiré votre accès au dépôt de l''''invitation intitulée : {2}.
+subject = {0} {1} a supprimé votre accès au dépôt : {2}',messages_english='deletionDate = Deletion date
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has removed your access to the Upload Request : {2}.
+subject = {0} {1} has removed your access to the Upload Request : {2}',messages_russian='deletionDate = Дата удаления
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> закрыл ваш доступ к загрузке {2}.
+subject = {0} {1} закрыл ваш доступ к загрузке {2}' WHERE id=22;
+
 -- Update UPLOAD_REQUEST_ACTIVATED_FOR_OWNER.sql (isCollective field)
 
 UPDATE mail_content SET subject='[(#{subject(${subject})})]',body='<!DOCTYPE html>
@@ -763,7 +922,6 @@ recipientsOfDepot = Получатель
 subject = Ваш запрос загрузки {0} активен' WHERE id=17;
 
 -- Update UPLOAD_REQUEST_ACTIVATED_FOR_RECIPIENT.sql (isCollective field)
-
 UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
@@ -802,7 +960,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
                        </span>
                    </th:block>
                     <th:block data-th-if="(${request.wasPreviouslyCreated})">
-                       <span data-th-text="#{msgAlt(${requestOwner.firstName} , ${requestOwner.lastName})}"> Peter Wilson''s Upload Request depot is now activated..</span>
+                       <span data-th-text="#{msgAlt(${subject} , ${requestOwner.firstName} , ${requestOwner.lastName})}"> Peter Wilson''s Upload Request is now activated..</span>
                      </th:block>
                      <br/>
                      <!--/* Check if the external user has a password protected file share */-->
@@ -843,7 +1001,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
 closureDate = Date de clôture
 depotSize = Taille
 mainMsg = <b>{0} {1}</b> vous invite à déposer des fichiers dans le dépôt : <b>{2}</b>.
-msgAlt = L''''invitation de {0} {1} est désormais active.
+msgAlt = L''''invitation de dépôt {0} de {1} {2} est désormais active.
 msgFrom = Le message de
 msgProtected = Vous pouvez déverrouiller le dépôt en suivant le lien ci-dessous et en saisissant le mot de passe fourni.
 msgUnProtected = Vous pouvez y accéder en suivant le lien ci-dessous.
@@ -855,7 +1013,7 @@ closureDate = Closure date
 depotSize = Allowed size
 mainMsg = <b>{0} {1}</b> invited you to its upload request : <b>{2}</b>.
 msgFrom = Message from
-msgAlt = The repository from {0} {1} is now active.
+msgAlt = The upload request {0} from {1} {2} is now active.
 msgProtected = Unlock it by following the link below and entering the password.
 msgUnProtected = Access it by following the link below.
 name = {0} {1}
@@ -866,7 +1024,7 @@ closureDate = Дата закрытия
 depotSize = Допустимый размер
 mainMsg = <b>{0} {1}</b> пригласил вас в свой запрос загрузки <b>{2}</b>.
 msgFrom = Сообщение от
-msgAlt = Репозиторий {0} {1} активен.
+msgAlt = Репозиторий {0} из {1} {2} теперь активен.
 msgProtected = Разблокируйте его, перейдя по ссылке ниже и введя пароль.
 msgUnProtected = Получите доступ, перейдя по ссылке ниже. 
 name = {0} {1}
@@ -890,26 +1048,14 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-          <span data-th-if="(${isCollective})" data-th-utext="#{collectiveBeginningMainMsg(${requestRecipient.mail})}"></span>
+          <span data-th-if="(${isCollective})" data-th-utext="#{collectiveBeginningMainMsg(${requestRecipient.mail},${subject})}"></span>
           <span data-th-if="!(${isCollective})"
-                data-th-utext="#{individualBeginningMainMsg(${requestRecipient.mail})}"></span>
+                data-th-utext="#{individualBeginningMainMsg(${requestRecipient.mail},${subject})}"></span>
           <span data-th-if="(${documentsCount} == 1)" data-th-utext="#{endingMainMsgSingular}"></span>
           <span data-th-if="(${documentsCount} > 1)" data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
         </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
     </div><!--/* End of main-content container*/-->
-    <!--/* If the sender has added a  customized message */-->
-    <div th:assert="${!#strings.isEmpty(body)}"
-         th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-        <span id="message-title">
-          <span data-th-text="#{msgTitle}">You have a message from</span>
-        </span>
-      <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
-          Hi design team,<br>
-          Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
-          within my LinShare space.  <br>Best regards, Peter.
-        </span>
-    </div> <!--/* End of customized message */-->
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
@@ -935,42 +1081,90 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
 endingMainMsgSingular = Il y a  <b>1 fichier </b> dans le dépôt.
 filesInURDepot =  Fichiers déposés
 fileSize =  Taille
-collectiveBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt.
+collectiveBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt <b>{1}</b>.
 invitationClosureDate = Date de clôture
 invitationCreationDate = Date d''activation
-msgTitle = Message lié à l''invitation :
 numFilesInDepot = Nombre de fichiers déposés
 recipientsURequest = Destinataires
 subject = {0} a clôturé votre invitation de dépôt : {1}
-individualBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt.
+individualBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt <b>{1}</b>.
 uploadedOverTotal = {0} / {1} fichiers
-totalUploaded = {0} files',messages_english='endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
-endingMainMsgSingular =  There is a total <b>1 file </b> in the depot.
+totalUploaded = {0} files',messages_english='endingMainMsgPlural = There are a total of <b> {0} files </b> in the upload request.
+endingMainMsgSingular =  There is <b>1 file </b> in the upload request.
 filesInURDepot = Files uploaded
 fileSize =  Total filesize
-collectiveBeginningMainMsg = <b>{0}</b> has closed your collective Upload Request depot.
+collectiveBeginningMainMsg = <b>{0}</b> has closed your collective Upload Request <b>{1}</b>.
 invitationClosureDate = Closure date
 invitationCreationDate = Activation date
-msgTitle =  Upload request''s  attached message :
 numFilesInDepot = Total uploaded files
 recipientsURequest = Recipients
-subject =  {0}  has closed  your Upload Request depot : {1}
-individualBeginningMainMsg  = <b>{0}</b> has closed your Upload Request depot.
+subject =  {0} has closed your Upload Request: {1}
+individualBeginningMainMsg  = <b>{0}</b> has closed your Upload Request <b>{1}</b>.
 uploadedOverTotal = {0} / {1} files
 totalUploaded = {0} files',messages_russian='endingMainMsgPlural = Всего в хранилище <b> {0} файлов </b>.
 endingMainMsgSingular =  Всего в хранилище <b>1 файл </b.
 filesInURDepot = Файлы загружены
 fileSize =  Общий размер файла
-collectiveBeginningMainMsg = <b>{0}</b> закрыл ваше групповое хранилище для файлов запроса загрузки.
+collectiveBeginningMainMsg = <b>{0}</b> закрыл ваше групповое хранилище для файлов запроса загрузки <b>{1}</b>.
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
-msgTitle =  Запрос загрузки содержит сообщение:
 numFilesInDepot = Всего загруженных файлов
 recipientsURequest = Получатели
 subject =  {0} закрыл ваше хранилище для файлов запроса загрузки {1}
-individualBeginningMainMsg  = <b>{0}</b> закрыл ваше хранилище для файлов запроса загрузки.
+individualBeginningMainMsg  = <b>{0}</b> закрыл ваше хранилище для файлов запроса загрузки <b>{1}</b>.
 uploadedOverTotal = {0} / {1} файлов
 totalUploaded = {0} файлов' WHERE id=14;
+
+-- UPLOAD_REQUEST_FILE_DELETED_BY_OWNER.sql
+UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${document.name})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${document.name},${subject})}">
+                 Peter WILSON has deleted the file my-file.txt from the depot : subject
+                     </span>
+                  </p>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <th:block data-th-replace="layout :: infoDateArea(#{deletionDate},${deletionDate})"/>
+            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>',messages_french='closureDate = Dépôt disponible jusqu''''au
+deletionDate = Fichier supprimé le
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>a supprimé le fichier  <b>{2} </b> de  l''''Invitation de Dépôt : {3}
+subject = {0} {1} a supprimé {2} du dépôt',messages_english='closureDate = Depot closure date
+deletionDate = File deletion date
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted the file <b>{2} </b>from the upload request  : {3}.
+subject = {0} {1} has deleted {2} from the upload request',messages_russian='closureDate = Срок действия загрузки
+deletionDate = Дата удаления
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> удалил файл <b>{2} </b> из хранилища {3}.
+subject = {0} {1} удалил файл {2} из хранилища' WHERE id=24;
 
 -- Update UPLOAD_REQUEST_CREATED.sql (isCollective field)
 
@@ -1107,17 +1301,6 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
         <!--/* End of upper message content for recipients of the upload request */-->
       </div><!--/* End of section-content*/-->
     </div><!--/* End of main-content container*/-->
-    <!--/* If the sender has added a  customized message */-->
-    <div   th:assert="${!#strings.isEmpty(body)}" th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-      <span id="message-title">
-        <span data-th-text="#{msgTitle}">You have a message from</span>
-      </span>
-      <span id="message-content"  data-th-text="*{body}" style="white-space: pre-line;">
-          Hi design team,<br>
-         Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
-          within my LinShare space.  <br>Best regards, Peter.
-      </span>
-    </div> <!--/* End of customized message */-->
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
@@ -1156,7 +1339,6 @@ filesInURDepot = Fichiers déposés
 formatMailSubject = : {0}
 invitationClosureDate =  Date d''''activation
 invitationCreationDate = Date de clôture
-msgTitle = Message lié à l''''invitation :
 recipientsURequest = Destinataires
 subjectForOwner =  Votre invitation de dépôt sera bientôt clôturée
 subjectForRecipient = L''''invitation au dépôt de {0} {1} sera bientôt clôturée
@@ -1164,8 +1346,8 @@ uploadFileBtn = Déposer un fichier',messages_english='beginningMainMsgForRecipi
 beginningMainMsgCollective = Your invitation will be closed in  <b>{0} days</b>.
 beginningMainMsgIndividual =  Your invitation is about to be closed in <b>{0} days</b>.
 endingMainMsgPlural =  and you currently have received<b>{0} files</b>.
-endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
-endingMainMsgPluralForRecipient = and so far you have sent <b> {0} files </b> in the depot.
+endingMainMsgPlural = There are a total of <b> {0} files </b> in the Upload Request.
+endingMainMsgPluralForRecipient = and so far you have sent <b> {0} files </b> in the Upload Request.
 endingMainMsgSingular =   and you currently have received<b>1 file</b>.
 endingMainMsgSingular = There is a total of <b>1 file </b> in the repository.
 endingMainMsgSingularForRecipient = and you currently have sent <b>1 file </b>in the repository.
@@ -1173,7 +1355,6 @@ filesInURDepot = Files uploaded
 formatMailSubject = : {0}
 invitationClosureDate = Closure date
 invitationCreationDate = Activation date
-msgTitle =  Upload Request''''s  attached message :
 recipientsURequest = Recipients
 subjectForOwner =  Your invitation is about to be closed.
 subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
@@ -1190,7 +1371,6 @@ filesInURDepot = Загруженные файлы
 formatMailSubject = : {0}
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
-msgTitle =  Сообщение запроса загрузки:
 recipientsURequest = Получатели
 subjectForOwner =  Срок действия вашего приглашения заканчивается.
 subjectForRecipient =  {0} {1}''''s срок действия вашего приглашения заканчивается.
@@ -1338,17 +1518,6 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"]
         <!--/* End of upper message content for recipients of the upload request */-->
       </div><!--/* End of section-content*/-->
     </div><!--/* End of upper main-content container*/-->
-    <!--/* If the sender has added a  customized message */-->
-    <div   th:assert="${!#strings.isEmpty(body)}" th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-        <span id="message-title">
-          <span data-th-text="#{msgTitle}">You have a message from</span>
-        </span>
-      <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
-          Hi design team,<br>
-          Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
-          within my LinShare space.  <br>Best regards, Peter.
-        </span>
-    </div> <!--/* End of customized message */-->
   </section><!--/* End of uppermain-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
@@ -1385,7 +1554,6 @@ filesInURDepot = Fichiers déposés
 formatMailSubject = : {0}
 invitationClosureDate = Date  de clôture
 invitationCreationDate =  Date d''''activation
-msgTitle = Message lié à l''''Invitation de Dépôt :
 recipientsURequest = Destinataires
 subjectForOwner = Votre Invitation de Dépôt {0} est clôturée
 subjectForRecipient = L'''' Invitation de Dépôt de {0} {1} intitulée {2} est clôturée',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Upload Request has expired
@@ -1399,7 +1567,6 @@ filesInURDepot = Files uploaded
 formatMailSubject = : {0}
 invitationClosureDate = Closure date
 invitationCreationDate = Activation date
-msgTitle = Upload Request''''s  attached message :
 recipientsURequest = Recipients
 subjectForOwner = Your invitation {0} is now closed
 subjectForRecipient =  {0} {1}''''s  invitation {2} is now closed',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Срок действия загрузки закончился
@@ -1413,7 +1580,6 @@ filesInURDepot = Загружено файлов
 formatMailSubject = : {0}
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
-msgTitle = Сообщение загрузки
 recipientsURequest = Получатели
 subjectForOwner = Ваше приглашение  {0} больше не действительно
 subjectForRecipient =  {0} {1}''''s  приглешение {2} больше не действительно' WHERE id=13;
@@ -1963,6 +2129,182 @@ data-th-text="${labelBtn}"  th:href="@{${urlLink}}">Button label</a>
 </th:block>
 </div>' WHERE id=1;
 
+-- Update UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT
+UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head data-th-replace="layout :: header"></head>
+<body>
+<div
+  th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <section id="main-content">
+    <!--/* Upper main-content*/-->
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${requestOwner.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+  <span  data-th-utext="#{mainMsg(${requestRecipient.mail},${deleted.name},${subject})}"></span>
+        </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+     <th:block data-th-replace="layout :: infoDateArea(#{invitationCreationDate},${request.activationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{invitationClosureDate},${request.expirationDate})"/>
+  </section> <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',messages_french='invitationClosureDate = Date d''''expiration
+invitationCreationDate = Date d''''activation
+mainMsg = <b>{0}</b> a supprimé le fichier <b> {1} </b>de votre Invitation de Dépôt <b>{2}</b>.
+subject =  {0} a supprimé un fichier de votre invitation de dépôt {1}',messages_english='invitationClosureDate = Closure date
+invitationCreationDate = Activation date
+mainMsg = <b>{0}</b> has deleted the file <b> {1} </b>from your Upload Request <b>{2}</b>.
+subject = {0} has deleted a file from the Upload Request {1}',messages_russian='invitationClosureDate = Дата закрытия
+invitationCreationDate = Дата активации
+mainMsg = <b>{0}</b> удалил файл <b> {1} </b> из вашего запроса загрузки <b>{2}</b>.
+subject = {0} удалил файл из загрузки {1}' WHERE id=15;
+
+-- UPLOAD_REQUEST_WARN_BEFORE_EXPIRY
+UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})]
+[/]
+[# th:if="${!warnOwner}"]
+[( #{subjectForRecipient(${requestOwner.firstName},${requestOwner.lastName})})]
+[/]
+[# th:if="${!#strings.isEmpty(mailSubject)}"]
+[( #{formatMailSubject(${mailSubject})})]
+[/]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Upper message content for the owner of the upload request */-->
+        <th:block data-th-if="(${warnOwner})">
+          <!--/* Greetings */-->
+          <th:block    data-th-replace="layout :: greetings(${requestOwner.firstName})"/>
+          <!--/* End of Greetings  */-->
+          <!--/* Main email  message content*/-->
+          <p>
+            <span  data-th-if="!(${isCollective})"   data-th-utext="#{beginningMainMsgIndividual(${remainingDays})}"></span>
+            <span  data-th-if="(${isCollective})"   data-th-utext="#{beginningMainMsgCollective(${remainingDays})}"></span>
+            <span data-th-if="(${documentsCount} ==  1)"   data-th-utext="#{endingMainMsgSingular}" ></span>
+            <span  data-th-if="(${documentsCount} >  1)"   data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
+          </p>
+        </th:block>
+        <!--/* End of Main email  message content*/-->
+        <!--/* End of upper message content for owner of the upload request */-->
+        <!--/* upper message content for recipients of the upload request */-->
+        <th:block data-th-if="(${!warnOwner})" >
+          <!--/* Greetings */-->
+          <th:block  data-th-replace="layout :: greetings(${requestRecipient.mail})" />
+          <!--/* End of Greetings  */-->
+          <!--/* Main email  message content*/-->
+          <p>
+            <span  data-th-utext="#{beginningMainMsgForRecipient(${requestOwner.firstName},${requestOwner.lastName},${remainingDays})}"></span>
+            <span data-th-if="(${request.uploadedFilesCount} ==  1)"   data-th-utext="#{endingMainMsgSingularForRecipient}" ></span>
+            <span  data-th-if="(${request.uploadedFilesCount} >  1)"   data-th-utext="#{endingMainMsgSingularForRecipient(${request.uploadedFilesCount})}"></span>
+            <th:block   data-th-replace="layout :: actionButtonLink(#{uploadFileBtn},${requestUrl})"/>
+          </p>
+        </th:block>
+        <!--/* End of Main email  message content*/-->
+        <!--/* End of upper message content for recipients of the upload request */-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+    <!--/* If the sender has added a  customized message */-->
+    <div   th:assert="${!#strings.isEmpty(body)}" th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
+      <span id="message-title">
+        <span data-th-text="#{msgTitle}">You have a message from</span>
+      </span>
+      <span id="message-content"  data-th-text="*{body}" style="white-space: pre-line;">
+          Hi design team,<br>
+         Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
+          within my LinShare space.  <br>Best regards, Peter.
+      </span>
+    </div> <!--/* End of customized message */-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <!--/*Lower message content for the owner of the upload request */-->
+    <th:block  data-th-if="(${warnOwner})">
+      <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
+      <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>
+    </th:block>
+    <!--/*Lower message content for the owner of the upload request */-->
+    <!--/*Lower message content for recipients of the upload request */-->
+    <th:block  data-th-if="(${!warnOwner})">
+      <th:block  data-th-if="(${isCollective})">
+        <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
+        <th:block data-th-replace="layout :: infoFileListWithMyUploadRefs(#{filesInURDepot},${documents})"/>
+      </th:block>
+      <th:block  data-th-if="!(${isCollective})">
+        <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, true)"/>
+      </th:block>
+    </th:block>
+    <!--/* End of lower message content for recipients of the upload request */-->
+    <th:block data-th-replace="layout :: infoDateArea(#{invitationCreationDate},${request.activationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{invitationClosureDate},${request.expirationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',messages_french='beginningMainMsgForRecipient =   L''''invitation dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> va expirer dans <b>{2} jours</b>
+beginningMainMsgCollective =   Votre invitation collective sera clôturée dans  <b>{0} jours</b>.
+beginningMainMsgIndividual =   Votre invitation au dépôt sera clôturée dans  <b>{0} jours</b>.
+endingMainMsgPlural = et vous avez actuellement reçu <b>{0} fichiers</b>.
+endingMainMsgPlural = Il y a un total de <b> {0} fichiers </b> dans le dépôt.
+endingMainMsgPluralForRecipient = et vous avez actuellement envoyé  <b> {0} fichiers </b> dans le dépôt.
+endingMainMsgSingular = et vous avez actuellement reçu <b>1 fichier</b>.
+endingMainMsgSingular = Il y a au total <b>1 fichier </b> dans le dépôt.
+endingMainMsgSingularForRecipient = et vous avez actuellement envoyé  <b>1 fichier </b> dans le dépôt.
+filesInURDepot = Fichiers déposés
+formatMailSubject = : {0}
+invitationClosureDate =  Date d''''activation
+invitationCreationDate = Date de clôture
+msgTitle = Message lié à l''''invitation :
+recipientsURequest = Destinataires
+subjectForOwner =  Votre invitation de dépôt sera bientôt clôturée
+subjectForRecipient = L''''invitation au dépôt de {0} {1} sera bientôt clôturée
+uploadFileBtn = Déposer un fichier',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s The Upload Request is about to reach it''''s end date in <b>{2} days</b>
+beginningMainMsgCollective = Your invitation will be closed in  <b>{0} days</b>.
+beginningMainMsgIndividual =  Your invitation is about to be closed in <b>{0} days</b>.
+endingMainMsgPlural =  and you currently have received<b>{0} files</b>.
+endingMainMsgPlural = There are a total of <b> {0} files </b> in the Upload Request.
+endingMainMsgPluralForRecipient = and so far you have sent <b> {0} files </b> in the Upload Request.
+endingMainMsgSingular =   and you currently have received<b>1 file</b>.
+endingMainMsgSingular = There is a total of <b>1 file </b> in the repository.
+endingMainMsgSingularForRecipient = and you currently have sent <b>1 file </b>in the repository.
+filesInURDepot = Files uploaded
+formatMailSubject = : {0}
+invitationClosureDate = Closure date
+invitationCreationDate = Activation date
+msgTitle =  Upload Request''''s  attached message :
+recipientsURequest = Recipients
+subjectForOwner =  Your invitation is about to be closed.
+subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
+uploadFileBtn = Upload a file',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Действие запроса на загрузку закончится через <b>{2} дней</b>
+beginningMainMsgCollective = Действие вашего приглашения закончится через <b>{0} дней</b>.
+beginningMainMsgIndividual =  Действие вашего приглашения закончится через <b>{0} дней</b>.
+endingMainMsgPlural =  вы получили <b>{0} файлов</b>.
+endingMainMsgPlural = Всего загрузка содержит <b> {0} файлов </b>.
+endingMainMsgPluralForRecipient = вы отправили <b> {0} файлов </b> в загрузку.
+endingMainMsgSingular =   вы получили <b>1 файл</b>.
+endingMainMsgSingular = Всего в репозитории of <b>1 файл </b>.
+endingMainMsgSingularForRecipient = вы отправили <b>1 файл </b> в репозиторий.
+filesInURDepot = Загруженные файлы
+formatMailSubject = : {0}
+invitationClosureDate = Дата закрытия
+invitationCreationDate = Дата активации
+msgTitle =  Сообщение запроса загрузки:
+recipientsURequest = Получатели
+subjectForOwner =  Срок действия вашего приглашения заканчивается.
+subjectForRecipient =  {0} {1}''''s срок действия вашего приглашения заканчивается.
+uploadFileBtn = Загрузить файл' WHERE id=12;
 
 -- Update UPLOAD_REQUEST_UPDATED_SETTINGS
 UPDATE mail_content SET subject='[# th:if="${subject.modified}"]
@@ -2067,7 +2409,7 @@ maxFileNum = File number
 maxFileSize = File size
 msgFrom =  New message from
 name = {0} {1}
-nameOfDepot: Name of the depot
+nameOfDepot: Name of the Upload Request
 secondaryMsg = Updated settings are listed below.
 subject = Updated Settings for Upload Request : {0}',messages_russian='activationDate = Дата активации
 closureRight = Права закрытия

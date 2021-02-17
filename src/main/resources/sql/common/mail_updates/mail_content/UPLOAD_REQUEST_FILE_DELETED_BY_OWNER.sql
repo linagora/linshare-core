@@ -42,8 +42,8 @@ deletionDate = Fichier supprimé le
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>a supprimé le fichier  <b>{2} </b> de  l''''Invitation de Dépôt : {3}
 subject = {0} {1} a supprimé {2} du dépôt',messages_english='closureDate = Depot closure date
 deletionDate = File deletion date
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted the file <b>{2} </b>from the depot  : {3}.
-subject = {0} {1} has deleted {2} from the depot',messages_russian='closureDate = Срок действия загрузки
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted the file <b>{2} </b>from the upload request  : {3}.
+subject = {0} {1} has deleted {2} from the upload request',messages_russian='closureDate = Срок действия загрузки
 deletionDate = Дата удаления
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> удалил файл <b>{2} </b> из хранилища {3}.
 subject = {0} {1} удалил файл {2} из хранилища' WHERE id=24;

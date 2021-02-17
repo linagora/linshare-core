@@ -100,7 +100,7 @@ maxFileNum = File number
 maxFileSize = File size
 msgFrom =  New message from
 name = {0} {1}
-nameOfDepot: Name of the depot
+nameOfDepot: Name of the Upload Request
 secondaryMsg = Updated settings are listed below.
 subject = Updated Settings for Upload Request : {0}',messages_russian='activationDate = Дата активации
 closureRight = Права закрытия

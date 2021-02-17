@@ -181,7 +181,7 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 		} else {
 			ctx.setVariable("requestUrl", fakeLinshareURL + "/#fakeURL/uuid");
 		}
-		ctx.setVariable("subject", "upload request sujet");
+		ctx.setVariable("subject", "Subject of Upload Request");
 		ctx.setVariable("warnOwner", warnOwner);
 		return ctx;
 	}

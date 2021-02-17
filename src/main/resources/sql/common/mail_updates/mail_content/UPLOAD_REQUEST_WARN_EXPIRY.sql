@@ -43,17 +43,6 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"]
         <!--/* End of upper message content for recipients of the upload request */-->
       </div><!--/* End of section-content*/-->
     </div><!--/* End of upper main-content container*/-->
-    <!--/* If the sender has added a  customized message */-->
-    <div   th:assert="${!#strings.isEmpty(body)}" th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-        <span id="message-title">
-          <span data-th-text="#{msgTitle}">You have a message from</span>
-        </span>
-      <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
-          Hi design team,<br>
-          Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
-          within my LinShare space.  <br>Best regards, Peter.
-        </span>
-    </div> <!--/* End of customized message */-->
   </section><!--/* End of uppermain-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
@@ -90,7 +79,6 @@ filesInURDepot = Fichiers déposés
 formatMailSubject = : {0}
 invitationClosureDate = Date  de clôture
 invitationCreationDate =  Date d''''activation
-msgTitle = Message lié à l''''Invitation de Dépôt :
 recipientsURequest = Destinataires
 subjectForOwner = Votre Invitation de Dépôt {0} est clôturée
 subjectForRecipient = L'''' Invitation de Dépôt de {0} {1} intitulée {2} est clôturée',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Upload Request has expired
@@ -104,7 +92,6 @@ filesInURDepot = Files uploaded
 formatMailSubject = : {0}
 invitationClosureDate = Closure date
 invitationCreationDate = Activation date
-msgTitle = Upload Request''''s  attached message :
 recipientsURequest = Recipients
 subjectForOwner = Your invitation {0} is now closed
 subjectForRecipient =  {0} {1}''''s  invitation {2} is now closed',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Срок действия загрузки закончился
@@ -118,7 +105,6 @@ filesInURDepot = Загружено файлов
 formatMailSubject = : {0}
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
-msgTitle = Сообщение загрузки
 recipientsURequest = Получатели
 subjectForOwner = Ваше приглашение  {0} больше не действительно
 subjectForRecipient =  {0} {1}''''s  приглешение {2} больше не действительно' WHERE id=13;

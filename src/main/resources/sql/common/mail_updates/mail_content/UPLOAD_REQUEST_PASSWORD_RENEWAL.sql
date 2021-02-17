@@ -50,7 +50,7 @@ closureDate = Depot closure date
 mainMsg = <b>{0} {1}</b> has changed the password of the Upload Request : {2}
 msgProtected = You may find the new password below as well as the access link.
 password = Password
-subject = {0} {1} sent you the new password for the depot: {2}',messages_russian='buttonMsg = Доступ к загрузке
+subject = {0} {1} sent you the new password for the Upload Request: {2}',messages_russian='buttonMsg = Доступ к загрузке
 closureDate = Дата закрытия загрузки
 mainMsg = <b>{0} {1}</b> изменил пароль к загрузке {2}
 msgProtected = Новый пароль и доступ к загрузке доступны ниже.

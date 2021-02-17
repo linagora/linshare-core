@@ -46,17 +46,6 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
         <!--/* End of upper message content for recipients of the upload request */-->
       </div><!--/* End of section-content*/-->
     </div><!--/* End of main-content container*/-->
-    <!--/* If the sender has added a  customized message */-->
-    <div   th:assert="${!#strings.isEmpty(body)}" th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-      <span id="message-title">
-        <span data-th-text="#{msgTitle}">You have a message from</span>
-      </span>
-      <span id="message-content"  data-th-text="*{body}" style="white-space: pre-line;">
-          Hi design team,<br>
-         Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
-          within my LinShare space.  <br>Best regards, Peter.
-      </span>
-    </div> <!--/* End of customized message */-->
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
@@ -95,7 +84,6 @@ filesInURDepot = Fichiers déposés
 formatMailSubject = : {0}
 invitationClosureDate =  Date d''''activation
 invitationCreationDate = Date de clôture
-msgTitle = Message lié à l''''invitation :
 recipientsURequest = Destinataires
 subjectForOwner =  Votre invitation de dépôt sera bientôt clôturée
 subjectForRecipient = L''''invitation au dépôt de {0} {1} sera bientôt clôturée
@@ -103,8 +91,8 @@ uploadFileBtn = Déposer un fichier',messages_english='beginningMainMsgForRecipi
 beginningMainMsgCollective = Your invitation will be closed in  <b>{0} days</b>.
 beginningMainMsgIndividual =  Your invitation is about to be closed in <b>{0} days</b>.
 endingMainMsgPlural =  and you currently have received<b>{0} files</b>.
-endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
-endingMainMsgPluralForRecipient = and so far you have sent <b> {0} files </b> in the depot.
+endingMainMsgPlural = There are a total of <b> {0} files </b> in the Upload Request.
+endingMainMsgPluralForRecipient = and so far you have sent <b> {0} files </b> in the Upload Request.
 endingMainMsgSingular =   and you currently have received<b>1 file</b>.
 endingMainMsgSingular = There is a total of <b>1 file </b> in the repository.
 endingMainMsgSingularForRecipient = and you currently have sent <b>1 file </b>in the repository.
@@ -112,7 +100,6 @@ filesInURDepot = Files uploaded
 formatMailSubject = : {0}
 invitationClosureDate = Closure date
 invitationCreationDate = Activation date
-msgTitle =  Upload Request''''s  attached message :
 recipientsURequest = Recipients
 subjectForOwner =  Your invitation is about to be closed.
 subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
@@ -129,7 +116,6 @@ filesInURDepot = Загруженные файлы
 formatMailSubject = : {0}
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
-msgTitle =  Сообщение запроса загрузки:
 recipientsURequest = Получатели
 subjectForOwner =  Срок действия вашего приглашения заканчивается.
 subjectForRecipient =  {0} {1}''''s срок действия вашего приглашения заканчивается.

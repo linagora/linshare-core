@@ -13,26 +13,14 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-          <span data-th-if="(${isCollective})" data-th-utext="#{collectiveBeginningMainMsg(${requestRecipient.mail})}"></span>
+          <span data-th-if="(${isCollective})" data-th-utext="#{collectiveBeginningMainMsg(${requestRecipient.mail},${subject})}"></span>
           <span data-th-if="!(${isCollective})"
-                data-th-utext="#{individualBeginningMainMsg(${requestRecipient.mail})}"></span>
+                data-th-utext="#{individualBeginningMainMsg(${requestRecipient.mail},${subject})}"></span>
           <span data-th-if="(${documentsCount} == 1)" data-th-utext="#{endingMainMsgSingular}"></span>
           <span data-th-if="(${documentsCount} > 1)" data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
         </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
     </div><!--/* End of main-content container*/-->
-    <!--/* If the sender has added a  customized message */-->
-    <div th:assert="${!#strings.isEmpty(body)}"
-         th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-        <span id="message-title">
-          <span data-th-text="#{msgTitle}">You have a message from</span>
-        </span>
-      <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
-          Hi design team,<br>
-          Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
-          within my LinShare space.  <br>Best regards, Peter.
-        </span>
-    </div> <!--/* End of customized message */-->
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
@@ -58,39 +46,36 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
 endingMainMsgSingular = Il y a  <b>1 fichier </b> dans le dépôt.
 filesInURDepot =  Fichiers déposés
 fileSize =  Taille
-collectiveBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt.
+collectiveBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt <b>{1}</b>.
 invitationClosureDate = Date de clôture
 invitationCreationDate = Date d''activation
-msgTitle = Message lié à l''invitation :
 numFilesInDepot = Nombre de fichiers déposés
 recipientsURequest = Destinataires
 subject = {0} a clôturé votre invitation de dépôt : {1}
-individualBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt.
+individualBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt <b>{1}</b>.
 uploadedOverTotal = {0} / {1} fichiers
-totalUploaded = {0} files',messages_english='endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
-endingMainMsgSingular =  There is a total <b>1 file </b> in the depot.
+totalUploaded = {0} files',messages_english='endingMainMsgPlural = There are a total of <b> {0} files </b> in the upload request.
+endingMainMsgSingular =  There is <b>1 file </b> in the upload request.
 filesInURDepot = Files uploaded
 fileSize =  Total filesize
-collectiveBeginningMainMsg = <b>{0}</b> has closed your collective Upload Request depot.
+collectiveBeginningMainMsg = <b>{0}</b> has closed your collective Upload Request <b>{1}</b>.
 invitationClosureDate = Closure date
 invitationCreationDate = Activation date
-msgTitle =  Upload request''s  attached message :
 numFilesInDepot = Total uploaded files
 recipientsURequest = Recipients
-subject =  {0}  has closed  your Upload Request depot : {1}
-individualBeginningMainMsg  = <b>{0}</b> has closed your Upload Request depot.
+subject =  {0} has closed your Upload Request: {1}
+individualBeginningMainMsg  = <b>{0}</b> has closed your Upload Request <b>{1}</b>.
 uploadedOverTotal = {0} / {1} files
 totalUploaded = {0} files',messages_russian='endingMainMsgPlural = Всего в хранилище <b> {0} файлов </b>.
 endingMainMsgSingular =  Всего в хранилище <b>1 файл </b.
 filesInURDepot = Файлы загружены
 fileSize =  Общий размер файла
-collectiveBeginningMainMsg = <b>{0}</b> закрыл ваше групповое хранилище для файлов запроса загрузки.
+collectiveBeginningMainMsg = <b>{0}</b> закрыл ваше групповое хранилище для файлов запроса загрузки <b>{1}</b>.
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
-msgTitle =  Запрос загрузки содержит сообщение:
 numFilesInDepot = Всего загруженных файлов
 recipientsURequest = Получатели
 subject =  {0} закрыл ваше хранилище для файлов запроса загрузки {1}
-individualBeginningMainMsg  = <b>{0}</b> закрыл ваше хранилище для файлов запроса загрузки.
+individualBeginningMainMsg  = <b>{0}</b> закрыл ваше хранилище для файлов запроса загрузки <b>{1}</b>.
 uploadedOverTotal = {0} / {1} файлов
 totalUploaded = {0} файлов' WHERE id=14;

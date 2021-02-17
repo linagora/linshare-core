@@ -36,7 +36,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
                        </span>
                    </th:block>
                     <th:block data-th-if="(${request.wasPreviouslyCreated})">
-                       <span data-th-text="#{msgAlt(${requestOwner.firstName} , ${requestOwner.lastName})}"> Peter Wilson''s Upload Request depot is now activated..</span>
+                       <span data-th-text="#{msgAlt(${subject} , ${requestOwner.firstName} , ${requestOwner.lastName})}"> Peter Wilson''s Upload Request is now activated..</span>
                      </th:block>
                      <br/>
                      <!--/* Check if the external user has a password protected file share */-->
@@ -77,7 +77,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
 closureDate = Date de clôture
 depotSize = Taille
 mainMsg = <b>{0} {1}</b> vous invite à déposer des fichiers dans le dépôt : <b>{2}</b>.
-msgAlt = L''''invitation de {0} {1} est désormais active.
+msgAlt = L''''invitation de dépôt {0} de {1} {2} est désormais active.
 msgFrom = Le message de
 msgProtected = Vous pouvez déverrouiller le dépôt en suivant le lien ci-dessous et en saisissant le mot de passe fourni.
 msgUnProtected = Vous pouvez y accéder en suivant le lien ci-dessous.
@@ -89,7 +89,7 @@ closureDate = Closure date
 depotSize = Allowed size
 mainMsg = <b>{0} {1}</b> invited you to its upload request : <b>{2}</b>.
 msgFrom = Message from
-msgAlt = The upload request from {0} {1} is now active.
+msgAlt = The upload request {0} from {1} {2} is now active.
 msgProtected = Unlock it by following the link below and entering the password.
 msgUnProtected = Access it by following the link below.
 name = {0} {1}
@@ -100,7 +100,7 @@ closureDate = Дата закрытия
 depotSize = Допустимый размер
 mainMsg = <b>{0} {1}</b> пригласил вас в свой запрос загрузки <b>{2}</b>.
 msgFrom = Сообщение от
-msgAlt = Репозиторий {0} {1} активен.
+msgAlt = Репозиторий {0} из {1} {2} теперь активен.
 msgProtected = Разблокируйте его, перейдя по ссылке ниже и введя пароль.
 msgUnProtected = Получите доступ, перейдя по ссылке ниже. 
 name = {0} {1}

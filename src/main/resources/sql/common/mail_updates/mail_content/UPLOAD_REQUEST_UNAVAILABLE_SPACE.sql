@@ -19,18 +19,6 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
         </p> <!--/* End of Main email  message content*/-->
       <!--/* End of section-content*/-->
     </div><!--/* End of main-content container*/-->
-    <!--/* If the sender has added a  customized message */-->
-    <div th:assert="${!#strings.isEmpty(body)}"
-         th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-      <span id="message-title">
-        <span data-th-text="#{msgTitle}">You have a message from</span>
-      </span>
-      <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
-        Hi design,<br>
-       Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
-        within my LinShare space.  <br>Best regards, Peter.
-       </span>
-    </div> <!--/* End of customized message */-->
   </section> <!--/* End of upper  main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
@@ -48,20 +36,17 @@ invitationCreationDate = Date d''''activation
 mainMsg =  <b>{0}</b>  n''''a pas pu déposer des fichiers dans le dépôt car il n''''y a plus d''''espace disponible dans votre Espace Personnel. Veuillez s''''il vous plait libérez de l''''espace.
 mainMsgTitle = Vous n''''avez plus d''''espace disponible.
 maxUploadDepotSize =  Taille total du dépôt
-msgTitle = Message lié à l''''invitation de dépôt :
 recipientsURequest = Destinataires
 subject =  {0}  n''''a pu déposer un fichier car il n''''y a plus d''''espace disponible',messages_english='invitationClosureDate = Closure date
 invitationCreationDate = Activation date
 mainMsg =  <b>{0}</b> is not able to upload any file, since there is no more space available in your Personal Space. Please free up some space.
 mainMsgTitle = No more space available.
-maxUploadDepotSize = Maximum size of the depot
-msgTitle = Upload Request''s  attached message :
+maxUploadDepotSize = Maximum size of the Upload Request
 recipientsURequest = Recipients
 subject =  {0} could not upload a file since there is no more space available',messages_russian='invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
 mainMsg =  <b>{0}</b> не может загрузить файлы, так как в вашем личном пространстве недостаточно места. Пожалуйста, удалите некоторые файлы, чтобы освободить место.
 mainMsgTitle = Недостаточно свободного места.
 maxUploadDepotSize = Максимальный размер загрузки
-msgTitle = Сообщение загрузки:
 recipientsURequest = Получатели
 subject =  {0} не может загрузить файл, так как недостаточно свободного места' WHERE id=11;
