@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
@@ -115,7 +116,7 @@ public class UploadRequestGroupDto {
 	private GenericUserDto owner;
 
 	@Schema(description = "Abstract Domain")
-	private DomainDto domainDto;
+	private GenericLightEntity domainDto;
 
 	@Schema(description = "Status")
 	private UploadRequestStatus status;
@@ -154,7 +155,7 @@ public class UploadRequestGroupDto {
 		this.enableNotification = entity.getEnableNotification();
 		this.collective = entity.isCollective();
 		this.owner = new GenericUserDto((User) entity.getOwner());
-		this.domainDto = new DomainDto(entity.getAbstractDomain(), true);
+		this.domainDto = new GenericLightEntity(entity.getAbstractDomain());
 		this.status = entity.getStatus();
 	}
 
@@ -343,11 +344,11 @@ public class UploadRequestGroupDto {
 		this.owner = owner;
 	}
 
-	public DomainDto getDomainDto() {
+	public GenericLightEntity getDomainDto() {
 		return domainDto;
 	}
 
-	public void setDomainDto(DomainDto domainDto) {
+	public void setDomainDto(GenericLightEntity domainDto) {
 		this.domainDto = domainDto;
 	}
 
