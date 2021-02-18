@@ -139,7 +139,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		TimeUnitValueFunctionality fileExpirationTimeFunctionality = getDefaultFileExpiryTimeFunctionality(domain);
 		if (fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
 			Calendar expirationDate = Calendar.getInstance();
-			expirationDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getMaxValue());
+			expirationDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
 			return expirationDate;
 		}
 		return null;

@@ -61,9 +61,6 @@ public class UploadRequestEntryDto {
 	@Schema(description = "ModificationDate")
 	protected Calendar modificationDate;
 
-	@Schema(description = "ExpirationDate")
-	protected Calendar expirationDate;
-
 	@Schema(description = "Name")
 	protected String name;
 
@@ -104,7 +101,6 @@ public class UploadRequestEntryDto {
 		this.recipient = new ContactDto(entry.getUploadRequestUrl().getContact());
 		this.creationDate = entry.getCreationDate();
 		this.modificationDate = entry.getModificationDate();
-		this.expirationDate = entry.getExpirationDate();
 		this.name = entry.getName();
 		this.comment = entry.getComment();
 		this.uuid = entry.getUuid();
@@ -137,14 +133,6 @@ public class UploadRequestEntryDto {
 
 	public void setModificationDate(Calendar modificationDate) {
 		this.modificationDate = modificationDate;
-	}
-
-	public Calendar getExpirationDate() {
-		return expirationDate;
-	}
-
-	public void setExpirationDate(Calendar expirationDate) {
-		this.expirationDate = expirationDate;
 	}
 
 	public String getName() {

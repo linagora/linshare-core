@@ -211,11 +211,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
 					.getEnciphermentFunctionality(actor.getDomain());
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
-			// We need to set an expiration date in case of file cleaner
-			// activation.
 			upReqEntry = uploadRequestEntryBusinessService.createUploadRequestEntryDocument(actor, tempFile, size,
-					fileName, comment, checkIfIsCiphered, timeStampingUrl, mimeType,
-					getDocumentExpirationDate(actor.getDomain()), isFromCmis, metadata, uploadRequestUrl);
+					fileName, comment, checkIfIsCiphered, timeStampingUrl, mimeType, null, isFromCmis, metadata,
+					uploadRequestUrl);
 			addToQuota(actor, size);
 		} finally {
 			try {
@@ -255,9 +253,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		if (uploadRequestEntry.getComment() == null) {
 			cr.setComment("");
 		}
-		// What will be expiration date of the document if URE expiration is null ?
 		DocumentEntry documentEntry = documentEntryBusinessService.copy(owner, cr.getDocumentUuid(), cr.getName(),
-				cr.getComment(), cr.getMetaData(), uploadRequestEntry.getExpirationDate(), cr.getCiphered());
+				cr.getComment(), cr.getMetaData(), getDocumentExpirationDate(owner.getDomain()), cr.getCiphered());
 		addToQuota(owner, cr.getSize());
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(authUser, owner, documentEntry, LogAction.CREATE);
 		log.setCause(LogActionCause.COPY);
