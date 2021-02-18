@@ -43,7 +43,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import javax.transaction.Transactional;
 
@@ -492,7 +491,6 @@ public class UploadRequestServiceImplTestV2 {
 
 	private Date parseDate(String inputDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return formatter.parse(inputDate);
 	}
 
@@ -583,4 +581,83 @@ public class UploadRequestServiceImplTestV2 {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testRoundExpiryDateWhenCreateEnabledUploadRequest() throws BusinessException, ParseException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2020-03-12 15:25:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		Date expiryDate = parseDate("2020-10-12 9:15:45");
+		UploadRequest uploadRequest = createSimpleUploadRequest(null);
+		uploadRequest.setExpiryDate(expiryDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Date expectedExpiryDate = parseDate("2020-10-12 10:00:00");
+		Assertions.assertEquals(expectedExpiryDate, uploadRequestGroup.getExpiryDate(),
+				"The expiry date of the group has not been rounded");
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(expectedExpiryDate, uploadRequest.getExpiryDate(),
+				"The expiry date of the upload request has not been rounded");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testRoundExpiryDateWhenCreateUploadRequest() throws BusinessException, ParseException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2020-03-12 15:25:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		Date expiryDate = parseDate("2020-10-12 9:15:45");
+		UploadRequest uploadRequest = createSimpleUploadRequest(now);
+		uploadRequest.setExpiryDate(expiryDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Date expectedExpiryDate = parseDate("2020-10-12 10:00:00");
+		Assertions.assertEquals(expectedExpiryDate, uploadRequestGroup.getExpiryDate(),
+				"The expiry date of the group has not been rounded");
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(expectedExpiryDate, uploadRequest.getExpiryDate(),
+				"The expiry date of the upload request has not been rounded");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testRoundNotifDateWhenCreateEnabledUploadRequest() throws BusinessException, ParseException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2020-05-12 15:25:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		Date expiryDate = parseDate("2020-10-12 15:25:00");
+		Date notifDate = parseDate("2020-10-10 10:25:00");
+		UploadRequest uploadRequest = createSimpleUploadRequest(null);
+		uploadRequest.setExpiryDate(expiryDate);
+		uploadRequest.setNotificationDate(notifDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Date expectedNotifDate = parseDate("2020-10-10 11:00:00");
+		Assertions.assertEquals(expectedNotifDate, uploadRequestGroup.getNotificationDate(),
+				"The notification date of the group has not been rounded");
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(expectedNotifDate, uploadRequest.getNotificationDate(),
+				"The notification date of the upload request has not been rounded");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testRoundNotifDateWhenCreateUploadRequest() throws BusinessException, ParseException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2020-05-12 15:25:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		Date expiryDate = parseDate("2020-10-12 15:25:00");
+		Date notifDate = parseDate("2020-10-10 10:25:00");
+		UploadRequest uploadRequest = createSimpleUploadRequest(now);
+		uploadRequest.setExpiryDate(expiryDate);
+		uploadRequest.setNotificationDate(notifDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Date expectedNotifDate = parseDate("2020-10-10 11:00:00");
+		Assertions.assertEquals(expectedNotifDate, uploadRequestGroup.getNotificationDate(),
+				"The notification date of the group has not been rounded");
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(expectedNotifDate, uploadRequest.getNotificationDate(),
+				"The notification date of the upload request has not been rounded");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }

@@ -35,7 +35,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -201,11 +200,11 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			req.setStatus(UploadRequestStatus.ENABLED);
 		} else {
 			req.setStatus(UploadRequestStatus.CREATED);
-			req.setActivationDate(roundToUpperHour(req.getActivationDate()));
+			req.setActivationDate(functionalityService.roundToUpperHour(req.getActivationDate()));
 			applyBusinessRuleForActivationDate(domain, req);
 		}
-		req.setExpiryDate(roundToUpperHour(req.getExpiryDate()));
-		req.setNotificationDate(roundToUpperHour(req.getNotificationDate()));
+		req.setExpiryDate(functionalityService.roundToUpperHour(req.getExpiryDate()));
+		req.setNotificationDate(functionalityService.roundToUpperHour(req.getNotificationDate()));
 		applyBusinessRuleForExpiryAndNoticationDate(domain, req);
 		applyBusinessRuleForMaxDepositSize(domain, req);
 		applyBusinessRuleForMaxFileCount(domain, req);
@@ -220,6 +219,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	private UploadRequestGroup checkUploadRequestGroupData(User owner, UploadRequestGroup group) {
 		AbstractDomain domain = owner.getDomain();
+		group.setExpiryDate(functionalityService.roundToUpperHour(group.getExpiryDate()));
+		group.setNotificationDate(functionalityService.roundToUpperHour(group.getNotificationDate()));
 		applyBusinessRuleForExpiryAndNoticationDate(domain, group);
 		applyBusinessRuleForMaxDepositSize(domain, group);
 		applyBusinessRuleForMaxFileCount(domain, group);
@@ -282,7 +283,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	private Date applyBusinessRuleForExpiryDate(AbstractDomain domain, Date expiryDate) {
 		TimeUnitValueFunctionality funcExpiry = functionalityService.getUploadRequestExpiryTimeFunctionality(domain);
-		return functionalityService.getDateValue(funcExpiry, expiryDate,
+		return functionalityService.getUploadRequestDateValue(funcExpiry, expiryDate,
 				BusinessErrorCode.UPLOAD_REQUEST_EXPIRY_DATE_INVALID);
 	}
 
@@ -609,19 +610,4 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		return uploadRequestGroupBusinessService.computeEntriesSize(uploadRequestGroup);
 	}
 
-	private Date roundToUpperHour(Date dateToRound) {
-		if (null == dateToRound)
-			return null;
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(dateToRound);
-		// If it is not a full hour we get to the next hour
-		if (calendar.get(Calendar.SECOND) != 0 || calendar.get(Calendar.MILLISECOND) != 0
-				|| calendar.get(Calendar.MINUTE) != 0) {
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.add(Calendar.HOUR, 1);
-		}
-		return calendar.getTime();
-	}
 }

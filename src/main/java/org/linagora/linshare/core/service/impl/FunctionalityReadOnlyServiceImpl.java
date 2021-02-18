@@ -521,7 +521,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		}
 		Calendar c = getCalendarTime(now);
 		c.add(func.toCalendarMaxValue(), func.getMaxValue());
-		Date maxDate = c.getTime(); // Maximum value allowed
+		Date maxDate = roundToUpperHour(c.getTime()); // Maximum value allowed
 		if (currentDate.before(now) || currentDate.after(maxDate)) {
 			String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(now), dateFormat.format(maxDate));
 			logger.warn(errorMessage);
@@ -572,8 +572,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return null;
 		}
 		logger.debug(func.getIdentifier() + " is activated");
-		Date now = getCalendarWithoutTime(new Date()).getTime();
-		Calendar c = getCalendarWithoutTime(expirationDate);
+		Date now = getCalendarTime(timeService.dateNow()).getTime();
+		Calendar c = getCalendarTime(expirationDate);
 		c.add(func.toCalendarValue(), -func.getValue());
 		Date defaultDate = c.getTime();
 		if (defaultDate.before(now)) {
@@ -584,7 +584,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return defaultDate;
 		}
 		logger.debug(func.getIdentifier() + " has a delegation policy");
-		Calendar cal = getCalendarWithoutTime(expirationDate);
+		Calendar cal = getCalendarTime(expirationDate);
 		cal.add(func.toCalendarMaxValue(), -func.getMaxValue());
 		Date minDate = cal.getTime(); // notification should be between min date and expiration date
 		if (minDate.before(now)) {
@@ -652,6 +652,23 @@ public class FunctionalityReadOnlyServiceImpl implements
 			calendar.setTime(date);
 		}
 		return calendar;
+	}
+
+	@Override
+	public Date roundToUpperHour(Date dateToRound) {
+		if (null == dateToRound)
+			return null;
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateToRound);
+		// If it is not a full hour we get to the next hour
+		if (calendar.get(Calendar.SECOND) != 0 || calendar.get(Calendar.MILLISECOND) != 0
+				|| calendar.get(Calendar.MINUTE) != 0) {
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.add(Calendar.HOUR, 1);
+		}
+		return calendar.getTime();
 	}
 
 	private String buildErrorMessage(Functionality func, String valueToCompare, String minValue, String maxValue) {
