@@ -1167,7 +1167,6 @@ mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> уда
 subject = {0} {1} удалил файл {2} из хранилища' WHERE id=24;
 
 -- Update UPLOAD_REQUEST_CREATED.sql (isCollective field)
-
 UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -1200,7 +1199,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
           <!--/* End of Greetings for external or internal recipient */-->
         <!--/* Main email  message content*/-->
         <p>
-                 <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
+                 <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
                      Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
                 </span>
  <span th:with="df=#{customDate}" data-th-text="${#dates.format(request.activationDate,df)}">7th of November, 2018</span>
@@ -1230,7 +1229,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
 closureDate = Date de clôture
 customDate= d MMMM yyyy.
 depotSize = Taille autorisée
-mainMsg = <b>{0} {1}</b> a créé une Invitation de dépôt, qui sera ouverte le
+mainMsg = <b>{0} {1}</b> a créé une Invitation de dépôt <b>{2}</b>, qui sera ouverte le
 msgFrom = Le message de
 name = {0} {1}
 recipientsOfDepot = Destinataires
@@ -1238,7 +1237,7 @@ subject = {0} {1} vous a créé une Invitation de Dépôt',messages_english='act
 closureDate = Closure date
 customDate= MMMM d, yyyy.
 depotSize = Allowed size
-mainMsg = <b>{0} {1}</b> has invited you to access to his Upload Request, sets to open
+mainMsg = <b>{0} {1}</b> has invited you to access to his Upload Request <b>{2}</b>, sets to open
 msgFrom = Message from
 name = {0} {1}
 recipientsOfDepot = Recipients
@@ -1246,7 +1245,7 @@ subject = {0} {1} has sent an invitation to access to his Upload Request.',messa
 closureDate = Дата закрытия
 customDate= MMMM d, yyyy.
 depotSize = Допустимый размер
-mainMsg = <b>{0} {1}</b> открыл для вас доступ к его запросу загрузки, созданному
+mainMsg = <b>{0} {1}</b> открыл для вас доступ к его запросу загрузки <b>{2}</b>, созданному
 msgFrom = Сообщение от
 name = {0} {1}
 recipientsOfDepot = Получатели
