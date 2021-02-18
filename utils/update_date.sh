@@ -18,7 +18,7 @@ fi
 
 set -o verbose
 
-yearto='2020'
+yearto='2021'
 
 # some legacy license use - instead of –
 find ${l_path} -name "*.*" | xargs -i sed -Ei 's/\(C\) (20[0-9]{2})–(20[0-9]{2}) LINAGORA/(C) \1-\2 LINAGORA/g' {}

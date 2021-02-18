@@ -1,7 +1,7 @@
 /*
  * LinShbjectare is an open source filesharing software, part of the LinPKI software
  * 
- * Copyright (C) 2015-2020 LINAGORA
+ * Copyright (C) 2015-2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -11,7 +11,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2020. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2021. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)

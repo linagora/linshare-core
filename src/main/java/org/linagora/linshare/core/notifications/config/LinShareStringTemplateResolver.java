@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2017-2020 LINAGORA
+ * Copyright (C) 2017-2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -11,7 +11,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display in the interface of the “LinShare™”
  * trademark/logo, the "Libre & Free" mention, the words “You are using the Free
- * and Open Source version of LinShare™, powered by Linagora © 2009–2020.
+ * and Open Source version of LinShare™, powered by Linagora © 2009–2021.
  * Contribute to Linshare R&D by subscribing to an Enterprise offer!”. You must
  * also retain the latter notice in all asynchronous messages such as e-mails
  * sent with the Program, (ii) retain all hypertext links between LinShare and
@@ -136,9 +136,9 @@ public class LinShareStringTemplateResolver extends StringTemplateResolver {
 	final private String formatFooter(String footer, Language lang) {
 		if (insertLicenceTerm) {
 			if (lang.equals(Language.FRENCH)) {
-				footer += "<br/>Vous utilisez la version libre et gratuite de <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, développée par Linagora © 2009–2020. Contribuez à la R&D du produit en souscrivant à une offre entreprise.<br/>";
+				footer += "<br/>Vous utilisez la version libre et gratuite de <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, développée par Linagora © 2009–2021. Contribuez à la R&D du produit en souscrivant à une offre entreprise.<br/>";
 			} else {
-				footer += "<br/>You are using the Open Source and free version of <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, powered by Linagora © 2009–2020. Contribute to Linshare R&D by subscribing to an Enterprise offer.<br/>";
+				footer += "<br/>You are using the Open Source and free version of <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, powered by Linagora © 2009–2021. Contribute to Linshare R&D by subscribing to an Enterprise offer.<br/>";
 			}
 		}
 		return footer;
