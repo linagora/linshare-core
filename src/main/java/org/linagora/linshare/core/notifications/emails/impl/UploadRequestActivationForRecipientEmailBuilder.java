@@ -66,7 +66,7 @@ public class UploadRequestActivationForRecipientEmailBuilder extends GenericUplo
 		UploadRequest request = emailCtx.getUploadRequest();
 
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		List<MailContact> recipients = getRecipients(emailCtx.getRecipients());
+		List<MailContact> recipients = getRecipients(request);
 
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());

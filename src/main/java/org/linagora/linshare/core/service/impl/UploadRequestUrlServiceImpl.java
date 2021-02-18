@@ -136,7 +136,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 			}
 		} else if (UploadRequestStatus.ENABLED.equals(request.getStatus())) {
 			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext(owner, request,
-					requestUrl, container.getRecipients());
+					requestUrl);
 			container.addMailContainersAddEmail(mailBuildingService.build(mailContext));
 		}
 		AuditLogEntryUser log = new UploadRequestUrlAuditLogEntry(new AccountMto(owner), new AccountMto(owner),
