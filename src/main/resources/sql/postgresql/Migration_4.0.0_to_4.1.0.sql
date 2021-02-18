@@ -135,7 +135,7 @@ INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (13, 0, 2), (14, 0, 2), (15, 0, 2),(16, 1, 1), (17, 0, 2), (18, 0, 2), (19, 1, 1), (20, 1, 1), (21, 0, 0);
 
 ALTER TABLE functionality_unit ADD integer_max_value int4 NULL;
-ALTER TABLE functionality_unit ADD max_unit_id int8 NOT NULL DEFAULT 13;
+ALTER TABLE functionality_unit ADD max_unit_id int8;
 ALTER TABLE functionality_integer ADD integer_max_value int4 NULL;
 
 ALTER TABLE functionality_unit RENAME COLUMN integer_value TO integer_default_value;
@@ -152,9 +152,30 @@ UPDATE functionality_unit SET integer_default_value = 10, integer_max_value = 20
 UPDATE functionality_unit SET integer_default_value = 50, integer_max_value = 100, max_unit_id = 20 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE');   -- UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
 UPDATE functionality_unit SET integer_default_value = 7, integer_max_value = 7, max_unit_id = 21 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION');      -- UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
 
+ALTER TABLE functionality_unit ALTER COLUMN max_unit_id SET NOT NULL;
+
+-- DRIVE should be disabled by default.
+UPDATE policy SET status=false, default_status=false WHERE id = 317;
+
 -- Add new fields for default pwd and store original pwd of an URU
 ALTER TABLE upload_request_url ADD COLUMN default_Password bool DEFAULT true NOT NULL;
 ALTER TABLE upload_request_url ADD COLUMN original_password character varying(255);
+
+-- UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
+UPDATE functionality_unit SET integer_max_value=1, integer_default_value=3 WHERE functionality_id=33;
+
+-- UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
+UPDATE functionality_integer SET integer_max_value=100, integer_default_value=10 WHERE functionality_id=35;
+
+-- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
+UPDATE policy SET status=false, default_status=false WHERE id=77;
+-- Functionality : UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
+UPDATE policy SET status=true, default_status=true WHERE id=80;
+UPDATE functionality_unit SET integer_max_value=1000, integer_default_value=500 WHERE functionality_id=37;
+
+-- UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
+UPDATE functionality_unit SET integer_default_value=20 WHERE functionality_id=42;
+
 
 --Drop upload proposition tables
 DROP TABLE upload_proposition;
