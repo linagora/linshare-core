@@ -143,4 +143,6 @@ public interface FunctionalityReadOnlyService {
 	Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate, BusinessErrorCode errorCode);
 
 	Date roundToUpperHour(Date dateToRound);
+
+	Calendar getCalendarWithoutTime(Date date);
 }

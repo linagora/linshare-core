@@ -235,6 +235,7 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="shareEntryGroupService" />
 		<constructor-arg ref="shareExpiryDateService" />
+		<constructor-arg ref="timeService" />
 	</bean>
 	<bean id="shareEntryGroupService" class="org.linagora.linshare.core.service.impl.ShareEntryGroupServiceImpl">
 		<constructor-arg ref="shareEntryGroupBusinessService" />

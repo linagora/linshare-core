@@ -76,6 +76,7 @@ import org.linagora.linshare.core.service.ShareEntryGroupService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
+import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
@@ -101,6 +102,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	private final EntryBusinessService entryBusinessService;
 
 	private final MailBuildingService mailBuildingService;
+	
+	private TimeService timeService;
 
 	// TODO : To be fix one day.
 	@SuppressWarnings("unused")
@@ -121,7 +124,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final MailBuildingService mailBuildingService,
 			final ShareExpiryDateService shareExpiryDateService,
 			final ShareEntryGroupService shareEntryGroupService,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			TimeService timeService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.funcService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
@@ -134,6 +138,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.mailBuildingService = mailBuildingService;
 		this.shareExpiryDateService = shareExpiryDateService;
 		this.shareEntryGroupService = shareEntryGroupService;
+		this.timeService = timeService;
 	}
 
 	@Override
@@ -172,8 +177,11 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		transformDocuments(actor, owner, shareContainer);
 
 		// Check expiration date.
-		shareContainer.setExpiryDate(getFinalShareExpiryDate(owner,
-				shareContainer.getExpiryDate()));
+		TimeUnitValueFunctionality shareExpirationFunctionality = funcService
+				.getDefaultShareExpiryTimeFunctionality(actor.getDomain());
+
+		shareContainer.setExpiryDate(funcService.getDateValue(shareExpirationFunctionality,
+				shareContainer.getExpiryDate(), BusinessErrorCode.SHARE_EXPIRY_DATE_INVALID));
 
 		shareContainer.updateEncryptedStatus();
 
@@ -230,7 +238,9 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		IntegerValueFunctionality usdaDurationFunc = funcService
 				.getUndownloadedSharedDocumentsAlertDuration(owner.getDomain());
 		Integer usdaDuration = usdaDurationFunc.getValue();
+		Date dateNow = timeService.dateNow();
 		Calendar c = Calendar.getInstance();
+		c.setTime(dateNow);
 		int day = c.get(Calendar.DAY_OF_WEEK);
 		int nbWeek = (day -2 + usdaDuration) / 5;
 		int finalamount = usdaDuration + nbWeek * 2;
@@ -239,7 +249,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		if (usdaDurationFunc.getDelegationPolicy().getStatus()) {
 			if (userInputNotificationDate != null) {
 				userInputNotificationDate = setEndOfDayTime(userInputNotificationDate);
-				if (userInputNotificationDate.before(new Date())) {
+				if (userInputNotificationDate.before(dateNow)) {
 					throw new BusinessException(
 							BusinessErrorCode.SHARE_WRONG_USDA_NOTIFICATION_DATE_BEFORE,
 							"Can not share documents, notification date for USDA is before today.");
@@ -366,58 +376,6 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * 
-	 * @param actor
-	 * @param userExpiryDate
-	 * @return Date
-	 */
-	@Override
-	public Date getFinalShareExpiryDate(Account actor,
-			Date userExpiryDate) {
-		// FIXME : One day it was used and working, but when ?
-		// expiryDate = shareExpiryDateService.computeMinShareExpiryDateOfList(shareContainer.getDocuments(), owner);
-		TimeUnitValueFunctionality shareExpiration = funcService
-				.getDefaultShareExpiryTimeFunctionality(actor.getDomain());
-		if (!shareExpiration.getActivationPolicy().getStatus()) {
-			return null;
-		}
-		Calendar expirationDate = Calendar.getInstance();
-		expirationDate.add(shareExpiration.toCalendarValue(),
-				shareExpiration.getMaxValue());
-		expirationDate.add(Calendar.DAY_OF_MONTH, 1);
-		expirationDate.set(Calendar.HOUR_OF_DAY, 0);
-		expirationDate.set(Calendar.MINUTE, 0);
-		expirationDate.set(Calendar.SECOND, 0);
-		Date highLimit = expirationDate.getTime();
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(shareExpiration.toCalendarValue(),
-				shareExpiration.getValue());
-		calendar.add(Calendar.DAY_OF_MONTH, 1);
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		Date defaultExpirationDate = calendar.getTime();
-		if (shareExpiration.getDelegationPolicy().getStatus()) {
-			if (userExpiryDate != null) {
-				userExpiryDate = setEndOfDayTime(userExpiryDate);
-				if (userExpiryDate.before(new Date())) {
-					throw new BusinessException(
-							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
-							"Can not share documents, expiry date is before today.");
-				}
-				if (userExpiryDate.after(highLimit)) {
-					throw new BusinessException(
-							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
-							"Can not share documents, expiry date is after the max date.");
-				}
-				return userExpiryDate;
-			}
-		}
-		return defaultExpirationDate;
 	}
 
 	private Date setEndOfDayTime(Date date) {

@@ -633,8 +633,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 			logger.debug("The given size value is null, default size value will be used " + defaultValue);
 		}
 	}
-
-	private Calendar getCalendarWithoutTime(Date date) {
+	
+	/**
+	 * TODO: linshare-core issue https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core/issues/1080
+	 */
+	@Override
+	public Calendar getCalendarWithoutTime(Date date) {
 		Calendar calendar = new GregorianCalendar();
 		if (date != null) {
 			calendar.setTime(date);

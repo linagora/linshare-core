@@ -63,8 +63,6 @@ public interface ShareService {
 
 	Date getUndownloadedSharedDocumentsAlertDuration(Account actor);
 
-	Date getFinalShareExpiryDate(Account actor, Date userExpiryDate);
-
 	ShareEntry findForDownloadOrCopyRight(Account actor, Account owner, String uuid)  throws BusinessException;
 
 	ShareEntry markAsCopied(Account actor, Account owner, String uuid, CopyMto copiedTo)  throws BusinessException;
