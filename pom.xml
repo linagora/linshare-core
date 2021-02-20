@@ -83,7 +83,7 @@
 			<subscribe>linshare-users-subscribe@linpki.org</subscribe>
 			<unsubscribe>linshare-users-unsubscribe@linpki.org</unsubscribe>
 			<post>linshare-users@linpki.org</post>
-			<archive />
+			<archive/>
 		</mailingList>
 		<mailingList>
 			<name>Developers List</name>
@@ -855,7 +855,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -868,7 +868,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -1346,7 +1346,7 @@
 								<phase>compile</phase>
 								<configuration>
 									<target name="copySql">
-										<copy file="${basedir}/src/test/resources/DISABLED-springContext-datasource-integration.xml" tofile="${project.build.outputDirectory}/springContext-datasource.xml" overwrite="true" />
+										<copy file="${basedir}/src/test/resources/DISABLED-springContext-datasource-integration.xml" tofile="${project.build.outputDirectory}/springContext-datasource.xml" overwrite="true"/>
 									</target>
 								</configuration>
 								<goals>
@@ -1768,8 +1768,8 @@
 								<phase>package</phase>
 								<configuration>
 									<tasks>
-										<property name="execution.path" refid="maven.runtime.classpath" />
-										<ant antfile="${basedir}/misc/build.xml" target="prepare-jetty" />
+										<property name="execution.path" refid="maven.runtime.classpath"/>
+										<ant antfile="${basedir}/misc/build.xml" target="prepare-jetty"/>
 									</tasks>
 								</configuration>
 								<goals>
@@ -1781,8 +1781,8 @@
 								<phase>clean</phase>
 								<configuration>
 									<tasks>
-										<property name="execution.path" refid="maven.runtime.classpath" />
-										<ant antfile="${basedir}/misc/build.xml" target="clean" />
+										<property name="execution.path" refid="maven.runtime.classpath"/>
+										<ant antfile="${basedir}/misc/build.xml" target="clean"/>
 									</tasks>
 								</configuration>
 								<goals>
@@ -1871,7 +1871,7 @@
 	</distributionManagement>
 
 	<properties>
-		<tapestry-release-version>5.2.6</tapestry-release-version>
+		<tapestry-release-version>5.7.0</tapestry-release-version>
 		<spring-release-version>3.0.5.RELEASE</spring-release-version>
 		<spring-security-release-version>3.0.5.RELEASE</spring-security-release-version>
 		<jackrabbit-release-version>1.4</jackrabbit-release-version>
