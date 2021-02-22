@@ -128,7 +128,7 @@ public class UploadRequestUpdateStatusTest {
 		calendar.add(Calendar.DAY_OF_MONTH, 10);
 		Date expiryDate = calendar.getTime();
 		referenceUploadRequest.setCanClose(true);
-		referenceUploadRequest.setMaxDepositSize((long) 100);
+		referenceUploadRequest.setMaxDepositSize((long) 5000000);
 		referenceUploadRequest.setMaxFileCount(Integer.valueOf(3));
 		referenceUploadRequest.setMaxFileSize((long) 5000000);
 		referenceUploadRequest.setExpiryDate(expiryDate);

@@ -2465,6 +2465,10 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 -- Update system-account-uploadrequest role to SYSTEM
 UPDATE account SET role_id = 6 WHERE ls_uuid = 'system-account-uploadrequest';
 
+-- Disable WORK_GROUP__FILE_EDITION functionality
+UPDATE policy SET status=false,default_status=false, system=true WHERE id IN (SELECT policy_activation_id FROM functionality WHERE identifier = 'WORK_GROUP__FILE_EDITION');
+UPDATE functionality SET system=true, param=false WHERE id IN (SELECT policy_activation_id FROM functionality WHERE identifier = 'WORK_GROUP__FILE_EDITION');
+
 -- End of your requests
 
 -- LinShare version

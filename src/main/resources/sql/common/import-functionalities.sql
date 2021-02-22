@@ -359,7 +359,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 -- time unit : month
  INSERT INTO unit(id, unit_type, unit_value)
  	VALUES (8, 0, 2),(18, 0, 2);
--- month : 1 month
+-- The default value of UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION is after 3 months
 INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value)
 	VALUES (33, 1, 8, 18, 3);
 

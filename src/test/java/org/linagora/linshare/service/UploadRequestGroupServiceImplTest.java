@@ -416,9 +416,9 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequestGroup group = uploadRequestGroupService.find(john, john, ure.getUploadRequestGroup().getUuid());
 		group.setMaxDepositSize(Long.valueOf(0));
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.update(john, john, group, false);
-		Assertions.assertEquals(null, uploadRequestGroup.getMaxDepositSize());
+		Assertions.assertEquals(0, uploadRequestGroup.getMaxDepositSize());
 		UploadRequest uploadRequest = group.getUploadRequests().iterator().next();
-		Assertions.assertEquals(null, uploadRequest.getMaxDepositSize());
+		Assertions.assertEquals(0, uploadRequest.getMaxDepositSize());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

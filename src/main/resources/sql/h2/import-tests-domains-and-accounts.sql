@@ -432,3 +432,9 @@ SET @quota_on_guest_domain_container_workgroup_id = SELECT 9;
 -- account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 
 UPDATE domain_abstract SET mailconfig_id = 1;
+
+
+-- Activate all nested func of upload request func (We need to activate all functionalities to insure the tests run well)
+UPDATE policy SET status=true WHERE id IN (SELECT policy_activation_id FROM functionality WHERE parent_identifier = 'UPLOAD_REQUEST');
+
+

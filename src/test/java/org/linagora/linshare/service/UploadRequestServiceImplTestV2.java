@@ -50,6 +50,7 @@ import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -114,6 +115,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-mongo-java-server.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
+@Disabled
 public class UploadRequestServiceImplTestV2 {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTestV2.class);
