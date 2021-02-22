@@ -1036,20 +1036,20 @@
 							<phase>prepare-package</phase>
 							<configuration>
 								<target>
-									<mkdir dir="target/generated-sources" />
+									<mkdir dir="target/generated-sources"/>
 									<concat destfile="target/generated-sources/import-postgresql.sql">
-										<fileset file="src/main/resources/sql/common/import-header.sql" />
-										<fileset file="src/main/resources/sql/common/import-domains.sql" />
-										<fileset file="src/main/resources/sql/common/import-quota.sql" />
-										<fileset file="src/main/resources/sql/common/import-welcome-messages.sql" />
-										<fileset file="src/main/resources/sql/common/import-functionalities.sql" />
-										<fileset file="src/main/resources/sql/common/import-mail-activation.sql" />
-										<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-										<fileset file="src/main/resources/sql/common/import-settings.sql" />
-										<fileset file="src/main/resources/sql/common/import-alias.sql" />
+										<fileset file="src/main/resources/sql/common/import-header.sql"/>
+										<fileset file="src/main/resources/sql/common/import-domains.sql"/>
+										<fileset file="src/main/resources/sql/common/import-quota.sql"/>
+										<fileset file="src/main/resources/sql/common/import-welcome-messages.sql"/>
+										<fileset file="src/main/resources/sql/common/import-functionalities.sql"/>
+										<fileset file="src/main/resources/sql/common/import-mail-activation.sql"/>
+										<fileset file="src/main/resources/sql/common/import_mail_structure.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql"/>
+										<fileset file="src/main/resources/sql/common/import-settings.sql"/>
+										<fileset file="src/main/resources/sql/common/import-alias.sql"/>
 									</concat>
 								</target>
 							</configuration>
@@ -1334,7 +1334,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -1407,7 +1407,7 @@
 								<phase>compile</phase>
 								<configuration>
 									<target name="copySql">
-										<copy file="${basedir}/src/test/resources/DISABLED-springContext-datasource-integration.xml" tofile="${project.build.outputDirectory}/springContext-datasource.xml" overwrite="true" />
+										<copy file="${basedir}/src/test/resources/DISABLED-springContext-datasource-integration.xml" tofile="${project.build.outputDirectory}/springContext-datasource.xml" overwrite="true"/>
 									</target>
 								</configuration>
 								<goals>
@@ -1575,7 +1575,7 @@
 		<spring-data.version>Moore-SR5</spring-data.version>
 		<spring.mvc.version>5.1.14.RELEASE</spring.mvc.version>
 		<spring-release-version>5.1.18.RELEASE</spring-release-version>
-		<spring-security-release-version>5.1.10.RELEASE</spring-security-release-version>
+		<spring-security-release-version>5.2.9.RELEASE</spring-security-release-version>
 		<sql.driver.postgresql>42.2.13</sql.driver.postgresql>
 		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 	</properties>
