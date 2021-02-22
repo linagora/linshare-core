@@ -49,14 +49,23 @@ public class FunctionalityIntegerDto extends FunctionalityDto {
 	@Schema(description = "maximum value parameter")
 	protected Integer maxValue;
 
+	@Schema(description = "Flag to use default value parameter")
+	protected Boolean valueUsed;
+
+	@Schema(description = "Flag to use maximum value parameter")
+	protected Boolean maxValueUsed;
+
 	public FunctionalityIntegerDto() {
 		super();
 	}
 
-	public FunctionalityIntegerDto(String identifier, boolean enable,
-			boolean canOverride, Integer value, Integer maxValue) {
+	public FunctionalityIntegerDto(String identifier, boolean enable, boolean canOverride, Integer value,
+			Integer maxValue, Boolean valueUsed, Boolean maxValueUsed) {
 		super(identifier, enable, canOverride);
 		this.value = value;
+		this.maxValue = maxValue;
+		this.valueUsed = valueUsed;
+		this.maxValueUsed = maxValueUsed;
 	}
 
 	public Integer getValue() {
@@ -73,6 +82,22 @@ public class FunctionalityIntegerDto extends FunctionalityDto {
 
 	public void setMaxValue(Integer maxValue) {
 		this.maxValue = maxValue;
+	}
+
+	public Boolean getValueUsed() {
+		return valueUsed;
+	}
+
+	public void setValueUsed(Boolean valueUsed) {
+		this.valueUsed = valueUsed;
+	}
+
+	public Boolean getMaxValueUsed() {
+		return maxValueUsed;
+	}
+
+	public void setMaxValueUsed(Boolean maxValueUsed) {
+		this.maxValueUsed = maxValueUsed;
 	}
 
 }

@@ -48,38 +48,76 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 
 	protected Integer maxValue;
 
+	protected Boolean valueUsed;
+
+	protected Boolean maxValueUsed;
+
 	public IntegerValueFunctionality() {
 		super();
 	}
 
-	public IntegerValueFunctionality(String identifier, boolean system,
-			Policy activationPolicy, Policy configurationPolicy,
-			AbstractDomain domain, Integer value, Integer maxValue) {
+	public IntegerValueFunctionality(String identifier, boolean system, Policy activationPolicy,
+			Policy configurationPolicy, AbstractDomain domain, Integer value, Integer maxValue, Boolean valueUsed,
+			Boolean maxValueUsed) {
 		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
 		this.maxValue = maxValue;
+		this.valueUsed = valueUsed;
+		this.maxValueUsed = maxValueUsed;
 	}
 	
 	@Override
 	public FunctionalityType getType() {
 		return FunctionalityType.INTEGER;
 	}
-	
+
+	private boolean strictBusinessEquals(IntegerValueFunctionality integerFunc) {
+		if (value == null) {
+			if(integerFunc.getValue() != null) {
+				return false;
+			}
+		} else {
+			if(!value.equals(integerFunc.getValue())) {
+				return false;
+			}
+		}
+		if (maxValue == null) {
+			if(integerFunc.getMaxValue() != null) {
+				return false;
+			}
+		} else {
+			if(!maxValue.equals(integerFunc.getMaxValue())) {
+				return false;
+			}
+		}
+		if (valueUsed == null) {
+			if(integerFunc.getValueUsed() != null) {
+				return false;
+			}
+		} else {
+			if(!valueUsed.equals(integerFunc.getValueUsed())) {
+				return false;
+			}
+		}
+		if (maxValueUsed == null) {
+			if(integerFunc.getMaxValueUsed() != null) {
+				return false;
+			}
+		} else {
+			if(!maxValueUsed.equals(integerFunc.getMaxValueUsed())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			IntegerValueFunctionality o = (IntegerValueFunctionality) obj;
-			if (maxValue != null) {
-				if (value.equals(o.getValue()) && maxValue.equals(o.getMaxValue())) {
-					logger.debug("IntegerValueFunctionality : " + this.toString()
-							+ " is equal to IntegerValueFunctionality " + obj.toString());
-					return true;
-				}
-			} else {
-				if (value.equals(o.getValue())) {
-					logger.debug("IntegerValueFunctionality : " + this.toString()
-							+ " is equal to IntegerValueFunctionality " + obj.toString());
-					return true;
-				}
+			if (strictBusinessEquals(o)) {
+				logger.debug("IntegerValueFunctionality : " + this.toString()
+						+ " is equal to IntegerValueFunctionality " + obj.toString());
+				return true;
 			}
 		}
 		logger.debug("IntegerValueFunctionality : " + this.toString() + " is not equal to IntegerValueFunctionality "
@@ -142,6 +180,22 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 
 	public void setMaxValue(Integer maxValue) {
 		this.maxValue = maxValue;
+	}
+
+	public Boolean getValueUsed() {
+		return valueUsed;
+	}
+
+	public void setValueUsed(Boolean valueUsed) {
+		this.valueUsed = valueUsed;
+	}
+
+	public Boolean getMaxValueUsed() {
+		return maxValueUsed;
+	}
+
+	public void setMaxValueUsed(Boolean maxValueUsed) {
+		this.maxValueUsed = maxValueUsed;
 	}
 
 }

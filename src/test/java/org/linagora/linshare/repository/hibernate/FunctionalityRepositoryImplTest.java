@@ -427,13 +427,17 @@ public class FunctionalityRepositoryImplTest {
 
 		Integer value=8;
 		Integer maxValue=0;
+		Boolean valueUsed = true;
+		Boolean maxValueUsed = true;
 		IntegerValueFunctionality fonc = new IntegerValueFunctionality(ID_FONC_1,
 				false,
 				new Policy(Policies.ALLOWED, true),
 				new Policy(Policies.ALLOWED, true),
 				currentDomain,
 				value,
-				maxValue);
+				maxValue,
+				valueUsed,
+				maxValueUsed);
 
 		IntegerValueFunctionality fonc2 = new IntegerValueFunctionality(ID_FONC_1,
 				false,
@@ -441,7 +445,9 @@ public class FunctionalityRepositoryImplTest {
 				new Policy(Policies.ALLOWED, true),
 				currentDomain,
 				value,
-				maxValue);
+				maxValue,
+				valueUsed,
+				maxValueUsed);
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setMaxValue(2);
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
@@ -454,13 +460,17 @@ public class FunctionalityRepositoryImplTest {
 	@Test
 	public void testEqualIntegerValueFunctionalityNullMaxValue() throws BusinessException{
 		Integer value = 8;
+		Boolean valueUsed = true;
+		Boolean maxValueUsed = true;
 		IntegerValueFunctionality integerValueFunctionality = new IntegerValueFunctionality(ID_FONC_1,
 				false,
 				new Policy(Policies.ALLOWED, true),
 				new Policy(Policies.ALLOWED, true),
 				currentDomain,
 				value,
-				null);
+				null,
+				valueUsed,
+				maxValueUsed);
 
 		IntegerValueFunctionality integerValueFunctionality_2 = new IntegerValueFunctionality(ID_FONC_1,
 				false,
@@ -468,9 +478,41 @@ public class FunctionalityRepositoryImplTest {
 				new Policy(Policies.ALLOWED, true),
 				currentDomain,
 				value,
-				null);
+				null,
+				valueUsed,
+				maxValueUsed);
 		Assertions.assertTrue(integerValueFunctionality.businessEquals(integerValueFunctionality_2, true));
 		integerValueFunctionality_2.setValue(2);
+		Assertions.assertFalse(integerValueFunctionality.businessEquals(integerValueFunctionality_2, true), "Expected to be not Equal");
+	}
+
+	@Test
+	public void testEqualIntegerValueFunctionalityNullMaxValueAndObjectMaxValueNotNull() throws BusinessException{
+		Integer value = 8;
+		Integer maxValue=10;
+		Boolean valueUsed = true;
+		Boolean maxValueUsed = true;
+		IntegerValueFunctionality integerValueFunctionality = new IntegerValueFunctionality(ID_FONC_1,
+				false,
+				new Policy(Policies.ALLOWED, true),
+				new Policy(Policies.ALLOWED, true),
+				currentDomain,
+				value,
+				null,
+				valueUsed,
+				maxValueUsed);
+
+		IntegerValueFunctionality integerValueFunctionality_2 = new IntegerValueFunctionality(ID_FONC_1,
+				false,
+				new Policy(Policies.ALLOWED, true),
+				new Policy(Policies.ALLOWED, true),
+				currentDomain,
+				value,
+				null,
+				valueUsed,
+				maxValueUsed);
+		Assertions.assertTrue(integerValueFunctionality.businessEquals(integerValueFunctionality_2, true));
+		integerValueFunctionality_2.setMaxValue(maxValue);
 		Assertions.assertFalse(integerValueFunctionality.businessEquals(integerValueFunctionality_2, true), "Expected to be not Equal");
 	}
 

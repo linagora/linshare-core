@@ -171,6 +171,8 @@ CREATE TABLE functionality_integer (
   functionality_id int8 NOT NULL,
   integer_max_value    int4,
   integer_default_value    int4,
+  default_value_used    bool DEFAULT 'true' NOT NULL,
+  max_value_used    bool DEFAULT 'true' NOT NULL,
   CONSTRAINT linshare_functionality_integer_pkey
     PRIMARY KEY (functionality_id));
 

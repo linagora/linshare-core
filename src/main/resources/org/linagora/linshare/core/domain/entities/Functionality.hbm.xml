@@ -35,6 +35,8 @@
     	</key>
         <property name="value" column="integer_default_value" type="integer"/>
         <property name="maxValue" column="integer_max_value" type="integer"/>
+        <property name="valueUsed" column="default_value_used" type="boolean"/>
+        <property name="maxValueUsed" column="max_value_used" type="boolean"/>
     </joined-subclass>
     
     <joined-subclass name="BooleanValueFunctionality" table="functionality_boolean">
