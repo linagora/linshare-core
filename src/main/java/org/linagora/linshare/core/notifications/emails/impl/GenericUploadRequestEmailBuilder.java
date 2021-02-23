@@ -107,8 +107,9 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 			for (UploadRequestEntry e : entries) {
 				Document d = new Document(e);
 				if (warnOwner) {
-					String linshareURL = getLinShareUrlForUploadRequest(request.getUploadRequestGroup().getOwner());
-					String href = getUploadRequestEntryLink(linshareURL, e.getUuid());
+					String linshareURL = getLinShareUrl(request.getUploadRequestGroup().getOwner());
+					String href = getUploadRequestEntryLink(linshareURL, request.getUploadRequestGroup().getUuid(),
+							request.getUuid(), e.getUuid());
 					d.setHref(href);
 				} else {
 					d.setMine(isMine(requestUrl, uploadRequestUrl));

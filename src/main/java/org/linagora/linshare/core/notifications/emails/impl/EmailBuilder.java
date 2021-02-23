@@ -653,11 +653,12 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return sb.toString();
 	}
 
-	protected String getUploadRequestEntryLink(String linshareURL, String documentUuid) {
+	protected String getUploadRequestEntryLink(String linshareURL, String groupUuid, String requestUuid, String entryUuid) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(linshareURL);
 		Formatter formatter = new Formatter(sb);
-		formatter.format(urlTemplateForUploadRequestEntries, documentUuid);
+		formatter.format(urlTemplateForUploadRequestUploadedFile, groupUuid,
+				requestUuid, entryUuid);
 		formatter.close();
 		return sb.toString();
 	}
@@ -728,10 +729,11 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return document;
 	}
 
-	protected Document getNewFakeUploadRequestEntry(String name, String linshareURL) {
+	protected Document getNewFakeUploadRequestEntry(String name, String linshareURL, String groupUuid,
+			String requestUuid, String entryUuid) {
 		Document document = new Document(name);
 		if (linshareURL != null) {
-			document.setHref(getUploadRequestEntryLink(linshareURL, document.getUuid()));
+			document.setHref(getUploadRequestEntryLink(linshareURL, groupUuid, requestUuid, document.getUuid()));
 		}
 		return document;
 	}
