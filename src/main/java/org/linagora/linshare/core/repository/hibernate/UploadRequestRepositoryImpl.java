@@ -154,6 +154,7 @@ public class UploadRequestRepositoryImpl extends
 		crit.add(Restrictions.gt("notificationDate", before));
 		crit.add(Restrictions.ltProperty("notificationDate", "expiryDate"));
 		crit.add(Restrictions.eq("status", UploadRequestStatus.ENABLED));
+		crit.add(Restrictions.eq("notified", false));
 		crit.setProjection(Projections.property("uuid"));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);
