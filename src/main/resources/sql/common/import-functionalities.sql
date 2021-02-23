@@ -132,8 +132,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 	VALUES (11, false, 'DOCUMENT_EXPIRATION', 21, 22, 1, now(), now());
 INSERT INTO unit(id, unit_type, unit_value) 
 	VALUES (5, 0, 2),(14, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value) 
-	VALUES (11, 4, 5, 14, 3);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, max_value_used) 
+	VALUES (11, 4, 5, 14, 3, false);
 
 
 -- Functionality : SHARE_EXPIRATION

@@ -161,6 +161,10 @@ UPDATE policy SET status=false, default_status=false WHERE id = 317;
 ALTER TABLE functionality_integer ADD COLUMN default_value_used boolean DEFAULT true NOT NULL;
 ALTER TABLE functionality_integer ADD COLUMN max_value_used boolean DEFAULT true NOT NULL;
 
+-- Add new fields default_value_used, max_value_used for unit functionalities
+ALTER TABLE functionality_unit ADD COLUMN default_value_used boolean DEFAULT true NOT NULL;
+ALTER TABLE functionality_unit ADD COLUMN max_value_used boolean DEFAULT true NOT NULL;
+
 -- Add new fields for default pwd and store original pwd of an URU
 ALTER TABLE upload_request_url ADD COLUMN default_Password bool DEFAULT true NOT NULL;
 ALTER TABLE upload_request_url ADD COLUMN original_password character varying(255);

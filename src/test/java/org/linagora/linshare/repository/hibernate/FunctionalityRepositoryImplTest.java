@@ -529,7 +529,9 @@ public class FunctionalityRepositoryImplTest {
 				value,
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
-				maxValue);
+				maxValue,
+				true,
+				true);
 		
 		UnitValueFunctionality fonc2 = new UnitValueFunctionality(ID_FONC_2,
 				false,
@@ -539,7 +541,9 @@ public class FunctionalityRepositoryImplTest {
 				value,
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
-				maxValue);
+				maxValue,
+				true,
+				true);
 		
 		Assertions.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setMaxValue(8);
@@ -560,7 +564,9 @@ public class FunctionalityRepositoryImplTest {
 				value,
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				null,
-				null);
+				null,
+				true,
+				true);
 
 		UnitValueFunctionality unitValueFunctionality_2 = new UnitValueFunctionality(ID_FONC_2,
 				false,
@@ -570,7 +576,9 @@ public class FunctionalityRepositoryImplTest {
 				value,
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				null,
-				null);
+				null,
+				true,
+				true);
 
 		Assertions.assertTrue(unitValueFunctionality.businessEquals(unitValueFunctionality_2, true));
 		unitValueFunctionality_2.setValue(8);
@@ -590,7 +598,9 @@ public class FunctionalityRepositoryImplTest {
 				value,
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
 				new FileSizeUnitClass(FileSizeUnit.GIGA),
-				maxValue);
+				maxValue,
+				true,
+				true);
 
 		UnitValueFunctionality fonc2 = new UnitValueFunctionality(ID_FONC_2,
 				false,
@@ -600,7 +610,9 @@ public class FunctionalityRepositoryImplTest {
 				value,
 				new TimeUnitClass(TimeUnit.WEEK),
 				new TimeUnitClass(TimeUnit.WEEK),
-				maxValue);
+				maxValue,
+				true,
+				true);
 
 		UnitValueFunctionality fonc3 = new UnitValueFunctionality(ID_FONC_2,
 				false,
@@ -610,7 +622,9 @@ public class FunctionalityRepositoryImplTest {
 				value,
 				new TimeUnitClass(TimeUnit.DAY),
 				new TimeUnitClass(TimeUnit.DAY),
-				maxValue);
+				maxValue,
+				true,
+				true);
 
 		Assertions.assertFalse(fonc.businessEquals(fonc2, true));
 		Assertions.assertFalse(fonc2.businessEquals(fonc3, true));

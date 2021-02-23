@@ -55,6 +55,10 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	protected Integer maxValue;
 
+	protected Boolean valueUsed;
+
+	protected Boolean maxValueUsed;
+
 	public UnitValueFunctionality() {
 		super();
 	}
@@ -63,14 +67,18 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			Policy configurationPolicy, AbstractDomain domain, Integer value, Unit<?> unit) {
 		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
 		this.unit = unit;
+		this.valueUsed = true;
+		this.maxValueUsed = false;
 	}
 	
 	public UnitValueFunctionality(String identifier, boolean system, Policy activationPolicy,
-			Policy configurationPolicy, AbstractDomain domain, Integer value, Unit<?> unit, Unit<?> maxUnit, Integer maxValue) {
+			Policy configurationPolicy, AbstractDomain domain, Integer value, Unit<?> unit, Unit<?> maxUnit, Integer maxValue, boolean valueUsed, boolean maxValueUsed) {
 		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
 		this.unit = unit;
 		this.maxValue = maxValue;
 		this.maxUnit = maxUnit;
+		this.valueUsed = valueUsed;
+		this.maxValueUsed = maxValueUsed;
 	}
 
 	@Override
@@ -205,6 +213,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		if (version >= 4) {
 			parameterDto.setMaxInteger(this.getMaxValue());
 			parameterDto.setMaxString(maxCurrentUnit);
+			parameterDto.setDefaultValueUsed(this.getValueUsed());
+			parameterDto.setMaxValueUsed(this.getMaxValueUsed());
 		}
 		res.add(parameterDto);
 		return res;
@@ -248,6 +258,22 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	public void setMaxValue(Integer maxValue) {
 		this.maxValue = maxValue;
+	}
+
+	public Boolean getValueUsed() {
+		return valueUsed;
+	}
+
+	public void setValueUsed(Boolean valueUsed) {
+		this.valueUsed = valueUsed;
+	}
+
+	public Boolean getMaxValueUsed() {
+		return maxValueUsed;
+	}
+
+	public void setMaxValueUsed(Boolean maxValueUsed) {
+		this.maxValueUsed = maxValueUsed;
 	}
 
 
