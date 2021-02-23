@@ -98,15 +98,9 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 		if (!uploadRequest.isNotified()) {
 			for (UploadRequestUrl urUrl : uploadRequest.getUploadRequestURLs()) {
 				if (uploadRequest.getEnableNotification()) {
-					if (urUrl.getUploadRequestEntries().isEmpty()) {
-						// Send remind to the recipients
-						EmailContext ctx = new UploadRequestReminderEmailContext((User) uploadRequest.getUploadRequestGroup().getOwner(), urUrl, uploadRequest);
-						notifications.add(mailBuildingService.build(ctx));
-					} else {
-						EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext(
-								(User) uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest, urUrl, false);
-						notifications.add(mailBuildingService.build(ctx));
-					}
+					EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext(
+							(User) uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest, urUrl, false);
+					notifications.add(mailBuildingService.build(ctx));
 				}
 			}
 			EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest, null, true);
