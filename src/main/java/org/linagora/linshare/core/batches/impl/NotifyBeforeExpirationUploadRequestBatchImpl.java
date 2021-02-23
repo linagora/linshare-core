@@ -85,7 +85,7 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 		SystemAccount account = getSystemAccount();
 		logger.info(getClass().toString() + " job starting ...");
 		List<String> entries = service.findAllRequestsToBeNotified(account);
-		logger.info(entries.size() + " Upload Request(s) have been found to be enabled");
+		logger.info(entries.size() + " Upload Request(s) have been found, notification before expiration will be sent to them.");
 		return entries;
 	}
 
