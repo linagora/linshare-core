@@ -38,6 +38,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
@@ -157,6 +158,14 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		ParameterDto parameterDto = new ParameterDto(this.getValue());
 		if (version >= 4) {
 			parameterDto.setMaxInteger(this.getMaxValue());
+			parameterDto.setDefaultValueUsed(this.getValueUsed());
+			parameterDto.setMaxValueUsed(this.getMaxValueUsed());
+		}
+		else {
+			//In lower versions, for compatibility purpose, the functionality MaxValue is rendered in value field
+			if (FunctionalityNames.WORK_GROUP__DOWNLOAD_ARCHIVE.toString().equals(this.getIdentifier())) {
+				parameterDto.setInteger(this.getMaxValue());
+			}
 		}
 		res.add(parameterDto);
 		return res;

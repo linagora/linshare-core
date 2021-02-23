@@ -190,8 +190,8 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (32, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date)
 	VALUES (16, false, 'COMPLETION', 31, 32, 1, now(), now());
-INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value)
-	VALUES (16, 3, 3);
+INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value, default_value_used, max_value_used )
+	VALUES (16, 3, 3, true, false);
 
 --useless - deleted
 ---- Functionality : TAB_HELP
@@ -536,9 +536,8 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (136, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
 	 VALUES(55, false, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION', 134, 135, 136, 1, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT', true, now(), now());
-INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value)
-	VALUES (55, 3, 3);
-
+INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value, default_value_used, max_value_used )
+	VALUES (55, 3, 3, true, false);
 -- Functionality : ANONYMOUS_URL__NOTIFICATION
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (224, true, true, 0, true);

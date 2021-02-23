@@ -64,6 +64,14 @@ public class ParameterDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
 	private String maxString;
 
+    @Schema(description = "default value field, define if the default value is used")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+	private boolean defaultValueUsed;
+
+    @Schema(description = "max value used field, define if the maxValue field is used")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+	private boolean maxValueUsed;
+
     @Schema(description = "Type")
 	private String type;
 
@@ -162,5 +170,21 @@ public class ParameterDto {
 
 	public void setMaxString(String maxString) {
 		this.maxString = maxString;
+	}
+
+	public boolean getDefaultValueUsed() {
+		return defaultValueUsed;
+	}
+
+	public void setDefaultValueUsed(boolean defaultValueUsed) {
+		this.defaultValueUsed = defaultValueUsed;
+	}
+
+	public boolean getMaxValueUsed() {
+		return maxValueUsed;
+	}
+
+	public void setMaxValueUsed(boolean maxValueUsed) {
+		this.maxValueUsed = maxValueUsed;
 	}
 }

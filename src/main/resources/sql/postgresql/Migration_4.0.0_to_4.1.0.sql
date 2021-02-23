@@ -158,8 +158,8 @@ ALTER TABLE functionality_unit ALTER COLUMN max_unit_id SET NOT NULL;
 UPDATE policy SET status=false, default_status=false WHERE id = 317;
 
 -- Add new fields default_value_used, max_value_used for integer functionalities
-ALTER TABLE functionality_integer ADD default_value_used NOT NULL DEFAULT true;
-ALTER TABLE functionality_integer ADD max_value_used NOT NULL DEFAULT true;
+ALTER TABLE functionality_integer ADD COLUMN default_value_used boolean DEFAULT true NOT NULL;
+ALTER TABLE functionality_integer ADD COLUMN max_value_used boolean DEFAULT true NOT NULL;
 
 -- Add new fields for default pwd and store original pwd of an URU
 ALTER TABLE upload_request_url ADD COLUMN default_Password bool DEFAULT true NOT NULL;
