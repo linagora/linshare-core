@@ -39,8 +39,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
@@ -102,24 +105,59 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		this.unit = unit;
 	}
 
+	private boolean strictBusinessEquals(UnitValueFunctionality unitFunc) {
+		if (valueUsed) {
+			if (value == null) {
+				if(unitFunc.getValue() != null) {
+					return false;
+				}
+			} else {
+				if(!value.equals(unitFunc.getValue())) {
+					return false;
+				}
+			}
+			if (unit == null) {
+				if(unitFunc.getUnit() != null) {
+					return false;
+				}
+			} else {
+				if(!unit.businessEquals(unitFunc.getUnit())) {
+					return false;
+				}
+			}
+		}
+		if(maxValueUsed) {
+			if (maxValue == null) {
+				if(unitFunc.getMaxValue() != null) {
+					return false;
+				}
+			} else {
+				if(!maxValue.equals(unitFunc.getMaxValue())) {
+					return false;
+				}
+			}
+			
+			if (maxUnit == null) {
+				if(unitFunc.getMaxUnit() != null) {
+					return false;
+				}
+			} else {
+				if(!maxUnit.businessEquals(unitFunc.getMaxUnit())) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public boolean businessEquals(AbstractFunctionality obj, boolean checkPolicies) {
 		if (super.businessEquals(obj, checkPolicies)) {
 			UnitValueFunctionality o = (UnitValueFunctionality) obj;
-			if (maxValue != null && maxUnit != null) {
-				if (value.equals(o.getValue()) && maxValue.equals(o.getMaxValue())) {
-					if (unit.businessEquals(o.getUnit()) && maxUnit.businessEquals(o.getMaxUnit())) {
-						logger.debug("UnitValueFunctionality : " + this.toString()
-								+ " is equal to UnitValueFunctionality " + obj.toString());
-						return true;
-					}
-				}
-			} else {
-				if (value.equals(o.getValue()) && unit.businessEquals(o.getUnit())) {
-					logger.debug("UnitValueFunctionality : " + this.toString() + " is equal to UnitValueFunctionality "
-							+ obj.toString());
-					return true;
-				}
+			if (this.strictBusinessEquals(o)) {
+				logger.debug("UnitValueFunctionality : " + this.toString() + " is equal to UnitValueFunctionality "
+						+ obj.toString());
+				return true;
 			}
 		}
 		logger.debug("UnitValueFunctionality : " + this.toString() + " is not equal to UnitValueFunctionality "
@@ -143,10 +181,14 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		UnitValueFunctionality f = (UnitValueFunctionality) functionality;
-		this.value = f.getValue();
-		this.maxValue = f.getMaxValue();
-		this.unit.updateUnitFrom(f.getUnit());
-		this.maxUnit.updateUnitFrom(f.getMaxUnit());
+		if (this.getValueUsed()) {
+			this.value = f.getValue();
+			this.unit.updateUnitFrom(f.getUnit());
+		}
+		if (this.getMaxValueUsed()) {
+			this.maxValue = f.getMaxValue();
+			this.maxUnit.updateUnitFrom(f.getMaxUnit());
+		}
 	}
 
 	@Override
@@ -159,26 +201,33 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	protected void updateFunctionality(Integer version, String type, ParameterDto parameterDto) {
-		this.value = parameterDto.getInteger();
-		this.maxValue = parameterDto.getMaxInteger();
-		String unit = parameterDto.getString().trim().toUpperCase();
-		String unitMax = null;
-		if (version >= 4) {
-			unitMax = parameterDto.getMaxString().trim().toUpperCase();
-		}
-		if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
-			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
-			FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
-			sizeUnit.setUnitValue(FileSizeUnit.valueOf(unit));
-			if (version >= 4) {
-				sizeMaxUnit.setUnitValue(FileSizeUnit.valueOf(unitMax));
+		if (this.getValueUsed()) {
+			this.value = parameterDto.getInteger();
+			String unit = parameterDto.getString().trim().toUpperCase();
+			if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
+				FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
+				sizeUnit.setUnitValue(FileSizeUnit.valueOf(unit));
+			} else if (type.equals(FunctionalityType.UNIT_TIME.toString())) {
+				TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+				timeUnit.setUnitValue(TimeUnit.valueOf(unit));
 			}
-		} else if (type.equals(FunctionalityType.UNIT_TIME.toString())) {
-			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
-			TimeUnitClass timeMaxUnit = (TimeUnitClass) getMaxUnit();
-			timeUnit.setUnitValue(TimeUnit.valueOf(unit));
+		}
+		if (this.getMaxValueUsed()) {
+			this.maxValue = parameterDto.getMaxInteger();
+			String unitMax = null;
 			if (version >= 4) {
-				timeMaxUnit.setUnitValue(TimeUnit.valueOf(unitMax));
+				unitMax = parameterDto.getMaxString().trim().toUpperCase();
+			}
+			if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
+				FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
+				if (version >= 4) {
+					sizeMaxUnit.setUnitValue(FileSizeUnit.valueOf(unitMax));
+				}
+			} else if (type.equals(FunctionalityType.UNIT_TIME.toString())) {
+				TimeUnitClass timeMaxUnit = (TimeUnitClass) getMaxUnit();
+				if (version >= 4) {
+					timeMaxUnit.setUnitValue(TimeUnit.valueOf(unitMax));
+				}
 			}
 		}
 	}
@@ -209,13 +258,25 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				units.add(val.toString());
 			}
 		}
-		ParameterDto parameterDto = new ParameterDto(unitType, units, currentUnit, this.getValue());
+		ParameterDto parameterDto = new ParameterDto(unitType, units);
 		if (version >= 4) {
-			parameterDto.setMaxInteger(this.getMaxValue());
-			parameterDto.setMaxString(maxCurrentUnit);
+			if (this.getValueUsed()) {
+				parameterDto.setString(currentUnit);
+				parameterDto.setInteger(this.getValue());
+			}
+			if (this.getMaxValueUsed()) {
+				parameterDto.setMaxInteger(this.getMaxValue());
+				parameterDto.setMaxString(maxCurrentUnit);
+			}
 			parameterDto.setDefaultValueUsed(this.getValueUsed());
 			parameterDto.setMaxValueUsed(this.getMaxValueUsed());
+		} else {
+			//In lower versions, for compatibility purpose, the functionality MaxValue is rendered in value field
+			if (FunctionalityNames.WORK_GROUP__DOWNLOAD_ARCHIVE.toString().equals(this.getIdentifier())) {
+				parameterDto.setInteger(this.getMaxValue());
+			}
 		}
+
 		res.add(parameterDto);
 		return res;
 	}
@@ -228,11 +289,15 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			FunctionalitySizeDto f = new FunctionalitySizeDto();
 			if (enable) {
 				if (version >= 4) {
-					f.setMaxValue(maxValue);
-					f.setMaxUnit(sizeMaxUnit.getUnitValue().toString());
+					if (this.getMaxValueUsed()) {
+						f.setMaxValue(maxValue);
+						f.setMaxUnit(sizeMaxUnit.getUnitValue().toString());
+					}
 				}
-				f.setUnit(sizeUnit.getUnitValue().toString());
-				f.setValue(value);
+				if (this.getValueUsed()) {
+					f.setUnit(sizeUnit.getUnitValue().toString());
+					f.setValue(value);
+				}
 			}
 			return f;
 		} else if (getUnit() instanceof TimeUnitClass && getMaxUnit() instanceof TimeUnitClass) {
@@ -241,18 +306,35 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			TimeUnitClass maxTimeUnit = (TimeUnitClass) getMaxUnit();
 			if (enable) {
 				if (version >= 4) {
-					f.setMaxValue(maxValue);
-					f.setMaxUnit(maxTimeUnit.getUnitValue().toString());
+					if (this.getMaxValueUsed()) {
+						f.setMaxValue(maxValue);
+						f.setMaxUnit(maxTimeUnit.getUnitValue().toString());
+					}
 				}
-				f.setUnit(timeUnit.getUnitValue().toString());
-				f.setValue(value);
+				if (this.getValueUsed()) {
+					f.setUnit(timeUnit.getUnitValue().toString());
+					f.setValue(value);
+				}
 			}
 			return f;
 		}
 		return null;
 	}
 
+	@Override
+	public Integer getValue() {
+		if (!this.getValueUsed()) {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_DEFAULT_VALUE_NOT_AVAILABLE,
+					"You cannot access the default value of the functionality \"" + this.getIdentifier() + "\"");
+		}
+		return super.getValue();
+	}
+
 	public Integer getMaxValue() {
+		if (!this.getMaxValueUsed()) {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_MAX_VALUE_NOT_AVAILABLE,
+					"You cannot access the max value of the functionality \"" + this.getIdentifier() + "\"");
+		}
 		return maxValue;
 	}
 
@@ -275,7 +357,6 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	public void setMaxValueUsed(Boolean maxValueUsed) {
 		this.maxValueUsed = maxValueUsed;
 	}
-
 
 	@Override
 	public String toString() {

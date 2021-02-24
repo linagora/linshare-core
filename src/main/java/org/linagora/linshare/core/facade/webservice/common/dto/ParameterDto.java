@@ -103,6 +103,11 @@ public class ParameterDto {
 		this.select = new ArrayList<String>(listUnit);
 	}
 
+	public ParameterDto(String type, List<String> listUnit) {
+		this.type = type;
+		this.select = new ArrayList<String>(listUnit);
+	}
+
 	public ParameterDto(Language value) {
 		this.string = value.getTapestryLocale();
 		this.type = "ENUM_LANG";

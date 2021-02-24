@@ -38,8 +38,9 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
@@ -72,40 +73,26 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	private boolean strictBusinessEquals(IntegerValueFunctionality integerFunc) {
-		if (value == null) {
-			if(integerFunc.getValue() != null) {
-				return false;
-			}
-		} else {
-			if(!value.equals(integerFunc.getValue())) {
-				return false;
-			}
-		}
-		if (maxValue == null) {
-			if(integerFunc.getMaxValue() != null) {
-				return false;
-			}
-		} else {
-			if(!maxValue.equals(integerFunc.getMaxValue())) {
-				return false;
+		if (this.getValueUsed()) {
+			if (value == null) {
+				if(integerFunc.getValue() != null) {
+					return false;
+				}
+			} else {
+				if(!value.equals(integerFunc.getValue())) {
+					return false;
+				}
 			}
 		}
-		if (valueUsed == null) {
-			if(integerFunc.getValueUsed() != null) {
-				return false;
-			}
-		} else {
-			if(!valueUsed.equals(integerFunc.getValueUsed())) {
-				return false;
-			}
-		}
-		if (maxValueUsed == null) {
-			if(integerFunc.getMaxValueUsed() != null) {
-				return false;
-			}
-		} else {
-			if(!maxValueUsed.equals(integerFunc.getMaxValueUsed())) {
-				return false;
+		if (this.getMaxValueUsed()) {
+			if (maxValue == null) {
+				if(integerFunc.getMaxValue() != null) {
+					return false;
+				}
+			} else {
+				if(!maxValue.equals(integerFunc.getMaxValue())) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -136,8 +123,12 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		IntegerValueFunctionality f = (IntegerValueFunctionality)functionality;
-		this.value = f.getValue();
-		this.maxValue = f.getMaxValue();
+		if (this.getValueUsed()) {
+			this.value = f.getValue();
+		}
+		if (this.getMaxValueUsed()) {
+			this.maxValue = f.getMaxValue();
+		}
 	}
 
 	@Override
@@ -145,8 +136,10 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		List<ParameterDto> parameters = functionality.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
-			this.value = parameterDto.getInteger();
-			if (version >= 4) {
+			if (this.getValueUsed()) {
+				this.value = parameterDto.getInteger();
+			}
+			if (version >= 4 && this.getMaxValueUsed()) {
 				this.maxValue = parameterDto.getMaxInteger();
 			}
 		}
@@ -155,17 +148,17 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public List<ParameterDto> getParameters(Integer version) {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
-		ParameterDto parameterDto = new ParameterDto(this.getValue());
-		if (version >= 4) {
-			parameterDto.setMaxInteger(this.getMaxValue());
-			parameterDto.setDefaultValueUsed(this.getValueUsed());
-			parameterDto.setMaxValueUsed(this.getMaxValueUsed());
+		ParameterDto parameterDto = new ParameterDto();
+		parameterDto.setType("INTEGER");
+		if (this.getValueUsed()) {
+			parameterDto.setInteger(this.getValue());
 		}
-		else {
-			//In lower versions, for compatibility purpose, the functionality MaxValue is rendered in value field
-			if (FunctionalityNames.WORK_GROUP__DOWNLOAD_ARCHIVE.toString().equals(this.getIdentifier())) {
-				parameterDto.setInteger(this.getMaxValue());
+		if (version >= 4) {
+			if (this.getMaxValueUsed()) {
+				parameterDto.setMaxInteger(this.getMaxValue());
+				parameterDto.setMaxValueUsed(this.getMaxValueUsed());
 			}
+			parameterDto.setDefaultValueUsed(this.getValueUsed());
 		}
 		res.add(parameterDto);
 		return res;
@@ -175,15 +168,30 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
 		FunctionalityIntegerDto f = new FunctionalityIntegerDto();
 		if (enable) {
-			if (version >= 4) {
+			if (version >= 4 && this.getMaxValueUsed()) {
 				f.setMaxValue(maxValue);
 			}
-			f.setValue(value);
+			if (this.getValueUsed()) {
+				f.setValue(value);
+			}
 		}
 		return f;
 	}
 
+	@Override
+	public Integer getValue() {
+		if (!this.getValueUsed()) {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_DEFAULT_VALUE_NOT_AVAILABLE,
+					"You cannot access the default value of the functionality \"" + this.getIdentifier() + "\"");
+		}
+		return super.getValue();
+	}
+
 	public Integer getMaxValue() {
+		if (!this.getMaxValueUsed()) {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_MAX_VALUE_NOT_AVAILABLE,
+					"You cannot access the max value of the functionality \"" + this.getIdentifier() + "\"");
+		}
 		return maxValue;
 	}
 

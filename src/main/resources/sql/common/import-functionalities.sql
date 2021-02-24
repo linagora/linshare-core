@@ -96,8 +96,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 	VALUES (10, false, 'GUESTS__EXPIRATION', 19, 20, 111, 1, 'GUESTS', true, now(), now());
 INSERT INTO unit(id, unit_type, unit_value) 
 	VALUES (4, 0, 2), (13, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value) 
-	VALUES (10, 4, 4, 13, 3);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used) 
+	VALUES (10, 4, 4, 13, 3, true, true);
 
 -- Functionality : GUESTS__RESTRICTED
 INSERT INTO policy(id, status, default_status, policy, system) 
@@ -132,8 +132,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 	VALUES (11, false, 'DOCUMENT_EXPIRATION', 21, 22, 1, now(), now());
 INSERT INTO unit(id, unit_type, unit_value) 
 	VALUES (5, 0, 2),(14, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, max_value_used) 
-	VALUES (11, 4, 5, 14, 3, false);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used) 
+	VALUES (11, 4, 5, 14, 3,true, false);
 
 
 -- Functionality : SHARE_EXPIRATION
@@ -147,8 +147,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 	VALUES (12, false, 'SHARE_EXPIRATION', 23, 24, 122, 1, now(), now());
 INSERT INTO unit(id, unit_type, unit_value) 
 	VALUES (6, 0, 2),(15, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value) 
-	VALUES (12, 4, 6, 15, 3);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used) 
+	VALUES (12, 4, 6, 15, 3, true, true);
 
 -- Functionality : SHARE_EXPIRATION__DELETE_FILE_ON_EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system) 
@@ -274,8 +274,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 	VALUES (66, false, 'WORK_GROUP__DOWNLOAD_ARCHIVE', 306, 307, 1, 'WORK_GROUP', true, now(), now());
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (12, 1, 1),(16, 1, 1);
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value) 
-	VALUES (66, 900, 12, 16, 0);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used) 
+	VALUES (66, 900, 12, 16, 0, false, true);
 
 -- Functionality : CONTACTS_LIST
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -344,8 +344,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  	VALUES(32, false, 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION', 65, 66, 67, 1, 'UPLOAD_REQUEST', true, now(), now());
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (7, 0, 2),(17, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value)
-	VALUES (32, -1, 7, 17, 0);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
+	VALUES (32, -1, 7, 17, 0, true, true);
 
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -360,8 +360,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  INSERT INTO unit(id, unit_type, unit_value)
  	VALUES (8, 0, 2),(18, 0, 2);
 -- The default value of UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION is after 3 months
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value)
-	VALUES (33, 1, 8, 18, 3);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
+	VALUES (33, 1, 8, 18, 3, true, true);
 
 -- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -372,8 +372,8 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (76, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
  	VALUES(35, false, 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT', 74, 75, 76, 1, 'UPLOAD_REQUEST', true, now(), now());
-INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value)
-	VALUES (35, 100, 10);
+INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value, default_value_used, max_value_used)
+	VALUES (35, 100, 10, true, true);
 
 -- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -388,8 +388,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (9, 1, 1),(19, 1, 1);
 -- size : 10 Mega
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value)
-	VALUES (36, 20, 9, 19, 10);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
+	VALUES (36, 20, 9, 19, 10, true, true);
 
 -- Functionality : UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -404,8 +404,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (10, 1, 1),(20, 1, 1);
 -- size : 500 Mega
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value)
-	VALUES (37, 1000, 10, 20, 500);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
+	VALUES (37, 1000, 10, 20, 500, true, true);
 
 -- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -464,8 +464,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (11, 0, 0),(21, 0, 0);
 -- time : 7 days
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value)
-	VALUES (42, 7, 11, 21, 20);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
+	VALUES (42, 7, 11, 21, 20, true, true);
 
 -- Functionality : UPLOAD_REQUEST__CAN_CLOSE
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -536,7 +536,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (136, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
 	 VALUES(55, false, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION', 134, 135, 136, 1, 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT', true, now(), now());
-INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value, default_value_used, max_value_used )
+INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value, default_value_used, max_value_used)
 	VALUES (55, 3, 3, true, false);
 -- Functionality : ANONYMOUS_URL__NOTIFICATION
 INSERT INTO policy(id, status, default_status, policy, system)
