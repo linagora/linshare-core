@@ -66,7 +66,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
 </html>',messages_french='buttonMsg = Accès
 closureDate = Date de clôture
 depotSize = Taille
-mainMsg = <b>{0} {1}</b> aimerais vous rappeller de déposer vos fichiers.
+mainMsg = <b>{0} {1}</b> aimerais vous rappeller de déposer vos fichiers sur: <b>{2}</b>.
 mainMsgEnd =
 msgFrom =  Le message de
 msgUnProtected = Pour accéder au dépôt, suivez le lien ci-dessous.
@@ -75,7 +75,7 @@ recipientsOfDepot = Destinataires
 subject = {0} {1} attend toujours des fichiers de votre part',messages_english='buttonMsg = Access
 closureDate = Closure date
 depotSize = Size
-mainMsg = <b>{0} {1}</b> kindly reminds you to upload your files.
+mainMsg = <b>{0} {1}</b> kindly reminds you to upload your files on: <b>{2}</b>.
 mainMsgEnd =
 msgFrom = Message from
 msgUnProtected = In order to upload your files, please follow the link below.
@@ -84,7 +84,7 @@ recipientsOfDepot = Recipients
 subject = {0} {1} is still awaiting your files',messages_russian='buttonMsg = Доступ
 closureDate = Дата закрытия
 depotSize = Размер
-mainMsg = <b>{0} {1}</b> напоминает вам о загрузке ваших файлов.
+mainMsg = <b>{0} {1}</b> напоминает вам о загрузке ваших файлов on: <b>{2}</b>.
 mainMsgEnd =
 msgFrom = Сообщение от
 msgUnProtected = Для того, чтобы загрузить ваши файлы, пожалуйста, перейдите по ссылке ниже.
