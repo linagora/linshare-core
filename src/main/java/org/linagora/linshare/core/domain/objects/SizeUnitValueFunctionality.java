@@ -71,5 +71,9 @@ public class SizeUnitValueFunctionality extends UnitValueFunctionality {
 		FileSizeUnitClass sizeUnit = (FileSizeUnitClass)getUnit();
 		return sizeUnit.getSiSize(getValue());
 	}
-	
+
+	public long getMaxSiSize() {
+		FileSizeUnitClass sizeUnit = (FileSizeUnitClass)getMaxUnit();
+		return sizeUnit.getSiSize(getMaxValue());
+	}
 }

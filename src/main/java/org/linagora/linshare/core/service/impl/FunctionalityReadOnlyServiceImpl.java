@@ -448,7 +448,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		}
 		logger.debug(func.getIdentifier() + " has a delegation policy");
 		Integer maxInteger = func.getMaxValue();
-		if (currentInteger > maxInteger) {
+		if ((maxInteger != -1) && currentInteger > maxInteger) {
 			String errorMessage = buildErrorMessage(func, currentInteger.toString(), maxInteger.toString());
 			logger.warn(errorMessage);
 			throw new BusinessException(errorCode, errorMessage);

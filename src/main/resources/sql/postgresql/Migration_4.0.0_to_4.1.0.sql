@@ -74,6 +74,25 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION ls_upgrade_functionality_unit() RETURNS void AS $$
+BEGIN
+	DECLARE
+		row record;
+		new_unit_id integer;
+	BEGIN
+		RAISE INFO 'Upgrading functionality_unit tables';
+		FOR row IN SELECT * from functionality_unit LOOP
+			INSERT INTO unit(id, unit_type, unit_value)
+				(  SELECT  nextVal('hibernate_sequence'), unit_type, unit_value FROM unit WHERE id = row.unit_id )
+			RETURNING id INTO new_unit_id;
+			UPDATE functionality_unit SET integer_max_value = integer_default_value, max_unit_id = new_unit_id where functionality_id = row.functionality_id;
+			RAISE INFO 'Upgrading functionality_unit with functionality_id "%"', row.functionality_id;
+		END LOOP;
+		RAISE INFO 'End Upgrading functionality_unit tables';
+	END;
+END
+$$ LANGUAGE plpgsql;
+
 
 SELECT ls_check_user_connected();
 SELECT ls_prechecks();
@@ -131,9 +150,6 @@ VALUES
     
 -- Add new field to Functionality_integer and Functionality_unit
 -- Set the max value and max unit for the new field on functionality_unit and functionality_integer tables
-INSERT INTO unit(id, unit_type, unit_value) 
-	VALUES (13, 0, 2), (14, 0, 2), (15, 0, 2),(16, 1, 1), (17, 0, 2), (18, 0, 2), (19, 1, 1), (20, 1, 1), (21, 0, 0);
-
 	-- Add new fields default_value_used, max_value_used for integer functionalities
 ALTER TABLE functionality_integer ADD COLUMN default_value_used boolean DEFAULT true NOT NULL;
 ALTER TABLE functionality_integer ADD COLUMN max_value_used boolean DEFAULT true NOT NULL;
@@ -150,20 +166,25 @@ ALTER TABLE functionality_unit RENAME COLUMN integer_value TO integer_default_va
 ALTER TABLE functionality_integer RENAME COLUMN integer_value TO integer_default_value;
 ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced0169f329edc1 FOREIGN KEY (max_unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
 
-UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4, max_unit_id = 13 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'GUESTS__EXPIRATION');      -- GUESTS__EXPIRATION
-UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4, max_unit_id = 14, max_value_used = false WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'DOCUMENT_EXPIRATION');      -- DOCUMENT_EXPIRATION
-UPDATE functionality_unit SET integer_default_value = 3, integer_max_value = 4, max_unit_id = 15 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'SHARE_EXPIRATION');      -- SHARE_EXPIRATION
-UPDATE functionality_unit SET integer_default_value = 0, integer_max_value = 900 , max_unit_id = 16, default_value_used = false WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'WORK_GROUP__DOWNLOAD_ARCHIVE'); -- WORK_GROUP__DOWNLOAD_ARCHIVE
-UPDATE functionality_unit SET integer_default_value = 0, integer_max_value = -1, max_unit_id = 17 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION');     -- UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
-UPDATE functionality_unit SET integer_default_value = 7, integer_max_value = 7, max_unit_id = 18 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION');      -- UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
-UPDATE functionality_unit SET integer_default_value = 10, integer_max_value = 20, max_unit_id = 19 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE');    -- UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
-UPDATE functionality_unit SET integer_default_value = 50, integer_max_value = 100, max_unit_id = 20 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE');   -- UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
-UPDATE functionality_unit SET integer_default_value = 7, integer_max_value = 7, max_unit_id = 21 WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION');      -- UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
+-- Upgrade max_unit of functionality_unit and funcitonality_integer
+SELECT ls_upgrade_functionality_unit();
 
-UPDATE functionality_integer SET max_value_used = false WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION');      -- UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION
-UPDATE functionality_integer SET max_value_used = false WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'COMPLETION');      -- COMPLETION
+UPDATE functionality_integer SET integer_max_value = integer_default_value;
+
+-- DOCUMENT_EXPIRATION
+UPDATE functionality_unit SET max_value_used = false
+	WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'DOCUMENT_EXPIRATION');
+-- WORK_GROUP__DOWNLOAD_ARCHIVE
+UPDATE functionality_unit SET default_value_used = false
+	WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier = 'WORK_GROUP__DOWNLOAD_ARCHIVE');
+
+-- UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION AND COMPLETION
+UPDATE functionality_integer SET max_value_used = false
+	WHERE functionality_id IN (SELECT id FROM functionality WHERE identifier IN ('UNDOWNLOADED_SHARED_DOCUMENTS_ALERT__DURATION', 'COMPLETION'));
 
 ALTER TABLE functionality_unit ALTER COLUMN max_unit_id SET NOT NULL;
+ALTER TABLE functionality_unit ALTER COLUMN integer_max_value SET NOT NULL;
+ALTER TABLE functionality_integer ALTER COLUMN integer_max_value SET NOT NULL;
 
 -- DRIVE should be disabled by default.
 UPDATE policy SET status=false, default_status=false WHERE id = 317;

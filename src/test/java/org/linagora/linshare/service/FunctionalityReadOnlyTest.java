@@ -128,6 +128,18 @@ public class FunctionalityReadOnlyTest {
 	}
 
 	@Test
+	public void testUploadRequestMaxFileCountFunctionality_GetUnlimitedIntegerValue() {
+		IntegerValueFunctionality func = functionalityService
+				.getUploadRequestMaxFileCountFunctionality(domain);
+		// the max value is -1 so unlimited value is allowed
+		func.setMaxValue(-1);
+		Integer maxValue = Integer.MAX_VALUE;
+		Integer integerValue = functionalityService.getIntegerValue(func, maxValue,
+				BusinessErrorCode.UPLOAD_REQUEST_INTEGER_VALUE_INVALID);
+		Assertions.assertEquals(maxValue, integerValue);
+	}
+
+	@Test
 	public void testUploadRequestMaxFileSizeFunctionality_GetSizeValue() {
 		SizeUnitValueFunctionality func = functionalityService.getUploadRequestMaxFileSizeFunctionality(domain);
 		// the user value is over the maximum value, we need to throws business exception
