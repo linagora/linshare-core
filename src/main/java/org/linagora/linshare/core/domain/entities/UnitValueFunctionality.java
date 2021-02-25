@@ -274,9 +274,12 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			//In lower versions, for compatibility purpose, the functionality MaxValue is rendered in value field
 			if (FunctionalityNames.WORK_GROUP__DOWNLOAD_ARCHIVE.toString().equals(this.getIdentifier())) {
 				parameterDto.setInteger(this.getMaxValue());
+				parameterDto.setString(maxCurrentUnit);
+			} else {
+				parameterDto.setInteger(this.getValue());
+				parameterDto.setString(currentUnit);
 			}
 		}
-
 		res.add(parameterDto);
 		return res;
 	}
