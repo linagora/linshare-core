@@ -169,8 +169,8 @@ CREATE TABLE functionality (
 
 CREATE TABLE functionality_integer (
   functionality_id int8 NOT NULL,
-  integer_max_value    int4,
-  integer_default_value    int4,
+  integer_max_value    int4 NOT NULL,
+  integer_default_value    int4 NOT NULL,
   default_value_used    bool DEFAULT 'true' NOT NULL,
   max_value_used    bool DEFAULT 'true' NOT NULL,
   CONSTRAINT linshare_functionality_integer_pkey
@@ -184,9 +184,9 @@ CREATE TABLE functionality_string (
 
 CREATE TABLE functionality_unit (
   functionality_id      int8 NOT NULL,
-  integer_max_value         int4,
+  integer_max_value         int4 NOT NULL,
   unit_id               int8 NOT NULL,
-  integer_default_value int4,
+  integer_default_value int4 NOT NULL,
   max_unit_id			int8 NOT NULL,
   default_value_used    bool DEFAULT 'true' NOT NULL,
   max_value_used    bool DEFAULT 'true' NOT NULL,

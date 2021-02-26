@@ -185,6 +185,7 @@ UPDATE functionality_integer SET max_value_used = false
 ALTER TABLE functionality_unit ALTER COLUMN max_unit_id SET NOT NULL;
 ALTER TABLE functionality_unit ALTER COLUMN integer_max_value SET NOT NULL;
 ALTER TABLE functionality_integer ALTER COLUMN integer_max_value SET NOT NULL;
+ALTER TABLE functionality_integer ALTER COLUMN integer_default_value SET NOT NULL;
 
 -- DRIVE should be disabled by default.
 UPDATE policy SET status=false, default_status=false WHERE id = 317;
