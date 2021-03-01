@@ -155,7 +155,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			collectiveMode = false;
 		}
 		UploadRequest req = initUploadRequest(owner, inputRequest);
-		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup(owner, domain, subject, body,
+		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup(owner, domain, sanitize(subject), sanitize(body),
 				req.getActivationDate(), req.isCanDelete(), req.isCanClose(), req.isCanEditExpiryDate(),
 				req.getLocale(), req.isProtectedByPassword(), req.getEnableNotification(), collectiveMode, req.getStatus(),
 				req.getExpiryDate(), req.getNotificationDate(), req.getMaxFileCount(), req.getMaxDepositSize(),
@@ -486,8 +486,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				uploadRequestGroup.getUuid(), group);
 		group.setModificationDate(new Date());
-		group.setBusinessSubject(uploadRequestGroup.getSubject());
-		group.setBusinessBody(uploadRequestGroup.getBody());
+		group.setBusinessSubject(sanitize(uploadRequestGroup.getSubject()));
+		group.setBusinessBody(sanitize(uploadRequestGroup.getBody()));
 		group.setBusinessMaxFileCount(uploadRequestGroup.getMaxFileCount());
 		group.setBusinessMaxDepositSize(uploadRequestGroup.getMaxDepositSize());
 		group.setBusinessMaxFileSize(uploadRequestGroup.getMaxFileSize());

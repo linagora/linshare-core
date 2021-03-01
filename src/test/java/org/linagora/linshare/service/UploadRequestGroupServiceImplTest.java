@@ -171,6 +171,18 @@ public class UploadRequestGroupServiceImplTest {
 	}
 
 	@Test
+	public void testSanitizeURGInputsOnCreation() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, urInit, contactList,
+				"EP_TEST_v233<script>alert(document.cookie)</script>",
+				"EP_TEST_v233<script>alert(document.cookie)</script>", true);
+		Assertions.assertNotNull(uploadRequestGroup);
+		Assertions.assertEquals("EP_TEST_v233", uploadRequestGroup.getSubject());
+		Assertions.assertEquals("EP_TEST_v233", uploadRequestGroup.getBody());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void createUploadRequestGroupIndividual() throws BusinessException {
 		// Create URG in individual mode
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -388,6 +400,18 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequest uploadRequest = uploadRequests.get(0);
 		Assertions.assertEquals(false, uploadRequest.isCanClose());
 		Assertions.assertEquals(Integer.valueOf(5), uploadRequest.getMaxFileCount());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSanitizeURGInputsOnUpdate() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup group = uploadRequestGroupService.find(john, john, ure.getUploadRequestGroup().getUuid());
+		group.setSubject("EP_TEST_v233<script>alert(document.cookie)</script>");
+		group.setBody("EP_TEST_v233<script>alert(document.cookie)</script>");
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.update(john, john, group, false);
+		Assertions.assertEquals("EP_TEST_v233", uploadRequestGroup.getSubject());
+		Assertions.assertEquals("EP_TEST_v233", uploadRequestGroup.getBody());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
