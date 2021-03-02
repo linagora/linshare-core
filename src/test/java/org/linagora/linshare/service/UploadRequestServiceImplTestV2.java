@@ -43,6 +43,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.transaction.Transactional;
 
@@ -50,7 +51,6 @@ import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -115,7 +115,6 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-mongo-java-server.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
-@Disabled
 public class UploadRequestServiceImplTestV2 {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTestV2.class);
@@ -163,7 +162,7 @@ public class UploadRequestServiceImplTestV2 {
 	@Autowired
 	private DocumentEntryService documentEntryService;
 
-	private UploadRequest uploadRequest;
+	private UploadRequest globaleUploadRequest;
 
 	private UploadRequest ureJohn;
 
@@ -180,6 +179,8 @@ public class UploadRequestServiceImplTestV2 {
 	private final String fileName = "linshare-default.properties";
 
 	private final String comment = "file description";
+
+	private Date globalNow;
 	
 	public UploadRequestServiceImplTestV2() {
 		super();
@@ -191,25 +192,26 @@ public class UploadRequestServiceImplTestV2 {
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		AbstractDomain subDomain = abstractDomainRepository.findById(LinShareTestConstants.SUB_DOMAIN);
+		globalNow = parseDate("2020-08-12 15:25:00");
+		Mockito.when(timeService.dateNow()).thenReturn(globalNow);
 		yoda = repository.findByMail("yoda@linshare.org");
 		john.setDomain(subDomain);
 		// UPLOAD REQUEST CREATE
-		uploadRequest = new UploadRequest();
-		uploadRequest.setCanClose(true);
-		uploadRequest.setMaxDepositSize((long) 100);
-		uploadRequest.setMaxFileCount(Integer.valueOf(3));
-		uploadRequest.setMaxFileSize((long) 50);
-		uploadRequest.setExpiryDate(new Date());
-		uploadRequest.setProtectedByPassword(false);
-		uploadRequest.setCanEditExpiryDate(true);
-		uploadRequest.setCanDelete(true);
-		uploadRequest.setLocale(Language.ENGLISH);
-		uploadRequest.setActivationDate(new Date());
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
+		globaleUploadRequest = new UploadRequest();
+		globaleUploadRequest.setCanClose(true);
+		globaleUploadRequest.setMaxDepositSize((long) 100);
+		globaleUploadRequest.setMaxFileCount(Integer.valueOf(3));
+		globaleUploadRequest.setMaxFileSize((long) 50);
+		globaleUploadRequest.setNotificationDate(parseDate("2020-09-01 09:00:00"));
+		globaleUploadRequest.setExpiryDate(parseDate("2020-09-01 15:00:00"));
+		globaleUploadRequest.setProtectedByPassword(false);
+		globaleUploadRequest.setCanEditExpiryDate(true);
+		globaleUploadRequest.setCanDelete(true);
+		globaleUploadRequest.setLocale(Language.ENGLISH);
+		globaleUploadRequest.setActivationDate(null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, globaleUploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
-		uploadRequest.setActivationDate(null);
-		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2020-08-12 15:25:00"));
-		UploadRequestGroup enabledUploadRequestGroupJane = uploadRequestGroupService.create(jane, jane, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
+		UploadRequestGroup enabledUploadRequestGroupJane = uploadRequestGroupService.create(jane, jane, globaleUploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		ureJohn = uploadRequestGroup.getUploadRequests().iterator().next();
 		enabledUreJane = enabledUploadRequestGroupJane.getUploadRequests().iterator().next();
@@ -225,7 +227,7 @@ public class UploadRequestServiceImplTestV2 {
 	@Test
 	public void createUploadRequest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest request = uploadRequest.clone();
+		UploadRequest request = globaleUploadRequest.clone();
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -236,7 +238,7 @@ public class UploadRequestServiceImplTestV2 {
 	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, globaleUploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		int size = uploadRequestService.findAll(john, john, uploadRequestGroup, null).size();
 		Assertions.assertEquals(1, size);
@@ -246,7 +248,7 @@ public class UploadRequestServiceImplTestV2 {
 	@Test
 	public void findFiltredUploadRequests() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest request = uploadRequest.clone();
+		UploadRequest request = globaleUploadRequest.clone();
 		request.setActivationDate(null);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		int initSize = uploadRequestService.findAll(john, john, uploadRequestGroup, Lists.newArrayList(UploadRequestStatus.CREATED)).size();
@@ -258,7 +260,7 @@ public class UploadRequestServiceImplTestV2 {
 	@Test
 	public void updateStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest request = uploadRequest.clone();
+		UploadRequest request = globaleUploadRequest.clone();
 		request.setActivationDate(null);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
@@ -389,7 +391,45 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = enabledUreJane.getUploadRequestURLs().iterator().next();
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(jane, jane, request, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		UploadRequestUrl requestUrl = request.getUploadRequestURLs().iterator().next();
+		Assertions.assertNotNull(requestUrl);
+		UploadRequest uploadRequest = requestUrl.getUploadRequest();
+		Assertions.assertNotNull(uploadRequest);
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
+				requestUrl);
+		Assertions.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
+
+		uploadRequestService.updateStatus(actor, actor, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, uploadRequestEntry));
+		Assertions.assertNotNull(documentEntry);
+
+		Document aDocument = uploadRequestEntry.getDocument();
+		userRepository.update(jane);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
+		metadata.setUuid(aDocument.getUuid());
+		fileDataStore.remove(metadata);
+		documentRepository.delete(aDocument);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCollectiveUploadRequestCopyUploadRequestEntry() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		Assertions.assertNotNull(actor);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(jane, jane, request, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", true);
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		UploadRequestUrl requestUrl = request.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
 		UploadRequest uploadRequest = requestUrl.getUploadRequest();
 		Assertions.assertNotNull(uploadRequest);
@@ -415,7 +455,12 @@ public class UploadRequestServiceImplTestV2 {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = enabledUreJane.getUploadRequestURLs().iterator().next();
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(jane, jane, request, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		UploadRequestUrl requestUrl = request.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
 		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				requestUrl);
@@ -438,17 +483,21 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = enabledUreJane.getUploadRequestURLs().iterator().next();
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(jane, jane, request, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		UploadRequestUrl requestUrl = request.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
-		UploadRequest uploadRequest = requestUrl.getUploadRequest();
-		Assertions.assertNotNull(uploadRequest);
+		Assertions.assertNotNull(request);
 		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
 				requestUrl);
 		Assertions.assertNotNull(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()));
 		uploadRequestEntry.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
 		uploadRequestEntryRepository.update(uploadRequestEntry);
 		Assertions.assertEquals(uploadRequestEntry.getName(), "EP_TEST_v233<script>alert(document.cookie)</script>");
-		uploadRequestService.updateStatus(actor, actor, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestService.updateStatus(actor, actor, request.getUuid(), UploadRequestStatus.CLOSED, false);
 		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, uploadRequestEntry));
 		Assertions.assertNotNull(documentEntry);
 		Assertions.assertEquals(documentEntry.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
@@ -468,14 +517,17 @@ public class UploadRequestServiceImplTestV2 {
 		Assertions.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = enabledUreJane.getUploadRequestURLs().iterator().next();
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(jane, jane, request, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		UploadRequestUrl requestUrl = request.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
-		UploadRequest uploadRequest = requestUrl.getUploadRequest();
-		Assertions.assertNotNull(uploadRequest);
 		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
 				requestUrl);
 		Assertions.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
-		uploadRequestService.updateStatus(actor, actor, enabledUreJane.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestService.updateStatus(actor, actor, request.getUuid(), UploadRequestStatus.CLOSED, false);
 		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, uploadRequestEntry));
 		Assertions.assertNotNull(documentEntry);
 
@@ -587,17 +639,20 @@ public class UploadRequestServiceImplTestV2 {
 	public void testRoundExpiryDateWhenCreateEnabledUploadRequest() throws BusinessException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date now = parseDate("2020-03-12 15:25:00");
+		Date expiryDate = parseDate("2020-04-01 9:15:45");
+		Date notificationDate = parseDate("2020-03-30 11:15:45");
 		Mockito.when(timeService.dateNow()).thenReturn(now);
-		Date expiryDate = parseDate("2020-10-12 9:15:45");
-		UploadRequest uploadRequest = createSimpleUploadRequest(null);
-		uploadRequest.setExpiryDate(expiryDate);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
-				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Date expectedExpiryDate = parseDate("2020-10-12 10:00:00");
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(null);
+		request.setExpiryDate(expiryDate);
+		request.setNotificationDate(notificationDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(jane, jane, request, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		Date expectedExpiryDate = parseDate("2020-04-01 10:00:00");
 		Assertions.assertEquals(expectedExpiryDate, uploadRequestGroup.getExpiryDate(),
 				"The expiry date of the group has not been rounded");
-		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assertions.assertEquals(expectedExpiryDate, uploadRequest.getExpiryDate(),
+		Assertions.assertEquals(expectedExpiryDate, request.getExpiryDate(),
 				"The expiry date of the upload request has not been rounded");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -606,17 +661,20 @@ public class UploadRequestServiceImplTestV2 {
 	public void testRoundExpiryDateWhenCreateUploadRequest() throws BusinessException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date now = parseDate("2020-03-12 15:25:00");
+		Date expiryDate = parseDate("2020-04-01 9:15:45");
+		Date notificationDate = parseDate("2020-03-30 11:15:45");
 		Mockito.when(timeService.dateNow()).thenReturn(now);
-		Date expiryDate = parseDate("2020-10-12 9:15:45");
-		UploadRequest uploadRequest = createSimpleUploadRequest(now);
-		uploadRequest.setExpiryDate(expiryDate);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(now);
+		request.setExpiryDate(expiryDate);
+		request.setNotificationDate(notificationDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, request,
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Date expectedExpiryDate = parseDate("2020-10-12 10:00:00");
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		Date expectedExpiryDate = parseDate("2020-04-01 10:00:00");
 		Assertions.assertEquals(expectedExpiryDate, uploadRequestGroup.getExpiryDate(),
 				"The expiry date of the group has not been rounded");
-		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assertions.assertEquals(expectedExpiryDate, uploadRequest.getExpiryDate(),
+		Assertions.assertEquals(expectedExpiryDate, request.getExpiryDate(),
 				"The expiry date of the upload request has not been rounded");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -624,20 +682,21 @@ public class UploadRequestServiceImplTestV2 {
 	@Test
 	public void testRoundNotifDateWhenCreateEnabledUploadRequest() throws BusinessException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Date now = parseDate("2020-05-12 15:25:00");
+		Date now = parseDate("2020-03-12 15:25:00");
+		Date expiryDate = parseDate("2020-04-01 9:15:45");
+		Date notificationDate = parseDate("2020-03-30 11:15:45");
 		Mockito.when(timeService.dateNow()).thenReturn(now);
-		Date expiryDate = parseDate("2020-10-12 15:25:00");
-		Date notifDate = parseDate("2020-10-10 10:25:00");
-		UploadRequest uploadRequest = createSimpleUploadRequest(null);
-		uploadRequest.setExpiryDate(expiryDate);
-		uploadRequest.setNotificationDate(notifDate);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(null);
+		request.setExpiryDate(expiryDate);
+		request.setNotificationDate(notificationDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, request,
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Date expectedNotifDate = parseDate("2020-10-10 11:00:00");
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		Date expectedNotifDate = parseDate("2020-03-30 12:00:00");
 		Assertions.assertEquals(expectedNotifDate, uploadRequestGroup.getNotificationDate(),
 				"The notification date of the group has not been rounded");
-		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assertions.assertEquals(expectedNotifDate, uploadRequest.getNotificationDate(),
+		Assertions.assertEquals(expectedNotifDate, request.getNotificationDate(),
 				"The notification date of the upload request has not been rounded");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -645,21 +704,117 @@ public class UploadRequestServiceImplTestV2 {
 	@Test
 	public void testRoundNotifDateWhenCreateUploadRequest() throws BusinessException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Date now = parseDate("2020-05-12 15:25:00");
+		Date now = parseDate("2020-03-12 15:25:00");
+		Date expiryDate = parseDate("2020-04-01 9:15:45");
+		Date notificationDate = parseDate("2020-03-30 11:15:45");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(now);
+		request.setExpiryDate(expiryDate);
+		request.setNotificationDate(notificationDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, request,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		Date expectedNotifDate = parseDate("2020-03-30 12:00:00");
+		Assertions.assertEquals(expectedNotifDate, uploadRequestGroup.getNotificationDate(),
+				"The notification date of the group has not been rounded");
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(expectedNotifDate, request.getNotificationDate(),
+				"The notification date of the upload request has not been rounded");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testFailToCreatePastUploadRequest() throws BusinessException, ParseException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+		calendar.setTime(parseDate("2020-04-05 11:05:00"));
+		Date past = calendar.getTime();
+		calendar.setTime(parseDate("2020-05-12 15:25:00"));
+		Date now = calendar.getTime();
 		Mockito.when(timeService.dateNow()).thenReturn(now);
 		Date expiryDate = parseDate("2020-10-12 15:25:00");
 		Date notifDate = parseDate("2020-10-10 10:25:00");
-		UploadRequest uploadRequest = createSimpleUploadRequest(now);
+		UploadRequest uploadRequest = createSimpleUploadRequest(past);
+		uploadRequest.setExpiryDate(expiryDate);
+		uploadRequest.setNotificationDate(notifDate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
+					"This is a body", false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCreateFailedUploadRequestFRTimezone() throws BusinessException, ParseException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+		calendar.setTime(parseDate("2021-02-22 03:58:00"));
+		Date now = calendar.getTime();
+		calendar.setTime(parseDate("2021-02-23 05:00:00"));
+		Date future = calendar.getTime();
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		Date expiryDate = parseDate("2021-03-22 02:00:00");
+		Date notifDate = parseDate("2021-03-21 09:00:00");
+		UploadRequest uploadRequest = createSimpleUploadRequest(future);
 		uploadRequest.setExpiryDate(expiryDate);
 		uploadRequest.setNotificationDate(notifDate);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Date expectedNotifDate = parseDate("2020-10-10 11:00:00");
-		Assertions.assertEquals(expectedNotifDate, uploadRequestGroup.getNotificationDate(),
-				"The notification date of the group has not been rounded");
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assertions.assertEquals(expectedNotifDate, uploadRequest.getNotificationDate(),
-				"The notification date of the upload request has not been rounded");
+		Date expectedActivationDate = parseDate("2021-02-23 05:00:00");
+		Assertions.assertEquals(expectedActivationDate, uploadRequestGroup.getActivationDate(),
+				"The activation date of the group is incorrect");
+		Assertions.assertEquals(expectedActivationDate, uploadRequest.getActivationDate(),
+				"The activation date of the upload request is incorrect");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCreateFailedUploadRequestVNTimezone() throws BusinessException, ParseException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+		calendar.setTime(parseDate("2021-02-22 03:58:00"));
+		Date now = calendar.getTime();
+		calendar.setTime(parseDate("2021-02-23 05:00:00"));
+		Date future = calendar.getTime();
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		Date expiryDate = parseDate("2021-03-22 02:00:00");
+		Date notifDate = parseDate("2021-03-21 09:00:00");
+		UploadRequest uploadRequest = createSimpleUploadRequest(future);
+		uploadRequest.setExpiryDate(expiryDate);
+		uploadRequest.setNotificationDate(notifDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Date expectedActivationDate = parseDate("2021-02-23 05:00:00");
+		Assertions.assertEquals(expectedActivationDate, uploadRequestGroup.getActivationDate(),
+				"The activation date of the group is incorrect");
+		Assertions.assertEquals(expectedActivationDate, uploadRequest.getActivationDate(),
+				"The activation date of the upload request is incorrect");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCreatePastUploadRequest() throws BusinessException, ParseException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2021-02-24 15:00:00");
+		Date future = parseDate("2021-02-24 13:00:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		Date expiryDate = parseDate("2021-03-22 02:00:00");
+		Date notifDate = parseDate("2021-03-21 09:00:00");
+		UploadRequest uploadRequest = createSimpleUploadRequest(future);
+		uploadRequest.setExpiryDate(expiryDate);
+		uploadRequest.setNotificationDate(notifDate);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
+					"This is a body", false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
