@@ -335,6 +335,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 
 	@Path("/{uuid}/audit")
 	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Operation(summary = "Get all traces for a document.", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
