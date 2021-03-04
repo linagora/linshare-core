@@ -43,6 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.reflections.Reflections;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -81,7 +82,7 @@ public class EnumResourceUtils {
 		for (final Class<? extends Enum> e : new Reflections(ENUMS_PATH)
 				.getSubTypesOf(Enum.class)) {
 			String enumIn = toUnderscore(e.getSimpleName());
-			if (!excludedEnums.contains(enumIn)) {
+			if (!excludedEnums.contains(enumIn) && !Strings.isNullOrEmpty(enumIn)) {
 				res.add(enumIn);
 			}
 		}
