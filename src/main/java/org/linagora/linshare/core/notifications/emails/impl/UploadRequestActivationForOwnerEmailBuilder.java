@@ -67,7 +67,7 @@ public class UploadRequestActivationForOwnerEmailBuilder extends GenericUploadRe
 
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 
-		List<MailContact> recipients = getRecipients(request);
+		List<MailContact> recipients = getRecipients(emailCtx.getRecipients());
 
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());

@@ -50,16 +50,6 @@ public class UploadRequestActivationEmailContext extends GenericUploadRequestEma
 	private List<Contact> recipients;
 
 	/**
-	 * Warn the recipient.
-	 * @param owner
-	 * @param uploadRequest
-	 * @param requestUrl
-	 */
-	public UploadRequestActivationEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl) {
-		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, false);
-	}
-
-	/**
 	 * @param owner
 	 * @param request
 	 * @param requestUrl

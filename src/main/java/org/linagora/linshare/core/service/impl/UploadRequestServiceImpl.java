@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -52,6 +53,7 @@ import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
@@ -184,8 +186,10 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	private void sendNotification(UploadRequest req, Account actor) {
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		if (UploadRequestStatus.ENABLED.equals(req.getStatus())) {
+			List<Contact> recipients = req.getUploadRequestURLs().stream().map(url -> url.getContact()).collect(Collectors.toList()); 
+
 			for (UploadRequestUrl urUrl : req.getUploadRequestURLs()) {
-				mails.add(mailBuildingService.build(new UploadRequestActivationEmailContext((User) actor, req, urUrl)));
+				mails.add(mailBuildingService.build(new UploadRequestActivationEmailContext((User) actor, req, urUrl, recipients)));
 			}
 		} else if (req.getEnableNotification()) {
 			if (UploadRequestStatus.CLOSED.equals(req.getStatus())) {
