@@ -45,8 +45,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.impl.JwtServiceImpl;
@@ -131,6 +134,29 @@ public class JwtLongTimeServiceImplTest {
 		Assertions.assertEquals(null, decode.getExpiration());
 		Assertions.assertEquals(token.getLabel(), TOKEN_LABEL);
 		Assertions.assertEquals(token.getDescription(), TOKEN_DESC);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testForbidAdminTokencreationForUser() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		jane.setRole(Role.ADMIN);
+		userRepository.update(jane);
+		Assertions.assertTrue(jane.hasAdminRole());
+		PermanentToken token = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
+		// Forbid the token creation by admin for a user
+		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+			jwtLongTimeService.create(jane, john, token);
+		});
+		Assertions.assertEquals(e.getErrorCode(), BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_CREATE);
+		// Admin can create a token for himself
+		PermanentToken createdToken = jwtLongTimeService.create(jane, jane, token);
+		Claims decode = jwtService.decode(createdToken.getToken());
+		logger.debug("Token:" + decode.toString());
+		Assertions.assertEquals(jane.getMail(), decode.getSubject());
+		Assertions.assertNull(decode.getExpiration());
+		Assertions.assertEquals(createdToken.getLabel(), TOKEN_LABEL);
+		Assertions.assertEquals(createdToken.getDescription(), TOKEN_DESC);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

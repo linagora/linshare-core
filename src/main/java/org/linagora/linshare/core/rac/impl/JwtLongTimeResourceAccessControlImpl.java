@@ -102,14 +102,10 @@ public class JwtLongTimeResourceAccessControlImpl extends
 		if (account.hasSuperAdminRole()) {
 			return true;
 		}
-		if (account.hasAdminRole() && functionality.getConfigurationPolicy().getStatus()) {
-			AbstractDomain domain = abstractDomainService.findById(entry.getDomain().getUuid());
-			return permissionService.isAdminforThisDomain(account, domain);
-		}
 		Functionality userCreateFunctionality = functionalityReadOnlyService
 				.getJwtLongTimeFunctionalityForUser(account.getDomain());
 		boolean enabled = userCreateFunctionality.getActivationPolicy().getStatus();
-		// true if users have the right to create them self some tokens.
+		// true if users have the right to create themselves some tokens.
 		boolean create = userCreateFunctionality.getDelegationPolicy().getStatus();
 		if (enabled && create) {
 			if (account.isInternal()) {
