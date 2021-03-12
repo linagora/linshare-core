@@ -31,11 +31,11 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
     <th:block data-th-replace="layout :: infoStandardArea(#{fileSize}, ${totalSize})"/>
     <th:block data-th-if="(${request.authorizedFiles})">
        <th:block data-th-replace="layout :: infoStandardArea(#{numFilesInDepot},
-        #{uploadedOverTotal(${request.uploadedFilesCount},${request.authorizedFiles})})"/>
+        #{uploadedOverTotal(${documentsCount},${request.authorizedFiles})})"/>
     </th:block>
     <th:block data-th-if="(${!request.authorizedFiles})">
        <th:block data-th-replace="layout :: infoStandardArea(#{numFilesInDepot},
-        #{totalUploaded(${request.uploadedFilesCount})})"/>
+        #{totalUploaded(${documentsCount})})"/>
     </th:block>
     <th:block data-th-replace="layout :: infoDateArea(#{invitationCreationDate},${request.activationDate})"/>
     <th:block data-th-replace="layout :: infoDateArea(#{invitationClosureDate},${request.expirationDate})"/>

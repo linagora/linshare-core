@@ -96,14 +96,14 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		res.add(getFakeOwner(language));
-		res.add(getFakeRecipient(language));
-		res.add(getFakeOwnerGrouped(language));
-		res.add(getFakeRecipientGrouped(language));
+		res.add(getFakeOwnerIndividual(language));
+		res.add(getFakeRecipientIndividual(language));
+		res.add(getFakeOwnerCollective(language));
+		res.add(getFakeRecipientCollective(language));
 		return res;
 	}
 
-	private Context getFakeOwner(Language language) {
+	private Context getFakeOwnerIndividual(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 		
@@ -132,7 +132,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		return ctx;
 	}
 
-	private Context getFakeOwnerGrouped(Language language) {
+	private Context getFakeOwnerCollective(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 		recipients.add(new MailContact("unknown2@linshare.org"));
@@ -163,7 +163,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		return ctx;
 	}
 
-	private Context getFakeRecipient(Language language) {
+	private Context getFakeRecipientIndividual(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 
@@ -192,7 +192,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		return ctx;
 	}
 
-	private Context getFakeRecipientGrouped(Language language) {
+	private Context getFakeRecipientCollective(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 		recipients.add(new MailContact("unknown2@linshare.org"));
@@ -206,7 +206,6 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		document = getNewFakeDocument("my-upload-request-file.txt", fakeLinshareURL);
 		document.setSize(659L);
 		document.setCreationDate(new Date());
-		document.setHref(fakeLinshareURL + "/#ownerlink");
 		document.setMine(true);
 		documents.add(document);
 
