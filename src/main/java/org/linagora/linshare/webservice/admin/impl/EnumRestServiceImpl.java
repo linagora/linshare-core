@@ -39,6 +39,7 @@ package org.linagora.linshare.webservice.admin.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
@@ -98,5 +99,13 @@ public class EnumRestServiceImpl extends WebserviceBase implements EnumRestServi
 		if (!contextPath.endsWith("/"))
 			contextPath += '/';
 		return contextPath;
+	}
+
+	@Path("/")
+	@GET
+	@Operation(summary = "Find all available enums.")
+	@Override
+	public List<String> findAll() throws BusinessException {
+		return new EnumResourceUtils().getAllEnumsName();
 	}
 }
