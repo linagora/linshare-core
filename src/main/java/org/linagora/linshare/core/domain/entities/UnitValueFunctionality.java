@@ -169,6 +169,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		UnitValueFunctionality func = null;
 		func = (UnitValueFunctionality) super.clone();
 		func.unit = (Unit<?>) unit.clone();
+		func.maxUnit = (Unit<?>) maxUnit.clone();
 		return func;
 	}
 
