@@ -114,4 +114,39 @@ SELECT ls_avoid_duplicate_unit_in_functionality_unit();
 
 -- Note: Insert fix scripts bellow.
 -- All fixes should be in the same transaction
+-- Update default values (integer_max_value integer_default_value) of UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION and UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
+UPDATE functionality_unit
+SET    integer_max_value = 4
+WHERE  functionality_id IN (SELECT id
+                            FROM   functionality f
+                            WHERE
+              identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION')
+       AND integer_max_value = 1
+       AND integer_default_value = 3
+       AND unit_id IN (SELECT id
+                       FROM   unit
+                       WHERE  unit_value = 2
+                              AND unit_type = 0)
+       AND max_unit_id IN (SELECT id
+                       FROM   unit
+                       WHERE  unit_value = 2
+                              AND unit_type = 0);
+
+UPDATE functionality_unit
+SET    integer_max_value = 21,
+       integer_default_value = 7
+WHERE  functionality_id IN (SELECT id
+                            FROM   functionality f
+                            WHERE
+              identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION')
+       AND integer_max_value = 7
+       AND integer_default_value = 20
+       AND unit_id IN (SELECT id
+                       FROM   unit
+                       WHERE  unit_value = 0
+                              AND unit_type = 0)
+       AND max_unit_id IN (SELECT id
+                       FROM   unit
+                       WHERE  unit_value = 0
+                              AND unit_type = 0);
 COMMIT;

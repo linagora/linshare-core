@@ -287,7 +287,7 @@ public class FunctionalityReadOnlyTest {
 		Date userExpirationDate = c1.getTime();
 		// Case 1:
 		// the user notification date is out of range, we need to throws business exception
-		c1.add(Calendar.DATE, - 10); // Maximum value allowed is 7 (delay before notification is 7 days )
+		c1.add(Calendar.DATE, - 22); // Maximum value allowed is 7 (delay before notification is 7 days )
 		Date userNotificationDate = c1.getTime();
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			functionalityService.getNotificationDateValue(funcNotify, userNotificationDate, userExpirationDate,

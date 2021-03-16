@@ -359,9 +359,9 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 -- time unit : month
  INSERT INTO unit(id, unit_type, unit_value)
  	VALUES (8, 0, 2),(18, 0, 2);
--- The default value of UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION is after 3 months
+-- The default value 3 months - max value 4 months
 INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
-	VALUES (33, 1, 8, 18, 3, true, true);
+	VALUES (33, 4, 8, 18, 3, true, true);
 
 -- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -463,9 +463,9 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 -- time unit : day
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (11, 0, 0),(21, 0, 0);
--- time : 7 days
+-- time : default value 7 days - max value 21 days
 INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
-	VALUES (42, 7, 11, 21, 20, true, true);
+	VALUES (42, 21, 11, 21, 7, true, true);
 
 -- Functionality : UPLOAD_REQUEST__CAN_CLOSE
 INSERT INTO policy(id, status, default_status, policy, system)
