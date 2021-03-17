@@ -78,9 +78,39 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
+
+CREATE OR REPLACE FUNCTION ls_avoid_duplicate_unit_in_functionality_unit() RETURNS void AS $$
+BEGIN
+	DECLARE
+		functionality_row record;
+		functionality_unit_row record;
+		count_occurences integer;
+		new_unit_id integer;
+	BEGIN
+		RAISE INFO 'Removing duplicated unit_id in functionality_unit table...';
+		FOR functionality_row IN SELECT * FROM functionality WHERE domain_id <> 1 AND id IN (SELECT functionality_id FROM functionality_unit) LOOP
+			FOR functionality_unit_row IN SELECT * FROM functionality_unit where functionality_id = functionality_row.id LOOP
+				SELECT COUNT(*) INTO count_occurences FROM functionality_unit where max_unit_id = functionality_unit_row.max_unit_id; 
+				RAISE INFO 'Found functionality_unit with functionality_id "%" in sub domain', functionality_unit_row.functionality_id;
+				IF (count_occurences > 1)
+				THEN
+					INSERT INTO unit(id, unit_type, unit_value)
+						(  SELECT  nextVal('hibernate_sequence'), unit_type, unit_value FROM unit WHERE id = functionality_unit_row.unit_id )
+					RETURNING id INTO new_unit_id;
+					UPDATE functionality_unit SET max_unit_id = new_unit_id where functionality_id = functionality_unit_row.functionality_id;
+					RAISE INFO 'Duplicate found : Updating max_unit_id of functionality_unit with functionality_id "%"', functionality_unit_row.functionality_id;
+				END IF;
+			END LOOP;
+		END LOOP;
+		RAISE INFO 'End removing duplicated unit_id in functionality_unit table';
+	END;
+END
+$$ LANGUAGE plpgsql;
+
 SELECT ls_check_user_connected();
 SELECT check_to_fix_version_from_2_4_to_4_1_0();
 SELECT ls_prechecks_patch();
+SELECT ls_avoid_duplicate_unit_in_functionality_unit();
 
 -- Note: Insert fix scripts bellow.
 -- All fixes should be in the same transaction
