@@ -198,13 +198,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			List<String> restrictedMails) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(guest);
-		if (guest.isRestricted()) {
-			Validate.notNull(restrictedMails,
-					"A restricted guest must have a restricted list of contacts (mails)");
-//			AKO : not empty already check if the object is null.
-			Validate.notEmpty(restrictedMails,
-					"A restricted guest must have a restricted list of contacts (mails)");
-		}
 		Validate.notEmpty(guest.getMail(), "Guest mail must be set.");
 		checkCreatePermission(actor, owner, Guest.class,
 				BusinessErrorCode.USER_CANNOT_CREATE_GUEST, null);
@@ -236,6 +229,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		guest.setLastName(sanitize(guest.getLastName()));
 		List<User> restrictedContacts = null;
 		if (guest.isRestricted()) {
+			Validate.notEmpty(restrictedMails,
+					"A restricted guest must have a restricted list of contacts (mails)");
 			restrictedContacts = transformToUsers(actor, restrictedMails);
 			if (restrictedContacts == null || restrictedContacts.isEmpty()) {
 				throw new BusinessException(

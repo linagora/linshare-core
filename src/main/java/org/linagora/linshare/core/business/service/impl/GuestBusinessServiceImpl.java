@@ -37,6 +37,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.PasswordService;
@@ -52,6 +53,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+
+import com.google.common.collect.Sets;
 
 
 public class GuestBusinessServiceImpl implements GuestBusinessService {
@@ -139,16 +142,20 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		}
 		guest.setPassword(hashedPassword);
 		Guest create = guestRepository.create(guest);
+		Set<AllowedContact> allowedContactsToAdd = Sets.newHashSet();
 		if (create.isRestricted()) {
 			if (allowedContacts == null || allowedContacts.isEmpty()) {
 				throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not create a restricted guest without a list of contacts.");
 			} else {
 				for (User contact : allowedContacts) {
-					allowedContactRepository.create(new AllowedContact(create,
-							contact));
+					AllowedContact allowedContact = new AllowedContact(create,
+							contact);
+					allowedContactRepository.create(allowedContact);
+					allowedContactsToAdd.add(allowedContact);
 				}
 			}
 		}
+		create.addContacts(allowedContactsToAdd);
 		return create;
 	}
 
