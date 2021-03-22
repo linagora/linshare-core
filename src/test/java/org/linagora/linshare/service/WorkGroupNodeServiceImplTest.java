@@ -52,6 +52,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -60,6 +61,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.InitMongoService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
@@ -128,6 +130,9 @@ public class WorkGroupNodeServiceImplTest {
 
 	@Autowired
 	private FunctionalityReadOnlyService functionalityService;
+
+	@Autowired
+	private QuotaService quotaService;
 
 	private User john;
 
@@ -230,6 +235,24 @@ public class WorkGroupNodeServiceImplTest {
 			workGroupNodeService.findMetadata(john, john, workGroup, revision, false);
 		});
 		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, exception.getErrorCode());
+	}
+
+	@Test
+	public void testQuotaDelete() throws IOException {
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		AccountQuota workgroupQuota = quotaService.findByRelatedAccount(workGroup);
+		Long quota = quotaService.getRealTimeUsedSpace(john, john, workgroupQuota.getUuid());
+		WorkGroupDocument document1 = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile1,
+				tempFile1.getName(), folder.getUuid(), false);
+		Long quotaAfterCreate = quotaService.getRealTimeUsedSpace(john, john, workgroupQuota.getUuid());
+		Assertions.assertEquals(quotaAfterCreate, quota + document1.getSize(),
+				"The quota must take in count the file creation");
+		workGroupNodeService.delete(john, john, workGroup, document1.getUuid());
+		Long newQuota = quotaService.getRealTimeUsedSpace(john, john, workgroupQuota.getUuid());
+		Assertions.assertEquals(quota, newQuota, "The quota must be the same after adding then deleting a file");
 	}
 
 }

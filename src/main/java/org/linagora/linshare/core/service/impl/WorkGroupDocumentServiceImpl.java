@@ -255,7 +255,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	protected void delFromQuota(WorkGroup workGroup, Long size) {
-		OperationHistory oh = new OperationHistory(workGroup, workGroup.getDomain(), size, OperationHistoryTypeEnum.DELETE,
+		OperationHistory oh = new OperationHistory(workGroup, workGroup.getDomain(), - size, OperationHistoryTypeEnum.DELETE,
 				ContainerQuotaType.WORK_GROUP);
 		operationHistoryBusinessService.create(oh);
 	}

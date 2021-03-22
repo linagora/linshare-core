@@ -60,6 +60,7 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
@@ -77,6 +78,7 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +125,9 @@ public class DocumentEntryServiceImplTest {
 
 	@Autowired
 	private DocumentEntryService documentEntryService;
+
+	@Autowired
+	private QuotaService quotaService;
 
 	private User john;
 
@@ -259,6 +264,24 @@ public class DocumentEntryServiceImplTest {
 					"The user should have access to this resource. This exception must not be thrown "
 							+ e.getMessage());
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testQuotaDeleteDocumentEntries() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		AccountQuota actorQuota = quotaService.findByRelatedAccount(actor);
+		Long quota = quotaService.getRealTimeUsedSpace(actor, actor, actorQuota.getUuid());
+		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
+		Long quotaAfterCreate = quotaService.getRealTimeUsedSpace(actor, actor, actorQuota.getUuid());
+		Assertions.assertEquals(quota + aDocumentEntry.getSize(), quotaAfterCreate,
+				"The quota must take in consideration the file creation");
+		documentEntryService.delete(actor, actor, aDocumentEntry.getUuid());
+		Long newQuota = quotaService.getRealTimeUsedSpace(actor, actor, actorQuota.getUuid());
+		Assertions.assertEquals(quota, newQuota, "The quota must be the same after adding then deleting a file");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
