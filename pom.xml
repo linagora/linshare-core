@@ -1588,7 +1588,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<slf4j-release-version>1.7.30</slf4j-release-version>
-		<spring-data.version>Moore-SR5</spring-data.version>
+		<spring-data.version>Moore-SR13</spring-data.version>
 		<spring.mvc.version>5.2.9.RELEASE</spring.mvc.version>
 		<spring-release-version>5.2.13.RELEASE</spring-release-version>
 		<spring-security-release-version>5.4.5</spring-security-release-version>
