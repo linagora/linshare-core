@@ -59,7 +59,7 @@ public interface SharedSpaceNodeFacade {
 
 	List<SharedSpaceMember> members(String actorUuid, String uuid, String accountUuid) throws BusinessException;
 
-	List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole);
+	List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole, String parent);
 
 	List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(String actorUuid, String uuid);
 

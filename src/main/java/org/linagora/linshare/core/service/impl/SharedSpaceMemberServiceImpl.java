@@ -169,10 +169,10 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	 * @param withRole boolean if true, return the user role in the node
 	 */
 	@Override
-	public List<SharedSpaceNodeNested> findAllNodesOnTopByAccount(Account authUser, Account actor, String accountUuid, boolean withRole) {
+	public List<SharedSpaceNodeNested> findAllNodesOnTopByAccount(Account authUser, Account actor, String accountUuid, boolean withRole, String parent) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(accountUuid, "accountUuid must be set.");
-		return businessService.findAllNestedNodeByAccountUuid(accountUuid, withRole);
+		return businessService.findAllNestedNodeByAccountUuid(accountUuid, withRole, parent);
 	}
 
 	@Override

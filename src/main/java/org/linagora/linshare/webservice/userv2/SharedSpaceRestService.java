@@ -49,7 +49,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface SharedSpaceRestService {
 
-	List<SharedSpaceNodeNested> findAll(boolean withRole) throws BusinessException;
+	List<SharedSpaceNodeNested> findAll(boolean withRole,String parent) throws BusinessException;
 
 	SharedSpaceNode find(String uuid, boolean withRole) throws BusinessException;
 

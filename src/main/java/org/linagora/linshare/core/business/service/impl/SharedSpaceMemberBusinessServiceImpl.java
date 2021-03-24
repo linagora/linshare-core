@@ -62,6 +62,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
@@ -186,11 +187,17 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	 * @return {@link SharedSpaceNodeNested} {@link List} All nodes of the given member except Nested SharedSpaces on Drives 
 	 */
 	@Override
-	public List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole) {
-		if (withRole) {
+	public List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole, String parent) {
+		if (withRole ) {
 			List<SharedSpaceMember> members = repository.findByAccountUuidAndNodeParentUuid(accountUuid, null);
 			return members.stream().map(member -> new SharedSpaceNodeNested(member)).collect(Collectors.toList());
-		} else {
+		} else if (withRole && !Strings.isNullOrEmpty(parent)) {
+			List<SharedSpaceMember> members = repository.findByAccountUuidAndNodeParentUuid(accountUuid, parent);
+			return members.stream().map(member -> new SharedSpaceNodeNested(member)).collect(Collectors.toList());
+		} else if (!Strings.isNullOrEmpty(parent)){
+			List<SharedSpaceMember> members = repository.findByAccountUuidAndNodeParentUuid(accountUuid, parent);
+			return Lists.transform(members, convertToSharedSpaceNode);
+		}else {
 			Aggregation aggregation = Aggregation.newAggregation(
 					Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
 					Aggregation.match(Criteria.where("node.parentUuid").is(null)),

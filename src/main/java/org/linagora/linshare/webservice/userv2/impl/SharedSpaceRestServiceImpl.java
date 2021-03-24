@@ -104,8 +104,10 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	@Override
 	public List<SharedSpaceNodeNested> findAll(
 			@Parameter(description = "Return also the role of the member", required = false)
-				@QueryParam("withRole") @DefaultValue("false") boolean withRole) throws BusinessException {
-		return nodeFacade.findAllMyNodes(null, withRole);
+				@QueryParam("withRole") @DefaultValue("false") boolean withRole,
+			@Parameter(description = "The parent uuid.", required = false)
+				@QueryParam("parent") String parent) throws BusinessException {
+		return nodeFacade.findAllMyNodes(null, withRole, parent);
 	}
 
 	@Path("/{uuid}")

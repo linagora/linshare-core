@@ -90,7 +90,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "Return also the role of the member", required = false)
 				@QueryParam("withRole") @DefaultValue("false") boolean withRole)
 			throws BusinessException {
-		return nodeFacade.findAllMyNodes(actorUuid, withRole);
+		return nodeFacade.findAllMyNodes(actorUuid, withRole, parent);
 	}
 
 	@Path("/{uuid}")

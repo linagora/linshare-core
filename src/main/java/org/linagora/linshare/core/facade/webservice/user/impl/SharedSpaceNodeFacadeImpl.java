@@ -38,7 +38,9 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
@@ -131,10 +133,17 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 	}
 
 	@Override
-	public List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole) {
+	public List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole, String parent) {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		return memberService.findAllNodesOnTopByAccount(authUser, actor, actor.getLsUuid(), withRole);
+		if (!Strings.isNullOrEmpty(parent)) {
+			SharedSpaceNode node = nodeService.find(authUser, actor, parent);
+			if (NodeType.DRIVE.equals(node.getNodeType())) {
+				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
+						"The requested shared space is not supported");
+			}
+		}
+		return memberService.findAllNodesOnTopByAccount(authUser, actor, actor.getLsUuid(), withRole, parent);
 	}
 
 	@Override
