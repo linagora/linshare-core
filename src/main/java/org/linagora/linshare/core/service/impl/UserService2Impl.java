@@ -33,24 +33,29 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.hibernate.criterion.Order;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
+import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.UserService2;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class UserService2Impl extends GenericServiceImpl<Account, User> implements UserService2 {
 
@@ -58,14 +63,18 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 
 	private final UserService userService;
 
+	private final AllowedContactRepository allowedContactRepository;
+
 	public UserService2Impl(
 			AbstractResourceAccessControl<Account, Account, User> rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			UserRepository<User> userRepository,
-			UserService userService) {
+			UserService userService,
+			AllowedContactRepository allowedContactRepository) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.userRepository = userRepository;
 		this.userService = userService;
+		this.allowedContactRepository = allowedContactRepository;
 	}
 
 	@Override
@@ -118,5 +127,17 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 		preChecks(authUser, actor);
 		checkDeletePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
 		return userService.deleteUser(actor, lsUuid);
+	}
+
+	@Override
+	public List<AllowedContact> findAllRestrictedContacts(Account authUser, Account actor, User user, String mail,
+			String firstName, String lastName) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
+		if (!user.isRestricted()) {
+			logger.info("You can not list the restricted contacts for a not restricted user.");
+			return Lists.newArrayList();
+		}
+		return allowedContactRepository.findAllRestrictedContacts(user, mail, firstName, lastName);
 	}
 }

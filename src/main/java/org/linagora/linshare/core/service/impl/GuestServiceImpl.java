@@ -229,8 +229,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		guest.setLastName(sanitize(guest.getLastName()));
 		List<User> restrictedContacts = null;
 		if (guest.isRestricted()) {
-			Validate.notEmpty(restrictedMails,
-					"A restricted guest must have a restricted list of contacts (mails)");
 			restrictedContacts = transformToUsers(actor, restrictedMails);
 			if (restrictedContacts == null || restrictedContacts.isEmpty()) {
 				throw new BusinessException(

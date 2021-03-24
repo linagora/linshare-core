@@ -38,6 +38,7 @@
 		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="allowedContactRepository" />
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">

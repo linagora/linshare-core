@@ -84,4 +84,6 @@ public interface AllowedContactRepository extends AbstractRepository<AllowedCont
 	 * @throws IllegalArgumentException 
 	 */
 	void purge(Guest guest) throws IllegalArgumentException, BusinessException;
+
+	List<AllowedContact> findAllRestrictedContacts(User user, String mail, String firstName, String lastName);
 }

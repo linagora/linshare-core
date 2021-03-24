@@ -40,6 +40,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
@@ -48,6 +49,7 @@ import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
@@ -59,6 +61,7 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade {
@@ -188,5 +191,17 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		Validate.notEmpty(userDto.getUuid(), "user uuid must be set");
 		User user = userService2.delete(authUser, actor, userDto.getUuid());
 		return UserDto.getFull(user);
+	}
+
+	@Override
+	public List<RestrictedContactDto> findAllRestrictedContacts(String actorUuid, String userUuid, String mail,
+			String firstName, String lastName) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notNull(userUuid);
+		User user = userService2.find(authUser, actor, userUuid);
+		List<AllowedContact> allowedContacts = userService2.findAllRestrictedContacts(authUser, actor, user, mail,
+				firstName, lastName);
+		return ImmutableList.copyOf(Lists.transform(allowedContacts, RestrictedContactDto.toDto()));
 	}
 }

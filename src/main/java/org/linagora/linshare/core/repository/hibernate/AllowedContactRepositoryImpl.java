@@ -50,6 +50,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
+import com.google.common.base.Strings;
+
 public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<AllowedContact>
 		implements AllowedContactRepository {
 
@@ -146,5 +148,23 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 		for(AllowedContact contact : this.findByOwner(guest)) {
 			this.delete(contact);
 		}
+	}
+
+	@Override
+	public List<AllowedContact> findAllRestrictedContacts(User user, String mail, String firstName,
+			String lastName) {
+		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
+		detachedCrit.add(Restrictions.eq("owner", user));
+		detachedCrit.createAlias("contact", "c");
+		if (!Strings.isNullOrEmpty(mail)) {
+			detachedCrit.add(Restrictions.ilike("c.mail", mail, MatchMode.ANYWHERE));
+		}
+		if (!Strings.isNullOrEmpty(firstName)) {
+			detachedCrit.add(Restrictions.ilike("c.firstName", firstName, MatchMode.ANYWHERE));
+		}
+		if (!Strings.isNullOrEmpty(lastName)) {
+			detachedCrit.add(Restrictions.ilike("c.lastName", lastName, MatchMode.ANYWHERE));
+		}
+		return findByCriteria(detachedCrit);
 	}
 }

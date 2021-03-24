@@ -35,9 +35,12 @@
  */
 package org.linagora.linshare.webservice.adminv5;
 
+import java.util.List;
+
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public interface UserRestService {
@@ -51,4 +54,7 @@ public interface UserRestService {
 	UserDto update(UserDto userDto, String uuid) throws BusinessException;
 
 	UserDto delete(UserDto userDto, String uuid) throws BusinessException;
+
+	List<RestrictedContactDto> findAllRestrictedContacts(String userUuid, String mail, String firstName,
+			String lastName) throws BusinessException;
 }

@@ -33,10 +33,13 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
@@ -51,4 +54,7 @@ public interface UserFacade extends AdminGenericFacade {
 	UserDto update(String actorUuid, UserDto userDto, String uuid) throws BusinessException;
 
 	UserDto delete(String actorUuid, UserDto userDto, String uuid) throws BusinessException;
+
+	List<RestrictedContactDto> findAllRestrictedContacts(String actorUuid, String userUuid, String mail,
+			String firstName, String lastName);
 }

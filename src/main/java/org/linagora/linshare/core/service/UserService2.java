@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
@@ -54,4 +57,7 @@ public interface UserService2 {
 	public User delete(Account authUser, Account actor, String uuid);
 
 	public User unlock(Account authUser, Account actor, User accountToUnlock) throws BusinessException;
+
+	public List<AllowedContact> findAllRestrictedContacts(Account authUser, Account actor, User user,
+			String mail, String firstName, String lastName);
 }
