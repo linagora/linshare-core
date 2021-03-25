@@ -302,21 +302,4 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("nodeUuid") String nodeUuid) {
 		return workGroupFacade.findAll(sharedSpaceUuid, actions, types, beginDate, endDate, nodeUuid);
 	}
-
-	@Path("/{uuid}/workgroups")
-	@GET
-	@Operation(summary = "Get workgroups inside this node.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
-			responseCode = "200"
-		)
-	})
-	@Override
-	public List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(
-			@Parameter(description = "The node uuid.")
-				@PathParam("uuid")String uuid) 
-			throws BusinessException {
-		return nodeFacade.findAllWorkGroupsInsideNode(null, uuid);
-	}
-
 }

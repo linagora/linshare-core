@@ -233,8 +233,7 @@ public class NestedSharedSpaceNodeTest {
 		SharedSpaceNode node2 = new SharedSpaceNode("workgroup2 DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
 		ssNodeService.create(john, john, node);
 		ssNodeService.create(john, john, node2);
-		List<SharedSpaceNodeNested> workGroupMembers = ssNodeService.findAllWorkgroupsInNode(john, john,
-				drive);
+		List<SharedSpaceNodeNested> workGroupMembers = ssMemberService.findAllNodesOnTopByAccount(john, john, john.getLsUuid(), false, drive.getUuid());
 		Assertions.assertEquals(2, workGroupMembers.size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -249,12 +248,11 @@ public class NestedSharedSpaceNodeTest {
 		node = ssNodeService.create(john, john, node);
 		SharedSpaceNode node2 = new SharedSpaceNode("workgroup2 DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
 		ssNodeService.create(john, john, node2);
-		List<SharedSpaceNodeNested> workGroupMembers = ssNodeService.findAllWorkgroupsInNode(john, john,
-				drive);
+		List<SharedSpaceNodeNested> workGroupMembers = ssMemberService.findAllNodesOnTopByAccount(john, john, john.getLsUuid(), false, drive.getUuid());
 		Assertions.assertEquals(2, workGroupMembers.size());
 		// Test the delete Method
 		ssNodeService.delete(john, john, node);
-		workGroupMembers = ssNodeService.findAllWorkgroupsInNode(john, john, drive);
+		workGroupMembers = ssMemberService.findAllNodesOnTopByAccount(john, john, john.getLsUuid(), false, drive.getUuid());
 		Assertions.assertEquals(1, workGroupMembers.size());
 		try {
 			ssNodeService.find(john, john, node.getUuid());

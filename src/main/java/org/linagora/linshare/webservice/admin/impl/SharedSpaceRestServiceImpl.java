@@ -57,15 +57,14 @@ import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.admin.SharedSpaceRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/shared_spaces")
@@ -247,21 +246,4 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			throws BusinessException {
 		return ssMemberFacade.find(null, memberUuid);
 	}
-
-	@Path("/{uuid}/workgroups")
-	@GET
-	@Operation(summary = "Get workgroups inside this node.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
-			responseCode = "200"
-		)
-	})
-	@Override
-	public List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(
-			@Parameter(description = "The node uuid.")
-				@PathParam("uuid")String uuid) 
-			throws BusinessException {
-		return ssNodeFacade.findAllWorkGroupsInsideNode(null, uuid);
-	}
-
 }

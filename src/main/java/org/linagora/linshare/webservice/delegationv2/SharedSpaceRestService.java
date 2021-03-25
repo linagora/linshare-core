@@ -52,10 +52,7 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
-	List<SharedSpaceNodeNested> findAll(String actorUuid, boolean withRole) throws BusinessException;
+	List<SharedSpaceNodeNested> findAll(String actorUuid, boolean withRole, String parent) throws BusinessException;
 
 	SharedSpaceNode update(PatchDto patchNode, String uuid) throws BusinessException;
-
-	List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(String actorUuid, String uuid) throws BusinessException;
-
 }

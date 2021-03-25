@@ -217,19 +217,6 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	}
 
 	@Override
-	public List<SharedSpaceNodeNested> findAllWorkgroupsInNode(Account authUser, Account actor, SharedSpaceNode parent) {
-		preChecks(authUser, actor);
-		Validate.notNull(parent, "The parent must be set.");
-		if (!NodeType.DRIVE.equals(parent.getNodeType())) {
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
-					String.format("You can not list workgroups in this node with uuid {}", parent.getUuid()));
-		}
-		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, null,
-				parent);
-		return memberService.findAllWorkGroupsInNode(authUser, actor, parent.getUuid(), actor.getLsUuid());
-	}
-
-	@Override
 	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);

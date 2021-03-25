@@ -62,7 +62,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.google.common.base.Function;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
@@ -187,20 +186,16 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	 * @return {@link SharedSpaceNodeNested} {@link List} All nodes of the given member except Nested SharedSpaces on Drives 
 	 */
 	@Override
-	public List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole, String parent) {
-		if (withRole ) {
-			List<SharedSpaceMember> members = repository.findByAccountUuidAndNodeParentUuid(accountUuid, null);
-			return members.stream().map(member -> new SharedSpaceNodeNested(member)).collect(Collectors.toList());
-		} else if (withRole && !Strings.isNullOrEmpty(parent)) {
+	public List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole,
+			String parent) {
+		// TODO Improve performance of retrieving the sharedSpaces(may be use of agregation)
+		if (withRole) {
 			List<SharedSpaceMember> members = repository.findByAccountUuidAndNodeParentUuid(accountUuid, parent);
 			return members.stream().map(member -> new SharedSpaceNodeNested(member)).collect(Collectors.toList());
-		} else if (!Strings.isNullOrEmpty(parent)){
-			List<SharedSpaceMember> members = repository.findByAccountUuidAndNodeParentUuid(accountUuid, parent);
-			return Lists.transform(members, convertToSharedSpaceNode);
-		}else {
+		} else {
 			Aggregation aggregation = Aggregation.newAggregation(
 					Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
-					Aggregation.match(Criteria.where("node.parentUuid").is(null)),
+					Aggregation.match(Criteria.where("node.parentUuid").is(parent)),
 					Aggregation.project("node.uuid",
 							"node.name",
 							"node.nodeType",

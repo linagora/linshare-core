@@ -82,7 +82,4 @@ public interface SharedSpaceNodeService {
 	 *
 	 */
 	WorkGroupDto deleteWorkgroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
-
-	List<SharedSpaceNodeNested> findAllWorkgroupsInNode(Account authUser, Account actor, SharedSpaceNode parent);
-
 }

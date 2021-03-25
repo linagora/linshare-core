@@ -88,8 +88,9 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The actor uuid.", required = true)
 				@PathParam("actorUuid")String actorUuid,
 			@Parameter(description = "Return also the role of the member", required = false)
-				@QueryParam("withRole") @DefaultValue("false") boolean withRole)
-			throws BusinessException {
+				@QueryParam("withRole") @DefaultValue("false") boolean withRole,
+			@Parameter(description = "The parent uuid.", required = false)
+				@QueryParam("parent") String parent) throws BusinessException {
 		return nodeFacade.findAllMyNodes(actorUuid, withRole, parent);
 	}
 
@@ -182,24 +183,5 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The uuid of the node that'll be updated.")
 				@PathParam("uuid")String uuid) throws BusinessException {
 		return nodeFacade.updatePartial(null, patchNode, uuid);
-	}
-
-
-	@Path("/{uuid}/workgroups")
-	@GET
-	@Operation(summary = "Get workgroups inside this node.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNode.class))),
-			responseCode = "200"
-		)
-	})
-	@Override
-	public List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(
-			@Parameter(description = "The actor uuid.")
-				@PathParam(value="actorUuid")String actorUuid,
-			@Parameter(description = "The node uuid.")
-				@PathParam("uuid")String uuid) 
-			throws BusinessException {
-		return nodeFacade.findAllWorkGroupsInsideNode(actorUuid, uuid);
 	}
 }
