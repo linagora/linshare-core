@@ -60,4 +60,6 @@ public interface UserService2 {
 
 	public List<AllowedContact> findAllRestrictedContacts(Account authUser, Account actor, User user,
 			String mail, String firstName, String lastName);
+
+	public AllowedContact findRestrictedContact(Account authUser, Account actor, User owner, String restrictedContactUuid);
 }

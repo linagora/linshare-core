@@ -57,4 +57,6 @@ public interface UserRestService {
 
 	List<RestrictedContactDto> findAllRestrictedContacts(String userUuid, String mail, String firstName,
 			String lastName) throws BusinessException;
+
+	RestrictedContactDto findRestrictedContact(String ownerUuid, String userUuid) throws BusinessException;
 }

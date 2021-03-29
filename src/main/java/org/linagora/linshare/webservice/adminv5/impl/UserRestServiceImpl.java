@@ -180,4 +180,18 @@ public class UserRestServiceImpl implements UserRestService {
 			@QueryParam("lastName") String lastName) throws BusinessException {
 		return userFacade.findAllRestrictedContacts(null, userUuid, mail, firstName, lastName);
 	}
+
+	@Path("/{uuid}/restricted_contacts/{restrictedContactUuid}")
+	@GET
+	@Operation(summary = "Find a restricted contact.", responses = {
+		@ApiResponse(content = @Content(schema = @Schema(implementation = RestrictedContactDto.class)), responseCode = "200")
+	})
+	@Override
+	public RestrictedContactDto findRestrictedContact(
+		@Parameter(description = "The owner's uuid of the restricted contact to retrieve.", required = true)
+			@PathParam("uuid") String ownerUuid,
+		@Parameter(description = "The restricted contact's uuid to retrieve.", required = true)
+			@PathParam("restrictedContactUuid") String restrictedContactUuid) throws BusinessException {
+		return userFacade.findRestrictedContact(null, ownerUuid, restrictedContactUuid);
+	}
 }

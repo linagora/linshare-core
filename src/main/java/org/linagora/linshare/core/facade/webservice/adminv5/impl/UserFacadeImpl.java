@@ -204,4 +204,13 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 				firstName, lastName);
 		return ImmutableList.copyOf(Lists.transform(allowedContacts, RestrictedContactDto.toDto()));
 	}
+
+	@Override
+	public RestrictedContactDto findRestrictedContact(String actorUuid, String ownerUuid, String restrictedContactUuid) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
+		User owner = userService2.find(authUser, actor, ownerUuid);
+		AllowedContact allowedContact = userService2.findRestrictedContact(authUser, actor, owner, restrictedContactUuid);
+		return new RestrictedContactDto(allowedContact);
+	}
 }

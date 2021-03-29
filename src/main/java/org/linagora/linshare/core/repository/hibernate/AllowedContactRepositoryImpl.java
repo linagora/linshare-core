@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
 import com.google.common.base.Strings;
@@ -166,5 +167,14 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 			detachedCrit.add(Restrictions.ilike("c.lastName", lastName, MatchMode.ANYWHERE));
 		}
 		return findByCriteria(detachedCrit);
+	}
+
+	@Override
+	public AllowedContact findRestrictedContact(User owner, String restrictedContactUuid) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("owner", owner));
+		criteria.createAlias("contact", "c");
+		criteria.add(Restrictions.eq("c.lsUuid", restrictedContactUuid));
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}
 }

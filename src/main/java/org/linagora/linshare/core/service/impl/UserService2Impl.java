@@ -34,7 +34,9 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.commons.lang3.Validate;
 import org.hibernate.criterion.Order;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
@@ -139,5 +141,20 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 			return Lists.newArrayList();
 		}
 		return allowedContactRepository.findAllRestrictedContacts(user, mail, firstName, lastName);
+	}
+
+	@Override
+	public AllowedContact findRestrictedContact(Account authUser, Account actor, User owner,
+			String restrictedContactUuid) {
+		preChecks(authUser, actor);
+		checkReadPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
+		Validate.notNull(owner, "The owner of the restrictedContact must be set.");
+		Validate.notEmpty(restrictedContactUuid, "The restrictedContact's uuid must be set.");
+		AllowedContact allowedContact = allowedContactRepository.findRestrictedContact(owner, restrictedContactUuid);
+		if (Objects.isNull(allowedContact)) {
+			throw new BusinessException(BusinessErrorCode.RESTRICTED_CONTACT_NOT_FOUND,
+					"The restricted contact with uuid : " + restrictedContactUuid + " is not found.");
+		}
+		return allowedContact;
 	}
 }
