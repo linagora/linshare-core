@@ -92,7 +92,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-test.xml", })
 public class UploadRequestUpdateStatusTest {
 
-	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplV2Test.class);
+	private static Logger logger = LoggerFactory.getLogger(UploadRequestUpdateStatusTest.class);
 
 	@Qualifier("userRepository")
 	@Autowired
