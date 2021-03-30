@@ -115,9 +115,9 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-mongo-java-server.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
-public class UploadRequestServiceImplTestV2 {
+public class UploadRequestServiceImplV2Test {
 
-	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTestV2.class);
+	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplV2Test.class);
 
 	@Qualifier("userRepository")
 	@Autowired
@@ -182,7 +182,7 @@ public class UploadRequestServiceImplTestV2 {
 
 	private Date globalNow;
 	
-	public UploadRequestServiceImplTestV2() {
+	public UploadRequestServiceImplV2Test() {
 		super();
 	}
 
