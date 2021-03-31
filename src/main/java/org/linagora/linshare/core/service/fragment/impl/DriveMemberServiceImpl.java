@@ -133,7 +133,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		if (!actor.getLsUuid().equals(account.getUuid())) {
 			notify(new DriveWarnNewMemberEmailContext(toAdd, actor, newMember, nestedMembers));
 		}
-		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORKGROUP_MEMBER);
+		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.DRIVE_MEMBER);
 		return toAdd;
 	}
 
