@@ -73,6 +73,7 @@ public class SharedSpaceMemberAuditLogEntry extends AuditLogEntryUser {
 		super(new AccountMto(authUser), new AccountMto(owner), action, type, member.getUuid());
 		member.setUser(member.getAccount());
 		this.workGroup = new WorkGroupLightDto(member.getNode());
+		addRelatedResources(member.getNode().getUuid());
 		this.resource = member;
 	}
 
