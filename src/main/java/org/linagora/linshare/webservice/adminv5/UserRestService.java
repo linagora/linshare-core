@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 
 public interface UserRestService {
 

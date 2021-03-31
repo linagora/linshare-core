@@ -55,7 +55,7 @@ import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.webservice.adminv5.UserRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
