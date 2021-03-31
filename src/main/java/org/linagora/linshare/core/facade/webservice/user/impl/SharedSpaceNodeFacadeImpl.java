@@ -36,20 +36,26 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.base.Strings;
 
@@ -58,13 +64,17 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 	private final SharedSpaceNodeService nodeService;
 	
 	private final SharedSpaceMemberService memberService;
+	
+	private final AuditLogEntryService auditLogEntryService;
 
 	public SharedSpaceNodeFacadeImpl(AccountService accountService,
 			SharedSpaceNodeService nodeService,
-			SharedSpaceMemberService memberService) {
+			SharedSpaceMemberService memberService,
+			AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.nodeService = nodeService;
 		this.memberService = memberService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -152,5 +162,15 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 	public List<SharedSpaceNode> findAll() {
 		Account authUser = checkAuthentication();
 		return nodeService.findAll(authUser, authUser);
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAllSharedSpaceAudits(String sharedSpaceUuid, List<LogAction> actions,
+			List<AuditLogEntryType> types, String beginDate, String endDate, String nodeUuid) {
+		Validate.notEmpty(sharedSpaceUuid, "shared space uuid required");
+		Account authUser = checkAuthentication();
+		User actor = (User) getActor(authUser, null);
+		SharedSpaceNode sharedSpace = nodeService.find(authUser, actor, sharedSpaceUuid);
+		return auditLogEntryService.findAllSharedSpaceAudits(authUser, actor, sharedSpace.getUuid(), nodeUuid, actions, types, beginDate, endDate);
 	}
 }

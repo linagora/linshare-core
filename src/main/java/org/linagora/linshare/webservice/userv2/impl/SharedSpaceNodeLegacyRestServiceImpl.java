@@ -42,7 +42,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
-import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 
 
 @Path("/shared_space_nodes")
@@ -52,9 +51,8 @@ public class SharedSpaceNodeLegacyRestServiceImpl extends SharedSpaceRestService
 
 	public SharedSpaceNodeLegacyRestServiceImpl(
 			SharedSpaceNodeFacade nodeFacade,
-			SharedSpaceMemberFacade memberFacade,
-			WorkGroupFacade workGroupFacade) {
-		super(nodeFacade, memberFacade, workGroupFacade);
+			SharedSpaceMemberFacade memberFacade) {
+		super(nodeFacade, memberFacade);
 	}
 
 }

@@ -160,7 +160,6 @@
 		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceRestServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
 		<constructor-arg ref="sharedSpaceMemberFacade" />
-		<constructor-arg ref="wsThreadFacade" />
 	</bean>	
 
 	<bean id="userv2SharedSpaceLegacyNodeRestService"

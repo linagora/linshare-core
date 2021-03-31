@@ -57,20 +57,18 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
-import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.SharedSpaceRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
-
 
 @Path("/shared_spaces")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -81,16 +79,12 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	private final SharedSpaceMemberFacade memberFacade;
 
-	private final WorkGroupFacade workGroupFacade;
-
 	public SharedSpaceRestServiceImpl(SharedSpaceNodeFacade nodeFacade,
-			SharedSpaceMemberFacade memberFacade,
-			WorkGroupFacade workGroupFacade
+			SharedSpaceMemberFacade memberFacade
 			) {
 		super();
 		this.nodeFacade = nodeFacade;
 		this.memberFacade = memberFacade;
-		this.workGroupFacade = workGroupFacade;
 	}
 
 	@Path("/")
@@ -299,7 +293,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate,
 			@Parameter(description = "Choose the specific node which you like to list the audits ", required = true)
-				@QueryParam("nodeUuid") String nodeUuid) {
-		return workGroupFacade.findAll(sharedSpaceUuid, actions, types, beginDate, endDate, nodeUuid);
+				@QueryParam("resourceUuid") String resourceUuid) {
+		return nodeFacade.findAllSharedSpaceAudits(sharedSpaceUuid, actions, types, beginDate, endDate, resourceUuid);
 	}
 }

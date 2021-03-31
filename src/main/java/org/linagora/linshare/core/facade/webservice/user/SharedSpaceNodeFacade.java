@@ -36,12 +36,16 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface SharedSpaceNodeFacade {
 
@@ -60,4 +64,7 @@ public interface SharedSpaceNodeFacade {
 	List<SharedSpaceMember> members(String actorUuid, String uuid, String accountUuid) throws BusinessException;
 
 	List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole, String parent);
+
+	Set<AuditLogEntryUser> findAllSharedSpaceAudits(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
+			String beginDate, String endDate, String nodeUuid);
 }
