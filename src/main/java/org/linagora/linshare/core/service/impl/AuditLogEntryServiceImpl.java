@@ -48,6 +48,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -161,6 +162,36 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 					Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		}
 		return res;
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAllSharedSpaceAudits(Account authUser, User actor, String sharedSpaceUuid,
+			String resourceUuid, List<LogAction> actions, List<AuditLogEntryType> types, String beginDate, String endDate) {
+		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
+		supportedTypes.add(AuditLogEntryType.WORKGROUP);
+		supportedTypes.add(AuditLogEntryType.WORKGROUP_DOCUMENT);
+		supportedTypes.add(AuditLogEntryType.WORKGROUP_FOLDER);
+		supportedTypes.add(AuditLogEntryType.WORKGROUP_MEMBER);
+		supportedTypes.add(AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION);
+		supportedTypes.add(AuditLogEntryType.DRIVE);
+		supportedTypes.add(AuditLogEntryType.DRIVE_MEMBER);
+		Date end = getEndDate(endDate);
+		Date begin = getBeginDate(beginDate, end);
+		if (Objects.nonNull(resourceUuid)) {
+			return userMongoRepository.findWorkGroupNodeHistoryForUser(
+					sharedSpaceUuid, resourceUuid,
+					actions, types,
+					begin, end,
+					Sort.by(Sort.Direction.DESC, CREATION_DATE));
+		} else {
+			return userMongoRepository.findAllSharedSpaceAuditsForUser(
+					actor.getLsUuid(),
+					sharedSpaceUuid,
+					getActions(actions),
+					getEntryTypes(types, supportedTypes, true),
+					begin, end,
+					Sort.by(Sort.Direction.DESC, CREATION_DATE));
+		}
 	}
 
 	@Override

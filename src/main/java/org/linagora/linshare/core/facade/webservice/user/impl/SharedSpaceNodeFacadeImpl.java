@@ -166,11 +166,11 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 
 	@Override
 	public Set<AuditLogEntryUser> findAllSharedSpaceAudits(String sharedSpaceUuid, List<LogAction> actions,
-			List<AuditLogEntryType> types, String beginDate, String endDate, String nodeUuid) {
-		Validate.notEmpty(sharedSpaceUuid, "shared space uuid required");
+			List<AuditLogEntryType> types, String beginDate, String endDate, String resourceUuid) {
 		Account authUser = checkAuthentication();
+		Validate.notEmpty(sharedSpaceUuid, "shared space uuid required");
 		User actor = (User) getActor(authUser, null);
 		SharedSpaceNode sharedSpace = nodeService.find(authUser, actor, sharedSpaceUuid);
-		return auditLogEntryService.findAllSharedSpaceAudits(authUser, actor, sharedSpace.getUuid(), nodeUuid, actions, types, beginDate, endDate);
+		return auditLogEntryService.findAllSharedSpaceAudits(authUser, actor, sharedSpace.getUuid(), resourceUuid, actions, types, beginDate, endDate);
 	}
 }

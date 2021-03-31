@@ -292,7 +292,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate,
-			@Parameter(description = "Choose the specific node which you like to list the audits ", required = true)
+			@Parameter(description = "Choose the specific node which you like to list the audits ", required = false)
 				@QueryParam("resourceUuid") String resourceUuid) {
 		return nodeFacade.findAllSharedSpaceAudits(sharedSpaceUuid, actions, types, beginDate, endDate, resourceUuid);
 	}

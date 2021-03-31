@@ -41,6 +41,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
@@ -79,4 +80,7 @@ public interface AuditLogEntryService {
 
 	Set<AuditLogEntryUser> findAllUploadRequestEntryAudits(Account authUser, Account actor, String uploadRequestEntryUuid,
 			List<LogAction> actions);
+
+	Set<AuditLogEntryUser> findAllSharedSpaceAudits(Account authUser, User actor, String sharedSpaceUuid, String nodeUuid, List<LogAction> actions,
+			List<AuditLogEntryType> types, String beginDate, String endDate);
 }

@@ -67,7 +67,11 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	@Query("{ 'relatedAccounts': {'$elemMatch' : { '$eq' : ?0 }}, 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } }")
 	Set<AuditLogEntryUser> findForUser(String ownerUuid, List<LogAction> actions, List<AuditLogEntryType> types);
 
-	// workgroups.
+	// shared spaces.
+	@Query("{  'actor.uuid' : ?0 , $or: [ {'resourceUuid' : ?1} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?1 }} } ], 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } 'creationDate' : { '$gt' : ?4 , '$lt' : ?5} }")
+	Set<AuditLogEntryUser> findAllSharedSpaceAuditsForUser(String actorUuid, String sharedSpaceUuid, List<LogAction> actions,
+			 List<AuditLogEntryType> types, Date beginDate, Date endDate, Sort sort);
+	
 	@Query("{  $or: [ {'resourceUuid' : ?0} , {'workGroup.uuid' : ?0} ], 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : ?3 , '$lt' : ?4} }")
 	Set<AuditLogEntryUser> findWorkGroupHistoryForUser(String workGroupUuid, List<LogAction> actions,
 			List<AuditLogEntryType> types, Date beginDate, Date endDate, Sort sort);
