@@ -124,9 +124,9 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		UserDto userDto = null;
 		if (user.isGuest() && user.isRestricted()) {
 			Guest guest = guestService.find(authUser, actor, uuid);
-			userDto = UserDto.getFull(guest);
+			userDto = new UserDto(guest);
 		} else {
-			userDto = UserDto.getFull(user);
+			userDto = new UserDto(user);
 		}
 		AccountQuota quota = quotaService.findByRelatedAccount(user);
 		userDto.setQuotaUuid(quota.getUuid());
@@ -141,10 +141,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		if (twofaFunc.getActivationPolicy().getStatus()) {
 			userDto.setSecondFAUuid(user.getLsUuid());
 			userDto.setSecondFAEnabled(user.isUsing2FA());
-			userDto.setSecondFARequired(twofaFunc.getValue());
 		} else {
 			userDto.setSecondFAEnabled(false);
-			userDto.setSecondFARequired(false);
 		}
 	}
 
@@ -163,7 +161,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			entity = userService2.unlock(authUser, actor, entity);
 		}
 		User update = checkAccountTypeAndUpdate(authUser, actor, userDto, entity, userToUpdate);
-		UserDto updatedDto = UserDto.getFull(update);
+		UserDto updatedDto = new UserDto(update);
 		updatedDto.setLocked(update.isLocked());
 		return updatedDto;
 	}
@@ -175,13 +173,14 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			List<String> ac = null;
 			if (userDto.isRestricted()) {
 				ac = Lists.newArrayList();
-				for (UserDto contactDto : userDto.getRestrictedContacts()) {
-					ac.add(contactDto.getMail());
+				for (AllowedContact contactDto : userService2.findAllRestrictedContacts(authUser, actor, entity, null,
+						null, null)) {
+					ac.add(contactDto.getContact().getMail());
 				}
 			}
 			update = guestService.update(authUser, (User) entity.getOwner(), (Guest) userToUpdate, ac);
 		} else {
-			update = userService2.update(authUser, actor, userToUpdate, userDto.getDomain());
+			update = userService2.update(authUser, actor, userToUpdate, userDto.getDomain().getIdentifier());
 		}
 		return update;
 	}
@@ -195,7 +194,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		}
 		Validate.notEmpty(userDto.getUuid(), "user uuid must be set");
 		User user = userService2.delete(authUser, actor, userDto.getUuid());
-		return UserDto.getFull(user);
+		return new UserDto(user);
 	}
 
 	@Override

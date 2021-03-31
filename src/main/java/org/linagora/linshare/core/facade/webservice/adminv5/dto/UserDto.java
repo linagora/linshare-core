@@ -77,16 +77,16 @@ public class UserDto {
 	@Schema(description = "User's role")
 	private String role;
 
-	@Schema(description = "CanUpload field shows if the user has the right to upload files")
+	@Schema(description = "CanUpload field shows if the user has the right to upload files in his personal space")
 	private Boolean canUpload;
 
 	@Schema(description = "CanCreateGuest field shows if the user has the right to create guest")
 	private Boolean canCreateGuest;
 
 	@Schema(description = "User's accountType")
-	private String accountType;
+	private AccountType accountType;
 
-	@Schema(description = "Restricted field shows that the user is able to share files just with a choosen list of users")
+	@Schema(description = "Restricted field shows that the user is able to share files just with a restricted list of users")
 	private Boolean restricted;
 
 	@Schema(description = "Comment")
@@ -101,59 +101,38 @@ public class UserDto {
 	@Schema(description = "The externalMailLocale field shows the language used for emails")
 	protected Language externalMailLocale;
 
-	@Schema(description = "The authWithOIDC field shows if the authentication via OIDC is enabled for this user.")
-	private Boolean authWithOIDC;
-
 	@Schema(description = "2FA uuid")
 	private String secondFAUuid;
 
-	@Schema(description = "If defined, it informs if current user is using Second Factor Authentication (2FA).")
-	private Boolean secondFAEnabled = null;
-
-	@Schema(description = "If defined, it means that the current user must enable Second Factor Authentication (2FA) before using any api.")
-	private Boolean secondFARequired = null;
+	@Schema(description = "If defined, it informs if current user is using Second Factor Authentication (2FA), it is uneditable.")
+	private Boolean secondFAEnabled;
 
 	@Schema(description = "Show if user access is locked")
-	private Boolean locked = null;
+	private Boolean locked;
 
 	public UserDto() {
 		super();
 	}
 
-	public UserDto(User user, boolean full) {
+	public UserDto(User user) {
 		this.uuid = user.getLsUuid();
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.mail = user.getMail();
 		this.role = user.getRole().toString();
-		this.accountType = user.getAccountType().toString();
+		this.accountType = user.getAccountType();
 		this.creationDate = user.getCreationDate();
 		this.modificationDate = user.getModificationDate();
 		this.domain = new DomainLightDto(user.getDomain());
-		if (full) {
-			if (this.isGuest()) {
-				Guest g = (Guest) user;
-				this.restricted = g.isRestricted();
-				this.comment = g.getComment();
-				this.expirationDate = g.getExpirationDate();
-			}
-			this.canUpload = user.getCanUpload();
-			this.canCreateGuest = user.getCanCreateGuest();
-			this.externalMailLocale = user.getExternalMailLocale();
+		if (this.isGuest()) {
+			Guest g = (Guest) user;
+			this.restricted = g.isRestricted();
+			this.comment = g.getComment();
+			this.expirationDate = g.getExpirationDate();
 		}
-	}
-
-	public UserDto(User user, Boolean full) {
-		this.uuid = user.getLsUuid();
-		this.firstName = user.getFirstName();
-		this.lastName = user.getLastName();
-		this.mail = user.getMail();
-		this.domain = new DomainLightDto(user.getDomain());
-		this.creationDate = user.getCreationDate();
-		this.modificationDate = user.getModificationDate();
-		if (full) {
-			this.externalMailLocale = user.getExternalMailLocale();
-		}
+		this.canUpload = user.getCanUpload();
+		this.canCreateGuest = user.getCanCreateGuest();
+		this.externalMailLocale = user.getExternalMailLocale();
 	}
 
 	public User toUserObject(boolean isGuest) {
@@ -247,14 +226,6 @@ public class UserDto {
 		this.secondFAEnabled = secondFAEnabled;
 	}
 
-	public Boolean isSecondFARequired() {
-		return secondFARequired;
-	}
-
-	public void setSecondFARequired(Boolean secondFARequired) {
-		this.secondFARequired = secondFARequired;
-	}
-
 	public Boolean isLocked() {
 		return locked;
 	}
@@ -311,11 +282,11 @@ public class UserDto {
 		this.canCreateGuest = canCreateGuest;
 	}
 
-	public String getAccountType() {
+	public AccountType getAccountType() {
 		return accountType;
 	}
 
-	public void setAccountType(String accountType) {
+	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
 	}
 
@@ -343,21 +314,9 @@ public class UserDto {
 		this.expirationDate = expirationDate;
 	}
 
-	public Boolean isAuthWithOIDC() {
-		return authWithOIDC;
-	}
-
-	public void setAuthWithOIDC(Boolean authWithOIDC) {
-		this.authWithOIDC = authWithOIDC;
-	}
-
 	@JsonIgnore
 	public boolean isGuest() {
-		return AccountType.valueOf(this.accountType) == AccountType.GUEST;
-	}
-
-	public static UserDto getFull(User user) {
-		return new UserDto(user, true);
+		return this.accountType == AccountType.GUEST;
 	}
 
 	/*
@@ -367,7 +326,7 @@ public class UserDto {
 		return new Function<User, UserDto>() {
 			@Override
 			public UserDto apply(User arg0) {
-				return getFull(arg0);
+				return new UserDto(arg0);
 			}
 		};
 	}
