@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
@@ -58,6 +59,10 @@ public class SharedSpaceNodeAuditLogEntry extends AuditLogEntryUser {
 			SharedSpaceNode node) {
 		super(new AccountMto(authUser), new AccountMto(owner), action, type, node.getUuid());
 		this.resource = node;
+		// bind nested workgroups traces with drive trace
+		if (node.getParentUuid() != null && node.getNodeType().equals(NodeType.WORK_GROUP)) {
+			addRelatedResources(node.getParentUuid());
+		}
 	}
 
 	public SharedSpaceNodeAuditLogEntry(SharedSpaceNode resource, SharedSpaceNode resourceUpdated) {
