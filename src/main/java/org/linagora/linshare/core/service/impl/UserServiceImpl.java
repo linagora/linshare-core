@@ -1068,6 +1068,6 @@ public class UserServiceImpl implements UserService {
 		logger.info("unlocking account {}", accountToUnlock.getMail());
 		accountToUnlock.setAuthenticationFailureCount(0);
 		accountToUnlock.setAuthenticationFailureLastDate(null);
-		return accountToUnlock;
+		return userRepository.update(accountToUnlock);
 	}
 }

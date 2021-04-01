@@ -130,8 +130,9 @@ public class UserDto {
 			this.restricted = g.isRestricted();
 			this.comment = g.getComment();
 			this.expirationDate = g.getExpirationDate();
+		} else {
+			this.restricted = false;
 		}
-		this.restricted = false;
 		this.canUpload = user.getCanUpload();
 		this.canCreateGuest = user.getCanCreateGuest();
 		this.externalMailLocale = user.getExternalMailLocale();

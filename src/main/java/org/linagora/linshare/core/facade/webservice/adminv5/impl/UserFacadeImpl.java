@@ -139,28 +139,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		User entity = userService2.find(authUser, actor, userDto.getUuid());
 		User userToUpdate = userDto.toUserObject(entity.isGuest());
 		if (!userDto.isLocked() && entity.isLocked()) {
-			entity = userService2.unlock(authUser, actor, entity);
+			userService2.unlock(authUser, actor, entity);
 		}
-		return new UserDto(checkAccountTypeAndUpdate(authUser, actor, userDto, entity, userToUpdate));
-	}
-
-	private User checkAccountTypeAndUpdate(Account authUser, Account actor, UserDto userDto, User entity,
-			User userToUpdate) {
-		User update = null;
-		if (entity.isGuest()) {
-			List<String> ac = null;
-			if (userDto.isRestricted()) {
-				ac = Lists.newArrayList();
-				for (AllowedContact contactDto : userService2.findAllRestrictedContacts(authUser, actor, entity, null,
-						null, null)) {
-					ac.add(contactDto.getContact().getMail());
-				}
-			}
-			update = guestService.update(authUser, (User) entity.getOwner(), (Guest) userToUpdate, ac);
-		} else {
-			update = userService2.update(authUser, actor, userToUpdate, userDto.getDomain().getIdentifier());
-		}
-		return update;
+		entity = userService2.update(authUser, actor, userToUpdate, userDto.getDomain().getIdentifier());
+		return new UserDto(entity);
 	}
 
 	@Override

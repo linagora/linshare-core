@@ -110,7 +110,6 @@ public class UserDto extends AccountDto {
 		this.mail = u.getMail();
 		this.role = u.getRole().toString();
 		this.accountType = u.getAccountType().toString();
-		this.restricted = false;
 		if (full) {
 			if (this.isGuest()) {
 				Guest g = (Guest) u;
