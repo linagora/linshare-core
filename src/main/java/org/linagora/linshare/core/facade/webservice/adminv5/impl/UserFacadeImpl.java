@@ -56,6 +56,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.QuotaService;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.UserService2;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
@@ -67,6 +68,8 @@ import com.google.common.collect.Lists;
 public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade {
 	
 	private final UserService2 userService2;
+
+	private final UserService userService;
 
 	private final GuestService guestService;
 
@@ -84,13 +87,15 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			AbstractDomainService abstractDomainService,
 			GuestService guestService,
 			QuotaService quotaService,
-			FunctionalityReadOnlyService functionalityReadOnlyService) {
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			UserService userService) {
 		super(accountService);
 		this.userService2 = userService2;
 		this.abstractDomainService = abstractDomainService;
 		this.guestService = guestService;
 		this.quotaService = quotaService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -206,11 +211,49 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	}
 
 	@Override
-	public RestrictedContactDto findRestrictedContact(String actorUuid, String ownerUuid, String restrictedContactUuid) {
+	public RestrictedContactDto findRestrictedContact(String actorUuid, String ownerUuid,
+			String restrictedContactUuid) {
 		Account authUser = checkAuthentication(Role.ADMIN);
 		Account actor = getActor(authUser, actorUuid);
 		User owner = userService2.find(authUser, actor, ownerUuid);
-		AllowedContact allowedContact = userService2.findRestrictedContact(authUser, actor, owner, restrictedContactUuid);
-		return new RestrictedContactDto(allowedContact);
+		return new RestrictedContactDto(
+				userService2.findRestrictedContact(authUser, actor, owner, restrictedContactUuid));
+	}
+
+	@Override
+	public RestrictedContactDto createRestrictedContact(String actorUuid, String ownerUuid,
+			RestrictedContactDto restrictedContactDto) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notEmpty(ownerUuid, "The owner's uuid of the restricted contact must be set");
+		User owner = userService2.find(authUser, actor, ownerUuid);
+		User user = null;
+		if (!Strings.isNullOrEmpty(restrictedContactDto.getUuid())) {
+			user = userService2.find(authUser, actor, restrictedContactDto.getUuid());
+		} else {
+			Validate.notEmpty(restrictedContactDto.getMail(), "RestrictedContact's mail must be set");
+			Validate.notNull(restrictedContactDto.getDomain(), "The restrictedContact's domain must be set");
+			AbstractDomain domain = abstractDomainService.findById(restrictedContactDto.getDomain().getIdentifier());
+			user = userService.findOrCreateUser(restrictedContactDto.getMail(), domain.getUuid());
+		}
+		AllowedContact restrictedContactToCreate = new AllowedContact(owner, user);
+		return new RestrictedContactDto(
+				userService2.createRestrictedContact(authUser, actor, restrictedContactToCreate));
+	}
+
+	@Override
+	public RestrictedContactDto deleteRestrictedContact(String actorUuid, String ownerUuid, RestrictedContactDto restrictedContactDto,
+			String restrictedContactUuid) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notNull(ownerUuid, "The owner's uuid of the restricted contact must be set");
+		User owner = userService2.find(authUser, actor, ownerUuid);
+		if (Strings.isNullOrEmpty(restrictedContactUuid)) {
+			Validate.notNull(restrictedContactDto, "Restricted contact must be set");
+			Validate.notEmpty(restrictedContactDto.getUuid(), "Restricted contact uuid must be set");
+			restrictedContactUuid = restrictedContactDto.getUuid();
+		}
+		return new RestrictedContactDto(
+				userService2.deleteRestrictedContact(authUser, actor, owner, restrictedContactUuid));
 	}
 }

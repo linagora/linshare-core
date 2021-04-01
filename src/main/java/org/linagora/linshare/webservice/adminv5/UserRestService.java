@@ -59,4 +59,9 @@ public interface UserRestService {
 			String lastName) throws BusinessException;
 
 	RestrictedContactDto findRestrictedContact(String ownerUuid, String userUuid) throws BusinessException;
+
+	RestrictedContactDto createRestrictedContact(String ownerUuid, RestrictedContactDto restrictedContactDto) throws BusinessException;
+
+	RestrictedContactDto deleteRestrictedContact(String ownerUuid, RestrictedContactDto restrictedContactDto,
+			String restrictedContactUuid) throws BusinessException;
 }

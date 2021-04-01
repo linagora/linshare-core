@@ -147,7 +147,6 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 	public AllowedContact findRestrictedContact(Account authUser, Account actor, User owner,
 			String restrictedContactUuid) {
 		preChecks(authUser, actor);
-		checkReadPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
 		Validate.notNull(owner, "The owner of the restrictedContact must be set.");
 		Validate.notEmpty(restrictedContactUuid, "The restrictedContact's uuid must be set.");
 		AllowedContact allowedContact = allowedContactRepository.findRestrictedContact(owner, restrictedContactUuid);
@@ -155,6 +154,35 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 			throw new BusinessException(BusinessErrorCode.RESTRICTED_CONTACT_NOT_FOUND,
 					"The restricted contact with uuid : " + restrictedContactUuid + " is not found.");
 		}
+		checkReadPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, allowedContact.getContact());
+		return allowedContact;
+	}
+
+	@Override
+	public AllowedContact createRestrictedContact(Account authUser, Account actor,
+			AllowedContact restrictedContactToCreate) {
+		preChecks(authUser, actor);
+		Validate.notNull(restrictedContactToCreate, "RestrictedContact to create must be set");
+		Validate.notNull(restrictedContactToCreate.getOwner(), "RestrictedContact's owner must be set");
+		Validate.notNull(restrictedContactToCreate.getContact(), "RestrictedContact's contact must be set");
+		checkCreatePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN,
+				restrictedContactToCreate.getContact());
+		if (findAllRestrictedContacts(authUser, actor, restrictedContactToCreate.getOwner(), null, null, null)
+				.contains(restrictedContactToCreate)) {
+			return restrictedContactToCreate;
+		}
+		return allowedContactRepository.create(restrictedContactToCreate);
+	}
+
+	@Override
+	public AllowedContact deleteRestrictedContact(Account authUser, Account actor, User owner,
+			String restrictedContactUuid) {
+		preChecks(authUser, actor);
+		Validate.notNull(owner, "The owner of the restrictedContact must be set.");
+		Validate.notEmpty(restrictedContactUuid, "The restrictedContact's uuid must be set.");
+		AllowedContact allowedContact = allowedContactRepository.findRestrictedContact(owner, restrictedContactUuid);
+		checkDeletePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, allowedContact.getContact());
+		allowedContactRepository.delete(allowedContact);
 		return allowedContact;
 	}
 }

@@ -62,4 +62,8 @@ public interface UserService2 {
 			String mail, String firstName, String lastName);
 
 	public AllowedContact findRestrictedContact(Account authUser, Account actor, User owner, String restrictedContactUuid);
+
+	public AllowedContact deleteRestrictedContact(Account authUser, Account actor, User owner, String restrictedContactUuid);
+
+	public AllowedContact createRestrictedContact(Account authUser, Account actor, AllowedContact allowedContactToCreate);
 }

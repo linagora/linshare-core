@@ -59,4 +59,9 @@ public interface UserFacade extends AdminGenericFacade {
 			String firstName, String lastName);
 
 	RestrictedContactDto findRestrictedContact(String actorUuid, String ownerUuid, String restrictedContactUuid);
+
+	RestrictedContactDto createRestrictedContact(String actorUuid, String ownerUuid, RestrictedContactDto restrictedContactDto);
+
+	RestrictedContactDto deleteRestrictedContact(String actorUuid, String ownerUuid,
+			RestrictedContactDto restrictedContactDto, String restrictedContactUuid);
 }

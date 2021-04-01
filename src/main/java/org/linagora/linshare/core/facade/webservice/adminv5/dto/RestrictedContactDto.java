@@ -56,10 +56,10 @@ public class RestrictedContactDto {
 	@Schema(description = "AllowedContact's lastName is optional")
 	private String lastName;
 
-	@Schema(description = "AllowedContact's mail is required for his creation")
+	@Schema(description = "AllowedContact's mail")
 	private String mail;
 
-	@Schema(description = "AllowedContact's domain uuid")
+	@Schema(description = "AllowedContact's domain")
 	private DomainLightDto domain;
 
 	protected RestrictedContactDto() {

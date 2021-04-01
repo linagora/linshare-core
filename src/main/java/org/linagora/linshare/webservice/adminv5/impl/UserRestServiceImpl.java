@@ -41,6 +41,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -193,5 +194,33 @@ public class UserRestServiceImpl implements UserRestService {
 		@Parameter(description = "The restricted contact's uuid to retrieve.", required = true)
 			@PathParam("restrictedContactUuid") String restrictedContactUuid) throws BusinessException {
 		return userFacade.findRestrictedContact(null, ownerUuid, restrictedContactUuid);
+	}
+
+	@Path("/{uuid}/restricted_contacts")
+	@POST
+	@Operation(summary = "Create a restricted contact.", responses = {
+		@ApiResponse(content = @Content(schema = @Schema(implementation = RestrictedContactDto.class)), responseCode = "200")
+	})
+	@Override
+	public RestrictedContactDto createRestrictedContact(
+			@Parameter(description = "The owner's uuid of the restricted contact to create.", required = true)
+				@PathParam("uuid") String ownerUuid,
+			@Parameter(description = "The restricted contact to create, if its uuid is null, mail and domain are required for its creation.", required = false) RestrictedContactDto restrictedContactDto) throws BusinessException {
+		return userFacade.createRestrictedContact(null, ownerUuid, restrictedContactDto);
+	}
+
+	@Path("/{uuid}/restricted_contacts/{restrictedContactUuid : .*}")
+	@DELETE
+	@Operation(summary = "Delete a restricted contact.", responses = {
+		@ApiResponse(content = @Content(schema = @Schema(implementation = RestrictedContactDto.class)), responseCode = "200")
+	})
+	@Override
+	public RestrictedContactDto deleteRestrictedContact(
+			@Parameter(description = "The owner's uuid of the restricted contact to delete.", required = true)
+				@PathParam("uuid") String ownerUuid,
+			@Parameter(description = "The restricted contact to delete", required = false) RestrictedContactDto restrictedContactDto,
+			@Parameter(description = "The restricted contact's uuid to delete, if null object is used", required = false)
+				@PathParam("restrictedContactUuid") String restrictedContactUuid) throws BusinessException {
+		return userFacade.deleteRestrictedContact(null, ownerUuid, restrictedContactDto, restrictedContactUuid);
 	}
 }
