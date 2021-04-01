@@ -75,7 +75,7 @@ public class UserDto {
 	private Date expirationDate;
 
 	@Schema(description = "User's role")
-	private String role;
+	private Role role;
 
 	@Schema(description = "CanUpload field shows if the user has the right to upload files in his personal space")
 	private Boolean canUpload;
@@ -92,7 +92,7 @@ public class UserDto {
 	@Schema(description = "Comment")
 	private String comment;
 
-	@Schema(description = "user's quota uuid.")
+	@Schema(description = "User's quota uuid (not available on findAll users)")
 	private String quotaUuid;
 
 	@Schema(description = "User's domain")
@@ -104,10 +104,10 @@ public class UserDto {
 	@Schema(description = "2FA uuid")
 	private String secondFAUuid;
 
-	@Schema(description = "If defined, it informs if current user is using Second Factor Authentication (2FA), it is uneditable.")
+	@Schema(description = "If defined, it informs if current user is using Second Factor Authentication (2FA)(ReadOnly).")
 	private Boolean secondFAEnabled;
 
-	@Schema(description = "Show if user access is locked")
+	@Schema(description = "Show if user's access is locked")
 	private Boolean locked;
 
 	public UserDto() {
@@ -119,20 +119,24 @@ public class UserDto {
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.mail = user.getMail();
-		this.role = user.getRole().toString();
+		this.role = user.getRole();
 		this.accountType = user.getAccountType();
 		this.creationDate = user.getCreationDate();
 		this.modificationDate = user.getModificationDate();
 		this.domain = new DomainLightDto(user.getDomain());
+		this.locked = user.isLocked();
 		if (this.isGuest()) {
 			Guest g = (Guest) user;
 			this.restricted = g.isRestricted();
 			this.comment = g.getComment();
 			this.expirationDate = g.getExpirationDate();
 		}
+		this.restricted = false;
 		this.canUpload = user.getCanUpload();
 		this.canCreateGuest = user.getCanCreateGuest();
 		this.externalMailLocale = user.getExternalMailLocale();
+		this.secondFAEnabled = user.isUsing2FA();
+		this.secondFAUuid = user.getLsUuid();
 	}
 
 	public User toUserObject(boolean isGuest) {
@@ -156,7 +160,7 @@ public class UserDto {
 			internal.setExternalMailLocale(getExternalMailLocale());
 			internal.setFirstName(getFirstName());
 			internal.setLastName(getLastName());
-			internal.setRole(Role.valueOf(getRole()));
+			internal.setRole(getRole());
 			internal.setMail(getMail());
 			return internal;
 		}
@@ -258,11 +262,11 @@ public class UserDto {
 		this.mail = mail;
 	}
 
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 

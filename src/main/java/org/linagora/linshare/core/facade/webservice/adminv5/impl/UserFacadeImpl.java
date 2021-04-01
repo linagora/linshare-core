@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
@@ -53,7 +52,6 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContac
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
@@ -77,8 +75,6 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 
 	private final AbstractDomainService abstractDomainService;
 
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-
 	private final PageContainerAdaptor<User, UserDto> pageContainerAdaptor = new PageContainerAdaptor<>();
 
 	public UserFacadeImpl(
@@ -87,14 +83,12 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			AbstractDomainService abstractDomainService,
 			GuestService guestService,
 			QuotaService quotaService,
-			FunctionalityReadOnlyService functionalityReadOnlyService,
 			UserService userService) {
 		super(accountService);
 		this.userService2 = userService2;
 		this.abstractDomainService = abstractDomainService;
 		this.guestService = guestService;
 		this.quotaService = quotaService;
-		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.userService = userService;
 	}
 
@@ -130,20 +124,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		}
 		AccountQuota quota = quotaService.findByRelatedAccount(user);
 		userDto.setQuotaUuid(quota.getUuid());
-		userDto.setLocked(user.isLocked());
-		setSecondFAAttributes(userDto, user);
 		return userDto;
-	}
-
-	private void setSecondFAAttributes(UserDto userDto, User user) {
-		BooleanValueFunctionality twofaFunc = functionalityReadOnlyService
-				.getSecondFactorAuthenticationFunctionality(user.getDomain());
-		if (twofaFunc.getActivationPolicy().getStatus()) {
-			userDto.setSecondFAUuid(user.getLsUuid());
-			userDto.setSecondFAEnabled(user.isUsing2FA());
-		} else {
-			userDto.setSecondFAEnabled(false);
-		}
 	}
 
 	@Override
@@ -160,10 +141,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		if (!userDto.isLocked() && entity.isLocked()) {
 			entity = userService2.unlock(authUser, actor, entity);
 		}
-		User update = checkAccountTypeAndUpdate(authUser, actor, userDto, entity, userToUpdate);
-		UserDto updatedDto = new UserDto(update);
-		updatedDto.setLocked(update.isLocked());
-		return updatedDto;
+		return new UserDto(checkAccountTypeAndUpdate(authUser, actor, userDto, entity, userToUpdate));
 	}
 
 	private User checkAccountTypeAndUpdate(Account authUser, Account actor, UserDto userDto, User entity,
