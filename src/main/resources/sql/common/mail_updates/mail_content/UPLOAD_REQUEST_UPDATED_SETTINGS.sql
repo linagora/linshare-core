@@ -21,7 +21,7 @@ UPDATE mail_content SET subject='[# th:if="${subject.modified}"]
                   <!--/* End of Greetings for external or internal recipient */-->
                   <!--/* Main email  message content*/-->
                   <p>
-                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName}, ${subject.value})}">
                      </span>
                      <span data-th-utext="#{secondaryMsg}">
                      </span>
@@ -54,9 +54,6 @@ UPDATE mail_content SET subject='[# th:if="${subject.modified}"]
             <span data-th-if="(${activationDate.modified})">
                <th:block data-th-replace="layout :: infoEditedDateArea(#{activationDate},${activationDate.oldValue},${activationDate.value})"/>
             </span>
-            <span data-th-if="(${subject.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{nameOfDepot},${subject.oldValue},${subject.value})"/>
-            </span>
             <span data-th-if="(${closureRight.modified})">
                <th:block data-th-replace="layout :: infoEditedItem(#{closureRight},${closureRight.oldValue},${closureRight.value})"/>
             </span>
@@ -82,7 +79,7 @@ deletionRight = Droits de suppression
 depotSize = Taille du dépôt
 expiryDate = Date de clôture
 enableNotification = Activation des notifications
-mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a modifié des paramètres liés au dépôt.
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a modifié des paramètres liés à l''''Invitation de dépôt <b>{2}</b>.
 maxFileNum = Nombre de Fichiers
 maxFileSize = Taille autorisée
 msgFrom = Nouveau message de
@@ -95,7 +92,7 @@ deletionRight = Deletion rights
 depotSize = Repository size
 expiryDate = Closure date
 enableNotification = Enable notifications
-mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  has updated some settings related to the Upload Request.
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  has updated some settings related to the Upload Request <b>{2}</b>.
 maxFileNum = File number
 maxFileSize = File size
 msgFrom =  New message from
@@ -108,7 +105,7 @@ deletionRight = Права удаления
 depotSize = Размер репозитория
 expiryDate = Дата закрытия
 enableNotification = Разрешить уведомления
-mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  обновил некоторые настройки запроса загрузки.
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  обновил некоторые настройки запроса загрузки <b>{2}</b>.
 maxFileNum = Номер файла
 maxFileSize = Размер файла
 msgFrom =  Новое сообщение от

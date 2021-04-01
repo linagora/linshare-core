@@ -76,7 +76,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
 </html>',messages_french='buttonMsg = Accès
 closureDate = Date de clôture
 depotSize = Taille
-mainMsg = <b>{0} {1}</b> vous invite à déposer des fichiers dans le dépôt : <b>{2}</b>.
+mainMsg = <b>{0} {1}</b> vous invite à déposer des fichiers via cette Invitation de Dépôt: <b>{2}</b>.
 msgAlt = L''''invitation de dépôt {0} de {1} {2} est désormais active.
 msgFrom = Le message de
 msgProtected = Vous pouvez déverrouiller le dépôt en suivant le lien ci-dessous et en saisissant le mot de passe fourni.

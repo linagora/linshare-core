@@ -71,13 +71,11 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='beginningMainMsgForRecipient =   L''''invitation dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> va expirer dans <b>{2} jours</b>
-beginningMainMsgCollective =   Votre invitation collective sera clôturée dans  <b>{0} jours</b>.
-beginningMainMsgIndividual =   Votre invitation au dépôt sera clôturée dans  <b>{0} jours</b>.
-endingMainMsgPlural = et vous avez actuellement reçu <b>{0} fichiers</b>.
+</html>',messages_french='beginningMainMsgForRecipient =   L''''invitation dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> sera clôturée dans <b>{2} jours</b>
+beginningMainMsgCollective =   Votre Invitation sera clôturée dans  <b>{0} jours</b>.
+beginningMainMsgIndividual =   Votre Invitation sera clôturée dans  <b>{0} jours</b>.
 endingMainMsgPlural = Il y a un total de <b> {0} fichiers </b> dans le dépôt.
 endingMainMsgPluralForRecipient = et vous avez actuellement envoyé  <b> {0} fichiers </b> dans le dépôt.
-endingMainMsgSingular = et vous avez actuellement reçu <b>1 fichier</b>.
 endingMainMsgSingular = Il y a au total <b>1 fichier </b> dans le dépôt.
 endingMainMsgSingularForRecipient = et vous avez actuellement envoyé  <b>1 fichier </b> dans le dépôt.
 filesInURDepot = Fichiers déposés
@@ -90,10 +88,8 @@ subjectForRecipient = L''''invitation au dépôt de {0} {1} sera bientôt clôtu
 uploadFileBtn = Déposer un fichier',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s The Upload Request is about to reach it''''s end date in <b>{2} days</b>
 beginningMainMsgCollective = Your invitation will be closed in  <b>{0} days</b>.
 beginningMainMsgIndividual =  Your invitation is about to be closed in <b>{0} days</b>.
-endingMainMsgPlural =  and you currently have received<b>{0} files</b>.
 endingMainMsgPlural = There are a total of <b> {0} files </b> in the Upload Request.
 endingMainMsgPluralForRecipient = and so far you have sent <b> {0} files </b> in the Upload Request.
-endingMainMsgSingular =   and you currently have received<b>1 file</b>.
 endingMainMsgSingular = There is a total of <b>1 file </b> in the repository.
 endingMainMsgSingularForRecipient = and you currently have sent <b>1 file </b>in the repository.
 filesInURDepot = Files uploaded
@@ -106,10 +102,8 @@ subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
 uploadFileBtn = Upload a file',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Действие запроса на загрузку закончится через <b>{2} дней</b>
 beginningMainMsgCollective = Действие вашего приглашения закончится через <b>{0} дней</b>.
 beginningMainMsgIndividual =  Действие вашего приглашения закончится через <b>{0} дней</b>.
-endingMainMsgPlural =  вы получили <b>{0} файлов</b>.
 endingMainMsgPlural = Всего загрузка содержит <b> {0} файлов </b>.
 endingMainMsgPluralForRecipient = вы отправили <b> {0} файлов </b> в загрузку.
-endingMainMsgSingular =   вы получили <b>1 файл</b>.
 endingMainMsgSingular = Всего в репозитории of <b>1 файл </b>.
 endingMainMsgSingularForRecipient = вы отправили <b>1 файл </b> в репозиторий.
 filesInURDepot = Загруженные файлы
