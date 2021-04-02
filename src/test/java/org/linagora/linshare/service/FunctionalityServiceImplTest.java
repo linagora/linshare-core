@@ -48,6 +48,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Policy;
@@ -59,10 +60,13 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -76,13 +80,16 @@ import com.google.common.collect.ImmutableList;
 	"/import-tests-domain-quota-updates.sql"})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-mongo-java-server.xml",
-		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-facade.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 @DirtiesContext
 public class FunctionalityServiceImplTest {
@@ -117,13 +124,21 @@ public class FunctionalityServiceImplTest {
 
 	@Autowired
 	private RootUserRepository rootUserRepository;
+	
+	@Qualifier("userRepository")
+	@Autowired
+	private UserRepository<User> userRepository;
 
-	private User actor;
+	@Autowired
+	private UserService userService;
+
+	private User actor, john;
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		actor = rootUserRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
+		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -213,6 +228,24 @@ public class FunctionalityServiceImplTest {
 		Assertions.assertNotSame(func3_root, func3_sub);
 		Assertions.assertTrue(func3_sub.businessEquals(func3_root, true));
 		Assertions.assertTrue(func3_sub.businessEquals(func3_top, true));
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testGetFunctionalityWithAnyRole() {
+		// User can get functionality without role restriction
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Assertions.assertEquals(Role.SIMPLE, john.getRole());
+		Functionality func1 = functionalityService.find(john, "UPLOAD_REQUEST");
+		Assertions.assertNotNull(func1);
+		john.setRole(Role.ADMIN);
+		userService.saveOrUpdateUser(john);
+		Assertions.assertEquals(Role.ADMIN, john.getRole());
+		Functionality func2 = functionalityService.find(john, "UPLOAD_REQUEST");
+		Assertions.assertNotNull(func2);
+		// Reset to initial value
+		john.setRole(Role.SIMPLE);
+		userService.saveOrUpdateUser(john);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

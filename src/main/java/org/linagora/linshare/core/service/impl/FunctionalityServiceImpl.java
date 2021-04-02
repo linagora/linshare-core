@@ -252,7 +252,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 			throws BusinessException {
 		Validate.notNull(actor);
 		Validate.notEmpty(functionalityId);
-		Validate.isTrue(actor.hasSimpleRole());
 		Functionality functionality = businessService.getFunctionality(
 				actor.getDomain(), functionalityId);
 		return functionality;
