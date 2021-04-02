@@ -144,19 +144,26 @@ BEGIN
 					current_actual_operation_sum = weekly_stat_row.actual_operation_sum;
 					is_first_row = FALSE;
 				ELSE
-					FOR daily_stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_DAILY_STAT' AND DATE_PART('day', weekly_stat_row.statistic_date::timestamp - 			statistic_date::timestamp) <= 7 AND DATE_PART('day', weekly_stat_row.statistic_date::timestamp - statistic_date::timestamp) >= 0 AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
-						RAISE INFO 'WEEKLY STAT with ID "%" DATE : %', weekly_stat_row.id, weekly_stat_row.statistic_date;
-						RAISE INFO 'FOUND DAILY STAT with ID "%" DATE : %', daily_stat_row.id, daily_stat_row.statistic_date;
-						RAISE INFO 'ID STAT : %', weekly_stat_row.id;
-						RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
-						current_create_operation_sum = current_create_operation_sum + daily_stat_row.create_operation_sum;
-						current_delete_operation_sum = current_delete_operation_sum + daily_stat_row.delete_operation_sum;
-						current_diff_operation_sum = current_diff_operation_sum + daily_stat_row.diff_operation_sum;
-						current_actual_operation_sum = current_actual_operation_sum + daily_stat_row.diff_operation_sum;
-						RAISE INFO 'diff_operation_sum : %', weekly_stat_row. diff_operation_sum;
-						RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
-						UPDATE statistic SET actual_operation_sum = current_actual_operation_sum WHERE id = weekly_stat_row.id;
-					END LOOP;
+					select 
+						sum(create_operation_sum), sum(delete_operation_sum), sum(diff_operation_sum) 
+					INTO current_create_operation_sum, current_delete_operation_sum, current_diff_operation_sum
+					FROM statistic 
+					WHERE statistic_type = 'WORK_GROUP_DAILY_STAT' 
+						AND DATE_PART('day', weekly_stat_row.statistic_date::timestamp - statistic_date::timestamp) <= 7 
+						AND DATE_PART('day', weekly_stat_row.statistic_date::timestamp - statistic_date::timestamp) >= 0 
+						AND account_id = work_group_row.account_id ;
+					
+					RAISE INFO 'WEEKLY STAT with ID "%" DATE : %', weekly_stat_row.id, weekly_stat_row.statistic_date;
+					RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
+					current_actual_operation_sum = current_actual_operation_sum + current_diff_operation_sum;
+					RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
+					UPDATE statistic 
+						SET 
+							actual_operation_sum = current_actual_operation_sum,
+							create_operation_sum = current_create_operation_sum,
+							diff_operation_sum = current_diff_operation_sum,
+							delete_operation_sum = current_delete_operation_sum
+						WHERE id = weekly_stat_row.id;
 				END IF;
 			END LOOP;
 		END LOOP;
@@ -188,19 +195,25 @@ BEGIN
 					current_actual_operation_sum = monthly_stat_row.actual_operation_sum;
 					is_first_row = FALSE;
 				ELSE
-					FOR weekly_stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT' AND DATE_PART('month', monthly_stat_row.statistic_date::timestamp) =  			DATE_PART('month', statistic_date::timestamp) + 1 AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
-						RAISE INFO 'MONTHLY STAT with ID "%" DATE : %', monthly_stat_row.id, monthly_stat_row.statistic_date;
-						RAISE INFO 'FOUND WEEKLY STAT with ID "%" DATE : %', weekly_stat_row.id, weekly_stat_row.statistic_date;
-						RAISE INFO 'ID STAT : %', monthly_stat_row.id;
-						RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
-						current_create_operation_sum = current_create_operation_sum + weekly_stat_row.create_operation_sum;
-						current_delete_operation_sum = current_delete_operation_sum + weekly_stat_row.delete_operation_sum;
-						current_diff_operation_sum = current_diff_operation_sum + weekly_stat_row.diff_operation_sum;
-						current_actual_operation_sum = current_actual_operation_sum + weekly_stat_row.diff_operation_sum;
-						RAISE INFO 'diff_operation_sum : %', monthly_stat_row. diff_operation_sum;
-						RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
-						UPDATE statistic SET actual_operation_sum = current_actual_operation_sum WHERE id = monthly_stat_row.id;
-					END LOOP;
+					SELECT 
+						sum(create_operation_sum), sum(delete_operation_sum), sum(diff_operation_sum) 
+					INTO current_create_operation_sum, current_delete_operation_sum, current_diff_operation_sum
+					FROM statistic 
+					WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT' 
+						AND DATE_PART('month', monthly_stat_row.statistic_date::TIMESTAMP) =  DATE_PART('month', statistic_date::TIMESTAMP) + 1
+						AND account_id = work_group_row.account_id ;
+					
+					RAISE INFO 'MONTHLY STAT with ID "%" DATE : %', monthly_stat_row.id, monthly_stat_row.statistic_date;
+					RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
+					current_actual_operation_sum = current_actual_operation_sum + current_diff_operation_sum;
+					RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
+					UPDATE statistic 
+						SET 
+							actual_operation_sum = current_actual_operation_sum,
+							create_operation_sum = current_create_operation_sum,
+							diff_operation_sum = current_diff_operation_sum,
+							delete_operation_sum = current_delete_operation_sum
+						WHERE id = monthly_stat_row.id;
 				END IF;
 			END LOOP;
 		END LOOP;
@@ -208,6 +221,23 @@ BEGIN
 	END;
 END
 $$ LANGUAGE plpgsql;
+
+--Delete duplicated rows in statistic table with same statistic_type and statistic_date
+DELETE FROM statistic 
+	WHERE id IN (
+	SELECT id 
+	FROM (
+		SELECT id, ROW_NUMBER() 
+			OVER( PARTITION BY statistic_date, statistic_type, account_id, domain_id ORDER BY  id ) AS row_num
+		FROM statistic ) partition_statistic
+	WHERE partition_statistic.row_num > 1 );
+	
+--Delete recent statistic that will be computed by the batch
+DELETE FROM statistic
+	WHERE DATE_PART('day', NOW()::timestamp - statistic_date::timestamp) <= 7
+		AND DATE_PART('day', NOW()::timestamp - statistic_date::timestamp) >= 0
+		AND (statistic_type LIKE '%WEEKLY%' OR statistic_type LIKE '%MONTHLY%') ;
+		
 
 SELECT ls_compute_daily_workgroup_statistic();
 SELECT ls_compute_weekly_workgroup_statistic();
