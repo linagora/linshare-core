@@ -225,8 +225,10 @@ public class MailConfig implements Cloneable {
 		MailContentLang needle = new MailContentLang(lang, type);
 
 		for (MailContentLang mcl : mailContentLangs) {
-			if (mcl.businessEquals(needle))
-				return mcl.getMailContent();
+			if (mcl.businessEquals(needle)) {
+				MailContent content = mcl.getMailContent();
+				return content;
+			}
 		}
 		throw new TechnicalException(
 				"No MailContent matching the [Language,MailContentType] pair: ["

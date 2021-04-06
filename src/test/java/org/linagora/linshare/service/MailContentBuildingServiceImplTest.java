@@ -140,9 +140,9 @@ public class MailContentBuildingServiceImplTest {
 		List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
 		for (int flavor = 0; flavor < contexts.size(); flavor++) {
 			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.FRENCH, flavor);
-			findErrors.addAll(testMailGenerate(type, build));
 			String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + Language.FRENCH + " : ";
 			build.setSubject(subject + build.getSubject());
+			findErrors.addAll(testMailGenerate(type, build));
 			sendMail(build);
 		}
 		if (!findErrors.isEmpty()) {
@@ -169,9 +169,9 @@ public class MailContentBuildingServiceImplTest {
 		List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
 		for (int flavor = 0; flavor < contexts.size(); flavor++) {
 			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.FRENCH, flavor);
-			findErrors.addAll(testMailGenerate(type, build));
 			String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + Language.FRENCH + " : ";
 			build.setSubject(subject + build.getSubject());
+			findErrors.addAll(testMailGenerate(type, build));
 			sendMail(build);
 		}
 		if (!findErrors.isEmpty()) {
@@ -200,8 +200,8 @@ public class MailContentBuildingServiceImplTest {
 		Assertions.assertNotNull(mailContainer);
 		logger.debug("Subject: {}", mailContainer.getSubject());
 		logger.debug("Content: {}", mailContainer.getContent());
-		Assertions.assertNotNull(mailContainer.getSubject());
-		Assertions.assertNotNull(mailContainer.getContent());
+		Assertions.assertFalse(mailContainer.getSubject().isEmpty());
+		Assertions.assertFalse(mailContainer.getContent().isEmpty());
 		List<TestMailResult> findErrors = Lists.newArrayList();
 		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getSubject()));
 		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getContent()));

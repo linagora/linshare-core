@@ -48,6 +48,7 @@ import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -267,7 +268,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			language = Language.ENGLISH;
 		}
 		EmailBuilder builder = emailBuilders.get(type);
-		cfg.findContent(language, type);
+		MailContent content = cfg.findContent(language, type);
+		Validate.notNull(content);
 		return builder.fakeBuild(cfg, language, flavor);
 	}
 
