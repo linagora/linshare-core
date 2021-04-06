@@ -1045,7 +1045,7 @@
 					<version>1.8</version><!--$NO-MVN-MAN-VER$-->
 					<executions>
 						<execution>
-							<id>ant-merge-files</id>
+							<id>ant-merge-files-import-postgres</id>
 							<goals>
 								<goal>run</goal>
 							</goals>
@@ -1066,6 +1066,23 @@
 										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
 										<fileset file="src/main/resources/sql/common/import-settings.sql" />
 										<fileset file="src/main/resources/sql/common/import-alias.sql" />
+									</concat>
+								</target>
+							</configuration>
+						</execution>
+						<execution>
+							<id>ant-merge-files-mail-templates</id>
+							<goals>
+								<goal>run</goal>
+							</goals>
+							<phase>generate-test-resources</phase>
+							<configuration>
+								<target>
+									<mkdir dir="target/generate-test-resources" />
+									<concat destfile="target/generate-test-resources/import-all-emails.sql">
+										<fileset file="target/classes/sql/common/mail_updates/mail_layout/*.sql" />
+										<fileset file="target/classes/sql/common/mail_updates/mail_content/*.sql" />
+										<fileset file="target/classes/sql/common/mail_updates/mail_footer/*.sql" />
 									</concat>
 								</target>
 							</configuration>
