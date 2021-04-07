@@ -43,6 +43,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 @XmlRootElement(name = "FunctionalitySize")
 public class FunctionalitySizeDto extends FunctionalityDto {
 
@@ -87,7 +89,16 @@ public class FunctionalitySizeDto extends FunctionalityDto {
 			FileSizeUnit unit = FileSizeUnit.valueOf(getUnit());
 			return unit.getSiSize(value);
 		}
-		return 0L;
+		return null;
+	}
+
+	@XmlElement
+	public Long getMaxRawSize() {
+		if (getMaxUnit() != null) {
+			FileSizeUnit unit = FileSizeUnit.valueOf(getMaxUnit());
+			return unit.getSiSize(maxValue);
+		}
+		return null;
 	}
 
 	public void setValue(Integer value) {
