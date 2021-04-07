@@ -253,6 +253,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		if (uploadRequestEntry.getComment() == null) {
 			cr.setComment("");
 		}
+		cr.setComment(sanitizeFileName(uploadRequestEntry.getComment()));
+		cr.setName(sanitizeFileName(uploadRequestEntry.getName()));
 		DocumentEntry documentEntry = documentEntryBusinessService.copy(owner, cr.getDocumentUuid(), cr.getName(),
 				cr.getComment(), cr.getMetaData(), getDocumentExpirationDate(owner.getDomain()), cr.getCiphered());
 		addToQuota(owner, cr.getSize());

@@ -51,7 +51,6 @@ import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -167,8 +166,6 @@ public class UploadRequestServiceImplV2Test {
 
 	private UploadRequest ureJohn;
 
-	private UploadRequest enabledUreJane;
-
 	private User john;
 
 	private Contact yoda;
@@ -212,10 +209,7 @@ public class UploadRequestServiceImplV2Test {
 		globaleUploadRequest.setActivationDate(null);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, globaleUploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
-		UploadRequestGroup enabledUploadRequestGroupJane = uploadRequestGroupService.create(jane, jane, globaleUploadRequest, Lists.newArrayList(yoda), "This is a subject",
-				"This is a body", false);
 		ureJohn = uploadRequestGroup.getUploadRequests().iterator().next();
-		enabledUreJane = enabledUploadRequestGroupJane.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -477,7 +471,6 @@ public class UploadRequestServiceImplV2Test {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	@Disabled("FIXE ME copy method not sanitize the input")
 	@Test
 	public void testUploadRequestCopyUploadRequestEntrySpecialCharacters() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -497,12 +490,14 @@ public class UploadRequestServiceImplV2Test {
 				requestUrl);
 		Assertions.assertNotNull(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()));
 		uploadRequestEntry.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
+		uploadRequestEntry.setComment("EP_TEST_v233<script>alert(document.cookie)</script>");
 		uploadRequestEntryRepository.update(uploadRequestEntry);
 		Assertions.assertEquals(uploadRequestEntry.getName(), "EP_TEST_v233<script>alert(document.cookie)</script>");
 		uploadRequestService.updateStatus(actor, actor, request.getUuid(), UploadRequestStatus.CLOSED, false);
 		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, uploadRequestEntry));
 		Assertions.assertNotNull(documentEntry);
 		Assertions.assertEquals(documentEntry.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
+		Assertions.assertEquals(documentEntry.getComment(), "EP_TEST_v233_script_alert(document.cookie)__script_");
 		Document aDocument = uploadRequestEntry.getDocument();
 		userRepository.update(jane);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
