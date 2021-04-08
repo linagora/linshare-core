@@ -176,7 +176,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			log.setResourceUpdated(new UploadRequestMto(req, true));
 			logEntryService.insert(log);
 			sendNotification(req, actor);
-			archiveEntries(req, authUser, actor, status.equals(UploadRequestStatus.PURGED),
+			archiveEntries(req, authUser, actor, status.compareTo(UploadRequestStatus.ARCHIVED) <= 0,
 					(status.compareTo(UploadRequestStatus.CLOSED) <= 0) && copy);
 			checkAndUpdateCollectiveUploadRequest(req.getUploadRequestGroup(), status);
 		}
@@ -203,16 +203,16 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		mails.clear();
 	}
 
-	private void archiveEntries(UploadRequest req, Account authUser, Account actor, boolean purge, boolean copy) {
-		if (purge || copy) {
-			for (UploadRequestUrl uploadRequestUrl : req.getUploadRequestURLs()) {
-				for (UploadRequestEntry requestEntry : uploadRequestUrl.getUploadRequestEntries()) {
-					if (!requestEntry.getCopied() && copy) {
-						uploadRequestEntryService.copy(authUser, actor, new CopyResource(TargetKind.UPLOAD_REQUEST, requestEntry));
-					}
-					if (purge) {
-						uploadRequestEntryService.delete((User) authUser, (User) actor, requestEntry.getUuid());
-					}
+	private void archiveEntries(UploadRequest req, Account authUser, Account actor, Boolean delUploadRequestEntries,
+			boolean copy) {
+		if (delUploadRequestEntries || copy) {
+			for (UploadRequestEntry requestEntry : findAllEntries(authUser, actor, req.getUuid())) {
+				if (!requestEntry.getCopied() && copy) {
+					uploadRequestEntryService.copy(authUser, actor,
+							new CopyResource(TargetKind.UPLOAD_REQUEST, requestEntry));
+				}
+				if (delUploadRequestEntries) {
+					uploadRequestEntryService.delete((User) authUser, (User) actor, requestEntry.getUuid());
 				}
 			}
 		}
