@@ -206,7 +206,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	private void archiveEntries(UploadRequest req, Account authUser, Account actor, Boolean delUploadRequestEntries,
 			boolean copy) {
 		if (delUploadRequestEntries || copy) {
-			for (UploadRequestEntry requestEntry : findAllEntries(authUser, actor, req.getUuid())) {
+			for (UploadRequestEntry requestEntry : findAllEntries(authUser, actor, req)) {
 				if (!requestEntry.getCopied() && copy) {
 					uploadRequestEntryService.copy(authUser, actor,
 							new CopyResource(TargetKind.UPLOAD_REQUEST, requestEntry));
@@ -374,18 +374,12 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public List<UploadRequestEntry> findAllEntries(Account actor, Account owner, String uploadRequestUuid)
+	public List<UploadRequestEntry> findAllEntries(Account authUser, Account actor, UploadRequest uploadRequest)
 			throws BusinessException {
-		preChecks(actor, owner);
-		checkListPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				null);
-		List<UploadRequestEntry> uploadRequestEntries = Lists.newArrayList();
-		UploadRequest uploadRequest = find(actor, owner, uploadRequestUuid);
-		Set<UploadRequestUrl> uploadRequestUrls = uploadRequest.getUploadRequestURLs();
-		for (UploadRequestUrl uploadRequestUrl : uploadRequestUrls) {
-			uploadRequestEntries.addAll(uploadRequestUrl.getUploadRequestEntries());
-		}
-		return uploadRequestEntries;
+		return uploadRequestEntryService.findAllEntries(authUser, actor, uploadRequest);
 	}
 
 	@Override

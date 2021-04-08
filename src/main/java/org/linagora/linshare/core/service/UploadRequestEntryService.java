@@ -41,6 +41,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
@@ -72,4 +73,6 @@ public interface UploadRequestEntryService {
 			List<UploadRequestEntry> entries);
 
 	DocumentEntry copy(Account actor, Account owner, CopyResource cr) throws BusinessException;
+
+	List<UploadRequestEntry> findAllEntries(Account authUser, Account actor, UploadRequest uploadRequest);
 }

@@ -58,6 +58,7 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.Thumbnail;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
@@ -335,5 +336,10 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	@Override
 	public List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl) {
 		return uploadRequestEntryRepository.findAllExtEntries(uploadRequestUrl);
+	}
+
+	@Override
+	public List<UploadRequestEntry> findAllEntries(UploadRequest uploadRequest) {
+		return uploadRequestEntryRepository.findAllEntries(uploadRequest);
 	}
 }

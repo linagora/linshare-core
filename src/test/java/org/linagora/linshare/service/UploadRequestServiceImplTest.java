@@ -358,7 +358,7 @@ public class UploadRequestServiceImplTest {
 				eJane.getUploadRequestURLs().iterator().next());
 		Assertions.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
 
-		List<UploadRequestEntry> entries = service.findAllEntries(actor, actor, eJane.getUuid());
+		List<UploadRequestEntry> entries = service.findAllEntries(actor, actor, eJane);
 		Assertions.assertNotNull(entries);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

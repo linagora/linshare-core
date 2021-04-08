@@ -41,6 +41,7 @@ import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
@@ -60,4 +61,6 @@ public interface UploadRequestEntryRepository extends
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
 
 	long getRelatedUploadRequestEntryCount(Document document);
+
+	List<UploadRequestEntry> findAllEntries(UploadRequest uploadRequest);
 }

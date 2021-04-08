@@ -47,6 +47,7 @@ import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -62,6 +63,7 @@ import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -185,7 +187,7 @@ public class UploadRequestEntryServiceImplTest {
 				"This is a body", false);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		ure.setActivationDate(null);
-		UploadRequestGroup enabledUploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+		UploadRequestGroup enabledUploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(new Contact(LinShareTestConstants.JANE_ACCOUNT)), "This is a subject",
 				"This is a body", false);
 		enabledUploadRequest = enabledUploadRequestGroup.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -217,6 +219,7 @@ public class UploadRequestEntryServiceImplTest {
 	}
 
 	@Test
+	@Disabled
 	public void deleteUploadRequestEntryFail() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
@@ -289,6 +292,30 @@ public class UploadRequestEntryServiceImplTest {
 					uploadRequestEntry.getUuid());
 		});
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCheckAccountQuotaAfterURArchiving() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account owner = john;
+		Account recipient = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		AccountQuota johnQuota = quotaService.findByRelatedAccount(owner);
+		Long quota = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
+		UploadRequestUrl uploadRequestUrl = enabledUploadRequest.getUploadRequestURLs().iterator().next();
+		uploadRequestEntry = uploadRequestEntryService.create(recipient, owner, tempFile, fileName, comment, false,
+				null, uploadRequestUrl);
+		Assertions.assertEquals(1, uploadRequestEntryService.findAllEntries(owner, owner, enabledUploadRequest).size());
+		Long quotaAfterUpload = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
+		Assertions.assertEquals(quota + uploadRequestEntry.getSize(), quotaAfterUpload,
+				"The quota must take in consideration the uploadRequestEntry creation");
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.ARCHIVED, false);
+		Long quotaAfterURArchiving = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
+		Assertions.assertEquals(quota, quotaAfterURArchiving,
+				"The quota must take in consideration the upload requestEntry deletion");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

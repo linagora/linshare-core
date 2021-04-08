@@ -276,8 +276,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	}
 
 	private void checkURStatusBeforeCopyAndDelete(UploadRequest uploadRequest, BusinessErrorCode error) {
-		if (!Lists.newArrayList(UploadRequestStatus.ENABLED, UploadRequestStatus.CLOSED, UploadRequestStatus.ARCHIVED)
-				.contains(uploadRequest.getStatus())) {
+		if (!Lists.newArrayList(UploadRequestStatus.ENABLED, UploadRequestStatus.CLOSED, UploadRequestStatus.ARCHIVED,
+				UploadRequestStatus.PURGED).contains(uploadRequest.getStatus())) {
 			throw new BusinessException(error,
 					"You Cannot cannot perform the requested action if upload request's status is not enabled, closed or archived");
 		}
@@ -450,5 +450,14 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		computedName = entry.getName() + "-ure-"
 				+ formatter.format(entry.getCreationDate().getTime()).concat(extension);
 		return computedName;
+	}
+
+	@Override
+	public List<UploadRequestEntry> findAllEntries(Account authUser, Account actor, UploadRequest uploadRequest) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, UploadRequestEntry.class, BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN,
+				null);
+		List<UploadRequestEntry> entries = uploadRequestEntryBusinessService.findAllEntries(uploadRequest);
+		return entries;
 	}
 }
