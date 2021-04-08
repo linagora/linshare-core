@@ -340,6 +340,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 				new AccountMto(actor), LogAction.DELETE, AuditLogEntryType.UPLOAD_REQUEST_ENTRY,
 				entry.getUuid(), entry);
 		logEntryService.insert(log);
+		delFromQuota(actor, entry.getSize());
 		return entry;
 	}
 

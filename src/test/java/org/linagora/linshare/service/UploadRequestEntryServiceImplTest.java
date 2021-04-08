@@ -55,6 +55,8 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -69,6 +71,7 @@ import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -130,6 +133,9 @@ public class UploadRequestEntryServiceImplTest {
 
 	@Autowired
 	private DocumentRepository documentRepository;
+
+	@Autowired
+	private QuotaService quotaService;
 
 	private UploadRequest ure = new UploadRequest();
 
@@ -283,6 +289,30 @@ public class UploadRequestEntryServiceImplTest {
 					uploadRequestEntry.getUuid());
 		});
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCheckAccountQuotaUREDeletionByRecipient() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account owner = john;
+		Account recipient = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		AccountQuota johnQuota = quotaService.findByRelatedAccount(owner);
+		Long quota = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
+		uploadRequestEntry = uploadRequestEntryService.create(recipient, owner, tempFile, fileName, comment, false, null,
+				uploadRequest.getUploadRequestURLs().iterator().next());
+		UploadRequestEntry entry = uploadRequestEntryService.find(recipient, recipient, uploadRequestEntry.getUuid());
+		Assertions.assertNotNull(entry);
+		Long quotaAfterUpload = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
+		Assertions.assertEquals(quota + uploadRequestEntry.getSize(), quotaAfterUpload,
+				"The quota must take in consideration the uploadRequestEntry creation");
+		uploadRequestEntryService.deleteEntryByRecipients(uploadRequest.getUploadRequestURLs().iterator().next(),
+				uploadRequestEntry.getUuid());
+		Long quotaAfterDeletion = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
+		Assertions.assertEquals(quota, quotaAfterDeletion,
+				"The quota must take in consideration the upload requestEntry deletion");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
