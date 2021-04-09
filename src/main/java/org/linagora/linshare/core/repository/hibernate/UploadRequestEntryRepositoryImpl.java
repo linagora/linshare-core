@@ -42,9 +42,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -134,6 +136,21 @@ public class UploadRequestEntryRepositoryImpl extends
 		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequestEntry");
 		urCrit.createAlias("uploadRequestEntry.uploadRequestUrl", "url");
 		urCrit.add(Restrictions.eq("url.uploadRequest", uploadRequest));
+		@SuppressWarnings("unchecked")
+		List<UploadRequestEntry> list = listByCriteria(urCrit);
+		return list;
+	}
+
+	@Override
+	public List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR() {
+		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequestEntry");
+		urCrit.createAlias("uploadRequestEntry.uploadRequestUrl", "url");
+		urCrit.createAlias("url.uploadRequest", "uploadRequest");
+		Disjunction or = Restrictions.disjunction();
+		urCrit.add(or);
+		or.add(Restrictions.eq("uploadRequest.status", UploadRequestStatus.ARCHIVED));
+		or.add(Restrictions.eq("uploadRequest.status", UploadRequestStatus.DELETED));
+		or.add(Restrictions.eq("uploadRequest.status", UploadRequestStatus.PURGED));
 		@SuppressWarnings("unchecked")
 		List<UploadRequestEntry> list = listByCriteria(urCrit);
 		return list;

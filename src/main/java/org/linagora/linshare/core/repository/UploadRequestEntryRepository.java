@@ -63,4 +63,6 @@ public interface UploadRequestEntryRepository extends
 	long getRelatedUploadRequestEntryCount(Document document);
 
 	List<UploadRequestEntry> findAllEntries(UploadRequest uploadRequest);
+
+	List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR();
 }

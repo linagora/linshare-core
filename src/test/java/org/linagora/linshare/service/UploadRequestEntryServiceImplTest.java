@@ -50,6 +50,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -128,6 +129,9 @@ public class UploadRequestEntryServiceImplTest {
 
 	@Autowired
 	private UploadRequestService uploadRequestService;
+
+	@Autowired
+	private UploadRequestBusinessService uploadRequestBusinessService;
 
 	@Qualifier("jcloudFileDataStore")
 	@Autowired
@@ -340,6 +344,32 @@ public class UploadRequestEntryServiceImplTest {
 		Long quotaAfterDeletion = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
 		Assertions.assertEquals(quota, quotaAfterDeletion,
 				"The quota must take in consideration the upload requestEntry deletion");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testFindAllEntriesForDeletedUR() throws BusinessException, IOException {
+		// This test is used to recover the entries for the archived, deleted UR and it will be
+		// used in the upgrade task
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account owner = john;
+		Account recipient = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		UploadRequestUrl uploadRequestUrl = enabledUploadRequest.getUploadRequestURLs().iterator().next();
+		uploadRequestEntry = uploadRequestEntryService.create(recipient, owner, tempFile, fileName, comment, false,
+				null, uploadRequestUrl);
+		Assertions.assertEquals(1, uploadRequestEntryService.findAllEntries(owner, owner, enabledUploadRequest).size());
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED,
+				false);
+		uploadRequestBusinessService.updateStatus(enabledUploadRequest, UploadRequestStatus.ARCHIVED);
+		Assertions.assertTrue(enabledUploadRequest.isArchived());
+		Assertions.assertEquals(1,
+				uploadRequestEntryService.findAllEntriesForArchivedDeletedPurgedUR(john, john).size());
+		uploadRequestBusinessService.updateStatus(enabledUploadRequest, UploadRequestStatus.DELETED);
+		Assertions.assertTrue(enabledUploadRequest.isDeleted());
+		Assertions.assertEquals(1,
+				uploadRequestEntryService.findAllEntriesForArchivedDeletedPurgedUR(john, john).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

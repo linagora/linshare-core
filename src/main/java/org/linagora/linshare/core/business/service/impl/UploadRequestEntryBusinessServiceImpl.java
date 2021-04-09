@@ -342,4 +342,9 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	public List<UploadRequestEntry> findAllEntries(UploadRequest uploadRequest) {
 		return uploadRequestEntryRepository.findAllEntries(uploadRequest);
 	}
+
+	@Override
+	public List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR() {
+		return uploadRequestEntryRepository.findAllEntriesForArchivedDeletedPurgedUR();
+	}
 }

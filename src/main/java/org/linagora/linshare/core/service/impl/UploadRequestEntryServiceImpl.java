@@ -460,4 +460,13 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		List<UploadRequestEntry> entries = uploadRequestEntryBusinessService.findAllEntries(uploadRequest);
 		return entries;
 	}
+
+	@Override
+	public List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR(Account authUser, Account actor) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, UploadRequestEntry.class, BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN,
+				null);
+		List<UploadRequestEntry> entries = uploadRequestEntryBusinessService.findAllEntriesForArchivedDeletedPurgedUR();
+		return entries;
+	}
 }

@@ -76,4 +76,6 @@ public interface UploadRequestEntryBusinessService {
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
 
 	List<UploadRequestEntry> findAllEntries(UploadRequest uploadRequest);
+
+	List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR();
 }

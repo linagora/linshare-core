@@ -75,4 +75,6 @@ public interface UploadRequestEntryService {
 	DocumentEntry copy(Account actor, Account owner, CopyResource cr) throws BusinessException;
 
 	List<UploadRequestEntry> findAllEntries(Account authUser, Account actor, UploadRequest uploadRequest);
+
+	List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR(Account authUser, Account actor);
 }
