@@ -108,7 +108,7 @@ public class JwtLongTimeResourceAccessControlImpl extends
 		// true if users have the right to create themselves some tokens.
 		boolean create = userCreateFunctionality.getDelegationPolicy().getStatus();
 		if (enabled && create) {
-			if (account.isInternal()) {
+			if (account.isInternal() || account.isGuest()) {
 				if (account != null && account.equals(authUser)) {
 					return true;
 				}

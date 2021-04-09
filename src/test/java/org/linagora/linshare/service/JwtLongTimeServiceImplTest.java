@@ -79,7 +79,7 @@ import io.jsonwebtoken.Claims;
 		"classpath:springContext-ldap.xml" })
 public class JwtLongTimeServiceImplTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(GroupPatternServiceImplTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(JwtLongTimeServiceImplTest.class);
 
 	private final String TOKEN_LABEL = "token label";
 
@@ -131,6 +131,19 @@ public class JwtLongTimeServiceImplTest {
 		Claims decode = jwtService.decode(token.getToken());
 		logger.debug("Token:" + decode.toString());
 		Assertions.assertEquals(john.getMail(), decode.getSubject());
+		Assertions.assertEquals(null, decode.getExpiration());
+		Assertions.assertEquals(token.getLabel(), TOKEN_LABEL);
+		Assertions.assertEquals(token.getDescription(), TOKEN_DESC);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void createTokenByGuestTest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PermanentToken token = jwtLongTimeService.create(guest, guest, new PermanentToken(TOKEN_LABEL, TOKEN_DESC));
+		Claims decode = jwtService.decode(token.getToken());
+		logger.debug("Token:" + decode.toString());
+		Assertions.assertEquals(guest.getMail(), decode.getSubject());
 		Assertions.assertEquals(null, decode.getExpiration());
 		Assertions.assertEquals(token.getLabel(), TOKEN_LABEL);
 		Assertions.assertEquals(token.getDescription(), TOKEN_DESC);
