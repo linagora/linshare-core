@@ -38,6 +38,7 @@ package org.linagora.linshare.mongo.entities.logs;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -45,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
 @XmlRootElement(name = "AuditLogEntryAdmin")
+@XmlTransient
 public abstract class AuditLogEntryAdmin extends AuditLogEntry {
 
 	protected String targetDomainUuid;

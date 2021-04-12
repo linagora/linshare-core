@@ -52,6 +52,7 @@ import com.google.common.collect.Lists;
 
 @JsonIgnoreProperties({"relatedAccounts"})
 @XmlRootElement(name = "AuditLogEntryUser")
+@XmlTransient
 public abstract class AuditLogEntryUser extends AuditLogEntry {
 
 	protected AccountMto actor;

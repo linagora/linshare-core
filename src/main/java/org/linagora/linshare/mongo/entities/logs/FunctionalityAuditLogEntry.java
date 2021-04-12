@@ -35,12 +35,15 @@
  */
 package org.linagora.linshare.mongo.entities.logs;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.mongo.entities.mto.FunctionalityMto;
 
+@XmlRootElement
 public class FunctionalityAuditLogEntry extends AuditLogEntryAdmin {
 
 	protected FunctionalityMto resource;

@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.GeneratedValue;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -57,7 +58,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({ @Type(value = ShareEntryAuditLogEntry.class, name = "share_audit"),
+@JsonSubTypes({
+		@Type(value = AuthenticationAuditLogEntryUser.class, name = "authentication_audit"),
+		@Type(value = MailAttachmentAuditLogEntry.class, name = "mail_attchment_audit"),
+		@Type(value = SafeDetailAuditLogEntry.class, name = "safe_detali_audit"),
+		@Type(value = WorkGroupNodeAuditLogEntry.class, name = "workgroup_node_audit"),
+		@Type(value = ShareEntryAuditLogEntry.class, name = "share_audit"),
 		@Type(value = ThreadAuditLogEntry.class, name = "thread_audit"),
 		@Type(value = ThreadMemberAuditLogEntry.class, name = "thread_member_audit"),
 		@Type(value = UserAuditLogEntry.class, name = "user_audit"),
@@ -78,7 +84,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 		@Type(value = SharedSpaceNodeAuditLogEntry.class, name = "shared_space_node_audit"),
 		@Type(value = SharedSpaceMemberAuditLogEntry.class, name = "shared_space_member_audit")
 	})
-@XmlSeeAlso({ ShareEntryAuditLogEntry.class,
+@XmlSeeAlso({
+	AuthenticationAuditLogEntryUser.class,
+	MailAttachmentAuditLogEntry.class,
+	SafeDetailAuditLogEntry.class,
+	WorkGroupNodeAuditLogEntry.class,
+	ShareEntryAuditLogEntry.class,
 	DocumentEntryAuditLogEntry.class,
 	ThreadAuditLogEntry.class,
 	ThreadMemberAuditLogEntry.class,
@@ -100,6 +111,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 	SharedSpaceNodeAuditLogEntry.class,
 	SharedSpaceMemberAuditLogEntry.class
 	})
+@XmlRootElement(name = "AuditLogEntry")
 @Document(collection="audit_log_entries")
 public class AuditLogEntry {
 

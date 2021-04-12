@@ -42,6 +42,8 @@ import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 
 import com.google.common.collect.Lists;
 
+@Deprecated(forRemoval = false)
+// DEPRECATED: We keep this object in order to be able to read old data still store in the database.
 public class ThreadMto {
 
 	protected String name;

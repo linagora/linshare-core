@@ -38,6 +38,8 @@ package org.linagora.linshare.mongo.entities.mto;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 
+@Deprecated(forRemoval = false)
+//DEPRECATED: We keep this object in order to be able to read old data still store in the database.
 public class ThreadMemberMto {
 
 	protected WorkGroupLightDto workGroup;
