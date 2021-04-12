@@ -141,6 +141,7 @@ public class UploadRequestMto {
 		this.maxFileSize = request.getMaxFileSize();
 		this.status = request.getStatus();
 		this.expiryDate = request.getExpiryDate();
+		this.creationDate = request.getCreationDate();
 		this.modificationDate = request.getModificationDate();
 		this.activationDate = request.getActivationDate();
 		this.notificationDate = request.getNotificationDate();
