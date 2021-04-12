@@ -59,6 +59,8 @@ public class UploadRequestUrlMto {
 		this.contactMail = url.getContact().getMail();
 		this.uploadRequestUuid = url.getUploadRequest().getUuid();
 		this.uploadRequestGroupUuid = url.getUploadRequest().getUploadRequestGroup().getUuid();
+		this.creationDate = url.getCreationDate();
+		this.modificationDate = url.getModificationDate();
 	}
 
 	public String getContactMail() {

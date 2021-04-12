@@ -113,6 +113,10 @@ public class UploadRequestMto {
 		this.maxDepositSize = request.getMaxDepositSize();
 		this.maxFileSize = request.getMaxFileSize();
 		this.status = request.getStatus();
+		this.creationDate = request.getCreationDate();
+		this.modificationDate = request.getModificationDate();
+		this.activationDate = request.getActivationDate();
+		this.notificationDate = request.getNotificationDate();
 		this.expiryDate = request.getExpiryDate();
 		this.canClose = request.isCanClose();
 		this.canDelete = request.isCanDelete();
@@ -137,6 +141,9 @@ public class UploadRequestMto {
 		this.maxFileSize = request.getMaxFileSize();
 		this.status = request.getStatus();
 		this.expiryDate = request.getExpiryDate();
+		this.modificationDate = request.getModificationDate();
+		this.activationDate = request.getActivationDate();
+		this.notificationDate = request.getNotificationDate();
 		this.canClose = request.isCanClose();
 		this.canDelete = request.isCanDelete();
 		this.canEditExpiryDate = request.isCanEditExpiryDate();
