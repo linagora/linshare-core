@@ -212,7 +212,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 							new CopyResource(TargetKind.UPLOAD_REQUEST, requestEntry));
 				}
 				if (delUploadRequestEntries) {
-					uploadRequestEntryService.delete((User) authUser, (User) actor, requestEntry.getUuid());
+					uploadRequestEntryService.delete(authUser, actor, requestEntry.getUuid());
 				}
 			}
 		}

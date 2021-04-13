@@ -250,6 +250,12 @@
 				</bean>
 				<bean class="org.linagora.linshare.core.upgrade.v4_1.UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl">
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_2.DeleteEntriesOfArchivedDeletedPurgedUploadRequestsImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="uploadRequestEntryService" />
+					<constructor-arg ref="uploadRequestEntryRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

@@ -87,8 +87,8 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 	@Override
 	public UploadRequestEntryDto delete(String actorUuid, String uuid) {
 		Validate.notEmpty(uuid, "Upload request entry uuid must be set.");
-		User authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
 		UploadRequestEntry uploadRequestEntry =  uploadRequestEntryService.delete(authUser, actor, uuid);
 		return new UploadRequestEntryDto(uploadRequestEntry);
 	}

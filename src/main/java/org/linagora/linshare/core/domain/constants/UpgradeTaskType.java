@@ -225,7 +225,12 @@ public enum UpgradeTaskType {
 	 * We have to update our database
 	 *
 	 */
-	UPGRADE_4_1_ADD_ALL_NEW_MIME_TYPE;
+	UPGRADE_4_1_ADD_ALL_NEW_MIME_TYPE,
+
+	/**
+	 * Delete entries of archived, deleted and purged upload requests
+	 */
+	UPGRADE_4_2_DELETE_ENTRIES_OF_ARCHIVED_DELETED_PURGED_UPLOAD_REQUESTS;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

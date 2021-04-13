@@ -64,5 +64,5 @@ public interface UploadRequestEntryRepository extends
 
 	List<UploadRequestEntry> findAllEntries(UploadRequest uploadRequest);
 
-	List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR();
+	List<String> findAllEntriesForArchivedDeletedPurgedUR();
 }

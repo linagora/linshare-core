@@ -142,7 +142,7 @@ public class UploadRequestEntryRepositoryImpl extends
 	}
 
 	@Override
-	public List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR() {
+	public List<String> findAllEntriesForArchivedDeletedPurgedUR() {
 		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequestEntry");
 		urCrit.createAlias("uploadRequestEntry.uploadRequestUrl", "url");
 		urCrit.createAlias("url.uploadRequest", "uploadRequest");
@@ -151,8 +151,9 @@ public class UploadRequestEntryRepositoryImpl extends
 		or.add(Restrictions.eq("uploadRequest.status", UploadRequestStatus.ARCHIVED));
 		or.add(Restrictions.eq("uploadRequest.status", UploadRequestStatus.DELETED));
 		or.add(Restrictions.eq("uploadRequest.status", UploadRequestStatus.PURGED));
+		urCrit.setProjection(Projections.property("uuid"));
 		@SuppressWarnings("unchecked")
-		List<UploadRequestEntry> list = listByCriteria(urCrit);
+		List<String> list = listByCriteria(urCrit);
 		return list;
 	}
 }

@@ -45,7 +45,6 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
@@ -63,7 +62,7 @@ public interface UploadRequestEntryService {
 
 	ByteSource download(Account actor, Account owner, String uuid) throws BusinessException;
 
-	UploadRequestEntry delete(User authUser, User actor, String uuid);
+	UploadRequestEntry delete(Account authUser, Account actor, String uuid);
 
 	UploadRequestEntry deleteEntryByRecipients(UploadRequestUrl uploadRequestUrl, String entryUuid) throws BusinessException;
 
@@ -76,5 +75,5 @@ public interface UploadRequestEntryService {
 
 	List<UploadRequestEntry> findAllEntries(Account authUser, Account actor, UploadRequest uploadRequest);
 
-	List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR(Account authUser, Account actor);
+	void delFromQuota(Account owner, Long size);
 }

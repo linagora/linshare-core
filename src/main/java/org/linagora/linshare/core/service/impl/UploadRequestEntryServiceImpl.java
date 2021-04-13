@@ -345,7 +345,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	}
 
 	@Override
-	public UploadRequestEntry delete(User authUser, User actor, String uuid) {
+	public UploadRequestEntry delete(Account authUser, Account actor, String uuid) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(uuid, "entry uuid is required.");
 		logger.debug(
@@ -376,7 +376,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		return uploadRequestEntry;
 	}
 
-	protected void delFromQuota(Account owner, Long size) {
+	@Override
+	public void delFromQuota(Account owner, Long size) {
 		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), - size, OperationHistoryTypeEnum.DELETE,
 				ContainerQuotaType.USER);
 		operationHistoryBusinessService.create(oh);
@@ -458,15 +459,6 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		checkListPermission(authUser, actor, UploadRequestEntry.class, BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN,
 				null);
 		List<UploadRequestEntry> entries = uploadRequestEntryBusinessService.findAllEntries(uploadRequest);
-		return entries;
-	}
-
-	@Override
-	public List<UploadRequestEntry> findAllEntriesForArchivedDeletedPurgedUR(Account authUser, Account actor) {
-		preChecks(authUser, actor);
-		checkListPermission(authUser, actor, UploadRequestEntry.class, BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN,
-				null);
-		List<UploadRequestEntry> entries = uploadRequestEntryBusinessService.findAllEntriesForArchivedDeletedPurgedUR();
 		return entries;
 	}
 }

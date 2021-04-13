@@ -364,12 +364,11 @@ public class UploadRequestEntryServiceImplTest {
 				false);
 		uploadRequestBusinessService.updateStatus(enabledUploadRequest, UploadRequestStatus.ARCHIVED);
 		Assertions.assertTrue(enabledUploadRequest.isArchived());
-		Assertions.assertEquals(1,
-				uploadRequestEntryService.findAllEntriesForArchivedDeletedPurgedUR(john, john).size());
+		String recoveredUREUuid = uploadRequestEntryRepository.findAllEntriesForArchivedDeletedPurgedUR().iterator().next();
+		Assertions.assertEquals(uploadRequestEntry.getUuid(), recoveredUREUuid);
 		uploadRequestBusinessService.updateStatus(enabledUploadRequest, UploadRequestStatus.DELETED);
 		Assertions.assertTrue(enabledUploadRequest.isDeleted());
-		Assertions.assertEquals(1,
-				uploadRequestEntryService.findAllEntriesForArchivedDeletedPurgedUR(john, john).size());
+		Assertions.assertEquals(uploadRequestEntry.getUuid(), recoveredUREUuid);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
