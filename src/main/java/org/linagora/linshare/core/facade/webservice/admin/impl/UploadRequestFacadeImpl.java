@@ -53,6 +53,7 @@ import org.linagora.linshare.core.service.UploadRequestService;
 
 import com.google.common.collect.Sets;
 
+@Deprecated
 public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements UploadRequestFacade {
 
 	private final UploadRequestService uploadRequestService;
@@ -63,6 +64,7 @@ public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements U
 		this.uploadRequestService = uploadRequestService;
 	}
 
+	@Deprecated
 	@Override
 	public Set<UploadRequestHistoryDto> findAllHistory(String uploadRequestUuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
@@ -75,6 +77,7 @@ public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements U
 		return dtos;
 	}
 
+	@Deprecated
 	@Override
 	public Set<UploadRequestDto> findAll(List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);

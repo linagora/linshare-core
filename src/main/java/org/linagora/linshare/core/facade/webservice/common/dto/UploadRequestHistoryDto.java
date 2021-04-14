@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+@Deprecated
 @XmlRootElement(name = "UploadRequestHistory")
 @Schema(name = "UploadRequestHistory", description = "History of an upload request")
 public class UploadRequestHistoryDto {
