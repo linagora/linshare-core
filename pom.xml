@@ -1049,11 +1049,11 @@
 							<goals>
 								<goal>run</goal>
 							</goals>
-							<phase>prepare-package</phase>
+							<phase>process-resources</phase>
 							<configuration>
 								<target>
-									<mkdir dir="target/generated-sources" />
-									<concat destfile="target/generated-sources/import-postgresql.sql">
+									<mkdir dir="target/classes/sql/postgresql/" />
+									<concat destfile="target/classes/sql/postgresql/import-postgresql.sql">
 										<fileset file="src/main/resources/sql/common/import-header.sql" />
 										<fileset file="src/main/resources/sql/common/import-domains.sql" />
 										<fileset file="src/main/resources/sql/common/import-quota.sql" />
@@ -1066,6 +1066,7 @@
 										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
 										<fileset file="src/main/resources/sql/common/import-settings.sql" />
 										<fileset file="src/main/resources/sql/common/import-alias.sql" />
+										<fileset file="src/main/resources/sql/common/import-footer.sql" />
 									</concat>
 								</target>
 							</configuration>
@@ -1075,14 +1076,17 @@
 							<goals>
 								<goal>run</goal>
 							</goals>
-							<phase>generate-test-resources</phase>
+<!-- 							<phase>generate-test-resources</phase> -->
+							<phase>process-resources</phase>
 							<configuration>
 								<target>
-									<mkdir dir="target/generate-test-resources" />
-									<concat destfile="target/generate-test-resources/import-all-emails.sql">
-										<fileset file="target/classes/sql/common/mail_updates/mail_layout/*.sql" />
-										<fileset file="target/classes/sql/common/mail_updates/mail_content/*.sql" />
-										<fileset file="target/classes/sql/common/mail_updates/mail_footer/*.sql" />
+									<mkdir dir="target/classes/sql/postgresql/" />
+									<concat destfile="target/classes/sql/postgresql/import-all-emails.sql">
+										<fileset file="src/main/resources/sql/common/import-header.sql" />
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+										<fileset file="src/main/resources/sql/common/import-footer.sql" />
 									</concat>
 								</target>
 							</configuration>
