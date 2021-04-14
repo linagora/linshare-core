@@ -65,4 +65,10 @@ public class SystemAccount extends Account {
 	public ContainerQuotaType getContainerQuotaType() {
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "SystemAccount [id=" + id + ", lsUuid=" + lsUuid + ", role=" + role + ", account type=" + getAccountType() + "]";
+	}
+
 }
