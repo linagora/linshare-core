@@ -83,15 +83,15 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	@Override
 	public WorkGroup find(Account actor, Account owner, String uuid) {
 		preChecks(actor, owner);
-		Validate.notEmpty(uuid, "Missing thread uuid");
+		Validate.notEmpty(uuid, "Missing shared space uuid");
 		WorkGroup workGroup = threadRepository.findByLsUuid(uuid);
 
 		if (workGroup == null) {
-			logger.error("Can't find thread  : " + uuid);
+			logger.error("Can't find shared space  : " + uuid);
 			logger.error("Current actor " + actor.getAccountRepresentation()
-					+ " is looking for a misssing thread (" + uuid
+					+ " is looking for a misssing shared space (" + uuid
 					+ ") owned by : " + owner.getAccountRepresentation());
-			String message = "Can not find thread with uuid : " + uuid;
+			String message = "Can not find shared space with uuid : " + uuid;
 			throw new BusinessException(
 					BusinessErrorCode.THREAD_NOT_FOUND, message);
 		}
@@ -102,14 +102,14 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	public WorkGroup findByLsUuidUnprotected(String uuid) {
 		WorkGroup workGroup = threadRepository.findByLsUuid(uuid);
 		if (workGroup == null) {
-			logger.error("Can't find thread  : " + uuid);
+			logger.error("Can't find shared space  : " + uuid);
 		}
 		return workGroup;
 	}
 
 	@Override
 	public WorkGroup create(Account actor, Account owner, String name) throws BusinessException {
-		logger.debug("User " + owner.getAccountRepresentation() + " trying to create new thread named " + name);
+		logger.debug("User " + owner.getAccountRepresentation() + " trying to create new shared space named " + name);
 		WorkGroup workGroup = new WorkGroup(owner.getDomain(), owner, name);
 		threadRepository.create(workGroup);
 		createQuotaThread(workGroup);
