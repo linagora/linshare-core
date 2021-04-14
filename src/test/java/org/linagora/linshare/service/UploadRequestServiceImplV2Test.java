@@ -631,6 +631,43 @@ public class UploadRequestServiceImplV2Test {
 				"The activation date has not been rounded");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+	
+	@Test
+	public void testNotRoundActivateDateWhenCreateUploadRequest() throws BusinessException, ParseException {
+		// validate activation date not rounded if enabled now (activation date is set to null)
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2020-08-12 15:25:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		UploadRequest uploadRequest = createSimpleUploadRequest(null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequestGroup.getStatus());
+		Assertions.assertEquals(now, uploadRequestGroup.getActivationDate(),
+				"The activation date should have now date value");
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(now, uploadRequest.getActivationDate(),
+				"The activation date should have now date value");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testRoundActivateDateWhenCreatePostponedUploadRequest() throws BusinessException, ParseException {
+		// validate activation date not rounded if not enabled now (activation date has a value)
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2020-08-12 15:25:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		UploadRequest uploadRequest = createSimpleUploadRequest(now);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Date expectedActivationDate = parseDate("2020-08-12 16:00:00");
+		Assertions.assertEquals(UploadRequestStatus.CREATED, uploadRequestGroup.getStatus());
+		Assertions.assertEquals(expectedActivationDate, uploadRequestGroup.getActivationDate(),
+				"The activation date has not been rounded");
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(expectedActivationDate, uploadRequest.getActivationDate(),
+				"The activation date has not been rounded");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 
 	@Test
 	public void testRoundExpiryDateWhenCreateEnabledUploadRequest() throws BusinessException, ParseException {
@@ -843,5 +880,37 @@ public class UploadRequestServiceImplV2Test {
 		});
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testUploadRequestActivationPostponed() throws BusinessException, ParseException {
+		// validate expiration date with a postponed activation date
+		// expiration should have a minimum value activation date
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2021-02-24 15:00:00");
+		Date future = parseDate("2021-03-24 13:00:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		UploadRequest uploadRequest = createSimpleUploadRequest(future);
+		uploadRequest.setExpiryDate(null);
+		uploadRequest.setNotificationDate(null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(jane, jane, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assertions.assertEquals(UploadRequestStatus.CREATED, uploadRequestGroup.getStatus());
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		// default from the functionality expiration ==> 3 months after activation date
+		Date expectedExpiryDate = parseDate("2021-06-24 13:00:00");
+		// default from the functionality notification ==> 7 days before expiration
+		Date expectedNotificationDate = parseDate("2021-06-17 13:00:00");
+		// by default expiration and notification date will have a rounded default value
+		// computed from functionality
+		Assertions.assertEquals(expectedExpiryDate, uploadRequestGroup.getExpiryDate(),
+				"The expiry date should be activation date + 3 months ");
+		Assertions.assertEquals(expectedNotificationDate, uploadRequestGroup.getNotificationDate(),
+				"The notification date should be 7 days before expiration date");
+		Assertions.assertEquals(expectedExpiryDate, uploadRequest.getExpiryDate(),
+				"The expiry date should be activation date + 3 months");
+		Assertions.assertEquals(expectedNotificationDate, uploadRequest.getNotificationDate(),
+				"The notification date should be 7 days before expiration date");
+
 	}
 }

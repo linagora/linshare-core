@@ -140,6 +140,9 @@ public interface FunctionalityReadOnlyService {
 
 	Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize, BusinessErrorCode errorCode);
 
+	Date getUploadRequestExpirationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date activationDate,
+			BusinessErrorCode errorCode);
+
 	Date getNotificationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date expirationDate, BusinessErrorCode errorCode);
 
 	Date roundToUpperHour(Date dateToRound);

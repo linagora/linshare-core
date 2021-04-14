@@ -529,6 +529,36 @@ public class FunctionalityReadOnlyServiceImpl implements
 		}
 		return currentDate;
 	}
+	
+	@Override
+	public Date getUploadRequestExpirationDateValue(TimeUnitValueFunctionality func, Date currentDate, Date activationDate, BusinessErrorCode errorCode) {
+		if (!func.getActivationPolicy().getStatus()) {
+			logger.debug(func.getIdentifier() + " is not activated");
+			return null;
+		}
+		logger.debug(func.getIdentifier() + " is activated");
+		Calendar calendar = getCalendarTime(activationDate);
+		calendar.add(func.toCalendarValue(), func.getValue());
+		Date defaultDate = roundToUpperHour(calendar.getTime());
+		if (func.getDelegationPolicy() == null || !func.getDelegationPolicy().getStatus() || currentDate == null) {
+			debuggerTime(func, currentDate, defaultDate);
+			return defaultDate;
+		}
+		// check if there is limitation of maximum value
+		// -1 mean no limit
+		if (func.getMaxValue() == -1 && (currentDate.after(activationDate) || currentDate.equals(activationDate))) {
+			return currentDate;
+		}
+		Calendar c = getCalendarTime(activationDate);
+		c.add(func.toCalendarMaxValue(), func.getMaxValue());
+		Date maxDate = roundToUpperHour(c.getTime()); // Maximum value allowed
+		if (currentDate.before(activationDate) || currentDate.after(maxDate)) {
+			String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(activationDate), dateFormat.format(maxDate));
+			logger.warn(errorMessage);
+			throw new BusinessException(errorCode, errorMessage);
+		}
+		return currentDate;
+	}
 
 	@Override
 	public Long getSizeValue(SizeUnitValueFunctionality func, Long currentSize, BusinessErrorCode errorCode) {

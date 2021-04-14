@@ -281,9 +281,9 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		req.setActivationDate(applyBusinessRuleForActivationDate(domain, req.getActivationDate()));
 	}
 
-	private Date applyBusinessRuleForExpiryDate(AbstractDomain domain, Date expiryDate) {
+	private Date applyBusinessRuleForExpiryDate(AbstractDomain domain, Date expiryDate, Date activationDate) {
 		TimeUnitValueFunctionality funcExpiry = functionalityService.getUploadRequestExpiryTimeFunctionality(domain);
-		return functionalityService.getUploadRequestDateValue(funcExpiry, expiryDate,
+		return functionalityService.getUploadRequestExpirationDateValue(funcExpiry, expiryDate, activationDate,
 				BusinessErrorCode.UPLOAD_REQUEST_EXPIRY_DATE_INVALID);
 	}
 
@@ -298,12 +298,12 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 
 	private void applyBusinessRuleForExpiryAndNoticationDate(AbstractDomain domain, UploadRequest req) {
-		req.setExpiryDate(applyBusinessRuleForExpiryDate(domain, req.getExpiryDate()));
+		req.setExpiryDate(applyBusinessRuleForExpiryDate(domain, req.getExpiryDate(), req.getActivationDate()));
 		req.setNotificationDate(applyBusinessRuleForNoticationDate(domain, req.getExpiryDate(), req.getNotificationDate()));
 	}
 
 	private void applyBusinessRuleForExpiryAndNoticationDate(AbstractDomain domain, UploadRequestGroup group) {
-		group.setExpiryDate(applyBusinessRuleForExpiryDate(domain, group.getExpiryDate()));
+		group.setExpiryDate(applyBusinessRuleForExpiryDate(domain, group.getExpiryDate(), group.getActivationDate()));
 		group.setNotificationDate(applyBusinessRuleForNoticationDate(domain, group.getExpiryDate(), group.getNotificationDate()));
 	}
 
