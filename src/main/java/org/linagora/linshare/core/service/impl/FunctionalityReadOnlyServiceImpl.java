@@ -508,7 +508,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		logger.debug(func.getIdentifier() + " is activated");
 		Calendar calendar = getCalendarTime(timeService.dateNow());
 		calendar.add(func.toCalendarValue(), func.getValue());
-		Date defaultDate = calendar.getTime();
+		Date defaultDate = roundToUpperHour(calendar.getTime());
 		if (func.getDelegationPolicy() == null || !func.getDelegationPolicy().getStatus() || currentDate == null) {
 			debuggerTime(func, currentDate, defaultDate);
 			return defaultDate;

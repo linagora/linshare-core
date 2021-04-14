@@ -653,6 +653,36 @@ public class UploadRequestServiceImplV2Test {
 				"The expiry date of the upload request has not been rounded");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+	
+	@Test
+	public void testRoundExpiryDateDefaultWhenCreateEnabledUploadRequest() throws BusinessException, ParseException {
+		// test that expiration date is rounded if the upload request is created without
+		// setting expiration date
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2020-03-12 15:25:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		UploadRequest request = globaleUploadRequest.clone();
+		request.setActivationDate(null);
+		request.setExpiryDate(null);
+		request.setNotificationDate(null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(jane, jane, request,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, uploadRequestGroup.getStatus());
+		request = uploadRequestGroup.getUploadRequests().iterator().next();
+		// default from the functionality expiration ==> 3 months after activation date
+		Date expectedExpiryDate = parseDate("2020-06-12 16:00:00");
+		// default from the functionality notification ==> 7 days before expiration
+		Date expectedNotificationDate = parseDate("2020-06-05 16:00:00");
+		// by default expiration and notification date will have a rounded default value
+		// computed from functionality
+		Assertions.assertEquals(expectedExpiryDate, uploadRequestGroup.getExpiryDate(),
+				"The expiry date of the group has not been rounded");
+		Assertions.assertEquals(expectedNotificationDate, uploadRequestGroup.getNotificationDate(),
+				"The notification date of the group has not been rounded");
+		Assertions.assertEquals(expectedExpiryDate, request.getExpiryDate(),
+				"The expiry date of the upload request has not been rounded");
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 
 	@Test
 	public void testRoundExpiryDateWhenCreateUploadRequest() throws BusinessException, ParseException {
