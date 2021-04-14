@@ -63,6 +63,7 @@ public abstract class AbstractUploadRequestResourceAccessControlImpl<R, E>
 			TechnicalAccountPermissionType permission, boolean checkActorIsEntryOwner) {
 		if (isEnabled(authUser)) {
 			if (authUser.hasUploadRequestRole()) {
+				logger.trace("authUser has UploadRequest Role");
 				return true;
 			}
 			return defaultPermissionCheck(authUser, actor, entry, permission, checkActorIsEntryOwner);

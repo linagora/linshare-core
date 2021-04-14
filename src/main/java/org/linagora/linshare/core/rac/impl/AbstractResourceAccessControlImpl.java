@@ -118,8 +118,10 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 		Validate.notNull(authUser);
 		Validate.notNull(actor);
 		Validate.notNull(permission);
-		if (authUser.hasAllRights())
+		if (authUser.hasAllRights()) {
+			logger.trace("authUser has all rights");
 			return true;
+		}
 		if (permission.equals(PermissionType.GET)) {
 			if (hasReadPermission(authUser, actor, entry, opt))
 				return true;

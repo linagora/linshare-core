@@ -274,6 +274,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 					"Upload request can not be closed, please check your closure right.");
 		}
 		Account actor = accountRepository.getUploadRequestSystemAccount();
+		logger.trace("UploadRequestSystemAccount is " + actor.getAccountRepresentation());
 		UploadRequest req = url.getUploadRequest();
 		if (req.getStatus().equals(UploadRequestStatus.CLOSED)) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_STATUS_NOT_MODIFIED,

@@ -140,8 +140,11 @@ public class UploadRequestEntryRessourceAccessControlImpl extends EntryResourceA
 	 */
 	protected boolean defaultPermissionCheck(Account authUser, Account actor, UploadRequestEntry entry,
 			TechnicalAccountPermissionType permission) {
-		if (isEnabled(authUser)) {
+		logger.trace("Current authUser " + authUser.getAccountRepresentation());
+		logger.trace("Current actor " + actor.getAccountRepresentation());
+		if (isEnabled(actor)) {
 			if (authUser.hasUploadRequestRole()) {
+				logger.trace("authUser has UploadRequest Role");
 				return true;
 			}
 			return defaultPermissionCheck(authUser, actor, entry, permission, true);
