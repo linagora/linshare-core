@@ -56,7 +56,7 @@ import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.ThreadService;
 
-public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
+public class StatisticWeeklyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 
 	private final ThreadDailyStatBusinessService threadDailyStatBusinessService;
 
@@ -64,19 +64,21 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 
 	private final ThreadService threadService;
 
-	private final BatchHistoryBusinessService batchHistoryBusinessService;
-
 	public StatisticWeeklyThreadBatchImpl(
 			final ThreadDailyStatBusinessService threadDailyStatBusinessService,
 			final ThreadWeeklyStatisticBusinessService threadWeeklyStatBusinessService,
 			final ThreadService threadService,
 			final AccountRepository<Account> accountRepository,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
-		super(accountRepository);
+		super(accountRepository, batchHistoryBusinessService);
 		this.threadDailyStatBusinessService = threadDailyStatBusinessService;
 		this.threadWeeklyStatBusinessService = threadWeeklyStatBusinessService;
 		this.threadService = threadService;
-		this.batchHistoryBusinessService = batchHistoryBusinessService;
+	}
+
+	@Override
+	public BatchType getBatchType() {
+		return BatchType.WEEKLY_THREAD_BATCH;
 	}
 
 	@Override
@@ -201,4 +203,5 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 	public boolean needToRun() {
 		return !batchHistoryBusinessService.exist(getFirstDayOfWeek(), BatchType.WEEKLY_THREAD_BATCH);
 	}
+
 }

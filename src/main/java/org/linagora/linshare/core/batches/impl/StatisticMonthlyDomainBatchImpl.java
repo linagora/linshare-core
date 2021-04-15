@@ -55,7 +55,7 @@ import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 
-public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
+public class StatisticMonthlyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 
 	private final DomainWeeklyStatBusinessService domainWeeklyStatBusinessService;
 
@@ -63,19 +63,21 @@ public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
 
 	private final AbstractDomainService abstractDomainService;
 
-	private final BatchHistoryBusinessService batchHistoryBusinessService;
-
 	public StatisticMonthlyDomainBatchImpl(
 			final DomainWeeklyStatBusinessService domainWeeklyStatBusinessService,
 			final DomainMonthlyStatBusinessService domainMonthlyStatBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final AccountRepository<Account> accountRepository,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
-		super(accountRepository);
+		super(accountRepository, batchHistoryBusinessService);
 		this.domainMonthlyStatBusinessService = domainMonthlyStatBusinessService;
 		this.domainWeeklyStatBusinessService = domainWeeklyStatBusinessService;
 		this.abstractDomainService = abstractDomainService;
-		this.batchHistoryBusinessService = batchHistoryBusinessService;
+	}
+
+	@Override
+	public BatchType getBatchType() {
+		return BatchType.MONTHLY_DOMAIN_BATCH;
 	}
 
 	@Override
@@ -180,4 +182,5 @@ public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
 	public boolean needToRun() {
 		return !batchHistoryBusinessService.exist(getFirstDayOfMonth(), BatchType.MONTHLY_DOMAIN_BATCH);
 	}
+
 }
