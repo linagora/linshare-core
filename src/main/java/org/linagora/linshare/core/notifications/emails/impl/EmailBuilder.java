@@ -729,19 +729,11 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return document;
 	}
 
-	protected Document getNewFakeUploadRequestEntry(String name, String linshareURL, String groupUuid,
-			String requestUuid, String entryUuid) {
-		Document document = new Document(name);
-		if (linshareURL != null) {
-			document.setHref(getUploadRequestEntryLink(linshareURL, groupUuid, requestUuid, document.getUuid()));
-		}
-		return document;
-	}
-
 	protected Document getNewFakeUploadRequestUploadedFileLink(String name, String linshareURL) {
 		UploadRequestGroup group = new UploadRequestGroup("Upload request subject", "Upload request body");
 		UploadRequest request = new UploadRequest(group);
-		UploadRequestEntry entry = new UploadRequestEntry();
+		request.setUuid(UUID.randomUUID().toString());
+		UploadRequestEntry entry = new UploadRequestEntry(name);
 		Document document = new Document(name);
 		if (linshareURL != null) {
 			document.setHref(

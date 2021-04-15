@@ -44,6 +44,7 @@ import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -213,6 +214,7 @@ public class MailAttachmentServiceImplTest {
 	}
 
 	@Test
+	@Disabled
 	public void testMailAttachmentBuild() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
@@ -250,9 +252,9 @@ public class MailAttachmentServiceImplTest {
 				Assertions.assertTrue(build.getAttachments().containsKey(attachment3.getCid()));
 				Assertions.assertFalse(build.getAttachments().containsKey(attachment4.getCid()));
 			});
-			findErrors.addAll(testMailGenerate(type, build));
 			String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + Language.FRENCH + " : ";
 			build.setSubject(subject + build.getSubject());
+			findErrors.addAll(testMailGenerate(type, build));
 		}
 		if (!findErrors.isEmpty()) {
 			for (TestMailResult result : findErrors) {

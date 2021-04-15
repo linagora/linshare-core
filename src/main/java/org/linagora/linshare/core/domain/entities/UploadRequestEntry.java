@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import org.linagora.linshare.core.domain.constants.EntryType;
 
@@ -61,6 +62,11 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	public UploadRequestEntry() {
 		super();
+	}
+
+	public UploadRequestEntry(String name) {
+		this.uuid = UUID.randomUUID().toString();
+		this.name = name;
 	}
 
 	public UploadRequestEntry(Account entryOwner, String name, String comment, Document document,

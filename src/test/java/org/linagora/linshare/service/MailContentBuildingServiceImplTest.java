@@ -40,6 +40,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -93,6 +94,7 @@ public class MailContentBuildingServiceImplTest {
 	private String recipientForSendMail = "felton.gumper@int6.linshare.dev";
 
 	@Test
+	@Disabled
 	public void testBuildAllMails() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<TestMailResult> findErrors = Lists.newArrayList();

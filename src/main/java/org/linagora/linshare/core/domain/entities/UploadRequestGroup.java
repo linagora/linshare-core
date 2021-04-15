@@ -37,6 +37,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -100,6 +101,7 @@ public class UploadRequestGroup {
 
 	public UploadRequestGroup(String subject, String body) {
 		super();
+		this.uuid = UUID.randomUUID().toString();
 		this.subject = subject;
 		this.body = body;
 	}
