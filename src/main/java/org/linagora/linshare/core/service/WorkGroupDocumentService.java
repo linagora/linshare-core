@@ -75,4 +75,8 @@ public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 	FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, WorkGroupDocument node,
 			WorkGroupDocumentRevision revision);
 
+	WorkGroupNode copy(Account actor, Account owner, WorkGroup toWorkGroup, String documentUuid, String fileName,
+			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom,
+			WorkGroupNodeAuditLogEntry log, boolean moveDocument) throws BusinessException;
+
 }
