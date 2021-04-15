@@ -201,7 +201,8 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 
 	@Path("/{sharedSpaceNodeUuid: .*}")
 	@PUT
-	@Operation(summary = "Update a sharedSpace node (folder, document, revision). Only name, parent or description can be updated.", responses = {
+	@Operation(summary = "Update a sharedSpace node (folder, document, revision). Only name, parent or description can be updated."
+			+ " Or move a document from a workgroup to another one if shared space uuid of the new node (document) is different from the current shared space uuid", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupNode.class))),
 			responseCode = "200"
@@ -215,7 +216,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@Parameter(description = "The sharedSpace node uuid.", required = true)
 				@PathParam("sharedSpaceNodeUuid")
 					String sharedSpaceNodeUuid,
-			@Parameter(description = "The sharedSpace folder to update. Only name or parent can be updated, Uuid is required, others fields are useless.", required = true)
+			@Parameter(description = "Contains new node information, in case of moving a document between different shared spaces, the shared space parent uuid in this node should be the destination .", required = true)
 				WorkGroupNode sharedSpaceNode)
 					throws BusinessException {
 		return sharedSpaceNodeFacade.update(null, sharedSpaceUuid, sharedSpaceNode, sharedSpaceNodeUuid);

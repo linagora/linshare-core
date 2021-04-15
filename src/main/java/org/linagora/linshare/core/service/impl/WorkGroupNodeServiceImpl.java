@@ -425,7 +425,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid)
+	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid, boolean moveDocument)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(workGroupNodeUuid, "missing workGroupNodeUuid");
@@ -436,17 +436,23 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE, auditType, node,
 				workGroup);
 		workGroupDocumentService.addMembersToLog(workGroup.getLsUuid(), log);
-		deleteNode(actor, owner, workGroup, node, log);
+		deleteNode(actor, owner, workGroup, node, log, moveDocument);
 		logEntryService.insert(log);
 		return node;
 	}
+	
+	@Override
+	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid)
+			throws BusinessException {
+		return delete(owner, owner, workGroup, workGroupNodeUuid, false);
+	}
 
 	private void deleteNode(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode,
-			WorkGroupNodeAuditLogEntry log) {
+			WorkGroupNodeAuditLogEntry log, boolean moveDocument) {
 		if (isFolder(workGroupNode)) {
 			List<WorkGroupNode> findAll = findAll(actor, owner, workGroup, workGroupNode.getUuid(), false, Lists.newArrayList());
 			for (WorkGroupNode node : findAll) {
-				deleteNode(actor, owner, workGroup, node, log);
+				deleteNode(actor, owner, workGroup, node, log, false);
 			}
 			if (!findAll.isEmpty()) {
 				log.addAuditLightEntities(transformToAuditLightEntity(findAll));
@@ -462,6 +468,10 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			revisionService.deleteAll(actor, owner, workGroup, revisions);
 //			Delete the document.
 			workGroupDocumentService.delete(actor, owner, workGroup, workGroupNode);
+			if (moveDocument) {
+				// in case of moving a document (WorkGroupDocument) from a shared space to another one
+				log.setCause(LogActionCause.MOVE);
+			}
 		} else if (isRevision(workGroupNode)) {
 			log.addRelatedResources(workGroupNode.getParent());
 			revisionService.delete(actor, owner, workGroup, workGroupNode);
@@ -608,10 +618,16 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 					"Can not copy this kind of node.");
 		}
 	}
-
+	
 	@Override
 	public WorkGroupNode copy(Account actor, User owner, WorkGroup fromWorkGroup, String fromNodeUuid,
 			WorkGroup toWorkGroup, String toNodeUuid) throws BusinessException {
+				return copy(actor, owner, fromWorkGroup, fromNodeUuid, toWorkGroup, toNodeUuid, false);
+	}
+
+	@Override
+	public WorkGroupNode copy(Account actor, User owner, WorkGroup fromWorkGroup, String fromNodeUuid,
+			WorkGroup toWorkGroup, String toNodeUuid, boolean moveDocument) throws BusinessException {
 		// step 1 : check the source
 		WorkGroupNode fromNode = find(actor, owner, fromWorkGroup, fromNodeUuid, false);
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, fromNode, fromWorkGroup);
@@ -641,12 +657,16 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 						toWorkGroup, doc.getSize(), doc.getMimeType(), fileName, toNode);
 				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 						AuditLogEntryType.WORKGROUP_DOCUMENT, newDocument, toWorkGroup);
-				log.setCause(LogActionCause.COPY);
+				if (moveDocument) {
+					log.setCause(LogActionCause.MOVE);
+				} else {
+					log.setCause(LogActionCause.COPY);
+					CopyMto copiedTo = new CopyMto(newDocument, toWorkGroup);
+					workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
+				}
 				// copy the most recent revision into the new document.
 				workGroupDocumentService.copy(actor, owner, toWorkGroup, mostRecent.getDocumentUuid(), fileName,
 						newDocument, doc.getCiphered(), doc.getSize(), doc.getUuid(), copyFrom, log);
-				CopyMto copiedTo = new CopyMto(newDocument, toWorkGroup);
-				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
 				return newDocument;
 			} else if (isDocument(toNode)) {
 				// Check versioning functionality
@@ -656,7 +676,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				// copy the most recent revision into the document.
 				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor,
 						owner, fromWorkGroup, mostRecent.getDocumentUuid(), fileName, toNode, doc.getCiphered(),
-						doc.getSize(), doc.getUuid(), copyFrom, null);
+						doc.getSize(), doc.getUuid(), copyFrom, null, moveDocument);
 				toNode = revisionService.updateDocument(actor, owner, toWorkGroup, revision);
 				CopyMto copiedTo = new CopyMto(revision, toWorkGroup);
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
