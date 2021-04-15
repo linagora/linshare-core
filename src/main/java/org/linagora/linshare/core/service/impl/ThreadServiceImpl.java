@@ -93,7 +93,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 					+ ") owned by : " + owner.getAccountRepresentation());
 			String message = "Can not find shared space with uuid : " + uuid;
 			throw new BusinessException(
-					BusinessErrorCode.THREAD_NOT_FOUND, message);
+					BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, message);
 		}
 		return workGroup;
 	}

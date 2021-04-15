@@ -85,10 +85,6 @@ public class WorkGroupEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implem
 		Validate.notEmpty(tetc.getThreadUuid(), "Missing required thread uuid");
 		Validate.notEmpty(tetc.getFileName(), "Missing required file name");
 		WorkGroup workGroup = threadService.find(authUser, actor, tetc.getThreadUuid());
-		if (workGroup == null) {
-			throw new BusinessException(BusinessErrorCode.THREAD_NOT_FOUND,
-					"Current thread was not found : " + tetc.getThreadUuid());
-		}
 		WorkGroupNode node = service.create(authUser, actor, workGroup, tetc.getFile(), tetc.getFileName(), tetc.getWorkGroupFolderUuid(), tetc.getStrictModeActivated());
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		dto.setWorkGroup(new WorkGroupLightDto(workGroup));

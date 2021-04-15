@@ -198,7 +198,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		Validate.notNull(domain, "domain must be set");
 		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
+			throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN, "JWT long time functionality forbidden.");
 		}
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN,
