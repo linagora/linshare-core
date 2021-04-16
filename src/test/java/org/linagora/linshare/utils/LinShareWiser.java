@@ -60,6 +60,7 @@ public class LinShareWiser extends Wiser {
 	static {
 		// \$\{[a-zA-Z]+\}
 		strPatterns.add("\\$\\{[a-zA-Z]+\\}");
+		strPatterns.add("\\#\\{[a-zA-Z]+\\}");
 		// \?\?[a-zA-Z]+\?\?
 		strPatterns.add("\\?\\?[a-zA-Z_]+\\?\\?");
 		// \{[0-9]+\}
@@ -94,12 +95,13 @@ public class LinShareWiser extends Wiser {
 		while (matcher.find()) {
 			allMatches.add(matcher.group());
 		}
-		logger.debug(allMatches.toString());
 		if(!allMatches.isEmpty()) {
+			String type_name = "";
 			if (type != null) {
-				logger.error("type tested : " + type.name());
+				logger.error("kind of email tested : " + type.name());
+				type_name = type.name();
 			}
-			logger.error("Variables found : " + allMatches.toString());
+			logger.error(type_name + ": Variables found : " + allMatches.toString());
 			results.add(new TestMailResult(type, data, strPattern, allMatches));
 		}
 		return results;
