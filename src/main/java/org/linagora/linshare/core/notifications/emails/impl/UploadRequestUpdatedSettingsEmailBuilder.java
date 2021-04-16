@@ -107,7 +107,7 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		res.add(getFakeIndividualForRecipient(language));
+//		res.add(getFakeIndividualForRecipient(language));
 		res.add(getFakeCollectiveForRecipient(language));
 		return res;
 	}
