@@ -122,9 +122,8 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 		ctx.setVariable("recipientsCount", recipients.size());
 
-		ctx.setVariable("subject", new StringParameter("a subject", "a new  subject"));
-		ctx.setVariable("message", new StringParameter("a message", "a new message"));
-		ctx.setVariable("body", new StringParameter("a body", "a new body"));
+		ctx.setVariable("subject", new StringParameter("a subject", false));
+		ctx.setVariable("message", new StringParameter("a message", false));
 
 		ctx.setVariable("totalMaxDepotSize", new LongParameter(8L, 30L));
 		ctx.setVariable("maxFileNum", new IntegerParameter(50, 48));
@@ -147,21 +146,22 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 		Context ctx = newFakeContext(language, false, true);
 		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("protected", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 
-		ctx.setVariable("totalMaxDepotSize", new IntegerParameter(8, 10));
-		ctx.setVariable("maxFileNum", new LongParameter(70L, 60L));
-		ctx.setVariable("maxFileSize", new LongParameter(70L, 90L));
+		ctx.setVariable("totalMaxDepotSize", new IntegerParameter(8, null));
+		ctx.setVariable("maxFileNum", new LongParameter(null, 60L));
+		ctx.setVariable("maxFileSize", new LongParameter(70L, null));
 
 		ctx.setVariable("subject", new StringParameter("new subject ", "old subject"));
-		ctx.setVariable("message", new StringParameter("old message", "new message"));
+		ctx.setVariable("message", new StringParameter("not changed message", false));
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		calendar.add(Calendar.MONTH, 1);
 		// old: now => new: now +1 month
 		ctx.setVariable("expiryDate", new DateParameter(calendar.getTime(), new Date()));
-		ctx.setVariable("activationDate", new DateParameter(new Date(), false));
+		ctx.setVariable("activationDate", new DateParameter(new Date(), null));
 		// old: Forbidden => new: Allowed
 		ctx.setVariable("deletionRight", new BooleanParameter(Boolean.valueOf(true), Boolean.valueOf(false)));
 		ctx.setVariable("closureRight", new BooleanParameter(Boolean.valueOf(true), Boolean.valueOf(false)));
