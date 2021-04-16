@@ -233,7 +233,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	public WorkGroupNode update(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode,
 			String workGroupNodeUuid) throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
-		Validate.notNull(workGroupNode, "Missing required workGroupFolder");
+		Validate.notNull(workGroupNode, "Missing required workGroup Folder, File or Revision");
 		Validate.notEmpty(workGroupNode.getName(), "Missing required name");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
@@ -242,16 +242,13 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		}
 		SharedSpaceNode sharedSpace = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpace.getUuid());
-		String sourceWorkGroupNodeUuid = workGroupNode.getUuid();
 		String targetWorkgroupUuid = workGroupNode.getWorkGroup();
-		if (!targetWorkgroupUuid.equals(workGroupUuid)) {
-			Validate.notEmpty(workGroupNode.getParent(), "Missing required parent (work group node uuid of the destination)");
-			String targetWorkgroupNodeUuid = workGroupNode.getParent();
-			logger.info("File moved from the workgroup {} to the workgroup {}", workGroupUuid, targetWorkgroupUuid);
+		if (targetWorkgroupUuid != null && !targetWorkgroupUuid.equals(workGroupUuid)) {
+			logger.debug("Moving asset from the workgroup {} to the workgroup {}", workGroupUuid, targetWorkgroupUuid);
 			WorkGroup targetWorkgroup = threadService.find(authUser, actor, targetWorkgroupUuid);
-			WorkGroupNode moved = service.copy(authUser, actor, workGroup, sourceWorkGroupNodeUuid, targetWorkgroup,
-					targetWorkgroupNodeUuid, true);
-			service.delete(authUser, actor, workGroup, sourceWorkGroupNodeUuid, true);
+			WorkGroupNode moved = service.copy(authUser, actor, workGroup, workGroupNode.getUuid(), targetWorkgroup,
+					workGroupNode.getParent(), true);
+			service.delete(authUser, actor, workGroup, workGroupNode.getUuid(), true);
 			return moved;
 		}
 		return service.update(authUser, actor, workGroup, workGroupNode);
