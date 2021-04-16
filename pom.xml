@@ -1045,11 +1045,11 @@
 					<version>1.8</version><!--$NO-MVN-MAN-VER$-->
 					<executions>
 						<execution>
+							<phase>process-resources</phase>
 							<id>ant-merge-files-import-postgres</id>
 							<goals>
 								<goal>run</goal>
 							</goals>
-							<phase>process-resources</phase>
 							<configuration>
 								<target>
 									<mkdir dir="target/classes/sql/postgresql/" />
@@ -1087,6 +1087,24 @@
 										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
 										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
 										<fileset file="src/main/resources/sql/common/import-footer.sql" />
+									</concat>
+								</target>
+							</configuration>
+						</execution>
+						<execution>
+							<id>ant-merge-files-mail-templates-h2</id>
+							<goals>
+								<goal>run</goal>
+							</goals>
+							<phase>process-resources</phase>
+<!-- 							<phase>process-resources</phase> -->
+							<configuration>
+								<target>
+									<mkdir dir="target/classes/sql/h2/" />
+									<concat destfile="target/classes/sql/h2/import-all-emails.sql">
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
 									</concat>
 								</target>
 							</configuration>
@@ -1438,7 +1456,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
+						<version>1.8</version>
 						<executions>
 							<execution>
 								<phase>compile</phase>
