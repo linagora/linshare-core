@@ -1,9 +1,4 @@
-UPDATE mail_content SET subject='[# th:if="${subject.modified}"]
-[(#{subject(${subject.value})})]
-[/]
-[# th:if="${!subject.modified}"]
-[(#{subject(${subject.oldValue})})]
-[/]',body='<!DOCTYPE html>
+UPDATE mail_content SET subject='[(#{subject(${subject.value})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
