@@ -16,9 +16,6 @@ body= '<!DOCTYPE html>
         <p>
           <span data-th-utext="#{beginingMainMsg}"></span>
           <span data-th-utext="#{otherMsg}"></span>
-          <!--/* Activation link for initialisation of the guest account */-->
-          <!--<th:block data-th-replace="layout :: actionButtonLink(#{changePasswordBtn},${resetLink})"/> -->
-          <br/>
         </p>
         <th:block data-th-replace="layout :: actionButtonLink(#{downloadBtn},${anonymousURL})"/></br>
         <!--/* End of Main email  message content*/-->
