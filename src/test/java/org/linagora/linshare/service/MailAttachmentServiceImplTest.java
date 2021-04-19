@@ -44,7 +44,6 @@ import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -214,7 +213,6 @@ public class MailAttachmentServiceImplTest {
 	}
 
 	@Test
-	@Disabled
 	public void testMailAttachmentBuild() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
@@ -238,7 +236,8 @@ public class MailAttachmentServiceImplTest {
 				cfg.getUuid(), "Test mail attachment", "logo.mail.attachment4.test", Language.RUSSIAN,
 				tempFile, null);
 		// !cfg.getMailAttachments().isEmpty() -> default mail attachment is not inserted
-		Assertions.assertFalse(cfg.getMailAttachments().isEmpty());
+		List<MailAttachment> attachments = attachmentService.findAllByMailConfig(admin, cfg);
+		Assertions.assertFalse(attachments.isEmpty());
 		MailContentType type = MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES;
 		logger.info("Building mail {} ", type);
 		List<TestMailResult> findErrors = Lists.newArrayList();
@@ -246,7 +245,7 @@ public class MailAttachmentServiceImplTest {
 		for (int flavor = 0; flavor < contexts.size(); flavor++) {
 			MailContainerWithRecipient build = buildingService.fakeBuild(type, cfg, Language.ENGLISH, flavor);
 			Assertions.assertAll("Failure in mail attachment insertion", () -> {
-				Assertions.assertFalse(build.getAttachments().containsKey(defaultMailAttachmentCid));
+				Assertions.assertTrue(build.getAttachments().containsKey(defaultMailAttachmentCid));
 				Assertions.assertFalse(build.getAttachments().containsKey(attachment.getCid()));
 				Assertions.assertTrue(build.getAttachments().containsKey(attachment2.getCid()));
 				Assertions.assertTrue(build.getAttachments().containsKey(attachment3.getCid()));
