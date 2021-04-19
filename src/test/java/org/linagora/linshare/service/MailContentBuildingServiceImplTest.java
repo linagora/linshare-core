@@ -200,8 +200,8 @@ public class MailContentBuildingServiceImplTest {
 		Assertions.assertNotNull(mailContainer);
 		logger.debug("Subject: {}", mailContainer.getSubject());
 		logger.debug("Content: {}", mailContainer.getContent());
-		Assertions.assertFalse(mailContainer.getSubject().isEmpty());
-		Assertions.assertFalse(mailContainer.getContent().isEmpty());
+		Assertions.assertTrue(!mailContainer.getSubject().isEmpty(), "We are expecting a subject template, not an empty string");
+		Assertions.assertTrue(!mailContainer.getContent().isEmpty(), "We are expecting a body/content template, not an empty string");
 		List<TestMailResult> findErrors = Lists.newArrayList();
 		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getSubject()));
 		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getContent()));
