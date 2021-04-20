@@ -344,7 +344,13 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	protected boolean isDisable(EmailContext context) {
 		MailActivation mailActivation = mailActivationBusinessService.findForInternalUsage(context.getFromDomain(),
 				context.getActivation());
-		return !mailActivation.isEnable();
+		Boolean mailActivationActivationStatus = mailActivation.isEnable();
+		if (mailActivationActivationStatus) {
+			logger.debug("The mail: {}", context.getType() + " is going to be sent");
+		} else {
+			logger.debug("The mail: {}", context.getType() + " is going to be skipped");
+		}
+		return !mailActivationActivationStatus;
 	}
 
 	protected String getLinShareUrl(Account recipient) {
