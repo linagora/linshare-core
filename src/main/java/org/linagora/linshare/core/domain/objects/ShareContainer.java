@@ -410,8 +410,9 @@ public class ShareContainer {
 		return (!anonymousShareRecipients.isEmpty()) || (!shareRecipients.isEmpty());
 	}
 
-
 	public void addMailContainer(MailContainerWithRecipient mailContainer) {
+		mailContainer.setInReplyTo(getInReplyTo());
+		mailContainer.setReferences(getReferences());
 		this.mailContainers.add(mailContainer);
 	}
 

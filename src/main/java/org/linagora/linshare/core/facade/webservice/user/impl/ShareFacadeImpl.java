@@ -226,6 +226,8 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.setEnableUSDA(createDto.isEnableUSDA());
 		sc.setNotificationDateForUSDA(createDto.getNotificationDateForUSDA());
 		sc.setSharingNote(createDto.getSharingNote());
+		sc.setInReplyTo(createDto.getInReplyTo());
+		sc.setReferences(createDto.getReferences());
 		Set<Entry> shares = shareService.create(authUser, authUser, sc);
 		Set<ShareDto> sharesDto = Sets.newHashSet();
 		List<String> uuids = Lists.newArrayList();
