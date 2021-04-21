@@ -16,5 +16,6 @@
 		<constructor-arg ref="guestService" />
 		<constructor-arg ref="quotaService" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 </beans>	

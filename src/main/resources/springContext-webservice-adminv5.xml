@@ -15,6 +15,10 @@
 	<!-- cxf -->
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<bean id="adminAuthenticationRestService" class="org.linagora.linshare.webservice.adminv5.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="wsAdminV5UserFacade" />
+		<constructor-arg ref="wsSecondFactorAuthenticationFacade" />
+	</bean>
 
 	<bean id="adminv5UserRestService" class="org.linagora.linshare.webservice.adminv5.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsAdminV5UserFacade" />
@@ -24,6 +28,7 @@
 		<jaxrs:serviceBeans>
 			<ref bean="adminv4AuthenticationRestService" />
 			<ref bean="adminv5UserRestService" />
+			<ref bean="adminAuthenticationRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

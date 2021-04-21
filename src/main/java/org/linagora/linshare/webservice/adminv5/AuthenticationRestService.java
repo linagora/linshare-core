@@ -31,42 +31,28 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5;
+package org.linagora.linshare.webservice.adminv5;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.fields.SortOrder;
-import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
-import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 
-public interface UserFacade extends AdminGenericFacade {
+public interface AuthenticationRestService {
 
-	PageContainer<UserDto> findAll(String actorUuid, String domainUuid, SortOrder sortOrder, UserFields sortField,
-			String mail, String firstName, String lastName, Boolean restricted, Boolean canCreateGuest,
-			Boolean canUpload, String role, String type, Integer pageNumber, Integer pageSize);
+	void noop();
 
-	UserDto find(String actorUuid, String uuid);
+	UserDto isAuthorized() throws BusinessException;
 
-	UserDto update(String actorUuid, UserDto userDto, String uuid) throws BusinessException;
+	void changePassword(PasswordDto password) throws BusinessException;
 
-	UserDto delete(String actorUuid, UserDto userDto, String uuid) throws BusinessException;
+	void logout();
 
-	List<RestrictedContactDto> findAllRestrictedContacts(String actorUuid, String userUuid, String mail,
-			String firstName, String lastName);
+	String getVersion();
 
-	RestrictedContactDto findRestrictedContact(String actorUuid, String ownerUuid, String restrictedContactUuid);
+	SecondFactorDto get2FA(String uuid);
 
-	RestrictedContactDto createRestrictedContact(String actorUuid, String ownerUuid, RestrictedContactDto restrictedContactDto);
+	SecondFactorDto create2FA(SecondFactorDto sfd);
 
-	RestrictedContactDto deleteRestrictedContact(String actorUuid, String ownerUuid,
-			RestrictedContactDto restrictedContactDto, String restrictedContactUuid);
-
-	UserDto isAuthorized();
-
-	void changePassword(PasswordDto password);
+	SecondFactorDto delete2FA(String uuid, SecondFactorDto sfd);
 }
