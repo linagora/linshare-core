@@ -113,6 +113,8 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 	public List<SharedSpaceRole> findRolesByNodeType(Account authUser, Account actor, NodeType type) {
 		preChecks(authUser, actor);
 		Validate.notNull(type, "Missing required shared space role.");
+		checkListPermission(actor, authUser, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
+				null);
 		return sharedSpaceRoleBusinessService.findRolesByNodeType(type);
 	}
 }
