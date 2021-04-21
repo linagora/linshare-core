@@ -64,6 +64,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
+import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -100,6 +101,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	private final UploadRequestEntryService requestEntryService;
 
+	private final RecipientFavouriteRepository recipientFavouriteRepository;
+
 	private TimeService timeService;
 
 	public UploadRequestGroupServiceImpl(
@@ -112,6 +115,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final UploadRequestService uploadRequestService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			final UploadRequestEntryService requestEntryService,
+			final RecipientFavouriteRepository recipientFavouriteRepository,
 			TimeService timeService) {
 		super(groupRac, sanitizerInputHtmlBusinessService);
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
@@ -122,6 +126,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		this.uploadRequestService = uploadRequestService;
 		this.requestEntryService = requestEntryService;
 		this.timeService = timeService;
+		this.recipientFavouriteRepository = recipientFavouriteRepository;
 	}
 
 	@Override
@@ -177,6 +182,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				Validate.notNull(contact, "contact must be set");
 				Validate.notEmpty(contact.getMail(), "mail of the contact must be set");
 				container = uploadRequestUrlService.create(container.getUploadRequests().iterator().next(), contact, container);
+				recipientFavouriteRepository.incAndCreate(owner, contact.getMail());
 			}
 		} else {
 			for (Contact contact : contacts) {
@@ -185,6 +191,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				UploadRequest clone = req.clone();
 				container = uploadRequestService.create(actor, owner, clone, container);
 				container = uploadRequestUrlService.create(clone, contact, container);
+				recipientFavouriteRepository.incAndCreate(owner, contact.getMail());
 			}
 		}
 		uploadRequestGroup.setUploadRequests(container.getUploadRequests());
@@ -553,6 +560,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 			}
 			container = uploadRequestUrlService.create(uploadRequest, contact, container);
+			recipientFavouriteRepository.incAndCreate(actor, contact.getMail());
 		}
 		notifierService.sendNotification(container.getMailContainers());
 		logEntryService.insert(container.getLogs());

@@ -167,6 +167,7 @@
 		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="uploadRequestService" />
 	</bean>
 
