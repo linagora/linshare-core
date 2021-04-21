@@ -82,6 +82,14 @@ public class ShareCreationDto {
 	@Schema(description= "mailingListUuid")
 	private Set<String> mailingListUuid;
 
+	@Schema(description = "You can provide the ID of the email you are about to send in your MUA client"
+			+ "(ex Thunderbird plugin). LinShare will send its emails with this value.")
+	protected String inReplyTo;
+
+	@Schema(description = "You can provide the IDs of all emails related the email you are about to send in your MUA client"
+			+ "(ex Thunderbird plugin). LinShare will send its emails with this value.")
+	protected String references;
+
 	public ShareCreationDto() {
 		super();
 	}
@@ -180,5 +188,21 @@ public class ShareCreationDto {
 
 	public void setForceAnonymousSharing(Boolean forceAnonymousSharing) {
 		this.forceAnonymousSharing = forceAnonymousSharing;
+	}
+
+	public String getInReplyTo() {
+		return inReplyTo;
+	}
+
+	public void setInReplyTo(String inReplyTo) {
+		this.inReplyTo = inReplyTo;
+	}
+
+	public String getReferences() {
+		return references;
+	}
+
+	public void setReferences(String references) {
+		this.references = references;
 	}
 }
