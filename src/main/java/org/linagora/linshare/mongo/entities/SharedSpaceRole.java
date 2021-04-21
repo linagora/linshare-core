@@ -64,18 +64,25 @@ public class SharedSpaceRole {
 	@Schema(description = "uuid")
 	protected String uuid;
 
+	@Schema(description = "The sharedSpaceRole's name")
 	protected String name;
 
+	@Schema(description = "This field shows if sharedSpaceRole is enabled")
 	protected Boolean enabled;
 
+	@Schema(description = "The sharedSpaceRole's author")
 	protected SharedSpaceAuthor author;
 
+	@Schema(description = "The sharedSpaceRole's domain")
 	protected GenericLightEntity domain;
 
+	@Schema(description = "The sharedSpaceRole's creationDate")
 	protected Date creationDate;
 
+	@Schema(description = "The sharedSpaceRole's modificationDate")
 	protected Date modificationDate;
-	
+
+	@Schema(description = "This field shows the nodeType")
 	protected NodeType type;
 
 	public SharedSpaceRole() {

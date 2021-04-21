@@ -38,7 +38,6 @@ package org.linagora.linshare.webservice.admin.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -53,12 +52,12 @@ import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.webservice.admin.SharedSpaceRoleRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/shared_space_roles")
@@ -77,7 +76,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	@GET
 	@Operation(summary = "Find a shared space role.", responses = {
 		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpacePermission.class))),
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceRole.class))),
 			responseCode = "200"
 		)
 	})
@@ -93,14 +92,14 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	@GET
 	@Operation(summary = "Get all shared space roles.", responses = {
 		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpacePermission.class))),
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceRole.class))),
 			responseCode = "200"
 		)
 	})
 	@Override
 	public List<SharedSpaceRole> findAll(
-			@Parameter(description = "Filter the roles by node type.", required = false)
-				@QueryParam("nodeType") @DefaultValue("WORK_GROUP") NodeType nodeType) throws BusinessException {
+			@Parameter(description = "Filter the roles by node type, if no nodeType entered, both workGroup and drive roles will be returned.", required = false)
+				@QueryParam("nodeType") NodeType nodeType) throws BusinessException {
 		return ssRoleFacade.findAll(null, nodeType);
 	}
 	
