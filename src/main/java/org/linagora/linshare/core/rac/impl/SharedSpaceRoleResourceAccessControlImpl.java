@@ -51,12 +51,22 @@ public class SharedSpaceRoleResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
-		return defaultPermissionCheck(authUser, authUser, entry, TechnicalAccountPermissionType.SHARED_SPACE_ROLE_GET,false);
+		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
+			return true;
+		} else {
+			return defaultPermissionCheck(authUser, authUser, entry,
+					TechnicalAccountPermissionType.SHARED_SPACE_ROLE_GET, false);
+		}
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
-		return true;
+		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
+			return true;
+		} else {
+			return defaultPermissionCheck(authUser, account, entry,
+					TechnicalAccountPermissionType.SHARED_SPACE_ROLE_LIST, false);
+		}
 	}
 
 	@Override
