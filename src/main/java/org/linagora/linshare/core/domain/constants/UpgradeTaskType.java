@@ -230,7 +230,24 @@ public enum UpgradeTaskType {
 	/**
 	 * Delete entries of archived, deleted and purged upload requests
 	 */
-	UPGRADE_4_2_DELETE_ENTRIES_OF_ARCHIVED_DELETED_PURGED_UPLOAD_REQUESTS;
+	UPGRADE_4_2_DELETE_ENTRIES_OF_ARCHIVED_DELETED_PURGED_UPLOAD_REQUESTS,
+
+	/**
+	 * Compute workgroup quota from documents
+	 */
+	UPGRADE_4_2_COMPUTE_ALL_WORKGROUPS_QUOTA,
+
+	/* 
+	 * Compute the workgroup quota container for each domain,
+	 * and update the current value in domains
+	 * 
+	 */
+	UPGRADE_4_2_COMPUTE_CURRENT_VALUE_FOR_DOMAINS,
+
+	/**
+	 * Compute top domain quota 
+	 */
+	UPGRADE_4_2_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

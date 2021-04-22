@@ -243,6 +243,89 @@ SELECT ls_compute_daily_workgroup_statistic();
 SELECT ls_compute_weekly_workgroup_statistic();
 SELECT ls_compute_monthly_workgroup_statistic();
 
+  -- TASK: UPGRADE_4_2_COMPUTE_ALL_WORKGROUPS_QUOTA
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (36,
+ 'UNDEFINED',
+ 'UPGRADE_4_2_COMPUTE_ALL_WORKGROUPS_QUOTA',
+ 'UPGRADE_4_2',
+  null,
+  null,
+  36,
+ 'NEW',
+ 'REQUIRED',
+  now(),
+  now(),
+  null);
+  
+  -- TASK: UPGRADE_4_2_COMPUTE_CURRENT_VALUE_FOR_DOMAINS
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (37,
+  'UNDEFINED',
+  'UPGRADE_4_2_COMPUTE_CURRENT_VALUE_FOR_DOMAINS',
+  'UPGRADE_4_2',
+  null,
+  'UPGRADE_4_2_COMPUTE_ALL_WORKGROUPS_QUOTA',
+  37,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (38,
+  'UNDEFINED',
+  'UPGRADE_4_2_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA',
+  'UPGRADE_4_2',
+  null,
+  'UPGRADE_4_2_COMPUTE_CURRENT_VALUE_FOR_DOMAINS',
+  38,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);
 
 -- End of your requests
 

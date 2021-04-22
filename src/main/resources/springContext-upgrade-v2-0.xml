@@ -256,6 +256,29 @@
 					<constructor-arg ref="uploadRequestEntryService" />
 					<constructor-arg ref="uploadRequestEntryRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_2.ComputeAllWorkgroupsQuotaImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+					<constructor-arg ref="accountQuotaBusinessService" />
+					<constructor-arg ref="threadService" />
+					<constructor-arg ref="operationHistoryBusinessService" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_2.ComputeCurrentValueForDomainsUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="abstractDomainRepository" />
+					<constructor-arg ref="accountQuotaRepository" />
+					<constructor-arg ref="containerQuotaRepository" />
+					<constructor-arg ref="domainQuotaRepository" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_2.ComputeTopAndRootDomainQuotaUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="abstractDomainRepository" />
+					<constructor-arg ref="domainQuotaRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
