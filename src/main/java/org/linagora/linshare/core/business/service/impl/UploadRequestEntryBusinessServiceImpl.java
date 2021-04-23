@@ -144,7 +144,6 @@ public class UploadRequestEntryBusinessServiceImpl implements
 			}
 			upReqdocEntry.setCmisSync(isFromCmis);
 			upReqEntry = uploadRequestEntryRepository.create(upReqdocEntry);
-			owner.getEntries().add(upReqEntry);
 		} catch (BusinessException e) {
 			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT,

@@ -41,7 +41,6 @@
 
 	<bean id="shareEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.ShareEntryBusinessServiceImpl">
 		<constructor-arg ref="shareEntryRepository" />
-		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="documentEntryRepository" />
 	</bean>
 
@@ -53,7 +52,6 @@
 
 	<bean id="anonymousShareEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.AnonymousShareEntryBusinessServiceImpl">
 		<constructor-arg ref="anonymousShareEntryRepository" />
-		<constructor-arg ref="accountService" />
 		<constructor-arg ref="documentEntryRepository" />
 		<constructor-arg ref="contactRepository" />
 		<constructor-arg ref="anonymousUrlBusinessService" />

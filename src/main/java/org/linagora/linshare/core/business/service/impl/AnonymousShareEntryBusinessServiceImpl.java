@@ -36,7 +36,6 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +55,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
-import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,18 +67,19 @@ import org.slf4j.LoggerFactory;
 public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEntryBusinessService {
 
 	private final AnonymousShareEntryRepository anonymousShareEntryRepository ;
-	private final AccountService accountService;
 	private final DocumentEntryRepository documentEntryRepository ;
 	private final ContactRepository contactRepository ;
 	private final AnonymousUrlBusinessService businessService;
 
 	private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryBusinessServiceImpl.class);
 
-	public AnonymousShareEntryBusinessServiceImpl(AnonymousShareEntryRepository anonymousShareEntryRepository, AccountService accountService, DocumentEntryRepository documentEntryRepository, ContactRepository contactRepository,
+	public AnonymousShareEntryBusinessServiceImpl(
+			AnonymousShareEntryRepository anonymousShareEntryRepository,
+			DocumentEntryRepository documentEntryRepository,
+			ContactRepository contactRepository,
 			AnonymousUrlBusinessService anonymousUrlBusinessService) {
 		super();
 		this.anonymousShareEntryRepository = anonymousShareEntryRepository;
-		this.accountService = accountService;
 		this.documentEntryRepository = documentEntryRepository;
 		this.contactRepository = contactRepository;
 		this.businessService = anonymousUrlBusinessService;
@@ -103,9 +102,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		// If the current document was previously shared, we need to reset its expiration date
 		documentEntry.setExpirationDate(null);
 		documentEntry.incrementShared();
-
-		documentEntry.getAnonymousShareEntries().add(anonymousShare);
-		sender.getEntries().add(anonymousShare);
+		documentEntryRepository.update(documentEntry);
 		return anonymousShare;
 	}
 
@@ -136,16 +133,9 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 	@Override
 	public void delete(AnonymousShareEntry anonymousShare) throws BusinessException {
 		anonymousShareEntryRepository.delete(anonymousShare);
-
 		DocumentEntry documentEntry = anonymousShare.getDocumentEntry();
 		documentEntry.decrementShared();
-		documentEntry.getAnonymousShareEntries().remove(anonymousShare);
-
-		Account sender = anonymousShare.getEntryOwner();
-		sender.getEntries().remove(anonymousShare);
-		documentEntry.setModificationDate(new GregorianCalendar());
 		documentEntryRepository.update(documentEntry);
-		accountService.update(sender);
 	}
 
 	@Override

@@ -36,18 +36,15 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.slf4j.Logger;
@@ -57,18 +54,14 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 	private final ShareEntryRepository shareEntryRepository ;
 
-	private final AccountRepository<Account> accountRepository;
-
 	private final DocumentEntryRepository documentEntryRepository ;
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareEntryBusinessServiceImpl.class);
 
 	public ShareEntryBusinessServiceImpl(ShareEntryRepository shareEntryRepository,
-			AccountRepository<Account> accountRepository,
 			DocumentEntryRepository documentEntryRepository) {
 		super();
 		this.shareEntryRepository = shareEntryRepository;
-		this.accountRepository = accountRepository;
 		this.documentEntryRepository = documentEntryRepository;
 	}
 
@@ -103,31 +96,15 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 		// If the current document was previously shared, we need to rest its expiration date
 		documentEntry.setExpirationDate(null);
-		documentEntry.getShareEntries().add(shareEntity);
-		recipient.getShareEntries().add(shareEntity);
-		sender.getEntries().add(shareEntity);
-		documentEntry.setModificationDate(new GregorianCalendar());
 		documentEntryRepository.update(documentEntry);
-		accountRepository.update(recipient);
-		accountRepository.update(sender);
 		return shareEntity;
 	}
 
 	@Override
 	public void delete(ShareEntry share) throws BusinessException {
-
 		shareEntryRepository.delete(share);
-
 		DocumentEntry documentEntry = share.getDocumentEntry();
 		documentEntry.decrementShared();
-		documentEntry.getShareEntries().remove(share);
-
-		Account recipient = share.getRecipient();
-		recipient.getShareEntries().remove(share);
-
-		Account sender = share.getEntryOwner();
-		sender.getEntries().remove(share);
-		documentEntry.setModificationDate(new GregorianCalendar());
 		documentEntryRepository.update(documentEntry);
 	}
 

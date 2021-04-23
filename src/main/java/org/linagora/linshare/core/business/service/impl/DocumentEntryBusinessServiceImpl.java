@@ -138,7 +138,6 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 			}
 			docEntry.setCmisSync(isFromCmis);
 			entity = documentEntryRepository.create(docEntry);
-			owner.getEntries().add(entity);
 		} catch (BusinessException e) {
 			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
@@ -291,8 +290,6 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 	@Override
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException {
 		logger.debug("Deleting document entry: " + documentEntry.getUuid());
-		Account owner = documentEntry.getEntryOwner();
-		owner.getEntries().remove(documentEntry);
 		documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(documentEntry.getDocument().getUuid()));
 		documentEntryRepository.delete(documentEntry);
 	}
@@ -359,7 +356,6 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 		docEntry.setCiphered(ciphered);
 		docEntry.setCmisSync(false);
 		docEntry = documentEntryRepository.create(docEntry);
-		owner.getEntries().add(docEntry);
 		return docEntry;
 	}
 
