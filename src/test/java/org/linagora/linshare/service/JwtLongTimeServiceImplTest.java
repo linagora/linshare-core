@@ -151,6 +151,39 @@ public class JwtLongTimeServiceImplTest {
 	}
 
 	@Test
+	public void testUpdateTokenByGuest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PermanentToken token = jwtLongTimeService.create(guest, guest, new PermanentToken(TOKEN_LABEL, TOKEN_DESC));
+		Claims decode = jwtService.decode(token.getToken());
+		logger.debug("Token:" + decode.toString());
+		Assertions.assertEquals(guest.getMail(), decode.getSubject());
+		Assertions.assertEquals(null, decode.getExpiration());
+		Assertions.assertEquals(token.getLabel(), TOKEN_LABEL);
+		Assertions.assertEquals(token.getDescription(), TOKEN_DESC);
+		token.setLabel("updated label");
+		token.setDescription("updated description");
+		jwtLongTimeService.update(guest, guest, token.getUuid(), token);
+		Assertions.assertEquals(token.getLabel(), "updated label");
+		Assertions.assertEquals(token.getDescription(), "updated description");
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testDeleteTokenByGuest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PermanentToken token = jwtLongTimeService.create(guest, guest, new PermanentToken(TOKEN_LABEL, TOKEN_DESC));
+		Claims decode = jwtService.decode(token.getToken());
+		logger.debug("Token:" + decode.toString());
+		Assertions.assertEquals(guest.getMail(), decode.getSubject());
+		Assertions.assertEquals(null, decode.getExpiration());
+		Assertions.assertEquals(token.getLabel(), TOKEN_LABEL);
+		Assertions.assertEquals(token.getDescription(), TOKEN_DESC);
+		PermanentToken deletedToken = jwtLongTimeService.delete(guest, guest, token);
+		Assertions.assertEquals(token.getUuid(), deletedToken.getUuid());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testForbidAdminTokencreationForUser() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		jane.setRole(Role.ADMIN);
