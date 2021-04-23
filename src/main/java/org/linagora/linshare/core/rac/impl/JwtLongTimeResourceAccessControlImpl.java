@@ -168,7 +168,7 @@ public class JwtLongTimeResourceAccessControlImpl extends
 				.getJwtLongTimeFunctionalityForUser(account.getDomain());
 		boolean enabled = userCreateFunctionality.getActivationPolicy().getStatus();
 		if (enabled) {
-			if (account.isInternal()) {
+			if (account.isInternal() || account.isGuest()) {
 				if (account != null && account.equals(authUser)) {
 					if (checkActorIsEntryOwner) {
 						return account.equals(getOwner(entry));
