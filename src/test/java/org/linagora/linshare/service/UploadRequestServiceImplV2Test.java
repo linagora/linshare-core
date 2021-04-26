@@ -913,4 +913,40 @@ public class UploadRequestServiceImplV2Test {
 				"The notification date should be 7 days before expiration date");
 
 	}
+	
+	@Test
+	public void testUploadRequestNotificationDate() throws BusinessException, ParseException {
+		// test to validate that notification date should have a minimum value expiration date
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date now = parseDate("2021-02-24 15:05:00");
+		Date expiryDate = parseDate("2021-03-24 13:00:00");
+		Date notifyDate = parseDate("2021-03-25 13:00:00");
+		Mockito.when(timeService.dateNow()).thenReturn(now);
+		UploadRequest uploadRequest = createSimpleUploadRequest(null);
+		uploadRequest.setExpiryDate(expiryDate);
+		uploadRequest.setNotificationDate(notifyDate);
+		// when notification is after expiration an exception is thrown
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.create(jane, jane, uploadRequest,
+					Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_NOTIFICATION_DATE_INVALID, exception.getErrorCode());
+		notifyDate = parseDate("2021-03-02 14:00:00");
+		uploadRequest.setNotificationDate(notifyDate);
+		BusinessException exception2 = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.create(jane, jane, uploadRequest,
+					Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_NOTIFICATION_DATE_INVALID, exception2.getErrorCode());
+		// notification date can be between [expiration and expiration - notification functionality max value]
+		notifyDate = parseDate("2021-03-22 13:00:00");
+		uploadRequest.setNotificationDate(notifyDate);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(jane, jane, uploadRequest,
+				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assertions.assertEquals(expiryDate, uploadRequestGroup.getExpiryDate());
+		Assertions.assertEquals(notifyDate, uploadRequestGroup.getNotificationDate());
+		Assertions.assertEquals(expiryDate, uploadRequest.getExpiryDate());
+		Assertions.assertEquals(notifyDate, uploadRequest.getNotificationDate());
+	}
+	
 }
