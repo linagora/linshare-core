@@ -96,4 +96,10 @@ public interface WorkGroupNodeService {
 
 	NodeMetadataMto findMetadata(User authUser, User actor, WorkGroup workGroup, WorkGroupNode node, boolean storage);
 
+	WorkGroupNode copy(Account actor, User owner, WorkGroup fromWorkGroup, String fromNodeUuid, WorkGroup toWorkGroup,
+			String toNodeUuid, boolean moveDocument) throws BusinessException;
+
+	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid, boolean moveDocument)
+			throws BusinessException;
+
 }

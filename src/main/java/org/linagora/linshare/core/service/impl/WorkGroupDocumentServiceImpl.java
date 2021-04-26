@@ -170,7 +170,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 
 	@Override
 	public WorkGroupNode copy(Account actor, Account owner, WorkGroup toWorkGroup, String documentUuid, String fileName,
-			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom, WorkGroupNodeAuditLogEntry log) throws BusinessException {
+			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom, WorkGroupNodeAuditLogEntry log, boolean moveDocument) throws BusinessException {
 		Validate.notEmpty(documentUuid, "documentUuid is required.");
 		Validate.notEmpty(fileName, "fileName is required.");
 		Validate.notNull(nodeParent);
@@ -183,6 +183,8 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 					AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, node, toWorkGroup);
 			if (copiedFrom.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION)) {
 				log.setCause(LogActionCause.RESTORE);
+			} else if (moveDocument){
+				log.setCause(LogActionCause.MOVE);
 			} else {
 				log.setCause(LogActionCause.COPY);
 			}
@@ -196,6 +198,13 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		logEntryService.insert(log);
 		addToQuota(toWorkGroup, size);
 		return node;
+	}
+
+	@Override
+	public WorkGroupNode copy(Account actor, Account owner, WorkGroup toWorkGroup, String documentUuid, String fileName,
+			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom,
+			WorkGroupNodeAuditLogEntry log) throws BusinessException {
+		return copy(actor, owner, toWorkGroup, documentUuid, fileName, nodeParent, ciphered, size, fromNodeUuid, copiedFrom, log, false);
 	}
 
 	@Override

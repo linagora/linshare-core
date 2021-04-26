@@ -39,5 +39,6 @@ public enum LogActionCause {
 	RESTORE,
 	UNDEFINED,
 	EXPIRATION,
-	INCONSISTENCY;
+	INCONSISTENCY,
+	MOVE;
 }
