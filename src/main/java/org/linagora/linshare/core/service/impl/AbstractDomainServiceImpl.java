@@ -548,8 +548,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			// if the current domain is linked to a UserProvider, we perform a
 			// search.
 			if (d.getUserProvider() != null) {
-				users.addAll(userProviderService.autoCompleteUser(
-						d.getUserProvider(), firstName, lastName));
+				List<User> autoCompleteUser = userProviderService.autoCompleteUser(
+						d.getUserProvider(), firstName, lastName);
+				for (User user : autoCompleteUser) {
+					user.setDomain(d);
+				}
+				users.addAll(autoCompleteUser);
 			} else {
 				logger.debug("UserProvider is null for domain : "
 						+ domain.getUuid());
