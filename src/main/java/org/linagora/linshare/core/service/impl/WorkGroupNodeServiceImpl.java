@@ -665,8 +665,9 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 					workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
 				}
 				// copy the most recent revision into the new document.
-				workGroupDocumentService.copy(actor, owner, toWorkGroup, mostRecent.getDocumentUuid(), fileName,
+				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor, owner, toWorkGroup, mostRecent.getDocumentUuid(), fileName,
 						newDocument, doc.getCiphered(), doc.getSize(), doc.getUuid(), copyFrom, log);
+				newDocument = revisionService.updateDocument(actor, owner, toWorkGroup, revision);
 				return newDocument;
 			} else if (isDocument(toNode)) {
 				// Check versioning functionality
