@@ -145,6 +145,7 @@
 		<constructor-arg ref="mailingListResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
+		<constructor-arg ref="mailingListContactRepository" />
 	</bean>
 
 	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">

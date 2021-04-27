@@ -53,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.MailingListResourceAccessControl;
+import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ContactListService;
 import org.linagora.linshare.core.service.UserService;
@@ -70,15 +71,19 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 
 	private final LogEntryService logEntryService;
 	
+	private final MailingListContactRepository mailingListContactRepository;
+	
 	public ContactListServiceImpl(MailingListBusinessService contactListBusinessService,
 			UserService userService,
 			final LogEntryService logEntryService,
 			MailingListResourceAccessControl rac,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			MailingListContactRepository mailingListContactRepository) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.contactListBusinessService = contactListBusinessService;
 		this.userService = userService;
 		this.logEntryService = logEntryService;
+		this.mailingListContactRepository = mailingListContactRepository;
 	}
 
 	/**
@@ -327,7 +332,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		duplicateMailingList.setDescription(sanitize(list.getDescription()));
 		duplicateMailingList.setMailingListContact(new ArrayList<ContactListContact>());
 		duplicateMailingList = contactListBusinessService.createList(duplicateMailingList, (User) owner);
-		for (ContactListContact contact : list.getMailingListContact()) {
+		for (ContactListContact contact : mailingListContactRepository.findAllContacts(list)) {
 			ContactListContact duplicateContact = new ContactListContact();
 			duplicateContact.setFirstName(contact.getFirstName());
 			duplicateContact.setLastName(contact.getLastName());

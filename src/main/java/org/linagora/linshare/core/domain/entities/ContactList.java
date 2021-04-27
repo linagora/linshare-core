@@ -42,6 +42,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
+import org.linagora.linshare.core.repository.MailingListContactRepository;
 
 public class ContactList {
 
@@ -80,19 +81,6 @@ public class ContactList {
 
 	public ContactList() {
 		super();
-	}
-
-	public ContactList(ContactList list) {
-		this.persistenceId = list.getPersistenceId();
-		this.uuid = list.getUuid();
-		this.identifier = list.getIdentifier();
-		this.description = list.getDescription();
-		this.isPublic = list.isPublic();
-		this.owner = list.getOwner();
-		this.domain = list.getDomain();
-		this.mailingListContact = list.getMailingListContact();
-		this.creationDate = list.getCreationDate();
-		this.modificationDate = list.getModificationDate();
 	}
 
 	public ContactList(MailingListDto list) {
@@ -169,6 +157,13 @@ public class ContactList {
 		this.uuid = uuid;
 	}
 
+	/**
+	 * Avoid use getter (when adding a contact to a list, mailing_list_contact_index database property (see list-index in ContactList.hbm) may always be 0, so it breaks the returned list semantic  
+	 * instead of it use the {@link MailingListContactRepository} to get
+	 * the contacts of the given list
+	 * 
+	 * @return
+	 */
 	public List<ContactListContact> getMailingListContact() {
 		return mailingListContact;
 	}
