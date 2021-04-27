@@ -84,6 +84,9 @@ public enum UploadRequestStatus {
 		if (PURGED.equals(status)) {
 			list.add(DELETED);
 		}
+		if (CANCELED.equals(status)) {
+			list.add(CREATED);
+		}
 		return list;
 	}
 
