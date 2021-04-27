@@ -56,6 +56,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.ContactListService;
@@ -80,6 +81,8 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	private final ContactListService listService;
 
 	private final AuditLogEntryService auditLogEntryService;
+	
+	private final MailingListContactRepository mailingListContactRepository;
 
 	public ShareFacadeImpl(
 			final AccountService accountService, 
@@ -87,13 +90,15 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 			final ShareService shareService,
 			final EntryBusinessService entryBusinessService,
 			final ContactListService listService,
-			final AuditLogEntryService auditLogEntryService) {
+			final AuditLogEntryService auditLogEntryService,
+			final MailingListContactRepository mailingListContactRepository) {
 		super(accountService);
 		this.shareEntryService = shareEntryService;
 		this.shareService = shareService;
 		this.entryBusinessService = entryBusinessService;
 		this.listService = listService;
 		this.auditLogEntryService = auditLogEntryService;
+		this.mailingListContactRepository = mailingListContactRepository;
 	}
 
 	@Override
@@ -210,7 +215,8 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		if (createDto.getMailingListUuid() != null && !createDto.getMailingListUuid().isEmpty()) {
 			for (String uuid : createDto.getMailingListUuid()) {
 				ContactList list = listService.findByUuid(authUser.getLsUuid(), uuid);
-				for (ContactListContact c : list.getMailingListContact()) {
+				List<ContactListContact> contacts = mailingListContactRepository.findAllContacts(list);
+				for (ContactListContact c : contacts) {
 					sc.addContact(c);
 				}
 			}

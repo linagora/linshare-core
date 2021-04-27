@@ -30,6 +30,7 @@
 		<constructor-arg ref="entryBusinessService" />
 		<constructor-arg ref="contactListService" />
 		<constructor-arg ref="auditLogEntryService" />
+		<constructor-arg ref="mailingListContactRepository" />
 	</bean>
 	<bean id="wsThreadFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadFacadeImpl">
 		<constructor-arg ref="threadService" />
