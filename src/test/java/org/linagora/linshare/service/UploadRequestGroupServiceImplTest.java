@@ -280,6 +280,8 @@ public class UploadRequestGroupServiceImplTest {
 		Assertions.assertEquals(UploadRequestStatus.CREATED, group.getStatus());
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CANCELED, false);
 		Assertions.assertEquals(UploadRequestStatus.CANCELED, group.getStatus());
+		Assertions.assertTrue(group.getUploadRequests().iterator().next().isCanceled());
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
