@@ -99,6 +99,7 @@ public class CopyMto {
 		this.name = node.getName();
 		this.contextUuid = workGroup.getLsUuid();
 		this.nodeType = node.getNodeType();
+		this.contextName = workGroup.getName();
 	}
 
 	public CopyMto(UploadRequestEntry entry) {
