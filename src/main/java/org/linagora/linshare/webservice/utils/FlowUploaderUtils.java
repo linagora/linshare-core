@@ -46,8 +46,13 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.objects.ChunkedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FlowUploaderUtils {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(FlowUploaderUtils.class);
 
 	public static Response testChunk(long chunkNumber, long totalChunks,
 			long chunkSize, long totalSize, String identifier, String filename,
@@ -65,7 +70,10 @@ public class FlowUploaderUtils {
 		boolean isValid = isValid(chunkNumber, chunkSize, totalSize, identifier,
 				filename, totalChunks);
 		// Throw HTTP 400 error code.
-		Validate.isTrue(isValid);
+		String msg = String.format(
+				"One parameter's value among multipart parameters is set to '0'. It should not: chunkNumber: %1$d | chunkSize: %2$d | totalSize: %3$d | identifier length: %4$d | filename length: %5$d | totalChunks: %6$d",
+				chunkNumber, chunkSize, totalSize, identifier.length(), filename.length(), totalChunks);
+		Validate.isTrue(isValid, msg);
 		if (chunkedFiles.containsKey(identifier)
 				&& chunkedFiles.get(identifier).hasChunk(chunkNumber)) {
 			// HTTP 200 : ok, we already get this chunk.
@@ -90,12 +98,23 @@ public class FlowUploaderUtils {
 
 	public static boolean isValid(long chunkNumber, long chunkSize,
 			long totalSize, String identifier, String filename, long totalChunks) {
+		logger.debug("Processing validation of multipart data ...");
+		logger.trace("chunkNumber {}",chunkNumber);
+		logger.trace("chnkSize {}", chunkSize);
+		logger.trace("totalSize {}", totalSize );
+		logger.trace("identifier length {}", identifier.length());
+		logger.trace("filename length {}", filename.length());
+		logger.trace("totalChunks {}", totalChunks);
 		// Check if the request is sane
-		if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0
-				|| identifier.length() == 0 || filename.length() == 0) {
+		if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0 || identifier.length() == 0
+				|| filename.length() == 0) {
+			logger.debug("One parameter's value among multipart parameters is set to '0'. It should not:"
+					+ "chunkNumber: {} , chunkSize: {} , totalSize: {} , identifier length: {} , filename length: {} ",
+					chunkNumber, chunkSize, totalSize, identifier.length(), filename.length());
 			return false;
 		}
 		if (chunkNumber > totalChunks) {
+			logger.debug("File metadata not valid the number of chunk could not be greater than total number of chunks | multipart parameters: chunkNumber {} > totalChunk {}");
 			return false;
 		}
 		return true;

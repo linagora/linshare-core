@@ -168,9 +168,17 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 		identifier = cleanIdentifier(identifier);
 		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
 				totalSize, identifier, filename, totalChunks);
-		Validate.isTrue(isValid);
 		checkIfMaintenanceIsEnabled();
 		FlowDto flow = new FlowDto(chunkNumber);
+		if (!isValid) {
+			String msg = String.format(
+					"One parameter's value among multipart parameters is set to '0'. It should not: chunkNumber: %1$d | chunkSize: %2$d | totalSize: %3$d | identifier length: %4$d | filename length: %5$d | totalChunks: %6$d",
+					chunkNumber, chunkSize, totalSize, identifier.length(), filename.length(), totalChunks);
+			logger.error(msg);
+			flow.setChunkUploadSuccess(false);
+			flow.setErrorMessage(msg);
+			return flow;
+		}
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = FlowUploaderUtils.getTempFile(identifier, chunkedFiles);

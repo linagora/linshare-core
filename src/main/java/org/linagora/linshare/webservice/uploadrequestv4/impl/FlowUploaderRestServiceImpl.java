@@ -132,8 +132,19 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
-		Validate.isTrue(isValid(chunkNumber, chunkSize, totalSize, identifier, filename));
+		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
+				totalSize, identifier, filename, totalChunks);
 		FlowDto flow = new FlowDto(chunkNumber);
+		if (!isValid) {
+			String msg = String.format(
+					"One parameter's value among multipart parameters is set to '0'. It should not: chunkNumber: %1$d | chunkSize: %2$d | totalSize: %3$d | identifier length: %4$d | filename length: %5$d | totalChunks: %6$d",
+					chunkNumber, chunkSize, totalSize, identifier.length(), filename.length(), totalChunks);
+			logger.error(msg);
+			flow.setChunkUploadSuccess(false);
+			flow.setErrorMessage(msg);
+			return flow;
+		}
+		Validate.isTrue(FlowUploaderUtils.isValid(chunkNumber, chunkSize, totalSize, identifier, filename, totalSize));
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = getTempFile(identifier);
@@ -210,20 +221,6 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 
 	private String cleanIdentifier(String identifier) {
 		return identifier.replaceAll("[^0-9A-Za-z_-]", "");
-	}
-
-	private boolean isValid(long chunkNumber, long chunkSize, long totalSize,
-			String identifier, String filename) {
-		// Check if the request is sane
-		if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0
-				|| identifier.length() == 0 || filename.length() == 0) {
-			return false;
-		}
-		double numberOfChunks = computeNumberOfChunks(chunkSize, totalSize);
-		if (chunkNumber > numberOfChunks) {
-			return false;
-		}
-		return true;
 	}
 
 	private double computeNumberOfChunks(long chunkSize, long totalSize) {
