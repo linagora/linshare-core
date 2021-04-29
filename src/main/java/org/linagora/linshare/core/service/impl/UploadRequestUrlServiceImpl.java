@@ -109,18 +109,15 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	}
 
 	@Override
-	public UploadRequestUrl find(String uuid, String password)
-			throws BusinessException {
-		Validate.notEmpty(uuid);
-		UploadRequestUrl requestUrl = uploadRequestUrlBusinessService
-				.findByUuid(uuid);
-		if (requestUrl != null) {
-			accessBusinessCheck(requestUrl, password);
-			return requestUrl;
+	public UploadRequestUrl find(String uuid, String password) throws BusinessException {
+		Validate.notEmpty(uuid, "uuid of the upload request url must be set");
+		UploadRequestUrl requestUrl = uploadRequestUrlBusinessService.findByUuid(uuid);
+		if (requestUrl == null) {
+			logger.debug("Upload Request Url not found, uuid: {}", uuid);
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_URL_NOT_FOUND, "Upload Request Url not found, uuid: " + uuid);
 		}
-		throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-				"You do not have the right to get this upload request url : "
-						+ uuid);
+		accessBusinessCheck(requestUrl, password);
+		return requestUrl;
 	}
 
 	@Override
@@ -306,12 +303,14 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 		if (authUser.getAccountType().equals(AccountType.SYSTEM)) {
 			Validate.notEmpty(requestUrlUuid);
 			UploadRequestUrl requestUrl = uploadRequestUrlBusinessService.findByUuid(requestUrlUuid);
-			if (requestUrl != null) {
+			if (requestUrl == null) {
+				logger.debug("Upload Request Url not found, uuid: {}", requestUrlUuid);
+				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_URL_NOT_FOUND,
+						"Upload Request Url not found, uuid: " + requestUrlUuid);
+			} else {
 				accessBusinessCheckForChangePwd(requestUrl, oldPassword, requestUrl.getUploadRequest());
 				return requestUrl;
 			}
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"You do not have the right to get this upload request url : " + requestUrlUuid);
 		}
 		return find(requestUrlUuid, oldPassword);
 	}
