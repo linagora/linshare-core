@@ -15,6 +15,7 @@
 
 	<bean id="uploadRequestv4FlowUploaderRestService" class="org.linagora.linshare.webservice.uploadrequestv4.impl.FlowUploaderRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestUrlFacade" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 	<bean id="uploadRequestv4RestService" class="org.linagora.linshare.webservice.uploadrequestv4.impl.UploadRequestRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestUrlFacade" />

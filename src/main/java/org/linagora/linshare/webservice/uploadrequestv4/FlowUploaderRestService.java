@@ -46,12 +46,12 @@ import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 public interface FlowUploaderRestService {
 
 	FlowDto uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
-			long totalSize, String identifier, String filename,
+			long currentChunkSize, long totalSize, String identifier, String filename,
 			String relativePath, InputStream file, MultipartBody body,
 			String uploadRequestUrlUuid, String password)
 			throws BusinessException;
 
-	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
+	Response testChunk(long chunkNumber, long totalChunks, long chunkSize, long currentChunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath);
 }

@@ -35,7 +35,6 @@
  */
 package org.linagora.linshare.webservice.uploadrequestv4.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -53,7 +52,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.objects.ChunkedFile;
@@ -81,6 +80,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	private static final String CHUNK_NUMBER = "flowChunkNumber";
 	private static final String TOTAL_CHUNKS = "flowTotalChunks";
 	private static final String CHUNK_SIZE = "flowChunkSize";
+	private static final String CURRENT_CHUNK_SIZE = "flowCurrentChunkSize";
 	private static final String TOTAL_SIZE = "flowTotalSize";
 	private static final String IDENTIFIER = "flowIdentifier";
 	private static final String FILENAME = "flowFilename";
@@ -88,6 +88,8 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	private static final String FILE = "file";
 	private static final String PASSWORD = "password";
 	private static final String REQUEST_URL_UUID = "requestUrlUuid";
+	
+	private boolean sizeValidation;
 
 	private final UploadRequestUrlFacade uploadRequestUrlFacade;
 
@@ -95,9 +97,11 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			.newConcurrentMap();
 
 	public FlowUploaderRestServiceImpl(
-			UploadRequestUrlFacade uploadRequestUrlFacade) {
+			UploadRequestUrlFacade uploadRequestUrlFacade,
+			boolean sizeValidation) {
 		super();
 		this.uploadRequestUrlFacade = uploadRequestUrlFacade;
+		this.sizeValidation = sizeValidation;
 	}
 
 	@Path("/")
@@ -106,12 +110,13 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	public Response testChunk(@QueryParam(CHUNK_NUMBER) long chunkNumber,
 			@QueryParam(TOTAL_CHUNKS) long totalChunks,
 			@QueryParam(CHUNK_SIZE) long chunkSize,
+			@QueryParam(CURRENT_CHUNK_SIZE) long currentChunkSize,
 			@QueryParam(TOTAL_SIZE) long totalSize,
 			@QueryParam(IDENTIFIER) String identifier,
 			@QueryParam(FILENAME) String filename,
 			@QueryParam(RELATIVE_PATH) String relativePath) {
 
-		return FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize,
+		return FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize, currentChunkSize,
 				totalSize, identifier, filename, relativePath, chunkedFiles, false);
 	}
 
@@ -122,17 +127,18 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	public FlowDto uploadChunk(@Multipart(CHUNK_NUMBER) long chunkNumber,
 			@Multipart(TOTAL_CHUNKS) long totalChunks,
 			@Multipart(CHUNK_SIZE) long chunkSize,
+			@Multipart(CURRENT_CHUNK_SIZE) long currentChunkSize,
 			@Multipart(TOTAL_SIZE) long totalSize,
 			@Multipart(IDENTIFIER) String identifier,
 			@Multipart(FILENAME) String filename,
 			@Multipart(RELATIVE_PATH) String relativePath,
-			@Multipart(FILE) InputStream file, MultipartBody body,
+			@Multipart(FILE) InputStream inputStreamCxf, MultipartBody body,
 			@Multipart(REQUEST_URL_UUID) String uploadRequestUrlUuid,
 			@Multipart(PASSWORD) String password) throws BusinessException {
 
 		logger.debug("upload chunk number : " + chunkNumber);
-		identifier = cleanIdentifier(identifier);
-		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
+		identifier = FlowUploaderUtils.cleanIdentifier(identifier);
+		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize, currentChunkSize,
 				totalSize, identifier, filename, totalChunks);
 		FlowDto flow = new FlowDto(chunkNumber);
 		if (!isValid) {
@@ -144,16 +150,26 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			flow.setErrorMessage(msg);
 			return flow;
 		}
-		Validate.isTrue(FlowUploaderUtils.isValid(chunkNumber, chunkSize, totalSize, identifier, filename, totalSize));
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = getTempFile(identifier);
 			ChunkedFile currentChunkedFile = chunkedFiles.get(identifier);
 			if (!currentChunkedFile.hasChunk(chunkNumber)) {
 				FileChannel fc = FileChannel.open(tempFile, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-				byte[] byteArray = IOUtils.toByteArray(file);
-				fc.write(ByteBuffer.wrap(byteArray), (chunkNumber - 1) * chunkSize);
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				IOUtils.copy(inputStreamCxf, output);
+				fc.write(ByteBuffer.wrap(output.toByteArray()), (chunkNumber - 1) * chunkSize);
 				fc.close();
+				inputStreamCxf.close();
+				if (sizeValidation) {
+					if (output.size() != currentChunkSize) {
+						String msg = String.format("File size does not match, found : %1$d, announced : %2$d", output.size(), currentChunkSize);
+						logger.error(msg);
+						flow.setChunkUploadSuccess(false);
+						flow.setErrorMessage(msg);
+						return flow;
+					}
+				}
 				currentChunkedFile.addChunk(chunkNumber);
 			} else {
 				logger.error("currentChunkedFile.hasChunk(chunkNumber) !!! {} ", currentChunkedFile);
@@ -162,15 +178,13 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			logger.debug("number of uploading files : {}", chunkedFiles.size());
 			logger.debug("current chuckedfile uuid : {}", identifier);
 			logger.debug("current chuckedfiles {}", chunkedFiles.toString());
-			if (isUploadFinished(identifier, chunkSize, totalSize)) {
+			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize, totalSize, chunkedFiles, totalChunks)) {
 				logger.debug("upload finished ");
 				flow.setLastChunk(true);
-				InputStream inputStream = Files.newInputStream(tempFile, StandardOpenOption.READ);
-				File tempFile2 = WebServiceUtils.getTempFile(inputStream, "rest-flowuploader", filename);
 				try {
-					uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid, password, tempFile2, filename);
+					uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid, password, tempFile.toFile(), filename);
 				} finally {
-					WebServiceUtils.deleteTempFile(tempFile2);
+					WebServiceUtils.deleteTempFile(tempFile.toFile());
 				}
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				if (remove != null) {
@@ -215,21 +229,4 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 		return chunkedFile.getPath();
 	}
 
-	/**
-	 * HELPERS
-	 */
-
-	private String cleanIdentifier(String identifier) {
-		return identifier.replaceAll("[^0-9A-Za-z_-]", "");
-	}
-
-	private double computeNumberOfChunks(long chunkSize, long totalSize) {
-		return Math.max(Math.floor(totalSize / chunkSize), 1);
-	}
-
-	private boolean isUploadFinished(String identifier, long chunkSize,
-			long totalSize) {
-		double numberOfChunks = computeNumberOfChunks(chunkSize, totalSize);
-		return chunkedFiles.get(identifier).getChunks().size() == numberOfChunks;
-	}
 }

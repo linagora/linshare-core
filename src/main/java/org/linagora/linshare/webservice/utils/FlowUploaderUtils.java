@@ -55,7 +55,7 @@ public class FlowUploaderUtils {
 			.getLogger(FlowUploaderUtils.class);
 
 	public static Response testChunk(long chunkNumber, long totalChunks,
-			long chunkSize, long totalSize, String identifier, String filename,
+			long chunkSize, long currentChunkSize, long totalSize, String identifier, String filename,
 			String relativePath,
 			ConcurrentMap<String, ChunkedFile> chunkedFiles, boolean maintenance) {
 		if (maintenance) {
@@ -67,7 +67,7 @@ public class FlowUploaderUtils {
 		}
 		Validate.notEmpty(identifier, "Flow file identifier must be defined.");
 		identifier = cleanIdentifier(identifier);
-		boolean isValid = isValid(chunkNumber, chunkSize, totalSize, identifier,
+		boolean isValid = isValid(chunkNumber, chunkSize, currentChunkSize, totalSize, identifier,
 				filename, totalChunks);
 		// Throw HTTP 400 error code.
 		String msg = String.format(
@@ -92,21 +92,22 @@ public class FlowUploaderUtils {
 		return builder.build();
 	}
 
-	private static String cleanIdentifier(String identifier) {
+	public static String cleanIdentifier(String identifier) {
 		return identifier.replaceAll("[^0-9A-Za-z_-]", "");
 	}
 
 	public static boolean isValid(long chunkNumber, long chunkSize,
-			long totalSize, String identifier, String filename, long totalChunks) {
+			long totalSize, long currentChunkSize, String identifier, String filename, long totalChunks) {
 		logger.debug("Processing validation of multipart data ...");
 		logger.trace("chunkNumber {}",chunkNumber);
 		logger.trace("chnkSize {}", chunkSize);
+		logger.trace("currentChunkSize {}", currentChunkSize);
 		logger.trace("totalSize {}", totalSize );
 		logger.trace("identifier length {}", identifier.length());
 		logger.trace("filename length {}", filename.length());
 		logger.trace("totalChunks {}", totalChunks);
 		// Check if the request is sane
-		if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0 || identifier.length() == 0
+		if (chunkNumber == 0 || chunkSize == 0 || currentChunkSize == 0 || totalSize == 0 || identifier.length() == 0
 				|| filename.length() == 0) {
 			logger.debug("One parameter's value among multipart parameters is set to '0'. It should not:"
 					+ "chunkNumber: {} , chunkSize: {} , totalSize: {} , identifier length: {} , filename length: {} ",
@@ -125,7 +126,7 @@ public class FlowUploaderUtils {
 		return chunkedFiles.get(identifier).getChunks()
 				.size() == totalChunks;
 	}
-
+	
 	public static java.nio.file.Path getTempFile(String identifier,
 			ConcurrentMap<String, ChunkedFile> chunkedFiles)
 					throws IOException {

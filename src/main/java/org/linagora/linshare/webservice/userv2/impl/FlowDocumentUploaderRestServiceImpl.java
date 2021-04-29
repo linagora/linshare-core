@@ -166,7 +166,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					throws BusinessException {
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
-		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
+		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize, currentChunkSize,
 				totalSize, identifier, filename, totalChunks);
 		checkIfMaintenanceIsEnabled();
 		FlowDto flow = new FlowDto(chunkNumber);
@@ -298,12 +298,13 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	public Response testChunk(@QueryParam(CHUNK_NUMBER) long chunkNumber,
 			@QueryParam(TOTAL_CHUNKS) long totalChunks,
 			@QueryParam(CHUNK_SIZE) long chunkSize,
+			@QueryParam(CURRENT_CHUNK_SIZE) long currentChunkSize,
 			@QueryParam(TOTAL_SIZE) long totalSize,
 			@QueryParam(IDENTIFIER) String identifier,
 			@QueryParam(FILENAME) String filename,
 			@QueryParam(RELATIVE_PATH) String relativePath) {
 		boolean maintenance = accountQuotaFacade.maintenanceModeIsEnabled();
-		Response testChunk = FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize,
+		Response testChunk = FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize, currentChunkSize,
 				totalSize, identifier, filename, relativePath, chunkedFiles, maintenance);
 		if (chunkNumber == 1 || (chunkNumber % 20) == 0 || chunkNumber == totalChunks) {
 			logger.info(String.format("GET: .../webservice/rest/user/v2/flow.json:%s: chunkNumber:%s/%s", identifier, chunkNumber, totalChunks));
