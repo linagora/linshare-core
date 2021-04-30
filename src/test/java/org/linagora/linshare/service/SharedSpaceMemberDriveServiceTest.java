@@ -111,6 +111,7 @@ public class SharedSpaceMemberDriveServiceTest {
 	private SharedSpaceRoleService ssRoleService;
 
 	@Autowired
+	@Qualifier("sharedSpaceNodeDriveService")
 	private SharedSpaceFragmentService sharedSpaceFragmentService;
 
 	private Account john;

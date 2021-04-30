@@ -361,7 +361,7 @@ VALUES
   now(),
   now(),
   null);
-  
+
   -- TASK: UPGRADE_4_2_COMPUTE_CURRENT_VALUE_FOR_DOMAINS
 INSERT INTO upgrade_task
   (id,
@@ -473,7 +473,93 @@ UPDATE policy SET status = false , default_status = false, policy = 2 ,system = 
  ALTER TABLE mailing_list RENAME TO contact_list;
  ALTER TABLE mailing_list_contact RENAME TO contact_list_contact;
  ALTER TABLE contact_list_contact RENAME COLUMN mailing_list_id TO contact_list_id;
- 
+
+
+-- Update domain_abstract by adding the column of drive provider
+ALTER TABLE domain_abstract ADD COLUMN drive_provider_id int8;
+
+-- Create the Drive provider
+	CREATE TABLE drive_provider (
+  id                  int8 NOT NULL,
+  uuid               varchar(255) NOT NULL UNIQUE,
+  provider_type      varchar(255) NOT NULL,
+  base_dn            varchar(255),
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
+  ldap_connection_id int8 NOT NULL,
+  ldap_pattern_id    int8 NOT NULL,
+  search_in_other_domains bool DEFAULT 'true',
+  PRIMARY KEY (id));
+
+-- Add the foreign keys constraints related to drive provider
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs303989 FOREIGN KEY (drive_provider_id) REFERENCES group_provider (id);
+ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi820203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
+ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi1670 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+
+-- Group ldap pattern
+INSERT INTO ldap_pattern(
+	id,
+	uuid,
+	pattern_type,
+	label,
+	system,
+	description,
+	auth_command,
+	search_user_command,
+	search_page_size,
+	search_size_limit,
+	auto_complete_command_on_first_and_last_name,
+	auto_complete_command_on_all_attributes, completion_page_size,
+	completion_size_limit,
+	creation_date,
+	modification_date,
+	search_all_groups_query,
+	search_group_query,
+	group_prefix)
+	VALUES(
+	6,
+	'c59078f1-2366-4360-baa0-6c089202e9a6',
+	'GROUP_LDAP_PATTERN',
+	'Ldap drives',
+	true,
+	'default-drive-pattern',
+	NULL,
+	NULL,
+	100,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NOW(),
+	NOW(),
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-*))");',
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-" + pattern + "))");',
+	'drive-');
+
+
+-- ldap attributes
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(22, 'mail', 'member_mail', false, true, true, false, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(23, 'givenName', 'member_firstname', false, true, true, false, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(24, 'cn', 'group_name_attr', false, true, true, true, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(25, 'member', 'extended_group_member_attr', false, true, true, true, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(26, 'sn', 'member_lastname', false, true, true, false, 6);
+
+
 ---- End of your queries
 
 -- LinShare version
