@@ -95,7 +95,7 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 
 	@Override
 	protected SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate,
-			SharedSpaceMember foundMemberToUpdate, boolean force, boolean propagate) {
+			SharedSpaceMember foundMemberToUpdate, boolean force, Boolean propagate) {
 		SharedSpaceMember updated = businessService.update(foundMemberToUpdate, memberToUpdate);
 		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
 		notify(new WorkGroupWarnUpdatedMemberEmailContext(updated, user, actor));

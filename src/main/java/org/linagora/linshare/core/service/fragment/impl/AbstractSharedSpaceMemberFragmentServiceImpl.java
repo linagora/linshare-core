@@ -218,7 +218,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 	}
 
 	@Override
-	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force, boolean propagate) {
+	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force, Boolean propagate) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
@@ -254,6 +254,6 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 	protected abstract SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember foundMemberToDelete);
 
 	protected abstract SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, SharedSpaceMember foundMemberToUpdate,
-			boolean force, boolean propagate);
+			boolean force, Boolean propagate);
 
 }

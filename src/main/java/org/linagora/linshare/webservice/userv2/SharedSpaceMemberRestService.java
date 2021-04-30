@@ -48,7 +48,7 @@ public interface SharedSpaceMemberRestService {
 
 	SharedSpaceMember addMember(SharedSpaceMember ssMember) throws BusinessException;
 
-	SharedSpaceMember update(SharedSpaceMember ssMember, String uuid, boolean force, boolean propagate) throws BusinessException;
+	SharedSpaceMember update(SharedSpaceMember ssMember, String uuid, boolean force, Boolean propagate) throws BusinessException;
 
 	SharedSpaceMember delete(String actorUuid, SharedSpaceMember ssMember, String uuid) throws BusinessException;
 

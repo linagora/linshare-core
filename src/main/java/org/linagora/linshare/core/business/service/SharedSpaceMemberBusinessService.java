@@ -85,5 +85,5 @@ public interface SharedSpaceMemberBusinessService {
 
 	List<SharedSpaceMember> findAllMembersByParent(String parentUuid);
 
-	List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid, boolean pristine);
+	List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid, Boolean pristine);
 }

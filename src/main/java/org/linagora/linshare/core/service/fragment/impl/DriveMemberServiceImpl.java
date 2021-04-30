@@ -139,7 +139,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 
 	@Override
 	protected SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate,
-			SharedSpaceMember foundMemberToUpdate, boolean force, boolean propagate) {
+			SharedSpaceMember foundMemberToUpdate, boolean force, Boolean propagate) {
 		LightSharedSpaceRole wgRole = ((SharedSpaceMemberDrive) memberToUpdate).getNestedRole();
 		Validate.notNull(wgRole, "The nested role must be set");
 		checkRoleTypeIntegrity(authUser, actor, wgRole.getUuid(), NodeType.WORK_GROUP);

@@ -270,7 +270,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid,
-			boolean pristine) {
+			Boolean pristine) {
 		return repository.findAllMembersByParentAndAccountAndPristine(accountUuid, parentUuid, pristine);
 	}
 }

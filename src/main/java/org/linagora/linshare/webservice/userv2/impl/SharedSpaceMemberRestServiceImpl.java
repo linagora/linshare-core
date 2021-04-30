@@ -132,7 +132,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@Parameter(description = "If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
 				@QueryParam("force") @DefaultValue("false") boolean force,
 			@Parameter(description = "Propagate parameter is true by default, the role will be updated in the current node and propagated on nested workgroups which are not updated manually, else if it is false the role will be updated just in current node")
-				@QueryParam("propagate") @DefaultValue("true") boolean propagate)
+				@QueryParam("propagate") @DefaultValue("true") Boolean propagate)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.update(null, ssmember, uuid, force, propagate);
 	}

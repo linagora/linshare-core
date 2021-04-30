@@ -492,7 +492,7 @@ ALTER TABLE domain_abstract ADD COLUMN drive_provider_id int8;
   PRIMARY KEY (id));
 
 -- Add the foreign keys constraints related to drive provider
-ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs303989 FOREIGN KEY (drive_provider_id) REFERENCES group_provider (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs303989 FOREIGN KEY (drive_provider_id) REFERENCES drive_provider (id);
 ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi820203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi1670 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
 

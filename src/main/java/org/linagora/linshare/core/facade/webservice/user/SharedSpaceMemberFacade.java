@@ -48,7 +48,7 @@ public interface SharedSpaceMemberFacade {
 
 	SharedSpaceMember create(String actorUuid, SharedSpaceMember member) throws BusinessException;
 
-	SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid, boolean force, boolean propagate) throws BusinessException;
+	SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid, boolean force, Boolean propagate) throws BusinessException;
 
 	SharedSpaceMember delete(String actorUuid, SharedSpaceMember member, String uuid) throws BusinessException;
 

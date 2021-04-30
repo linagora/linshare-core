@@ -213,7 +213,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force, boolean propagate) {
+	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force, Boolean propagate) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		SharedSpaceMember foundMemberToUpdate = null;
