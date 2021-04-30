@@ -51,7 +51,7 @@ public interface FlowUploaderRestService {
 			String uploadRequestUrlUuid, String password)
 			throws BusinessException;
 
-	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
+	Response testChunk(long chunkNumber, long totalChunks, long chunkSize, long currentChunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath);
 }

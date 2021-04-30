@@ -166,11 +166,19 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					throws BusinessException {
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
-		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
+		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize, currentChunkSize,
 				totalSize, identifier, filename, totalChunks);
-		Validate.isTrue(isValid);
 		checkIfMaintenanceIsEnabled();
 		FlowDto flow = new FlowDto(chunkNumber);
+		if (!isValid) {
+			String msg = String.format(
+					"One parameter's value among multipart parameters is set to '0'. It should not: chunkNumber: %1$d | chunkSize: %2$d | totalSize: %3$d | identifier length: %4$d | filename length: %5$d | totalChunks: %6$d",
+					chunkNumber, chunkSize, totalSize, identifier.length(), filename.length(), totalChunks);
+			logger.error(msg);
+			flow.setChunkUploadSuccess(false);
+			flow.setErrorMessage(msg);
+			return flow;
+		}
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
 			java.nio.file.Path tempFile = FlowUploaderUtils.getTempFile(identifier, chunkedFiles);
@@ -290,12 +298,13 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	public Response testChunk(@QueryParam(CHUNK_NUMBER) long chunkNumber,
 			@QueryParam(TOTAL_CHUNKS) long totalChunks,
 			@QueryParam(CHUNK_SIZE) long chunkSize,
+			@QueryParam(CURRENT_CHUNK_SIZE) long currentChunkSize,
 			@QueryParam(TOTAL_SIZE) long totalSize,
 			@QueryParam(IDENTIFIER) String identifier,
 			@QueryParam(FILENAME) String filename,
 			@QueryParam(RELATIVE_PATH) String relativePath) {
 		boolean maintenance = accountQuotaFacade.maintenanceModeIsEnabled();
-		Response testChunk = FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize,
+		Response testChunk = FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize, currentChunkSize,
 				totalSize, identifier, filename, relativePath, chunkedFiles, maintenance);
 		if (chunkNumber == 1 || (chunkNumber % 20) == 0 || chunkNumber == totalChunks) {
 			logger.info(String.format("GET: .../webservice/rest/user/v2/flow.json:%s: chunkNumber:%s/%s", identifier, chunkNumber, totalChunks));

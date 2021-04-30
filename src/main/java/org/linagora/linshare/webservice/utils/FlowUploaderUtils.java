@@ -46,11 +46,16 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.objects.ChunkedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FlowUploaderUtils {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(FlowUploaderUtils.class);
 
 	public static Response testChunk(long chunkNumber, long totalChunks,
-			long chunkSize, long totalSize, String identifier, String filename,
+			long chunkSize, long currentChunkSize, long totalSize, String identifier, String filename,
 			String relativePath,
 			ConcurrentMap<String, ChunkedFile> chunkedFiles, boolean maintenance) {
 		if (maintenance) {
@@ -62,7 +67,7 @@ public class FlowUploaderUtils {
 		}
 		Validate.notEmpty(identifier, "Flow file identifier must be defined.");
 		identifier = cleanIdentifier(identifier);
-		boolean isValid = isValid(chunkNumber, chunkSize, totalSize, identifier,
+		boolean isValid = isValid(chunkNumber, chunkSize, currentChunkSize, totalSize, identifier,
 				filename, totalChunks);
 		// Throw HTTP 400 error code.
 		Validate.isTrue(isValid);
@@ -88,14 +93,28 @@ public class FlowUploaderUtils {
 		return identifier.replaceAll("[^0-9A-Za-z_-]", "");
 	}
 
-	public static boolean isValid(long chunkNumber, long chunkSize,
-			long totalSize, String identifier, String filename, long totalChunks) {
+	public static boolean isValid(long chunkNumber, long chunkSize, long currentChunkSize, long totalSize,
+			String identifier, String filename, long totalChunks) {
+		logger.debug("Processing validation of multipart data ...");
+		logger.trace("chunkNumber {}", chunkNumber);
+		logger.trace("chunkSize {}", chunkSize);
+		logger.trace("currentChunkSize {}", currentChunkSize);
+		logger.trace("totalSize {}", totalSize);
+		logger.trace("identifier length {}", identifier.length());
+		logger.trace("filename length {}", filename.length());
+		logger.trace("totalChunks {}", totalChunks);
 		// Check if the request is sane
-		if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0
-				|| identifier.length() == 0 || filename.length() == 0) {
+		if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0 || identifier.length() == 0
+				|| filename.length() == 0) {
+			logger.debug("One parameter's value among multipart parameters is set to '0'. It should not:"
+					+ "chunkNumber: {} , long currentChunkSize {},chunkSize: {} , totalSize: {} , identifier length: {} , filename length: {} ",
+					chunkNumber, chunkSize, currentChunkSize, totalSize, identifier.length(), filename.length());
 			return false;
 		}
 		if (chunkNumber > totalChunks) {
+			logger.debug(
+					"File metadata not valid the number of chunk could not be greater than total number of chunks | multipart parameters: chunkNumber {} > totalChunk {}",
+					chunkNumber, totalChunks);
 			return false;
 		}
 		return true;

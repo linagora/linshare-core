@@ -81,6 +81,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	private static final String CHUNK_NUMBER = "flowChunkNumber";
 	private static final String TOTAL_CHUNKS = "flowTotalChunks";
 	private static final String CHUNK_SIZE = "flowChunkSize";
+	private static final String CURRENT_CHUNK_SIZE = "flowCurrentChunkSize";
 	private static final String TOTAL_SIZE = "flowTotalSize";
 	private static final String IDENTIFIER = "flowIdentifier";
 	private static final String FILENAME = "flowFilename";
@@ -106,12 +107,13 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 	public Response testChunk(@QueryParam(CHUNK_NUMBER) long chunkNumber,
 			@QueryParam(TOTAL_CHUNKS) long totalChunks,
 			@QueryParam(CHUNK_SIZE) long chunkSize,
+			@QueryParam(CURRENT_CHUNK_SIZE) long currentChunkSize,
 			@QueryParam(TOTAL_SIZE) long totalSize,
 			@QueryParam(IDENTIFIER) String identifier,
 			@QueryParam(FILENAME) String filename,
 			@QueryParam(RELATIVE_PATH) String relativePath) {
 
-		return FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize,
+		return FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize, currentChunkSize,
 				totalSize, identifier, filename, relativePath, chunkedFiles, false);
 	}
 

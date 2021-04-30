@@ -53,7 +53,7 @@ public interface FlowDocumentUploaderRestService {
 			String workGroupFolderUuid, boolean async)
 			throws BusinessException;
 
-	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
+	Response testChunk(long chunkNumber, long totalChunks, long chunkSize, long currentChunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath);
 
