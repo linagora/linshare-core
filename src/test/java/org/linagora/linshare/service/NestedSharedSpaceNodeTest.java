@@ -317,7 +317,7 @@ public class NestedSharedSpaceNodeTest {
 		// Create a workgroup with Jane having the creator role
 		ssNodeService.create(john, john, workGroupInsideDrive);
 		janeMember.setNestedRole(new LightSharedSpaceRole(contributor));
-		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, false);
+		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, false, false);
 		Assertions.assertEquals(contributor.getUuid(), janeMember.getNestedRole().getUuid());
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
 		for (SharedSpaceNodeNested sharedSpaceNodeNested : workgroupsInsideDrive) {
@@ -340,7 +340,7 @@ public class NestedSharedSpaceNodeTest {
 		// Create a workgroup with Jane having the creator role
 		ssNodeService.create(jane, jane, workGroupInsideDrive);
 		janeMember.setNestedRole(new LightSharedSpaceRole(contributor));
-		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, true);
+		janeMember = (SharedSpaceMemberDrive)ssMemberService.update(john, john, janeMember, true, false);
 		Assertions.assertEquals(contributor.getUuid(), janeMember.getNestedRole().getUuid());
 		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
 		for (SharedSpaceNodeNested sharedSpaceNodeNested : workgroupsInsideDrive) {

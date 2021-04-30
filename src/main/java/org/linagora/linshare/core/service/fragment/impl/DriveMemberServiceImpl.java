@@ -139,7 +139,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 
 	@Override
 	protected SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate,
-			SharedSpaceMember foundMemberToUpdate, boolean force) {
+			SharedSpaceMember foundMemberToUpdate, boolean force, boolean propagate) {
 		LightSharedSpaceRole wgRole = ((SharedSpaceMemberDrive) memberToUpdate).getNestedRole();
 		Validate.notNull(wgRole, "The nested role must be set");
 		checkRoleTypeIntegrity(authUser, actor, wgRole.getUuid(), NodeType.WORK_GROUP);
@@ -152,9 +152,9 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			if (force) {
 				nestedMembers = businessService.findAllMembersByParentAndAccount(
 						foundMemberToUpdate.getAccount().getUuid(), updated.getNode().getUuid());
-			} else {
-				nestedMembers = businessService.findAllMembersWithNoConflictedRoles(
-						foundMemberToUpdate.getAccount().getUuid(), updated.getNode().getUuid(), wgRole.getUuid());
+			} else if (propagate) {
+				nestedMembers = businessService.findAllMembersByParentAndAccountAndPristine(
+						foundMemberToUpdate.getAccount().getUuid(), updated.getNode().getUuid(), true);
 			}
 			for (SharedSpaceMember wgFoundMember : nestedMembers) {
 				SharedSpaceMember wgMemberToUpdate = new SharedSpaceMember(wgFoundMember);

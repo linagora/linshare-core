@@ -269,9 +269,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The shared space member uuid")
 				@PathParam(value="memberUuid")String memberUuid,
 			@Parameter(description = "If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
-				@QueryParam("force") @DefaultValue("false") boolean force)
+				@QueryParam("force") @DefaultValue("false") boolean force,
+			@Parameter(description = "Propagate parameter is true by default, the role will be updated in the current node and propagated on nested workgroups which are not updated manually, else if it is false the role will be updated just in current node")
+				@QueryParam("propagate") @DefaultValue("true") boolean propagate)
 			throws BusinessException {
-		return memberFacade.update(null, member, memberUuid, force);
+		return memberFacade.update(null, member, memberUuid, force, propagate);
 	}
 
 	@Path("/{uuid}/audit")

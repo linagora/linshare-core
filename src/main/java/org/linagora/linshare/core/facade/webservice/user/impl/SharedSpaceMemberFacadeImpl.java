@@ -114,7 +114,7 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	}
 
 	@Override
-	public SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid, boolean force) throws BusinessException {
+	public SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid, boolean force, boolean propagate) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(member, "Shared space member must be set.");
@@ -126,7 +126,7 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		} else {
 			Validate.notEmpty(member.getUuid(), "The shared space member uuid to update must be set.");
 		}
-		return memberService.update(authUser, actor, member, force);
+		return memberService.update(authUser, actor, member, force, propagate);
 	}
 
 	@Override

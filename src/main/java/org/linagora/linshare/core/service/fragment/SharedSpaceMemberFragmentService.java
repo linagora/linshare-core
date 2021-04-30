@@ -49,7 +49,7 @@ public interface SharedSpaceMemberFragmentService {
 	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceMemberContext context,
 			SharedSpaceAccount account) throws BusinessException;
 
-	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force);
+	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force, boolean propagate);
 
 	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
 

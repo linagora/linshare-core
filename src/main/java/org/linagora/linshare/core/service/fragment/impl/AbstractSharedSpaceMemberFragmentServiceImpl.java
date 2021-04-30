@@ -194,6 +194,8 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		 */
 		boolean isInNestedWorkgroup = (parentUuid != null) && (!memberExistsInNode(account.getUuid(), node.getUuid()));
 		memberWg.setNested(isInNestedWorkgroup);
+		SharedSpaceMemberWorkgroup memberToCreate = (SharedSpaceMemberWorkgroup) memberWg;
+		memberToCreate.setPristine(true);
 		SharedSpaceMember toAdd = businessService.create(memberWg);
 		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORKGROUP_MEMBER);
 		return toAdd;
@@ -216,7 +218,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 	}
 
 	@Override
-	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force) {
+	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force, boolean propagate) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
@@ -232,7 +234,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		}
 		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToUpdate);
-		return update(authUser, actor, memberToUpdate, foundMemberToUpdate, force);
+		return update(authUser, actor, memberToUpdate, foundMemberToUpdate, force, propagate);
 	}
 
 	@Override
@@ -252,6 +254,6 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 	protected abstract SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember foundMemberToDelete);
 
 	protected abstract SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, SharedSpaceMember foundMemberToUpdate,
-			boolean force);
+			boolean force, boolean propagate);
 
 }

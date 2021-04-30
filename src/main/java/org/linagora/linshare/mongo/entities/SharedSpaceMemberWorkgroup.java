@@ -43,6 +43,8 @@ import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 @XmlRootElement(name = "SharedSpaceMemberWorkgroup")
 public class SharedSpaceMemberWorkgroup extends SharedSpaceMember {
 
+	protected boolean pristine;
+
 	public SharedSpaceMemberWorkgroup() {
 		super();
 		this.type = NodeType.WORK_GROUP;
@@ -55,5 +57,13 @@ public class SharedSpaceMemberWorkgroup extends SharedSpaceMember {
 			) {
 		super(node, role, account);
 		this.type = NodeType.WORK_GROUP;
+	}
+
+	public boolean isPristine() {
+		return pristine;
+	}
+
+	public void setPristine(boolean pristine) {
+		this.pristine = pristine;
 	}
 }

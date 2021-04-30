@@ -53,11 +53,13 @@ import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
+import org.linagora.linshare.core.service.fragment.SharedSpaceFragmentService;
 import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberWorkgroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
@@ -108,6 +110,9 @@ public class SharedSpaceMemberDriveServiceTest {
 	@Qualifier("sharedSpaceRoleService")
 	private SharedSpaceRoleService ssRoleService;
 
+	@Autowired
+	private SharedSpaceFragmentService sharedSpaceFragmentService;
+
 	private Account john;
 
 	private Account jane;
@@ -119,6 +124,8 @@ public class SharedSpaceMemberDriveServiceTest {
 	private SharedSpaceRole adminWorkgroupRole;
 
 	private SharedSpaceRole reader;
+
+	private SharedSpaceRole writer;
 
 	public SharedSpaceMemberDriveServiceTest() {
 		super();
@@ -135,6 +142,7 @@ public class SharedSpaceMemberDriveServiceTest {
 		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
 		writerDriveRole = ssRoleService.findByName(root, root, "DRIVE_WRITER");
 		reader = ssRoleService.findByName(root, root, "READER");
+		writer = ssRoleService.findByName(root, root, "WRITER");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -195,13 +203,60 @@ public class SharedSpaceMemberDriveServiceTest {
 		memberToUpdate.setNestedRole(new LightSharedSpaceRole(reader));
 		memberToUpdate.setRole(new LightSharedSpaceRole(writerDriveRole));
 		SharedSpaceMemberDrive updated = (SharedSpaceMemberDrive) ssMemberDriveService.update(john, john,
-				memberToUpdate, true);
+				memberToUpdate, true,  false);
 		Assertions.assertEquals(writerDriveRole.getUuid(), updated.getRole().getUuid());
 		try {
 			ssMemberDriveService.create(jane, jane, drive, context, new SharedSpaceAccount((User) john));
 		} catch (BusinessException ex) {
 			Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, ex.getErrorCode());
 		}
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testPropagateUpdateNestedRolesOnDriveMembers() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// Create a drive as John
+		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
+		Assertions.assertNotNull(drive, "Drive not created");
+		ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(), drive.getUuid());
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(adminDriveRole, adminWorkgroupRole);
+		// Add Jane to the created drive
+		SharedSpaceMemberDrive secondDriveMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
+				context, new SharedSpaceAccount((User) jane));
+		Assertions.assertNotNull(secondDriveMember, "Member not added to the drive");
+		Assertions.assertEquals(secondDriveMember.getNestedRole().getName(), adminWorkgroupRole.getName());
+		Assertions.assertEquals(ssMemberService.findAll(john, john, drive.getUuid()).size(), 2);
+		// Create first workgroup inside a drive
+		SharedSpaceNode node = new SharedSpaceNode("workgroup DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
+		SharedSpaceNode expectedNode = ssNodeService.create(john, john, node);
+		Assertions.assertNotNull(expectedNode, "node not created");
+		// Create second workgroup inside a drive as John
+		SharedSpaceNode secondNode = new SharedSpaceNode("workgroup2 DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
+		SharedSpaceNode secondExpectedNode = ssNodeService.create(john, john, secondNode);
+		Assertions.assertNotNull(secondExpectedNode, "node not created");
+		Assertions.assertEquals(sharedSpaceFragmentService.findAllWorkgroupsInNode(john, john, drive).size(), 2);
+		// Update Jane on the second node and pristine will be set to false
+		SharedSpaceMember janeMemberSecondNode = ssMemberService.findMemberByAccountUuid(john, john, jane.getLsUuid(), secondExpectedNode.getUuid());
+		janeMemberSecondNode.setRole(new LightSharedSpaceRole(writer));
+		SharedSpaceMemberWorkgroup workGroupMember = (SharedSpaceMemberWorkgroup) ssMemberService.update(john, john, janeMemberSecondNode);
+		Assertions.assertEquals(writer.getUuid(), workGroupMember.getRole().getUuid());
+		Assertions.assertFalse(workGroupMember.isPristine());
+		//check the pristine field for jane in the first node is true
+		SharedSpaceMemberWorkgroup janeMemberFirstNode = (SharedSpaceMemberWorkgroup) ssMemberService.findMemberByAccountUuid(john, john, jane.getLsUuid(), expectedNode.getUuid());
+		Assertions.assertTrue(janeMemberFirstNode.isPristine());
+		Assertions.assertEquals(janeMemberFirstNode.getRole().getName(), adminWorkgroupRole.getName());
+		// Update Jane member on the Drive with propagate flag is true
+		secondDriveMember.setNestedRole(new LightSharedSpaceRole(reader));
+		SharedSpaceMemberDrive updated = (SharedSpaceMemberDrive) ssMemberDriveService.update(john, john,
+				secondDriveMember, false,  true);
+		Assertions.assertEquals(reader.getName(), updated.getNestedRole().getName());
+		//check Update of Jane role on first nested node
+		SharedSpaceMemberWorkgroup janeMemberFirstNodeUpdate = (SharedSpaceMemberWorkgroup) ssMemberService.findMemberByAccountUuid(john, john, jane.getLsUuid(), expectedNode.getUuid());
+		Assertions.assertEquals(reader.getName(), janeMemberFirstNodeUpdate.getRole().getName());
+		//No role update for Jane on the second nested node
+		SharedSpaceMemberWorkgroup janeMemberSecondNodeUpdate = (SharedSpaceMemberWorkgroup) ssMemberService.findMemberByAccountUuid(john, john, jane.getLsUuid(), secondExpectedNode.getUuid());
+		Assertions.assertFalse(reader.getName().equals(janeMemberSecondNodeUpdate.getRole().getName()));
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

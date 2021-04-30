@@ -42,12 +42,14 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberWorkgroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -154,7 +156,16 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		Validate.notNull(memberToUpdate.getRole(), "The role must be set.");
 		foundMemberToUpdate.setRole(new LightSharedSpaceRole(checkRole(memberToUpdate.getRole().getUuid())));
 		foundMemberToUpdate.setModificationDate(new Date());
-		return repository.save(foundMemberToUpdate);
+		return checkSharedSpaceMemberTypeOnUpdate(foundMemberToUpdate);
+	}
+
+	private SharedSpaceMember checkSharedSpaceMemberTypeOnUpdate(SharedSpaceMember member) {
+		if (NodeType.WORK_GROUP.equals(member.getNode().getNodeType())) {
+			SharedSpaceMemberWorkgroup memberWg = (SharedSpaceMemberWorkgroup) member;
+			memberWg.setPristine(false);
+			return repository.save(memberWg);
+		}
+		return repository.save(member);
 	}
 
 	@Override
@@ -255,5 +266,11 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	public List<SharedSpaceMember> findAllMembersWithNoConflictedRoles(String accountUuid, String parentUuid,
 			String roleUuid) {
 		return repository.findAllMembersWithNoConflictedRoles(accountUuid, parentUuid, true, roleUuid);
+	}
+
+	@Override
+	public List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid,
+			boolean pristine) {
+		return repository.findAllMembersByParentAndAccountAndPristine(accountUuid, parentUuid, pristine);
 	}
 }

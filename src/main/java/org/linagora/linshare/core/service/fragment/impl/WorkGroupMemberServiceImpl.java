@@ -60,6 +60,7 @@ import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberWorkgroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmentServiceImpl{
@@ -94,9 +95,8 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 
 	@Override
 	protected SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate,
-			SharedSpaceMember foundMemberToUpdate, boolean force) {
-		SharedSpaceMember updated = new SharedSpaceMember();
-		updated = businessService.update(foundMemberToUpdate, memberToUpdate);
+			SharedSpaceMember foundMemberToUpdate, boolean force, boolean propagate) {
+		SharedSpaceMember updated = businessService.update(foundMemberToUpdate, memberToUpdate);
 		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
 		notify(new WorkGroupWarnUpdatedMemberEmailContext(updated, user, actor));
 		saveUpdateLog(authUser, actor, LogAction.UPDATE, foundMemberToUpdate, updated,
