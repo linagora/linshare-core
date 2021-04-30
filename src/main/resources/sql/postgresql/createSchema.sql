@@ -565,7 +565,6 @@ CREATE TABLE mailing_list_contact (
   uuid                       varchar(255) NOT NULL,
   creation_date              timestamp(6) NOT NULL,
   modification_date          timestamp(6) NOT NULL,
-  mailing_list_contact_index int4 NOT NULL,
   PRIMARY KEY (id));
 -- is it still usefull ?
 CREATE TABLE upload_request_template (

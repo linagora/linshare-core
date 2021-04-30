@@ -451,6 +451,10 @@ WHERE  functionality_id IN (SELECT id
                        FROM   unit
                        WHERE  unit_value = 0
                               AND unit_type = 0);
+
+ -- Remove mailing_list_contact_index
+ ALTER TABLE mailing_list_contact DROP mailing_list_contact_index;
+ 
 -- End of your requests
 
 -- LinShare version

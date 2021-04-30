@@ -14,12 +14,10 @@
 		<property name="creationDate" column="creation_date" type="timestamp" length="29" not-null="true" lazy="false" />
 		<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false" />
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
-
-		<set name="mailingListContact" lazy="true" cascade="all" inverse="true">
+		<set name="mailingListContact" lazy="true" cascade="all">
 			<key column="mailing_list_id" not-null="true" />
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ContactListContact" />
 		</set>
-
 		<many-to-one name="domain" class="org.linagora.linshare.core.domain.entities.AbstractDomain" column="domain_abstract_id"
 			lazy="false" fetch="join" cascade="lock"></many-to-one>
 		<many-to-one name="owner" class="org.linagora.linshare.core.domain.entities.User" cascade="lock" column="user_id"
