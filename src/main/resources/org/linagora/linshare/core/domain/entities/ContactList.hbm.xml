@@ -15,11 +15,10 @@
 		<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false" />
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
 
-		<list name="mailingListContact" cascade="all" lazy="true">
+		<set name="mailingListContact" lazy="true" cascade="all" inverse="true">
 			<key column="mailing_list_id" not-null="true" />
-			<list-index column="mailing_list_contact_index" />
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ContactListContact" />
-		</list>
+		</set>
 
 		<many-to-one name="domain" class="org.linagora.linshare.core.domain.entities.AbstractDomain" column="domain_abstract_id"
 			lazy="false" fetch="join" cascade="lock"></many-to-one>

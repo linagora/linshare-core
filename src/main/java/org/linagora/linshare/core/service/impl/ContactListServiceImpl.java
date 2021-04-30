@@ -36,7 +36,7 @@
 
 package org.linagora.linshare.core.service.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
@@ -54,8 +54,8 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.MailingListResourceAccessControl;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
-import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ContactListService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.MailingListAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.MailingListContactAuditLogEntry;
@@ -330,7 +330,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		duplicateMailingList.setDomain(list.getDomain());
 		duplicateMailingList.setPublic(list.isPublic());
 		duplicateMailingList.setDescription(sanitize(list.getDescription()));
-		duplicateMailingList.setMailingListContact(new ArrayList<ContactListContact>());
+		duplicateMailingList.setMailingListContact(new HashSet<ContactListContact>());
 		duplicateMailingList = contactListBusinessService.createList(duplicateMailingList, (User) owner);
 		for (ContactListContact contact : mailingListContactRepository.findAllContacts(list)) {
 			ContactListContact duplicateContact = new ContactListContact();

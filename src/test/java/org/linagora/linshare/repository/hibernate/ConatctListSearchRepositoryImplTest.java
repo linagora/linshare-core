@@ -36,9 +36,10 @@
 
 package org.linagora.linshare.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -123,7 +124,7 @@ public class ConatctListSearchRepositoryImplTest {
 		mailingList1.setDomain(domain);
 		mailingList1.setPublic(true);
 		mailingList1.setDescription("yoyo");
-		mailingList1.setMailingListContact(new ArrayList<ContactListContact>());
+		mailingList1.setMailingListContact(new HashSet<ContactListContact>());
 		mailingListRepository.create(mailingList1);
 
 		mailingList2 = new ContactList();
@@ -132,7 +133,7 @@ public class ConatctListSearchRepositoryImplTest {
 		mailingList2.setDomain(domain);
 		mailingList2.setPublic(false);
 		mailingList2.setDescription("fofo");
-		mailingList2.setMailingListContact(new ArrayList<ContactListContact>());
+		mailingList2.setMailingListContact(new HashSet<ContactListContact>());
 		mailingListRepository.create(mailingList2);
 
 		contact = new ContactListContact();
@@ -142,7 +143,7 @@ public class ConatctListSearchRepositoryImplTest {
 		contact.setUuid(UID);
 		contact.setCreationDate(new Date());
 		contact.setModificationDate(new Date());
-		List<ContactListContact> contacts = new ArrayList<>();
+		Set<ContactListContact> contacts = new HashSet<>();
 		contacts.add(contact);
 		mailingList1.setMailingListContact(contacts);
 		mailingListRepository.update(mailingList1);

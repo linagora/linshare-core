@@ -36,9 +36,10 @@
 
 package org.linagora.linshare.service;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -156,7 +157,7 @@ public class ContactListServiceTest {
 		contactList1.setDomain(domain);
 		contactList1.setPublic(true);
 		contactList1.setDescription("yoyo");
-		contactList1.setMailingListContact(new ArrayList<ContactListContact>());
+		contactList1.setMailingListContact(new HashSet<ContactListContact>());
 		mailingListRepository.create(contactList1);
 
 		contactList2 = new ContactList();
@@ -165,13 +166,13 @@ public class ContactListServiceTest {
 		contactList2.setDomain(domain);
 		contactList2.setPublic(false);
 		contactList2.setDescription("fofo");
-		contactList2.setMailingListContact(new ArrayList<ContactListContact>());
+		contactList2.setMailingListContact(new HashSet<ContactListContact>());
 		mailingListRepository.create(contactList2);
 
 		contact = newContact(UID, CONTACT_MAIL);
 		contact1 = newContact(UID1, CONTACT_MAIL1);
 		contact2 = newContact(UID2, CONTACT_MAIL2);
-		List<ContactListContact> contacts = new ArrayList<>();
+		Set<ContactListContact> contacts = new HashSet<>();
 		contacts.add(contact);
 		contacts.add(contact1);
 		contacts.add(contact2);
@@ -201,7 +202,7 @@ public class ContactListServiceTest {
 		contactList.setDomain(domain);
 		contactList.setPublic(false);
 		contactList.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
-		contactList.setMailingListContact(new ArrayList<ContactListContact>());
+		contactList.setMailingListContact(new HashSet<ContactListContact>());
 		contactListService.create(internal, internal, contactList);
 		Assertions.assertEquals(contactList.getIdentifier(), "EP_TEST_v233");
 		Assertions.assertEquals(contactList.getDescription(), "EP_TEST_v233");
@@ -220,7 +221,7 @@ public class ContactListServiceTest {
 		contactList.setDomain(domain);
 		contactList.setPublic(false);
 		contactList.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
-		contactList.setMailingListContact(new ArrayList<ContactListContact>());
+		contactList.setMailingListContact(new HashSet<ContactListContact>());
 		contactListService.create(internal, internal, contactList);
 		contactList.setIdentifier("EP_TEST_v233<script>alert(document.cookie)</script>");
 		contactListService.update(internal, internal, contactList);
@@ -255,7 +256,7 @@ public class ContactListServiceTest {
 		contactList.setDomain(domain);
 		contactList.setPublic(false);
 		contactList.setDescription("fofo");
-		contactList.setMailingListContact(new ArrayList<ContactListContact>());
+		contactList.setMailingListContact(new HashSet<ContactListContact>());
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			contactListService.create(internal, internal, contactList);
 		});

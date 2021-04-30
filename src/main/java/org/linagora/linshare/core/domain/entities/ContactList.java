@@ -36,13 +36,12 @@
 
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
-import org.linagora.linshare.core.repository.MailingListContactRepository;
 
 public class ContactList {
 
@@ -73,7 +72,7 @@ public class ContactList {
 	private AbstractDomain domain;
 
 	// List of contacts.
-	private List<ContactListContact> mailingListContact = new ArrayList<ContactListContact>();
+	private Set<ContactListContact> mailingListContact = new HashSet<ContactListContact>();
 
 	protected Date creationDate;
 
@@ -157,19 +156,13 @@ public class ContactList {
 		this.uuid = uuid;
 	}
 
-	/**
-	 * Avoid use getter (when adding a contact to a list, mailing_list_contact_index database property (see list-index in ContactList.hbm) may always be 0, so it breaks the returned list semantic  
-	 * instead of it use the {@link MailingListContactRepository} to get
-	 * the contacts of the given list
-	 * 
-	 * @return
-	 */
-	public List<ContactListContact> getMailingListContact() {
+
+	public Set<ContactListContact> getMailingListContact() {
 		return mailingListContact;
 	}
 
-	public void setMailingListContact(List<ContactListContact> contactListMember) {
-		this.mailingListContact = contactListMember;
+	public void setMailingListContact(Set<ContactListContact> mailingListContact) {
+		this.mailingListContact = mailingListContact;
 	}
 
 	public Date getCreationDate() {
