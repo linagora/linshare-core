@@ -241,8 +241,7 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
-				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER);
-		ldapDriveMemberObject.setRole(Role.CONTRIBUTOR);
+				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.DRIVE);
 		Assertions.assertNotNull(drive, "The drive has not been found");
@@ -255,7 +254,7 @@ public class LDAPDriveSyncServiceImplTest {
 		Assertions.assertNotNull(member, "The member has not been found");
 		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
 				member.getExternalId(), "The externalId do not match");
-		Assertions.assertEquals(Role.CONTRIBUTOR.toString(), member.getRole().getName());
+		Assertions.assertEquals(Role.CONTRIBUTOR.toString(), member.getNestedRole().getName());
 		Assertions.assertEquals(syncDate, member.getSyncDate(), "The given syncDate is not the same as the found one");
 	}
 
@@ -272,8 +271,7 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
-				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER);
-		ldapDriveMemberObject.setRole(Role.CONTRIBUTOR);
+				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.DRIVE);
 		Assertions.assertNotNull(drive, "The drive has not been found");
@@ -285,7 +283,7 @@ public class LDAPDriveSyncServiceImplTest {
 		Assertions.assertNotNull(member, "The member has not been found");
 		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
 				member.getExternalId(), "The externalId do not match");
-		Assertions.assertEquals(Role.CONTRIBUTOR.toString(), member.getRole().getName());
+		Assertions.assertEquals(Role.CONTRIBUTOR.toString(), member.getNestedRole().getName());
 		Assertions.assertEquals(syncDate, member.getSyncDate(), "The given syncDate is not the same as the found one");
 	}
 
@@ -303,15 +301,14 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
-				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER);
-		ldapDriveMemberObject.setRole(Role.CONTRIBUTOR);
+				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
 		// Create a drive
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.DRIVE);
 		// Create a member
 		driveSyncService.createOrUpdateLDAPDriveMember(systemAccount, domain.getUuid(), drive,
 				ldapDriveMemberObject, syncDate, resultContext, domain.getDriveProvider().getSearchInOtherDomains());
-		ldapDriveMemberObject.setRole(Role.ADMIN);
+		ldapDriveMemberObject.setNestedRole(Role.ADMIN);
 		ldapDriveMemberObject.setFirstName("Bob");
 		syncDate = calendar.getTime();
 		// Update a member
@@ -321,7 +318,7 @@ public class LDAPDriveSyncServiceImplTest {
 		Assertions.assertNotNull(updated, "The member has not been found");
 		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
 				updated.getExternalId(), "The externalId do not match");
-		Assertions.assertEquals(Role.ADMIN.toString(), updated.getRole().getName());
+		Assertions.assertEquals(Role.ADMIN.toString(), updated.getNestedRole().getName());
 		Assertions.assertEquals(syncDate, updated.getSyncDate(), "The given syncDate is not the same as the found one");
 	}
 
@@ -363,8 +360,7 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
-				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER);
-		ldapDriveMemberObject.setRole(Role.CONTRIBUTOR);
+				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.DRIVE);
 		Assertions.assertNotNull(drive, "The drive has not been found");

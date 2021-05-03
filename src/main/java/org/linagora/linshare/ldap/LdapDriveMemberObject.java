@@ -42,8 +42,9 @@ public class LdapDriveMemberObject extends LdapGroupMemberObject {
 	}
 
 	public LdapDriveMemberObject(String firstName, String lastName, String email, String externalId,
-			Role nestedRole) {
+			Role role, Role nestedRole) {
 		super(firstName, lastName, email, externalId);
+		this.role = role;
 		this.nestedRole = nestedRole;
 	}
 
