@@ -76,26 +76,26 @@ public class LDAPDriveQueryServiceImpl extends LDAPGroupQueryServiceImpl impleme
 			JScriptDriveMemberLdapQuery memberQuery = memberQuery(baseDn, groupPattern, lqlctx, dnList);
 			// load writer members and drive role is not defined
 			if (groupQuery.isDnExist(group.getWritersDn()) && !groupQuery.isDnExist(group.getDriveWritersDn())) {
-				res.addAll(convert(Role.WRITER, Role.DRIVE_READER, getMembers(group.getWritersDn(), groupQuery, memberQuery)));
+				res.addAll(convert(Role.DRIVE_READER, Role.WRITER, getMembers(group.getWritersDn(), groupQuery, memberQuery)));
 			}
 			// load contributor members and drive role is not defined
 			if (groupQuery.isDnExist(group.getContributorsDn()) && !groupQuery.isDnExist(group.getDriveWritersDn())) {
-				res.addAll(convert(Role.CONTRIBUTOR, Role.DRIVE_READER, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
+				res.addAll(convert(Role.DRIVE_READER, Role.CONTRIBUTOR, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
 			}
 			// load drive_writer role and workGroup role is not defined
 			if ((!(groupQuery.isDnExist(group.getWritersDn())) || (groupQuery.isDnExist(group.getContributorsDn()))) && groupQuery.isDnExist(group.getDriveWritersDn())) {
-				res.addAll(convert(Role.READER, Role.DRIVE_WRITER, getMembers(group.getDriveWritersDn(), groupQuery, memberQuery)));
+				res.addAll(convert(Role.DRIVE_WRITER, Role.READER, getMembers(group.getDriveWritersDn(), groupQuery, memberQuery)));
 			}
 			// load writer members and drive role is defined
 			if (groupQuery.isDnExist(group.getWritersDn()) && groupQuery.isDnExist(group.getDriveWritersDn())) {
-				res.addAll(convert(Role.WRITER, Role.DRIVE_WRITER, getMembers(group.getWritersDn(), groupQuery, memberQuery)));
+				res.addAll(convert(Role.DRIVE_WRITER, Role.WRITER, getMembers(group.getWritersDn(), groupQuery, memberQuery)));
 			}
 			// load contributor members and drive role is defined
 			if (groupQuery.isDnExist(group.getContributorsDn()) && groupQuery.isDnExist(group.getDriveWritersDn())) {
-				res.addAll(convert(Role.CONTRIBUTOR, Role.DRIVE_WRITER, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
+				res.addAll(convert(Role.DRIVE_WRITER, Role.CONTRIBUTOR, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
 			}
 			// load read only members
-			res.addAll(convert(Role.READER, Role.DRIVE_READER, getMembers(group.getExternalId(), groupQuery, memberQuery)));
+			res.addAll(convert(Role.DRIVE_READER, Role.READER, getMembers(group.getExternalId(), groupQuery, memberQuery)));
 		} finally {
 			ldapContext.close();
 		}

@@ -98,15 +98,15 @@ public class LDAPDriveSyncServiceImpl extends LDAPGroupSyncServiceImpl implement
 			SharedSpaceLDAPGroup group, LdapDriveMemberObject memberObject, Date syncDate,
 			LdapGroupsBatchResultContext resultContext, Boolean searchInOtherDomains) {
 		User user = findOrCreateUser(memberObject.getEmail(), domainUuid, searchInOtherDomains, memberObject);
-		SharedSpaceRole role = getRoleFrom(actor, memberObject.getRole(), NodeType.WORK_GROUP);
-		SharedSpaceRole nestedRole = getRoleFrom(actor, memberObject.getNestedRole(), NodeType.DRIVE);
+		SharedSpaceRole role = getRoleFrom(actor, memberObject.getRole(), NodeType.DRIVE);
+		SharedSpaceRole nestedRole = getRoleFrom(actor, memberObject.getNestedRole(), NodeType.WORK_GROUP);
 		SharedSpaceLDAPDriveMember member = (SharedSpaceLDAPDriveMember) super.findMemberToUpdate(group.getUuid(), memberObject.getExternalId(), syncDate);
 		if (member != null) {
 			member.setModificationDate(new Date());
 			member.setSyncDate(syncDate);
 			logger.info(String.format("Ldap group member updated : NAME : %s", member.getAccount().getName()));
 			if ((member.getRole().getUuid().equals(role.getUuid()))
-					&& (member.getNestedRole().equals(nestedRole.getUuid()))) {
+					&& (member.getNestedRole().getUuid().equals(nestedRole.getUuid()))) {
 				// Simple update : The member is not notified
 				mongoTemplate.save(member);
 				return member;
@@ -140,7 +140,7 @@ public class LDAPDriveSyncServiceImpl extends LDAPGroupSyncServiceImpl implement
 		// Create each member
 		for (LdapDriveMemberObject memberObject : memberObjects) {
 			createOrUpdateLDAPDriveMember(actor, domain.getUuid(), created, memberObject, syncDate, resultContext,
-					domain.getGroupProvider().getSearchInOtherDomains());
+					domain.getDriveProvider().getSearchInOtherDomains());
 		}
 		deleteOutDatedMembers(actor, created, syncDate, resultContext);
 	}
