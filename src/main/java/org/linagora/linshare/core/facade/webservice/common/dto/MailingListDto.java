@@ -87,7 +87,7 @@ public class MailingListDto {
 		this.owner = UserDto.getSimple(list.getOwner());
 		this.domainId = list.getDomain().getUuid();
 		if (full) {
-			for (ContactListContact current : list.getMailingListContact()) {
+			for (ContactListContact current : list.getContactListContacts()) {
 				contacts.add(new MailingListContactDto(current));
 			}
 		}
@@ -100,7 +100,7 @@ public class MailingListDto {
 		list.setDescription(getDescription());
 		list.setPublic(isPublic());
 		for (MailingListContactDto current : getContacts()) {
-			list.getMailingListContact().add(new ContactListContact(current));
+			list.getContactListContacts().add(new ContactListContact(current));
 		}
 		return list;
 	}

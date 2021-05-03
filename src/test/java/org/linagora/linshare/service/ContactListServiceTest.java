@@ -157,7 +157,7 @@ public class ContactListServiceTest {
 		contactList1.setDomain(domain);
 		contactList1.setPublic(true);
 		contactList1.setDescription("yoyo");
-		contactList1.setMailingListContact(new HashSet<ContactListContact>());
+		contactList1.setContactListContacts(new HashSet<ContactListContact>());
 		mailingListRepository.create(contactList1);
 
 		contactList2 = new ContactList();
@@ -166,7 +166,7 @@ public class ContactListServiceTest {
 		contactList2.setDomain(domain);
 		contactList2.setPublic(false);
 		contactList2.setDescription("fofo");
-		contactList2.setMailingListContact(new HashSet<ContactListContact>());
+		contactList2.setContactListContacts(new HashSet<ContactListContact>());
 		mailingListRepository.create(contactList2);
 
 		contact = newContact(UID, CONTACT_MAIL);
@@ -176,7 +176,7 @@ public class ContactListServiceTest {
 		contacts.add(contact);
 		contacts.add(contact1);
 		contacts.add(contact2);
-		contactList1.setMailingListContact(contacts);
+		contactList1.setContactListContacts(contacts);
 		mailingListRepository.update(contactList1);
 
 		logger.debug("End setUp");
@@ -202,7 +202,7 @@ public class ContactListServiceTest {
 		contactList.setDomain(domain);
 		contactList.setPublic(false);
 		contactList.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
-		contactList.setMailingListContact(new HashSet<ContactListContact>());
+		contactList.setContactListContacts(new HashSet<ContactListContact>());
 		contactListService.create(internal, internal, contactList);
 		Assertions.assertEquals(contactList.getIdentifier(), "EP_TEST_v233");
 		Assertions.assertEquals(contactList.getDescription(), "EP_TEST_v233");
@@ -221,7 +221,7 @@ public class ContactListServiceTest {
 		contactList.setDomain(domain);
 		contactList.setPublic(false);
 		contactList.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
-		contactList.setMailingListContact(new HashSet<ContactListContact>());
+		contactList.setContactListContacts(new HashSet<ContactListContact>());
 		contactListService.create(internal, internal, contactList);
 		contactList.setIdentifier("EP_TEST_v233<script>alert(document.cookie)</script>");
 		contactListService.update(internal, internal, contactList);
@@ -238,7 +238,7 @@ public class ContactListServiceTest {
 		List<ContactList> contactLists = contactListService.findAllByMemberEmail(internal, internal, null, CONTACT_MAIL);
 		Assertions.assertEquals(contactLists.size(), 1, "just one list contains the member who has the mentioned email");
 		ContactList duplicatedContactList = contactListService.duplicate(internal, internal, contactLists.get(0), "contactList duplicated");
-		Assertions.assertEquals(3, duplicatedContactList.getMailingListContact().size());
+		Assertions.assertEquals(3, duplicatedContactList.getContactListContacts().size());
 		contactListService.deleteList(internal.getLsUuid(), duplicatedContactList.getUuid());
 		ContactList deletedContactList = contactListService.findByIdentifier(internal.getLsUuid(), duplicatedContactList.getUuid());
 		Assertions.assertNull(deletedContactList);
@@ -256,7 +256,7 @@ public class ContactListServiceTest {
 		contactList.setDomain(domain);
 		contactList.setPublic(false);
 		contactList.setDescription("fofo");
-		contactList.setMailingListContact(new HashSet<ContactListContact>());
+		contactList.setContactListContacts(new HashSet<ContactListContact>());
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			contactListService.create(internal, internal, contactList);
 		});

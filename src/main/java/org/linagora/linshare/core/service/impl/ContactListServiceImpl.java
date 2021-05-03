@@ -243,7 +243,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		Validate.notNull(actorUuid);
 		Validate.notNull(contactToUpdate);
 		ContactListContact contact = contactListBusinessService.findContact(contactToUpdate.getUuid());
-		ContactList list = contact.getMailingList();
+		ContactList list = contact.getContactList();
 		User actor = userService.findByLsUuid(actorUuid);
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
 				new AccountMto(list.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list,
@@ -264,7 +264,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 
 		User actor = userService.findByLsUuid(actorUuid);
 		ContactListContact contact = contactListBusinessService.findContact(contactUuid);
-		ContactList contactList = contact.getMailingList();
+		ContactList contactList = contact.getContactList();
 		checkRights(actor, contactList, "You are not authorized to delete a contact");
 		contactListBusinessService.deleteContact(contactList, contactUuid);
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
@@ -330,7 +330,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		duplicateMailingList.setDomain(list.getDomain());
 		duplicateMailingList.setPublic(list.isPublic());
 		duplicateMailingList.setDescription(sanitize(list.getDescription()));
-		duplicateMailingList.setMailingListContact(new HashSet<ContactListContact>());
+		duplicateMailingList.setContactListContacts(new HashSet<ContactListContact>());
 		duplicateMailingList = contactListBusinessService.createList(duplicateMailingList, (User) owner);
 		for (ContactListContact contact : mailingListContactRepository.findAllContacts(list)) {
 			ContactListContact duplicateContact = new ContactListContact();
@@ -406,7 +406,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		Validate.notNull(contact, "Contact must be set.");
 		Validate.notEmpty(contact.getUuid(), "Contact uuid must be set.");
 		ContactListContact contactToUpdate = contactListBusinessService.findContact(contact.getUuid());
-		ContactList list = contactToUpdate.getMailingList();
+		ContactList list = contactToUpdate.getContactList();
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
 				new AccountMto(list.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list,
 				contactToUpdate);
@@ -426,7 +426,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		Validate.notEmpty(contactUuid, "Contact uuid must be set.");
 
 		ContactListContact contactToDelete = contactListBusinessService.findContact(contactUuid);
-		ContactList list = contactToDelete.getMailingList();
+		ContactList list = contactToDelete.getContactList();
 		checkUpdatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, list);
 		contactListBusinessService.deleteContact(list, contactToDelete.getUuid());
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),

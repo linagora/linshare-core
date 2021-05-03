@@ -177,8 +177,8 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<ContactLis
 		private_mine.add(Restrictions.eq("owner", user));
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.or(public_others, private_mine));
-		det.createAlias("mailingListContact", "mlc");
-		det.add(Restrictions.eq("mlc.mail", email));
+		det.createAlias("contactListContacts", "clc");
+		det.add(Restrictions.eq("clc.mail", email));
 		return findByCriteria(det);
 	}
 
@@ -187,8 +187,8 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<ContactLis
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("domain", user.getDomain()));
 		det.add(Restrictions.eq("owner", user));
-		det.createAlias("mailingListContact", "mlc");
-		det.add(Restrictions.eq("mlc.mail", email));
+		det.createAlias("contactListContacts", "clc");
+		det.add(Restrictions.eq("clc.mail", email));
 		return findByCriteria(det);
 	}
 
@@ -198,8 +198,8 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<ContactLis
 		det.add(Restrictions.eq("domain", user.getDomain()));
 		det.add(Restrictions.eq("isPublic", true));
 		det.add(Restrictions.ne("owner", user));
-		det.createAlias("mailingListContact", "mlc");
-		det.add(Restrictions.eq("mlc.mail", email));
+		det.createAlias("contactListContacts", "clc");
+		det.add(Restrictions.eq("clc.mail", email));
 		return findByCriteria(det);
 	}
 	

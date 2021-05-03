@@ -58,7 +58,7 @@ public class MailingListContactMto {
 	public MailingListContactMto(ContactListContact contact) {
 		this.uuid = contact.getUuid();
 		this.mail = contact.getMail();
-		this.listUuid = contact.getMailingList().getUuid();
+		this.listUuid = contact.getContactList().getUuid();
 		this.firstName = contact.getFirstName();
 		this.lastName = contact.getLastName();
 	}

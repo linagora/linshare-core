@@ -69,7 +69,7 @@ public class MailingListContactDto {
 		this.uuid = contact.getUuid();
 		this.lastName = contact.getLastName();
 		this.firstName = contact.getFirstName();
-		this.mailingListUuid = contact.getMailingList().getUuid();
+		this.mailingListUuid = contact.getContactList().getUuid();
 	}
 
 	public ContactListContact toObject() {

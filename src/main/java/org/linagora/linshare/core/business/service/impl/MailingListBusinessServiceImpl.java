@@ -224,7 +224,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 		List<ContactListContact> contactListContact = findAllContacts(contactList);
 		if (!contactListContact.contains(contact)) {
 			contactList.addMailingListContact(contact);
-			contact.setMailingList(contactList);
+			contact.setContactList(contactList);
 			contact = contactRepository.create(contact);
 			listRepository.update(contactList);
 			return contact;

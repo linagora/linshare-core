@@ -124,7 +124,7 @@ public class ConatctListSearchRepositoryImplTest {
 		mailingList1.setDomain(domain);
 		mailingList1.setPublic(true);
 		mailingList1.setDescription("yoyo");
-		mailingList1.setMailingListContact(new HashSet<ContactListContact>());
+		mailingList1.setContactListContacts(new HashSet<ContactListContact>());
 		mailingListRepository.create(mailingList1);
 
 		mailingList2 = new ContactList();
@@ -133,7 +133,7 @@ public class ConatctListSearchRepositoryImplTest {
 		mailingList2.setDomain(domain);
 		mailingList2.setPublic(false);
 		mailingList2.setDescription("fofo");
-		mailingList2.setMailingListContact(new HashSet<ContactListContact>());
+		mailingList2.setContactListContacts(new HashSet<ContactListContact>());
 		mailingListRepository.create(mailingList2);
 
 		contact = new ContactListContact();
@@ -145,7 +145,7 @@ public class ConatctListSearchRepositoryImplTest {
 		contact.setModificationDate(new Date());
 		Set<ContactListContact> contacts = new HashSet<>();
 		contacts.add(contact);
-		mailingList1.setMailingListContact(contacts);
+		mailingList1.setContactListContacts(contacts);
 		mailingListRepository.update(mailingList1);
 
 		logger.debug("End setUp");

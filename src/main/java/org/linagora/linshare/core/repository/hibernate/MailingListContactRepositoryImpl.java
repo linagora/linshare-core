@@ -89,7 +89,7 @@ public class MailingListContactRepositoryImpl extends
 		DetachedCriteria det = DetachedCriteria
 				.forClass(ContactListContact.class);
 		det.add(Restrictions.eq("mail", mail));
-		det.add(Restrictions.eq("mailingList", list));
+		det.add(Restrictions.eq("contactList", list));
 		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
 
@@ -97,7 +97,7 @@ public class MailingListContactRepositoryImpl extends
 	@Override
 	public List<String> getAllContactMails(ContactList list) {
 		DetachedCriteria det = DetachedCriteria.forClass(ContactListContact.class);
-		det.add(Restrictions.eq("mailingList", list));
+		det.add(Restrictions.eq("contactList", list));
 		det.setProjection(Projections.property("mail"));
 		return listByCriteria(det);
 	}
@@ -121,7 +121,7 @@ public class MailingListContactRepositoryImpl extends
 	@Override
 	public List<ContactListContact> findAllContacts(ContactList list) {
 		DetachedCriteria det = DetachedCriteria.forClass(ContactListContact.class);
-		det.add(Restrictions.eq("mailingList", list));
+		det.add(Restrictions.eq("contactList", list));
 		return findByCriteria(det);
 	}
 
@@ -132,11 +132,11 @@ public class MailingListContactRepositoryImpl extends
 			public Long doInHibernate(final Session session)
 					throws HibernateException {
 				final Query<?> query = session.createQuery(
-						"UPDATE MailingListContact SET mail = :newEmail WHERE mail = :currentEmail");
+						"UPDATE ContactListContact SET mail = :newEmail WHERE mail = :currentEmail");
 				query.setParameter("newEmail", newEmail);
 				query.setParameter("currentEmail", currentEmail);
 				long updatedCounter = (long) query.executeUpdate();
-				logger.info(updatedCounter + " MailingListContact have been updated.");
+				logger.info(updatedCounter + " ContactListContact have been updated.");
 				return updatedCounter;
 			}
 		};

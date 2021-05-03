@@ -72,7 +72,7 @@ public class MailingListMto {
 		this.domain = new DomainMto(list.getDomain());
 		this.isPublic = list.isPublic();
 		this.contacts = Lists.newArrayList();
-		for (ContactListContact m : list.getMailingListContact()) {
+		for (ContactListContact m : list.getContactListContacts()) {
 			contacts.add(new MailingListContactMto(m));
 		}
 	}

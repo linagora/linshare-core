@@ -77,7 +77,7 @@ public class ContactListContactDto {
 		this.uuid = contact.getUuid();
 		this.lastName = contact.getLastName();
 		this.firstName = contact.getFirstName();
-		this.mailingListUuid = contact.getMailingList().getUuid();
+		this.mailingListUuid = contact.getContactList().getUuid();
 		this.creationDate = contact.getCreationDate();
 		this.modificationDate = contact.getModificationDate();
 	}

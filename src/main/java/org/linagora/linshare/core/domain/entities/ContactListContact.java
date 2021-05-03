@@ -56,7 +56,7 @@ public class ContactListContact {
 
 	protected Date modificationDate;
 	
-	private ContactList mailingList;
+	private ContactList contactList;
 	/**
 	 * Constructors
 	 */
@@ -165,12 +165,12 @@ public class ContactListContact {
 		this.modificationDate = modificationDate;
 	}
 
-	public ContactList getMailingList() {
-		return mailingList;
+	public ContactList getContactList() {
+		return contactList;
 	}
 
-	public void setMailingList(ContactList contactList) {
-		this.mailingList = contactList;
+	public void setContactList(ContactList contactList) {
+		this.contactList = contactList;
 	}
 
 	/**

@@ -72,7 +72,7 @@ public class ContactList {
 	private AbstractDomain domain;
 
 	// List of contacts.
-	private Set<ContactListContact> mailingListContact = new HashSet<ContactListContact>();
+	private Set<ContactListContact> contactListContacts = new HashSet<ContactListContact>();
 
 	protected Date creationDate;
 
@@ -88,7 +88,7 @@ public class ContactList {
 		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
 		for (MailingListContactDto current : list.getContacts()) {
-			mailingListContact.add(new ContactListContact(current));
+			contactListContacts.add(new ContactListContact(current));
 		}
 	}
 
@@ -157,12 +157,12 @@ public class ContactList {
 	}
 
 
-	public Set<ContactListContact> getMailingListContact() {
-		return mailingListContact;
+	public Set<ContactListContact> getContactListContacts() {
+		return contactListContacts;
 	}
 
-	public void setMailingListContact(Set<ContactListContact> mailingListContact) {
-		this.mailingListContact = mailingListContact;
+	public void setContactListContacts(Set<ContactListContact> contactListContacts) {
+		this.contactListContacts = contactListContacts;
 	}
 
 	public Date getCreationDate() {
@@ -191,7 +191,7 @@ public class ContactList {
 	 * @param contact
 	 */
 	public void addMailingListContact(ContactListContact contact) {
-		mailingListContact.add(contact);
+		contactListContacts.add(contact);
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class ContactList {
 	 * @param contact
 	 */
 	public void deleteMailingListContact(ContactListContact contact) {
-		mailingListContact.remove(contact);
+		contactListContacts.remove(contact);
 	}
 
 	/**

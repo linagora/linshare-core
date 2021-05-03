@@ -452,8 +452,18 @@ WHERE  functionality_id IN (SELECT id
                        WHERE  unit_value = 0
                               AND unit_type = 0);
 
- -- Remove mailing_list_contact_index
+ -- Remove mailing_list_contact_index from mailing_list_contact table
  ALTER TABLE mailing_list_contact DROP mailing_list_contact_index;
+ 
+ -- Refactor change mailing to contact in contact list tables
+ ALTER INDEX mailing_list_index RENAME TO contact_list_index;
+ ALTER INDEX mailing_list_contact_index RENAME TO contact_list_contact_index;
+ 
+ ALTER TABLE mailing_list RENAME TO contact_list;
+ ALTER TABLE mailing_list_contact RENAME TO contact_list_contact;
+ ALTER TABLE contact_list_contact RENAME COLUMN mailing_list_id TO contact_list_id;
+ 
+ 
  
 -- End of your requests
 

@@ -545,7 +545,7 @@ CREATE TABLE upload_request_entry (
   ls_type                 varchar(255),
   sha256sum               varchar(255),
   PRIMARY KEY (entry_id));
-CREATE TABLE mailing_list (
+CREATE TABLE contact_list (
   id                  int8 NOT NULL,
   domain_abstract_id int8 NOT NULL,
   user_id            int8 NOT NULL,
@@ -556,9 +556,9 @@ CREATE TABLE mailing_list (
   creation_date      timestamp(6) NOT NULL,
   modification_date  timestamp(6) NOT NULL,
   PRIMARY KEY (id));
-CREATE TABLE mailing_list_contact (
+CREATE TABLE contact_list_contact (
   id                          int8 NOT NULL,
-  mailing_list_id            int8 NOT NULL,
+  contact_list_id            int8 NOT NULL,
   mail                       varchar(255) NOT NULL,
   first_name                 varchar(255),
   last_name                  varchar(255),
@@ -913,10 +913,10 @@ CREATE UNIQUE INDEX signature_i
   ON signature (uuid);
 CREATE INDEX unit_index
   ON unit (id);
-CREATE INDEX mailing_list_index
-  ON mailing_list (uuid);
-CREATE INDEX mailing_list_contact_index
-  ON mailing_list_contact (uuid);
+CREATE INDEX contact_list_index
+  ON contact_list (uuid);
+CREATE INDEX contact_list_contact_index
+  ON contact_list_contact (uuid);
 CREATE UNIQUE INDEX welcome_messages_uuid
   ON welcome_messages (uuid);
 CREATE INDEX async_task_id
@@ -986,9 +986,9 @@ ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11782 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
-ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES account (id);
-ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingListContact FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
+ALTER TABLE contact_list ADD CONSTRAINT FKcontact_li478123 FOREIGN KEY (user_id) REFERENCES account (id);
+ALTER TABLE contact_list ADD CONSTRAINT FKcontact_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE contact_list_contact ADD CONSTRAINT FKContactListContact FOREIGN KEY (contact_list_id) REFERENCES contact_list (id);
 ALTER TABLE upload_request_template ADD CONSTRAINT FKupload_req618325 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif791766 FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
 ALTER TABLE mime_type ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
