@@ -454,6 +454,15 @@ WHERE  functionality_id IN (SELECT id
                        WHERE  unit_value = 0
                               AND unit_type = 0);
 
+ -- enable Upload Request mail activation
+UPDATE mail_activation SET system = false, enable = true WHERE identifier LIKE 'UPLOAD_REQUEST_%';
+-- -- activation policy update
+UPDATE policy SET status = true , default_status = true, policy = 0 ,system = true WHERE id IN (SELECT policy_activation_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%');
+-- -- configuration policy update
+UPDATE policy SET status = true , default_status = true, policy = 1 ,system = false WHERE id IN (SELECT policy_configuration_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%');
+-- -- delegation policy update
+UPDATE policy SET status = false , default_status = false, policy = 2 ,system = true WHERE id IN (SELECT policy_delegation_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%'); 
+
  -- Remove mailing_list_contact_index from mailing_list_contact table
  ALTER TABLE mailing_list_contact DROP mailing_list_contact_index;
  
