@@ -1065,7 +1065,6 @@
 										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
 										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
 										<fileset file="src/main/resources/sql/common/import-settings.sql" />
-										<fileset file="src/main/resources/sql/common/import-alias.sql" />
 										<fileset file="src/main/resources/sql/common/import-footer.sql" />
 									</concat>
 								</target>

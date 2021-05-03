@@ -1,11 +1,15 @@
 -- Postgresql migration script template
 
+-- Migration script to upgrade from LinShare CHANGE_ME to LinShare CHANGE_ME. 
+
 BEGIN;
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET client_min_messages = info;
 SET default_with_oids = false;
+
+---- Precheck functions 
 
 CREATE OR REPLACE FUNCTION ls_version() RETURNS void AS $$
 BEGIN
@@ -73,32 +77,19 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-
-SELECT ls_check_user_connected();
 SELECT ls_prechecks();
+SELECT ls_check_user_connected();
 
 SET client_min_messages = warning;
 
-DROP VIEW IF EXISTS alias_users_list_all;
-DROP VIEW IF EXISTS alias_users_list_active;
-DROP VIEW IF EXISTS alias_users_list_destroyed;
-DROP VIEW IF EXISTS alias_threads_list_all;
-DROP VIEW IF EXISTS alias_threads_list_active;
-DROP VIEW IF EXISTS alias_threads_list_destroyed;
--- Here your request
+
+---- Here your queries
 
 
 
--- End of your requests
+---- End of your queries
 
--- LinShare version
+-- Upgrade LinShare version
 SELECT ls_version();
 
--- Alias for threads
--- All threads
-CREATE VIEW alias_threads_list_all AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id;
--- All active threads
-CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = 0;
--- All destroyed threads
-CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed != 0;
 COMMIT;

@@ -134,6 +134,8 @@ SELECT ls_prechecks();
 
 SET client_min_messages = warning;
 
+-- Clean useless aliases
+DROP VIEW IF EXISTS alias_func_list_all;
 DROP VIEW IF EXISTS alias_users_list_all;
 DROP VIEW IF EXISTS alias_users_list_active;
 DROP VIEW IF EXISTS alias_users_list_destroyed;
@@ -141,7 +143,7 @@ DROP VIEW IF EXISTS alias_threads_list_all;
 DROP VIEW IF EXISTS alias_threads_list_active;
 DROP VIEW IF EXISTS alias_threads_list_destroyed;
 
----- Here your request
+---- Here your queries
 
 -- Avoid duplicate unit_id in functionality_unit table function declaration 
 CREATE OR REPLACE FUNCTION ls_avoid_duplicate_unit_in_functionality_unit() RETURNS void AS $$
@@ -463,18 +465,9 @@ WHERE  functionality_id IN (SELECT id
  ALTER TABLE mailing_list_contact RENAME TO contact_list_contact;
  ALTER TABLE contact_list_contact RENAME COLUMN mailing_list_id TO contact_list_id;
  
- 
- 
--- End of your requests
+---- End of your queries
 
 -- LinShare version
 SELECT ls_version();
 
--- Alias for threads
--- All threads
-CREATE VIEW alias_threads_list_all AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id;
--- All active threads
-CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = 0;
--- All destroyed threads
-CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed != 0;
 COMMIT;
