@@ -37,6 +37,7 @@ package org.linagora.linshare.mongo.entities;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 
 @XmlRootElement(name = "SharedSpaceAccount")
@@ -62,6 +63,13 @@ public class SharedSpaceAccount {
 		this.name = user.getFullName();
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
+		this.mail = user.getMail();
+	}
+	
+	public SharedSpaceAccount(Account user) {
+		super();
+		this.uuid = user.getLsUuid();
+		this.name = user.getFullName();
 		this.mail = user.getMail();
 	}
 

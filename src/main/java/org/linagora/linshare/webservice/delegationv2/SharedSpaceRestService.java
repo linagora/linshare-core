@@ -44,7 +44,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 public interface SharedSpaceRestService {
 
-	SharedSpaceNode find(String actorUuid, String uuid, boolean withRole) throws BusinessException;
+	SharedSpaceNode find(String actorUuid, String uuid, boolean withRole, boolean lastUpdater) throws BusinessException;
 
 	SharedSpaceNode create(String actorUuid, SharedSpaceNode node) throws BusinessException;
 

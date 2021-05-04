@@ -306,6 +306,7 @@
 	<bean name="sharedSpaceNodeBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceNodeBusinessServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+		<constructor-arg ref="mongoTemplate" />
 	</bean>
 	<bean name="driveMemberBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.DriveMemberBusinessServiceImpl">

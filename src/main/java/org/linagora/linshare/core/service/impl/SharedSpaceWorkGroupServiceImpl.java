@@ -103,7 +103,7 @@ public class SharedSpaceWorkGroupServiceImpl extends AbstractSharedSpaceFragment
 					"Can not create this kind of sharedSpace with this method.");
 		}
 		SharedSpaceNode toCreate = new SharedSpaceNode(sanitize(node.getName()), node.getParentUuid(), node.getNodeType(),
-				node.getVersioningParameters());
+				node.getVersioningParameters(), sanitize(node.getDescription()), new SharedSpaceAccount((User) actor));
 		SharedSpaceNode created = simpleCreate(authUser, actor, toCreate);
 		SharedSpaceNode parent = null;
 		if (node.getParentUuid() != null) {

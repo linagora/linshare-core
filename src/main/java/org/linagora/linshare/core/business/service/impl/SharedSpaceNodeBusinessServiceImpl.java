@@ -42,14 +42,24 @@ import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessServic
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusinessService {
 
 	protected SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
+	
+	protected MongoTemplate mongoTemplate;
 
-	public SharedSpaceNodeBusinessServiceImpl(SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
+	public SharedSpaceNodeBusinessServiceImpl(SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
+			MongoTemplate mongoTemplate) {
 		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
@@ -58,7 +68,22 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	}
 
 	@Override
+	public void loadLastUpdaterAuditTrace(SharedSpaceNode node) throws BusinessException {
+		Query query = new Query();
+		Criteria criteria = new Criteria();
+		criteria.orOperator(Criteria.where("resourceUuid").is(node.getUuid()),
+				Criteria.where("relatedResources").in(node.getUuid()));
+		query.addCriteria(criteria);
+		query.with(Sort.by(Direction.DESC, "creationDate")).limit(1);
+		AuditLogEntryUser lastAuditEntry = mongoTemplate.findOne(query, AuditLogEntryUser.class);
+		node.setLastAuditEntry(lastAuditEntry);
+	}
+
+	@Override
 	public SharedSpaceNode create(SharedSpaceNode node) throws BusinessException {
+		if (node.getDescription() == null) {
+			node.setDescription("");
+		}
 		return sharedSpaceNodeMongoRepository.insert(node);
 	}
 
@@ -81,6 +106,9 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	public SharedSpaceNode update(SharedSpaceNode foundNodeToUpdate, SharedSpaceNode nodeToUpdate)
 			throws BusinessException {
 		foundNodeToUpdate.setName(nodeToUpdate.getName());
+		if (nodeToUpdate.getDescription() != null) {
+			foundNodeToUpdate.setDescription(nodeToUpdate.getDescription());
+		}
 		if (nodeToUpdate.getVersioningParameters() != null) {
 			foundNodeToUpdate.setVersioningParameters(nodeToUpdate.getVersioningParameters());
 		}

@@ -58,4 +58,6 @@ public interface SharedSpaceNodeBusinessService {
 
 	List<SharedSpaceNode> findByParentUuidAndType(String parentUuid) throws BusinessException;
 
+	void loadLastUpdaterAuditTrace(SharedSpaceNode node) throws BusinessException;
+
 }

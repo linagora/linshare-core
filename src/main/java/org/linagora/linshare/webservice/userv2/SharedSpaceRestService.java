@@ -51,7 +51,7 @@ public interface SharedSpaceRestService {
 
 	List<SharedSpaceNodeNested> findAll(boolean withRole, String parent) throws BusinessException;
 
-	SharedSpaceNode find(String uuid, boolean withRole) throws BusinessException;
+	SharedSpaceNode find(String uuid, boolean withRole, boolean lastUpdater) throws BusinessException;
 
 	SharedSpaceNode create(SharedSpaceNode node) throws BusinessException;
 

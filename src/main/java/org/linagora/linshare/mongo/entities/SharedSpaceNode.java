@@ -47,11 +47,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "SharedSpace")
 @Document(collection = "shared_space_nodes")
@@ -62,12 +65,17 @@ public class SharedSpaceNode {
 	@GeneratedValue
 	protected String id;
 
+	@Schema(description = "Uuid of shared space")
 	protected String uuid;
 
+	@Schema(description = "name of shared space")
 	protected String name;
 
+	@Schema(description = "parent Uuid of shared space only available for Workgroups inside a Drive")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String parentUuid;
 
+	@Schema(description = "The type of shared space. See enum for possible values.")
 	@Enumerated(EnumType.STRING)
 	protected NodeType nodeType;
 
@@ -75,13 +83,29 @@ public class SharedSpaceNode {
 
 	protected Date modificationDate;
 
+	@Schema(description = "Indicate if versioning enabled, only available for Workgroup types")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected VersioningParameters versioningParameters;
 
+	@Schema(description = "Quota uuid of the Workgroup")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String quotaUuid;
 
+	@Schema(description = "Optional description of the shared space")
+	protected String description;
+
+	@Schema(description = "Role of the authenticated user in the shared space. Optionaly provided when requesting the detail of the resource.")
 	@Transient
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected GenericLightEntity role;
+
+	@Schema(description = "Used to recover the last update event related to an update or an action considered as an update of the shared space. Optionaly provided when requesting the detail of the resource.")
+	@Transient
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected AuditLogEntryUser lastAuditEntry;
+	
+	@Schema(description = "Author of the shared space")
+	protected SharedSpaceAccount author;
 
 	public SharedSpaceNode() {
 		super();
@@ -107,7 +131,7 @@ public class SharedSpaceNode {
 	}
 
 	public SharedSpaceNode(String name, String parentUuid, NodeType nodeType,
-			VersioningParameters versioningParameters) {
+			VersioningParameters versioningParameters, String description, SharedSpaceAccount author) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
@@ -116,6 +140,8 @@ public class SharedSpaceNode {
 		this.versioningParameters = versioningParameters;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
+		this.description = description;
+		this.author = author;
 	}
 
 	public SharedSpaceNode(String name, String uuid, NodeType nodeType, Date creationDate, Date modificationDate) {
@@ -137,6 +163,8 @@ public class SharedSpaceNode {
 		this.creationDate = node.getCreationDate();
 		this.modificationDate = node.getModificationDate();
 		this.quotaUuid = node.getQuotaUuid();
+		this.author = node.getAuthor();
+		this.description = node.getDescription();
 	}
 
 	@XmlTransient
@@ -220,13 +248,36 @@ public class SharedSpaceNode {
 	public void setRole(GenericLightEntity role) {
 		this.role = role;
 	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public AuditLogEntryUser getLastAuditEntry() {
+		return lastAuditEntry;
+	}
+
+	public void setLastAuditEntry(AuditLogEntryUser lastAuditEntry) {
+		this.lastAuditEntry = lastAuditEntry;
+	}
+
+	public SharedSpaceAccount getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(SharedSpaceAccount author) {
+		this.author = author;
+	}
 
 	@Override
 	public String toString() {
 		return "SharedSpaceNode [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
 				+ ", nodeType=" + nodeType + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate
-				+ ", versioningParameters=" + versioningParameters + ", quotaUuid=" + quotaUuid + ", role=" + role
-				+ "]";
+				+ ", versioningParameters=" + versioningParameters + ", quotaUuid=" + quotaUuid + "]";
 	}
 
 }

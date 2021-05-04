@@ -152,12 +152,20 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkReadPermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(found.getNodeType()), found);
 		return found;
 	}
+	
+	
 
 	@Override
-	public SharedSpaceNode findWithRole(Account authUser, Account actor, String uuid) throws BusinessException {
+	public SharedSpaceNode find(Account authUser, Account actor, String uuid, boolean withRole, boolean lastUpdater)
+			throws BusinessException {
 		SharedSpaceNode node = find(authUser, actor, uuid);
-		SharedSpaceMember member = memberService.findMemberByAccountUuid(authUser, actor, actor.getLsUuid(), uuid);
-		node.setRole(new GenericLightEntity(member.getRole()));
+		if (withRole) {
+			SharedSpaceMember member = memberService.findMemberByAccountUuid(authUser, actor, actor.getLsUuid(), uuid);
+			node.setRole(new GenericLightEntity(member.getRole()));
+		} 
+		if (lastUpdater) {
+			businessService.loadLastUpdaterAuditTrace(node);
+		}
 		return node;
 	}
 

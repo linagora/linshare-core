@@ -117,9 +117,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "shared space node's uuid.", required = true)
 				@PathParam("uuid") String uuid,
 			@Parameter(description = "Return also the role of the current user", required = false)
-				@QueryParam("withRole") @DefaultValue("false") boolean withRole)
+				@QueryParam("withRole") @DefaultValue("false") boolean withRole,
+			@Parameter(description = "IF true, the last updater of this resource will be returned as long as metadata. See lastAuditEntry property.", required = false)
+				@QueryParam("lastUpdater") @DefaultValue("false") boolean lastUpdater)
 			throws BusinessException {
-		return nodeFacade.find(null, uuid, withRole);
+		return nodeFacade.find(null, uuid, withRole, lastUpdater);
 	}
 
 	@Path("/")
