@@ -19,7 +19,10 @@
 		<constructor-arg ref="wsAdminV5UserFacade" />
 		<constructor-arg ref="wsSecondFactorAuthenticationFacade" />
 	</bean>
-
+	<bean id="adminv5SharedSpaceRestService" class="org.linagora.linshare.webservice.adminv5.impl.SharedSpaceRestServiceImpl">
+		<constructor-arg ref="sharedSpaceNodeFacade" />
+		<constructor-arg ref="sharedSpaceMemberFacade" />
+	</bean>
 	<bean id="adminv5UserRestService" class="org.linagora.linshare.webservice.adminv5.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsAdminV5UserFacade" />
 	</bean>
@@ -29,6 +32,7 @@
 			<ref bean="adminv5UserRestService" />
 			<ref bean="adminv5AuthenticationRestService" />
 			<ref bean="adminSharedSpaceRoleRestService"/>
+			<ref bean="adminv5SharedSpaceRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
