@@ -20,7 +20,7 @@
 		<constructor-arg ref="wsSecondFactorAuthenticationFacade" />
 	</bean>
 	<bean id="adminv5SharedSpaceRestService" class="org.linagora.linshare.webservice.adminv5.impl.SharedSpaceRestServiceImpl">
-		<constructor-arg ref="sharedSpaceNodeFacade" />
+		<constructor-arg ref="wsAdminV5SharedSpaceFacade" />
 		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>
 	<bean id="adminv5UserRestService" class="org.linagora.linshare.webservice.adminv5.impl.UserRestServiceImpl">

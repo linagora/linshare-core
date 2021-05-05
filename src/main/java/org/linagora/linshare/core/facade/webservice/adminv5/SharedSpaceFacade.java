@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2018-2021 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,62 +33,39 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.facade.webservice.adminv5;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
-public interface SharedSpaceMemberBusinessService {
+public interface SharedSpaceFacade {
 
-	SharedSpaceMember find(String uuid) throws BusinessException;
+	PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, Integer pageNumber, Integer pageSize);
 
-	List<SharedSpaceMember> findAll() throws BusinessException;
+	SharedSpaceNode find(String actorUuid, String uuid, boolean withRole) throws BusinessException;
 
-	SharedSpaceMember create(SharedSpaceMember sharedSpacemember) throws BusinessException;
+	SharedSpaceNode create(String actorUuid, SharedSpaceNode node) throws BusinessException;
 
-	SharedSpaceMember findByAccountAndNode(String accountUuid, String nodeUuid) throws BusinessException;
+	SharedSpaceNode delete(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
-	void delete(SharedSpaceMember memberToDelete) throws BusinessException;
+	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
+	
+	SharedSpaceNode updatePartial(String actorUuid, PatchDto patchNode, String uuid) throws BusinessException;
 
-	SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember member)
-			throws BusinessException;
+	List<SharedSpaceMember> members(String actorUuid, String uuid, String accountUuid) throws BusinessException;
 
-	List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid) throws BusinessException;
+	List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole, String parent);
 
-	void deleteAll(List<SharedSpaceMember> foundMembersToDelete) throws BusinessException;
-
-	List<String> findMembersUuidBySharedSpaceNodeUuid(String shareSpaceNodeUuid) throws BusinessException;
-
-	List<SharedSpaceMember> findByMemberName(String name) throws BusinessException;
-
-	List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole, String parent);
-
-	void updateNestedNode(SharedSpaceNode node) throws BusinessException;
-
-	List<SharedSpaceMember> findAllUserMemberships(String userUuid);
-
-	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
-
-	SharedSpaceMember findByNodeAndUuid(String nodeUuid, String uuid);
-
-	List<SharedSpaceNodeNested> findAllByParentAndAccount(String accountUuid, String parentUuid);
-
-	List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid);
-
-	List<SharedSpaceMember> findAllMembersWithNoConflictedRoles(String accountUuid, String parentUuid, String roleUuid);
-
-	List<SharedSpaceNodeNested> findAllNodesByParent(String parentUuid);
-
-	List<SharedSpaceMember> findAllMembersByParent(String parentUuid);
-
-	List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid, Boolean pristine);
-
-	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, PageContainer<SharedSpaceNodeNested> container);
-
-	PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container);
+	Set<AuditLogEntryUser> findAllSharedSpaceAudits(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
+			String beginDate, String endDate, String nodeUuid);
 }

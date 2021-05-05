@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2018-2021 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -37,6 +37,8 @@ package org.linagora.linshare.webservice.adminv5;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -53,7 +55,7 @@ public interface SharedSpaceRestService {
 
 	List<SharedSpaceMember> members(String uuid, String accountUuid) throws BusinessException;
 
-	List<SharedSpaceNode> findAll() throws BusinessException;
+	Response findAll(String accountUuid, Integer pageNumber, Integer pageSize);
 
 	SharedSpaceMember findMember(String memberUuid) throws BusinessException;
 

@@ -57,6 +57,7 @@ import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -272,5 +273,33 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	public List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid,
 			Boolean pristine) {
 		return repository.findAllMembersByParentAndAccountAndPristine(accountUuid, parentUuid, pristine);
+	}
+
+	@Override
+	public PageContainer<SharedSpaceNodeNested> findAllByAccount(String accountUuid,
+			PageContainer<SharedSpaceNodeNested> container) {
+		Aggregation aggregation = Aggregation.newAggregation(
+				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
+				Aggregation.project("node.uuid",
+						"node.name",
+						"node.nodeType",
+						"node.creationDate",
+						"node.modificationDate"),
+				Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
+				Aggregation.limit(Long.valueOf(container.getPageSize())));
+		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
+				.getMappedResults();
+		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(), getCount(accountUuid), sharedSpaces);
+	}
+
+	private Long getCount(String accountUuid) {
+		Query countQuery = new Query(Criteria.where("account.uuid").is(accountUuid));
+		return mongoTemplate.count(countQuery, SharedSpaceMember.class);
+	}
+
+	@Override
+	public PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

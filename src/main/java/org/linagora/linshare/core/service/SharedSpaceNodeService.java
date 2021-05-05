@@ -44,6 +44,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface SharedSpaceNodeService {
 
@@ -82,4 +83,6 @@ public interface SharedSpaceNodeService {
 	 *
 	 */
 	WorkGroupDto deleteWorkgroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+
+	PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account, PageContainer<SharedSpaceNodeNested> container);
 }

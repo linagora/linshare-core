@@ -429,6 +429,7 @@
 				<entry key="WORK_GROUP" value-ref="sharedSpaceWorkGroupService" />
 			</map>
 		</constructor-arg>
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 
 	<bean id="sharedSpaceWorkGroupService" class="org.linagora.linshare.core.service.impl.SharedSpaceWorkGroupServiceImpl">

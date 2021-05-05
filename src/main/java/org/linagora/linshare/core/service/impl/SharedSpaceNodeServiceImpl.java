@@ -37,15 +37,18 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -65,6 +68,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -96,6 +100,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final Map<NodeType, SharedSpaceFragmentService> serviceBuilders;
 
+	private final DomainPermissionBusinessService domainPermissionBusinessService;
+
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
@@ -109,7 +115,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			WorkGroupNodeService workGroupNodeService,
 			DriveMemberBusinessService driveMemberBusinessService,
 			Map<NodeType, SharedSpaceFragmentService> serviceBuilders,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			DomainPermissionBusinessService domainPermissionBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
 		this.memberService = memberService;
@@ -123,6 +130,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.workGroupNodeService = workGroupNodeService;
 		this.driveMemberBusinessService = driveMemberBusinessService;
 		this.serviceBuilders = serviceBuilders;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
 	}
 
 	private SharedSpaceFragmentService getService(NodeType type) {
@@ -250,6 +258,25 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		} else {
 			return BusinessErrorCode.WORK_GROUP_FORBIDDEN;
 		}
+	}
+
+	@Override
+	public PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account,
+			PageContainer<SharedSpaceNodeNested> container) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
+				null);
+		PageContainer<SharedSpaceNodeNested> sharedSpaces = new PageContainer<SharedSpaceNodeNested>();
+		if (Objects.nonNull(account)) {
+			if (!domainPermissionBusinessService.isAdminForThisUser(actor, (User) account)) {
+				throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
+						"You are not authorized to retieve the sharedSpaces of this account: " + account.getLsUuid());
+			}
+			sharedSpaces = memberBusinessService.findAllByAccount(account.getLsUuid(), container);
+		} else {
+			sharedSpaces = memberBusinessService.findAll(container);
+		}
+		return sharedSpaces;
 	}
 
 }

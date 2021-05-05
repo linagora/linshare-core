@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2018-2021 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -49,15 +49,19 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.SharedSpaceFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
-import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.adminv5.SharedSpaceRestService;
+import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -72,15 +76,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
-	private final SharedSpaceNodeFacade ssNodeFacade;
-	
-	private final SharedSpaceMemberFacade ssMemberFacade;
+	private final SharedSpaceFacade sharedSpaceFacade;
 
-	public SharedSpaceRestServiceImpl(SharedSpaceNodeFacade ssNodeFacade,
+	private final SharedSpaceMemberFacade sharedSpaceMemberFacade;
+
+	private PagingResponseBuilder<SharedSpaceNodeNested> pageResponseBuilder= new PagingResponseBuilder<>();
+
+	public SharedSpaceRestServiceImpl(SharedSpaceFacade sharedSpaceFacade,
 			SharedSpaceMemberFacade ssMemberFacade) {
 		super();
-		this.ssNodeFacade = ssNodeFacade;
-		this.ssMemberFacade = ssMemberFacade;
+		this.sharedSpaceFacade = sharedSpaceFacade;
+		this.sharedSpaceMemberFacade = ssMemberFacade;
 	}
 
 	@Path("/{uuid}")
@@ -96,7 +102,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "shared space's uuid.", required = true)
 				@PathParam("uuid") String uuid) 
 			throws BusinessException {
-		return ssNodeFacade.find(null, uuid, false);
+		return sharedSpaceFacade.find(null, uuid, false);
 	}
 	
 	@Path("/{uuid : .*}")
@@ -113,7 +119,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "shared space's uuid.", required = false)
 				@PathParam(value = "uuid") String uuid) 
 			throws BusinessException {
-		return ssNodeFacade.delete(null, node, uuid);
+		return sharedSpaceFacade.delete(null, node, uuid);
 	}
 	
 	@Path("/{uuid : .*}")
@@ -130,7 +136,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The shared space's uuid.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return ssNodeFacade.update(null, node, uuid);
+		return sharedSpaceFacade.update(null, node, uuid);
 	}
 	
 	@Path("/{uuid}")
@@ -146,7 +152,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The Patch that contains the feilds that'll be updated in the node") PatchDto patchNode,
 			@Parameter(description = "The uuid of the node that'll be updated.")
 				@PathParam("uuid")String uuid) throws BusinessException {
-		return ssNodeFacade.updatePartial(null, patchNode, uuid);
+		return sharedSpaceFacade.updatePartial(null, patchNode, uuid);
 	}
 
 	@Path("/")
@@ -158,10 +164,17 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		)
 	})
 	@Override
-	public List<SharedSpaceNode> findAll() throws BusinessException {
-		return ssNodeFacade.findAll();
+	public Response findAll(
+			@Parameter(description = "If the admin specify the account he will retrieve the list of the choosen account, else all shared spaces of all accounts domains will be returned.", required = false)
+				@QueryParam("account") String accountUuid,
+			@Parameter(description = "The admin can choose the page number to get.", required = false)
+				@QueryParam("page") Integer pageNumber,
+			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
+				@QueryParam("size") Integer pageSize) throws BusinessException {
+		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, pageNumber, pageSize);
+		return pageResponseBuilder.build(container);
 	}
-	
+
 	@Path("/{uuid}/members")
 	@GET
 	@Operation(summary = "Get all members for the choosen shared space.", responses = {
@@ -177,7 +190,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The uuid of an account within a sharedSpace")
 				@QueryParam("accountUuid")String accountUuid)
 			throws BusinessException {
-		return ssNodeFacade.members(null, uuid, accountUuid);
+		return sharedSpaceFacade.members(null, uuid, accountUuid);
 	}
 	
 	@Path("{uuid}/members")
@@ -192,7 +205,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	public SharedSpaceMember addMember(
 			@Parameter(description = "The shared space member to add")SharedSpaceMemberDrive member)
 					throws BusinessException {
-		return ssMemberFacade.create(null, member);
+		return sharedSpaceMemberFacade.create(null, member);
 	}
 	
 	@Path("{uuid}/members/{memberUuid : .*}")
@@ -209,7 +222,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The shared space member uuid")
 				@PathParam(value="memberUuid")String memberUuid)
 			throws BusinessException {
-		return ssMemberFacade.delete(null, member, memberUuid);
+		return sharedSpaceMemberFacade.delete(null, member, memberUuid);
 	}
 	
 	@Path("{uuid}/members/{memberUuid : .*}")
@@ -230,7 +243,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "Propagate parameter is true by default, the role will be updated in the current node and propagated on nested workgroups which are not updated manually, else if it is false the role will be updated just in current node")
 				@QueryParam("propagate") @DefaultValue("true") Boolean propagate)
 			throws BusinessException {
-		return ssMemberFacade.update(null, member, memberUuid, force, propagate);
+		return sharedSpaceMemberFacade.update(null, member, memberUuid, force, propagate);
 	}
 	
 	@Path("{uuid}/members/{memberUuid}")
@@ -246,6 +259,6 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The shared space member uuid")
 				@PathParam(value="memberUuid")String memberUuid)
 			throws BusinessException {
-		return ssMemberFacade.find(null, memberUuid);
+		return sharedSpaceMemberFacade.find(null, memberUuid);
 	}
 }
