@@ -1562,7 +1562,7 @@
 		<h2.version>1.4.200</h2.version>
 		<hibernate.version>5.4.24.Final</hibernate.version>
 		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
-		<jackson.version>2.10.0</jackson.version>
+		<jackson.version>2.10.5</jackson.version>
 		<jclouds.version>2.2.0</jclouds.version>
 		<jjwt.version>0.11.1</jjwt.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
