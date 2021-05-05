@@ -1556,7 +1556,7 @@
 
 	<properties>
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
-		<cxf.version>3.4.0</cxf.version>
+		<cxf.version>3.4.1</cxf.version>
 		<cxf.swagger.ui.version>3.26.1</cxf.swagger.ui.version>
 		<guava.version>30.0-jre</guava.version>
 		<h2.version>1.4.200</h2.version>
