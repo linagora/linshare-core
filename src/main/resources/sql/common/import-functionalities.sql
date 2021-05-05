@@ -602,7 +602,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 
 -- Functionality : DRIVE
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (317, false, false, 1, false);
+	VALUES (317, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (318, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param, creation_date, modification_date)

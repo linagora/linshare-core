@@ -559,6 +559,10 @@ INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
 VALUES(26, 'sn', 'member_lastname', false, true, true, false, 6);
 
+-- Enable Drive functionality by default
+
+UPDATE policy SET status=true, default_status=true, system=false WHERE id IN (SELECT policy_activation_id FROM functionality WHERE identifier = 'DRIVE');
+UPDATE functionality SET system=false WHERE identifier='DRIVE';
 
 ---- End of your queries
 
