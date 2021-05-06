@@ -42,7 +42,6 @@ import javax.ws.rs.core.Response;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 public interface SharedSpaceRestService {
@@ -59,11 +58,11 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceMember findMember(String memberUuid) throws BusinessException;
 
-	SharedSpaceMember addMember(SharedSpaceMemberDrive member) throws BusinessException;
+	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
 
 	SharedSpaceMember deleteMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
 
-	SharedSpaceMember updateMember(SharedSpaceMemberDrive member, String memberUuid, boolean force, Boolean propagate) throws BusinessException;
+	SharedSpaceMember updateMember(SharedSpaceMember member, String memberUuid, boolean force, Boolean propagate) throws BusinessException;
 
 	SharedSpaceNode update(PatchDto patchNode, String uuid) throws BusinessException;
 }

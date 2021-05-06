@@ -56,7 +56,6 @@ import org.linagora.linshare.core.facade.webservice.adminv5.SharedSpaceFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.adminv5.SharedSpaceRestService;
@@ -203,7 +202,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	})
 	@Override
 	public SharedSpaceMember addMember(
-			@Parameter(description = "The shared space member to add")SharedSpaceMemberDrive member)
+			@Parameter(description = "The shared space member to add")SharedSpaceMember member)
 					throws BusinessException {
 		return sharedSpaceMemberFacade.create(null, member);
 	}
@@ -235,7 +234,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	})
 	@Override
 	public SharedSpaceMember updateMember(
-			@Parameter(description = "The shared space member to update.")SharedSpaceMemberDrive member,
+			@Parameter(description = "The shared space member to update.")SharedSpaceMember member,
 			@Parameter(description = "The shared space member uuid")
 				@PathParam(value="memberUuid")String memberUuid,
 			@Parameter(description = "If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
