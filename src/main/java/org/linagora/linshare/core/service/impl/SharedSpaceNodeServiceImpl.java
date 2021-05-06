@@ -264,6 +264,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account,
 			PageContainer<SharedSpaceNodeNested> container) {
 		preChecks(authUser, actor);
+		if (!authUser.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
+					"You do not have a super admin role, you are not authorized use this service");
+		}
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 				null);
 		PageContainer<SharedSpaceNodeNested> sharedSpaces = new PageContainer<SharedSpaceNodeNested>();
@@ -272,6 +276,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 				throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
 						"You are not authorized to retieve the sharedSpaces of this account: " + account.getLsUuid());
 			}
+			Validate.notEmpty(account.getLsUuid(), "accountUuid should be set");
 			sharedSpaces = memberBusinessService.findAllByAccount(account.getLsUuid(), container);
 		} else {
 			sharedSpaces = memberBusinessService.findAll(container);

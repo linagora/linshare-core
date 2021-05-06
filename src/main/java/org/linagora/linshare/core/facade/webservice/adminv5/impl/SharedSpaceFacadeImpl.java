@@ -42,6 +42,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -163,7 +164,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, Integer pageNumber,
 			Integer pageSize) {
-		Account authUser = checkAuthentication();
+		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		User actor = getActor(authUser, actorUuid);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(pageNumber, pageSize);
 		Account account = null;
