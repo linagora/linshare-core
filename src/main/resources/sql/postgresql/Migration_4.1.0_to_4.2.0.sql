@@ -390,7 +390,7 @@ VALUES
   now(),
   null);
 
--- TASK: UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA
+-- TASK: UPGRADE_4_2_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA
 INSERT INTO upgrade_task
   (id,
   uuid,
@@ -412,6 +412,34 @@ VALUES
   null,
   'UPGRADE_4_2_COMPUTE_CURRENT_VALUE_FOR_DOMAINS',
   38,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);
+  
+-- TASK: UPGRADE_4_2_ADD_DETAILS_TO_SHARED_SPACE_NODES
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (39,
+  'UNDEFINED',
+  'UPGRADE_4_2_ADD_DETAILS_TO_SHARED_SPACE_NODES',
+  'UPGRADE_4_2',
+  null,
+  null,
+  39,
   'NEW',
   'REQUIRED',
   now(),

@@ -247,7 +247,13 @@ public enum UpgradeTaskType {
 	/**
 	 * Compute top domain quota 
 	 */
-	UPGRADE_4_2_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA;
+	UPGRADE_4_2_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA,
+	
+	/**
+	 * Add Author and description to SharedSpaceNode 
+	 */
+	UPGRADE_4_2_ADD_DETAILS_TO_SHARED_SPACE_NODES;
+	
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
