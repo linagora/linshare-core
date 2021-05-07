@@ -159,8 +159,8 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 					try {
 						member = ssMemberService.findMemberByAccountUuid(authUser, authUser, account.getLsUuid(), threadUuid);
 					} catch (BusinessException e) {
-						logger.debug(String.format("No member found for this account %s and this node %s",
-								account.getAccountRepresentation(), threadUuid), e);
+						logger.debug(String.format("Thes account %s is not yet a member of this SharedSpace %s",
+								account.getAccountRepresentation(), threadUuid));
 					}
 					if (member == null) {
 						result.add(new ThreadMemberAutoCompleteResultDto(account));
