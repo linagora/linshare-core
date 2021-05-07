@@ -43,11 +43,15 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang3.Validate;
+import org.hibernate.criterion.Order;
+import org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationToken;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UserProviderType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -59,13 +63,19 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.LdapUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LDAPUserQueryService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.mongo.entities.logs.DomainPatternAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.DomainPatternMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.google.common.collect.Lists;
 
 public class UserProviderServiceImpl extends GenericAdminServiceImpl implements UserProviderService {
 
@@ -80,6 +90,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 
 	private final LdapUserProviderRepository ldapUserProviderRepository;
 
+	private final UserRepository<User> userRepository;
+
 	private final AuditAdminMongoRepository mongoRepository;
 
 	public UserProviderServiceImpl(
@@ -88,12 +100,14 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			LdapUserProviderRepository ldapUserProviderRepository,
 			UserProviderRepository userProviderRepository,
 			AuditAdminMongoRepository mongoRepository,
+			UserRepository<User> userRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(sanitizerInputHtmlBusinessService);
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
 		this.userProviderRepository = userProviderRepository;
 		this.ldapUserProviderRepository = ldapUserProviderRepository;
+		this.userRepository = userRepository;
 		this.mongoRepository = mongoRepository;
 	}
 
@@ -283,7 +297,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	}
 
 	@Override
-	public User findUser(UserProvider up, String mail)
+	public User findUser(AbstractDomain domain, UserProvider up, String mail)
 			throws BusinessException {
 		if (up != null) {
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
@@ -300,6 +314,23 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return user;
+			} else if (UserProviderType.OIDC.equals(up.getType())) {
+				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+				if(!authentication.isAuthenticated()) {
+					// it means we are trying to find/create this profile during authentication process.
+					// This code is ugly, it is a quick workaround.
+					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())){
+						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
+						return new Internal(
+								jwtAuthentication.getAttribute("first_name"),
+								jwtAuthentication.getAttribute("last_name"),
+								jwtAuthentication.getAttribute("email"),
+								jwtAuthentication.getAttribute("email"));
+						}
+				} else {
+					// probably trying to discover a user.
+					logger.debug("UserProviderType.OIDC provider does not supported discovering new user.");
+				}
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -308,8 +339,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	}
 
 	@Override
-	public List<User> searchUser(UserProvider up, String mail,
-			String firstName, String lastName) throws BusinessException {
+	public List<User> searchUser(AbstractDomain domain, UserProvider up,
+			String mail, String firstName, String lastName) throws BusinessException {
 		if (up != null) {
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
 				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
@@ -326,16 +357,22 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return users;
+			} else if (UserProviderType.OIDC.equals(up.getType())) {
+				PageContainer<User> container = new PageContainer<>(0,50);
+				container = userRepository.findAll(domain, Order.asc("modificationDate"), mail, firstName,
+						lastName, null, null, null, null, null, container);
+				List<User> users = container.getPageResponse().getContent();
+				return users;
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
 		}
-		return null;
+		return Lists.newArrayList();
 	}
 
 	@Override
-	public List<User> autoCompleteUser(UserProvider up,
-			String pattern) throws BusinessException {
+	public List<User> autoCompleteUser(AbstractDomain domain,
+			UserProvider up, String pattern) throws BusinessException {
 		if (up != null) {
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
 				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
@@ -363,17 +400,24 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					logger.error(e.getMessage());
 					logger.debug(e.toString());
 				}
+				users.stream().map(user -> {user.setDomain(domain); return user;});
+				return users;
+			} else if (UserProviderType.OIDC.equals(up.getType())) {
+				PageContainer<User> container = new PageContainer<>(0,50);
+				container = userRepository.findAll(domain, Order.asc("modificationDate"), pattern, null,
+						null, null, null, null, null, null, container);
+				List<User> users = container.getPageResponse().getContent();
 				return users;
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
 		}
-		return null;
+		return Lists.newArrayList();
 	}
 
 	@Override
-	public List<User> autoCompleteUser(UserProvider up,
-			String firstName, String lastName) throws BusinessException {
+	public List<User> autoCompleteUser(AbstractDomain domain,
+			UserProvider up, String firstName, String lastName) throws BusinessException {
 		if (up != null) {
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
 				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
@@ -401,16 +445,24 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					logger.error(e.getMessage());
 					logger.debug(e.toString());
 				}
+				users.stream().map(user -> {user.setDomain(domain); return user;});
+				return users;
+			} else if (UserProviderType.OIDC.equals(up.getType())) {
+				PageContainer<User> container = new PageContainer<>(0,50);
+				container = userRepository.findAll(domain, Order.asc("modificationDate"), null, firstName,
+						lastName, null, null, null, null, null,
+						container);
+				List<User> users = container.getPageResponse().getContent();
 				return users;
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
 		}
-		return null;
+		return Lists.newArrayList();
 	}
 
 	@Override
-	public Boolean isUserExist(UserProvider up, String mail)
+	public Boolean isUserExist(AbstractDomain domain, UserProvider up, String mail)
 			throws BusinessException {
 		if (up != null) {
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
@@ -428,11 +480,15 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return result;
+			} else if (UserProviderType.OIDC.equals(up.getType())) {
+				User user = userRepository.findByMailAndDomain(domain.getUuid(), mail);
+				if (user != null)
+					return true;
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
 		}
-		return null;
+		return false;
 	}
 
 	@Override
@@ -455,6 +511,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return user;
+			} else if (UserProviderType.OIDC.equals(up.getType())) {
+				logger.debug("UserProviderType.OIDC does not provide an authentication through this method.");
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -463,7 +521,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	}
 
 	@Override
-	public User searchForAuth(UserProvider up, String login)
+	public User searchForAuth(AbstractDomain domain, UserProvider up, String login)
 			throws BusinessException {
 		if (up != null) {
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
@@ -480,7 +538,36 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				} catch (org.springframework.ldap.CommunicationException e) {
 					throwError(userProvider.getLdapConnection(), e);
 				}
+				if (user != null) {
+					user.setDomain(domain);
+				}
 				return user;
+			} else if (UserProviderType.OIDC.equals(up.getType())) {
+				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+				if(authentication !=null && !authentication.isAuthenticated()) {
+					// It means we are trying to find this profile during authentication process.
+					// It was the auto discover feature of LDAP, but it does not exist for OIDC.
+					// This code is ugly workaround
+					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())){
+						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
+						String domainUuid = jwtAuthentication.getAttribute("domain");
+						if (domainUuid.equals(domain.getUuid())) {
+							// if this user does not belong to this domain, we ignore him.
+							Internal internal = new Internal(
+									jwtAuthentication.getAttribute("first_name"),
+									jwtAuthentication.getAttribute("last_name"),
+									jwtAuthentication.getAttribute("email"),
+									jwtAuthentication.getAttribute("email"));
+							if (internal != null) {
+								internal.setDomain(domain);
+							}
+							return internal;
+						} else {
+							logger.debug("Skipped.Provided domain uuid does not match current domain: {}, {}", domainUuid, domain.getUuid());
+						}
+					}
+				}
+				logger.info("Using UserProviderType.OIDC provider outside authentication is not supported.");
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}

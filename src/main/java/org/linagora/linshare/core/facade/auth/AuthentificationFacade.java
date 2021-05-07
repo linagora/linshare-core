@@ -63,6 +63,8 @@ public interface AuthentificationFacade {
 
 	public AbstractDomain retrieveDomain(String domainIdentifier);
 
+	public boolean isExist(String domainUuid);
+
 	List<String> getAllSubDomainIdentifiers(String domainIdentifier);
 
 	public List<String> getAllDomains();

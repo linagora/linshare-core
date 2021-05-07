@@ -430,7 +430,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throws BusinessException {
 		User user = null;
 		if (domain.getUserProvider() != null) {
-			user = userProviderService.findUser(domain.getUserProvider(), mail);
+			user = userProviderService.findUser(domain, domain.getUserProvider(), mail);
 			if (user != null) {
 				user.setDomain(domain);
 				user.setRole(user.getDomain().getDefaultRole());
@@ -446,8 +446,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	public Boolean isUserExist(AbstractDomain domain, String mail)
 			throws BusinessException {
 		if (domain.getUserProvider() != null) {
-			return userProviderService.isUserExist(domain.getUserProvider(),
-					mail);
+			return userProviderService.isUserExist(domain,
+					domain.getUserProvider(), mail);
 		} else {
 			logger.debug("UserProvider is null for domain : "
 					+ domain.getUuid());
@@ -523,14 +523,14 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			// search.
 			if (d.getUserProvider() != null) {
 				List<User> list = userProviderService.autoCompleteUser(
-						d.getUserProvider(), pattern);
+						d, d.getUserProvider(), pattern);
 				for (User user : list) {
 					user.setDomain(d);
 				}
 				users.addAll(list);
 			} else {
 				logger.debug("UserProvider is null for domain : "
-						+ domain.getUuid());
+						+ d.getUuid());
 			}
 		}
 		return users;
@@ -549,14 +549,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			// search.
 			if (d.getUserProvider() != null) {
 				List<User> autoCompleteUser = userProviderService.autoCompleteUser(
-						d.getUserProvider(), firstName, lastName);
-				for (User user : autoCompleteUser) {
-					user.setDomain(d);
-				}
+						d, d.getUserProvider(), firstName, lastName);
 				users.addAll(autoCompleteUser);
 			} else {
 				logger.debug("UserProvider is null for domain : "
-						+ domain.getUuid());
+						+ d.getUuid());
 			}
 		}
 		return users;
@@ -650,7 +647,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				List<User> ldapUserList = new ArrayList<User>();
 				try {
 					ldapUserList = userProviderService.searchUser(
-							d.getUserProvider(), mail, firstName, lastName);
+							d, d.getUserProvider(), mail, firstName, lastName);
 				} catch (BusinessException e) {
 					logger.error("can not search users from domain:"
 							+ d.getUuid());
@@ -673,7 +670,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				}
 			} else {
 				logger.debug("UserProvider is null for domain : "
-						+ domain.getUuid());
+						+ d.getUuid());
 			}
 		}
 
@@ -811,7 +808,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			// search.
 			if (d.getUserProvider() != null) {
 				List<User> list = userProviderService.autoCompleteUser(
-						d.getUserProvider(), pattern);
+						d, d.getUserProvider(), pattern);
 				users.addAll(list);
 			} else {
 				logger.debug("UserProvider is null for domain : "

@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
@@ -60,16 +61,16 @@ public interface UserProviderService {
 	LdapUserProvider update(LdapUserProvider userProvider) throws BusinessException;
 	void delete(UserProvider userProvider) throws BusinessException;
 
-	User findUser(UserProvider userProvider, String mail) throws BusinessException;
-	Boolean isUserExist(UserProvider userProvider, String mail) throws BusinessException;
+	User findUser(AbstractDomain domain, UserProvider userProvider, String mail) throws BusinessException;
+	Boolean isUserExist(AbstractDomain domain, UserProvider userProvider, String mail) throws BusinessException;
 
-	List<User> searchUser(UserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException;
+	List<User> searchUser(AbstractDomain domain, UserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException;
 
-	List<User> autoCompleteUser(UserProvider userProvider, String pattern) throws BusinessException;
-	List<User> autoCompleteUser(UserProvider userProvider, String firstName, String lastName) throws BusinessException;
+	List<User> autoCompleteUser(AbstractDomain domain, UserProvider userProvider, String pattern) throws BusinessException;
+	List<User> autoCompleteUser(AbstractDomain domain, UserProvider userProvider, String firstName, String lastName) throws BusinessException;
 
 	User auth(UserProvider userProvider, String login, String userPasswd) throws BusinessException;
-	User searchForAuth(UserProvider userProvider, String login) throws BusinessException;
+	User searchForAuth(AbstractDomain domain, UserProvider userProvider, String login) throws BusinessException;
 
 	public boolean canDeletePattern(String uuid);
 }

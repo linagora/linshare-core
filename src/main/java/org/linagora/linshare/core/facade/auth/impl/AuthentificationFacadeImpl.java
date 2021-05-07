@@ -138,6 +138,15 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
+	public boolean isExist(String domainUuid) {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainUuid);
+		if (domain != null) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	public List<String> getAllSubDomainIdentifiers(String domainIdentifier) {
 		return abstractDomainService.getAllSubDomainIdentifiers(domainIdentifier);
 	}
@@ -158,10 +167,7 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	public User ldapSearchForAuth(String domainIdentifier, String login)
 			throws BusinessException {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-		User user = userProviderService.searchForAuth(domain.getUserProvider(), login);
-		if (user != null) {
-			user.setDomain(domain);
-		}
+		User user = userProviderService.searchForAuth(domain, domain.getUserProvider(), login);
 		return user;
 	}
 

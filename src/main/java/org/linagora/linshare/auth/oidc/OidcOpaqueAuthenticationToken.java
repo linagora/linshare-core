@@ -37,6 +37,7 @@ package org.linagora.linshare.auth.oidc;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import com.google.common.collect.Maps;
@@ -76,8 +77,10 @@ public class OidcOpaqueAuthenticationToken extends AbstractAuthenticationToken {
 		this.attributes = attributes;
 	}
 
-	public String getStringAttribute(String key) {
-		return (String) attributes.get(key);
+	public String getAttribute(String key) {
+		String value = (String) attributes.get(key);
+		Validate.notEmpty(value, "Attribute '" + key + "' must be provided as claim by the OIDC provider.");
+		return value;
 	}
 
 	public void put(String key, Object value) {

@@ -68,8 +68,6 @@ import org.springframework.security.oauth2.server.resource.authentication.Opaque
 import org.springframework.security.oauth2.server.resource.introspection.NimbusOpaqueTokenIntrospector;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 
-import com.google.common.collect.Lists;
-
 public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider {
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -128,25 +126,38 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 
 		User foundUser = null;
 		// looking in the db first.
-		if (domainUuid == null) {
-			foundUser = authentificationFacade.findByLogin(email);
-		} else {
-			foundUser = authentificationFacade.findByLoginAndDomain(domainUuid, email);
-		}
-		if (foundUser == null) {
-			// looking through user providers.
-			List<String> domains = Lists.newArrayList();
-			if (domainUuid == null) {
-				domains = authentificationFacade.getAllDomains();
+		if (domainUuid != null) {
+			if (!authentificationFacade.isExist(domainUuid)) {
+				logger.error("Provided domain uuid does not exit: {}", domainUuid);
+				throw new AuthenticationServiceException(
+						"Provided domain uuid does not exit: " + domainUuid);
 			} else {
-				domains = authentificationFacade.getAllSubDomainIdentifiers(domainUuid);
-				// we also need to look in the provided domain.
-				domains.add(0, domainUuid);
+				foundUser = authentificationFacade.findByLoginAndDomain(domainUuid, email);
+				if (foundUser == null) {
+					// looking through user provider.
+					foundUser = authentificationFacade.ldapSearchForAuth(domainUuid, email);
+				}
+				if (foundUser == null) {
+					// looking through nested user providers.
+					List<String> domains = authentificationFacade.getAllSubDomainIdentifiers(domainUuid);
+					for (String domain : domains) {
+						foundUser = authentificationFacade.ldapSearchForAuth(domain, email);
+						if (foundUser != null) {
+							break;
+						}
+					}
+				}
 			}
-			for (String domain : domains) {
-				foundUser = authentificationFacade.ldapSearchForAuth(domain, email);
-				if (foundUser != null) {
-					break;
+		} else {
+			foundUser = authentificationFacade.findByLogin(email);
+			if (foundUser == null) {
+				// looking through user providers.
+				List<String> domains = authentificationFacade.getAllDomains();
+				for (String domain : domains) {
+					foundUser = authentificationFacade.ldapSearchForAuth(domain, email);
+					if (foundUser != null) {
+						break;
+					}
 				}
 			}
 		}
