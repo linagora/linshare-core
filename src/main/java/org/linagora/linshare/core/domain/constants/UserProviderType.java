@@ -42,7 +42,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 
 public enum UserProviderType {
 
-	LDAP_PROVIDER;
+	LDAP_PROVIDER, OIDC;
 
 	public static UserProviderType fromString(String s) {
 		try {

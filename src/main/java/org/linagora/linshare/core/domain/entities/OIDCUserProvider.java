@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2021 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,38 +33,16 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.UserProviderType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 
-public abstract class UserProvider extends Provider {
+public class OIDCUserProvider extends UserProvider {
 
-	protected UserProviderType userProviderType;
-
-	public UserProviderType getUserProviderType() {
-		return userProviderType;
-	}
-
+	// TODO: need to be fix :)
 	@Override
-	public String toString() {
-		return "UserProvider [Type=" + userProviderType + ", uuid=" + uuid + "]";
+	public LDAPUserProviderDto toLDAPUserProviderDto() {
+		// TODO Auto-generated method stub
+		return null;
 	}
-
-	/**
-	 * alias
-	 * @return UserProviderType
-	 */
-	public UserProviderType getType() {
-		return userProviderType;
-	}
-
-	protected void setUserProviderType(UserProviderType userProviderType) {
-		this.userProviderType = userProviderType;
-	}
-
-	// TODO Just create and return an UserProviderDto or a map
-	public abstract LDAPUserProviderDto toLDAPUserProviderDto();
-
 }

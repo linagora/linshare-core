@@ -19,5 +19,7 @@
 			<many-to-one name="pattern" column="ldap_pattern_id" class="org.linagora.linshare.core.domain.entities.UserLdapPattern" not-null="true" lazy="proxy"  >
 			</many-to-one>
 		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.OIDCUserProvider" discriminator-value="OIDC" lazy="true">
+		</subclass>
 	</class>
 </hibernate-mapping>
