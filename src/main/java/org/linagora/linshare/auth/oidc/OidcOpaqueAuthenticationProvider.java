@@ -37,6 +37,7 @@ package org.linagora.linshare.auth.oidc;
 
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.auth.AuthRole;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.core.domain.entities.User;
@@ -53,10 +54,19 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistration.Builder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrations;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.security.oauth2.server.resource.authentication.OpaqueTokenAuthenticationProvider;
+import org.springframework.security.oauth2.server.resource.introspection.NimbusOpaqueTokenIntrospector;
+import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
 
 import com.google.common.collect.Lists;
 
@@ -68,17 +78,34 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 
 	private OpaqueTokenAuthenticationProvider opaqueTokenAuthenticationProvider;
 
-	public void setAuthentificationFacade(AuthentificationFacade authentificationFacade) {
-		this.authentificationFacade = authentificationFacade;
-	}
+	private ClientRegistration clientRegistration;
 
-	public void setOpaqueTokenAuthenticationProvider(OpaqueTokenAuthenticationProvider opaqueTokenAuthenticationProvider) {
-		this.opaqueTokenAuthenticationProvider = opaqueTokenAuthenticationProvider;
+	private OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
+
+	public OidcOpaqueAuthenticationProvider(AuthentificationFacade authentificationFacade, Boolean useOIDC,
+			String issuerUri, String clientId, String clientSecret) {
+		super();
+		this.authentificationFacade = authentificationFacade;
+		if (useOIDC) {
+			Validate.notEmpty(clientId, "Missing OIDC client ID");
+			Validate.notEmpty(clientSecret, "Missing OIDC client secret");
+			Validate.notEmpty(issuerUri, "Missing OIDC issuer Uri");
+			Builder builder = ClientRegistrations
+					.fromOidcIssuerLocation(issuerUri)
+					.clientId(clientId)
+					.clientSecret(clientSecret);
+			this.clientRegistration = builder.build();
+			Object introspectionUri = this.clientRegistration.getProviderDetails().getConfigurationMetadata().get("introspection_endpoint");
+			Validate.notNull(introspectionUri);
+			Validate.notEmpty((String)introspectionUri, "Can not get introspection_endpoint from OIDC provider.");
+			OpaqueTokenIntrospector introspector = new NimbusOpaqueTokenIntrospector((String)introspectionUri, clientId, clientSecret);
+			this.opaqueTokenAuthenticationProvider = new OpaqueTokenAuthenticationProvider(introspector);
+			this.oAuth2UserService = new DefaultOAuth2UserService();
+		}
 	}
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-
 		// Quick workaround: Not very nice code. :(
 		OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
 		final String token = jwtAuthentication.getToken();
@@ -86,22 +113,35 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 		BearerTokenAuthentication authenticate = (BearerTokenAuthentication) opaqueTokenAuthenticationProvider
 				.authenticate(authToken);
 		logger.debug("OIDC opaque access token seems to be good. Processing authentication...");
-		OAuth2AuthenticatedPrincipal principal = (OAuth2AuthenticatedPrincipal) authenticate.getPrincipal();
+
+		OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, token, null, null);
+		OAuth2UserRequest req = new OAuth2UserRequest(clientRegistration, accessToken);
+		OAuth2User loadUser = oAuth2UserService.loadUser(req);
+
+		String email = authenticate.getName();
+		Validate.notEmpty(email, "Missing email value in claims.");
+		String domainUuid = loadUser.getAttribute("domain");
+		jwtAuthentication.put("email", email);
+		jwtAuthentication.put("domain", domainUuid);
+		jwtAuthentication.put("first_name", loadUser.getAttribute("name"));
+		jwtAuthentication.put("last_name", loadUser.getAttribute("family_name"));
 
 		User foundUser = null;
-		String email = principal.getName();
-		String domainUuid = principal.getAttribute("domain");
+		// looking in the db first.
 		if (domainUuid == null) {
 			foundUser = authentificationFacade.findByLogin(email);
 		} else {
 			foundUser = authentificationFacade.findByLoginAndDomain(domainUuid, email);
 		}
 		if (foundUser == null) {
+			// looking through user providers.
 			List<String> domains = Lists.newArrayList();
 			if (domainUuid == null) {
 				domains = authentificationFacade.getAllDomains();
 			} else {
 				domains = authentificationFacade.getAllSubDomainIdentifiers(domainUuid);
+				// we also need to look in the provided domain.
+				domains.add(0, domainUuid);
 			}
 			for (String domain : domains) {
 				foundUser = authentificationFacade.ldapSearchForAuth(domain, email);

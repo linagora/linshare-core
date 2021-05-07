@@ -35,13 +35,19 @@
  */
 package org.linagora.linshare.auth.oidc;
 
+import java.util.Map;
+
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+
+import com.google.common.collect.Maps;
 
 public class OidcOpaqueAuthenticationToken extends AbstractAuthenticationToken {
 
 	private static final long serialVersionUID = 9181838390481593863L;
 
 	private final String token;
+
+	private Map<String, Object> attributes = Maps.newConcurrentMap();
 
 	public OidcOpaqueAuthenticationToken(String token) {
 		super(null);
@@ -60,5 +66,23 @@ public class OidcOpaqueAuthenticationToken extends AbstractAuthenticationToken {
 	@Override
 	public Object getPrincipal() {
 		return token;
+	}
+
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, Object> attributes) {
+		this.attributes = attributes;
+	}
+
+	public String getStringAttribute(String key) {
+		return (String) attributes.get(key);
+	}
+
+	public void put(String key, Object value) {
+		if (value != null) {
+			attributes.put(key, value);
+		}
 	}
 }

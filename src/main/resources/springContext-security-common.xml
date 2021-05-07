@@ -124,19 +124,12 @@
 		<b:property name="useOIDC" value="${oidc.on}" />
 	</b:bean>
 
-	<b:bean id="opaqueTokenIntrospector" class="org.springframework.security.oauth2.server.resource.introspection.NimbusOpaqueTokenIntrospector" >
-		<b:constructor-arg value="${oidc.introspectionUri}"/>
+	<b:bean id="oidcOpaqueAuthenticationProvider" class="org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationProvider">
+		<b:constructor-arg ref="authentificationFacade" />
+		<b:constructor-arg value="${oidc.on}"/>
+		<b:constructor-arg value="${oidc.issuerUri}"/>
 		<b:constructor-arg value="${oidc.client.id}"/>
 		<b:constructor-arg value="${oidc.client.secret}"/>
-	</b:bean>
-
-	<b:bean id="opaqueTokenAuthenticationProvider" class="org.springframework.security.oauth2.server.resource.authentication.OpaqueTokenAuthenticationProvider" >
-		<b:constructor-arg ref="opaqueTokenIntrospector"/>
-	</b:bean>
-
-	<b:bean id="oidcOpaqueAuthenticationProvider" class="org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationProvider">
-		<b:property name="authentificationFacade" ref="authentificationFacade" />
-		<b:property name="opaqueTokenAuthenticationProvider" ref="opaqueTokenAuthenticationProvider" />
 	</b:bean>
 
 	<b:bean id="jwtAuthenticationProvider"

@@ -305,6 +305,8 @@ linshare.mode.production=true
 
 ## OIDC Parameters
 # oidc.on=false
+# oidc.introspectionUri was introduced in 4.1 and abandoned in 4.2 for issuerUri.
 # oidc.introspectionUri=http://auth.linshare.local/oauth2/introspect
+# oidc.issuerUri=http://auth.linshare.local
 # oidc.client.id=linshare
 # oidc.client.secret=linshare
