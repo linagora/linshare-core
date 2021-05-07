@@ -46,7 +46,10 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.AccountQuotaFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
@@ -82,6 +85,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
+	private final AccountQuotaFacade accountQuotaFacade;
+
 	public UserFacadeImpl(
 			AccountService accountService,
 			UserService2 userService2,
@@ -89,7 +94,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			GuestService guestService,
 			QuotaService quotaService,
 			UserService userService,
-			FunctionalityReadOnlyService functionalityReadOnlyService) {
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			AccountQuotaFacade accountQuotaFacade) {
 		super(accountService);
 		this.userService2 = userService2;
 		this.abstractDomainService = abstractDomainService;
@@ -97,6 +103,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		this.quotaService = quotaService;
 		this.userService = userService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.accountQuotaFacade = accountQuotaFacade;
 	}
 
 	@Override
@@ -241,5 +248,16 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		User actor = getActor(authUser, null);
 		userService.changePassword(authUser, actor, password.getOldPwd(), password.getNewPwd());
+	}
+
+	@Override
+	public AccountQuotaDto find(String accountUuid, String quotaUuid, boolean realTime) {
+		Validate.notEmpty(accountUuid, "accountUuid must be set.");
+		AccountQuotaDto quotaDto = accountQuotaFacade.find(quotaUuid, realTime);
+		if (!quotaDto.getAccount().getUuid().equals(accountUuid)) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
+					"The chosen quota is not related to the requested account, please check the entered accountUuid and quotaUuid");
+		}
+		return quotaDto;
 	}
 }

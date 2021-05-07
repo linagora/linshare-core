@@ -53,6 +53,7 @@ import javax.ws.rs.core.Response;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
@@ -223,4 +224,26 @@ public class UserRestServiceImpl implements UserRestService {
 				@PathParam("restrictedContactUuid") String restrictedContactUuid) throws BusinessException {
 		return userFacade.deleteRestrictedContact(null, ownerUuid, restrictedContactDto, restrictedContactUuid);
 	}
+
+	@Path("/{uuid}/quota/{quotaUuid}")
+	@GET
+	@Operation(summary = "find user's quota", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountQuotaDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public AccountQuotaDto findUserQuota(
+			@Parameter(description = "User's Uuid", required = true)
+				@PathParam("uuid") String accountUuid,
+			@Parameter(description = "User's quota Uuid", required = true)
+				@PathParam("quotaUuid") String quotaUuid,
+			@Parameter(description = "Compute real time quota value. Carefull it could be time consuming.", required = false)
+				@QueryParam("realtime") @DefaultValue("false")
+					boolean realTime
+			) throws BusinessException {
+		return userFacade.find(accountUuid, quotaUuid, realTime);
+	}
+
 }

@@ -39,6 +39,7 @@ import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
@@ -69,4 +70,6 @@ public interface UserFacade extends AdminGenericFacade {
 	UserDto isAuthorized();
 
 	void changePassword(PasswordDto password);
+
+	AccountQuotaDto find(String accountUuid, String quotaUuid, boolean realTime);
 }

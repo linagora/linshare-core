@@ -17,6 +17,7 @@
 		<constructor-arg ref="quotaService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="wsAdminAccountQuotaFacade" />
 	</bean>
 
 	<bean id="wsAdminV5SharedSpaceFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.SharedSpaceFacadeImpl">
