@@ -54,6 +54,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -81,13 +82,10 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 	}
 
 	@Override
-	public SharedSpaceNode find(String actorUuid, String uuid, boolean withRole) throws BusinessException {
+	public SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
-		if (withRole) {
-			return nodeService.findWithRole(authUser, actor, uuid);
-		}
 		return nodeService.find(authUser, actor, uuid);
 	}
 
@@ -97,7 +95,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(node, "Missing required input shared space node.");
 		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(), node.getParentUuid(), node.getNodeType(),
-				node.getVersioningParameters());
+				node.getVersioningParameters(), node.getDescription(), new SharedSpaceAccount(actor));
 		return nodeService.create(authUser, actor, toCreate);
 	}
 

@@ -52,7 +52,7 @@ public interface SharedSpaceFacade {
 
 	PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, Integer pageNumber, Integer pageSize);
 
-	SharedSpaceNode find(String actorUuid, String uuid, boolean withRole) throws BusinessException;
+	SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException;
 
 	SharedSpaceNode create(String actorUuid, SharedSpaceNode node) throws BusinessException;
 
