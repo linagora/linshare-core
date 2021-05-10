@@ -42,10 +42,14 @@ import java.util.UUID;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.DriveWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -56,7 +60,7 @@ import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class DriveWarnUpdatedMemberEmailBuilder extends WorkGroupWarnUpdatedMemberEmailBuilder {
+public class DriveWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
@@ -70,6 +74,29 @@ public class DriveWarnUpdatedMemberEmailBuilder extends WorkGroupWarnUpdatedMemb
 		ctx.setVariable("nestedMembers", emailCtx.getNestedMembers());
 		ctx.setVariable("nbrWorkgroupsUpdated", emailCtx.getNestedMembers().size());
 		return buildMailContainer(emailCtx, ctx);
+	}
+
+	protected MailContainerWithRecipient buildMailContainer(WorkGroupWarnUpdatedMemberEmailContext emailCtx, Context ctx) {
+		MailContact owner = null;
+		if (emailCtx.getOwner() instanceof SystemAccount) {
+			owner = new MailContact(emailCtx.getOwner().getMail());
+		} else {
+			owner = new MailContact((User) emailCtx.getOwner());
+		}
+		SharedSpaceMember driveMember = emailCtx.getWorkGroupMember();
+		User member = emailCtx.getUserMember();
+		String linshareURL = getLinShareUrl(member);
+		ctx.setVariable("owner", owner);
+		ctx.setVariable("member", new MailContact(member));
+		ctx.setVariable("owner", owner);
+		ctx.setVariable("driveMember", driveMember);
+		ctx.setVariable("driveName", driveMember.getNode().getName());
+		ctx.setVariable("driveLink", getDriveLink(linshareURL, driveMember.getNode().getUuid()));
+		ctx.setVariable(linshareURL, linshareURL);
+		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
+				emailCtx);
+		return buildMailContainer;
 	}
 
 	@Override
@@ -102,9 +129,9 @@ public class DriveWarnUpdatedMemberEmailBuilder extends WorkGroupWarnUpdatedMemb
 		ctx.setVariable("nbrWorkgroupsUpdated", nestedMembers.size());
 		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		ctx.setVariable("threadMember", driveMember);
-		ctx.setVariable("workGroupName", driveMember.getNode().getName());
-		ctx.setVariable("workGroupLink", getWorkGroupLink(fakeLinshareURL, "fake_uuid"));
+		ctx.setVariable("driveMember", driveMember);
+		ctx.setVariable("driveName", driveMember.getNode().getName());
+		ctx.setVariable("driveLink", getDriveLink(fakeLinshareURL, "fake_uuid"));
 		ctx.setVariable("linshareURL", fakeLinshareURL);
 		res.add(ctx);
 		return res;

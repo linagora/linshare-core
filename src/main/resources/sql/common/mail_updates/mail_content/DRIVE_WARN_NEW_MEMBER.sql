@@ -26,7 +26,10 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
-       <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, ${driveMember.role.name})"/>
+    <th:block th:switch="${driveMember.role.name}">
+      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightAdminTitle})"/></p>
+      <p th:case="''DRIVE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightWriteTitle})"/></p>
+      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightReadTitle})"/></p>
     </th:block>
     <th:block data-th-replace="layout :: infoStandardArea(#{driveNameTitle},${driveName})"/>
     <th:block data-th-replace="layout :: infoDateArea(#{driveCreationDateTitle},${driveMember.creationDate})"/>
