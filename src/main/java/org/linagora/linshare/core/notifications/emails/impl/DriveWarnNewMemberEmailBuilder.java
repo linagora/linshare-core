@@ -43,6 +43,9 @@ import java.util.UUID;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.DriveWarnNewMemberEmailContext;
@@ -58,7 +61,7 @@ import org.thymeleaf.context.Context;
 import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
 
-public class DriveWarnNewMemberEmailBuilder extends WorkGroupWarnNewMemberEmailBuilder {
+public class DriveWarnNewMemberEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
@@ -68,9 +71,30 @@ public class DriveWarnNewMemberEmailBuilder extends WorkGroupWarnNewMemberEmailB
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		DriveWarnNewMemberEmailContext emailCtx = (DriveWarnNewMemberEmailContext) context;
+		Context ctx = new Context(emailCtx.getLocale());
+		MailContact owner = null;
+		if (emailCtx.getOwner() instanceof SystemAccount) {
+			owner = new MailContact(emailCtx.getOwner().getMail());
+
+		} else {
+			owner = new MailContact((User) emailCtx.getOwner());
+		}
 		Map<String, Object> variables = Maps.newHashMap();
 		variables.put("childMembers", emailCtx.getChildMembers());
-		return buildMailContainer(emailCtx, variables);
+		variables.put("owner", owner);
+		SharedSpaceMember driveMember = emailCtx.getWorkgroupMember();
+		User member = emailCtx.getNewMember();
+		String linshareURL = getLinShareUrl(member);
+		variables.put("member", new MailContact(member));
+		variables.put("linshareURL", linshareURL);
+		variables.put("driveMember", driveMember);
+		variables.put("driveName", driveMember.getNode().getName());
+		variables.put("driveLink", getDriveLink(linshareURL, driveMember.getNode().getUuid()));
+		ctx.setVariables(variables);
+		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
+				emailCtx);
+		return buildMailContainer;
 	}
 
 	@Override
@@ -97,9 +121,9 @@ public class DriveWarnNewMemberEmailBuilder extends WorkGroupWarnNewMemberEmailB
 		ctx.setVariable("childMembers", childMembers);
 		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		ctx.setVariable("threadMember", driveMember);
-		ctx.setVariable("workGroupName", driveMember.getNode().getName());
-		ctx.setVariable("workGroupLink", getWorkGroupLink(fakeLinshareURL, "fake_uuid"));
+		ctx.setVariable("driveMember", driveMember);
+		ctx.setVariable("driveName", driveMember.getNode().getName());
+		ctx.setVariable("driveLink", getDriveLink(fakeLinshareURL, "fake_uuid"));
 		ctx.setVariable("linshareURL", fakeLinshareURL);
 		res.add(ctx);
 		return res;

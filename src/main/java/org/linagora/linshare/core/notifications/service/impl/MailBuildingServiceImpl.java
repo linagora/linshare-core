@@ -132,6 +132,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			boolean templatingSubjectPrefix,
 			String urlFragmentQueryParamFileUuid,
 			String urlTemplateForWorkgroup,
+			String urlTemplateForDrive,
 			String urlTemplateForUploadRequestEntries,
 			String urlTemplateForUploadRequestUploadedFile
 			) throws Exception {
@@ -199,7 +200,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
 				mailActivationBusinessService, fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments,
-				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile);
+				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForDrive, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -218,6 +219,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		String urlTemplateForAnonymousUrl,
 		String paramFilesUuid,
 		String urlTemplateForWorkgroup,
+		String urlTemplateForDrive,
 		String urlTemplateForUploadRequestEntries,
 		String urlTemplateForUploadRequestUploadedFile
 	) {
@@ -234,6 +236,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setUrlTemplateForAnonymousUrl(urlTemplateForAnonymousUrl);
 			emailBuilder.setUrlFragmentQueryParamFileUuid(paramFilesUuid);
 			emailBuilder.setUrlTemplateForWorkgroup(urlTemplateForWorkgroup);
+			emailBuilder.setUrlTemplateForDrive(urlTemplateForDrive);
 			emailBuilder.setUrlTemplateForUploadRequestEntries(urlTemplateForUploadRequestEntries);
 			emailBuilder.setUrlTemplateForUploadRequestUploadedFile(urlTemplateForUploadRequestUploadedFile);
 		}
