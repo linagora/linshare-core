@@ -48,14 +48,14 @@ import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.AccountQuotaFacade;
-import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountQuotaService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
@@ -85,7 +85,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	private final AccountQuotaFacade accountQuotaFacade;
+	private final AccountQuotaService accountQuotaService;
 
 	public UserFacadeImpl(
 			AccountService accountService,
@@ -95,7 +95,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			QuotaService quotaService,
 			UserService userService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
-			AccountQuotaFacade accountQuotaFacade) {
+			AccountQuotaService accountQuotaService) {
 		super(accountService);
 		this.userService2 = userService2;
 		this.abstractDomainService = abstractDomainService;
@@ -103,7 +103,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		this.quotaService = quotaService;
 		this.userService = userService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
-		this.accountQuotaFacade = accountQuotaFacade;
+		this.accountQuotaService = accountQuotaService;
 	}
 
 	@Override
@@ -251,13 +251,20 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	}
 
 	@Override
-	public AccountQuotaDto find(String accountUuid, String quotaUuid, boolean realTime) {
+	public UserDtoQuotaDto findUserQuota(String actorUuid, String accountUuid, String quotaUuid) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notEmpty(quotaUuid, "quotaUuid must be set.");
 		Validate.notEmpty(accountUuid, "accountUuid must be set.");
-		AccountQuotaDto quotaDto = accountQuotaFacade.find(quotaUuid, realTime);
-		if (!quotaDto.getAccount().getUuid().equals(accountUuid)) {
+		User user = userService2.find(authUser, actor, accountUuid);
+		AccountQuota quota = accountQuotaService.find(authUser, quotaUuid);
+		if (!quota.getAccount().getLsUuid().equals(user.getLsUuid())) {
 			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
 					"The chosen quota is not related to the requested account, please check the entered accountUuid and quotaUuid");
 		}
+		UserDtoQuotaDto quotaDto = new UserDtoQuotaDto(quota);
+		Long usedSpace = quotaService.getRealTimeUsedSpace(authUser, authUser, quotaUuid);
+		quotaDto.setRealTimeUsedSpace(usedSpace);
 		return quotaDto;
 	}
 }

@@ -57,6 +57,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
 import org.linagora.linshare.webservice.adminv5.UserRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
@@ -234,16 +235,13 @@ public class UserRestServiceImpl implements UserRestService {
 		)
 	})
 	@Override
-	public AccountQuotaDto findUserQuota(
+	public UserDtoQuotaDto findUserQuota(
 			@Parameter(description = "User's Uuid", required = true)
 				@PathParam("uuid") String accountUuid,
 			@Parameter(description = "User's quota Uuid", required = true)
-				@PathParam("quotaUuid") String quotaUuid,
-			@Parameter(description = "Compute real time quota value. Carefull it could be time consuming.", required = false)
-				@QueryParam("realtime") @DefaultValue("false")
-					boolean realTime
+				@PathParam("quotaUuid") String quotaUuid
 			) throws BusinessException {
-		return userFacade.find(accountUuid, quotaUuid, realTime);
+		return userFacade.findUserQuota(null, accountUuid, quotaUuid);
 	}
 
 }

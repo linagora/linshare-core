@@ -40,9 +40,9 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
 
 public interface UserRestService {
 
@@ -66,5 +66,5 @@ public interface UserRestService {
 	RestrictedContactDto deleteRestrictedContact(String ownerUuid, RestrictedContactDto restrictedContactDto,
 			String restrictedContactUuid) throws BusinessException;
 
-	AccountQuotaDto findUserQuota(String accountUuid, String quotaUuid, boolean realTime) throws BusinessException;
+	UserDtoQuotaDto findUserQuota(String accountUuid, String quotaUuid) throws BusinessException;
 }
