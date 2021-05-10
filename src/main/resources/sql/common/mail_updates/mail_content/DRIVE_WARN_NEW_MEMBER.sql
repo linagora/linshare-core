@@ -48,21 +48,21 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
 </html>',messages_french='driveCreationDateTitle = Date de création
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au drive <br>
 simpleMainMsg = Vous avez été ajouté au drive
-subject = Vous avez été ajouté au drive {0}
+subject = Vous avez été ajouté au Drive {0}
 driveRight = Droit par défaut 
-driveNameTitle = Nom du drive
+driveNameTitle = Nom du Drive
 nestedWorkGroupsList=Vous avez automatiquement été ajouté aux groupes de travail suivants :
 displayDriveAndRole ={0} avec un rôle <span style="text-transform:uppercase">{1}</span>',messages_english='driveCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the drive <br>
-simpleMainMsg = You have been added to the drive
-subject = You have been added to the drive {0}
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive <br>
+simpleMainMsg = You have been added to the Drive
+subject = You have been added to the Drive {0}
 driveRight = Default right
 driveNameTitle = Drive Name
 nestedWorkGroupsList=You have been automatically added to the following workgroups:
 displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_russian='driveCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the drive <br>
-simpleMainMsg = You have been added to the drive
-subject = You have been added to the drive {0}
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive <br>
+simpleMainMsg = You have been added to the Drive
+subject = You have been added to the Drive {0}
 driveRight = Default right
 driveNameTitle = Drive Name
 nestedWorkGroupsList=You have been automatically added to the following workgroups:

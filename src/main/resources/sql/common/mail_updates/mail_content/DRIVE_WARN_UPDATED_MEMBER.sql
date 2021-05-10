@@ -26,6 +26,7 @@ UPDATE mail_content SET subject='[(#{subject(${driveName})})]',body='<!DOCTYPE h
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoStandardArea(#{driveNameTitle},${driveName})"/>
     <th:block th:switch="${driveMember.role.name}">
       <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightAdminTitle})"/></p>
       <p th:case="''DRIVE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightWriteTitle})"/></p>
@@ -37,7 +38,6 @@ UPDATE mail_content SET subject='[(#{subject(${driveName})})]',body='<!DOCTYPE h
       <p th:case="''WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>
       <p th:case="''READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/></p>
     </th:block>
-    <th:block data-th-replace="layout :: infoStandardArea(#{driveNameTitle},${driveName})"/>
     <th:block data-th-replace="layout :: infoDateArea(#{driveUpdatedDateTitle},${driveMember.modificationDate})"/>
     <div th:if="${nbrWorkgroupsUpdated != 0}">
     <th:block data-th-replace="layout :: infoStandardArea(#{nbrWorkgoups},${nbrWorkgroupsUpdated})"/>
@@ -55,28 +55,28 @@ UPDATE mail_content SET subject='[(#{subject(${driveName})})]',body='<!DOCTYPE h
 </div>
 </body>
 </html>',messages_french='driveUpdatedDateTitle = Date de la mise à jour
-mainMsg = Vos droits sur le DRIVE
+mainMsg = Vos droits sur le Drive
 mainMsgNext = et dans ses WorkGroups contenus ont été mis à jour
 mainMsgNextBy= par <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Vos droits sur le DRIVE {0} ont été mis à jour
-driveRight = Droit sur le DRIVE
+subject =  Vos droits sur le Drive {0} ont été mis à jour
+driveRight = Droit sur le Drive
 workGroupRight =  Droit sur le groupe de travail
-driveNameTitle = Nom du DRIVE
+driveNameTitle = Nom du Drive
 nestedWorkGroupsList = Liste des workgoups
 nbrWorkgoups = Nombre de groupe de travail mis à jours',messages_english='driveUpdatedDateTitle = Updated date
-mainMsg = Your rights on the DRIVE 
+mainMsg = Your rights on the Drive 
 mainMsgNext= and workgroups inside it, have been updated
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Your rights on the DRIVE {0} was updated.
+subject =  Your rights on the Drive {0} was updated.
 driveRight = Drive right
 workGroupRight = Workgroup right
 driveNameTitle = Drive Name
 nestedWorkGroupsList = Workgroups list
 nbrWorkgoups = Number of updated workGroups',messages_russian='driveUpdatedDateTitle = Updated date
-mainMsg = Your rights on the DRIVE 
+mainMsg = Your rights on the Drive 
 mainMsgNext= and workgroups inside it, have been updated
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Your rights on the DRIVE {0} was updated.
+subject =  Your rights on the Drive {0} was updated.
 driveRight = Drive right
 workGroupRight = Workgroup right
 driveNameTitle = Drive Name

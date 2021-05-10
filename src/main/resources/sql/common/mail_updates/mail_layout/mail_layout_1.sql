@@ -12,6 +12,9 @@ workGroupRightWirteTitle = Écriture
 workGroupRightContributeTitle = Contribution
 workGroupRightReadTitle = Lecture
 workGroupRightContributorTitle = Contributeur
+driveRightAdminTitle = Drive: Administrateur
+driveRightWriteTitle = Drive: Auteur
+driveRightReadTitle = Drive: Lecteur
 welcomeMessage = Bonjour {0},',messages_english='common.availableUntil = Expiry date
 common.byYou= | By you
 common.download= Download
@@ -25,6 +28,9 @@ workGroupRightAdminTitle = Administrator
 workGroupRightWirteTitle = Writer
 workGroupRightContributeTitle = Contributor
 workGroupRightReadTitle = Reader
+driveRightAdminTitle = Drive: administrator
+driveRightWriteTitle = Drive: writer
+driveRightReadTitle = Drive: reader
 welcomeMessage = Hello {0},',messages_russian='common.availableUntil = Срок действия
 common.byYou= | Вами
 common.download= Загрузить
@@ -38,6 +44,9 @@ workGroupRightAdminTitle = Администратор
 workGroupRightWirteTitle = Автор
 workGroupRightContributeTitle = Редактор
 workGroupRightReadTitle = Читатель
+driveRightAdminTitle = Drive: administrator
+driveRightWriteTitle = Drive: writer
+driveRightReadTitle = Drive: reader
 welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
