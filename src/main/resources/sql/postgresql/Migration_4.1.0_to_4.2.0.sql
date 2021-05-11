@@ -624,12 +624,12 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
     <th:block th:switch="${driveMember.role.name}">
-      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightAdminTitle})"/></p>
-      <p th:case="''DRIVE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightWriteTitle})"/></p>
-      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightReadTitle})"/></p>
+      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleAdminTitle})"/></p>
+      <p th:case="''DRIVE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleWriteTitle})"/></p>
+      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleReadTitle})"/></p>
     </th:block>
     <th:block data-th-replace="layout :: infoStandardArea(#{driveNameTitle},${driveName})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{driveCreationDateTitle},${driveMember.creationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{driveMemberCreationDateTitle},${driveMember.creationDate})"/>
     <div th:if="${!childMembers.isEmpty()}">
       <th:block data-th-utext="#{nestedWorkGroupsList}"/>
       <ul style="padding: 5px 17px; margin: 0;list-style-type:disc;">
@@ -642,22 +642,22 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='driveCreationDateTitle = Date de création
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au drive <br>
-simpleMainMsg = Vous avez été ajouté au drive
+</html>',messages_french='driveMemberCreationDateTitle = Date de création
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au Drive: <br>
+simpleMainMsg = Vous avez été ajouté au Drive
 subject = Vous avez été ajouté au Drive {0}
 driveRight = Droit par défaut 
 driveNameTitle = Nom du Drive
 nestedWorkGroupsList=Vous avez automatiquement été ajouté aux groupes de travail suivants :
-displayDriveAndRole ={0} avec un rôle <span style="text-transform:uppercase">{1}</span>',messages_english='driveCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive <br>
+displayDriveAndRole ={0} avec un rôle <span style="text-transform:uppercase">{1}</span>',messages_english='driveMemberCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive: <br>
 simpleMainMsg = You have been added to the Drive
 subject = You have been added to the Drive {0}
 driveRight = Default right
 driveNameTitle = Drive Name
 nestedWorkGroupsList=You have been automatically added to the following workgroups:
-displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_russian='driveCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive <br>
+displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_russian='driveMemberCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive: <br>
 simpleMainMsg = You have been added to the Drive
 subject = You have been added to the Drive {0}
 driveRight = Default right
@@ -697,9 +697,9 @@ UPDATE mail_content SET subject='[(#{subject(${driveName})})]',body='<!DOCTYPE h
   <section id="secondary-content">
     <th:block data-th-replace="layout :: infoStandardArea(#{driveNameTitle},${driveName})"/>
     <th:block th:switch="${driveMember.role.name}">
-      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightAdminTitle})"/></p>
-      <p th:case="''DRIVE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightWriteTitle})"/></p>
-      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightReadTitle})"/></p>
+      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleAdminTitle})"/></p>
+      <p th:case="''DRIVE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleWriteTitle})"/></p>
+      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleReadTitle})"/></p>
     </th:block>
     <th:block th:switch="${driveMember.nestedRole.name}">
       <p th:case="''ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/></p>  
@@ -707,7 +707,7 @@ UPDATE mail_content SET subject='[(#{subject(${driveName})})]',body='<!DOCTYPE h
       <p th:case="''WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>
       <p th:case="''READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/></p>
     </th:block>
-    <th:block data-th-replace="layout :: infoDateArea(#{driveUpdatedDateTitle},${driveMember.modificationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{driveMemberUpdatedDateTitle},${driveMember.modificationDate})"/>
     <div th:if="${nbrWorkgroupsUpdated != 0}">
     <th:block data-th-replace="layout :: infoStandardArea(#{nbrWorkgoups},${nbrWorkgroupsUpdated})"/>
       <th:block data-th-utext="#{nestedWorkGroupsList}"/>
@@ -723,7 +723,7 @@ UPDATE mail_content SET subject='[(#{subject(${driveName})})]',body='<!DOCTYPE h
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='driveUpdatedDateTitle = Date de la mise à jour
+</html>',messages_french='driveMemberUpdatedDateTitle = Date de la mise à jour
 mainMsg = Vos droits sur le Drive
 mainMsgNext = et dans ses WorkGroups contenus ont été mis à jour
 mainMsgNextBy= par <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
@@ -732,20 +732,20 @@ driveRight = Droit sur le Drive
 workGroupRight =  Droit sur le groupe de travail
 driveNameTitle = Nom du Drive
 nestedWorkGroupsList = Liste des workgoups
-nbrWorkgoups = Nombre de groupe de travail mis à jours',messages_english='driveUpdatedDateTitle = Updated date
-mainMsg = Your rights on the Drive 
+nbrWorkgoups = Nombre de groupe de travail mis à jours',messages_english='driveMemberUpdatedDateTitle = Updated date
+mainMsg = Your roles on the Drive 
 mainMsgNext= and workgroups inside it, have been updated
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Your rights on the Drive {0} was updated.
+subject =  Your roles on the Drive {0} was updated.
 driveRight = Drive right
 workGroupRight = Workgroup right
 driveNameTitle = Drive Name
 nestedWorkGroupsList = Workgroups list
-nbrWorkgoups = Number of updated workGroups',messages_russian='driveUpdatedDateTitle = Updated date
-mainMsg = Your rights on the Drive 
+nbrWorkgoups = Number of updated workGroups',messages_russian='driveMemberUpdatedDateTitle = Updated date
+mainMsg = Your roles on the Drive 
 mainMsgNext= and workgroups inside it, have been updated
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Your rights on the Drive {0} was updated.
+subject =  Your roles on the Drive {0} was updated.
 driveRight = Drive right
 workGroupRight = Workgroup right
 driveNameTitle = Drive Name
@@ -768,9 +768,9 @@ workGroupRightWirteTitle = Écriture
 workGroupRightContributeTitle = Contribution
 workGroupRightReadTitle = Lecture
 workGroupRightContributorTitle = Contributeur
-driveRightAdminTitle = Drive: Administrateur
-driveRightWriteTitle = Drive: Auteur
-driveRightReadTitle = Drive: Lecteur
+driveRoleAdminTitle = Drive: Administrateur
+driveRoleWriteTitle = Drive: Auteur
+driveRoleReadTitle = Drive: Lecteur
 welcomeMessage = Bonjour {0},',messages_english='common.availableUntil = Expiry date
 common.byYou= | By you
 common.download= Download
@@ -784,9 +784,9 @@ workGroupRightAdminTitle = Administrator
 workGroupRightWirteTitle = Writer
 workGroupRightContributeTitle = Contributor
 workGroupRightReadTitle = Reader
-driveRightAdminTitle = Drive: administrator
-driveRightWriteTitle = Drive: writer
-driveRightReadTitle = Drive: reader
+driveRoleAdminTitle = Drive: Administrator
+driveRoleWriteTitle = Drive: Writer
+driveRoleReadTitle = Drive: Reader
 welcomeMessage = Hello {0},',messages_russian='common.availableUntil = Срок действия
 common.byYou= | Вами
 common.download= Загрузить
@@ -800,9 +800,9 @@ workGroupRightAdminTitle = Администратор
 workGroupRightWirteTitle = Автор
 workGroupRightContributeTitle = Редактор
 workGroupRightReadTitle = Читатель
-driveRightAdminTitle = Drive: administrator
-driveRightWriteTitle = Drive: writer
-driveRightReadTitle = Drive: reader
+driveRoleAdminTitle = Drive: Administrator
+driveRoleWriteTitle = Drive: Writer
+driveRoleReadTitle = Drive: Reader
 welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>

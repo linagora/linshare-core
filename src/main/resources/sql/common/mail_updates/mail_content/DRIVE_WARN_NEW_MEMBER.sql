@@ -27,12 +27,12 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
     <th:block th:switch="${driveMember.role.name}">
-      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightAdminTitle})"/></p>
-      <p th:case="''DRIVE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightWriteTitle})"/></p>
-      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRightReadTitle})"/></p>
+      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleAdminTitle})"/></p>
+      <p th:case="''DRIVE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleWriteTitle})"/></p>
+      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleReadTitle})"/></p>
     </th:block>
     <th:block data-th-replace="layout :: infoStandardArea(#{driveNameTitle},${driveName})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{driveCreationDateTitle},${driveMember.creationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{driveMemberCreationDateTitle},${driveMember.creationDate})"/>
     <div th:if="${!childMembers.isEmpty()}">
       <th:block data-th-utext="#{nestedWorkGroupsList}"/>
       <ul style="padding: 5px 17px; margin: 0;list-style-type:disc;">
@@ -45,22 +45,22 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='driveCreationDateTitle = Date de création
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au drive <br>
-simpleMainMsg = Vous avez été ajouté au drive
+</html>',messages_french='driveMemberCreationDateTitle = Date de création
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au Drive: <br>
+simpleMainMsg = Vous avez été ajouté au Drive
 subject = Vous avez été ajouté au Drive {0}
 driveRight = Droit par défaut 
 driveNameTitle = Nom du Drive
 nestedWorkGroupsList=Vous avez automatiquement été ajouté aux groupes de travail suivants :
-displayDriveAndRole ={0} avec un rôle <span style="text-transform:uppercase">{1}</span>',messages_english='driveCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive <br>
+displayDriveAndRole ={0} avec un rôle <span style="text-transform:uppercase">{1}</span>',messages_english='driveMemberCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive: <br>
 simpleMainMsg = You have been added to the Drive
 subject = You have been added to the Drive {0}
 driveRight = Default right
 driveNameTitle = Drive Name
 nestedWorkGroupsList=You have been automatically added to the following workgroups:
-displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_russian='driveCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive <br>
+displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_russian='driveMemberCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Drive: <br>
 simpleMainMsg = You have been added to the Drive
 subject = You have been added to the Drive {0}
 driveRight = Default right
