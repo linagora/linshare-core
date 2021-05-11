@@ -213,19 +213,19 @@ public class AdvancedStatisticBatchTest {
 		Contact yoda = new Contact("yoda@linshare.org");
 		UploadRequest ure = new UploadRequest();
 		ure.setCanClose(true);
-		ure.setMaxDepositSize((long) 100);
+		ure.setMaxDepositSize((long) 100000);
 		ure.setMaxFileCount(Integer.valueOf(3));
-		ure.setMaxFileSize((long) 50);
-		ure.setStatus(UploadRequestStatus.CREATED);
-		ure.setExpiryDate(new Date());
+		ure.setMaxFileSize((long) 100000);
 		ure.setProtectedByPassword(false);
 		ure.setCanEditExpiryDate(true);
 		ure.setCanDelete(true);
 		ure.setLocale(Language.ENGLISH);
-		ure.setActivationDate(new Date());
+		ure.setExpiryDate(new Date());
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		ure = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(UploadRequestStatus.ENABLED,
+				ure.getStatus());
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");

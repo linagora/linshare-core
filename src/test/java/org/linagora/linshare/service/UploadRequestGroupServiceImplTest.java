@@ -43,7 +43,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -121,7 +120,7 @@ public class UploadRequestGroupServiceImplTest {
 
 	private UploadRequest urInit;
 
-	private UploadRequest ure = new UploadRequest();
+	private UploadRequest ure;
 
 	private User john;
 
@@ -564,18 +563,17 @@ public class UploadRequestGroupServiceImplTest {
 		// On this test we will return the nbr of uploaded files and used space on an
 		// URG
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure,
-				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		Assertions.assertEquals(UploadRequestStatus.ENABLED, ure.getStatus());
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		File tempFile2 = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(john, john, tempFile,
 				"First Upload request entry", "First URE", false, null,
-				uploadRequest.getUploadRequestURLs().iterator().next());
+				ure.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry uploadRequestEntry2 = uploadRequestEntryService.create(john, john, tempFile2,
 				"Second Upload request entry", "Second URE", false, null,
-				uploadRequest.getUploadRequestURLs().iterator().next());
+				ure.getUploadRequestURLs().iterator().next());
+		UploadRequestGroup uploadRequestGroup = ure.getUploadRequestGroup();
 		Assertions.assertEquals(2, uploadRequestGroupService.countNbrUploadedFiles(uploadRequestGroup));
 		Assertions.assertEquals(uploadRequestEntry.getSize() + uploadRequestEntry2.getSize(),
 				uploadRequestGroupService.computeEntriesSize(uploadRequestGroup));
@@ -585,11 +583,10 @@ public class UploadRequestGroupServiceImplTest {
 	// helpers
 	private UploadRequest initUploadRequest() {
 		UploadRequest uploadRequest = new UploadRequest();
-		uploadRequest.setUuid(UUID.randomUUID().toString());
 		uploadRequest.setCanClose(true);
-		uploadRequest.setMaxDepositSize((long) 100);
+		uploadRequest.setMaxDepositSize((long) 100000);
 		uploadRequest.setMaxFileCount(Integer.valueOf(3));
-		uploadRequest.setMaxFileSize((long) 50);
+		uploadRequest.setMaxFileSize((long) 100000);
 		uploadRequest.setProtectedByPassword(false);
 		uploadRequest.setCanEditExpiryDate(true);
 		uploadRequest.setCanDelete(true);

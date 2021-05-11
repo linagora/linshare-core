@@ -179,9 +179,9 @@ public class UploadRequestEntryServiceImplTest {
 		john.setDomain(subDomain);
 		// UPLOAD REQUEST CREATE
 		ure.setCanClose(true);
-		ure.setMaxDepositSize((long) 100);
+		ure.setMaxDepositSize((long) 100000);
 		ure.setMaxFileCount(Integer.valueOf(3));
-		ure.setMaxFileSize((long) 50);
+		ure.setMaxFileSize((long) 100000);
 		ure.setExpiryDate(new Date());
 		ure.setProtectedByPassword(false);
 		ure.setCanEditExpiryDate(true);
@@ -210,7 +210,7 @@ public class UploadRequestEntryServiceImplTest {
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
-				uploadRequest.getUploadRequestURLs().iterator().next());
+				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		Assertions.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
 		Document aDocument = uploadRequestEntry.getDocument();
 		uploadRequestEntryRepository.delete(uploadRequestEntry);
@@ -229,9 +229,9 @@ public class UploadRequestEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequest request = new UploadRequest();
 		request.setCanClose(true);
-		request.setMaxDepositSize((long) 100);
+		request.setMaxDepositSize((long) 100000);
 		request.setMaxFileCount(Integer.valueOf(3));
-		request.setMaxFileSize((long) 50);
+		request.setMaxFileSize((long) 100000);
 		request.setProtectedByPassword(false);
 		request.setCanEditExpiryDate(true);
 		request.setCanDelete(true);
@@ -249,8 +249,7 @@ public class UploadRequestEntryServiceImplTest {
 		Assertions.assertNotNull(url);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		Assertions.assertEquals(UploadRequestStatus.CREATED,
-				request.getStatus());
+		Assertions.assertEquals(UploadRequestStatus.CREATED, request.getStatus());
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 					url);
@@ -321,15 +320,15 @@ public class UploadRequestEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
-				uploadRequest.getUploadRequestURLs().iterator().next());
+				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
 		entry.getUploadRequestUrl().getUploadRequest().setCanDelete(false);
 		uploadRequestService.update(john, john, entry.getUploadRequestUrl().getUploadRequest().getUuid(),
 				entry.getUploadRequestUrl().getUploadRequest(), false);
-		Assertions.assertFalse(uploadRequest.isCanDelete());
+		Assertions.assertFalse(enabledUploadRequest.isCanDelete());
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			uploadRequestEntryService.deleteEntryByRecipients(uploadRequest.getUploadRequestURLs().iterator().next(),
+			uploadRequestEntryService.deleteEntryByRecipients(enabledUploadRequest.getUploadRequestURLs().iterator().next(),
 					uploadRequestEntry.getUuid());
 		});
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED, exception.getErrorCode());
@@ -370,7 +369,7 @@ public class UploadRequestEntryServiceImplTest {
 		AccountQuota johnQuota = quotaService.findByRelatedAccount(owner);
 		Long quota = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
 		uploadRequestEntry = uploadRequestEntryService.create(recipient, owner, tempFile, fileName, comment, false, null,
-				uploadRequest.getUploadRequestURLs().iterator().next());
+				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(recipient, recipient, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
 		Long quotaAfterUpload = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
