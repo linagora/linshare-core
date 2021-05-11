@@ -39,6 +39,7 @@ package org.linagora.linshare.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.transaction.Transactional;
@@ -219,6 +220,42 @@ public class UploadRequestEntryServiceImplTest {
 		metadata.setUuid(aDocument.getUuid());
 		fileDataStore.remove(metadata);
 		documentRepository.delete(aDocument);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testforbidEntryCreation() throws BusinessException, IOException {
+		// In this test we will forbid the entry creation if the UR not yet enabled
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequest request = new UploadRequest();
+		request.setCanClose(true);
+		request.setMaxDepositSize((long) 100);
+		request.setMaxFileCount(Integer.valueOf(3));
+		request.setMaxFileSize((long) 50);
+		request.setProtectedByPassword(false);
+		request.setCanEditExpiryDate(true);
+		request.setCanDelete(true);
+		request.setLocale(Language.ENGLISH);
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DAY_OF_YEAR, 2);
+		Date date = c.getTime();
+		request.setActivationDate(date);
+		request.setExpiryDate(date);
+		UploadRequestGroup group = uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		request = group.getUploadRequests().iterator().next();
+		Assertions.assertNotNull(request);
+		UploadRequestUrl url = request.getUploadRequestURLs().iterator().next();
+		Assertions.assertNotNull(url);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		Assertions.assertEquals(UploadRequestStatus.CREATED,
+				request.getStatus());
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
+					url);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_READONLY_MODE, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
