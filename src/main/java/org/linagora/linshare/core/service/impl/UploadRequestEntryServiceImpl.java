@@ -214,6 +214,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			upReqEntry = uploadRequestEntryBusinessService.createUploadRequestEntryDocument(actor, tempFile, size,
 					fileName, comment, checkIfIsCiphered, timeStampingUrl, mimeType, null, isFromCmis, metadata,
 					uploadRequestUrl);
+			createBusinessCheck(upReqEntry);
 			addToQuota(actor, size);
 		} finally {
 			try {
@@ -229,6 +230,45 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 				LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_ENTRY, upReqEntry.getUuid(), upReqEntry);
 		logEntryService.insert(log);
 		return upReqEntry;
+	}
+
+	private void createBusinessCheck(UploadRequestEntry entry) throws BusinessException {
+		UploadRequest request = entry.getUploadRequestUrl().getUploadRequest();
+		UploadRequestUrl requestUrl = entry.getUploadRequestUrl();
+		if (!request.getStatus().equals(UploadRequestStatus.ENABLED)) {
+			throw new BusinessException(
+					BusinessErrorCode.UPLOAD_REQUEST_READONLY_MODE,
+					"The current upload request url is in read only mode : "
+							+ requestUrl.getUuid());
+		}
+		if (request.getMaxFileSize() != null) {
+			if (entry.getSize() > request.getMaxFileSize()) {
+				throw new BusinessException(
+						BusinessErrorCode.UPLOAD_REQUEST_FILE_TOO_LARGE,
+						"You already have reached the uploaded file limit.");
+			}
+		}
+		if (request.getMaxFileCount() != null) {
+			// already reach the limit
+			if (requestUrl.getUploadRequestEntries().size() >= request
+					.getMaxFileCount()) {
+				throw new BusinessException(
+						BusinessErrorCode.UPLOAD_REQUEST_TOO_MANY_FILES,
+						"You already have reached the uploaded file limit.");
+			}
+		}
+		if (request.getMaxDepositSize() != null) {
+			long totalSize = 0;
+			for (UploadRequestEntry ure : requestUrl.getUploadRequestEntries()) {
+				totalSize += ure.getSize();
+			}
+			totalSize += entry.getSize();
+			if (totalSize >= request.getMaxDepositSize()) {
+				throw new BusinessException(
+						BusinessErrorCode.UPLOAD_REQUEST_TOTAL_DEPOSIT_SIZE_TOO_LARGE,
+						"You already have reached the limit of your quota.");
+			}
+		}
 	}
 
 	@Override
