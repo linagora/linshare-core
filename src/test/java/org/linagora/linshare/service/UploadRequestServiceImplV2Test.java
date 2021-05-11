@@ -197,9 +197,9 @@ public class UploadRequestServiceImplV2Test {
 		// UPLOAD REQUEST CREATE
 		globaleUploadRequest = new UploadRequest();
 		globaleUploadRequest.setCanClose(true);
-		globaleUploadRequest.setMaxDepositSize((long) 100);
+		globaleUploadRequest.setMaxDepositSize((long) 100000);
 		globaleUploadRequest.setMaxFileCount(Integer.valueOf(3));
-		globaleUploadRequest.setMaxFileSize((long) 50);
+		globaleUploadRequest.setMaxFileSize((long) 100000);
 		globaleUploadRequest.setNotificationDate(parseDate("2020-09-01 09:00:00"));
 		globaleUploadRequest.setExpiryDate(parseDate("2020-09-01 15:00:00"));
 		globaleUploadRequest.setProtectedByPassword(false);
