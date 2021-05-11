@@ -85,6 +85,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 import org.linagora.linshare.webservice.userv2.SharedSpaceNodeRestService;
+import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -175,6 +176,33 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			)
 				throws BusinessException {
 		return sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, parent, flat, nodeTypes);
+	}
+	
+	@Path("/search")
+	@GET
+	@Operation(summary = "Search on sharedSpace node (folder, document, revision)..", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = WorkGroupNode.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public Response findAllWithSearch(
+			@Parameter(description = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid")
+					String sharedSpaceUuid,
+			@Parameter(description = "Search pattern (case insensitive) that contains matching sequence in name of Folder, Document or Revision in the shared space", required = false)
+				@QueryParam("pattern") @DefaultValue("")
+					String pattern,
+			@Parameter(description = "Number of the page", required = false)
+				@QueryParam("pageNumber")
+					Integer pageNumber,
+			@Parameter(description = "Size of element in the page", required = false)
+				@QueryParam("pageSize")
+					Integer pageSize)
+			throws BusinessException {
+		return new PagingResponseBuilder<WorkGroupNode>()
+				.build(sharedSpaceNodeFacade.findAllWithSearch(null, sharedSpaceUuid, pattern, pageNumber, pageSize));
 	}
 
 	@Path("/{sharedSpaceNodeUuid}")

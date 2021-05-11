@@ -77,6 +77,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -139,6 +140,15 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.findAll(authUser, actor, workGroup, parentNodeUuid, flat, nodeTypes);
+	}
+	
+	@Override
+	public PageContainer<WorkGroupNode> findAllWithSearch(String actorUuid, String sharedSpaceUuid, String pattern, Integer pageNumber, Integer pageSize) {
+		User authUser = checkAuthentication();
+		Validate.notEmpty(sharedSpaceUuid, "Missing required sharedSpace uuid");
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceUuid);
+		return service.findAllWithSearch(authUser, actor, workGroup, pattern, new PageContainer<WorkGroupNode>(pageNumber, pageSize));
 	}
 
 	@Override

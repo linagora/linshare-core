@@ -77,6 +77,7 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -136,6 +137,14 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	@Override
 	public List<WorkGroupNode> findAll(Account actor, User owner, WorkGroup workGroup) throws BusinessException {
 		return findAll(actor, owner, workGroup, null, true, Lists.newArrayList(WorkGroupNodeType.DOCUMENT));
+	}
+	
+	@Override
+	public PageContainer<WorkGroupNode> findAllWithSearch(User authUser, User actor, WorkGroup workGroup, String pattern,
+			PageContainer<WorkGroupNode> pageContainer) {
+		checkListPermission(authUser, actor, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_NODE_LIST_FORBIDDEN,
+				null, workGroup);
+		return workGroupNodeBusinessService.findAllWithSearch(workGroup, pattern, pageContainer);
 	}
 
 	@Override

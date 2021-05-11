@@ -49,6 +49,7 @@ import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface WorkGroupNodeService {
 
@@ -103,5 +104,8 @@ public interface WorkGroupNodeService {
 
 	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid, boolean moveDocument)
 			throws BusinessException;
+
+	PageContainer<WorkGroupNode> findAllWithSearch(User authUser, User actor, WorkGroup workGroup, String pattern,
+			PageContainer<WorkGroupNode> pageContainer);
 
 }

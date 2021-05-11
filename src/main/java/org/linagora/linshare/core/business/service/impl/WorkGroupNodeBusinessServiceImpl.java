@@ -64,8 +64,11 @@ import org.linagora.linshare.mongo.entities.light.AuditDownloadLightEntity;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 import org.linagora.linshare.utils.DocumentCount;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -157,6 +160,25 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		query.addCriteria(Criteria.where("path").regex(pattern));
 		List<WorkGroupNode> nodes = mongoTemplate.find(query, WorkGroupNode.class);
 		return nodes.stream().collect(Collectors.toMap(WorkGroupNode::getUuid, Function.identity()));
+	}
+	
+	@Override
+	public PageContainer<WorkGroupNode> findAllWithSearch(WorkGroup workGroup, String pattern,
+			PageContainer<WorkGroupNode> pageContainer) {
+		// allow to return nodes with names that contains "pattern" (regex is case
+		// insensitive)
+		String regex = "(?i).*" + pattern + ".*";
+		logger.info(regex);
+		Integer page = pageContainer.getPageNumber();
+		Integer size = pageContainer.getPageSize();
+		Pageable paging = PageRequest.of(page, size);
+		Query query = new Query();
+		Criteria criteria = Criteria.where("workGroup").is(workGroup.getLsUuid()).and("nodeType").ne("ROOT_FOLDER");
+		query.addCriteria(criteria.and("name").regex(regex));
+		query.with(paging);
+		List<WorkGroupNode> nodes = mongoTemplate.find(query, WorkGroupNode.class);
+		long count = mongoTemplate.count(new Query(criteria), WorkGroupNode.class);
+		return new PageContainer<WorkGroupNode>(page, size, count, nodes);
 	}
 
 	@Override

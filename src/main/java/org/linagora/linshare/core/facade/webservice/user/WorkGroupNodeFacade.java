@@ -50,6 +50,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface WorkGroupNodeFacade extends GenericFacade {
 
@@ -78,5 +79,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 	String findByWorkGroupNodeUuid(String workGroupNodeUuid) throws BusinessException;
 
 	NodeMetadataMto findMetaData(String actorUuid, String sharedSpaceUuid, String sharedSpaceNodeUuid, boolean storage);
+
+	PageContainer<WorkGroupNode> findAllWithSearch(String actorUuid, String sharedSpaceUuid, String pattern, Integer pageSize, Integer pageNumber);
 
 }

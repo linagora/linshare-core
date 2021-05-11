@@ -35,11 +35,17 @@
  */
 package org.linagora.linshare.webservice.userv2;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 
 public interface SharedSpaceNodeRestService extends WorkGroupNodeRestService {
 
 	NodeMetadataMto findMetaData(String sharedSpaceUuid, String sharedSpaceNodeUuid, Boolean storage) throws BusinessException;
+	
+	Response findAllWithSearch(String sharedSpaceUuid, String pattern, Integer pageNumber , Integer pageSize)
+			throws BusinessException;
+	
 
 }

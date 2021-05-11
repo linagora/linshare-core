@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface WorkGroupNodeBusinessService {
 
@@ -64,5 +65,8 @@ public interface WorkGroupNodeBusinessService {
 
 	FileAndMetaData downloadArchiveRevision(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode rootNode,
 			List<WorkGroupNode> documentNodes, WorkGroupNodeAuditLogEntry log);
+
+	PageContainer<WorkGroupNode> findAllWithSearch(WorkGroup workGroup, String pattern,
+			PageContainer<WorkGroupNode> pageContainer);
 
 }
