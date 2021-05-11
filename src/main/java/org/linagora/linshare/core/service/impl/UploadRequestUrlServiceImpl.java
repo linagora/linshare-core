@@ -169,7 +169,6 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 		// Store the file into the owner account.
 		UploadRequestEntry upReqdoc = uploadRequestEntryService.create(
 				actor, owner, file, fileName, "", false, null, requestUrl);
-		createBusinessCheck(requestUrl, upReqdoc);
 		if (requestUrl.getUploadRequest().getEnableNotification()) {
 			EmailContext context = new UploadRequestUploadedFileEmailContext(
 					(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
@@ -229,45 +228,6 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 						BusinessErrorCode.UPLOAD_REQUEST_NOT_ENABLE_YET,
 						"The current upload request url is no more available now. : "
 								+ requestUrl.getUuid());
-			}
-		}
-	}
-
-	private void createBusinessCheck(UploadRequestUrl requestUrl,
-			UploadRequestEntry document) throws BusinessException {
-		UploadRequest request = requestUrl.getUploadRequest();
-		if (!request.getStatus().equals(UploadRequestStatus.ENABLED)) {
-			throw new BusinessException(
-					BusinessErrorCode.UPLOAD_REQUEST_READONLY_MODE,
-					"The current upload request url is in read only mode : "
-							+ requestUrl.getUuid());
-		}
-		if (request.getMaxFileSize() != null) {
-			if (document.getSize() > request.getMaxFileSize()) {
-				throw new BusinessException(
-						BusinessErrorCode.UPLOAD_REQUEST_FILE_TOO_LARGE,
-						"You already have reached the uploaded file limit.");
-			}
-		}
-		if (request.getMaxFileCount() != null) {
-			// already reach the limit
-			if (requestUrl.getUploadRequestEntries().size() >= request
-					.getMaxFileCount()) {
-				throw new BusinessException(
-						BusinessErrorCode.UPLOAD_REQUEST_TOO_MANY_FILES,
-						"You already have reached the uploaded file limit.");
-			}
-		}
-		if (request.getMaxDepositSize() != null) {
-			long totalSize = 0;
-			for (UploadRequestEntry entry : requestUrl.getUploadRequestEntries()) {
-				totalSize += entry.getSize();
-			}
-			totalSize += document.getSize();
-			if (totalSize >= request.getMaxDepositSize()) {
-				throw new BusinessException(
-						BusinessErrorCode.UPLOAD_REQUEST_TOTAL_DEPOSIT_SIZE_TOO_LARGE,
-						"You already have reached the limit of your quota.");
 			}
 		}
 	}
