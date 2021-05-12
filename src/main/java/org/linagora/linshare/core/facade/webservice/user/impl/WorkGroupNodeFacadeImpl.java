@@ -36,6 +36,10 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -143,14 +147,34 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 	
 	@Override
-	public PageContainer<WorkGroupNode> findAllWithSearch(String actorUuid, String sharedSpaceUuid, String pattern, Integer pageNumber, Integer pageSize) {
-		User authUser = checkAuthentication();
+	public PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String pattern,
+			boolean caseSensitive, Integer pageNumber, Integer pageSize, String creationDateAfter,
+			String creationDateBefore, String modificationDateAfter, String modificationDateBefore, String parentUuid,
+			List<WorkGroupNodeType> types, String lastAuthor) {
+		Account authUser = checkAuthentication();
 		Validate.notEmpty(sharedSpaceUuid, "Missing required sharedSpace uuid");
-		User actor = getActor(authUser, actorUuid);
+		Account actor = getActor(authUser, actorUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceUuid);
-		return service.findAllWithSearch(authUser, actor, workGroup, pattern, new PageContainer<WorkGroupNode>(pageNumber, pageSize));
+		return service.findAll(authUser, actor, workGroup, pattern, caseSensitive,
+				new PageContainer<WorkGroupNode>(pageNumber, pageSize), getDateFromString(creationDateAfter), getDateFromString(creationDateBefore),
+				getDateFromString(modificationDateAfter), getDateFromString(modificationDateBefore), parentUuid, types, lastAuthor);
 	}
-
+	
+	private Date getDateFromString(String dateString) {
+		Date date = null;
+		String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+		if (dateString != null) {
+			try {
+				DateFormat df = new SimpleDateFormat(dateFormat);
+				date = df.parse(dateString);
+			} catch (ParseException e) {
+				logger.error(e.getMessage(), e);
+				throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "String date parsing error. Supported format: " + dateFormat);
+			}
+		}
+		return date;
+	}
+	
 	@Override
 	public WorkGroupNode find(String actorUuid, String workGroupUuid, String workGroupNodeUuid, Boolean withTree)
 			throws BusinessException {

@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.service;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
@@ -105,7 +106,9 @@ public interface WorkGroupNodeService {
 	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid, boolean moveDocument)
 			throws BusinessException;
 
-	PageContainer<WorkGroupNode> findAllWithSearch(User authUser, User actor, WorkGroup workGroup, String pattern,
-			PageContainer<WorkGroupNode> pageContainer);
+	PageContainer<WorkGroupNode> findAll(Account authUser, Account actor, WorkGroup workGroup, String pattern,
+			boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter,
+			Date creationDateBefore, Date modificationDateAfter, Date modificationDateBefore, String parentUuid,
+			List<WorkGroupNodeType> types, String lastAuthor);
 
 }

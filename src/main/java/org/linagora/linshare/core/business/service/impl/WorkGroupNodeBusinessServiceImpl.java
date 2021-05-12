@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -63,17 +64,21 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.light.AuditDownloadLightEntity;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
+import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.linagora.linshare.utils.DocumentCount;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 
@@ -90,13 +95,16 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 	protected final DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService;
 
 	protected final MongoTemplate mongoTemplate;
+	
+	protected final WorkGroupNodeMongoRepository repository;
 
 	public WorkGroupNodeBusinessServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
 			DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService,
-			MongoTemplate mongoTemplate) {
+			MongoTemplate mongoTemplate,WorkGroupNodeMongoRepository repository) {
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.documentEntryRevisionBusinessService = documentEntryRevisionBusinessService;
 		this.mongoTemplate = mongoTemplate;
+		this.repository = repository;
 	}
 
 	@Override
@@ -163,24 +171,74 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 	}
 	
 	@Override
-	public PageContainer<WorkGroupNode> findAllWithSearch(WorkGroup workGroup, String pattern,
-			PageContainer<WorkGroupNode> pageContainer) {
-		// allow to return nodes with names that contains "pattern" (regex is case
-		// insensitive)
-		String regex = "(?i).*" + pattern + ".*";
-		logger.info(regex);
-		Integer page = pageContainer.getPageNumber();
-		Integer size = pageContainer.getPageSize();
-		Pageable paging = PageRequest.of(page, size);
+	public PageContainer<WorkGroupNode> findAll(WorkGroup workGroup, String pattern, boolean caseSensitive,
+			PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter, Date creationDateBefore,
+			Date modificationDateAfter, Date modificationDateBefore, String parentUuid,
+			List<WorkGroupNodeType> types, String lastAuthor) {
 		Query query = new Query();
-		Criteria criteria = Criteria.where("workGroup").is(workGroup.getLsUuid()).and("nodeType").ne("ROOT_FOLDER");
-		query.addCriteria(criteria.and("name").regex(regex));
+		if (creationDateAfter != null) {
+			query.addCriteria(Criteria.where("creationDate").gte(creationDateAfter));
+		}
+		if (creationDateBefore != null) {
+			query.addCriteria(Criteria.where("creationDate").lt(creationDateBefore));
+		}
+		if (modificationDateAfter != null) {
+			query.addCriteria(Criteria.where("modificationDate").gte(modificationDateAfter));
+		}
+		if (modificationDateBefore != null) {
+			query.addCriteria(Criteria.where("modificationDate").lt(modificationDateBefore));
+		}
+		if (lastAuthor != null) {
+			query.addCriteria(Criteria.where("lastAuthor.uuid").is(lastAuthor));
+		}
+		String regex = null;
+		if (pattern != null && !pattern.isEmpty()) {
+			regex = "(?i).*" + pattern + ".*";
+			if (caseSensitive) {
+				regex = ".*" + pattern + ".*";
+			}
+			logger.debug("Used regex : {}", regex);
+			query.addCriteria(Criteria.where("name").regex(regex));
+		}
+		if (parentUuid == null) {
+			// recover the root folder uuid
+			parentUuid = DataAccessUtils
+					.singleResult(repository.findByWorkGroupAndParent(workGroup.getLsUuid(), workGroup.getLsUuid()))
+					.getUuid();
+		}
+		Criteria mainCriteria = Criteria.where("path").regex(parentUuid);
+		query.addCriteria(mainCriteria);
+		query.addCriteria(Criteria.where("nodeType").in(getTypes(types)));
+		Pageable paging = PageRequest.of(pageContainer.getPageNumber(), pageContainer.getPageSize());
 		query.with(paging);
+		query.with(Sort.by(Sort.Direction.DESC,"creationDate"));
+		logger.debug(query.toString());
 		List<WorkGroupNode> nodes = mongoTemplate.find(query, WorkGroupNode.class);
-		long count = mongoTemplate.count(new Query(criteria), WorkGroupNode.class);
-		return new PageContainer<WorkGroupNode>(page, size, count, nodes);
+		long count = mongoTemplate.count(new Query(mainCriteria), WorkGroupNode.class);
+		return new PageContainer<WorkGroupNode>(pageContainer.getPageNumber(), pageContainer.getPageSize(), count, nodes);
 	}
 
+	private List<WorkGroupNodeType> getTypes(List<WorkGroupNodeType> types) {
+		List<WorkGroupNodeType> supportedTypes = Arrays.asList(WorkGroupNodeType.FOLDER, WorkGroupNodeType.DOCUMENT,
+				WorkGroupNodeType.DOCUMENT_REVISION);
+		List<WorkGroupNodeType> typesQuery = Lists.newArrayList();
+		if (types != null && !types.isEmpty()) {
+			logger.debug("Filtering by node types: {}", types);
+			for (WorkGroupNodeType workGroupNodeType : types) {
+				// check if input types are supported
+				if (supportedTypes.contains(workGroupNodeType)) {
+					typesQuery.add(workGroupNodeType);
+				}
+			}
+
+		}
+		// input types not supported, use default types to filter
+		if (typesQuery.isEmpty()) {
+			typesQuery = supportedTypes;
+		}
+		return typesQuery;
+	}
+	
 	@Override
 	public List<WorkGroupNode> findAllSubDocuments(WorkGroup workGroup, String pattern) {
 		Query query = new Query();

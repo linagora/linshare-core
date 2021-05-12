@@ -187,22 +187,47 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 		)
 	})
 	@Override
-	public Response findAllWithSearch(
+	public Response findAll(
 			@Parameter(description = "The sharedSpace uuid.", required = true)
 				@PathParam("sharedSpaceUuid")
 					String sharedSpaceUuid,
-			@Parameter(description = "Search pattern (case insensitive) that contains matching sequence in name of Folder, Document or Revision in the shared space", required = false)
-				@QueryParam("pattern") @DefaultValue("")
+			@Parameter(description = "Search pattern that contains matching sequence in name of Folder, Document or Revision in the shared space. Case insensitive by default", required = false)
+				@QueryParam("pattern")
 					String pattern,
+			@Parameter(description = "If true, perform pattern comparisons with case sensitivity.", required = false)
+				@QueryParam("caseSensitive")
+						boolean caseSensitive,
 			@Parameter(description = "Number of the page", required = false)
 				@QueryParam("pageNumber")
 					Integer pageNumber,
 			@Parameter(description = "Size of element in the page", required = false)
 				@QueryParam("pageSize")
-					Integer pageSize)
+					Integer pageSize,
+			@Parameter(description = "Begining of creation date range. Used always with creationDateBefore query param", required = false)
+				@QueryParam("creationDateAfter")
+					String creationDateAfter,
+			@Parameter(description = "End of creation date range. Used always with creationDateAfter query param", required = false)
+				@QueryParam("creationDateBefore")
+					String creationDateBefore,
+			@Parameter(description = "Begining of modification date range. Used always with modificationDateBefore query param", required = false)
+				@QueryParam("modificationDateAfter")
+					String modificationDateAfter,
+			@Parameter(description = "End of modification date range. Used always with modificationDateBefore query param", required = false)
+				@QueryParam("modificationDateBefore")
+					String modificationDateBefore,
+			@Parameter(description = "Filter by parent", required = false)
+				@QueryParam("parentUuid")
+					String parentUuid,
+			@Parameter(description = "Filter by node type. See Enum to check available types (ROOT_FOLDER is not supported)", required = false)
+				@QueryParam("types")
+					List<WorkGroupNodeType> types,
+			@Parameter(description = "Filter by uuid of the user who performed last action on the node", required = false)
+				@QueryParam("lastAuthor")
+					String lastAuthor)					
 			throws BusinessException {
-		return new PagingResponseBuilder<WorkGroupNode>()
-				.build(sharedSpaceNodeFacade.findAllWithSearch(null, sharedSpaceUuid, pattern, pageNumber, pageSize));
+		return new PagingResponseBuilder<WorkGroupNode>().build(sharedSpaceNodeFacade.findAll(null,
+				sharedSpaceUuid, pattern, caseSensitive, pageNumber, pageSize, creationDateAfter, creationDateBefore,
+				modificationDateAfter, modificationDateBefore, parentUuid, types, lastAuthor));
 	}
 
 	@Path("/{sharedSpaceNodeUuid}")

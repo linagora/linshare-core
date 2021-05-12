@@ -80,6 +80,9 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 
 	NodeMetadataMto findMetaData(String actorUuid, String sharedSpaceUuid, String sharedSpaceNodeUuid, boolean storage);
 
-	PageContainer<WorkGroupNode> findAllWithSearch(String actorUuid, String sharedSpaceUuid, String pattern, Integer pageSize, Integer pageNumber);
+	PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String pattern,
+			boolean caseSensitive, Integer pageNumber, Integer pageSize, String creationDateAfter,
+			String creationDateBefore, String modificationDateAfter, String modificationDateBefore, String parentUuid,
+			List<WorkGroupNodeType> types, String lastAuthor);
 
 }

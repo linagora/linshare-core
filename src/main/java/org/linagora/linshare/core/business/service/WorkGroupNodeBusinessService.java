@@ -66,7 +66,9 @@ public interface WorkGroupNodeBusinessService {
 	FileAndMetaData downloadArchiveRevision(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode rootNode,
 			List<WorkGroupNode> documentNodes, WorkGroupNodeAuditLogEntry log);
 
-	PageContainer<WorkGroupNode> findAllWithSearch(WorkGroup workGroup, String pattern,
-			PageContainer<WorkGroupNode> pageContainer);
+	PageContainer<WorkGroupNode> findAll(WorkGroup workGroup, String pattern, boolean caseSensitive,
+			PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter, Date creationDateBefore,
+			Date modificationDateAfter, Date modificationDateBefore, String parentUuid, List<WorkGroupNodeType> types,
+			String lastAuthor);
 
 }
