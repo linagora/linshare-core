@@ -223,6 +223,7 @@
 		<constructor-arg ref="notifierService"/>
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="uploadRequestBusinessService" />
 	</bean>
 
 	<bean name="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl">
