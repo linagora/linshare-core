@@ -114,7 +114,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	@Override
 	public SharedSpaceMember update(
 			@Parameter(description = "The shared space memnber to update.", required = true) SharedSpaceMember ssMember,
-			@Parameter(description = "The shared space member to update.")
+			@Parameter(description = "The uuid of the shared space member to update.", required = true)
 				@PathParam("uuid") String uuid,
 			@Parameter(description = "If force parameter is false, the role will be updated just in the current node, else if it is true we will force the new updated role in all nested nodes")
 				@QueryParam("force") @DefaultValue("false") boolean force,
@@ -135,7 +135,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	@Override
 	public SharedSpaceMember delete(
 			@Parameter(description = "The shared space member to delete.", required = true) SharedSpaceMember ssMember,
-			@Parameter(description = "The shared space member to delete.")
+			@Parameter(description = "The uuid of the shared space member to delete.", required = true)
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.delete(null, ssMember, uuid);

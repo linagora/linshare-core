@@ -35,6 +35,7 @@
 			<ref bean="adminSharedSpaceRoleRestService"/>
 			<ref bean="adminv5SharedSpaceRestService"/>
 			<ref bean="adminv5EnumRestService"/>
+			<ref bean="adminSharedSpaceMemberRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -45,8 +45,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
-import org.linagora.linshare.core.upgrade.v2_2.MigrateThreadToMongoUpgradeTaskImpl;
-import org.linagora.linshare.core.upgrade.v2_2.MigrateWorkGroupMemberAuditToSharedSpaceMemberAuditUpgradeTaskImpl;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -55,6 +53,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Indication: If the type field is NOT set in the payload at shared space member creation, 
@@ -79,22 +79,29 @@ public class SharedSpaceMember {
 	@GeneratedValue
 	protected String id;
 
+	@Schema(description = "Uuid of shared space member")
 	protected String uuid;
 
 	protected SharedSpaceNodeNested node;
 
+	@Schema(description = "Role of the shared space member.")
 	protected LightSharedSpaceRole role;
-	
+
 	protected GenericLightEntity oldRole;
 
+	@Schema(description = "This field show the sharedSpace's account.")
 	protected SharedSpaceAccount account;
 
+	@Schema(description = "creationDate of the shared space member.")
 	protected Date creationDate;
 
+	@Schema(description = "modificationDate of the shared space member.")
 	protected Date modificationDate;
 
+	@Schema(description = "This field is used to show if the shared space member exists on a nested sharedSpace.")
 	protected boolean nested;
 
+	@Schema(description = "This field is used to show the type of the sharedSpace to which the shared space member belongs.")
 	protected NodeType type;
 
 	// WorkAround
@@ -115,7 +122,7 @@ public class SharedSpaceMember {
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
-	
+
 	/**
 	 * used by old upgrade {@link MigrateThreadToMongoUpgradeTaskImpl}
 	 * and {@link MigrateWorkGroupMemberAuditToSharedSpaceMemberAuditUpgradeTaskImpl}
