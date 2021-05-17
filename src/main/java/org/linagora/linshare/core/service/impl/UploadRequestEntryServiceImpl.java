@@ -56,6 +56,7 @@ import org.apache.tika.mime.MimeTypes;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -110,6 +111,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 
 	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 
+	private final UploadRequestBusinessService uploadRequestBusinessService;
+
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
 
 	private final AbstractDomainService abstractDomainService;
@@ -152,7 +155,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			MailBuildingService mailBuildingService,
 			NotifierService notifierService,
 			DocumentEntryBusinessService documentEntryBusinessService,
-			LogEntryService logEntryService) {
+			LogEntryService logEntryService,
+			UploadRequestBusinessService uploadRequestBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -167,6 +171,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		this.notifierService = notifierService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
+		this.uploadRequestBusinessService = uploadRequestBusinessService;
 	}
 
 	@Override
@@ -211,10 +216,11 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
 					.getEnciphermentFunctionality(actor.getDomain());
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
+			Integer numberOfUploadedFiles = uploadRequestBusinessService.countNbrUploadedFiles(uploadRequestUrl.getUploadRequest());
 			upReqEntry = uploadRequestEntryBusinessService.createUploadRequestEntryDocument(actor, tempFile, size,
 					fileName, comment, checkIfIsCiphered, timeStampingUrl, mimeType, null, isFromCmis, metadata,
 					uploadRequestUrl);
-			createBusinessCheck(upReqEntry);
+			createBusinessCheck(upReqEntry, numberOfUploadedFiles);
 			addToQuota(actor, size);
 		} finally {
 			try {
@@ -232,7 +238,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		return upReqEntry;
 	}
 
-	private void createBusinessCheck(UploadRequestEntry entry) throws BusinessException {
+	private void createBusinessCheck(UploadRequestEntry entry, Integer numberOfUploadedFiles) throws BusinessException {
 		UploadRequest request = entry.getUploadRequestUrl().getUploadRequest();
 		UploadRequestUrl requestUrl = entry.getUploadRequestUrl();
 		if (!request.getStatus().equals(UploadRequestStatus.ENABLED)) {
@@ -250,8 +256,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		}
 		if (request.getMaxFileCount() != null) {
 			// already reach the limit
-			if (requestUrl.getUploadRequestEntries().size() >= request
-					.getMaxFileCount()) {
+			if (numberOfUploadedFiles + 1 > request.getMaxFileCount()) {
 				throw new BusinessException(
 						BusinessErrorCode.UPLOAD_REQUEST_TOO_MANY_FILES,
 						"You already have reached the uploaded file limit.");
