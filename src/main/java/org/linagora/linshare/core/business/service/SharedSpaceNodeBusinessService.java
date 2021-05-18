@@ -39,6 +39,8 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface SharedSpaceNodeBusinessService {
 
@@ -59,5 +61,7 @@ public interface SharedSpaceNodeBusinessService {
 	List<SharedSpaceNode> findByParentUuidAndType(String parentUuid) throws BusinessException;
 
 	void loadLastUpdaterAuditTrace(SharedSpaceNode node) throws BusinessException;
+
+	PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container);
 
 }

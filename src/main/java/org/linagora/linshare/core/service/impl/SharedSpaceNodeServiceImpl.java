@@ -287,7 +287,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			Validate.notEmpty(account.getLsUuid(), "accountUuid should be set");
 			sharedSpaces = memberBusinessService.findAllByAccount(account.getLsUuid(), container);
 		} else {
-			sharedSpaces = memberBusinessService.findAll(container);
+			sharedSpaces = businessService.findAll(container);
 		}
 		return sharedSpaces;
 	}

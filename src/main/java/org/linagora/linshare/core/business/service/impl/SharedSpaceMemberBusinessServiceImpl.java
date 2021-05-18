@@ -296,19 +296,4 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		Query countQuery = new Query(Criteria.where("account.uuid").is(accountUuid));
 		return mongoTemplate.count(countQuery, SharedSpaceMember.class);
 	}
-
-	@Override
-	public PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container) {
-		Aggregation aggregation = Aggregation.newAggregation(
-				Aggregation.project("node.uuid",
-						"node.name",
-						"node.nodeType",
-						"node.creationDate",
-						"node.modificationDate"),
-				Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
-				Aggregation.limit(Long.valueOf(container.getPageSize())));
-		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
-				.getMappedResults();
-		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(), nodeRepository.count(), sharedSpaces);
-	}
 }

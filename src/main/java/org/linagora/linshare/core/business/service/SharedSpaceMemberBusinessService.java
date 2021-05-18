@@ -89,6 +89,4 @@ public interface SharedSpaceMemberBusinessService {
 	List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid, Boolean pristine);
 
 	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, PageContainer<SharedSpaceNodeNested> container);
-
-	PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container);
 }

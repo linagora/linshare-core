@@ -37,13 +37,16 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -125,4 +128,16 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 		return sharedSpaceNodeMongoRepository.findByName(name);
 	}
 
+	@Override
+	public PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container) {
+		Query query = new Query();
+		query.skip(Long.valueOf(container.getPageNumber() * container.getPageSize()));
+		query.limit(container.getPageSize());
+		List<SharedSpaceNodeNested> nodes = mongoTemplate.find(query, SharedSpaceNode.class)
+				.stream()
+				.map(node -> new SharedSpaceNodeNested(node))
+				.collect(Collectors.toList());
+		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(),
+				sharedSpaceNodeMongoRepository.count(), nodes);
+	}
 }
