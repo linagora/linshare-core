@@ -151,9 +151,6 @@ public class WarnSenderAboutShareExpirationBatchImplTest {
 		DocumentEntry documentEntry = documentEntryBusinessService.createDocumentEntry(owner, tempFile,
 				tempFile.length(), "shareFile", null, false, null, "text/plain", documentEntryExpiration, false, null);
 		ShareContainer shareContainer = new ShareContainer();
-		Calendar expirationDate = Calendar.getInstance();
-		expirationDate.add(Calendar.DATE, 7);
-		shareContainer.setExpiryDate(expirationDate.getTime());
 		shareContainer.addShareRecipient(recipient);
 		shareContainer.addDocumentEntry(documentEntry);
 		shareService.create(actor, owner, shareContainer);

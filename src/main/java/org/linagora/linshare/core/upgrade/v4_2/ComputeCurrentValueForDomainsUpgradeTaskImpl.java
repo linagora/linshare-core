@@ -36,8 +36,20 @@
 
 package org.linagora.linshare.core.upgrade.v4_2;
 
+import java.util.List;
+
+import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.exception.BatchBusinessException;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.job.quartz.BatchResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -45,7 +57,7 @@ import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.linagora.linshare.core.repository.hibernate.ContainerQuotaRepositoryImpl;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
-public class ComputeCurrentValueForDomainsUpgradeTaskImpl extends org.linagora.linshare.core.upgrade.v2_1.ComputeCurrentValueForDomainsUpgradeTaskImpl {
+public class ComputeCurrentValueForDomainsUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	protected AbstractDomainRepository abstractDomainRepository;
 
@@ -61,13 +73,65 @@ public class ComputeCurrentValueForDomainsUpgradeTaskImpl extends org.linagora.l
 			AccountQuotaRepository accountQuotaRepository,
 			ContainerQuotaRepositoryImpl containerQuotaRepository,
 			DomainQuotaRepository domainQuotaRepository) {
-		super(accountRepository, upgradeTaskLogMongoRepository, domainRepository, accountQuotaRepository,
-				containerQuotaRepository, domainQuotaRepository);
+		super(accountRepository, upgradeTaskLogMongoRepository);
+		this.abstractDomainRepository = domainRepository;
+		this.accountQuotaRepository = accountQuotaRepository;
+		this.containerQuotaRepository = containerQuotaRepository;
+		this.domainQuotaRepository = domainQuotaRepository;
 	}
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
 		return UpgradeTaskType.UPGRADE_4_2_COMPUTE_CURRENT_VALUE_FOR_DOMAINS;
+	}
+
+	@Override
+	public List<String> getAll(BatchRunContext batchRunContext) {
+		List<String> domainIdentifiers = abstractDomainRepository.findAllDomainIdentifiers();
+		return domainIdentifiers;
+	}
+
+	@Override
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
+			throws BatchBusinessException, BusinessException {
+		AbstractDomain abstractDomain = abstractDomainRepository.findById(identifier);
+		BatchResultContext<AbstractDomain> res = new BatchResultContext<AbstractDomain>(abstractDomain);
+		console.logDebug(batchRunContext, total, position, "Processing domain : " + abstractDomain.toString());
+		ContainerQuota containerQuotaWorkGroup = containerQuotaRepository.find(abstractDomain, ContainerQuotaType.WORK_GROUP);
+		long currentQuotaWorkGroup = accountQuotaRepository.sumOfCurrentValue(containerQuotaWorkGroup);
+		containerQuotaWorkGroup.setCurrentValue(currentQuotaWorkGroup);
+		containerQuotaRepository.update(containerQuotaWorkGroup);
+		ContainerQuota containerQuotaUser = containerQuotaRepository.find(abstractDomain, ContainerQuotaType.USER);
+		long currentDomainQuota = containerQuotaUser.getCurrentValue() + currentQuotaWorkGroup;
+		DomainQuota domainQuota = domainQuotaRepository.find(abstractDomain);
+		domainQuota.setCurrentValue(currentDomainQuota);
+		domainQuotaRepository.update(domainQuota);
+		res.setProcessed(true);
+		return res;
+	}
+
+	@Override
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
+		@SuppressWarnings("unchecked")
+		BatchResultContext<AbstractDomain> res = (BatchResultContext<AbstractDomain>) context;
+		AbstractDomain resource = res.getResource();
+		if (res.getProcessed()) {
+			logInfo(batchRunContext, total, position, resource + " has been updated.");
+		} else {
+			logInfo(batchRunContext, total, position, resource + " has been skipped.");
+		}
+	}
+
+	@Override
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position,
+			BatchRunContext batchRunContext) {
+		@SuppressWarnings("unchecked")
+		BatchResultContext<AbstractDomain> res = (BatchResultContext<AbstractDomain>) exception.getContext();
+		AbstractDomain resource = res.getResource();
+		console.logError(batchRunContext, total, position, "The upgrade task : " + resource + " failed.", batchRunContext);
+		logger.error("Error occured while updating the DomainQuota : "
+				+ resource +
+				". BatchBusinessException", exception);
 	}
 
 }

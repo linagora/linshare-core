@@ -41,10 +41,9 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.MimePolicyRepository;
 import org.linagora.linshare.core.repository.MimeTypeRepository;
-import org.linagora.linshare.core.upgrade.v2_1.AddAllNewMimeTypeUpgradeTaskImpl;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
-public class UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl extends AddAllNewMimeTypeUpgradeTaskImpl{
+public class UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl extends org.linagora.linshare.core.upgrade.v4_0.UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl{
 
 	public UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl(AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
