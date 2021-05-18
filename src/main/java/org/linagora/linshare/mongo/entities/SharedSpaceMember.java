@@ -45,7 +45,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -87,15 +86,13 @@ public class SharedSpaceMember {
 	@Schema(description = "Role of the shared space member.")
 	protected LightSharedSpaceRole role;
 
-	protected GenericLightEntity oldRole;
-
-	@Schema(description = "This field show the sharedSpace's account.")
+	@Schema(description = "This field show the sharedSpaceMember's account.")
 	protected SharedSpaceAccount account;
 
-	@Schema(description = "creationDate of the shared space member.")
+	@Schema(description = "CreationDate of the shared space member.")
 	protected Date creationDate;
 
-	@Schema(description = "modificationDate of the shared space member.")
+	@Schema(description = "ModificationDate of the shared space member.")
 	protected Date modificationDate;
 
 	@Schema(description = "This field is used to show if the shared space member exists on a nested sharedSpace.")
@@ -118,24 +115,6 @@ public class SharedSpaceMember {
 		this.uuid = UUID.randomUUID().toString();
 		this.node = node;
 		this.role = role;
-		this.account = account;
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
-	}
-
-	/**
-	 * used by old upgrade {@link MigrateThreadToMongoUpgradeTaskImpl}
-	 * and {@link MigrateWorkGroupMemberAuditToSharedSpaceMemberAuditUpgradeTaskImpl}
-	 * @param node
-	 * @param oldRole
-	 * @param account
-	 */
-	@Deprecated(since = "2.3", forRemoval = true)
-	public SharedSpaceMember(SharedSpaceNodeNested node, GenericLightEntity oldRole, SharedSpaceAccount account) {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.node = node;
-		this.oldRole = oldRole;
 		this.account = account;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();

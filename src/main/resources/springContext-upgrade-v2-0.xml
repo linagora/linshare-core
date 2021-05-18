@@ -149,15 +149,6 @@
 					<constructor-arg ref="uploadRequestRepository" />
 					<constructor-arg ref="auditUserMongoRepository" />
 				</bean>
-				<bean class="org.linagora.linshare.core.upgrade.v2_2.MigrateThreadToMongoUpgradeTaskImpl">
-					<constructor-arg ref="accountRepository" />
-					<constructor-arg ref="upgradeTaskLogMongoRepository" />
-					<constructor-arg ref="threadRepository" />
-					<constructor-arg ref="threadMemberRepository" />
-					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
-					<constructor-arg ref="sharedSpaceMemberMongoRepository"/> 
-					<constructor-arg ref="sharedSpaceRoleMongoRepository" />
-				</bean>
 				<bean class="org.linagora.linshare.core.upgrade.v2_2.MigrateOldAuditLogEntryToBasicStatisticsUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
@@ -171,13 +162,6 @@
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
 					<constructor-arg ref="auditUserMongoRepository" />
-				</bean>
-				<bean class="org.linagora.linshare.core.upgrade.v2_2.MigrateWorkGroupMemberAuditToSharedSpaceMemberAuditUpgradeTaskImpl">
-					<constructor-arg ref="accountRepository" />
-					<constructor-arg ref="upgradeTaskLogMongoRepository" />
-					<constructor-arg ref="mongoTemplate" />
-					<constructor-arg ref="auditUserMongoRepository" />
-					<constructor-arg ref="sharedSpaceRoleMongoRepository" />
 				</bean>
 				<!--  Upgrade Task for 2.3 -->
 				<bean class="org.linagora.linshare.core.upgrade.v2_3.UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl">
