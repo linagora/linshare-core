@@ -139,7 +139,7 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 	@Override
 	public AnonymousUrl find(Account actor, Account owner, String uuid) {
 		Validate.notEmpty(uuid);
-		if (!actor.hasAllRights()) {
+		if (!actor.hasAllRights() || !actor.hasAnonymousShareSystemAccountRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
 		}
 		return anonymousUrlBusinessService.find(uuid);
@@ -148,7 +148,7 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 	@Override
 	public AnonymousUrl find(Account actor, Account owner, String uuid, String password) {
 		Validate.notEmpty(uuid);
-		if (!actor.hasAllRights()) {
+		if (!actor.hasAllRights() || !actor.hasAnonymousShareSystemAccountRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
 		}
 		AnonymousUrl anonymousUrl = anonymousUrlBusinessService
@@ -164,7 +164,7 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 
 	@Override
 	public AnonymousUrl delete(Account actor, Account owner, String uuid) {
-		if (!actor.hasAllRights()) {
+		if (!actor.hasAllRights() || !actor.hasAnonymousShareSystemAccountRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
 		}
 		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.find(uuid);

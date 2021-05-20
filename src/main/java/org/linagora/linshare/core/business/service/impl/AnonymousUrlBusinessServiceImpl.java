@@ -70,7 +70,7 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 
 	@Override
 	public SystemAccount getAnonymousURLAccount() {
-		return accountRepository.getBatchSystemAccount();
+		return accountRepository.getAnonymousShareSystemAccount();
 	}
 
 	@Override

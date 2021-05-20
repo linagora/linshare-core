@@ -63,6 +63,8 @@ public interface AccountRepository<U extends Account> extends
 
 	SystemAccount getUploadRequestSystemAccount();
 
+	SystemAccount getAnonymousShareSystemAccount();
+
 	U findDeleted(String lsUuid);
 
 	void markToPurge(U entity);

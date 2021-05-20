@@ -1172,6 +1172,12 @@ data-th-text="${labelBtn}"  th:href="@{${urlLink}}">Button label</a>
 			</ul>
 </th:block>
 </div>' WHERE id=1;
+
+
+-- System account for anonymous share
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count) 
+	VALUES (4,'system-anonymous-share-account', 7, 'system-anonymous-share-account', now(),now(), 8, 'en', 'en','en', true, 0, 1, 'IN_USE', false, false, false, 0);
+
 ---- End of your queries
 
 -- LinShare version

@@ -184,6 +184,14 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	}
 
 	@Override
+	public SystemAccount getAnonymousShareSystemAccount() {
+		DetachedCriteria det = DetachedCriteria.forClass(SystemAccount.class)
+				.add(Restrictions.eq("lsUuid", "system-anonymous-share-account"));
+		return (SystemAccount) DataAccessUtils
+				.singleResult(findByCriteria(det));
+	}
+
+	@Override
 	public void delete(U entity) throws BusinessException, IllegalArgumentException {
 		entity.setDestroyed(getUserDestroyedMaxValue(entity.getDomain(), entity.getMail()) + 1);
 		this.update(entity);

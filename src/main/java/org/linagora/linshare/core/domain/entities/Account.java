@@ -358,6 +358,10 @@ public abstract class Account {
 		return this.getRole().equals(Role.SYSTEM);
 	}
 
+	public boolean hasAnonymousShareSystemAccountRole() {
+		return this.getRole().equals(Role.ANONYMOUS);
+	}
+
 	public boolean hasDelegationRole() {
 		return this.getRole().equals(Role.DELEGATION);
 	}
