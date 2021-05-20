@@ -80,7 +80,7 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 
 	private String clientSecret;
 
-	private Builder clientRegistrationsBuilder;
+	private String issuerUri;
 
 	public OidcOpaqueAuthenticationProvider(AuthentificationFacade authentificationFacade, Boolean useOIDC,
 			String issuerUri, String clientId, String clientSecret) {
@@ -90,12 +90,9 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 			Validate.notEmpty(clientId, "Missing OIDC client ID");
 			Validate.notEmpty(clientSecret, "Missing OIDC client secret");
 			Validate.notEmpty(issuerUri, "Missing OIDC issuer Uri");
-			clientRegistrationsBuilder = ClientRegistrations
-					.fromOidcIssuerLocation(issuerUri)
-					.clientId(clientId)
-					.clientSecret(clientSecret);
 			this.clientId = clientId;
 			this.clientSecret = clientSecret;
+			this.issuerUri = issuerUri;
 			this.oAuth2UserService = new DefaultOAuth2UserService();
 		}
 	}
@@ -115,7 +112,7 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 		final String token = jwtAuthentication.getToken();
 		BearerTokenAuthenticationToken authToken = new BearerTokenAuthenticationToken(token);
 
-		ClientRegistration clientRegistration = clientRegistrationsBuilder.build();
+		ClientRegistration clientRegistration = getClientRegistration();
 		AuthenticationProvider opaqueTokenAuthenticationProvider = getOpaqueTokenAuthenticationProvider(clientRegistration, clientId, clientSecret);
 
 		BearerTokenAuthentication authenticate = (BearerTokenAuthentication) opaqueTokenAuthenticationProvider
@@ -193,6 +190,14 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 				true, true, true, grantedAuthorities);
 
 		return new UsernamePasswordAuthenticationToken(userDetail, jwtAuthentication.getCredentials(), grantedAuthorities);
+	}
+
+	private ClientRegistration getClientRegistration() {
+		Builder clientRegistrationsBuilder = ClientRegistrations
+				.fromOidcIssuerLocation(issuerUri)
+				.clientId(clientId)
+				.clientSecret(clientSecret);
+		return clientRegistrationsBuilder.build();
 	}
 
 	@Override
