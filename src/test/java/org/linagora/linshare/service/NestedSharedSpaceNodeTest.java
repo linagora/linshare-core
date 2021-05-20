@@ -301,6 +301,7 @@ public class NestedSharedSpaceNodeTest {
 		List<SharedSpaceNodeNested> justinNodes = ssMemberService.findAllWorkGroupsInNode(foo, foo,
 				nestedWorkgroup.getParentUuid(), foo.getLsUuid());
 		Assertions.assertEquals(1, justinNodes.size());
+		ssNodeService.delete(john, john, drive);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

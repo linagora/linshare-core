@@ -133,6 +133,7 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 		Query query = new Query();
 		query.skip(Long.valueOf(container.getPageNumber() * container.getPageSize()));
 		query.limit(container.getPageSize());
+		query.with(Sort.by(Direction.DESC, "creationDate"));
 		List<SharedSpaceNodeNested> nodes = mongoTemplate.find(query, SharedSpaceNode.class)
 				.stream()
 				.map(node -> new SharedSpaceNodeNested(node))
