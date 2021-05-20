@@ -74,11 +74,13 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 
 	private AuthentificationFacade authentificationFacade;
 
-	private OpaqueTokenAuthenticationProvider opaqueTokenAuthenticationProvider;
-
-	private ClientRegistration clientRegistration;
-
 	private OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
+
+	private String clientId;
+
+	private String clientSecret;
+
+	private Builder clientRegistrationsBuilder;
 
 	public OidcOpaqueAuthenticationProvider(AuthentificationFacade authentificationFacade, Boolean useOIDC,
 			String issuerUri, String clientId, String clientSecret) {
@@ -88,18 +90,22 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 			Validate.notEmpty(clientId, "Missing OIDC client ID");
 			Validate.notEmpty(clientSecret, "Missing OIDC client secret");
 			Validate.notEmpty(issuerUri, "Missing OIDC issuer Uri");
-			Builder builder = ClientRegistrations
+			clientRegistrationsBuilder = ClientRegistrations
 					.fromOidcIssuerLocation(issuerUri)
 					.clientId(clientId)
 					.clientSecret(clientSecret);
-			this.clientRegistration = builder.build();
-			Object introspectionUri = this.clientRegistration.getProviderDetails().getConfigurationMetadata().get("introspection_endpoint");
-			Validate.notNull(introspectionUri);
-			Validate.notEmpty((String)introspectionUri, "Can not get introspection_endpoint from OIDC provider.");
-			OpaqueTokenIntrospector introspector = new NimbusOpaqueTokenIntrospector((String)introspectionUri, clientId, clientSecret);
-			this.opaqueTokenAuthenticationProvider = new OpaqueTokenAuthenticationProvider(introspector);
+			this.clientId = clientId;
+			this.clientSecret = clientSecret;
 			this.oAuth2UserService = new DefaultOAuth2UserService();
 		}
+	}
+
+	private AuthenticationProvider getOpaqueTokenAuthenticationProvider(ClientRegistration clientRegistration, String clientId, String clientSecret) {
+		Object introspectionUri = clientRegistration.getProviderDetails().getConfigurationMetadata().get("introspection_endpoint");
+		Validate.notNull(introspectionUri);
+		Validate.notEmpty((String)introspectionUri, "Can not get introspection_endpoint from OIDC provider.");
+		OpaqueTokenIntrospector introspector = new NimbusOpaqueTokenIntrospector((String)introspectionUri, clientId, clientSecret);
+		return new OpaqueTokenAuthenticationProvider(introspector);
 	}
 
 	@Override
@@ -108,6 +114,10 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 		OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
 		final String token = jwtAuthentication.getToken();
 		BearerTokenAuthenticationToken authToken = new BearerTokenAuthenticationToken(token);
+
+		ClientRegistration clientRegistration = clientRegistrationsBuilder.build();
+		AuthenticationProvider opaqueTokenAuthenticationProvider = getOpaqueTokenAuthenticationProvider(clientRegistration, clientId, clientSecret);
+
 		BearerTokenAuthentication authenticate = (BearerTokenAuthentication) opaqueTokenAuthenticationProvider
 				.authenticate(authToken);
 		logger.debug("OIDC opaque access token seems to be good. Processing authentication...");
