@@ -252,8 +252,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Add Author and description to SharedSpaceNode 
 	 */
-	UPGRADE_4_2_ADD_DETAILS_TO_SHARED_SPACE_NODES;
-	
+	UPGRADE_4_2_ADD_DETAILS_TO_SHARED_SPACE_NODES,
+
+	/**
+	 * Update System to anonymous account on audit traces of anonymous share
+	 */
+	UPGRADE_4_2_UPDATE_SYSTEM_TO_ANONYMOUS_ACCOUNT_ON_AUDIT_TRACES;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

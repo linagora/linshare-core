@@ -1178,6 +1178,33 @@ data-th-text="${labelBtn}"  th:href="@{${urlLink}}">Button label</a>
 INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count) 
 	VALUES (4,'system-anonymous-share-account', 7, 'system-anonymous-share-account', now(),now(), 8, 'en', 'en','en', true, 0, 1, 'IN_USE', false, false, false, 0);
 
+-- TASK: UPGRADE_4_2_UPDATE_SYSTEM_TO_ANONYMOUS_ACCOUNT_ON_AUDIT_TRACES
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (40,
+  'UNDEFINED',
+  'UPGRADE_4_2_UPDATE_SYSTEM_TO_ANONYMOUS_ACCOUNT_ON_AUDIT_TRACES',
+  'UPGRADE_4_2',
+  null,
+  null,
+  40,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);
 ---- End of your queries
 
 -- LinShare version

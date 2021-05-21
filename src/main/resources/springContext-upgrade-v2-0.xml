@@ -87,6 +87,11 @@
 					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 					<constructor-arg ref="auditUserMongoRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_2.UpdateSystmeAccountToAnonymousOnAuditTraces">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
