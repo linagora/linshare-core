@@ -76,6 +76,9 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
+		if (authUser.hasAnonymousShareSystemAccountRole()) {
+			return true;
+		}
 		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_GET);
 	}
@@ -118,6 +121,9 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 	@Override
 	protected boolean hasDownloadPermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
+		if (authUser.hasAnonymousShareSystemAccountRole()) {
+			return true;
+		}
 		/*
 		 * The actor has not the right to download his own anonymousShareEntry,
 		 * neither account with delegation role.
@@ -128,6 +134,9 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 	@Override
 	protected boolean hasDownloadTumbnailPermission(Account authUser,
 			Account actor, AnonymousShareEntry entry, Object... opt) {
+		if (authUser.hasAnonymousShareSystemAccountRole()) {
+			return true;
+		}
 		/*
 		 * The actor has not the right to download his own anonymousShareEntry,
 		 * neither account with delegation role.

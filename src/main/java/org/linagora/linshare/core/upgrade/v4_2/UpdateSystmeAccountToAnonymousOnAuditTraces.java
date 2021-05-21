@@ -91,6 +91,8 @@ public class UpdateSystmeAccountToAnonymousOnAuditTraces extends GenericUpgradeT
 				Criteria.where("type").is(AuditLogEntryType.ANONYMOUS_SHARE_ENTRY.toString()),
 				Criteria.where("action").is(LogAction.DOWNLOAD.toString()),
 				Criteria.where("authUser.uuid").ne(anonymousAccount.getLsUuid())));
+		logger.info("{} ShareEntryAuditLogEntries have been found.", mongoTemplate.count(query,
+				ShareEntryAuditLogEntry.class));
 		Update update = new Update().set("authUser", new AccountMto(anonymousAccount));
 		mongoTemplate.updateMulti(query, update, ShareEntryAuditLogEntry.class);
 		res.setProcessed(true);

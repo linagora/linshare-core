@@ -139,37 +139,39 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 	@Override
 	public AnonymousUrl find(Account actor, Account owner, String uuid) {
 		Validate.notEmpty(uuid);
-		if (!actor.hasAllRights() || !actor.hasAnonymousShareSystemAccountRole()) {
+		if (actor.hasAllRights() || actor.hasAnonymousShareSystemAccountRole()) {
+			return anonymousUrlBusinessService.find(uuid);
+		} else {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
 		}
-		return anonymousUrlBusinessService.find(uuid);
 	}
 
 	@Override
 	public AnonymousUrl find(Account actor, Account owner, String uuid, String password) {
 		Validate.notEmpty(uuid);
-		if (!actor.hasAllRights() || !actor.hasAnonymousShareSystemAccountRole()) {
+		if (actor.hasAllRights() || actor.hasAnonymousShareSystemAccountRole()) {
+			AnonymousUrl anonymousUrl = anonymousUrlBusinessService.find(uuid);
+			if (anonymousUrl == null) {
+				throw new BusinessException(BusinessErrorCode.ANONYMOUS_URL_NOT_FOUND,
+						"anonymousUrl not found : " + uuid);
+			}
+			accessBusinessCheck(anonymousUrl, password);
+			return anonymousUrl;
+		} else {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
 		}
-		AnonymousUrl anonymousUrl = anonymousUrlBusinessService
-				.find(uuid);
-		if(anonymousUrl == null) {
-			throw new BusinessException(
-					BusinessErrorCode.ANONYMOUS_URL_NOT_FOUND,
-					"anonymousUrl not found : " + uuid);
-		}
-		accessBusinessCheck(anonymousUrl, password);
-		return anonymousUrl;
 	}
 
 	@Override
 	public AnonymousUrl delete(Account actor, Account owner, String uuid) {
 		if (!actor.hasAllRights() || !actor.hasAnonymousShareSystemAccountRole()) {
+			AnonymousUrl anonymousUrl = anonymousUrlBusinessService.find(uuid);
+			anonymousUrlBusinessService.delete(anonymousUrl);
+			return anonymousUrl;
+		} else {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
 		}
-		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.find(uuid);
-		anonymousUrlBusinessService.delete(anonymousUrl);
-		return anonymousUrl;
+
 	}
 
 	private void accessBusinessCheck(AnonymousUrl url, String password)
