@@ -40,17 +40,20 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
@@ -146,5 +149,25 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@Parameter(description = "UploadRequest entry to delete. ", required = false) EntryDto entry)
 			throws BusinessException {
 		return uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entryUuid, entry);
+	}
+
+	@Path("/{entryUuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
+	@GET
+	@Operation(summary = "Download the thumbnail of a choosen upload request entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public Response thumbnail(
+			@Parameter(description = "The upload requestEntry's uuid to which we will get the thumbnail.", required = true)
+				@PathParam("entryUuid") String uploadRequestEntryUuid,
+			@Parameter(description = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false)
+				@PathParam("kind") ThumbnailType thumbnailType,
+			@Parameter(description = "True to get an encoded base 64 response", required = false)
+				@QueryParam("base64") @DefaultValue("false") boolean base64)
+					throws BusinessException {
+		return uploadRequestUrlFacade.thumbnail(uploadRequestEntryUuid, base64, thumbnailType);
 	}
 }

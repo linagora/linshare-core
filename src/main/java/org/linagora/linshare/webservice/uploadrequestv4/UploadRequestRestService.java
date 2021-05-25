@@ -40,6 +40,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
@@ -55,4 +56,7 @@ public interface UploadRequestRestService {
 	UploadRequestEntryDto delete(String uuid, String password, String entryUuid, EntryDto entry) throws BusinessException;
 
 	List<UploadRequestEntryDto> findAllEntries(String uuid, String password) throws BusinessException;
+
+	Response thumbnail(String uploadRequestEntryUuid, ThumbnailType thumbnailType, boolean base64)
+			throws BusinessException;
 }

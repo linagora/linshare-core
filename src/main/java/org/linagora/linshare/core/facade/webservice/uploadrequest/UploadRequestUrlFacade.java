@@ -38,6 +38,9 @@ package org.linagora.linshare.core.facade.webservice.uploadrequest;
 import java.io.File;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
@@ -60,4 +63,6 @@ public interface UploadRequestUrlFacade {
 	List<UploadRequestEntryDto> findAllExtEntries(String uuid, String password);
 
 	void changePassword(String uuid, ChangeUploadRequestUrlPassword reset);
+
+	Response thumbnail(String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType);
 }

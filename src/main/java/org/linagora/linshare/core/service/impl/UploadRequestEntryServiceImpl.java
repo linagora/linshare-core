@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -524,11 +525,15 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	}
 
 	@Override
-	public FileAndMetaData thumbnail(Account authUser, Account actor, UploadRequestEntry uploadRequestEntry,
+	public FileAndMetaData thumbnail(Account authUser, Account actor, String uploadRequestEntryUuid,
 			ThumbnailType thumbnailType) {
 		preChecks(actor, actor);
+		UploadRequestEntry uploadRequestEntry = find(authUser, actor, uploadRequestEntryUuid);
 		checkThumbNailDownloadPermission(actor, actor, UploadRequestEntry.class,
 				BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN, uploadRequestEntry);
+		if (Objects.isNull(thumbnailType)) {
+			thumbnailType = ThumbnailType.MEDIUM;
+		}
 		ByteSource byteSource = getThumbnailByteSource(uploadRequestEntry, thumbnailType);
 		return new FileAndMetaData(byteSource, uploadRequestEntry.getName(), uploadRequestEntry.getType());
 	}

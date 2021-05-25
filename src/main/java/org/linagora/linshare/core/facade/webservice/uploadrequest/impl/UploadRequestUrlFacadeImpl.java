@@ -40,7 +40,11 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.MimeType;
@@ -56,9 +60,12 @@ import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MimePolicyService;
+import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
+import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -74,16 +81,20 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
+	private final UploadRequestEntryService uploadRequestEntryService;
+
 	public UploadRequestUrlFacadeImpl(final AccountService accountService,
 			final UploadRequestService uploadRequestService,
 			final UploadRequestUrlService uploadRequestUrlService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
-			final MimePolicyService mimePolicyService) {
+			final MimePolicyService mimePolicyService,
+			UploadRequestEntryService uploadRequestEntryService) {
 		super(accountService);
 		this.uploadRequestService = uploadRequestService;
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.mimePolicyService = mimePolicyService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.uploadRequestEntryService = uploadRequestEntryService;
 	}
 
 	@Override
@@ -175,4 +186,13 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 		return dto;
 	}
 
+	@Override
+	public Response thumbnail(String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType) {
+		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntryUuid");
+		SystemAccount authUser = uploadRequestUrlService.getUploadRequestSystemAccount();
+		FileAndMetaData data = uploadRequestEntryService.thumbnail(authUser, authUser, uploadRequestEntryUuid,
+				thumbnailType);
+		ResponseBuilder builder = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(data, base64, thumbnailType);
+		return builder.build();
+	}
 }

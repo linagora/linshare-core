@@ -78,6 +78,6 @@ public interface UploadRequestEntryService {
 
 	void delFromQuota(Account owner, Long size);
 
-	FileAndMetaData thumbnail(Account authUser, Account actor, UploadRequestEntry uploadRequestEntry,
+	FileAndMetaData thumbnail(Account authUser, Account actor, String uploadRequestEntryUuid,
 			ThumbnailType thumbnailType);
 }

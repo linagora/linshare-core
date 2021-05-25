@@ -37,7 +37,6 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.ws.rs.core.Response;
@@ -114,12 +113,9 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 			ThumbnailType thumbnailType) {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		if (Objects.isNull(thumbnailType)) {
-			thumbnailType = ThumbnailType.MEDIUM;
-		}
 		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntry uuid");
-		UploadRequestEntry uploadRequestEntry =  uploadRequestEntryService.find(authUser, actor, uploadRequestEntryUuid);
-		FileAndMetaData data = uploadRequestEntryService.thumbnail(authUser, actor,uploadRequestEntry, thumbnailType);
+		FileAndMetaData data = uploadRequestEntryService.thumbnail(authUser, actor, uploadRequestEntryUuid,
+				thumbnailType);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(data, base64, thumbnailType);
 		return builder.build();
 	}
