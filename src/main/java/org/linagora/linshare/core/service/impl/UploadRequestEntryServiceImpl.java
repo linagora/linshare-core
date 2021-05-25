@@ -44,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -58,25 +59,31 @@ import org.linagora.linshare.core.business.service.OperationHistoryBusinessServi
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
+import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.Thumbnail;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.CopyResource;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -85,6 +92,7 @@ import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileB
 import org.linagora.linshare.core.notifications.context.UploadRequestUnavailableSpaceEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestEntryRessourceAccessControl;
+import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -137,6 +145,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 
 	private LogEntryService logEntryService;
 
+	private final DocumentRepository documentRepository;
+
+	private final FileDataStore fileDataStore;
+
 	private final static String ARCHIVE_MIME_TYPE = "application/zip";
 	private final static String ARCHIVE_EXTENTION = ".zip";
 
@@ -156,7 +168,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			NotifierService notifierService,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
-			UploadRequestBusinessService uploadRequestBusinessService) {
+			UploadRequestBusinessService uploadRequestBusinessService,
+			DocumentRepository documentRepository,
+			FileDataStore fileDataStore) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -172,6 +186,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
+		this.documentRepository = documentRepository;
+		this.fileDataStore = fileDataStore;
 	}
 
 	@Override
@@ -505,5 +521,30 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 				null);
 		List<UploadRequestEntry> entries = uploadRequestEntryBusinessService.findAllEntries(uploadRequest);
 		return entries;
+	}
+
+	@Override
+	public FileAndMetaData thumbnail(Account authUser, Account actor, UploadRequestEntry uploadRequestEntry,
+			ThumbnailType thumbnailType) {
+		preChecks(actor, actor);
+		checkThumbNailDownloadPermission(actor, actor, UploadRequestEntry.class,
+				BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN, uploadRequestEntry);
+		ByteSource byteSource = getThumbnailByteSource(uploadRequestEntry, thumbnailType);
+		return new FileAndMetaData(byteSource, uploadRequestEntry.getName(), uploadRequestEntry.getType());
+	}
+
+	private ByteSource getThumbnailByteSource(UploadRequestEntry uploadRequestEntry, ThumbnailType thumbnailType) {
+		Document doc = documentRepository.findByUuid(uploadRequestEntry.getDocument().getUuid());
+		if (doc == null) {
+			logger.error("can not find document entity with uuid : {}", uploadRequestEntry.getDocument().getUuid());
+			return null;
+		}
+		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnails();
+		FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(thumbnailType);
+		if (thumbnailMap.containsKey(thumbnailType)) {
+			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
+			return fileDataStore.get(metadata);
+		}
+		return null;
 	}
 }

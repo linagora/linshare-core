@@ -37,10 +37,15 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -50,7 +55,9 @@ import org.linagora.linshare.core.facade.webservice.user.UploadRequestEntryFacad
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.io.ByteSource;
 
@@ -100,5 +107,20 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 		Validate.notEmpty(uploadRequestEntryUuid, "Upload request entry uuid must be set");
 		Account actor = getActor(authUser, actorUuid);
 		return auditLogEntryService.findAllUploadRequestEntryAudits(authUser, actor, uploadRequestEntryUuid, actions);
+	}
+
+	@Override
+	public Response thumbnail(String actorUuid, String uploadRequestEntryUuid, boolean base64,
+			ThumbnailType thumbnailType) {
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		if (Objects.isNull(thumbnailType)) {
+			thumbnailType = ThumbnailType.MEDIUM;
+		}
+		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntry uuid");
+		UploadRequestEntry uploadRequestEntry =  uploadRequestEntryService.find(authUser, actor, uploadRequestEntryUuid);
+		FileAndMetaData data = uploadRequestEntryService.thumbnail(authUser, actor,uploadRequestEntry, thumbnailType);
+		ResponseBuilder builder = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(data, base64, thumbnailType);
+		return builder.build();
 	}
 }

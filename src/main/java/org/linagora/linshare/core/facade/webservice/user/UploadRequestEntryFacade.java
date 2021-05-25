@@ -39,7 +39,10 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -55,4 +58,6 @@ public interface UploadRequestEntryFacade {
 	UploadRequestEntryDto delete(String actorUuid, String uuid);
 
 	Set<AuditLogEntryUser> findAllAudits(String actorUuid, String uploadRequestEntryUuid, List<LogAction> actions);
+
+	Response thumbnail(String actorUuid, String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType);
 }

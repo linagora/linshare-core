@@ -39,6 +39,7 @@ package org.linagora.linshare.core.service;
 import java.io.File;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -76,4 +77,7 @@ public interface UploadRequestEntryService {
 	List<UploadRequestEntry> findAllEntries(Account authUser, Account actor, UploadRequest uploadRequest);
 
 	void delFromQuota(Account owner, Long size);
+
+	FileAndMetaData thumbnail(Account authUser, Account actor, UploadRequestEntry uploadRequestEntry,
+			ThumbnailType thumbnailType);
 }

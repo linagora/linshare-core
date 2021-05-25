@@ -42,6 +42,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -53,4 +54,6 @@ public interface UploadRequestEntryRestService {
 	UploadRequestEntryDto delete(String uuid) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAllAudits(String uploadRequestEntryUuid, List<LogAction> actions) throws BusinessException ;
+
+	Response thumbnail(String uploadRequestEntryUuid, ThumbnailType thumbnailType, boolean base64) throws BusinessException;
 }

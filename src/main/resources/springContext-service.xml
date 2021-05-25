@@ -224,6 +224,8 @@
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="uploadRequestBusinessService" />
+		<constructor-arg ref="fileDataStore" />
+		<constructor-arg ref="documentRepository" />
 	</bean>
 
 	<bean name="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl">
