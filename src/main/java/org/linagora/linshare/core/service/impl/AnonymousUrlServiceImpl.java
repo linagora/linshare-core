@@ -131,7 +131,7 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 	@Override
 	public List<String> findAllExpiredEntries(Account actor, Account owner) {
 		if (!actor.hasAllRights()) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+			throw new BusinessException(BusinessErrorCode.ANONYMOUS_URL_FORBIDDEN, "You do not have the right to use this method.");
 		}
 		return anonymousUrlBusinessService.findAllExpiredEntries();
 	}
@@ -142,7 +142,7 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 		if (actor.hasAllRights() || actor.hasAnonymousShareSystemAccountRole()) {
 			return anonymousUrlBusinessService.find(uuid);
 		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+			throw new BusinessException(BusinessErrorCode.ANONYMOUS_URL_FORBIDDEN, "You do not have the right to use this method.");
 		}
 	}
 
@@ -158,18 +158,18 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 			accessBusinessCheck(anonymousUrl, password);
 			return anonymousUrl;
 		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+			throw new BusinessException(BusinessErrorCode.ANONYMOUS_URL_FORBIDDEN, "You do not have the right to use this method.");
 		}
 	}
 
 	@Override
 	public AnonymousUrl delete(Account actor, Account owner, String uuid) {
-		if (!actor.hasAllRights() || !actor.hasAnonymousShareSystemAccountRole()) {
+		if (actor.hasAllRights()) {
 			AnonymousUrl anonymousUrl = anonymousUrlBusinessService.find(uuid);
 			anonymousUrlBusinessService.delete(anonymousUrl);
 			return anonymousUrl;
 		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+			throw new BusinessException(BusinessErrorCode.ANONYMOUS_URL_FORBIDDEN, "You do not have the right to use this method.");
 		}
 
 	}
