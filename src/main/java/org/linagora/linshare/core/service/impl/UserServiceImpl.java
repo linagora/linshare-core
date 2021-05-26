@@ -38,6 +38,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -926,7 +927,10 @@ public class UserServiceImpl implements UserService {
 		}
 		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
 		user.setCanUpload(updatedUser.getCanUpload());
-		user.setLocale(updatedUser.getLocale());
+		// TODO: Workaround to not break the adminv4 API (Field 'Local' does not exist on new UserDto of adminv5)
+		if (Objects.nonNull(updatedUser.getLocale())) {
+			user.setLocale(updatedUser.getLocale());
+		}
 		user.setExternalMailLocale(updatedUser.getExternalMailLocale());
 		if (user.isGuest()) {
 			Guest updatedGuest = (Guest) updatedUser;
