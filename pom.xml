@@ -391,7 +391,7 @@
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>oauth2-oidc-sdk</artifactId>
-			<version>9.3.1</version>
+			<version>9.7</version>
 		</dependency>
 		<!-- spring security - end -->
 
