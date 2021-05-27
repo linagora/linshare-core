@@ -70,6 +70,7 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 
 public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements UploadRequestUrlFacade {
 
@@ -194,5 +195,18 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 				thumbnailType);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(data, base64, thumbnailType);
 		return builder.build();
+	}
+
+	@Override
+	public Response download(String uploadRequestEntryUuid) {
+		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntryUuid");
+		SystemAccount authUser = uploadRequestUrlService.getUploadRequestSystemAccount();
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.find(authUser, authUser,
+				uploadRequestEntryUuid);
+		ByteSource documentStream = uploadRequestEntryService.download(authUser, authUser, uploadRequestEntry.getUuid());
+		FileAndMetaData data = new FileAndMetaData(documentStream, uploadRequestEntry.getSize(),
+				uploadRequestEntry.getName(), uploadRequestEntry.getType());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
+		return response.build();
 	}
 }

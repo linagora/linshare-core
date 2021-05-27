@@ -63,12 +63,12 @@ import org.linagora.linshare.webservice.uploadrequestv4.UploadRequestRestService
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/requests")
@@ -169,5 +169,20 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 				@QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
 		return uploadRequestUrlFacade.thumbnail(uploadRequestEntryUuid, base64, thumbnailType);
+	}
+
+	@Path("/{entryUuid}/download")
+	@GET
+	@Operation(summary = "Download a choosen upload request entry.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public Response download(
+			@Parameter(description = "Upload request entry uuid.", required = true)
+				@PathParam("entryUuid") String uploadRequestEntryUuid) throws BusinessException {
+		return uploadRequestUrlFacade.download(uploadRequestEntryUuid);
 	}
 }
