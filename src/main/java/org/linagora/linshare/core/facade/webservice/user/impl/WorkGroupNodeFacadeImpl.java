@@ -56,7 +56,6 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -122,17 +121,6 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		this.auditLogEntryService = auditLogEntryService;
 		this.sharedSpaceNodeService = sharedSpaceNodeService;
 		this.workGroupDocumentRevisionService = workGroupDocumentRevisionService;
-	}
-
-	@Override
-	protected User checkAuthentication() throws BusinessException {
-		User authUser = super.checkAuthentication();
-		Functionality functionality = functionalityService.getWorkGroupFunctionality(authUser.getDomain());
-		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-					"You are not authorized to use this service");
-		}
-		return authUser;
 	}
 
 	@Override

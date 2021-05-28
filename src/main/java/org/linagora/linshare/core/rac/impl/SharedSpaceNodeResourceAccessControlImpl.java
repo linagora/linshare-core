@@ -47,6 +47,7 @@ import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
 public class SharedSpaceNodeResourceAccessControlImpl
@@ -55,26 +56,35 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	public SharedSpaceNodeResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
 			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
-			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository) {
-		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository);
+			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository,
+			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
+		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository, sharedSpaceNodeMongoRepository);
 	}
 
 	@Override
 	protected SharedSpaceResourceType getSharedSpaceResourceType() {
 		return SharedSpaceResourceType.WORKGROUP;
 	}
-
+	
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry.getUuid(),
-				TechnicalAccountPermissionType.SHARED_SPACE_NODE_GET, SharedSpaceActionType.READ, getSharedSpaceResourceType(entry));
+		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.SHARED_SPACE_NODE_GET, SharedSpaceActionType.READ,
+				getSharedSpaceResourceType(entry));
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+		boolean isDriveFuncEnabled = functionalityService.getDriveFunctionality(actor.getDomain()).getActivationPolicy()
+				.getStatus();
+		boolean isWorkgroupFuncEnabled = functionalityService.getWorkGroupFunctionality(actor.getDomain())
+				.getActivationPolicy().getStatus();
+		if (!isDriveFuncEnabled && !isWorkgroupFuncEnabled) {
+			return false;
+		}
 		if (opt.length > 0 && opt[0] != null) {
 			SharedSpaceNode parent = (SharedSpaceNode) opt[0];
-			boolean canListWorkGroupsInside = defaultSharedSpacePermissionCheck(authUser, actor, parent.getUuid(),
+			boolean canListWorkGroupsInside = defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, parent,
 					TechnicalAccountPermissionType.SHARED_SPACE_NODE_GET, SharedSpaceActionType.READ,
 					getSharedSpaceResourceType(parent));
 			if (!canListWorkGroupsInside) {
@@ -88,17 +98,20 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry.getUuid(),
+		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.SHARED_SPACE_NODE_DELETE, SharedSpaceActionType.DELETE, getSharedSpaceResourceType(entry));
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+		if (!isFunctionalityEnabled(actor, entry)) {
+			return false;
+		}
 		SharedSpaceNode parent = null;
 		if (opt.length > 0 && opt[0] != null) {
 			parent = (SharedSpaceNode) opt[0];
 		}
-		Functionality creation = new Functionality();
+		Functionality creation = null;
 		if (NodeType.WORK_GROUP.equals(entry.getNodeType()) && (Objects.isNull(entry.getParentUuid()))) {
 			creation = functionalityService.getWorkGroupCreationRight(actor.getDomain());
 		} else if (NodeType.DRIVE.equals(entry.getNodeType())
@@ -130,7 +143,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry.getUuid(),
+		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.SHARED_SPACE_NODE_UPDATE, SharedSpaceActionType.UPDATE, getSharedSpaceResourceType(entry));
 	}
 

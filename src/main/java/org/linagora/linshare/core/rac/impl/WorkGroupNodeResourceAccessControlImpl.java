@@ -47,8 +47,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.WorkGroupNodeResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
 public class WorkGroupNodeResourceAccessControlImpl
@@ -58,8 +60,9 @@ public class WorkGroupNodeResourceAccessControlImpl
 	public WorkGroupNodeResourceAccessControlImpl(
 			FunctionalityReadOnlyService functionalityService,
 			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
-			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository) {
-		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository);
+			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository,
+			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
+		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository, sharedSpaceNodeMongoRepository);
 	}
 
 	@Override
@@ -137,26 +140,34 @@ public class WorkGroupNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_GET, SharedSpaceActionType.READ);
+		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_ENTRIES_GET, SharedSpaceActionType.READ, getSharedSpaceResourceType(entry));
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
 		WorkGroup workGroup = (WorkGroup) opt[0];
+		SharedSpaceNode node = sharedSpaceNodeMongoRepository.findByUuid(workGroup.getLsUuid());
+		if (!isFunctionalityEnabled(actor, node)) {
+			return false;
+		}
 		return defaultSharedSpacePermissionCheck(authUser, actor, workGroup.getLsUuid(),
 				TechnicalAccountPermissionType.THREAD_ENTRIES_LIST, SharedSpaceActionType.READ);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE, SharedSpaceActionType.DELETE);
+		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE, SharedSpaceActionType.DELETE, getSharedSpaceResourceType(entry));
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
 		WorkGroup workGroup = (WorkGroup) opt[0];
+		SharedSpaceNode node = sharedSpaceNodeMongoRepository.findByUuid(workGroup.getLsUuid());
+		if (!isFunctionalityEnabled(actor, node)) {
+			return false;
+		}
 		if (authUser.hasSafeRole()) {
 			return true;
 		}
@@ -166,20 +177,20 @@ public class WorkGroupNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE, SharedSpaceActionType.UPDATE);
+		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE, SharedSpaceActionType.UPDATE, getSharedSpaceResourceType(entry));
 	}
 
 	protected boolean hasDownloadPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD, SharedSpaceActionType.DOWNLOAD);
+		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD, SharedSpaceActionType.DOWNLOAD, getSharedSpaceResourceType(entry));
 	}
 
 	protected boolean hasDownloadTumbnailPermission(Account authUser, Account actor, WorkGroupNode entry,
 			Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL,
-				SharedSpaceActionType.DOWNLOAD_THUMBNAIL);
+				SharedSpaceActionType.DOWNLOAD_THUMBNAIL, getSharedSpaceResourceType(entry));
 	}
 
 	protected SharedSpaceResourceType getSharedSpaceResourceType(WorkGroupNode entry) {
@@ -198,9 +209,6 @@ public class WorkGroupNodeResourceAccessControlImpl
 
 	protected boolean defaultSharedSpacePermissionCheck(Account authUser, Account actor, WorkGroupNode entry,
 			TechnicalAccountPermissionType permission, SharedSpaceActionType action) {
-		if (authUser.hasSuperAdminRole()) {
-			return true;
-		}
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser, permission);
 		}

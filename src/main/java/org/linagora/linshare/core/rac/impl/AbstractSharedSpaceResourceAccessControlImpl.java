@@ -35,15 +35,18 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.rac.AbstractSharedSpaceResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
 public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends AbstractResourceAccessControlImpl<Account, R, E> implements AbstractSharedSpaceResourceAccessControl<Account, R, E>{
@@ -51,13 +54,17 @@ public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends
 	protected SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository;
 
 	protected SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository;
+	
+	protected SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
 
 	public AbstractSharedSpaceResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
 			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
-			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository) {
+			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository,
+			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
 		super(functionalityService);
 		this.sharedSpaceMemberMongoRepository = sharedSpaceMemberMongoRepository;
 		this.sharedSpacePermissionMongoRepository = sharedSpacePermissionMongoRepository;
+		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
 	}
 
 	protected abstract SharedSpaceResourceType getSharedSpaceResourceType();
@@ -88,12 +95,44 @@ public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends
 			TechnicalAccountPermissionType permission, SharedSpaceActionType action) {
 		return defaultSharedSpacePermissionCheck(authUser, actor, sharedSpaceNodeUuid, permission, action, getSharedSpaceResourceType());
 	}
+	
+	protected boolean defaultSharedSpacePermissionAndFunctionalityCheck(Account authUser, Account actor, E entry,
+			TechnicalAccountPermissionType permission, SharedSpaceActionType action, SharedSpaceResourceType resourceType) {
+		String nodeUuid = getSharedSpaceNodeUuid(entry);
+		SharedSpaceNode node = sharedSpaceNodeMongoRepository.findByUuid(nodeUuid);
+		if (!isFunctionalityEnabled(actor, node)) {
+			return false;
+		}
+		return defaultSharedSpacePermissionCheck(authUser, actor, nodeUuid, permission, action, resourceType);
+	}
+	
+	protected boolean isFunctionalityEnabled(Account actor, SharedSpaceNode node) {
+		Functionality driveFunctionality = functionalityService.getDriveFunctionality(actor.getDomain());
+		Functionality wgFunctionality = functionalityService.getWorkGroupFunctionality(actor.getDomain());
+		if (node.getNodeType().equals(NodeType.DRIVE)
+				|| (node.getNodeType().equals(NodeType.WORK_GROUP) && node.getParentUuid() != null)) {
+			// node is a drive or nested workgroup
+			if (driveFunctionality.getActivationPolicy().getStatus()) {
+				return true;
+			} else {
+				logger.error("{} is disabled on your domain, you are not authorized to do any operation.",
+						driveFunctionality.getIdentifier());
+				return false;
+			}
+		} else if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
+			if (wgFunctionality.getActivationPolicy().getStatus()) {
+				return true;
+			} else {
+				logger.error("{} is disabled on your domain, you are not authorized to do any operation.",
+						wgFunctionality.getIdentifier());
+				return false;
+			}
+		}
+		return false;
+	}
 
 	protected boolean defaultSharedSpacePermissionCheck(Account authUser, Account actor, String sharedSpaceNodeUuid,
 			TechnicalAccountPermissionType permission, SharedSpaceActionType action, SharedSpaceResourceType resourceType) {
-		if (authUser.hasSuperAdminRole()) {
-			return true;
-		}
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser, permission);
 		}

@@ -70,6 +70,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
 		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
+		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 	</bean>
 
 	<bean name="safeDetailResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SafeDetailResourceAccessControlImpl">
@@ -88,6 +89,7 @@
 	<bean name="sharedSpaceNodeResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceNodeResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
+		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
 	</bean>
 	<bean name="sharedSpaceRoleResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceRoleResourceAccessControlImpl">
@@ -96,6 +98,7 @@
 	<bean name="sharedSpaceMemberResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceMemberResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
+		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 	</bean>
 
 	<bean name="userResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UserResourceAccessControlImpl">
