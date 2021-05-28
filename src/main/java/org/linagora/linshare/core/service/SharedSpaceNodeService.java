@@ -85,4 +85,6 @@ public interface SharedSpaceNodeService {
 	WorkGroupDto deleteWorkgroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
 
 	PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account, PageContainer<SharedSpaceNodeNested> container);
+
+	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, boolean withRole, String parent);
 }

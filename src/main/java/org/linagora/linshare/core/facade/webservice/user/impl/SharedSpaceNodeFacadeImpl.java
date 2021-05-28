@@ -50,7 +50,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
-import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -64,17 +63,13 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 
 	private final SharedSpaceNodeService nodeService;
 	
-	private final SharedSpaceMemberService memberService;
-	
 	private final AuditLogEntryService auditLogEntryService;
 
 	public SharedSpaceNodeFacadeImpl(AccountService accountService,
 			SharedSpaceNodeService nodeService,
-			SharedSpaceMemberService memberService,
 			AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.nodeService = nodeService;
-		this.memberService = memberService;
 		this.auditLogEntryService = auditLogEntryService;
 	}
 
@@ -153,7 +148,7 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		} else {
 			parent = null;
 		}
-		return memberService.findAllNodesOnTopByAccount(authUser, actor, actor.getLsUuid(), withRole, parent);
+		return nodeService.findAllByAccount(authUser, actor, withRole, parent);
 	}
 
 	@Override
