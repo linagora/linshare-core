@@ -39,12 +39,12 @@ package org.linagora.linshare.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
-import java.util.Date;
+import java.text.ParseException;
 
 import javax.transaction.Transactional;
 
 import org.apache.cxf.helpers.IOUtils;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -146,10 +146,6 @@ public class UploadRequestEntryServiceImplTest {
 
 	private UploadRequest ure = new UploadRequest();
 
-	private UploadRequest uploadRequest;
-
-	private UploadRequest enabledUploadRequest;
-
 	private User john;
 
 	private User jane;
@@ -177,24 +173,6 @@ public class UploadRequestEntryServiceImplTest {
 		AbstractDomain subDomain = abstractDomainRepository.findById(LinShareTestConstants.SUB_DOMAIN);
 		yoda = repository.findByMail("yoda@linshare.org");
 		john.setDomain(subDomain);
-		// UPLOAD REQUEST CREATE
-		ure.setCanClose(true);
-		ure.setMaxDepositSize((long) 100000);
-		ure.setMaxFileCount(Integer.valueOf(3));
-		ure.setMaxFileSize((long) 100000);
-		ure.setExpiryDate(new Date());
-		ure.setProtectedByPassword(false);
-		ure.setCanEditExpiryDate(true);
-		ure.setCanDelete(true);
-		ure.setLocale(Language.ENGLISH);
-		ure.setActivationDate(new Date());
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
-				"This is a body", false);
-		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		ure.setActivationDate(null);
-		UploadRequestGroup enabledUploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(new Contact(LinShareTestConstants.JANE_ACCOUNT)), "This is a subject",
-				"This is a body", false);
-		enabledUploadRequest = enabledUploadRequestGroup.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -204,11 +182,46 @@ public class UploadRequestEntryServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
+	private UploadRequest createdUploadRequest() throws ParseException {
+		// UPLOAD REQUEST CREATED
+		ure.setCanClose(true);
+		ure.setMaxDepositSize((long) 100000);
+		ure.setMaxFileCount(Integer.valueOf(3));
+		ure.setMaxFileSize((long) 100000);
+		ure.setActivationDate(new DateTime().plusMonths(3).toDate());
+		ure.setExpiryDate(new DateTime().plusMonths(4).toDate());
+		ure.setProtectedByPassword(false);
+		ure.setCanEditExpiryDate(true);
+		ure.setCanDelete(true);
+		ure.setLocale(Language.ENGLISH);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda),
+				"This is a subject", "This is a body", false);
+		return uploadRequestGroup.getUploadRequests().iterator().next();
+	}
+
+	private UploadRequest enabledUploadRequest() throws ParseException {
+		// UPLOAD REQUEST ENABLED
+		ure.setCanClose(true);
+		ure.setMaxDepositSize((long) 100000);
+		ure.setMaxFileCount(Integer.valueOf(3));
+		ure.setMaxFileSize((long) 100000);
+		ure.setProtectedByPassword(false);
+		ure.setCanEditExpiryDate(true);
+		ure.setCanDelete(true);
+		ure.setLocale(Language.ENGLISH);
+		ure.setActivationDate(null);
+		UploadRequestGroup enabledUploadRequestGroup = uploadRequestGroupService.create(john, john, ure,
+				Lists.newArrayList(new Contact(LinShareTestConstants.JANE_ACCOUNT)), "This is a subject",
+				"This is a body", false);
+		return enabledUploadRequestGroup.getUploadRequests().iterator().next();
+	}
+
 	@Test
-	public void testUploadRequestCreateDocumentEntry() throws BusinessException, IOException {
+	public void testUploadRequestCreateDocumentEntry() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		Assertions.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
@@ -224,26 +237,10 @@ public class UploadRequestEntryServiceImplTest {
 	}
 
 	@Test
-	public void testforbidEntryCreation() throws BusinessException, IOException {
+	public void testforbidEntryCreation() throws BusinessException, IOException, ParseException {
 		// In this test we will forbid the entry creation if the UR not yet enabled
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest request = new UploadRequest();
-		request.setCanClose(true);
-		request.setMaxDepositSize((long) 100000);
-		request.setMaxFileCount(Integer.valueOf(3));
-		request.setMaxFileSize((long) 100000);
-		request.setProtectedByPassword(false);
-		request.setCanEditExpiryDate(true);
-		request.setCanDelete(true);
-		request.setLocale(Language.ENGLISH);
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DAY_OF_YEAR, 2);
-		Date date = c.getTime();
-		request.setActivationDate(date);
-		request.setExpiryDate(date);
-		UploadRequestGroup group = uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject",
-				"This is a body", false);
-		request = group.getUploadRequests().iterator().next();
+		UploadRequest request = createdUploadRequest();
 		Assertions.assertNotNull(request);
 		UploadRequestUrl url = request.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(url);
@@ -251,8 +248,7 @@ public class UploadRequestEntryServiceImplTest {
 		IOUtils.transferTo(stream, tempFile);
 		Assertions.assertEquals(UploadRequestStatus.CREATED, request.getStatus());
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
-					url);
+			uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null, url);
 		});
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_READONLY_MODE, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -260,33 +256,40 @@ public class UploadRequestEntryServiceImplTest {
 
 	@Test
 	@Disabled
-	public void deleteUploadRequestEntryFail() throws BusinessException, IOException {
+	public void deleteUploadRequestEntryFail() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
 		Assertions.assertEquals(UploadRequestStatus.ENABLED,
 				uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getStatus());
-		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
-		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.PURGED, false);
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED,
+				false);
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.PURGED,
+				false);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		});
-		Assertions.assertEquals("You Cannot cannot perform the requested action if upload request's status is not enabled, closed or archived", exception.getMessage());
+		Assertions.assertEquals(
+				"You Cannot cannot perform the requested action if upload request's status is not enabled, closed or archived",
+				exception.getMessage());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void deleteUploadRequestEntryClosedUR() throws BusinessException, IOException {
+	public void deleteUploadRequestEntryClosedUR() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
-		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED,
+				false);
 		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
@@ -296,9 +299,10 @@ public class UploadRequestEntryServiceImplTest {
 	}
 
 	@Test
-	public void deleteUploadRequestEntryEnabledUR() throws BusinessException, IOException {
+	public void deleteUploadRequestEntryEnabledUR() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
@@ -314,11 +318,12 @@ public class UploadRequestEntryServiceImplTest {
 	}
 
 	@Test
-	public void testForbidDeleteUploadRequestEntryByRecipient() throws BusinessException, IOException {
+	public void testForbidDeleteUploadRequestEntryByRecipient() throws BusinessException, IOException, ParseException {
 		// In this test the deletion of URE is forbidden if the deletion right is
 		// disabled
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
@@ -328,20 +333,21 @@ public class UploadRequestEntryServiceImplTest {
 				entry.getUploadRequestUrl().getUploadRequest(), false);
 		Assertions.assertFalse(enabledUploadRequest.isCanDelete());
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			uploadRequestEntryService.deleteEntryByRecipients(enabledUploadRequest.getUploadRequestURLs().iterator().next(),
-					uploadRequestEntry.getUuid());
+			uploadRequestEntryService.deleteEntryByRecipients(
+					enabledUploadRequest.getUploadRequestURLs().iterator().next(), uploadRequestEntry.getUuid());
 		});
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testCheckAccountQuotaAfterURArchiving() throws BusinessException, IOException {
+	public void testCheckAccountQuotaAfterURArchiving() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account owner = john;
 		Account recipient = jane;
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		AccountQuota johnQuota = quotaService.findByRelatedAccount(owner);
 		Long quota = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
 		UploadRequestUrl uploadRequestUrl = enabledUploadRequest.getUploadRequestURLs().iterator().next();
@@ -351,8 +357,10 @@ public class UploadRequestEntryServiceImplTest {
 		Long quotaAfterUpload = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
 		Assertions.assertEquals(quota + uploadRequestEntry.getSize(), quotaAfterUpload,
 				"The quota must take in consideration the uploadRequestEntry creation");
-		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
-		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.ARCHIVED, false);
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.CLOSED,
+				false);
+		uploadRequestService.updateStatus(john, john, enabledUploadRequest.getUuid(), UploadRequestStatus.ARCHIVED,
+				false);
 		Long quotaAfterURArchiving = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
 		Assertions.assertEquals(quota, quotaAfterURArchiving,
 				"The quota must take in consideration the upload requestEntry deletion");
@@ -360,7 +368,7 @@ public class UploadRequestEntryServiceImplTest {
 	}
 
 	@Test
-	public void testCheckAccountQuotaUREDeletionByRecipient() throws BusinessException, IOException {
+	public void testCheckAccountQuotaUREDeletionByRecipient() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account owner = john;
 		Account recipient = jane;
@@ -368,14 +376,15 @@ public class UploadRequestEntryServiceImplTest {
 		IOUtils.transferTo(stream, tempFile);
 		AccountQuota johnQuota = quotaService.findByRelatedAccount(owner);
 		Long quota = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
-		uploadRequestEntry = uploadRequestEntryService.create(recipient, owner, tempFile, fileName, comment, false, null,
-				enabledUploadRequest.getUploadRequestURLs().iterator().next());
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
+		uploadRequestEntry = uploadRequestEntryService.create(recipient, owner, tempFile, fileName, comment, false,
+				null, enabledUploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(recipient, recipient, uploadRequestEntry.getUuid());
 		Assertions.assertNotNull(entry);
 		Long quotaAfterUpload = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
 		Assertions.assertEquals(quota + uploadRequestEntry.getSize(), quotaAfterUpload,
 				"The quota must take in consideration the uploadRequestEntry creation");
-		uploadRequestEntryService.deleteEntryByRecipients(uploadRequest.getUploadRequestURLs().iterator().next(),
+		uploadRequestEntryService.deleteEntryByRecipients(enabledUploadRequest.getUploadRequestURLs().iterator().next(),
 				uploadRequestEntry.getUuid());
 		Long quotaAfterDeletion = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
 		Assertions.assertEquals(quota, quotaAfterDeletion,
@@ -384,14 +393,16 @@ public class UploadRequestEntryServiceImplTest {
 	}
 
 	@Test
-	public void testFindAllEntriesForDeletedUR() throws BusinessException, IOException {
-		// This test is used to recover the entries for the archived, deleted UR and it will be
+	public void testFindAllEntriesForDeletedUR() throws BusinessException, IOException, ParseException {
+		// This test is used to recover the entries for the archived, deleted UR and it
+		// will be
 		// used in the upgrade task
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account owner = john;
 		Account recipient = jane;
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		UploadRequestUrl uploadRequestUrl = enabledUploadRequest.getUploadRequestURLs().iterator().next();
 		uploadRequestEntry = uploadRequestEntryService.create(recipient, owner, tempFile, fileName, comment, false,
 				null, uploadRequestUrl);
@@ -400,7 +411,8 @@ public class UploadRequestEntryServiceImplTest {
 				false);
 		uploadRequestBusinessService.updateStatus(enabledUploadRequest, UploadRequestStatus.ARCHIVED);
 		Assertions.assertTrue(enabledUploadRequest.isArchived());
-		String recoveredUREUuid = uploadRequestEntryRepository.findAllEntriesForArchivedDeletedPurgedUR().iterator().next();
+		String recoveredUREUuid = uploadRequestEntryRepository.findAllEntriesForArchivedDeletedPurgedUR().iterator()
+				.next();
 		Assertions.assertEquals(uploadRequestEntry.getUuid(), recoveredUREUuid);
 		uploadRequestBusinessService.updateStatus(enabledUploadRequest, UploadRequestStatus.DELETED);
 		Assertions.assertTrue(enabledUploadRequest.isDeleted());

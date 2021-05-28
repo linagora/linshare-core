@@ -207,8 +207,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			req.setStatus(UploadRequestStatus.ENABLED);
 		} else {
 			req.setStatus(UploadRequestStatus.CREATED);
-			req.setActivationDate(functionalityService.roundToUpperHour(req.getActivationDate()));
-			applyBusinessRuleForActivationDate(domain, req);
+			Date activationDate = functionalityService.roundToUpperHour(req.getActivationDate());
+			req.setActivationDate(applyBusinessRuleForActivationDate(domain, activationDate));
 		}
 		req.setExpiryDate(functionalityService.roundToUpperHour(req.getExpiryDate()));
 		req.setNotificationDate(functionalityService.roundToUpperHour(req.getNotificationDate()));
@@ -282,10 +282,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			checkDate = timeService.dateNow();
 		}
 		return checkDate;
-	}
-
-	private void applyBusinessRuleForActivationDate(AbstractDomain domain, UploadRequest req) {
-		req.setActivationDate(applyBusinessRuleForActivationDate(domain, req.getActivationDate()));
 	}
 
 	private Date applyBusinessRuleForExpiryDate(AbstractDomain domain, Date expiryDate, Date activationDate) {
