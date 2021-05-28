@@ -183,6 +183,11 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.validator.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 			<version>2.10.6</version>
@@ -1635,6 +1640,7 @@
 		<h2.version>1.4.200</h2.version>
 		<hibernate.version>5.4.30.Final</hibernate.version>
 		<jackson.version>2.12.3</jackson.version>
+		<hibernate.validator.version>6.2.0.Final</hibernate.validator.version>
 		<jclouds.version>2.3.0</jclouds.version>
 		<jjwt.version>0.11.2</jjwt.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
