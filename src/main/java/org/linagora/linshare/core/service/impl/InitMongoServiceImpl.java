@@ -174,7 +174,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 		createInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", "read a drive", SharedSpaceActionType.READ,
 				SharedSpaceResourceType.DRIVE, drive_admin, drive_writer, drive_reader);
 		createInitPermission("5557fc26-ea2d-4e3b-81af-37a614d8014c", "Update  a drive", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.DRIVE, drive_admin, drive_writer);
+				SharedSpaceResourceType.DRIVE, drive_admin);
 		createInitPermission("70ecfe55-f388-4e37-91bc-958386e0a865", "Delete  a drive", SharedSpaceActionType.DELETE,
 				SharedSpaceResourceType.DRIVE, drive_admin);
 
