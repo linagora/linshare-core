@@ -1205,6 +1205,33 @@ VALUES
   now(),
   now(),
   null);
+ -- UPGRADE_4_2_ADD_WORKGROUP_UUID_AS_RELATED_RESOURCE_IN_WORKGROUP_NODE_AUDIT_TRACES
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (41,
+  'UNDEFINED',
+  'UPGRADE_4_2_ADD_WORKGROUP_UUID_AS_RELATED_RESOURCE_IN_WORKGROUP_NODE_AUDIT_TRACES',
+  'UPGRADE_4_2',
+  null,
+  null,
+  41,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);
 ---- End of your queries
 
 -- LinShare version

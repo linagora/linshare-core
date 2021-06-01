@@ -92,6 +92,12 @@
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_2.AddRelatedResourceToWorkgroupNodeAuditEntriesUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+					<constructor-arg ref="auditUserMongoRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

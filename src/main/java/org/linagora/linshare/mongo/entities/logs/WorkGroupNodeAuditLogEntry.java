@@ -83,7 +83,9 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 	public WorkGroupNodeAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
 			WorkGroupNode node, WorkGroup workGroup) {
 		super(new AccountMto(authUser), new AccountMto(owner), action, type, node.getUuid());
+		this.addRelatedResources(workGroup.getLsUuid());
 		this.resource = buildCopy(node);
+		// used only to get the name of the workgroup
 		this.workGroup = new WorkGroupLightDto(workGroup);
 	}
 

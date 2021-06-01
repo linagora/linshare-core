@@ -131,7 +131,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, String nodeUuid,
+	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid,
 			List<LogAction> action, List<AuditLogEntryType> type, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
@@ -148,9 +148,9 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		Date end = getEndDate(endDate);
 		Date begin = getBeginDate(beginDate, end);
 		// TODO:workgroups: use limit (Pageable query).
-		if (Objects.nonNull(nodeUuid)) {
+		if (Objects.nonNull(workGroupNodeUuid)) {
 			res = userMongoRepository.findWorkGroupNodeHistoryForUser(
-					workGroup.getLsUuid(), nodeUuid,
+					workGroup.getLsUuid(), workGroupNodeUuid,
 					actions, types,
 					begin, end,
 					Sort.by(Sort.Direction.DESC, CREATION_DATE));

@@ -257,7 +257,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Update System to anonymous account on audit traces of anonymous share
 	 */
-	UPGRADE_4_2_UPDATE_SYSTEM_TO_ANONYMOUS_ACCOUNT_ON_AUDIT_TRACES;
+	UPGRADE_4_2_UPDATE_SYSTEM_TO_ANONYMOUS_ACCOUNT_ON_AUDIT_TRACES,
+	
+	/**
+	 * For all operations on Workgroup nodes, store related workgroup uuid in relatedResource field in WorkGroupNodeAuditLogEntry
+	 */
+	UPGRADE_4_2_ADD_WORKGROUP_UUID_AS_RELATED_RESOURCE_IN_WORKGROUP_NODE_AUDIT_TRACES;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

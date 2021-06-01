@@ -148,6 +148,10 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		this.relatedResources = relatedResources;
 	}
 
+	public List<String> getRelatedResources() {
+		return relatedResources;
+	}
+
 	public void addRelatedResources(List<String> relatedResources) {
 		if (this.relatedResources == null) {
 			this.relatedResources = Lists.newArrayList();
