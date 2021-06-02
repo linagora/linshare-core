@@ -208,6 +208,6 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);
 		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
-		return auditLogEntryService.findAll(authUser, actor, workGroup, nodeUuid, actions, types, beginDate, endDate);
+		return auditLogEntryService.findAllSharedSpaceAudits(authUser, actor, workGroup.getLsUuid(), nodeUuid, actions, types, beginDate, endDate);
 	}
 }
