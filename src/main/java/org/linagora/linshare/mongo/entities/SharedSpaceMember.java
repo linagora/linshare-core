@@ -95,8 +95,15 @@ public class SharedSpaceMember {
 	@Schema(description = "ModificationDate of the shared space member.")
 	protected Date modificationDate;
 
-	@Schema(description = "This field is used to show if the shared space member exists on a nested sharedSpace.")
-	protected boolean nested;
+	@Schema(description = "This field is used to show if the shared space member exists in a nested sharedSpace.")
+	protected boolean nested = false;
+
+	/*
+	 * if true, the membership is seen as part of a nested SharedSpace (nested workgroup in a Drive)
+	 * if false, the membership is not seen a part of a root SharedSpace (root workgroup), 
+	 */
+	@JsonIgnore
+	protected boolean seeAsNested = false;
 
 	@Schema(description = "This field is used to show the type of the sharedSpace to which the shared space member belongs.")
 	protected NodeType type;
@@ -201,6 +208,14 @@ public class SharedSpaceMember {
 
 	public void setNested(boolean nested) {
 		this.nested = nested;
+	}
+
+	public boolean isSeeAsNested() {
+		return seeAsNested;
+	}
+
+	public void setSeeAsNested(boolean seeAsNested) {
+		this.seeAsNested = seeAsNested;
 	}
 
 	public NodeType getType() {

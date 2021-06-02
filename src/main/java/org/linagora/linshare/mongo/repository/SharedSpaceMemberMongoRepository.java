@@ -62,6 +62,15 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{ 'node.uuid' : ?0, 'uuid' : ?1 }")
 	SharedSpaceMember findByNodeUuidAndUuid(String nodeUuid, String uuid);
 
+	/**
+	 * It allows to get all members of a Drive only because it uses parentUuid 
+	 * and the method is called only from the drive service
+	 * @param parentUuid
+	 * @return
+	 */
+	@Query("{ 'node.parentUuid' : ?0}")
+	List<SharedSpaceMember> findAllByNodeParentUuid(String parentUuid);
+
 	@Query("{ 'account.uuid' : ?0, 'node.parentUuid' : ?1,  'nested' : ?2 }")
 	List<SharedSpaceMember> findByAccountUuidAndParentUuidAndNested(String accountUuid, String parentUuid, boolean nested);
 
@@ -71,12 +80,15 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{ 'account.uuid' : ?0, 'node.parentUuid' : ?1, 'nested' : ?2, 'role.uuid' : ?3 }")
 	List<SharedSpaceMember> findAllMembersWithNoConflictedRoles(String accountUuid, String parentUuid, boolean nested, String roleUuid);
 
-	@Query("{ 'node.parentUuid' : ?0, 'nested' : ?1 }")
-	List<SharedSpaceMember> findByParentUuidAndNested(String parentUuid, boolean nested);
-	
-	@Query("{ 'accountUuid' : ?0, 'node.parentUuid' : ?1 }")
-	List<SharedSpaceMember> findByAccountUuidAndNodeParentUuid(String accountUuid, String parentUuid);
-
+	/**
+	 * Method use to get all SharedSpaces (workgroup) membership in a SharedSpace (Drive) in order to update
+	 * all pristine membership.
+	 *
+	 * @param accountUuid : the uuid of the account that belong to a SharedSpace
+	 * @param parentUuid : the uuid of the parent SharedSpace (aka Drive)
+	 * @param pristine: Define if the membership was updated in this SharedSpace (WG) or if the membership is the same as in the Drive.
+	 * @return
+	 */
 	@Query("{ 'accountUuid' : ?0, 'node.parentUuid' : ?1, 'pristine' : ?2 }")
 	List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid,
 			boolean pristine);

@@ -43,7 +43,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
-import org.springframework.data.annotation.Transient;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -59,7 +58,6 @@ public class SharedSpaceNodeNested {
 	@Enumerated(EnumType.STRING)
 	protected NodeType nodeType;
 
-	@Transient
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected GenericLightEntity role;
 
@@ -88,19 +86,6 @@ public class SharedSpaceNodeNested {
 		this.nodeType = node.getNodeType();
 		this.creationDate = node.getCreationDate();
 		this.modificationDate = node.getModificationDate();
-	}
-
-	public SharedSpaceNodeNested(SharedSpaceNodeNested nestedNode) {
-		this.uuid = nestedNode.getUuid();
-		this.name = nestedNode.getName();
-		this.nodeType = nestedNode.getNodeType();
-		this.creationDate = nestedNode.getCreationDate();
-		this.modificationDate = nestedNode.getModificationDate();
-	}
-
-	public SharedSpaceNodeNested(SharedSpaceMember member) {
-		this(member.getNode());
-		this.role = new GenericLightEntity(member.getRole());
 	}
 
 	public String getUuid() {

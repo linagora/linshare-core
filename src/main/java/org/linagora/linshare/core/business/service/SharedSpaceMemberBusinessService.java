@@ -66,8 +66,6 @@ public interface SharedSpaceMemberBusinessService {
 
 	List<SharedSpaceMember> findByMemberName(String name) throws BusinessException;
 
-	List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole, String parent);
-
 	void updateNestedNode(SharedSpaceNode node) throws BusinessException;
 
 	List<SharedSpaceMember> findAllUserMemberships(String userUuid);
@@ -76,17 +74,44 @@ public interface SharedSpaceMemberBusinessService {
 
 	SharedSpaceMember findByNodeAndUuid(String nodeUuid, String uuid);
 
-	List<SharedSpaceNodeNested> findAllByParentAndAccount(String accountUuid, String parentUuid);
+	/**
+	 * Admins only
+	 * @param lsUuid
+	 * @param container
+	 * @return
+	 */
+	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, PageContainer<SharedSpaceNodeNested> container);
+
 
 	List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid);
-
-	List<SharedSpaceMember> findAllMembersWithNoConflictedRoles(String accountUuid, String parentUuid, String roleUuid);
-
-	List<SharedSpaceNodeNested> findAllNodesByParent(String parentUuid);
-
-	List<SharedSpaceMember> findAllMembersByParent(String parentUuid);
-
 	List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid, Boolean pristine);
+	List<SharedSpaceNodeNested> findAllByParentAndAccount(String accountUuid, String parentUuid);
 
-	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, PageContainer<SharedSpaceNodeNested> container);
+	/**
+	 * It is a projection onto SharedSpaceMembers to get a list of SharedSpaces which belong to
+	 * the following account with its owner role (Optionally).
+	 * @param accountUuid String uuid of shared space account
+	 * @param withRole Boolean if true return the role of  member in the node
+	 * @param parent : by default all SharedSpaces without parent are returned. (Nullable)
+	 * @return {@link SharedSpaceNodeNested} {@link List} list of Sharedspaces.
+	 */
+	List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParent(String accountUuid, boolean withRole, String parent);
+
+	/**
+	 * It is a projection onto SharedSpaceMembers to get a list of SharedSpaces which belong to
+	 * the following account with its owner role (Optionally).
+	 * Workgroups not considered as nested will be also returned.
+	 * @param accountUuid String uuid of shared space account
+	 * @param withRole Boolean if true return the role of  member in the node
+	 * @param parent : by default all SharedSpaces without parent are returned. (Nullable)
+	 * @return {@link SharedSpaceNodeNested} {@link List} list of Sharedspaces.
+	 */
+	List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParentForUsers(String accountUuid, boolean withRole, String parent);
+
+	/**
+	 * This method must only be used by root account. there is no filter on the account member.
+	 * @param parentUuid
+	 * @return
+	 */
+	List<SharedSpaceNodeNested> findAllNodesByParent(String parentUuid);
 }

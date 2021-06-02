@@ -236,14 +236,14 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, boolean withRole, String parent) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		return memberService.findAllNodesOnTopByAccount(authUser, actor, actor.getLsUuid(), withRole, parent);
+		return memberService.findAllSharedSpacesByAccountAndParentForUsers(authUser, actor, actor.getLsUuid(), withRole, parent);
 	}
 	
 	@Override
 	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		return memberService.findAllNodesOnTopByAccount(authUser, actor, actor.getLsUuid(), false, null);
+		return memberService.findAllSharedSpacesByAccountAndParentForUsers(authUser, actor, actor.getLsUuid(), false, null);
 	}
 
 	@Override

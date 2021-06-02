@@ -192,8 +192,13 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		/**
 		 * If the member is added to nested workgroup, set the [nested] field to true
 		 */
-		boolean isInNestedWorkgroup = (parentUuid != null) && (!memberExistsInNode(account.getUuid(), node.getUuid()));
-		memberWg.setNested(isInNestedWorkgroup);
+		if (parentUuid != null) {
+			memberWg.setNested(true);
+			memberWg.setSeeAsNested(true);
+			if(!memberExistsInNode(account.getUuid(), parentUuid)) {
+				memberWg.setSeeAsNested(false);
+			}
+		}
 		SharedSpaceMemberWorkgroup memberToCreate = (SharedSpaceMemberWorkgroup) memberWg;
 		memberToCreate.setPristine(true);
 		SharedSpaceMember toAdd = businessService.create(memberWg);

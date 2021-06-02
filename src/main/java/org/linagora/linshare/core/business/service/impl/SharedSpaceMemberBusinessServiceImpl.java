@@ -37,6 +37,7 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,8 +59,13 @@ import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.Fields;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -191,31 +197,93 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return repository.findByMemberName(name);
 	}
 
-	
-	/**
-	 * @param accountUuid String uuid of shared space account
-	 * @param withRole Boolean if true return the role of  member in the node
-	 * @return {@link SharedSpaceNodeNested} {@link List} All nodes of the given member except Nested SharedSpaces on Drives 
-	 */
 	@Override
-	public List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole,
-			String parent) {
-		// TODO Improve performance of retrieving the sharedSpaces(may be use of agregation)
+	public List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParent(String accountUuid, boolean withRole, String parent) {
+		ProjectionOperation projections = null;
+		MatchOperation match = null;
 		if (withRole) {
-			List<SharedSpaceMember> members = repository.findByAccountUuidAndNodeParentUuid(accountUuid, parent);
-			return members.stream().map(member -> new SharedSpaceNodeNested(member)).collect(Collectors.toList());
+			projections = Aggregation.project(
+				Fields.from(
+						Fields.field("uuid", "node.uuid"),
+						Fields.field("name", "node.name"),
+						Fields.field("parentUuid", "node.parentUuid"),
+						Fields.field("creationDate", "node.creationDate"),
+						Fields.field("modificationDate", "node.modificationDate"),
+						Fields.field("nodeType", "node.nodeType"),
+						Fields.field("role.uuid", "role.uuid"),
+						Fields.field("role.name", "role.name")
+						)
+				);
 		} else {
-			Aggregation aggregation = Aggregation.newAggregation(
-					Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
-					Aggregation.match(Criteria.where("node.parentUuid").is(parent)),
-					Aggregation.project("node.uuid",
-							"node.name",
-							"node.nodeType",
-							"node.creationDate",
-							"node.modificationDate"));
-			return mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
-					.getMappedResults();
+			projections = Aggregation.project(
+					Fields.from(
+							Fields.field("uuid", "node.uuid"),
+							Fields.field("name", "node.name"),
+							Fields.field("parentUuid", "node.parentUuid"),
+							Fields.field("creationDate", "node.creationDate"),
+							Fields.field("modificationDate", "node.modificationDate"),
+							Fields.field("nodeType", "node.nodeType")
+							)
+					);
 		}
+		if (Objects.isNull(parent)) {
+			match = Aggregation.match(Criteria.where("account.uuid").is(accountUuid).and("nested").is(false));
+		} else {
+			match = Aggregation.match(Criteria.where("account.uuid").is(accountUuid).and("nested").is(true).and("node.parentUuid").is(parent));
+		}
+		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class,
+				match,
+				Aggregation.sort(Direction.DESC, "node.modificationDate"),
+				projections
+				);
+		AggregationResults<SharedSpaceNodeNested> aggregate = mongoTemplate.aggregate(
+				aggregation, "shared_space_members", SharedSpaceNodeNested.class);
+		return aggregate.getMappedResults();
+	}
+
+	@Override
+	public List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParentForUsers(String accountUuid, boolean withRole,
+			String parent) {
+		ProjectionOperation projections = null;
+		MatchOperation match = null;
+		if (withRole) {
+			projections = Aggregation.project(
+				Fields.from(
+						Fields.field("uuid", "node.uuid"),
+						Fields.field("name", "node.name"),
+						Fields.field("parentUuid", "node.parentUuid"),
+						Fields.field("creationDate", "node.creationDate"),
+						Fields.field("modificationDate", "node.modificationDate"),
+						Fields.field("nodeType", "node.nodeType"),
+						Fields.field("role.uuid", "role.uuid"),
+						Fields.field("role.name", "role.name")
+						)
+				);
+		} else {
+			projections = Aggregation.project(
+					Fields.from(
+							Fields.field("uuid", "node.uuid"),
+							Fields.field("name", "node.name"),
+							Fields.field("parentUuid", "node.parentUuid"),
+							Fields.field("creationDate", "node.creationDate"),
+							Fields.field("modificationDate", "node.modificationDate"),
+							Fields.field("nodeType", "node.nodeType")
+							)
+					);
+		}
+		if (Objects.isNull(parent)) {
+			match = Aggregation.match(Criteria.where("account.uuid").is(accountUuid).and("seeAsNested").is(false));
+		} else {
+			match = Aggregation.match(Criteria.where("account.uuid").is(accountUuid).and("node.parentUuid").is(parent));
+		}
+		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class,
+				match,
+				Aggregation.sort(Direction.DESC, "node.modificationDate"),
+				projections
+				);
+		AggregationResults<SharedSpaceNodeNested> aggregate = mongoTemplate.aggregate(
+				aggregation, "shared_space_members", SharedSpaceNodeNested.class);
+		return aggregate.getMappedResults();
 	}
 
 	@Override
@@ -247,26 +315,17 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public List<SharedSpaceMember> findAllMembersByParent(String parentUuid) {
-		return repository.findByParentUuidAndNested(parentUuid, true);
-	}
-
-	@Override
 	public List<SharedSpaceNodeNested> findAllNodesByParent(String parentUuid) {
-		List<SharedSpaceMember> members = findAllMembersByParent(parentUuid);
+		// TODO: why don't use projection ?
+		List<SharedSpaceMember> members = repository.findAllByNodeParentUuid(parentUuid);
 		return Lists.transform(members, convertToSharedSpaceNode);
 	}
 
 	@Override
 	public List<SharedSpaceNodeNested> findAllByParentAndAccount(String accountUuid, String parentUuid) {
+		// TODO: why don't use projection ?
 		List<SharedSpaceMember> members = findAllMembersByParentAndAccount(accountUuid, parentUuid);
 		return Lists.transform(members, convertToSharedSpaceNode);
-	}
-
-	@Override
-	public List<SharedSpaceMember> findAllMembersWithNoConflictedRoles(String accountUuid, String parentUuid,
-			String roleUuid) {
-		return repository.findAllMembersWithNoConflictedRoles(accountUuid, parentUuid, true, roleUuid);
 	}
 
 	@Override

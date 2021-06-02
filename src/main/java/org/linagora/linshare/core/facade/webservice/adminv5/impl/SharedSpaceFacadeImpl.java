@@ -156,7 +156,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 		} else {
 			parent = null;
 		}
-		return memberService.findAllNodesOnTopByAccount(authUser, actor, actor.getLsUuid(), withRole, parent);
+		return memberService.findAllSharedSpacesByAccountAndParent(authUser, actor, actor.getLsUuid(), withRole, parent);
 	}
 
 	@Override
