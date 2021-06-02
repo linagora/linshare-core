@@ -185,7 +185,6 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 					Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		} else {
 			return userMongoRepository.findAllSharedSpaceAuditsForUser(
-					actor.getLsUuid(),
 					sharedSpaceUuid,
 					getActions(actions),
 					getEntryTypes(types, supportedTypes, true),
