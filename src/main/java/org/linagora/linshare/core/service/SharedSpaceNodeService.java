@@ -68,6 +68,11 @@ public interface SharedSpaceNodeService {
 
 	List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid, String accountUuid);
 
+	@Deprecated
+	/**
+	 * Only use to compability with threadFacade and WorkgroupFacadeImpl
+	 *
+	 */
 	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor);
 
 	@Deprecated
@@ -84,7 +89,23 @@ public interface SharedSpaceNodeService {
 	 */
 	WorkGroupDto deleteWorkgroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
 
+	/**
+	 * Admins API only
+	 * @param authUser
+	 * @param actor
+	 * @param account
+	 * @param container
+	 * @return
+	 */
 	PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account, PageContainer<SharedSpaceNodeNested> container);
 
+	/**
+	 * user API only
+	 * @param authUser
+	 * @param actor
+	 * @param withRole
+	 * @param parent
+	 * @return
+	 */
 	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, boolean withRole, String parent);
 }
