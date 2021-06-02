@@ -68,12 +68,34 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	Set<AuditLogEntryUser> findForUser(String ownerUuid, List<LogAction> actions, List<AuditLogEntryType> types);
 
 	// shared spaces.
+	/**
+	 * Returns traces of the Shared space (Drive/nested workgroup/ workgroup) and the related resource traces (members/folders/documents/revisions) that belongs to this shared space.
+	 * All operations performed by members on a given resource of the shared space are included.
+	 * @param sharedSpaceUuid String uuid of the shared space. Could be a drive, nested workgroup or workgroup.
+	 * @param actions {@link List} of {@link LogAction} list of audit action types. Should not be null neither empty.
+	 * @param types {@link List} of {@link AuditLogEntryType} list of audit entry types. Should not be null neither empty.
+	 * @param beginDate {@link Date} Begin of the date range.
+	 * @param endDate {@link Date} End of the date range.
+	 * @param sort {@link Sort} contains direction and sort field used to sort resulting data.
+	 * @return {@link Set} of {@link AuditLogEntryUser}
+	 */
 	@Query("{  $or: [ {'resourceUuid' : ?0} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?0 }} } ], 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } 'creationDate' : { '$gt' : ?3 , '$lt' : ?4} }")
 	Set<AuditLogEntryUser> findAllSharedSpaceAuditsForUser(String sharedSpaceUuid, List<LogAction> actions,
 			 List<AuditLogEntryType> types, Date beginDate, Date endDate, Sort sort);
-
+	/**
+	 * Returns traces of a given Workgroup node (folder/document/revision) and all traces of related resources (folders/documents/revisions) that belongs to a shared space with uuid sharedSpaceUuid
+	 * All operations performed by shared space members on a given workgroup node and its related resources are included.
+	 * @param String sharedSpaceUuid uuid of the shared space. Could be a drive, nested workgroup or workgroup.
+	 * @param String workGroupNodeUuid uuid of workgroup node.
+	 * @param actions {@link List} of {@link LogAction} list of audit action types. Should not be null neither empty.
+	 * @param types {@link List} of {@link AuditLogEntryType} list of audit entry types. Should not be null neither empty.
+	 * @param beginDate {@link Date} Begin of the date range.
+	 * @param endDate {@link Date} End of the date range.
+	 * @param sort {@link Sort} contains direction and sort field used to sort resulting data.
+	 * @return {@link Set} of {@link AuditLogEntryUser}
+	 */
 	@Query("{ 'relatedResources': {'$elemMatch' : { '$eq' : ?0 }}  , $or: [ {'resourceUuid' : ?1} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?1 }} } ] , 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } , 'creationDate' : { '$gt' : ?4 , '$lt' : ?5} }")
-	Set<AuditLogEntryUser> findWorkGroupNodeHistoryForUser(String workGroupUuid, String workGroupNodeUuid,
+	Set<AuditLogEntryUser> findWorkGroupNodeHistoryForUser(String sharedSpaceUuid, String workGroupNodeUuid,
 			List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate, Date endDate, Sort sort);
 
 	@Query("{ 'relatedAccounts': {'$elemMatch' : { '$eq' : ?0 }}, 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } , $or: [ {'resourceUuid' : ?1} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?1 }} } ] }")
