@@ -41,11 +41,9 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.SharedSpaceFacade;
@@ -141,22 +139,6 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 		Account authUser = checkAuthentication();
 		Validate.notEmpty(uuid, "Missing required shared space node");
 		return nodeService.findAllMembers(authUser, authUser, uuid, accountUuid);
-	}
-
-	@Override
-	public List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole, String parent) {
-		Account authUser = checkAuthentication();
-		Account actor = getActor(authUser, actorUuid);
-		if (!Strings.isNullOrEmpty(parent)) {
-			SharedSpaceNode node = nodeService.find(authUser, actor, parent);
-			if (!NodeType.DRIVE.equals(node.getNodeType())) {
-				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
-						"The requested shared space is not supported");
-			}
-		} else {
-			parent = null;
-		}
-		return memberService.findAllSharedSpacesByAccountAndParent(authUser, actor, actor.getLsUuid(), withRole, parent);
 	}
 
 	@Override

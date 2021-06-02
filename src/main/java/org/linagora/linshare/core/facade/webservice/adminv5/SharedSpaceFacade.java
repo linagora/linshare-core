@@ -59,12 +59,10 @@ public interface SharedSpaceFacade {
 	SharedSpaceNode delete(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
 	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
-	
+
 	SharedSpaceNode updatePartial(String actorUuid, PatchDto patchNode, String uuid) throws BusinessException;
 
 	List<SharedSpaceMember> members(String actorUuid, String uuid, String accountUuid) throws BusinessException;
-
-	List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole, String parent);
 
 	Set<AuditLogEntryUser> findAllSharedSpaceAudits(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate, String nodeUuid);

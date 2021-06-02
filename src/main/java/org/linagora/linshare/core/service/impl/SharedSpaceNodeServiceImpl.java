@@ -238,7 +238,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		return memberService.findAllSharedSpacesByAccountAndParentForUsers(authUser, actor, actor.getLsUuid(), withRole, parent);
 	}
-	
+
 	@Override
 	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor) {
 		preChecks(authUser, actor);
