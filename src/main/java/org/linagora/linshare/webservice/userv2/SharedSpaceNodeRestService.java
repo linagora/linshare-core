@@ -49,6 +49,6 @@ public interface SharedSpaceNodeRestService extends WorkGroupNodeRestService {
 
 	Response findAll(String sharedSpaceUuid, String pattern, boolean caseSensitive, Integer pageNumber,
 			Integer pageSize, String creationDateAfter, String creationDateBefore, String modificationDateAfter,
-			String modificationDateBefore, String parentUuid, List<WorkGroupNodeType> types, String lastAuthor)
-			throws BusinessException;
+			String modificationDateBefore, String parent, List<WorkGroupNodeType> type, String lastAuthor, Long minSize,
+			Long maxSize, String sortOrder, String sortField) throws BusinessException;
 }

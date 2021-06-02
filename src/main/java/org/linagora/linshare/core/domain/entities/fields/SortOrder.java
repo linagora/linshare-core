@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.entities.fields;
 
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
+import org.springframework.data.domain.Sort.Direction;
 
 public enum SortOrder {
 
@@ -46,5 +47,9 @@ public enum SortOrder {
 
 	public static Order addAccountTypeSortOrder(SortOrder order) {
 		return SortOrder.ASC.equals(order) ? Property.forName("class").asc() : Property.forName("class").desc();
+	}
+	
+	public static Direction getSortDir(SortOrder dir) {
+		return SortOrder.ASC.equals(dir) ? Direction.ASC : Direction.DESC;
 	}
 }

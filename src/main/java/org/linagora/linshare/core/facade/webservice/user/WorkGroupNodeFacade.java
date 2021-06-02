@@ -45,6 +45,8 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
@@ -82,7 +84,8 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 
 	PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String pattern,
 			boolean caseSensitive, Integer pageNumber, Integer pageSize, String creationDateAfter,
-			String creationDateBefore, String modificationDateAfter, String modificationDateBefore, String parentUuid,
-			List<WorkGroupNodeType> types, String lastAuthor);
+			String creationDateBefore, String modificationDateAfter, String modificationDateBefore, String parent,
+			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder order,
+			SharedSpaceNodeField sortField);
 
 }

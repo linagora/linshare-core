@@ -59,6 +59,8 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -133,19 +135,22 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.findAll(authUser, actor, workGroup, parentNodeUuid, flat, nodeTypes);
 	}
-	
+
 	@Override
 	public PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String pattern,
 			boolean caseSensitive, Integer pageNumber, Integer pageSize, String creationDateAfter,
-			String creationDateBefore, String modificationDateAfter, String modificationDateBefore, String parentUuid,
-			List<WorkGroupNodeType> types, String lastAuthor) {
+			String creationDateBefore, String modificationDateAfter, String modificationDateBefore, String parent,
+			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder,
+			SharedSpaceNodeField sortField) {
 		Account authUser = checkAuthentication();
 		Validate.notEmpty(sharedSpaceUuid, "Missing required sharedSpace uuid");
 		Account actor = getActor(authUser, actorUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceUuid);
 		return service.findAll(authUser, actor, workGroup, pattern, caseSensitive,
-				new PageContainer<WorkGroupNode>(pageNumber, pageSize), getDateFromString(creationDateAfter), getDateFromString(creationDateBefore),
-				getDateFromString(modificationDateAfter), getDateFromString(modificationDateBefore), parentUuid, types, lastAuthor);
+				new PageContainer<WorkGroupNode>(pageNumber, pageSize), getDateFromString(creationDateAfter),
+				getDateFromString(creationDateBefore), getDateFromString(modificationDateAfter),
+				getDateFromString(modificationDateBefore), parent, types, lastAuthor, minSize, maxSize, sortOrder,
+				sortField);
 	}
 	
 	private Date getDateFromString(String dateString) {

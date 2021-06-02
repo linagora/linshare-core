@@ -65,6 +65,8 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
@@ -203,31 +205,43 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@Parameter(description = "Size of element in the page", required = false)
 				@QueryParam("pageSize")
 					Integer pageSize,
-			@Parameter(description = "Begining of creation date range. Used always with creationDateBefore query param", required = false)
+			@Parameter(description = "Returns nodes with creationDate after the given creationDateAfter parameter", required = false)
 				@QueryParam("creationDateAfter")
 					String creationDateAfter,
-			@Parameter(description = "End of creation date range. Used always with creationDateAfter query param", required = false)
+			@Parameter(description = "Returns nodes with creationDate before the given creationDateBefore parameter", required = false)
 				@QueryParam("creationDateBefore")
 					String creationDateBefore,
-			@Parameter(description = "Begining of modification date range. Used always with modificationDateBefore query param", required = false)
+			@Parameter(description = "Returns nodes with modification Date after the given modificationDateAfter parameter", required = false)
 				@QueryParam("modificationDateAfter")
 					String modificationDateAfter,
-			@Parameter(description = "End of modification date range. Used always with modificationDateBefore query param", required = false)
+			@Parameter(description = "Returns nodes with modificationDate after the given modificationDateBefore parameter", required = false)
 				@QueryParam("modificationDateBefore")
 					String modificationDateBefore,
-			@Parameter(description = "Filter by parent", required = false)
-				@QueryParam("parentUuid")
-					String parentUuid,
-			@Parameter(description = "Filter by node type. See Enum to check available types (ROOT_FOLDER is not supported)", required = false)
-				@QueryParam("types")
+			@Parameter(description = "Uuid of the parent node. If set return all nodes in all levels inside the given parent, otherwise return all nodes in current workgroup", required = false)
+				@QueryParam("parent")
+					String parent,
+			@Parameter(description = "Filter by list of node types. See Enum to check available types (ROOT_FOLDER is not supported)", required = false)
+				@QueryParam("type")
 					List<WorkGroupNodeType> types,
 			@Parameter(description = "Filter by uuid of the user who performed last action on the node", required = false)
 				@QueryParam("lastAuthor")
-					String lastAuthor)					
+					String lastAuthor,
+			@Parameter(description = "Returns documents/revisions with size (in Bytes) greater or equal than minSize parameter", required = false)
+				@QueryParam("minSize")
+					Long minSize,
+			@Parameter(description = "Returns documents/revisions with size (in Bytes) lesser or equal than maxSize parameter", required = false)
+				@QueryParam("maxSize")
+					Long maxSize,
+			@Parameter(description = "Direction of the sort. ASC or DESC", required = false)
+				@QueryParam("sortOrder") @DefaultValue("DESC")
+					String sortOrder,
+			@Parameter(description = "Name of the attribute used in the sort.", required = false)
+				@QueryParam("sortField") @DefaultValue("modificationDate")
+					String sortField)					
 			throws BusinessException {
-		return new PagingResponseBuilder<WorkGroupNode>().build(sharedSpaceNodeFacade.findAll(null,
-				sharedSpaceUuid, pattern, caseSensitive, pageNumber, pageSize, creationDateAfter, creationDateBefore,
-				modificationDateAfter, modificationDateBefore, parentUuid, types, lastAuthor));
+		return new PagingResponseBuilder<WorkGroupNode>().build(sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, pattern, caseSensitive, pageNumber,
+						pageSize, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
+						parent, types, lastAuthor, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField)));
 	}
 
 	@Path("/{sharedSpaceNodeUuid}")

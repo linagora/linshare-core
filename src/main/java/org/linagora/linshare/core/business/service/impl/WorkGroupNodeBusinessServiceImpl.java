@@ -56,6 +56,8 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
@@ -69,7 +71,6 @@ import org.linagora.linshare.utils.DocumentCount;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -173,21 +174,13 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 	@Override
 	public PageContainer<WorkGroupNode> findAll(WorkGroup workGroup, String pattern, boolean caseSensitive,
 			PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter, Date creationDateBefore,
-			Date modificationDateAfter, Date modificationDateBefore, String parentUuid,
-			List<WorkGroupNodeType> types, String lastAuthor) {
+			Date modificationDateAfter, Date modificationDateBefore, String parentUuid, List<WorkGroupNodeType> types,
+			String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField) {
 		Query query = new Query();
-		if (creationDateAfter != null) {
-			query.addCriteria(Criteria.where("creationDate").gte(creationDateAfter));
-		}
-		if (creationDateBefore != null) {
-			query.addCriteria(Criteria.where("creationDate").lt(creationDateBefore));
-		}
-		if (modificationDateAfter != null) {
-			query.addCriteria(Criteria.where("modificationDate").gte(modificationDateAfter));
-		}
-		if (modificationDateBefore != null) {
-			query.addCriteria(Criteria.where("modificationDate").lt(modificationDateBefore));
-		}
+		query.addCriteria(new Criteria().andOperator(
+				filterCriteria(creationDateAfter, creationDateBefore, "creationDate"),
+				filterCriteria(modificationDateAfter, modificationDateBefore, "modificationDate"),
+				filterCriteria(minSize, maxSize, "size")));
 		if (lastAuthor != null) {
 			query.addCriteria(Criteria.where("lastAuthor.uuid").is(lastAuthor));
 		}
@@ -200,22 +193,42 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			logger.debug("Used regex : {}", regex);
 			query.addCriteria(Criteria.where("name").regex(regex));
 		}
+		Criteria mainCriteria = null;
 		if (parentUuid == null) {
-			// recover the root folder uuid
-			parentUuid = DataAccessUtils
-					.singleResult(repository.findByWorkGroupAndParent(workGroup.getLsUuid(), workGroup.getLsUuid()))
-					.getUuid();
+			// by default returns all nodes at all levels in the workgroup
+			mainCriteria = Criteria.where("workGroup").is(workGroup.getLsUuid());
+		} else {
+			// returns all nodes at all levels from the given parent  
+			WorkGroupNode node = repository.findByWorkGroupAndUuid(workGroup.getLsUuid(), parentUuid);
+			if (node == null) {
+				logger.error("Node not found " + parentUuid);
+				throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND,
+						"Node not found : " + parentUuid);
+			}
+			mainCriteria = Criteria.where("path").regex(node.getUuid());
 		}
-		Criteria mainCriteria = Criteria.where("path").regex(parentUuid);
 		query.addCriteria(mainCriteria);
 		query.addCriteria(Criteria.where("nodeType").in(getTypes(types)));
 		Pageable paging = PageRequest.of(pageContainer.getPageNumber(), pageContainer.getPageSize());
 		query.with(paging);
-		query.with(Sort.by(Sort.Direction.DESC,"creationDate"));
+		query.with(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString()));
 		logger.debug(query.toString());
 		List<WorkGroupNode> nodes = mongoTemplate.find(query, WorkGroupNode.class);
 		long count = mongoTemplate.count(new Query(mainCriteria), WorkGroupNode.class);
-		return new PageContainer<WorkGroupNode>(pageContainer.getPageNumber(), pageContainer.getPageSize(), count, nodes);
+		return new PageContainer<WorkGroupNode>(pageContainer.getPageNumber(), pageContainer.getPageSize(), count,
+				nodes);
+	}
+
+	private Criteria filterCriteria(Object minValue, Object maxValue, String field) {
+		Criteria criteria = new Criteria();
+		if (minValue != null && maxValue != null) {
+			 criteria = Criteria.where(field).gte(minValue).lte(maxValue);
+		} else if (minValue != null) {
+			criteria =  Criteria.where(field).gte(minValue);
+		} else if (maxValue != null){
+			criteria = Criteria.where(field).lte(maxValue);
+		} 
+		return criteria;
 	}
 
 	private List<WorkGroupNodeType> getTypes(List<WorkGroupNodeType> types) {

@@ -54,6 +54,8 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -140,14 +142,15 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public PageContainer<WorkGroupNode> findAll(Account authUser, Account actor, WorkGroup workGroup,
-			String pattern, boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter,
+	public PageContainer<WorkGroupNode> findAll(Account authUser, Account actor, WorkGroup workGroup, String pattern,
+			boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter,
 			Date creationDateBefore, Date modificationDateAfter, Date modificationDateBefore, String parentUuid,
-			List<WorkGroupNodeType> types, String lastAuthor) {
+			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField) {
 		checkListPermission(authUser, actor, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_NODE_LIST_FORBIDDEN,
 				null, workGroup);
-		return workGroupNodeBusinessService.findAll(workGroup, pattern, caseSensitive, pageContainer,
-				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, parentUuid, types, lastAuthor);
+		return workGroupNodeBusinessService.findAll(workGroup, pattern, caseSensitive, pageContainer, creationDateAfter,
+				creationDateBefore, modificationDateAfter, modificationDateBefore, parentUuid, types, lastAuthor,
+				minSize, maxSize, sortOrder, sortField);
 	}
 
 	@Override
