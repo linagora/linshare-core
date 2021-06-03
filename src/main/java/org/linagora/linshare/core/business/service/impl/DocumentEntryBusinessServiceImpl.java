@@ -164,7 +164,9 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
 			return fileDataStore.get(metadata);
 		}
-		return null;
+		throw new BusinessException(BusinessErrorCode.THUMBNAIL_NOT_FOUND,
+				"Can not get thumbnail of the document with uuid: " + doc.getUuid()
+						+ ", please check the entered kind: " + kind);
 	}
 
 	@Override
@@ -172,7 +174,8 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 		Document doc = documentRepository.findByUuid(entry.getDocumentUuid());
 		if (doc == null) {
 			logger.error("can not find document entity with uuid : {}", entry.getDocumentUuid());
-			return null;
+			throw new BusinessException(BusinessErrorCode.DOCUMENT_NOT_FOUND,
+					"can not find document with uuid : " + entry.getDocumentUuid());
 		}
 		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnails();
 		FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
@@ -180,7 +183,9 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
 			return fileDataStore.get(metadata);
 		}
-		return null;
+		throw new BusinessException(BusinessErrorCode.THUMBNAIL_NOT_FOUND,
+				"Can not get thumbnail of the document with uuid: " + doc.getUuid()
+						+ ", please check the entered kind: " + kind);
 	}
 
 	@Override
