@@ -153,13 +153,13 @@ public class SharedSpaceMemberBusinessServiceImplTest {
 		sharedSpaceMemberBusinessService
 				.create(new SharedSpaceMember(nodeDrive, lightContirbutorRoleToPersist, accountJane));
 		List<SharedSpaceNodeNested> nestedNodes = sharedSpaceMemberBusinessService
-				.findAllSharedSpacesByAccountAndParentForUsers(accountJane.getUuid(), false, null);
+				.findAllSharedSpacesByAccountAndParentForUsers(accountJane.getUuid(), false, null, null);
 		// without role should return 2 nodes , the nested workgroup is not returned
 		assertEquals(nestedNodes.size(), 2, "Only nested nodes on top should be returned");
 		nestedNodes.forEach(nested -> {
 			assertNull(nested.getRole());
 		});
-		nestedNodes = sharedSpaceMemberBusinessService.findAllSharedSpacesByAccountAndParentForUsers(accountJane.getUuid(), true, null);
+		nestedNodes = sharedSpaceMemberBusinessService.findAllSharedSpacesByAccountAndParentForUsers(accountJane.getUuid(), true, null, null);
 		// with role should return 2 nodes , the nested workgroup is not returned
 		assertEquals(nestedNodes.size(), 2, "Only nested nodes on top should be returned");
 		nestedNodes.forEach(nested -> {

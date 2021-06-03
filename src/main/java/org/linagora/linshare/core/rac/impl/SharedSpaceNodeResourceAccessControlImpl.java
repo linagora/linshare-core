@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.rac.impl;
 
 import java.util.Objects;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
@@ -75,6 +76,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+
 		boolean isDriveFuncEnabled = functionalityService.getDriveFunctionality(actor.getDomain()).getActivationPolicy()
 				.getStatus();
 		boolean isWorkgroupFuncEnabled = functionalityService.getWorkGroupFunctionality(actor.getDomain())
@@ -83,13 +85,23 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			return false;
 		}
 		if (opt.length > 0 && opt[0] != null) {
-			SharedSpaceNode parent = (SharedSpaceNode) opt[0];
-			boolean canListWorkGroupsInside = defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, parent,
-					TechnicalAccountPermissionType.SHARED_SPACE_NODE_GET, SharedSpaceActionType.READ,
-					getSharedSpaceResourceType(parent));
-			if (!canListWorkGroupsInside) {
-				logger.error(String.format("You cannot list workgroups inside the node {}", parent.getUuid()));
-				return false;
+				SharedSpaceNode parent = (SharedSpaceNode) opt[0];
+				boolean canListWorkGroupsInside = defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, parent,
+						TechnicalAccountPermissionType.SHARED_SPACE_NODE_GET, SharedSpaceActionType.READ,
+						getSharedSpaceResourceType(parent));
+				if (!canListWorkGroupsInside) {
+					logger.error(String.format("You cannot list workgroups inside the node {}", parent.getUuid()));
+					return false;
+				}
+		}
+		if (opt.length > 1 && opt[1] != null) {
+			@SuppressWarnings("unchecked")
+			Set<NodeType> types = (Set<NodeType>) opt[1];
+			if (!isDriveFuncEnabled) {
+				types.remove(NodeType.DRIVE);
+			}
+			if (!isWorkgroupFuncEnabled) {
+				types.remove(NodeType.WORK_GROUP);
 			}
 		}
 		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_LIST,

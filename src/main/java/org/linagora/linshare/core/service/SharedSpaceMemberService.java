@@ -36,7 +36,9 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
@@ -58,7 +60,7 @@ public interface SharedSpaceMemberService extends SharedSpaceMemberFragmentServi
 
 	List<SharedSpaceMember> findByNode(Account authUser, Account actor, String ssnodeUuid);
 
-	List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParentForUsers(Account authUser, Account actor, String accountUuid, boolean withRole, String parent);
+	List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParentForUsers(Account authUser, Account actor, String accountUuid, boolean withRole, String parent, Set<NodeType> types);
 
 	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
 

@@ -233,7 +233,7 @@ public class NestedSharedSpaceNodeTest {
 		SharedSpaceNode node2 = new SharedSpaceNode("workgroup2 DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
 		ssNodeService.create(john, john, node);
 		ssNodeService.create(john, john, node2);
-		List<SharedSpaceNodeNested> workGroupMembers = ssMemberService.findAllSharedSpacesByAccountAndParentForUsers(john, john, john.getLsUuid(), false, drive.getUuid());
+		List<SharedSpaceNodeNested> workGroupMembers = ssMemberService.findAllSharedSpacesByAccountAndParentForUsers(john, john, john.getLsUuid(), false, drive.getUuid(), null);
 		Assertions.assertEquals(2, workGroupMembers.size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -248,11 +248,11 @@ public class NestedSharedSpaceNodeTest {
 		node = ssNodeService.create(john, john, node);
 		SharedSpaceNode node2 = new SharedSpaceNode("workgroup2 DriveTest", drive.getUuid(), NodeType.WORK_GROUP);
 		ssNodeService.create(john, john, node2);
-		List<SharedSpaceNodeNested> workGroupMembers = ssMemberService.findAllSharedSpacesByAccountAndParentForUsers(john, john, john.getLsUuid(), false, drive.getUuid());
+		List<SharedSpaceNodeNested> workGroupMembers = ssMemberService.findAllSharedSpacesByAccountAndParentForUsers(john, john, john.getLsUuid(), false, drive.getUuid(), null);
 		Assertions.assertEquals(2, workGroupMembers.size());
 		// Test the delete Method
 		ssNodeService.delete(john, john, node);
-		workGroupMembers = ssMemberService.findAllSharedSpacesByAccountAndParentForUsers(john, john, john.getLsUuid(), false, drive.getUuid());
+		workGroupMembers = ssMemberService.findAllSharedSpacesByAccountAndParentForUsers(john, john, john.getLsUuid(), false, drive.getUuid(), null);
 		Assertions.assertEquals(1, workGroupMembers.size());
 		try {
 			ssNodeService.find(john, john, node.getUuid());
@@ -303,7 +303,7 @@ public class NestedSharedSpaceNodeTest {
 		// Check Justin is a member on created NESTED workgroup but the workgroup is not seen as nester for him. because he is not part of the drive
 		Assertions.assertEquals(false, justinMemberNestedWg.isSeeAsNested());
 		Assertions.assertEquals(drive.getUuid(), nestedWorkgroup.getParentUuid());
-		List<SharedSpaceNodeNested> justinSharedSpaces = ssMemberService.findAllSharedSpacesByAccountAndParentForUsers(foo, foo, foo.getLsUuid(), false, nestedWorkgroup.getParentUuid());
+		List<SharedSpaceNodeNested> justinSharedSpaces = ssMemberService.findAllSharedSpacesByAccountAndParentForUsers(foo, foo, foo.getLsUuid(), false, nestedWorkgroup.getParentUuid(), null);
 		Assertions.assertEquals(1, justinSharedSpaces.size());
 		ssNodeService.delete(john, john, drive);
 		logger.info(LinShareTestConstants.END_TEST);

@@ -38,6 +38,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
@@ -72,6 +73,7 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, SharedSpaceNode>
 		implements SharedSpaceNodeService {
@@ -235,20 +237,27 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	@Override
 	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, boolean withRole, String parent) {
 		preChecks(authUser, actor);
-		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		return memberService.findAllSharedSpacesByAccountAndParentForUsers(authUser, actor, actor.getLsUuid(), withRole, parent);
+		Set<NodeType> types = Sets.newHashSet();
+		types.add(NodeType.DRIVE);
+		types.add(NodeType.WORK_GROUP);
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null, null, types);
+		return memberService.findAllSharedSpacesByAccountAndParentForUsers(authUser, actor, actor.getLsUuid(), withRole, parent, types);
 	}
 
 	@Override
 	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor) {
 		preChecks(authUser, actor);
-		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		return memberService.findAllSharedSpacesByAccountAndParentForUsers(authUser, actor, actor.getLsUuid(), false, null);
+		Set<NodeType> types = Sets.newHashSet();
+		types.add(NodeType.DRIVE);
+		types.add(NodeType.WORK_GROUP);
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null, null, types);
+		return memberService.findAllSharedSpacesByAccountAndParentForUsers(authUser, actor, actor.getLsUuid(), false, null, types);
 	}
 
 	@Override
 	public List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid,
 			String accountUuid) {
+		// TODO: No need of rac ?
 		List<SharedSpaceMember> members = Lists.newArrayList();
 		if (Strings.isNullOrEmpty(accountUuid)) {
 			members = memberService.findAll(authUser, actor, sharedSpaceNodeUuid);

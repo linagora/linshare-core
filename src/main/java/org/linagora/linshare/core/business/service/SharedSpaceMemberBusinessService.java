@@ -36,7 +36,9 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -104,9 +106,10 @@ public interface SharedSpaceMemberBusinessService {
 	 * @param accountUuid String uuid of shared space account
 	 * @param withRole Boolean if true return the role of  member in the node
 	 * @param parent : by default all SharedSpaces without parent are returned. (Nullable)
+	 * @param types the list of node types you want to get (NullAble.)
 	 * @return {@link SharedSpaceNodeNested} {@link List} list of Sharedspaces.
 	 */
-	List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParentForUsers(String accountUuid, boolean withRole, String parent);
+	List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParentForUsers(String accountUuid, boolean withRole, String parent, Set<NodeType> types);
 
 	/**
 	 * This method must only be used by root account. there is no filter on the account member.

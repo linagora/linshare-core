@@ -38,6 +38,7 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -72,6 +73,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
 
@@ -243,9 +245,14 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParentForUsers(String accountUuid, boolean withRole,
-			String parent) {
+			String parent, Set<NodeType> types) {
 		ProjectionOperation projections = null;
 		MatchOperation match = null;
+		if (types == null) {
+			types = Sets.newHashSet();
+			types.add(NodeType.DRIVE);
+			types.add(NodeType.WORK_GROUP);
+		}
 		if (withRole) {
 			projections = Aggregation.project(
 				Fields.from(
@@ -278,6 +285,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		}
 		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class,
 				match,
+				Aggregation.match(Criteria.where("node.nodeType").in(types)),
 				Aggregation.sort(Direction.DESC, "node.modificationDate"),
 				projections
 				);

@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -168,12 +169,13 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	 * Get all SharedSpaces for one account.
 	 * @param withRole : boolean if true, return the user role in the node
 	 * @param parent : the list can be filtered by parentUuid (NullAble.)
+	 * @param types : the list of node types you want to get (NullAble.)
 	 */
 	@Override
-	public List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParentForUsers(Account authUser, Account actor, String accountUuid, boolean withRole, String parent) {
+	public List<SharedSpaceNodeNested> findAllSharedSpacesByAccountAndParentForUsers(Account authUser, Account actor, String accountUuid, boolean withRole, String parent, Set<NodeType> types) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(accountUuid, "accountUuid must be set.");
-		return businessService.findAllSharedSpacesByAccountAndParentForUsers(accountUuid, withRole, parent);
+		return businessService.findAllSharedSpacesByAccountAndParentForUsers(accountUuid, withRole, parent, types);
 	}
 
 	@Override
