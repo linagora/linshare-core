@@ -73,6 +73,12 @@ public class UserDtoQuotaDto {
 	@Schema(description = "The maximum file size allowed.")
 	private Long maxFileSize;
 
+	@Schema(description = "The default maximum file size allowed.")
+	private Long defaultMaxFileSize;
+
+	@Schema(description = "The default value of the quota limit")
+	private Long defaultQuota;
+
 	@Schema(description = "The account to which the quota relies.")
 	private AccountDto account;
 
@@ -80,14 +86,17 @@ public class UserDtoQuotaDto {
 		super();
 	}
 
-	public UserDtoQuotaDto(AccountQuota quota) {
+	public UserDtoQuotaDto(AccountQuota quota, Long realTimeUsedSpace) {
 		this.uuid = quota.getUuid();
 		this.quota = quota.getQuota();
 		this.usedSpace = quota.getCurrentValue();
 		this.yersterdayUsedSpace = quota.getLastValue();
 		this.maintenance = quota.getMaintenance();
 		this.maxFileSize = quota.getMaxFileSize();
+		this.defaultMaxFileSize = quota.getContainerQuota().getDefaultMaxFileSize();
+		this.defaultQuota = quota.getContainerQuota().getDefaultAccountQuota();
 		this.account = new AccountDto(quota.getAccount(), true);
+		this.realTimeUsedSpace = realTimeUsedSpace;
 		this.creationDate = quota.getCreationDate();
 		this.modificationDate = quota.getModificationDate();
 	}
@@ -160,8 +169,24 @@ public class UserDtoQuotaDto {
 		return maxFileSize;
 	}
 
+	public Long getDefaultMaxFileSize() {
+		return defaultMaxFileSize;
+	}
+
+	public void setDefaultMaxFileSize(Long defaultMaxFileSize) {
+		this.defaultMaxFileSize = defaultMaxFileSize;
+	}
+
 	public void setMaxFileSize(Long maxFileSize) {
 		this.maxFileSize = maxFileSize;
+	}
+
+	public Long getDefaultQuota() {
+		return defaultQuota;
+	}
+
+	public void setDefaultQuota(Long defaultQuota) {
+		this.defaultQuota = defaultQuota;
 	}
 
 	public AccountDto getAccount() {

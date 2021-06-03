@@ -277,9 +277,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
 					"The chosen quota is not related to the requested account, please check the entered accountUuid and quotaUuid");
 		}
-		UserDtoQuotaDto quotaDto = new UserDtoQuotaDto(quota);
-		Long usedSpace = quotaService.getRealTimeUsedSpace(authUser, authUser, quotaUuid);
-		quotaDto.setRealTimeUsedSpace(usedSpace);
+		Long realTimeUsedSpace = quotaService.getRealTimeUsedSpace(authUser, authUser, quotaUuid);
+		UserDtoQuotaDto quotaDto = new UserDtoQuotaDto(quota, realTimeUsedSpace);
 		return quotaDto;
 	}
 
