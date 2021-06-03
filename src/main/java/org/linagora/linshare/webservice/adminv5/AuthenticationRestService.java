@@ -37,7 +37,9 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
-
+/**
+ *  Contains methods that allows to manage administrators authentication operations.
+ */
 public interface AuthenticationRestService {
 
 	void noop();

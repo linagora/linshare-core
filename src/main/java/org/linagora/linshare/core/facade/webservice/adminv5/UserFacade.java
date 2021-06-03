@@ -43,6 +43,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContac
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface UserFacade extends AdminGenericFacade {
@@ -72,4 +73,9 @@ public interface UserFacade extends AdminGenericFacade {
 	void changePassword(PasswordDto password);
 
 	UserDtoQuotaDto findUserQuota(String actorUuid, String accountUuid, String quotaUuid);
+
+	SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException;
+
+	SecondFactorDto delete2FA(String userUuid, String secondFactorUuid, SecondFactorDto dto) throws BusinessException;
+
 }

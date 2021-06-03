@@ -18,6 +18,8 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="accountQuotaService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 
 	<bean id="wsAdminV5SharedSpaceFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.SharedSpaceFacadeImpl">

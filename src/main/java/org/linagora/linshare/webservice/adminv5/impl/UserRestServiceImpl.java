@@ -58,6 +58,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.webservice.adminv5.UserRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
@@ -242,6 +243,44 @@ public class UserRestServiceImpl implements UserRestService {
 				@PathParam("quotaUuid") String quotaUuid
 			) throws BusinessException {
 		return userFacade.findUserQuota(null, accountUuid, quotaUuid);
+	}
+
+	@Path("/{uuid}/2fa/{secondfaUuid}")
+	@GET
+	@Operation(summary = "Get the 2FA state ",
+		responses = {
+			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200")
+		})
+	@Override
+	public SecondFactorDto find2FA(
+			@Parameter(description = "User uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@Parameter(description = "The second factor key uuid, Required.", required = true)
+				@PathParam("secondfaUuid") String secondfaUuid
+			)
+			throws BusinessException {
+		return userFacade.find2FA(uuid, secondfaUuid);
+	}
+
+	@Path("/{uuid}/2fa/{secondfaUuid: .*}")
+	@DELETE
+	@Operation(summary = "Delete a shared key of a given user, 2fa will be disabled ",
+		responses = {
+			@ApiResponse(content = @Content(schema = @Schema(implementation = SecondFactorDto.class)), responseCode = "200")
+		})
+	@Override
+	public SecondFactorDto delete2FA(
+			@Parameter(description = "User uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@Parameter(description = "The second factor key uuid, Optional if defined in payload.", required = false)
+				@PathParam("secondfaUuid") String secondfaUuid,
+			@Parameter(
+					description = "Second factor dto. Optional. Uuid can be provided if not defined in the URL.",
+					required = false
+					)
+				SecondFactorDto dto)
+			throws BusinessException {
+		return userFacade.delete2FA(uuid, secondfaUuid, dto);
 	}
 
 }

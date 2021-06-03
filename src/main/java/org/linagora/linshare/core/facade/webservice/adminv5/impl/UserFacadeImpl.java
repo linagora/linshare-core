@@ -36,6 +36,10 @@ package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -54,14 +58,17 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContac
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountQuotaService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.UserService2;
+import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
 
@@ -86,6 +93,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private final AccountQuotaService accountQuotaService;
+	
+	private final DomainPermissionBusinessService domainPermissionBusinessService;
+	
+	private final LogEntryService logEntryService;
 
 	public UserFacadeImpl(
 			AccountService accountService,
@@ -95,7 +106,9 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			QuotaService quotaService,
 			UserService userService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
-			AccountQuotaService accountQuotaService) {
+			AccountQuotaService accountQuotaService, 
+			DomainPermissionBusinessService domainPermissionBusinessService,
+			LogEntryService logEntryService) {
 		super(accountService);
 		this.userService2 = userService2;
 		this.abstractDomainService = abstractDomainService;
@@ -104,6 +117,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		this.userService = userService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.accountQuotaService = accountQuotaService;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -267,4 +282,58 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		quotaDto.setRealTimeUsedSpace(usedSpace);
 		return quotaDto;
 	}
+
+	@Override
+	public SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(userUuid, "user uuid must be set");
+		Validate.notEmpty(secondFactorUuid, "Second Factor uuid must be set");
+		checkSecondFactorUuid(userUuid, secondFactorUuid);
+		Account user = userService.findByLsUuid(userUuid);
+		checkAdminPermission(authUser, user);
+		return new SecondFactorDto(user.getLsUuid(), user.getSecondFACreationDate(), user.isUsing2FA());
+	}
+
+	@Override
+	public SecondFactorDto delete2FA(String userUuid, String secondFactorUuid, SecondFactorDto dto) throws BusinessException {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(userUuid, "user uuid must be set");
+		if (Strings.isNullOrEmpty(secondFactorUuid)) {
+			Validate.notNull(dto, "missing SecondFactorDto");
+			Validate.notEmpty(dto.getUuid(), "Missing second factor key uuid");
+			secondFactorUuid = dto.getUuid();
+		}
+		checkSecondFactorUuid(userUuid, secondFactorUuid);
+		Account user = userService.findByLsUuid(userUuid);
+		checkAdminPermission(authUser, user);
+		user.setSecondFACreationDate(null);
+		user.setSecondFASecret(null);
+		user = accountService.update(user);
+		// TODO: should be done in the service
+		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(authUser, user, LogAction.UPDATE,
+				AuditLogEntryType.USER, (User) user);
+		userAuditLogEntry.setCause(LogActionCause.SECOND_FACTOR_SHARED_KEY_DELETE);
+		logEntryService.insert(userAuditLogEntry);
+		return new SecondFactorDto(user.getLsUuid(), user.getSecondFACreationDate(), user.isUsing2FA());
+	}
+
+	// TODO: Could be moved to AdminGenericFacadeImpl
+	private void checkSecondFactorUuid(String userUuid, String secondFactorUuid) {
+		// For now, second factor uuid must equal user uuid.
+		if (!userUuid.equals(secondFactorUuid)) {
+			String message = "Second factor key uuid must be the same as user uuid.";
+			logger.error(message);
+			throw new BusinessException(message);
+		}
+	}
+	// TODO: Could be moved to AdminGenericFacadeImpl 
+	private void checkAdminPermission(Account actor, Account user) {
+		if (!domainPermissionBusinessService.isAdminforThisDomain(actor, user.getDomain())) {
+			logger.error("Not allowed to perform this action, You are not an admin for domain {}",
+					user.getDomainId());
+			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_SECOND_FACTOR_FORBIDEN,
+					"Not allowed to perform this action");
+		}
+	}
+
 }

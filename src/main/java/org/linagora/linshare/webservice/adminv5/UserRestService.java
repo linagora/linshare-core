@@ -43,6 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 
 public interface UserRestService {
 
@@ -67,4 +68,8 @@ public interface UserRestService {
 			String restrictedContactUuid) throws BusinessException;
 
 	UserDtoQuotaDto findUserQuota(String accountUuid, String quotaUuid) throws BusinessException;
+
+	SecondFactorDto find2FA(String uuid, String secondfaUuid) throws BusinessException;
+
+	SecondFactorDto delete2FA(String uuid, String secondfaUuid, SecondFactorDto dto) throws BusinessException;
 }
