@@ -542,7 +542,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		Document doc = documentRepository.findByUuid(uploadRequestEntry.getDocument().getUuid());
 		if (doc == null) {
 			logger.error("can not find document entity with uuid : {}", uploadRequestEntry.getDocument().getUuid());
-			return null;
+			throw new BusinessException(BusinessErrorCode.DOCUMENT_NOT_FOUND,
+					"can not find document with uuid : " + uploadRequestEntry.getDocument().getUuid());
 		}
 		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnails();
 		FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(thumbnailType);
@@ -550,6 +551,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
 			return fileDataStore.get(metadata);
 		}
-		return null;
+		throw new BusinessException(BusinessErrorCode.THUMBNAIL_NOT_FOUND,
+				"Can not get thumbnail of the uploadRequestEntry with uuid: " + uploadRequestEntry.getUuid()
+						+ ", please check the entered kind: " + thumbnailType);
 	}
 }
