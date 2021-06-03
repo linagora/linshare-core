@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

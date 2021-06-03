@@ -61,8 +61,8 @@ import org.linagora.linshare.core.service.fragment.impl.AbstractSharedSpaceFragm
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
 public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragmentServiceImpl {
 

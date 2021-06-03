@@ -43,8 +43,8 @@ import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessServic
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.data.domain.Sort;

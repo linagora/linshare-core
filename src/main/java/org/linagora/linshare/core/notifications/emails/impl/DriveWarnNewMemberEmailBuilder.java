@@ -54,8 +54,8 @@ import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.thymeleaf.context.Context;
 
 import com.beust.jcommander.internal.Maps;

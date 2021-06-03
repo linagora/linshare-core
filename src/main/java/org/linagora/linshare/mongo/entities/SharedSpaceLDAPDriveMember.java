@@ -36,6 +36,7 @@ package org.linagora.linshare.mongo.entities;
 import java.util.Date;
 
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
 public class SharedSpaceLDAPDriveMember extends SharedSpaceLDAPGroupMember{
 

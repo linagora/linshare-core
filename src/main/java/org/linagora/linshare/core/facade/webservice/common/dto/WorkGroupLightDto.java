@@ -38,7 +38,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

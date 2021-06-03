@@ -64,8 +64,8 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

@@ -59,8 +59,8 @@ import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.service.fragment.SharedSpaceFragmentService;
 import org.linagora.linshare.core.service.impl.GenericServiceImpl;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
 public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServiceImpl<Account, SharedSpaceNode>
 		implements SharedSpaceFragmentService {

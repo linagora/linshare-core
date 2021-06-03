@@ -67,8 +67,8 @@ import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.service.fragment.SharedSpaceFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
 import com.google.common.base.Strings;

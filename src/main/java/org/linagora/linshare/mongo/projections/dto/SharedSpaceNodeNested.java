@@ -33,7 +33,7 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.projections.dto;
 
 import java.util.Date;
 
@@ -42,6 +42,7 @@ import javax.persistence.Enumerated;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
