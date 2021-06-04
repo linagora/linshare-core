@@ -55,6 +55,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.config.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
+import org.linagora.linshare.core.notifications.emails.impl.DriveDeletedtWarnEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.DriveWarnDeletedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.DriveWarnNewMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.DriveWarnUpdatedMemberEmailBuilder;
@@ -91,6 +92,7 @@ import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUploade
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WarnOwnerAboutGuestExpirationEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.WorkGroupDeletedtWarnEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnDeletedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnNewMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnUpdatedMemberEmailBuilder;
@@ -189,6 +191,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_NEW_MEMBER, new WorkGroupWarnNewMemberEmailBuilder());
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_UPDATED_MEMBER, new WorkGroupWarnUpdatedMemberEmailBuilder());
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_DELETED_MEMBER, new WorkGroupWarnDeletedMemberEmailBuilder());
+		emailBuilders.put(MailContentType.WORKGROUP_DELETED_WARN, new WorkGroupDeletedtWarnEmailBuilder());
 
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED, new JwtPermanentCreatedEmailBuilder());
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED, new JwtPermanentDeletedEmailBuilder());
@@ -196,6 +199,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.DRIVE_WARN_NEW_MEMBER, new DriveWarnNewMemberEmailBuilder());
 		emailBuilders.put(MailContentType.DRIVE_WARN_UPDATED_MEMBER, new DriveWarnUpdatedMemberEmailBuilder());
 		emailBuilders.put(MailContentType.DRIVE_WARN_DELETED_MEMBER, new DriveWarnDeletedMemberEmailBuilder());
+		emailBuilders.put(MailContentType.DRIVE_DELETED_WARN, new DriveDeletedtWarnEmailBuilder());
+
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0, new GuestAccountResetPasswordFor4_0_EmailBuilder(urlTemplateForGuestReset));
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
