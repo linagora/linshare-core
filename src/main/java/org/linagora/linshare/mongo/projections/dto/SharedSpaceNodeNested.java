@@ -37,8 +37,6 @@ package org.linagora.linshare.mongo.projections.dto;
 
 import java.util.Date;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
@@ -56,7 +54,6 @@ public class SharedSpaceNodeNested {
 
 	protected String parentUuid;
 
-	@Enumerated(EnumType.STRING)
 	protected NodeType nodeType;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)

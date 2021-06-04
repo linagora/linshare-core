@@ -772,10 +772,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		} else {
 			List<AbstractDomain> domainList = Lists.newArrayList();
 			domainList.add(actor.getDomain());
-			List<AbstractDomain> entities = abstractDomainRepository.getSubDomainsByDomain(actor.getDomain().getUuid());
-			for (AbstractDomain abstractDomain : entities) {
-				domainList.add(abstractDomain);
-			}
+			domainList.addAll(
+					abstractDomainRepository.getSubDomainsByDomain(
+							actor.getDomain().getUuid()));
 			return domainList;
 		}
 	}

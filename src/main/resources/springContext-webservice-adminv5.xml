@@ -28,6 +28,9 @@
 	</bean>
 	<bean id="adminv5EnumRestService" class="org.linagora.linshare.webservice.adminv5.impl.EnumRestServiceImpl">
 	</bean>
+	<bean id="adminv5DomainRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainRestServiceImpl">
+		<constructor-arg ref="wsAdminV5DomainFacade" />
+	</bean>
 	<jaxrs:server id="restAdminV5Container" address="/rest/admin/v5">
 		<jaxrs:serviceBeans>
 			<ref bean="adminv5UserRestService" />
@@ -36,6 +39,7 @@
 			<ref bean="adminv5SharedSpaceRestService"/>
 			<ref bean="adminv5EnumRestService"/>
 			<ref bean="adminSharedSpaceMemberRestService"/>
+			<ref bean="adminv5DomainRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

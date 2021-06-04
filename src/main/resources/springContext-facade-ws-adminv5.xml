@@ -27,4 +27,8 @@
 		<constructor-arg ref="sharedSpaceNodeService" />
 		<constructor-arg ref="sharedSpaceMemberService" />
 	</bean>
+	<bean id="wsAdminV5DomainFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.DomainFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
 </beans>	
