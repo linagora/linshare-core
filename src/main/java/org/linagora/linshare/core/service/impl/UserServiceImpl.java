@@ -934,16 +934,17 @@ public class UserServiceImpl implements UserService {
 		user.setExternalMailLocale(updatedUser.getExternalMailLocale());
 		if (user.isGuest()) {
 			Guest updatedGuest = (Guest) updatedUser;
-			Assert.notNull(updatedUser.getOwner(), "The owner must not be null");
 			Assert.notNull(updatedGuest.getExpirationDate(), "Expiration date must not be null");
 			Assert.isTrue(updatedUser.getCanCreateGuest() == false, "Guest can not create a guest user");
 			Guest guest = (Guest) user;
 			guest.setExpirationDate(updatedGuest.getExpirationDate());
 			guest.setComment(updatedGuest.getComment());
 			guest.setRestricted(updatedGuest.isRestricted());
-			User owner = find((User) updatedGuest.getOwner(), updatedGuest
-					.getOwner().getDomainId());
-			guest.setOwner(owner);
+			Account ownerRef = updatedGuest.getOwner();
+			if (ownerRef != null) {
+				User owner = find((User) ownerRef, ownerRef.getDomainId());
+				guest.setOwner(owner);
+			}
 		} else {
 			// For internal users.
 			user.setRole(updatedUser.getRole());
