@@ -237,11 +237,14 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 					String sortOrder,
 			@Parameter(description = "Name of the attribute used in the sort.", required = false)
 				@QueryParam("sortField") @DefaultValue("modificationDate")
-					String sortField)					
+					String sortField,
+			@Parameter(description = "Filter by the kind of document (DOCUMENT/PDF/SPREADSHEET/IMAGE/VIDEO/AUDIO/ARCHIVE).", required = false)
+				@QueryParam("documentKind")
+					List<String> documentKinds)					
 			throws BusinessException {
 		return new PagingResponseBuilder<WorkGroupNode>().build(sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, pattern, caseSensitive, pageNumber,
 						pageSize, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
-						parent, types, lastAuthor, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField)));
+						parent, types, lastAuthor, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField), documentKinds));
 	}
 
 	@Path("/{sharedSpaceNodeUuid}")

@@ -86,6 +86,6 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 			boolean caseSensitive, Integer pageNumber, Integer pageSize, String creationDateAfter,
 			String creationDateBefore, String modificationDateAfter, String modificationDateBefore, String parent,
 			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder order,
-			SharedSpaceNodeField sortField);
+			SharedSpaceNodeField sortField, List<String> documentKinds);
 
 }

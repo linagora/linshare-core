@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.fields.DocumentKind;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.utils.FileAndMetaData;
@@ -71,6 +72,7 @@ public interface WorkGroupNodeBusinessService {
 	PageContainer<WorkGroupNode> findAll(WorkGroup workGroup, String pattern, boolean caseSensitive,
 			PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter, Date creationDateBefore,
 			Date modificationDateAfter, Date modificationDateBefore, String parentUuid, List<WorkGroupNodeType> types,
-			String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField);
+			String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField,
+			List<DocumentKind> documentKinds);
 
 }

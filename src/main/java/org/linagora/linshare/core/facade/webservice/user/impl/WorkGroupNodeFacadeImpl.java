@@ -59,6 +59,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.fields.DocumentKind;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.objects.CopyResource;
@@ -141,16 +142,18 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			boolean caseSensitive, Integer pageNumber, Integer pageSize, String creationDateAfter,
 			String creationDateBefore, String modificationDateAfter, String modificationDateBefore, String parent,
 			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder,
-			SharedSpaceNodeField sortField) {
+			SharedSpaceNodeField sortField, List<String> documentKinds) {
 		Account authUser = checkAuthentication();
 		Validate.notEmpty(sharedSpaceUuid, "Missing required sharedSpace uuid");
 		Account actor = getActor(authUser, actorUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceUuid);
+		List<DocumentKind> documentKindsConverted = Lists.newArrayList();
+		documentKinds.forEach(s -> documentKindsConverted.add(DocumentKind.valueOf(s)));
 		return service.findAll(authUser, actor, workGroup, pattern, caseSensitive,
 				new PageContainer<WorkGroupNode>(pageNumber, pageSize), getDateFromString(creationDateAfter),
 				getDateFromString(creationDateBefore), getDateFromString(modificationDateAfter),
 				getDateFromString(modificationDateBefore), parent, types, lastAuthor, minSize, maxSize, sortOrder,
-				sortField);
+				sortField, documentKindsConverted);
 	}
 	
 	private Date getDateFromString(String dateString) {

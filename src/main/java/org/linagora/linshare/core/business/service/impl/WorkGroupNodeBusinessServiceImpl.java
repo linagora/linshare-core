@@ -56,6 +56,7 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.fields.DocumentKind;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -170,12 +171,13 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		List<WorkGroupNode> nodes = mongoTemplate.find(query, WorkGroupNode.class);
 		return nodes.stream().collect(Collectors.toMap(WorkGroupNode::getUuid, Function.identity()));
 	}
-	
+
 	@Override
 	public PageContainer<WorkGroupNode> findAll(WorkGroup workGroup, String pattern, boolean caseSensitive,
 			PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter, Date creationDateBefore,
 			Date modificationDateAfter, Date modificationDateBefore, String parentUuid, List<WorkGroupNodeType> types,
-			String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField) {
+			String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField,
+			List<DocumentKind> documentKinds) {
 		Query query = new Query();
 		query.addCriteria(new Criteria().andOperator(
 				filterCriteria(creationDateAfter, creationDateBefore, "creationDate"),
@@ -183,6 +185,13 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 				filterCriteria(minSize, maxSize, "size")));
 		if (lastAuthor != null) {
 			query.addCriteria(Criteria.where("lastAuthor.uuid").is(lastAuthor));
+		}
+		if (documentKinds != null && !documentKinds.isEmpty()) {
+			List<String> mimeTypes = Lists.newArrayList();
+			for (DocumentKind documentKind : documentKinds) {
+				mimeTypes.addAll(documentKind.getValues());
+			}
+			query.addCriteria(Criteria.where("mimeType").in(mimeTypes));
 		}
 		String regex = null;
 		if (pattern != null && !pattern.isEmpty()) {
@@ -193,10 +202,9 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			logger.debug("Used regex : {}", regex);
 			query.addCriteria(Criteria.where("name").regex(regex));
 		}
-		Criteria mainCriteria = null;
 		if (parentUuid == null) {
 			// by default returns all nodes at all levels in the workgroup
-			mainCriteria = Criteria.where("workGroup").is(workGroup.getLsUuid());
+			query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
 		} else {
 			// returns all nodes at all levels from the given parent  
 			WorkGroupNode node = repository.findByWorkGroupAndUuid(workGroup.getLsUuid(), parentUuid);
@@ -205,16 +213,15 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 				throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND,
 						"Node not found : " + parentUuid);
 			}
-			mainCriteria = Criteria.where("path").regex(node.getUuid());
+			query.addCriteria(Criteria.where("path").regex(node.getUuid()));
 		}
-		query.addCriteria(mainCriteria);
 		query.addCriteria(Criteria.where("nodeType").in(getTypes(types)));
+		long count = mongoTemplate.count(query, WorkGroupNode.class);
 		Pageable paging = PageRequest.of(pageContainer.getPageNumber(), pageContainer.getPageSize());
 		query.with(paging);
 		query.with(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString()));
 		logger.debug(query.toString());
 		List<WorkGroupNode> nodes = mongoTemplate.find(query, WorkGroupNode.class);
-		long count = mongoTemplate.count(new Query(mainCriteria), WorkGroupNode.class);
 		return new PageContainer<WorkGroupNode>(pageContainer.getPageNumber(), pageContainer.getPageSize(), count,
 				nodes);
 	}
