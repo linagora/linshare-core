@@ -143,7 +143,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.JWT_PERMANENT_TOKEN, jwtLongTime);
 		logEntryService.insert(createLog);
-		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
+		if (!actor.hasSuperAdminRole()) {
 			EmailContext context = new JwtPermanentCreatedEmailContext(authUser, actor, jwtLongTime);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
