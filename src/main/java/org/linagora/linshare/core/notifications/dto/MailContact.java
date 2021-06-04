@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.Recipient;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 
 public class MailContact {
 
@@ -76,6 +77,12 @@ public class MailContact {
 		this.mail = recipient.getMail();
 		this.firstName = recipient.getFirstName();
 		this.lastName = recipient.getLastName();
+	}
+
+	public MailContact(SharedSpaceAccount account) {
+		this.mail = account.getMail();
+		this.firstName = account.getFirstName();
+		this.lastName = account.getLastName();
 	}
 
 	public String getMail() {

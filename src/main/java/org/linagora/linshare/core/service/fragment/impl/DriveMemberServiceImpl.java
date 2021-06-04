@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.service.fragment.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
@@ -44,14 +45,17 @@ import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessServ
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.DriveDeletedWarnEmailContext;
 import org.linagora.linshare.core.notifications.context.DriveWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.DriveWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.DriveWarnUpdatedMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
@@ -67,6 +71,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 
 import com.google.common.collect.Lists;
 
@@ -195,7 +200,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 	}
 
 	@Override
-	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node) {
+	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node, LogActionCause cause, List<SharedSpaceNodeNested> nodes) {
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required shared space node");
 		Validate.isTrue(NodeType.DRIVE.equals(node.getNodeType()), "Node type need to be a Drive");
@@ -211,10 +216,29 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		driveMemberBusinessService.deleteAll(foundMembersToDelete);
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
-			notify(new DriveWarnDeletedMemberEmailContext(member, (User) actor, user));
-			saveLogForCreateAndDelete(authUser, actor, LogAction.DELETE, member, AuditLogEntryType.DRIVE_MEMBER);
+			SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
+					AuditLogEntryType.DRIVE_MEMBER, member);
+			getEmailContextAndNotify(actor, cause, member, user, nodes);
+			List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(member.getNode().getUuid());
+			log.addRelatedAccounts(members);
+			if (Objects.nonNull(cause)) {
+				log.setCause(cause);
+			}
+			logEntryService.insert(log);
 		}
 		return foundMembersToDelete;
 	}
 
+	private void getEmailContextAndNotify(Account actor, LogActionCause cause, SharedSpaceMember member, User user,
+			List<SharedSpaceNodeNested> nodes) {
+		if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
+			EmailContext context = null;
+			if (LogActionCause.DRIVE_DELETION.equals(cause)) {
+				context = new DriveDeletedWarnEmailContext(member, actor, nodes);
+			} else {
+				context = new DriveWarnDeletedMemberEmailContext(member, actor, user);
+			}
+			notify(context);
+		}
+	}
 }

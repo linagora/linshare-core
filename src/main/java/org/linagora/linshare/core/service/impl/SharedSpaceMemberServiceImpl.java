@@ -42,6 +42,7 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -238,11 +239,11 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node) {
+	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node, LogActionCause cause, List<SharedSpaceNodeNested> nodes) {
 		Validate.notNull(node, "shared space node must be set");
 		Validate.notEmpty(node.getUuid(), "shared space node uuid must be set");
 		SharedSpaceMemberFragmentService service = getService(node.getNodeType());
-		return service.deleteAllMembers(authUser, actor, node);
+		return service.deleteAllMembers(authUser, actor, node, cause, nodes);
 	}
 
 	@Override

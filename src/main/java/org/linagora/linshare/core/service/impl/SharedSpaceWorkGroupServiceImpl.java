@@ -43,6 +43,7 @@ import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessSer
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -197,7 +198,7 @@ public class SharedSpaceWorkGroupServiceImpl extends AbstractSharedSpaceFragment
 		//Delete the Thread
 		WorkGroup workGroup = threadService.find(authUser, authUser, foundedNodeTodel.getUuid());
 		threadService.deleteThread(authUser, authUser, workGroup);
-		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel);
+		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel, LogActionCause.WORKGROUP_DELETION, null);
 		businessService.delete(foundedNodeTodel);
 		saveLog(authUser, actor, LogAction.DELETE, foundedNodeTodel);
 		return foundedNodeTodel;

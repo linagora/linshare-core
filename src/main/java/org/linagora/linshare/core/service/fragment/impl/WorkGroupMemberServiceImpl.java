@@ -60,8 +60,9 @@ import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberWorkgroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 
 public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmentServiceImpl{
 
@@ -114,7 +115,8 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 	}
 
 	@Override
-	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node) {
+	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node,
+			LogActionCause cause, List<SharedSpaceNodeNested> nodes) {
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required shared space node");
 		Validate.isTrue(NodeType.WORK_GROUP.equals(node.getNodeType()), "Node type need to be a Workgroup");

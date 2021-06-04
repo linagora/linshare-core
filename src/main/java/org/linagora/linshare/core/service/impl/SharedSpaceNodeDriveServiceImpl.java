@@ -43,6 +43,7 @@ import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessSer
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -114,9 +115,9 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 		List<SharedSpaceNodeNested> nodes = findAllWorkgroupsInNode(authUser, actor, foundedNodeToDel);
 		for (SharedSpaceNodeNested nested : nodes) {
 			SharedSpaceNode wg = find(authUser, actor, nested.getUuid());
-			memberService.deleteAllMembers(authUser, actor, wg);
+			memberService.deleteAllMembers(authUser, actor, wg, LogActionCause.DRIVE_DELETION, null);
 		}
-		memberService.deleteAllMembers(authUser, actor, foundedNodeToDel);
+		memberService.deleteAllMembers(authUser, actor, foundedNodeToDel, LogActionCause.DRIVE_DELETION, nodes);
 		businessService.delete(foundedNodeToDel);
 		saveLog(authUser, actor, LogAction.DELETE, foundedNodeToDel);
 		return foundedNodeToDel;
