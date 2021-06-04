@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.service.fragment.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -43,11 +44,14 @@ import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessServ
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.WorkGroupDeletedWarnEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
@@ -127,15 +131,36 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 		}
 		// We check the user has the right to delete members of this node
 		// If he can delete one member, he can delete them all
-		checkDeletePermission(authUser, actor, SharedSpaceMember.class,
-				BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
+		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				foundMembersToDelete.get(0));
 		businessService.deleteAll(foundMembersToDelete);
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
-			notify(new WorkGroupWarnDeletedMemberEmailContext(member, actor, user));
-			saveLogForCreateAndDelete(authUser, actor, LogAction.DELETE, member, AuditLogEntryType.WORKGROUP_MEMBER);
+			SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
+					AuditLogEntryType.WORKGROUP_MEMBER, member);
+			getEmailContextAndNotify(actor, cause, member, user);
+			List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(member.getNode().getUuid());
+			log.addRelatedAccounts(members);
+			if(Objects.nonNull(cause)) {
+				log.setCause(cause);
+			}
+			logEntryService.insert(log);
 		}
 		return foundMembersToDelete;
+	}
+
+	private void getEmailContextAndNotify(Account actor, LogActionCause cause, SharedSpaceMember member, User user) {
+		if (!LogActionCause.DRIVE_DELETION.equals(cause)) {
+			if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
+				EmailContext context = null;
+				if (LogActionCause.WORKGROUP_DELETION.equals(cause)) {
+					context = new WorkGroupDeletedWarnEmailContext(member, actor);
+				} else {
+					context = new WorkGroupWarnDeletedMemberEmailContext(member, actor, user);
+				}
+				notify(context);
+			}
+		}
 	}
 
 }
