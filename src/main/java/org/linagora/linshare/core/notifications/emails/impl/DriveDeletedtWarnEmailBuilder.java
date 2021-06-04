@@ -59,11 +59,6 @@ public class DriveDeletedtWarnEmailBuilder extends EmailBuilder {
 		Context ctx = new Context(emailCtx.getLocale());
 		Account owner = emailCtx.getOwner();
 		String linshareURL = getLinShareUrl(owner);
-//		if (emailCtx.getUserMember() instanceof SystemAccount) {
-//			owner = new MailContact(emailCtx.getOwner().getMail());
-//		} else {
-//			owner = new MailContact((User) emailCtx.getOwner());
-//		}
 		ctx.setVariable("driveName", emailCtx.getSharedSpaceMember().getNode().getName());
 		ctx.setVariable("owner", emailCtx.getOwner());
 		ctx.setVariable("member", new MailContact(emailCtx.getSharedSpaceMember().getAccount()));

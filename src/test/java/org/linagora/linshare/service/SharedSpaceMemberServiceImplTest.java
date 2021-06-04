@@ -49,6 +49,7 @@ import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessServ
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -265,7 +266,7 @@ public class SharedSpaceMemberServiceImplTest {
 		List<SharedSpaceMember> foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
 		Assertions.assertTrue(foundMembers.size() > 0, "No members have been created");
 		SharedSpaceNode node = nodeBusinessService.find(lightNodePersisted.getUuid());
-		service.deleteAllMembers(john, john, node);
+		service.deleteAllMembers(john, john, node, LogActionCause.WORKGROUP_DELETION, null);
 		foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
 		Assertions.assertEquals(0, foundMembers.size(), "There are members left in the shared space node");
 	}

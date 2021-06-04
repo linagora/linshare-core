@@ -39,7 +39,7 @@ import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
 public class DriveDeletedWarnEmailContext extends WorkGroupDeletedWarnEmailContext {
 

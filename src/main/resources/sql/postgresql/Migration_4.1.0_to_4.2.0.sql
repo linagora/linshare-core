@@ -1286,6 +1286,130 @@ VALUES
   now(),
   now(),
   null);
+
+-- Mail content for WORKGROUP_DELETED_WARN
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,39,39,'','','',NOW(),true,'','b8fd5482-c47f-11eb-8529-0242ac130003',true);
+-- Mail content for DRIVE_DELETED_WARN
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,40,40,'','','',NOW(),true,'','c34c8f84-c47f-11eb-8529-0242ac130003',true);
+
+-- Mail content lang for WORKGROUP_DELETED_WARN and DRIVE_DELETED_WARN (EN)
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (39,0,1,39,39,true,'84738a92-c47f-11eb-8529-0242ac130003');
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (40,0,1,40,40,true,'92708d98-c47f-11eb-8529-0242ac130003');
+
+-- Mail content lang for WORKGROUP_DELETED_WARN and DRIVE_DELETED_WARN (FR)
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (139,1,1,39,39,true,'84738a92-c47f-11eb-8529-0242ac130003');
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (140,1,1,40,40,true,'92708d98-c47f-11eb-8529-0242ac130003');
+
+-- Mail content lang for WORKGROUP_DELETED_WARN and DRIVE_DELETED_WARN (RU)
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (239,2,1,39,39,true,'84738a92-c47f-11eb-8529-0242ac130003');
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (240,2,1,40,40,true,'92708d98-c47f-11eb-8529-0242ac130003');
+
+-- MailActivation : WORKGROUP_DELETED_WARN
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (330, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (331, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (332, false, false, 2, true);
+-- --mail activation
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(40, false, 'WORKGROUP_DELETED_WARN', 330, 331, 332, 1, true);
+
+-- MailActivation : DRIVE_DELETED_WARN
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (333, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (334, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (335, false, false, 2, true);
+-- --mail activation
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(41, false, 'DRIVE_DELETED_WARN', 333, 334, 335, 1, true);
+
+-- Mail content WORKGROUP_DELETED_WARN
+UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+    <!--/* Upper main-content*/-->
+    <section id="main-content">
+        <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+            <div id="section-content">
+                <!--/* Greetings */-->
+                <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+                <!--/* End of Greetings  */-->
+                <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${workGroupName}, ${owner.firstName},${owner.lastName})}">
+                     </span>
+                  </p>
+                </p> <!--/* End of Main email  message content*/-->
+            </div><!--/* End of section-content*/-->
+        </div><!--/* End of main-content container*/-->
+    </section> <!--/* End of upper main-content*/-->
+    <!--/* Secondary content for  bottom email section */-->
+    <section id="secondary-content">
+        <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+    </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',messages_french='subject = Le groupe de travail {0} a été supprimé.
+mainMsg = Le groupe de travail {0} a été supprimé par <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+workGroupNameTitle = Nom du groupe de travail',messages_english='subject = The workgroup {0} has been deleted.
+mainMsg = The workgroup {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+workGroupNameTitle = Workgroup Name',messages_russian='subject = The workgroup {0} has been deleted.
+mainMsg = The workgroup {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+workGroupNameTitle = Workgroup Name' WHERE id=39;
+
+-- Mail content DRIVE_DELETED_WARN
+UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+    <!--/* Upper main-content*/-->
+    <section id="main-content">
+        <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+            <div id="section-content">
+                <!--/* Greetings */-->
+                <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+                <!--/* End of Greetings  */-->
+                <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${driveName}, ${owner.firstName},${owner.lastName})}">
+                     </span>
+                  </p>
+                </p> <!--/* End of Main email  message content*/-->
+            </div><!--/* End of section-content*/-->
+        </div><!--/* End of main-content container*/-->
+    </section> <!--/* End of upper main-content*/-->
+    <!--/* Secondary content for  bottom email section */-->
+    <section id="secondary-content">
+    <div th:if="${!nestedNodes.isEmpty()}">
+      <th:block data-th-utext="#{nestedWorkGroupsList}"/>
+      <ul style="padding: 5px 17px; margin: 0;list-style-type:disc;">
+        <li style="color:#787878;font-size:10px" th:each="node : ${nestedNodes}">
+            <span style="color:#787878;font-size:13px">
+              <th:block data-th-utext="#{displayNestedNodeName(${node.name})}"/>
+          </li>
+      </ul>  
+    </div>
+    </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',messages_french='subject = Le Drive {0} a été supprimé.
+mainMsg = Le Drive {0} a été supprimé par <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+nestedWorkGroupsList=Vous avez automatiquement été ajouté aux groupes de travail suivants :
+displayNestedNodeName:{0}',messages_english='subject = The Drive {0} has been deleted.
+mainMsg = The Drive {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+nestedWorkGroupsList=You have been automatically deleted from the following workgroups:
+workGroupNameTitle = Workgroup Name
+displayNestedNodeName:{0}',messages_russian='subject = The Drive {0} has been deleted.
+mainMsg = The Drive {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+nestedWorkGroupsList=You have been automatically deleted from the following workgroups:
+displayNestedNodeName:{0}' WHERE id=40;
+
 ---- End of your queries
 
 -- LinShare version
