@@ -170,7 +170,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		if (!userDto.isLocked() && entity.isLocked()) {
 			userService2.unlock(authUser, actor, entity);
 		}
-		entity = userService2.update(authUser, actor, userToUpdate, userDto.getDomain().getIdentifier());
+		entity = userService2.update(authUser, actor, userToUpdate, userDto.getDomain().getUuid());
 		return new UserDto(entity);
 	}
 
@@ -221,7 +221,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		} else {
 			Validate.notEmpty(restrictedContactDto.getMail(), "RestrictedContact's mail must be set");
 			Validate.notNull(restrictedContactDto.getDomain(), "The restrictedContact's domain must be set");
-			AbstractDomain domain = abstractDomainService.findById(restrictedContactDto.getDomain().getIdentifier());
+			AbstractDomain domain = abstractDomainService.findById(restrictedContactDto.getDomain().getUuid());
 			user = userService.findOrCreateUser(restrictedContactDto.getMail(), domain.getUuid());
 		}
 		AllowedContact restrictedContactToCreate = new AllowedContact(owner, user);

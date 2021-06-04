@@ -36,7 +36,6 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
@@ -45,6 +44,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "RestrictedContact")
+@Schema(name = "RestrictedContactV5", description = "A RestrictedContact must be a user.")
 public class RestrictedContactDto {
 
 	@Schema(description = "AllowedContact's uuid")

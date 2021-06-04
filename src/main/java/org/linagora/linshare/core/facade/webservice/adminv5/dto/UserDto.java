@@ -40,10 +40,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Function;
@@ -51,7 +51,69 @@ import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "User")
+@Schema(name = "UserV5", description = "A linshare user")
 public class UserDto {
+
+	@XmlRootElement(name = "Author")
+	@Schema(name = "UserAuthor", description = "The author of a guest user.")
+	class Author {
+
+		@Schema(description = "Uuid")
+		private String uuid;
+
+		@Schema(description = "User's name")
+		private String name;
+
+		@Schema(description = "User's mail")
+		private String email;
+
+		@Schema(description = "User's domain")
+		protected DomainLightDto domain;
+
+		public Author() {
+			super();
+		}
+
+		public Author(Account author) {
+			super();
+			this.uuid = author.getLsUuid();
+			this.name = author.getFullName();
+			this.email = author.getMail();
+			this.domain = new DomainLightDto(author.getDomain());
+		}
+
+		public String getUuid() {
+			return uuid;
+		}
+
+		public void setUuid(String uuid) {
+			this.uuid = uuid;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public void setEmail(String email) {
+			this.email = email;
+		}
+
+		public DomainLightDto getDomain() {
+			return domain;
+		}
+
+		public void setDomain(DomainLightDto domain) {
+			this.domain = domain;
+		}
+	}
 
 	@Schema(description = "Uuid")
 	private String uuid;
@@ -110,6 +172,9 @@ public class UserDto {
 	@Schema(description = "Show if user's access is locked")
 	private Boolean locked;
 
+	@Schema(description = "Author of the guest.")
+	private Author author;
+
 	public UserDto() {
 		super();
 	}
@@ -130,6 +195,7 @@ public class UserDto {
 			this.restricted = g.isRestricted();
 			this.comment = g.getComment();
 			this.expirationDate = g.getExpirationDate();
+			this.author = new Author(user.getOwner());
 		} else {
 			this.restricted = false;
 		}
@@ -317,6 +383,14 @@ public class UserDto {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public Author getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(Author author) {
+		this.author = author;
 	}
 
 	@JsonIgnore

@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2021 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,62 +33,49 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-
-package org.linagora.linshare.core.facade.webservice.common.dto;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "Domain")
-@Schema(name = "DomainLightDto", description = "")
+@Schema(name = "DomainV5Light", description = "A LinShare's domain")
 public class DomainLightDto {
 
-	private String label;
+	@Schema(description = "Unique identifier of the resource")
+	private String uuid;
 
-	private String identifier;
+	@Schema(description = "A common name, used to easily identify the resource.")
+	private String name;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private DomainType type;
-
-	public DomainLightDto(){}
+	public DomainLightDto() {
+		super();
+	}
 
 	public DomainLightDto(AbstractDomain domain) {
-		this.identifier = domain.getUuid();
-		this.label = domain.getLabel();
+		this.setUuid(domain.getUuid());
+		this.setName(domain.getLabel());
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getName() {
+		return name;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public DomainType getType() {
-		return type;
-	}
-
-	public void setType(DomainType type) {
-		this.type = type;
-	}
-
-	@Override
-	public String toString() {
-		return "DomainLightDto [label=" + label + ", identifier=" + identifier
-				+ "]";
+	public void setName(String name) {
+		this.name = name;
 	}
 }

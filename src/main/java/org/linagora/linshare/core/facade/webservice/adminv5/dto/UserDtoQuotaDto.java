@@ -38,12 +38,11 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name="Quota")
-@Schema(name = "Quota", description = "A quota instance for accounts.")
+@Schema(name = "UserV5Quota", description = "A quota instance for accounts.")
 public class UserDtoQuotaDto {
 
 	@Schema(description = "uuid")
@@ -79,8 +78,8 @@ public class UserDtoQuotaDto {
 	@Schema(description = "The default value of the quota limit")
 	private Long defaultQuota;
 
-	@Schema(description = "The account to which the quota relies.")
-	private AccountDto account;
+	@Schema(description = "The account to which the quota belongs.")
+	private AccountLightDto account;
 
 	protected UserDtoQuotaDto() {
 		super();
@@ -95,7 +94,7 @@ public class UserDtoQuotaDto {
 		this.maxFileSize = quota.getMaxFileSize();
 		this.defaultMaxFileSize = quota.getContainerQuota().getDefaultMaxFileSize();
 		this.defaultQuota = quota.getContainerQuota().getDefaultAccountQuota();
-		this.account = new AccountDto(quota.getAccount(), true);
+		this.account = new AccountLightDto(quota.getAccount());
 		this.realTimeUsedSpace = realTimeUsedSpace;
 		this.creationDate = quota.getCreationDate();
 		this.modificationDate = quota.getModificationDate();
@@ -189,11 +188,11 @@ public class UserDtoQuotaDto {
 		this.defaultQuota = defaultQuota;
 	}
 
-	public AccountDto getAccount() {
+	public AccountLightDto getAccount() {
 		return account;
 	}
 
-	public void setAccount(AccountDto account) {
+	public void setAccount(AccountLightDto account) {
 		this.account = account;
 	}
 }

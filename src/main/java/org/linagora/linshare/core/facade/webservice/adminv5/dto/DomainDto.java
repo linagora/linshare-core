@@ -52,7 +52,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "Domain")
-@Schema(name = "Domain", description = "A domain")
+@Schema(name = "DomainV5", description = "A LinShare's domain")
 public class DomainDto {
 
 	@Schema(description = "Unique identifier of the resource")
@@ -88,6 +88,13 @@ public class DomainDto {
 
 	private DomainDto() {
 		super();
+	}
+
+	public static DomainDto getUltraLight(final AbstractDomain domain) {
+		DomainDto dto = new DomainDto();
+		dto.setUuid(domain.getUuid());
+		dto.setName(domain.getLabel());
+		return dto;
 	}
 
 	public static DomainDto getLight(final AbstractDomain domain) {

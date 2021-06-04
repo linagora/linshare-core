@@ -33,62 +33,71 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-
-package org.linagora.linshare.core.facade.webservice.common.dto;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@XmlRootElement(name = "Domain")
-@Schema(name = "DomainLightDto", description = "")
-public class DomainLightDto {
+@XmlRootElement(name = "Account")
+@Schema(name = "AccountV5Light", description = "")
+public class AccountLightDto {
 
-	private String label;
+	@Schema(description = "Uuid")
+	protected String uuid;
 
-	private String identifier;
+	@Schema(description = "User's name")
+	private String name;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private DomainType type;
+	@Schema(description = "User's mail")
+	private String email;
 
-	public DomainLightDto(){}
+	@Schema(description = "Domain")
+	protected DomainLightDto domain;
 
-	public DomainLightDto(AbstractDomain domain) {
-		this.identifier = domain.getUuid();
-		this.label = domain.getLabel();
+	public AccountLightDto() {
+		super();
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public AccountLightDto(Account a) {
+		this.uuid = a.getLsUuid();
+		this.name = a.getFullName();
+		this.email = a.getMail();
+		this.domain = new DomainLightDto(a.getDomain());
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public String getLabel() {
-		return label;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public String getName() {
+		return name;
 	}
 
-	public DomainType getType() {
-		return type;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public void setType(DomainType type) {
-		this.type = type;
+	public String getEmail() {
+		return email;
 	}
 
-	@Override
-	public String toString() {
-		return "DomainLightDto [label=" + label + ", identifier=" + identifier
-				+ "]";
+	public void setEmail(String email) {
+		this.email = email;
 	}
+
+	public DomainLightDto getDomain() {
+		return domain;
+	}
+
+	public void setDomain(DomainLightDto domain) {
+		this.domain = domain;
+	}
+
 }
