@@ -75,8 +75,11 @@ public class AbstractDomainRepositoryImpl extends
 
 	@Override
 	public List<AbstractDomain> findAll() {
-		return findByCriteria(DetachedCriteria.forClass(getPersistentClass())
-				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE)));
+		return findByCriteria(
+				DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE))
+				.addOrder(Order.asc("label"))
+			);
 	}
 
 	@Override
@@ -228,6 +231,7 @@ public class AbstractDomainRepositoryImpl extends
 		det.createAlias("parentDomain", "parent");
 		det.add(Restrictions.eq("parent.uuid", domain));
 		det.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
+		det.addOrder(Order.asc("label"));
 		return findByCriteria(det);
 	}
 
@@ -262,6 +266,7 @@ public class AbstractDomainRepositoryImpl extends
 		return listByCriteria(crit);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllDomainIdentifiersWithDriveProviders() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
