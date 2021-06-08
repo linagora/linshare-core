@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.SharedSpaceMemberContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
@@ -67,6 +68,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
+import org.slf4j.spi.LocationAwareLogger;
 
 public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmentServiceImpl{
 
@@ -134,22 +136,25 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMembersToDelete.get(0));
 		businessService.deleteAll(foundMembersToDelete);
+		SharedSpaceMemberContainer container = new SharedSpaceMemberContainer();
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
 			SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.WORKGROUP_MEMBER, member);
-			getEmailContextAndNotify(actor, cause, member, user);
+			getEmailContextAndNotify(actor, cause, member, user, container);
 			List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(member.getNode().getUuid());
 			log.addRelatedAccounts(members);
 			if(Objects.nonNull(cause)) {
 				log.setCause(cause);
 			}
-			logEntryService.insert(log);
+			container.addLog(log);
 		}
+		notifierService.sendNotification(container.getMailContainers());
+		logEntryService.insertSharedSpaceMemberAuditLogs(LocationAwareLogger.INFO_INT, container.getLogs());
 		return foundMembersToDelete;
 	}
 
-	private void getEmailContextAndNotify(Account actor, LogActionCause cause, SharedSpaceMember member, User user) {
+	private void getEmailContextAndNotify(Account actor, LogActionCause cause, SharedSpaceMember member, User user, SharedSpaceMemberContainer container) {
 		if (!LogActionCause.DRIVE_DELETION.equals(cause)) {
 			if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
 				EmailContext context = null;
@@ -158,9 +163,8 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 				} else {
 					context = new WorkGroupWarnDeletedMemberEmailContext(member, actor, user);
 				}
-				notify(context);
+				container.addMailContainersAddEmail(mailBuildingService.build(context));
 			}
 		}
 	}
-
 }

@@ -49,6 +49,7 @@ import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
@@ -224,5 +225,30 @@ public class LogEntryServiceImpl implements LogEntryService {
 		}
 		return new BasicStatistic(1L, parentDomainUuid, entity,
 				BasicStatisticType.ONESHOT);
+	}
+
+	@Override
+	public List<SharedSpaceMemberAuditLogEntry> insertSharedSpaceMemberAuditLogs(Integer level, 
+			List<SharedSpaceMemberAuditLogEntry> logs) {
+		List<BasicStatistic> basicStatisticsList = Lists.newArrayList();
+		if (logs == null || logs.isEmpty()) {
+			throw new IllegalArgumentException("Entity must not be null or empty");
+		}
+		// Logger trace
+		if (level == INFO) {
+			logger.info(logs.toString());
+		} else if (level == WARN) {
+			logger.warn(logs.toString());
+		} else if (level == ERROR) {
+			logger.error(logs.toString());
+		} else {
+			throw new IllegalArgumentException("Unknown log level, is neither INFO, WARN nor ERROR");
+		}
+		logs.forEach(entity -> {
+			BasicStatistic basicStatistic = generateBasicStatistic(entity);
+			basicStatisticsList.add(basicStatistic);
+		});
+		basicStatisticMongoRepository.insert(basicStatisticsList);
+		return auditUserMongoRepository.insert(logs);
 	}
 }

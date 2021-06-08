@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.SharedSpaceMemberContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.DriveDeletedWarnEmailContext;
@@ -71,6 +72,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
+import org.slf4j.spi.LocationAwareLogger;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 
 import com.google.common.collect.Lists;
@@ -214,23 +216,26 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		checkDeletePermission(authUser, actor, SharedSpaceMember.class,
 				BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
 		driveMemberBusinessService.deleteAll(foundMembersToDelete);
+		SharedSpaceMemberContainer container = new SharedSpaceMemberContainer();
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
 			SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.DRIVE_MEMBER, member);
-			getEmailContextAndNotify(actor, cause, member, user, nodes);
+			getEmailContextAndNotify(actor, cause, member, user, nodes, container);
 			List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(member.getNode().getUuid());
 			log.addRelatedAccounts(members);
 			if (Objects.nonNull(cause)) {
 				log.setCause(cause);
 			}
-			logEntryService.insert(log);
+			container.addLog(log);
 		}
+		notifierService.sendNotification(container.getMailContainers());
+		logEntryService.insertSharedSpaceMemberAuditLogs(LocationAwareLogger.INFO_INT, container.getLogs());
 		return foundMembersToDelete;
 	}
 
 	private void getEmailContextAndNotify(Account actor, LogActionCause cause, SharedSpaceMember member, User user,
-			List<SharedSpaceNodeNested> nodes) {
+			List<SharedSpaceNodeNested> nodes, SharedSpaceMemberContainer container) {
 		if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
 			EmailContext context = null;
 			if (LogActionCause.DRIVE_DELETION.equals(cause)) {
@@ -238,7 +243,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			} else {
 				context = new DriveWarnDeletedMemberEmailContext(member, actor, user);
 			}
-			notify(context);
+			container.addMailContainersAddEmail(mailBuildingService.build(context));
 		}
 	}
 }
