@@ -33,38 +33,52 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.DriveDeletedWarnEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.thymeleaf.context.Context;
+
+import com.google.common.collect.Lists;
 
 public class DriveDeletedtWarnEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.DRIVE_DELETED_WARN;
+		return MailContentType.DRIVE_WARN_DELETED_DRIVE;
 	}
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		DriveDeletedWarnEmailContext emailCtx = (DriveDeletedWarnEmailContext) context;
 		Context ctx = new Context(emailCtx.getLocale());
-		Account owner = emailCtx.getOwner();
-		String linshareURL = getLinShareUrl(owner);
+		MailContact owner = null;
+		if (emailCtx.getActor() instanceof SystemAccount) {
+			owner = new MailContact(emailCtx.getActor().getMail());
+		} else {
+			owner = new MailContact((User) emailCtx.getActor());
+		}
+		User member = emailCtx.getUserMember();
+		String linshareURL = getLinShareUrl(member);
 		ctx.setVariable("driveName", emailCtx.getSharedSpaceMember().getNode().getName());
-		ctx.setVariable("owner", emailCtx.getOwner());
-		ctx.setVariable("member", new MailContact(emailCtx.getSharedSpaceMember().getAccount()));
+		ctx.setVariable("owner", emailCtx.getActor());
+		ctx.setVariable("member", owner);
 		ctx.setVariable("nestedNodes", emailCtx.getNestedNodes());
 		ctx.setVariable(linshareURL, linshareURL);
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
@@ -72,8 +86,21 @@ public class DriveDeletedtWarnEmailBuilder extends EmailBuilder {
 
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Context> res = Lists.newArrayList();
+		Context ctx = newFakeContext(language);
+		SharedSpaceMemberDrive driveMember = getNewFakeSharedSpaceMemberDrive("Drive_test");
+		List<SharedSpaceNodeNested> nestedNodes = Lists.newArrayList();
+		nestedNodes.add(new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_1",
+				driveMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
+		nestedNodes.add(new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_2",
+				driveMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
+		nestedNodes.add(new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_3",
+				driveMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
+		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		ctx.setVariable("driveName", driveMember.getNode().getName());
+		ctx.setVariable("nestedNodes", nestedNodes);
+		res.add(ctx);
+		return res;
 	}
-
 }

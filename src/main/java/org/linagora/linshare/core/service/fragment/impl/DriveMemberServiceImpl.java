@@ -234,7 +234,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
 			EmailContext context = null;
 			if (LogActionCause.DRIVE_DELETION.equals(cause)) {
-				context = new DriveDeletedWarnEmailContext(member, actor, nodes);
+				context = new DriveDeletedWarnEmailContext(member, actor, user, nodes);
 			} else {
 				context = new DriveWarnDeletedMemberEmailContext(member, actor, user);
 			}

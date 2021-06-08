@@ -1287,24 +1287,24 @@ VALUES
   now(),
   null);
 
--- Mail content for WORKGROUP_DELETED_WARN
+-- Mail content for WORKGROUP_WARN_DELETED_WORKGROUP
 INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,39,39,'','','',NOW(),true,'','b8fd5482-c47f-11eb-8529-0242ac130003',true);
--- Mail content for DRIVE_DELETED_WARN
+-- Mail content for DRIVE_WARN_DELETED_DRIVE
 INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,40,40,'','','',NOW(),true,'','c34c8f84-c47f-11eb-8529-0242ac130003',true);
 
--- Mail content lang for WORKGROUP_DELETED_WARN and DRIVE_DELETED_WARN (EN)
+-- Mail content lang for WORKGROUP_WARN_DELETED_WORKGROUP and DRIVE_WARN_DELETED_DRIVE (EN)
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (39,0,1,39,39,true,'84738a92-c47f-11eb-8529-0242ac130003');
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (40,0,1,40,40,true,'92708d98-c47f-11eb-8529-0242ac130003');
 
--- Mail content lang for WORKGROUP_DELETED_WARN and DRIVE_DELETED_WARN (FR)
+-- Mail content lang for WORKGROUP_WARN_DELETED_WORKGROUP and DRIVE_WARN_DELETED_DRIVE (FR)
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (139,1,1,39,39,true,'84738a92-c47f-11eb-8529-0242ac130003');
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (140,1,1,40,40,true,'92708d98-c47f-11eb-8529-0242ac130003');
 
--- Mail content lang for WORKGROUP_DELETED_WARN and DRIVE_DELETED_WARN (RU)
+-- Mail content lang for WORKGROUP_WARN_DELETED_WORKGROUP and DRIVE_WARN_DELETED_DRIVE (RU)
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (239,2,1,39,39,true,'84738a92-c47f-11eb-8529-0242ac130003');
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (240,2,1,40,40,true,'92708d98-c47f-11eb-8529-0242ac130003');
 
--- MailActivation : WORKGROUP_DELETED_WARN
+-- MailActivation : WORKGROUP_WARN_DELETED_WORKGROUP
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (330, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -1313,9 +1313,9 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (332, false, false, 2, true);
 -- --mail activation
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(40, false, 'WORKGROUP_DELETED_WARN', 330, 331, 332, 1, true);
+	VALUES(40, false, 'WORKGROUP_WARN_DELETED_WORKGROUP', 330, 331, 332, 1, true);
 
--- MailActivation : DRIVE_DELETED_WARN
+-- MailActivation : DRIVE_WARN_DELETED_DRIVE
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (333, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -1324,9 +1324,9 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (335, false, false, 2, true);
 -- --mail activation
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(41, false, 'DRIVE_DELETED_WARN', 333, 334, 335, 1, true);
+	VALUES(41, false, 'DRIVE_WARN_DELETED_DRIVE', 333, 334, 335, 1, true);
 
--- Mail content WORKGROUP_DELETED_WARN
+-- Mail content WORKGROUP_WARN_DELETED_WORKGROUP
 UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -1362,7 +1362,7 @@ workGroupNameTitle = Workgroup Name',messages_russian='subject = The workgroup {
 mainMsg = The workgroup {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 workGroupNameTitle = Workgroup Name' WHERE id=39;
 
--- Mail content DRIVE_DELETED_WARN
+-- Mail content DRIVE_WARN_DELETED_DRIVE
 UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>

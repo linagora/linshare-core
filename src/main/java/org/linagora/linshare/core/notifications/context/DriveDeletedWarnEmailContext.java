@@ -38,6 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
@@ -45,20 +46,20 @@ public class DriveDeletedWarnEmailContext extends WorkGroupDeletedWarnEmailConte
 
 	private List<SharedSpaceNodeNested> nestedNodes;
 
-	public DriveDeletedWarnEmailContext(SharedSpaceMember driveMember, Account userMember,
+	public DriveDeletedWarnEmailContext(SharedSpaceMember workgroupMember, Account owner, User userMember,
 			List<SharedSpaceNodeNested> nestedNodes) {
-		super(driveMember, userMember);
+		super(workgroupMember, owner, userMember);
 		this.nestedNodes = nestedNodes;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.DRIVE_DELETED_WARN;
+		return MailContentType.DRIVE_WARN_DELETED_DRIVE;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.DRIVE_DELETED_WARN;
+		return MailActivationType.DRIVE_WARN_DELETED_DRIVE;
 	}
 
 	public List<SharedSpaceNodeNested> getNestedNodes() {

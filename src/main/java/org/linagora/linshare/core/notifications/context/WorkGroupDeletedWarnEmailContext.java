@@ -37,31 +37,32 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public class WorkGroupDeletedWarnEmailContext extends EmailContext {
 
-	private String sharedSpaceName;
-
 	private SharedSpaceMember sharedSpaceMember;
 
-	private Account owner;
+	private Account actor;
 
-	public WorkGroupDeletedWarnEmailContext(SharedSpaceMember workgroupMember, Account userMember) {
+	protected User userMember;
+
+	public WorkGroupDeletedWarnEmailContext(SharedSpaceMember workgroupMember, Account actor, User userMember) {
 		super(userMember.getDomain(), false);
-		this.sharedSpaceName = workgroupMember.getNode().getName();
 		this.sharedSpaceMember = workgroupMember;
-		this.owner = userMember;
+		this.actor = actor;
+		this.userMember = userMember;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.WORKGROUP_DELETED_WARN;
+		return MailContentType.WORKGROUP_WARN_DELETED_WORKGROUP;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.WORKGROUP_DELETED_WARN;
+		return MailActivationType.WORKGROUP_WARN_DELETED_WORKGROUP;
 	}
 
 	@Override
@@ -71,21 +72,13 @@ public class WorkGroupDeletedWarnEmailContext extends EmailContext {
 
 	@Override
 	public String getMailReplyTo() {
-		return sharedSpaceMember.getAccount().getMail();
+		return actor.getMail();
 	}
 
 	@Override
 	public void validateRequiredField() {
-		Validate.notNull(sharedSpaceMember, "Missing threadMember");
-		Validate.notNull(sharedSpaceName, "Missing SharedSpace node");
-	}
-
-	public String getSharedSpaceName() {
-		return sharedSpaceName;
-	}
-
-	public void setSharedSpaceName(String sharedSpaceName) {
-		this.sharedSpaceName = sharedSpaceName;
+		Validate.notNull(sharedSpaceMember, "Missing SharedSpaceMember");
+		Validate.notNull(actor, "Missing actor");
 	}
 
 	public SharedSpaceMember getSharedSpaceMember() {
@@ -96,11 +89,19 @@ public class WorkGroupDeletedWarnEmailContext extends EmailContext {
 		this.sharedSpaceMember = sharedSpaceMember;
 	}
 
-	public Account getOwner() {
-		return owner;
+	public Account getActor() {
+		return actor;
 	}
 
-	public void setOwner(Account owner) {
-		this.owner = owner;
+	public void setActor(Account actor) {
+		this.actor = actor;
+	}
+
+	public User getUserMember() {
+		return userMember;
+	}
+
+	public void setUserMember(User userMember) {
+		this.userMember = userMember;
 	}
 }

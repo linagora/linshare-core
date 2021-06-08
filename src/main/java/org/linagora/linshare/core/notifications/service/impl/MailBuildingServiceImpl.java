@@ -191,7 +191,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_NEW_MEMBER, new WorkGroupWarnNewMemberEmailBuilder());
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_UPDATED_MEMBER, new WorkGroupWarnUpdatedMemberEmailBuilder());
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_DELETED_MEMBER, new WorkGroupWarnDeletedMemberEmailBuilder());
-		emailBuilders.put(MailContentType.WORKGROUP_DELETED_WARN, new WorkGroupDeletedtWarnEmailBuilder());
+		emailBuilders.put(MailContentType.WORKGROUP_WARN_DELETED_WORKGROUP, new WorkGroupDeletedtWarnEmailBuilder());
 
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED, new JwtPermanentCreatedEmailBuilder());
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED, new JwtPermanentDeletedEmailBuilder());
@@ -199,7 +199,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.DRIVE_WARN_NEW_MEMBER, new DriveWarnNewMemberEmailBuilder());
 		emailBuilders.put(MailContentType.DRIVE_WARN_UPDATED_MEMBER, new DriveWarnUpdatedMemberEmailBuilder());
 		emailBuilders.put(MailContentType.DRIVE_WARN_DELETED_MEMBER, new DriveWarnDeletedMemberEmailBuilder());
-		emailBuilders.put(MailContentType.DRIVE_DELETED_WARN, new DriveDeletedtWarnEmailBuilder());
+		emailBuilders.put(MailContentType.DRIVE_WARN_DELETED_DRIVE, new DriveDeletedtWarnEmailBuilder());
 
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0, new GuestAccountResetPasswordFor4_0_EmailBuilder(urlTemplateForGuestReset));
 

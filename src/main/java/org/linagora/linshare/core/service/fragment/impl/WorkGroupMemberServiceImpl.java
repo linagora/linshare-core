@@ -154,7 +154,7 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 			if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
 				EmailContext context = null;
 				if (LogActionCause.WORKGROUP_DELETION.equals(cause)) {
-					context = new WorkGroupDeletedWarnEmailContext(member, actor);
+					context = new WorkGroupDeletedWarnEmailContext(member, actor, user);
 				} else {
 					context = new WorkGroupWarnDeletedMemberEmailContext(member, actor, user);
 				}

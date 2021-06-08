@@ -370,7 +370,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
 	VALUES(38, false, 'GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0', 319, 320, 321, 1, true);
 
--- MailActivation : WORKGROUP_DELETED_WARN
+-- MailActivation : WORKGROUP_WARN_DELETED_WORKGROUP
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (330, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -379,9 +379,9 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (332, false, false, 2, true);
 -- --mail activation
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(40, false, 'WORKGROUP_DELETED_WARN', 330, 331, 332, 1, true);
+	VALUES(40, false, 'WORKGROUP_WARN_DELETED_WORKGROUP', 330, 331, 332, 1, true);
 
-	-- MailActivation : DRIVE_DELETED_WARN
+	-- MailActivation : DRIVE_WARN_DELETED_DRIVE
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (333, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -390,7 +390,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (335, false, false, 2, true);
 -- --mail activation
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(41, false, 'DRIVE_DELETED_WARN', 333, 334, 335, 1, true);
+	VALUES(41, false, 'DRIVE_WARN_DELETED_DRIVE', 333, 334, 335, 1, true);
 
 -- MAilActivation: SHARE_ANONYMOUS_RESET_PASSWORD
 -- --policies 
