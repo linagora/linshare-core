@@ -262,7 +262,17 @@ public enum UpgradeTaskType {
 	/**
 	 * For all operations on Workgroup nodes, store related workgroup uuid in relatedResource field in WorkGroupNodeAuditLogEntry
 	 */
-	UPGRADE_4_2_ADD_WORKGROUP_UUID_AS_RELATED_RESOURCE_IN_WORKGROUP_NODE_AUDIT_TRACES;
+	UPGRADE_4_2_ADD_WORKGROUP_UUID_AS_RELATED_RESOURCE_IN_WORKGROUP_NODE_AUDIT_TRACES,
+
+	/**
+	 * Add seeAsNested field to all SharedSpaceMember entities 
+	 */
+	UPGRADE_4_2_ADD_SEE_AS_NESTED_FIELD_TO_SHARED_SPACE_MEMBERS,
+
+	/**
+	 * Update nested SharedSpaceMembers with right value of seeAsNested
+	 */
+	UPGRADE_4_2_UPDATE_SEE_AS_NESTED_FIELD_IN_NESTED_SHARED_SPACE_MEMBERS;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

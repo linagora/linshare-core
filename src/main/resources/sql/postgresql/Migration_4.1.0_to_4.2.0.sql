@@ -1232,6 +1232,60 @@ VALUES
   now(),
   now(),
   null);
+ -- UPGRADE_4_2_ADD_SEE_AS_NESTED_FIELD_TO_SHARED_SPACE_MEMBERS
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (42,
+  'UNDEFINED',
+  'UPGRADE_4_2_ADD_SEE_AS_NESTED_FIELD_TO_SHARED_SPACE_MEMBERS',
+  'UPGRADE_4_2',
+  null,
+  null,
+  42,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);
+-- UPGRADE_4_2_UPDATE_SEE_AS_NESTED_FIELD_IN_NESTED_SHARED_SPACE_MEMBERS
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (43,
+  'UNDEFINED',
+  'UPGRADE_4_2_UPDATE_SEE_AS_NESTED_FIELD_IN_NESTED_SHARED_SPACE_MEMBERS',
+  'UPGRADE_4_2',
+  null,
+  'UPGRADE_4_2_ADD_SEE_AS_NESTED_FIELD_TO_SHARED_SPACE_MEMBERS',
+  43,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);
 ---- End of your queries
 
 -- LinShare version
