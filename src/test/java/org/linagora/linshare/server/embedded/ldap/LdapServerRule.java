@@ -37,8 +37,8 @@
 package org.linagora.linshare.server.embedded.ldap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
@@ -46,7 +46,7 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
-public class LdapServerRule implements AfterEachCallback, BeforeEachCallback {
+public class LdapServerRule implements AfterAllCallback, BeforeAllCallback {
 	private static final Log LOG = LogFactory.getLog(LdapServerRule.class);
 
 	public static final String DefaultDn = "cn=Directory Manager";
@@ -77,14 +77,13 @@ public class LdapServerRule implements AfterEachCallback, BeforeEachCallback {
 		this.port = port;
 	}
 
-	
 	@Override
-	public void beforeEach(ExtensionContext context) throws Exception {
+	public void beforeAll(ExtensionContext context) throws Exception {
 		start();
 	}
 
 	@Override
-	public void afterEach(ExtensionContext context) throws Exception {
+	public void afterAll(ExtensionContext context) throws Exception {
 		stop();
 	}
 
@@ -151,5 +150,4 @@ public class LdapServerRule implements AfterEachCallback, BeforeEachCallback {
 	public void setBaseDn(String baseDn) {
 		this.baseDn = baseDn;
 	}
-
 }
