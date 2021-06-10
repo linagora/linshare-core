@@ -1585,19 +1585,6 @@
 									</sources>
 								</configuration>
 							</execution>
-							<execution>
-								<id>add-test-source</id>
-								<phase>generate-test-sources</phase>
-								<inherited>false</inherited>
-								<goals>
-									<goal>add-test-source</goal>
-								</goals>
-								<configuration>
-									<sources>
-										<source>${project.basedir}/src/test/generated/cxf</source>
-									</sources>
-								</configuration>
-							</execution>
 						</executions>
 					</plugin>
 				</plugins>
