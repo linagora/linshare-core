@@ -51,6 +51,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.SharedSpaceFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
@@ -166,11 +168,16 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	public Response findAll(
 			@Parameter(description = "If the admin specify the account he will retrieve the list of the choosen account, else all shared spaces of all accounts domains will be returned.", required = false)
 				@QueryParam("account") String accountUuid,
-			@Parameter(description = "The admin can choose the page number to get.", required = false)
-				@QueryParam("page") Integer pageNumber,
+			@Parameter(description = "The admin can choose the order of sorting the sharedSpace's list to retrieve, if not set the ascending order will be applied by default.", required = false)
+				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
+			@Parameter(description = "The admin can choose the field to sort with the sharedSpace's list to retrieve, if not set the modification date order will be choosen by default.", required = false)
+			@QueryParam("sortField") @DefaultValue("modificationDate") String sortField,
+				@Parameter(description = "The admin can choose the page number to get.", required = false)
+					@QueryParam("page") Integer pageNumber,
 			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
-				@QueryParam("size") Integer pageSize) throws BusinessException {
-		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, pageNumber, pageSize);
+			@QueryParam("size") Integer pageSize) throws BusinessException {
+		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, SortOrder.valueOf(sortOrder), SharedSpaceField.valueOf(sortField),
+				pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}
 

@@ -41,6 +41,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.springframework.data.domain.Sort;
 
 public interface SharedSpaceNodeBusinessService {
 
@@ -62,6 +63,6 @@ public interface SharedSpaceNodeBusinessService {
 
 	void loadLastUpdaterAuditTrace(SharedSpaceNode node) throws BusinessException;
 
-	PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container);
+	PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container, Sort sort);
 
 }

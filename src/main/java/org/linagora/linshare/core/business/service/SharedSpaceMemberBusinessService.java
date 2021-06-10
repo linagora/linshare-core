@@ -44,6 +44,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.springframework.data.domain.Sort;
 
 public interface SharedSpaceMemberBusinessService {
 
@@ -82,7 +83,7 @@ public interface SharedSpaceMemberBusinessService {
 	 * @param container
 	 * @return
 	 */
-	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, PageContainer<SharedSpaceNodeNested> container);
+	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, PageContainer<SharedSpaceNodeNested> container, Sort sort);
 
 
 	List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid);

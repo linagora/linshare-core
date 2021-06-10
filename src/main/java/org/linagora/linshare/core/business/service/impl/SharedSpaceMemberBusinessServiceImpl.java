@@ -60,6 +60,7 @@ import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -344,7 +345,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAllByAccount(String accountUuid,
-			PageContainer<SharedSpaceNodeNested> container) {
+			PageContainer<SharedSpaceNodeNested> container, Sort sort) {
 		Aggregation aggregation = Aggregation.newAggregation(
 				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
 				Aggregation.project("node.uuid",
@@ -353,7 +354,8 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 						"node.creationDate",
 						"node.modificationDate"),
 				Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
-				Aggregation.limit(Long.valueOf(container.getPageSize())));
+				Aggregation.limit(Long.valueOf(container.getPageSize())),
+				Aggregation.sort(sort));
 		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
 				.getMappedResults();
 		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(), getCount(accountUuid), sharedSpaces);

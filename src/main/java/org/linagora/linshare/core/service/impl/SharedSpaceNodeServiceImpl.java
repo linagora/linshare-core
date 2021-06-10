@@ -51,6 +51,8 @@ import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
@@ -70,6 +72,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.springframework.data.domain.Sort;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -286,7 +289,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account,
-			PageContainer<SharedSpaceNodeNested> container) {
+			SortOrder sortOrder, SharedSpaceField sortField, PageContainer<SharedSpaceNodeNested> container) {
 		preChecks(authUser, actor);
 		if (!authUser.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
@@ -295,15 +298,16 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 				null);
 		PageContainer<SharedSpaceNodeNested> sharedSpaces = new PageContainer<SharedSpaceNodeNested>();
+		Sort sort = Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString());
 		if (Objects.nonNull(account)) {
 			if (!domainPermissionBusinessService.isAdminForThisUser(actor, (User) account)) {
 				throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
 						"You are not authorized to retieve the sharedSpaces of this account: " + account.getLsUuid());
 			}
 			Validate.notEmpty(account.getLsUuid(), "accountUuid should be set");
-			sharedSpaces = memberBusinessService.findAllByAccount(account.getLsUuid(), container);
+			sharedSpaces = memberBusinessService.findAllByAccount(account.getLsUuid(), container, sort);
 		} else {
-			sharedSpaces = businessService.findAll(container);
+			sharedSpaces = businessService.findAll(container, sort);
 		}
 		return sharedSpaces;
 	}

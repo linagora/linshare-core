@@ -37,7 +37,6 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
@@ -50,6 +49,8 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -129,15 +130,23 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	}
 
 	@Override
-	public PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container) {
-		Query query = new Query();
-		query.skip(Long.valueOf(container.getPageNumber() * container.getPageSize()));
-		query.limit(container.getPageSize());
-		query.with(Sort.by(Direction.DESC, "creationDate"));
-		List<SharedSpaceNodeNested> nodes = mongoTemplate.find(query, SharedSpaceNode.class)
-				.stream()
-				.map(node -> new SharedSpaceNodeNested(node))
-				.collect(Collectors.toList());
+	public PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+		Aggregation aggregation = Aggregation.newAggregation(
+		Aggregation.project(
+				Fields.from(
+						Fields.field("uuid"),
+						Fields.field("name"),
+						Fields.field("parentUuid"),
+						Fields.field("creationDate"),
+						Fields.field("modificationDate"),
+						Fields.field("nodeType")
+						)
+				),
+		Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
+		Aggregation.limit(Long.valueOf(container.getPageSize())),
+		Aggregation.sort(sort));
+		List<SharedSpaceNodeNested> nodes = mongoTemplate.aggregate(aggregation, "shared_space_nodes", SharedSpaceNodeNested.class)
+				.getMappedResults();
 		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(),
 				sharedSpaceNodeMongoRepository.count(), nodes);
 	}

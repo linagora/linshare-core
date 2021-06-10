@@ -44,13 +44,14 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.SharedSpaceFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
-import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -64,18 +65,14 @@ import com.google.common.base.Strings;
 public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements SharedSpaceFacade {
 
 	private final SharedSpaceNodeService nodeService;
-	
-	private final SharedSpaceMemberService memberService;
-	
+
 	private final AuditLogEntryService auditLogEntryService;
 
 	public SharedSpaceFacadeImpl(AccountService accountService,
 			SharedSpaceNodeService nodeService,
-			SharedSpaceMemberService memberService,
 			AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.nodeService = nodeService;
-		this.memberService = memberService;
 		this.auditLogEntryService = auditLogEntryService;
 	}
 
@@ -142,8 +139,8 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 	}
 
 	@Override
-	public PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, Integer pageNumber,
-			Integer pageSize) {
+	public PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, SortOrder sortOrder,
+			SharedSpaceField sortField, Integer pageNumber, Integer pageSize) {
 		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		User actor = getActor(authUser, actorUuid);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(pageNumber, pageSize);
@@ -151,7 +148,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 		if (!Strings.isNullOrEmpty(accountUuid)) {
 			account = accountService.findByLsUuid(accountUuid);
 		}
-		return nodeService.findAll(authUser, actor, account, container);
+		return nodeService.findAll(authUser, actor, account, sortOrder, sortField, container);
 	}
 
 	@Override
