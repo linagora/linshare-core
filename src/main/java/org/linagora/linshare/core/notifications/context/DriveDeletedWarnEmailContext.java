@@ -35,20 +35,27 @@ package org.linagora.linshare.core.notifications.context;
 
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
-public class DriveDeletedWarnEmailContext extends WorkGroupDeletedWarnEmailContext {
+public class DriveDeletedWarnEmailContext extends EmailContext {
+
+	private Account actor;
+
+	private SharedSpaceMember sharedSpaceMember;
 
 	private List<SharedSpaceNodeNested> nestedNodes;
 
-	public DriveDeletedWarnEmailContext(SharedSpaceMember workgroupMember, Account owner, User userMember,
-			List<SharedSpaceNodeNested> nestedNodes) {
-		super(workgroupMember, owner, userMember);
+	public DriveDeletedWarnEmailContext(Account actor, AbstractDomain domain,
+			SharedSpaceMember sharedSpaceMember, List<SharedSpaceNodeNested> nestedNodes) {
+		super(domain, false);
+		this.actor = actor;
+		this.sharedSpaceMember = sharedSpaceMember;
 		this.nestedNodes = nestedNodes;
 	}
 
@@ -68,5 +75,40 @@ public class DriveDeletedWarnEmailContext extends WorkGroupDeletedWarnEmailConte
 
 	public void setNestedNodes(List<SharedSpaceNodeNested> nestedNodes) {
 		this.nestedNodes = nestedNodes;
+	}
+
+	public Account getActor() {
+		return actor;
+	}
+
+	public void setActor(Account actor) {
+		this.actor = actor;
+	}
+
+	public SharedSpaceMember getSharedSpaceMember() {
+		return sharedSpaceMember;
+	}
+
+	public void setSharedSpaceMember(SharedSpaceMember sharedSpaceMember) {
+		this.sharedSpaceMember = sharedSpaceMember;
+	}
+
+	@Override
+	public String getMailRcpt() {
+		return sharedSpaceMember.getAccount().getMail();
+	}
+
+	@Override
+	public String getMailReplyTo() {
+		if (actor.canReceiveMail()) {
+			return actor.getMail();
+		}
+		return null;
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(sharedSpaceMember, "Missing SharedSpaceMember");
+		Validate.notNull(actor, "Missing actor");
 	}
 }

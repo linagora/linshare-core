@@ -37,14 +37,14 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupDeletedWarnEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
@@ -60,19 +60,14 @@ public class WorkGroupDeletedtWarnEmailBuilder extends EmailBuilder {
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		WorkGroupDeletedWarnEmailContext emailCtx = (WorkGroupDeletedWarnEmailContext) context;
 		Context ctx = new Context(emailCtx.getLocale());
-		MailContact owner = null;
-		if (emailCtx.getActor() instanceof SystemAccount) {
-			owner = new MailContact(emailCtx.getActor().getMail());
-		} else {
-			owner = new MailContact((User) emailCtx.getActor());
-		}
-		User member = emailCtx.getUserMember();
-		String linshareURL = getLinShareUrl(member);
+		MailContact actor = new MailContact(emailCtx.getActor());
+		AbstractDomain abstractDomain = emailCtx.getFromDomain();
+		String linshareURL = getLinShareUrl(abstractDomain);
 		ctx.setVariable("workGroupName", emailCtx.getSharedSpaceMember().getNode().getName());
-		ctx.setVariable("owner", owner);
-		ctx.setVariable("member", new MailContact(emailCtx.getSharedSpaceMember().getAccount()));
+		ctx.setVariable("actor", actor);
+		ctx.setVariable("member", emailCtx.getSharedSpaceMember());
 		ctx.setVariable(linshareURL, linshareURL);
-		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = abstractDomain.getCurrentMailConfiguration();
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
@@ -81,9 +76,10 @@ public class WorkGroupDeletedtWarnEmailBuilder extends EmailBuilder {
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
+		SharedSpaceMember wgMember = getNewFakeSharedSpaceMember("WG_test");
 		Context ctx = newFakeContext(language);
-		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		ctx.setVariable("member", wgMember);
+		ctx.setVariable("actor", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("workGroupName", "work_group_name-1");
 		res.add(ctx);
 		return res;

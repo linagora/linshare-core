@@ -49,7 +49,7 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.SharedSpaceMemberContainer;
+import org.linagora.linshare.core.domain.objects.OnDeleteSharedSpaceContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.DriveDeletedWarnEmailContext;
@@ -71,9 +71,8 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
-import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
-import org.slf4j.spi.LocationAwareLogger;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
 import com.google.common.collect.Lists;
 
@@ -202,7 +201,8 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 	}
 
 	@Override
-	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node, LogActionCause cause, List<SharedSpaceNodeNested> nodes) {
+	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, SharedSpaceNode node,
+			LogActionCause cause, List<SharedSpaceNodeNested> nodes) {
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required shared space node");
 		Validate.isTrue(NodeType.DRIVE.equals(node.getNodeType()), "Node type need to be a Drive");
@@ -213,15 +213,22 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		}
 		// We check the user has the right to delete members of this node
 		// If he can delete one member, he can delete them all
-		checkDeletePermission(authUser, actor, SharedSpaceMember.class,
-				BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
-		driveMemberBusinessService.deleteAll(foundMembersToDelete);
-		SharedSpaceMemberContainer container = new SharedSpaceMemberContainer();
+		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				foundMembersToDelete.get(0));
+		OnDeleteSharedSpaceContainer container = new OnDeleteSharedSpaceContainer();
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
 			SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.DRIVE_MEMBER, member);
-			getEmailContextAndNotify(actor, cause, member, user, nodes, container);
+			if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
+				EmailContext context = null;
+				if (LogActionCause.DRIVE_DELETION.equals(cause)) {
+					context = new DriveDeletedWarnEmailContext(actor, user.getDomain(), member, nodes);
+				} else {
+					context = new DriveWarnDeletedMemberEmailContext(member, actor, user);
+				}
+				container.addMailContainersAddEmail(mailBuildingService.build(context));
+			}
 			List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(member.getNode().getUuid());
 			log.addRelatedAccounts(members);
 			if (Objects.nonNull(cause)) {
@@ -229,21 +236,9 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			}
 			container.addLog(log);
 		}
+		driveMemberBusinessService.deleteAll(foundMembersToDelete);
 		notifierService.sendNotification(container.getMailContainers());
-		logEntryService.insertSharedSpaceMemberAuditLogs(LocationAwareLogger.INFO_INT, container.getLogs());
+		logEntryService.insert(container.getLogs());
 		return foundMembersToDelete;
-	}
-
-	private void getEmailContextAndNotify(Account actor, LogActionCause cause, SharedSpaceMember member, User user,
-			List<SharedSpaceNodeNested> nodes, SharedSpaceMemberContainer container) {
-		if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
-			EmailContext context = null;
-			if (LogActionCause.DRIVE_DELETION.equals(cause)) {
-				context = new DriveDeletedWarnEmailContext(member, actor, user, nodes);
-			} else {
-				context = new DriveWarnDeletedMemberEmailContext(member, actor, user);
-			}
-			container.addMailContainersAddEmail(mailBuildingService.build(context));
-		}
 	}
 }

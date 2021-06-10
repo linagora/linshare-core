@@ -36,8 +36,8 @@ package org.linagora.linshare.core.notifications.context;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public class WorkGroupDeletedWarnEmailContext extends EmailContext {
@@ -46,13 +46,10 @@ public class WorkGroupDeletedWarnEmailContext extends EmailContext {
 
 	private Account actor;
 
-	protected User userMember;
-
-	public WorkGroupDeletedWarnEmailContext(SharedSpaceMember workgroupMember, Account actor, User userMember) {
-		super(userMember.getDomain(), false);
+	public WorkGroupDeletedWarnEmailContext(Account actor, SharedSpaceMember workgroupMember, AbstractDomain workgroupMemberDomain) {
+		super(workgroupMemberDomain, false);
 		this.sharedSpaceMember = workgroupMember;
 		this.actor = actor;
-		this.userMember = userMember;
 	}
 
 	@Override
@@ -72,7 +69,10 @@ public class WorkGroupDeletedWarnEmailContext extends EmailContext {
 
 	@Override
 	public String getMailReplyTo() {
-		return actor.getMail();
+		if (actor.canReceiveMail()) {
+			return actor.getMail();
+		}
+		return null;
 	}
 
 	@Override
@@ -95,13 +95,5 @@ public class WorkGroupDeletedWarnEmailContext extends EmailContext {
 
 	public void setActor(Account actor) {
 		this.actor = actor;
-	}
-
-	public User getUserMember() {
-		return userMember;
-	}
-
-	public void setUserMember(User userMember) {
-		this.userMember = userMember;
 	}
 }

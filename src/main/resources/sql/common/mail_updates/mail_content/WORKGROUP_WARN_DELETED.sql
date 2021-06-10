@@ -8,11 +8,11 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
         <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
             <div id="section-content">
                 <!--/* Greetings */-->
-                <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+                <th:block data-th-replace="layout :: greetings(${member.account.firstName})"/>
                 <!--/* End of Greetings  */-->
                 <!--/* Main email  message content*/-->
                   <p>
-                     <span data-th-utext="#{mainMsg(${workGroupName}, ${owner.firstName},${owner.lastName})}">
+                     <span data-th-utext="#{mainMsg(${workGroupName}, ${actor.firstName},${actor.lastName})}">
                      </span>
                   </p>
                 </p> <!--/* End of Main email  message content*/-->

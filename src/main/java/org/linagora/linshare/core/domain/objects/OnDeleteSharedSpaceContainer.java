@@ -35,26 +35,27 @@ package org.linagora.linshare.core.domain.objects;
 
 import java.util.List;
 
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 
 import com.google.common.collect.Lists;
 
-public class SharedSpaceMemberContainer {
+public class OnDeleteSharedSpaceContainer {
 
-	private List<SharedSpaceMemberAuditLogEntry> logs = Lists.newArrayList();
+	private List<AuditLogEntryUser> logs = Lists.newArrayList();
 
 	private List<MailContainerWithRecipient> mailContainers = Lists
 			.newArrayList();
 
-	public SharedSpaceMemberContainer() {
+	public OnDeleteSharedSpaceContainer() {
 		super();
 	}
 
-	public List<SharedSpaceMemberAuditLogEntry> getLogs() {
+	public List<AuditLogEntryUser> getLogs() {
 		return logs;
 	}
 
-	public void setLogs(List<SharedSpaceMemberAuditLogEntry> logs) {
+	public void setLogs(List<AuditLogEntryUser> logs) {
 		this.logs = logs;
 	}
 

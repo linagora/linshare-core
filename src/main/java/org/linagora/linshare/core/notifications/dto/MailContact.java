@@ -36,10 +36,10 @@
 package org.linagora.linshare.core.notifications.dto;
 
 import org.apache.commons.lang3.StringUtils;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.Recipient;
-import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 
 public class MailContact {
 
@@ -79,10 +79,15 @@ public class MailContact {
 		this.lastName = recipient.getLastName();
 	}
 
-	public MailContact(SharedSpaceAccount account) {
-		this.mail = account.getMail();
-		this.firstName = account.getFirstName();
-		this.lastName = account.getLastName();
+	public MailContact(Account account) {
+		if (account instanceof User) {
+			User user = (User) account;
+			this.mail = StringUtils.trimToNull(user.getMail());
+			this.firstName = StringUtils.trimToNull(user.getFirstName());
+			this.lastName = StringUtils.trimToNull(user.getLastName());
+		} else {
+			this.mail = StringUtils.trimToNull(account.getMail());
+		}
 	}
 
 	public String getMail() {

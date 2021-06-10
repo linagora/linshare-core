@@ -398,6 +398,10 @@ public abstract class Account {
 		return this.getAccountType().equals(AccountType.INTERNAL);
 	}
 
+	public boolean isSystem() {
+		return this.getAccountType().equals(AccountType.SYSTEM);
+	}
+
 	@Override
 	public String toString() {
 		return getAccountRepresentation();
@@ -453,5 +457,12 @@ public abstract class Account {
 
 	public void setAuthenticationSuccessLastDate(Date authenticationSuccessLastDate) {
 		this.authenticationSuccessLastDate = authenticationSuccessLastDate;
+	}
+
+	public boolean canReceiveMail() {
+		if (this.isSystem() || this.isRoot()) {
+			return false;
+		}
+		return true;
 	}
 }

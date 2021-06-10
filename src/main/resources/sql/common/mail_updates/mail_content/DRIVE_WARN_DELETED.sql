@@ -8,11 +8,11 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
         <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
             <div id="section-content">
                 <!--/* Greetings */-->
-                <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+                <th:block data-th-replace="layout :: greetings(${member.account.firstName})"/>
                 <!--/* End of Greetings  */-->
                 <!--/* Main email  message content*/-->
                   <p>
-                     <span data-th-utext="#{mainMsg(${driveName}, ${owner.firstName},${owner.lastName})}">
+                     <span data-th-utext="#{mainMsg(${driveName}, ${actor.firstName},${actor.lastName})}">
                      </span>
                   </p>
                 </p> <!--/* End of Main email  message content*/-->
@@ -35,12 +35,12 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
 </body>
 </html>',messages_french='subject = Le Drive {0} a été supprimé.
 mainMsg = Le Drive {0} a été supprimé par <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-nestedWorkGroupsList=Vous avez automatiquement été ajouté aux groupes de travail suivants :
+nestedWorkGroupsList=Vous avez automatiquement été supprimé des groupes de travail suivants :
 displayNestedNodeName:{0}',messages_english='subject = The Drive {0} has been deleted.
 mainMsg = The Drive {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-nestedWorkGroupsList=You have been automatically deleted from the following workgroups:
+nestedWorkGroupsList=You have been automatically removed from the following workgroups:
 workGroupNameTitle = Workgroup Name
 displayNestedNodeName:{0}',messages_russian='subject = The Drive {0} has been deleted.
 mainMsg = The Drive {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-nestedWorkGroupsList=You have been automatically deleted from the following workgroups:
+nestedWorkGroupsList=You have been automatically removed from the following workgroups:
 displayNestedNodeName:{0}' WHERE id=40;

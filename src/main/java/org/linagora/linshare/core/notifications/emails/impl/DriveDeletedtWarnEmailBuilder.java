@@ -40,9 +40,8 @@ import java.util.UUID;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.DriveDeletedWarnEmailContext;
@@ -65,20 +64,15 @@ public class DriveDeletedtWarnEmailBuilder extends EmailBuilder {
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		DriveDeletedWarnEmailContext emailCtx = (DriveDeletedWarnEmailContext) context;
 		Context ctx = new Context(emailCtx.getLocale());
-		MailContact owner = null;
-		if (emailCtx.getActor() instanceof SystemAccount) {
-			owner = new MailContact(emailCtx.getActor().getMail());
-		} else {
-			owner = new MailContact((User) emailCtx.getActor());
-		}
-		User member = emailCtx.getUserMember();
-		String linshareURL = getLinShareUrl(member);
+		MailContact actor = new MailContact(emailCtx.getActor());
+		AbstractDomain abstractDomain = emailCtx.getFromDomain();
+		String linshareURL = getLinShareUrl(abstractDomain);
 		ctx.setVariable("driveName", emailCtx.getSharedSpaceMember().getNode().getName());
-		ctx.setVariable("owner", emailCtx.getActor());
-		ctx.setVariable("member", owner);
+		ctx.setVariable("actor", actor);
+		ctx.setVariable("member", emailCtx.getSharedSpaceMember());
 		ctx.setVariable("nestedNodes", emailCtx.getNestedNodes());
 		ctx.setVariable(linshareURL, linshareURL);
-		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = abstractDomain.getCurrentMailConfiguration();
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
@@ -96,8 +90,8 @@ public class DriveDeletedtWarnEmailBuilder extends EmailBuilder {
 				driveMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
 		nestedNodes.add(new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_3",
 				driveMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
-		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		ctx.setVariable("member", driveMember);
+		ctx.setVariable("actor", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("driveName", driveMember.getNode().getName());
 		ctx.setVariable("nestedNodes", nestedNodes);
 		res.add(ctx);

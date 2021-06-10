@@ -44,7 +44,6 @@ import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.slf4j.spi.LocationAwareLogger;
 
@@ -81,7 +80,4 @@ public interface LogEntryService {
 	AuditLogEntryAdmin insert(int level, AuditLogEntryAdmin entity);
 
 	BasicStatistic generateBasicStatistic(AuditLogEntry entity);
-
-	List<SharedSpaceMemberAuditLogEntry> insertSharedSpaceMemberAuditLogs(Integer level,
-			List<SharedSpaceMemberAuditLogEntry> logs);
 }

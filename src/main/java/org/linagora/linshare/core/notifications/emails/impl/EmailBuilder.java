@@ -364,8 +364,11 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	}
 
 	protected String getLinShareUrl(Account recipient) {
-		String value = functionalityReadOnlyService.getCustomNotificationUrlFunctionality(recipient.getDomain())
-				.getValue();
+		return getLinShareUrl(recipient.getDomain());
+	}
+
+	protected String getLinShareUrl(AbstractDomain abstractDomain) {
+		String value = functionalityReadOnlyService.getCustomNotificationUrlFunctionality(abstractDomain).getValue();
 		return value;
 	}
 

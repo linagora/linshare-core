@@ -42,6 +42,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -52,7 +53,7 @@ import com.beust.jcommander.internal.Sets;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", })
-public class BusinessErrorCodeTest {
+public class CheckUnicityEnumCodesTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -70,5 +71,20 @@ public class BusinessErrorCodeTest {
 		}
 		Assertions.assertTrue(businessErrorCodesWithDuplicatedCodes.isEmpty(),
 				"Found BusinessErrorCode with duplicated codes : " + businessErrorCodesWithDuplicatedCodes.toString());
+	}
+
+	@Test
+	public void testUniqueMailContentTypeId() {
+		List<Integer> contentTypesIds = Lists.newArrayList();
+		Lists.newArrayList(MailContentType.values()).forEach(type -> contentTypesIds.add(type.toInt()));
+		Set<Integer> checkedContentTypeIds = Sets.newHashSet();
+		List<Integer> duplicatesContentTypesIds = Lists.newArrayList();
+		for (Integer id : contentTypesIds) {
+			if (!checkedContentTypeIds.add(id)) {
+				duplicatesContentTypesIds.add(id);
+			}
+		}
+		Assertions.assertTrue(duplicatesContentTypesIds.isEmpty(),
+				duplicatesContentTypesIds.size() + " duplicated MailContentTypeId(s): " + duplicatesContentTypesIds.toString());
 	}
 }
