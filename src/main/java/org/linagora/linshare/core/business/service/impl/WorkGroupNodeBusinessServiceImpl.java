@@ -179,19 +179,26 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField,
 			List<DocumentKind> documentKinds) {
 		Query query = new Query();
-		query.addCriteria(new Criteria().andOperator(
-				filterCriteria(creationDateAfter, creationDateBefore, "creationDate"),
-				filterCriteria(modificationDateAfter, modificationDateBefore, "modificationDate"),
-				filterCriteria(minSize, maxSize, "size")));
+		query.addCriteria(
+				new Criteria().andOperator(filterCriteria(creationDateAfter, creationDateBefore, "creationDate"),
+						filterCriteria(modificationDateAfter, modificationDateBefore, "modificationDate"),
+						filterCriteria(minSize, maxSize, "size")));
 		if (lastAuthor != null) {
 			query.addCriteria(Criteria.where("lastAuthor.uuid").is(lastAuthor));
 		}
 		if (documentKinds != null && !documentKinds.isEmpty()) {
 			List<String> mimeTypes = Lists.newArrayList();
-			for (DocumentKind documentKind : documentKinds) {
-				mimeTypes.addAll(documentKind.getValues());
+			if (!documentKinds.contains(DocumentKind.OTHER)) {
+				for (DocumentKind documentKind : documentKinds) {
+					mimeTypes.addAll(documentKind.getValues());
+				}
+				query.addCriteria(Criteria.where("mimeType").in(mimeTypes));
+			} else {
+				for (DocumentKind documentKind : DocumentKind.values()) {
+					mimeTypes.addAll(documentKind.getValues());
+				}
+				query.addCriteria(Criteria.where("mimeType").exists(true).nin(mimeTypes));
 			}
-			query.addCriteria(Criteria.where("mimeType").in(mimeTypes));
 		}
 		String regex = null;
 		if (pattern != null && !pattern.isEmpty()) {
@@ -206,7 +213,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			// by default returns all nodes at all levels in the workgroup
 			query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
 		} else {
-			// returns all nodes at all levels from the given parent  
+			// returns all nodes at all levels from the given parent
 			WorkGroupNode node = repository.findByWorkGroupAndUuid(workGroup.getLsUuid(), parentUuid);
 			if (node == null) {
 				logger.error("Node not found " + parentUuid);
@@ -217,6 +224,10 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		}
 		query.addCriteria(Criteria.where("nodeType").in(getTypes(types)));
 		long count = mongoTemplate.count(query, WorkGroupNode.class);
+		logger.debug("total of elements returned by the query without pagination: {}", count);
+		if (count == 0) {
+			return new PageContainer<WorkGroupNode>();
+		}
 		Pageable paging = PageRequest.of(pageContainer.getPageNumber(), pageContainer.getPageSize());
 		query.with(paging);
 		query.with(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString()));

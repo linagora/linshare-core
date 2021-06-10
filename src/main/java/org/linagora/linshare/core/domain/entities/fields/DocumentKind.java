@@ -76,7 +76,8 @@ public enum DocumentKind {
 			"application/vnd.ms-spreadsheetml",
 			"application/vnd.oasis.opendocument.spreadsheet-template",
 			"application/x-tika-msworks-spreadsheet",
-			"application/vnd.openxmlformats-officedocument.spreadsheetml.template");
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.template"),
+	OTHER;
 
 	private final List<String> values;
 

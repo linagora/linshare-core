@@ -199,10 +199,10 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@Parameter(description = "If true, perform pattern comparisons with case sensitivity.", required = false)
 				@QueryParam("caseSensitive")
 						boolean caseSensitive,
-			@Parameter(description = "Number of the page", required = false)
+			@Parameter(description = "The page number", required = false)
 				@QueryParam("pageNumber")
 					Integer pageNumber,
-			@Parameter(description = "Size of element in the page", required = false)
+			@Parameter(description = "Number of elements in a page", required = false)
 				@QueryParam("pageSize")
 					Integer pageSize,
 			@Parameter(description = "Returns nodes with creationDate after the given creationDateAfter parameter", required = false)
@@ -238,7 +238,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@Parameter(description = "Name of the attribute used in the sort.", required = false)
 				@QueryParam("sortField") @DefaultValue("modificationDate")
 					String sortField,
-			@Parameter(description = "Filter by the kind of document (DOCUMENT/PDF/SPREADSHEET/IMAGE/VIDEO/AUDIO/ARCHIVE).", required = false)
+			@Parameter(description = "Filter by the kind of document (DOCUMENT/PDF/SPREADSHEET/IMAGE/VIDEO/AUDIO/ARCHIVE). To get other kind of documents use OTHER", required = false)
 				@QueryParam("documentKind")
 					List<String> documentKinds)					
 			throws BusinessException {
