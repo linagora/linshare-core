@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-	xsi:schemaLocation="
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+          xsi:schemaLocation="
           http://www.springframework.org/schema/data/mongo
-          http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+          http://www.springframework.org/schema/data/mongo/spring-mongo-2.0.xsd
           http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans.xsd">
+          http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
+<!-- de.bwaldvogel.mongo.MongoServer does not support GRIDFS so we can use it in a embedded mode.
+So we disable the usage of GRIDFS by using  jcloud for files and thumbnails.
+see: springContext-storage-jcloud.xml -->
 	<bean name="server" class="de.bwaldvogel.mongo.MongoServer" destroy-method="shutdown" init-method="bind">
 		<constructor-arg>
 			<bean class="de.bwaldvogel.mongo.backend.memory.MemoryBackend" />
@@ -21,6 +24,7 @@
 			</bean>
 		</constructor-arg>
 	</bean>
+
 	<!-- 	org.springframework.data.mongodb.core.SimpleMongoDbFactory  -->
 	<mongo:db-factory
 		id="mongoDbFactoryDefault"
