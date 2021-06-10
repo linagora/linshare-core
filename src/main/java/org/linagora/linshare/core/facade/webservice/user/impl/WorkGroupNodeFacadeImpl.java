@@ -138,9 +138,9 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String pattern,
-			boolean caseSensitive, Integer pageNumber, Integer pageSize, String creationDateAfter,
-			String creationDateBefore, String modificationDateAfter, String modificationDateBefore, String parent,
+	public PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String parent,
+			String pattern, boolean caseSensitive, Integer pageNumber, Integer pageSize,
+			String creationDateAfter, String creationDateBefore, String modificationDateAfter, String modificationDateBefore,
 			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder,
 			SharedSpaceNodeField sortField, List<String> documentKinds) {
 		Account authUser = checkAuthentication();
@@ -149,10 +149,10 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceUuid);
 		List<DocumentKind> documentKindsConverted = Lists.newArrayList();
 		documentKinds.forEach(s -> documentKindsConverted.add(DocumentKind.valueOf(s)));
-		return service.findAll(authUser, actor, workGroup, pattern, caseSensitive,
-				new PageContainer<WorkGroupNode>(pageNumber, pageSize), getDateFromString(creationDateAfter),
-				getDateFromString(creationDateBefore), getDateFromString(modificationDateAfter),
-				getDateFromString(modificationDateBefore), parent, types, lastAuthor, minSize, maxSize, sortOrder,
+		return service.findAll(authUser, actor, workGroup, parent, pattern,
+				caseSensitive, new PageContainer<WorkGroupNode>(pageNumber, pageSize),
+				getDateFromString(creationDateAfter), getDateFromString(creationDateBefore),
+				getDateFromString(modificationDateAfter), getDateFromString(modificationDateBefore), types, lastAuthor, minSize, maxSize, sortOrder,
 				sortField, documentKindsConverted);
 	}
 	

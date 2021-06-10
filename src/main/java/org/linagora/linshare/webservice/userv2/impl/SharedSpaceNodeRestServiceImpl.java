@@ -193,6 +193,9 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@Parameter(description = "The sharedSpace uuid.", required = true)
 				@PathParam("sharedSpaceUuid")
 					String sharedSpaceUuid,
+			@Parameter(description = "Uuid of the parent node. If set return all nodes in all levels inside the given parent, otherwise return all nodes in current workgroup", required = false)
+				@QueryParam("parent")
+					String parent,
 			@Parameter(description = "Search pattern that contains matching sequence in name of Folder, Document or Revision in the shared space. Case insensitive by default", required = false)
 				@QueryParam("pattern")
 					String pattern,
@@ -217,9 +220,6 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			@Parameter(description = "Returns nodes with modificationDate after the given modificationDateBefore parameter", required = false)
 				@QueryParam("modificationDateBefore")
 					String modificationDateBefore,
-			@Parameter(description = "Uuid of the parent node. If set return all nodes in all levels inside the given parent, otherwise return all nodes in current workgroup", required = false)
-				@QueryParam("parent")
-					String parent,
 			@Parameter(description = "Filter by list of node types. See Enum to check available types (ROOT_FOLDER is not supported)", required = false)
 				@QueryParam("type")
 					List<WorkGroupNodeType> types,
@@ -242,9 +242,9 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 				@QueryParam("documentKind")
 					List<String> documentKinds)					
 			throws BusinessException {
-		return new PagingResponseBuilder<WorkGroupNode>().build(sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, pattern, caseSensitive, pageNumber,
-						pageSize, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
-						parent, types, lastAuthor, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField), documentKinds));
+		return new PagingResponseBuilder<WorkGroupNode>().build(sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, parent, pattern, caseSensitive,
+						pageNumber, pageSize, creationDateAfter, creationDateBefore, modificationDateAfter,
+						modificationDateBefore, types, lastAuthor, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField), documentKinds));
 	}
 
 	@Path("/{sharedSpaceNodeUuid}")

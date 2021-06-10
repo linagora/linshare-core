@@ -173,9 +173,9 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 	}
 
 	@Override
-	public PageContainer<WorkGroupNode> findAll(WorkGroup workGroup, String pattern, boolean caseSensitive,
-			PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter, Date creationDateBefore,
-			Date modificationDateAfter, Date modificationDateBefore, String parentUuid, List<WorkGroupNodeType> types,
+	public PageContainer<WorkGroupNode> findAll(WorkGroup workGroup, String parentUuid, String pattern,
+			boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter,
+			Date creationDateBefore, Date modificationDateAfter, Date modificationDateBefore, List<WorkGroupNodeType> types,
 			String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField,
 			List<DocumentKind> documentKinds) {
 		Query query = new Query();

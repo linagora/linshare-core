@@ -109,10 +109,9 @@ public interface WorkGroupNodeService {
 	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid, boolean moveDocument)
 			throws BusinessException;
 
-	PageContainer<WorkGroupNode> findAll(Account authUser, Account actor, WorkGroup workGroup, String pattern,
-			boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer, Date dateFromString,
-			Date dateFromString2, Date dateFromString3, Date dateFromString4, String parent,
+	PageContainer<WorkGroupNode> findAll(Account authUser, Account actor, WorkGroup workGroup, String parentUuid,
+			String pattern, boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter,
+			Date creationDateBefore, Date modificationDateAfter, Date modificationDateBefore,
 			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder,
 			SharedSpaceNodeField sortField, List<DocumentKind> documentKinds);
-
 }
