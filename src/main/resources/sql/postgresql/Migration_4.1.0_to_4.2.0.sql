@@ -1410,6 +1410,11 @@ mainMsg = The Drive {0} has been deleted by <b> {1} <span style="text-transform:
 nestedWorkGroupsList=You have been automatically removed from the following workgroups:
 displayNestedNodeName:{0}' WHERE id=40;
 
+
+-- Update root user's first and last name
+
+UPDATE account SET first_name='Super', last_name='Administrator' where ls_uuid='root@localhost.localdomain';
+
 ---- End of your queries
 
 -- LinShare version
