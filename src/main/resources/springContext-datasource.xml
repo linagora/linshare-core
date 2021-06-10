@@ -20,10 +20,11 @@
                 <prop key="hibernate.format_sql">${linshare.db.format_sql}</prop>
                 <prop key="hibernate.generate_statistics">${linshare.db.gen_stats}</prop>
                 <prop key="hibernate.hbm2ddl.auto">${linshare.db.hbm2ddl.auto}</prop>
+                <prop key="hibernate.hbm2ddl.import_files_sql_extractor">${linshare.hbm2ddl.import_files_sql_extractor}</prop>
             </props>
         </property>
     </bean>
-    
+
     <bean id="dataSourceHibernate" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${linshare.db.driver.class}"/>
         <property name="url" value="${linshare.db.url}"/>
