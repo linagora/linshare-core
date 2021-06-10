@@ -40,6 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +60,9 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.fields.DocumentKind;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -74,6 +81,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
@@ -81,6 +89,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
@@ -163,6 +173,7 @@ public class WorkGroupNodeServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		sharedSpaceNodeService.delete(john, john, ssnode);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -253,6 +264,143 @@ public class WorkGroupNodeServiceImplTest {
 		workGroupNodeService.delete(john, john, workGroup, document1.getUuid());
 		Long newQuota = quotaService.getRealTimeUsedSpace(john, john, workgroupQuota.getUuid());
 		Assertions.assertEquals(quota, newQuota, "The quota must be the same after adding then deleting a file");
+	}
+
+	@Test
+	public void testFindAllDefault() throws IOException {
+		createWorkgroupDocument("linshare-default.properties", "linshare-temp0");
+		createWorkgroupDocument("linshare-test.properties", "linshare-temp1");
+		// disable pagination
+		PageContainer<WorkGroupNode> pageContainer = new PageContainer<WorkGroupNode>(null, null);
+		// sorting has default values set from webservices. We should set them manually
+		// in the service.
+		PageContainer<WorkGroupNode> nodes = workGroupNodeService.findAll(john, john, workGroup, null, null, false,
+				pageContainer, null, null, null, null, null, null, null, null, SortOrder.DESC,
+				SharedSpaceNodeField.modificationDate, null);
+		// search on the wg should returns all folders/documents/revisions in all levels
+		Assertions.assertEquals(5, nodes.getPageResponse().getContent().size());
+		nodes = workGroupNodeService.findAll(john, john, workGroup, folder.getUuid(), null, false, pageContainer, null,
+				null, null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
+		// search on the folder should returns all folders/documents/revisions in all
+		// levels
+		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
+	}
+
+	@Test
+	public void testFindAllWithName() throws IOException {
+		// Test with search by name pattern | findAll method (used to search workgroup
+		// nodes)
+		createWorkgroupDocument("linshare-default.properties", "linshare-temp0");
+		createWorkgroupDocument("linshare-test.properties", "linshare-tempxyz");
+		// disable pagination
+		PageContainer<WorkGroupNode> pageContainer = new PageContainer<WorkGroupNode>(null, null);
+		String pattern = "xyz";
+		PageContainer<WorkGroupNode> nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, false,
+				pageContainer, null, null, null, null, null, null, null, null, SortOrder.DESC,
+				SharedSpaceNodeField.modificationDate, null);
+		// search on the workgroup should returns only folders/documents/revisions with
+		// name that contains given pattern
+		Assertions.assertEquals(2, nodes.getPageResponse().getContent().size());
+		pattern = "xYZ";
+		nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, false, pageContainer, null, null,
+				null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
+		// search on the workgroup should returns only folders/documents/revisions with
+		// name that contains given pattern
+		Assertions.assertEquals(2, nodes.getPageResponse().getContent().size());
+		// caseSensitive enabled
+		boolean caseSensitive = true;
+		nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, caseSensitive, pageContainer, null,
+				null, null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
+		// search on the workgroup should returns only folders/documents/revisions with
+		// name that contains given pattern
+		Assertions.assertEquals(0, nodes.getPageResponse().getContent().size());
+		pattern = "";
+		nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, false, pageContainer, null, null,
+				null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
+		// search on the workgroup with name that contains empty pattern should returns
+		// all folders/documents/revisions
+		Assertions.assertEquals(5, nodes.getPageResponse().getContent().size());
+	}
+
+	@Test
+	public void testFindAllWithAllFilters() throws IOException {
+		// Test with search with all filters set together | findAll method (used to
+		// search workgroup nodes)
+		createWorkgroupDocument("linshare-default.properties", "linshare-temp0");
+		createWorkgroupDocument("linshare-test.properties", "linshare-tempxyz");
+		PageContainer<WorkGroupNode> pageContainer = new PageContainer<WorkGroupNode>(0, 5);
+		String pattern = "";
+		Date wgCreationDate = workGroup.getCreationDate();
+		Date creationDateAfter = wgCreationDate;
+		Date creationDateBefore = addHoursToDate(workGroup.getCreationDate(), 1);
+		Date modificationDateAfter = wgCreationDate;
+		Date modificationDateBefore = addHoursToDate(wgCreationDate, 1);
+		List<WorkGroupNodeType> nodeTypes = Arrays.asList(WorkGroupNodeType.FOLDER, WorkGroupNodeType.DOCUMENT,
+				WorkGroupNodeType.DOCUMENT_REVISION);
+		String lastAuthor = john.getLsUuid();
+		Long minSize = 0L;
+		Long maxSize = Long.MAX_VALUE;
+		List<DocumentKind> documentKinds = Lists.newArrayList();
+		documentKinds.add(DocumentKind.DOCUMENT);
+		SortOrder sortOrder = SortOrder.DESC;
+		SharedSpaceNodeField sortField = SharedSpaceNodeField.modificationDate;
+		String parent = folder.getUuid();
+		PageContainer<WorkGroupNode> nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false,
+				pageContainer, null, null, null, null, null, null, null, null, sortOrder, sortField, null);
+		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
+
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
+				creationDateAfter, null, null, null, null, null, null, null, sortOrder, sortField, null);
+		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
+
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
+				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, null, null, null,
+				null, sortOrder, sortField, null);
+		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
+
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
+				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes, null,
+				null, null, sortOrder, sortField, null);
+		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
+
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
+				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes,
+				lastAuthor, null, null, sortOrder, sortField, null);
+		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
+
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
+				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes,
+				lastAuthor, minSize, maxSize, sortOrder, sortField, null);
+		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
+
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
+				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes,
+				lastAuthor, minSize, maxSize, sortOrder, sortField, documentKinds);
+		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
+
+		documentKinds.add(DocumentKind.OTHER);
+		// means we want documents that have mimeType not exists in all defaultSupported
+		// mimeTypes defined in DocumentKind Enum 
+		// see WorkgroupNodeBusinessServiceImpl.getDefaultSupportedMimetypes()
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
+				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes,
+				lastAuthor, minSize, maxSize, sortOrder, sortField, documentKinds);
+		// documentKind of created workgroup documents is DOCUMENT, expected empty list
+		Assertions.assertEquals(0, nodes.getPageResponse().getContent().size());
+	}
+
+	public Date addHoursToDate(Date date, int hours) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(1, 1);
+		return calendar.getTime();
+	}
+
+	private void createWorkgroupDocument(String streamName, String tempFileName) throws IOException {
+		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(streamName);
+		File tempFile = File.createTempFile(tempFileName, ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		workGroupNodeService.create(john, john, workGroup, tempFile, tempFile.getName(), folder.getUuid(), false);
 	}
 
 }
