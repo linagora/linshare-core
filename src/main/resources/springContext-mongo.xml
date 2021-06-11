@@ -33,15 +33,7 @@
 	</bean>
 	<mongo:repositories base-package="org.linagora.linshare.mongo" />
 
-
-	<bean id = "initMongoServiceImpl" class="org.linagora.linshare.core.service.impl.InitMongoServiceImpl" init-method="init" >
-		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
-		<constructor-arg ref="userService" />
-		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
-	</bean>
-	
 	<!-- another client to initialize gridfs instance for little files like thumbnails. -->
-
 	<mongo:mongo-client
 		id="mongoClientSmall"
 		replica-set="${linshare.mongo.smallfiles.replicaset}"

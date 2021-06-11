@@ -67,7 +67,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -103,7 +102,8 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",
@@ -136,9 +136,6 @@ public class WorkGroupNodeServiceImplTest {
 	private UserRepository<User> userRepository;
 
 	@Autowired
-	private InitMongoService initMongoService;
-
-	@Autowired
 	private FunctionalityReadOnlyService functionalityService;
 
 	@Autowired
@@ -158,7 +155,6 @@ public class WorkGroupNodeServiceImplTest {
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
-		initMongoService.init();
 		ssnode = sharedSpaceNodeService.create(john, john,
 				new SharedSpaceNode("Workgroup_test", "My parent nodeUuid", NodeType.WORK_GROUP));
 		workGroup = threadService.find(john, john, ssnode.getUuid());

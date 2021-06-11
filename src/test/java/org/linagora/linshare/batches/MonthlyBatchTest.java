@@ -62,15 +62,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+@DirtiesContext
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({
-	
 	"/import-tests-stat.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -79,11 +80,12 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-ldap.xml" })
 public class MonthlyBatchTest {
 

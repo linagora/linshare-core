@@ -55,7 +55,6 @@ import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -84,7 +83,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class SharedSpaceMemberBusinessServiceImplTest {
@@ -94,9 +94,6 @@ public class SharedSpaceMemberBusinessServiceImplTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
-
-	@Autowired
-	InitMongoService initService;
 
 	@Autowired
 	private SharedSpaceRoleMongoRepository roleRepository;
@@ -118,7 +115,6 @@ public class SharedSpaceMemberBusinessServiceImplTest {
 	public void setUp() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
-		initService.init();
 		lightAdminRoleToPersist = new LightSharedSpaceRole(roleRepository.findByName("ADMIN"));
 		lightReaderRoleToPersist = new LightSharedSpaceRole(roleRepository.findByName("READER"));
 		lightContirbutorRoleToPersist = new LightSharedSpaceRole(roleRepository.findByName("CONTRIBUTOR"));

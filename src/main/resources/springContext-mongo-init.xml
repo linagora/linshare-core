@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+          xsi:schemaLocation="
+          http://www.springframework.org/schema/data/mongo
+          http://www.springframework.org/schema/data/mongo/spring-mongo-2.0.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+<!--  refactoring to have this bean declared once, but I'm not confident with the "init" process,
+there is an impact on the database. no concurrency issues ?-->
+	<bean id = "initMongoServiceImpl"
+		class="org.linagora.linshare.core.service.impl.InitMongoServiceImpl"
+		init-method="init" >
+		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
+	</bean>
+</beans>

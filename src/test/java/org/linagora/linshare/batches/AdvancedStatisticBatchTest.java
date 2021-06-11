@@ -65,7 +65,6 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
@@ -84,6 +83,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -91,6 +91,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+@DirtiesContext
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ 
@@ -99,7 +100,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-business-service.xml",
@@ -107,6 +108,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
 public class AdvancedStatisticBatchTest {
@@ -148,9 +150,6 @@ public class AdvancedStatisticBatchTest {
 	private SharedSpaceMemberService memberService;
 
 	@Autowired
-	private InitMongoService initMongoService;
-
-	@Autowired
 	private ThreadService threadService;
 
 	private User john;
@@ -164,7 +163,6 @@ public class AdvancedStatisticBatchTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		initMongoService.init();
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		createWorkgroupDocument();

@@ -59,7 +59,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
@@ -85,7 +84,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class SharedSpaceMemberServiceImplTest {
@@ -130,9 +130,6 @@ public class SharedSpaceMemberServiceImplTest {
 	private SharedSpaceNodeBusinessService nodeBusinessService;
 
 	@Autowired
-	InitMongoService initService;
-
-	@Autowired
 	@Qualifier("sharedSpaceMemberService")
 	private SharedSpaceMemberService service;
 
@@ -154,7 +151,6 @@ public class SharedSpaceMemberServiceImplTest {
 		system = userRepository.getBatchSystemAccount();
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
-		initService.init();
 		adminRole = roleBusinessService.findByName("ADMIN");
 		readerRole = roleBusinessService.findByName("READER");
 		lightReaderRoleToPersist = new LightSharedSpaceRole(readerRole);

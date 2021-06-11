@@ -484,11 +484,6 @@
 		<constructor-arg ref="sharedSpaceRoleBusinessService" />
 		<constructor-arg ref="sharedSpaceRoleResourceAccessControl" />
 	</bean>
-	<bean id="initMongoService" class="org.linagora.linshare.core.service.impl.InitMongoServiceImpl">
-		<constructor-arg ref="userService" />
-		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
-		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
-	</bean>
 	<bean id="sharedSpacePermissionService" class="org.linagora.linshare.core.service.impl.SharedSpacePermissionServiceImpl">
 		<constructor-arg ref="sharedSpacePermissionBusinessService" />
 	</bean>

@@ -52,7 +52,6 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
@@ -80,7 +79,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class WorkGroupFolderServiceTest {
@@ -103,9 +103,6 @@ public class WorkGroupFolderServiceTest {
 	@Autowired
 	private SharedSpaceNodeService sharedSpaceNodeService;
 
-	@Autowired
-	private InitMongoService init;
-
 	private User jane;
 
 	private boolean dryRun = false;
@@ -114,7 +111,6 @@ public class WorkGroupFolderServiceTest {
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
-		init.init();
 	}
 
 	@AfterEach

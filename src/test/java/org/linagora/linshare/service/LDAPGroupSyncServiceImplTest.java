@@ -68,7 +68,6 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
@@ -105,7 +104,8 @@ import com.beust.jcommander.internal.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",
@@ -144,9 +144,6 @@ public class LDAPGroupSyncServiceImplTest {
 	@Autowired
 	AbstractDomainService abstractDomainService;
 
-	@Autowired
-	private InitMongoService init;
-
 	private Wiser wiser;
 
 	private LdapConnection ldapConnection;
@@ -173,7 +170,6 @@ public class LDAPGroupSyncServiceImplTest {
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
-		init.init();
 		systemAccount = userRepository.getBatchSystemAccount();
 		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		domain = abstractDomainService.findById(LinShareTestConstants.TOP_DOMAIN);

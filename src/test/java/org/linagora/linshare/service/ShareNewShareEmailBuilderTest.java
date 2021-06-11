@@ -102,7 +102,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-business-service.xml",

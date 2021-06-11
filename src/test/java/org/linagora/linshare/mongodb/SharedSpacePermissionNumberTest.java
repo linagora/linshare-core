@@ -43,7 +43,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,15 +62,13 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class SharedSpacePermissionNumberTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
-	
-	@Autowired
-	private InitMongoService initMongo;
 
 	@Autowired
 	private SharedSpacePermissionMongoRepository permissionRepo;
@@ -93,7 +90,6 @@ public class SharedSpacePermissionNumberTest {
 		Long resourceNumber = (long) SharedSpaceResourceType.values().length;
 		Long actionNumber = (long) SharedSpaceActionType.values().length;
 		Long actualPermissionNumber = resourceNumber * actionNumber - 7;
-		initMongo.init();
 		/*
 		 * The DOWNLOAD and DOWNLOAD_THUMBNAIL actions are not applicable to all
 		 * resources, DOWNLOAD ---> FOLDER + FILE and DOWNLOAD_THUMBNAIL ----> FILE, so

@@ -64,7 +64,7 @@ import io.jsonwebtoken.Claims;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",

@@ -55,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -62,6 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+@DirtiesContext
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
 @Sql({
@@ -72,13 +74,14 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
 public class CheckUserStillInconsistentBatchImplTest {

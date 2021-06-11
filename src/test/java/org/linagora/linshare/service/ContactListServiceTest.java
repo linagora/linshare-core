@@ -84,7 +84,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class ContactListServiceTest {

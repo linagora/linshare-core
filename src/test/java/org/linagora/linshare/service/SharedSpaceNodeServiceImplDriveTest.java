@@ -53,7 +53,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
@@ -74,15 +73,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-test.xml" })
 public class SharedSpaceNodeServiceImplDriveTest {
 
 	private static Logger logger = LoggerFactory.getLogger(SharedSpaceNodeServiceImplDriveTest.class);
-
-	@Autowired
-	private InitMongoService init;
 
 	@Autowired
 	@Qualifier("sharedSpaceNodeService")
@@ -104,7 +101,6 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		init.init();
 		authUser = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

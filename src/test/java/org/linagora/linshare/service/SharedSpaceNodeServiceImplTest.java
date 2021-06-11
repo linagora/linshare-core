@@ -54,7 +54,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -78,7 +77,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class SharedSpaceNodeServiceImplTest {
@@ -103,9 +103,6 @@ public class SharedSpaceNodeServiceImplTest {
 	private SharedSpaceNode node4;
 
 	@Autowired
-	private InitMongoService init;
-
-	@Autowired
 	@Qualifier("sharedSpaceNodeService")
 	private SharedSpaceNodeService service;
 
@@ -116,7 +113,6 @@ public class SharedSpaceNodeServiceImplTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		init.init();
 		root = userRepo.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		john = userRepo.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		foo = userRepo.findByMail(LinShareTestConstants.FOO_ACCOUNT);

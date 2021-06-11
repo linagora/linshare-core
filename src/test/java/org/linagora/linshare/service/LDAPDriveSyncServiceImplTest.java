@@ -61,7 +61,6 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DriveProviderService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LDAPDriveSyncService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
 import org.linagora.linshare.core.service.LdapConnectionService;
@@ -96,9 +95,10 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml"
 })
@@ -133,9 +133,6 @@ public class LDAPDriveSyncServiceImplTest {
 	@Autowired
 	AbstractDomainService abstractDomainService;
 
-	@Autowired
-	private InitMongoService init;
-
 	private Wiser wiser;
 
 	private LdapConnection ldapConnection;
@@ -168,7 +165,6 @@ public class LDAPDriveSyncServiceImplTest {
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
-		init.init();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		systemAccount = userRepository.getBatchSystemAccount();

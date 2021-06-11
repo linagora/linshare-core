@@ -67,7 +67,7 @@ import com.google.common.collect.Lists;
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml", "classpath:springContext-repository.xml",
-		"classpath:springContext-mongo-java-server.xml", "classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-mongo.xml", "classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-business-service.xml", "classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
 public class MailContentBuildingServiceImplTest {

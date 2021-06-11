@@ -47,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpacePermissionService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
@@ -72,7 +71,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class SharedSpacePermissionServiceImplTest{
@@ -87,9 +87,6 @@ public class SharedSpacePermissionServiceImplTest{
 	private UserRepository<User> userRepository;
 
 	@Autowired
-	InitMongoService initMongoService;
-
-	@Autowired
 	private SharedSpacePermissionService service;
 
 	@Mock
@@ -98,7 +95,6 @@ public class SharedSpacePermissionServiceImplTest{
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		initMongoService.init();
 		Mockito.when(authUser.isUser()).thenReturn(true);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

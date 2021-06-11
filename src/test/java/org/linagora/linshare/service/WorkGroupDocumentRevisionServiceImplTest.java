@@ -61,7 +61,6 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
@@ -95,7 +94,8 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",
@@ -124,9 +124,6 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	private UserRepository<User> userRepository;
 
 	@Autowired
-	private InitMongoService initMongoService;
-
-	@Autowired
 	private WorkGroupNodeMongoRepository repository;
 
 	private User john;
@@ -141,7 +138,6 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
-		initMongoService.init();
 		createNeed();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

@@ -57,7 +57,6 @@ import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
-import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -76,13 +75,14 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		})
@@ -113,9 +113,6 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	@Autowired
 	private GroupProviderService groupProviderService;
 
-	@Autowired
-	private InitMongoService initService;
-
 	private User root;
 
 	public SynchronizeLDAPGroupsInWorkgroupsBatchImplTest() {
@@ -126,7 +123,6 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		root = userRepository.findByLoginAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
-		initService.init();
 		GroupLdapPatternDto groupPatternDto = new GroupLdapPatternDto();
 		groupPatternDto.setDescription("description");
 		groupPatternDto.setLabel("New Pattern");

@@ -77,13 +77,14 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
 public class WarnSenderAboutShareExpirationBatchImplTest {

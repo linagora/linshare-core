@@ -1516,14 +1516,28 @@
 		<profile>
 			<id>mongo-java-server</id>
 			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources</directory>
-					</resource>
-					<resource>
-						<directory>src/mongo-java-server/resources</directory>
-					</resource>
-				</resources>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<configuration>
+									<target name="copy-mongo-java-server">
+										<copy todir="${project.build.outputDirectory}/" overwrite="true" flatten="true">
+											<fileset dir="src/mongo-java-server/resources"/>
+										</copy>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
 			</build>
 			<dependencies>
 				<dependency>

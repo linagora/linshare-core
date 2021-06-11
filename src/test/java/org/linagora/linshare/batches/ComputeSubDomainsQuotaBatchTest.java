@@ -50,6 +50,7 @@ import org.linagora.linshare.core.runner.BatchRunner;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -58,6 +59,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+@DirtiesContext
 @ExtendWith(SpringExtension.class)
 @Sql({
 	"/import-tests-quota.sql"})
@@ -65,13 +67,14 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-datasource.xml", 
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
-		"classpath:springContext-mongo-java-server.xml",
+		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-scheduler.xml",
