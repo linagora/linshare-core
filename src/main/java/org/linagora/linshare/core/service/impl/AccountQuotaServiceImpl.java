@@ -60,6 +60,7 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 		this.business = accountQuotaBusinessService;
 	}
 
+	@Deprecated
 	@Override
 	public AccountQuota find(Account actor, String uuid) {
 		Validate.notNull(actor, "Actor must be set.");
@@ -74,11 +75,29 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 	}
 
 	@Override
+	public AccountQuota find(Account authUser, Account actor, String userUuid, String quotaUuid) {
+		Validate.notNull(authUser, "authUser must be set.");
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notEmpty(quotaUuid, "Uuid must be set.");
+		AccountQuota accountQuota = business.find(quotaUuid);
+		if (accountQuota == null) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
+					"Can not found account quota with uuid : " + quotaUuid);
+		}
+		if (!userUuid.equals(accountQuota.getAccount().getLsUuid())) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
+					"The chosen quota is not related to the requested account, please check the entered accountUuid and quotaUuid");
+		}
+		return accountQuota;
+	}
+
+	@Override
 	public List<AccountQuota> findAll(Account actor) {
 		Validate.notNull(actor, "Actor must be set.");
 		return business.findAll();
 	}
 
+	@Deprecated
 	@Override
 	public AccountQuota update(Account actor, AccountQuota aq) {
 		Validate.notNull(actor, "Actor must be set.");
@@ -88,6 +107,15 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 		// checkUpdatePermission(actor, owner, AccountQuota.class,
 		// BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
 		return business.update(entity, aq);
+	}
+
+	@Override
+	public AccountQuota update(Account authUser, Account actor, String userUuid, AccountQuota accountQuota) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(accountQuota, "Account quota must be set.");
+		Validate.notEmpty(accountQuota.getUuid(), "Account quota uuid must be set.");
+		AccountQuota entity = find(authUser, actor, userUuid, accountQuota.getUuid());
+		return business.update(entity, accountQuota);
 	}
 
 }

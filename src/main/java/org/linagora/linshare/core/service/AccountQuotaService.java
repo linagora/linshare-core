@@ -44,8 +44,30 @@ public interface AccountQuotaService {
 
 	AccountQuota find(Account actor, String uuid);
 
+	/**
+	 * Only for Admins
+	 * find a quota and check if it belongs to the right account 
+	 * @param authUser Account authenticated user
+	 * @param actor Account account that make the operation
+	 * @param userUuid String uuid of the account whom quota belongs
+	 * @param quotaUuid uuid of the quota
+	 * @return {@link AccountQuota}
+	 */
+	AccountQuota find(Account authUser, Account actor, String userUuid, String quotaUuid);
+
 	List<AccountQuota> findAll(Account actor);
 
 	AccountQuota update(Account actor, AccountQuota entity);
+
+	/**
+	 * Only for Admins
+	 * Update a quota of an account
+	 * @param authUser Account authenticated user
+	 * @param actor Account account that make the operation
+	 * @param userUuid String uuid of the account whom quota belongs
+	 * @param accountQuota {@link AccountQuota} account quota entity
+	 * @return {@link AccountQuota}
+	 */
+	AccountQuota update(Account authUser, Account actor, String userUuid, AccountQuota accountQuota);
 
 }

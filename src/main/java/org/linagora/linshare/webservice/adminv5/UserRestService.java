@@ -73,5 +73,5 @@ public interface UserRestService {
 
 	SecondFactorDto delete2FA(String uuid, String secondfaUuid, SecondFactorDto dto) throws BusinessException;
 
-	UserDtoQuotaDto updateUserQuota(String uuid, String quotaUuid, UserDtoQuotaDto dto) throws BusinessException;
+	UserDtoQuotaDto updateUserQuota(String userUuid, String quotaUuid, UserDtoQuotaDto dto) throws BusinessException;
 }

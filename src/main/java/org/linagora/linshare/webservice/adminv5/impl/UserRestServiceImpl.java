@@ -293,12 +293,12 @@ public class UserRestServiceImpl implements UserRestService {
 	@Override
 	public UserDtoQuotaDto updateUserQuota(
 			@Parameter(description = "User's Uuid", required = true)
-			@PathParam("uuid") String uuid,
+				@PathParam("uuid") String userUuid,
 			@Parameter(description = "User's quota Uuid", required = true)
-			@PathParam("quotaUuid") String quotaUuid,
-			@Parameter(description = "User's quota Dto. Only quota, maxFileSize, quotaOverride and maxFileSizeOverride fields can be updated.", required = true)
+				@PathParam("quotaUuid") String quotaUuid,
+			@Parameter(description = "User's quota Dto. Should at least contains quota field. Only quota, maxFileSize, quotaOverride and maxFileSizeOverride fields can be updated.", required = true)
 			UserDtoQuotaDto dto
 			) throws BusinessException {
-		return userFacade.updateUserQuota(uuid, quotaUuid, dto);
+		return userFacade.updateUserQuota(null, userUuid, quotaUuid, dto);
 	}
 }
