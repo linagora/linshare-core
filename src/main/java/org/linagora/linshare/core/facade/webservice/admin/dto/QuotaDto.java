@@ -79,7 +79,7 @@ public class QuotaDto {
 	protected Long usedSpace;
 
 	@Schema(description = "Yesterday used space. Read only.")
-	protected Long yersterdayUsedSpace;
+	protected Long yesterdayUsedSpace;
 
 	@Schema(description = "If set to true, uploads are disable due to server maintenance.")
 	protected Boolean maintenance;
@@ -109,7 +109,7 @@ public class QuotaDto {
 		this.defaultQuotaOverride = quota.getDefaultQuotaOverride();
 //		this.quotaWarning = quota.getQuotaWarning();
 		this.usedSpace = quota.getCurrentValue();
-		this.yersterdayUsedSpace = quota.getLastValue();
+		this.yesterdayUsedSpace = quota.getLastValue();
 		this.maintenance = quota.getMaintenance();
 		this.creationDate = quota.getCreationDate();
 		this.modificationDate = quota.getModificationDate();
@@ -156,12 +156,12 @@ public class QuotaDto {
 		this.uuid = uuid;
 	}
 
-	public Long getYersterdayUsedSpace() {
-		return yersterdayUsedSpace;
+	public Long getYesterdayUsedSpace() {
+		return yesterdayUsedSpace;
 	}
 
-	public void setYersterdayUsedSpace(Long yersterdayUsedSpace) {
-		this.yersterdayUsedSpace = yersterdayUsedSpace;
+	public void setYesterdayUsedSpace(Long yesterdayUsedSpace) {
+		this.yesterdayUsedSpace = yesterdayUsedSpace;
 	}
 
 	public Date getCreationDate() {

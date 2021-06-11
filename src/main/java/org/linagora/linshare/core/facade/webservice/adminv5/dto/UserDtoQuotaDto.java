@@ -52,7 +52,7 @@ public class UserDtoQuotaDto {
 	private Long quota;
 
 	@Schema(description = "The value of yesterday's used space (Read only)")
-	private Long yersterdayUsedSpace;
+	private Long yesterdayUsedSpace;
 
 	@Schema(description = "The used space. Read only.")
 	protected Long usedSpace;
@@ -89,7 +89,7 @@ public class UserDtoQuotaDto {
 		this.uuid = quota.getUuid();
 		this.quota = quota.getQuota();
 		this.usedSpace = quota.getCurrentValue();
-		this.yersterdayUsedSpace = quota.getLastValue();
+		this.yesterdayUsedSpace = quota.getLastValue();
 		this.maintenance = quota.getMaintenance();
 		this.maxFileSize = quota.getMaxFileSize();
 		this.defaultMaxFileSize = quota.getContainerQuota().getDefaultMaxFileSize();
@@ -116,12 +116,12 @@ public class UserDtoQuotaDto {
 		this.quota = quota;
 	}
 
-	public Long getYersterdayUsedSpace() {
-		return yersterdayUsedSpace;
+	public Long getYesterdayUsedSpace() {
+		return yesterdayUsedSpace;
 	}
 
-	public void setYersterdayUsedSpace(Long yersterdayUsedSpace) {
-		this.yersterdayUsedSpace = yersterdayUsedSpace;
+	public void setYesterdayUsedSpace(Long yesterdayUsedSpace) {
+		this.yesterdayUsedSpace = yesterdayUsedSpace;
 	}
 
 	public Long getRealTimeUsedSpace() {
