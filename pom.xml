@@ -1140,12 +1140,13 @@
 						<configuration>
 							<target>
 								<mkdir dir="target/classes/sql/postgresql/" />
-								<concat destfile="target/classes/sql/postgresql/import-all-emails.sql">
-									<fileset file="src/main/resources/sql/common/import-header.sql" />
+								<concat destfile="target/classes/sql/postgresql/reset-default-emails-config.sql">
+									<fileset file="src/main/resources/sql/common/import-reset-default-emails-configuration-header.sql" />
+									<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
 									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
 									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
 									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									<fileset file="src/main/resources/sql/common/import-footer.sql" />
+									<fileset file="src/main/resources/sql/common/import-reset-default-emails-configuration-footer.sql" />
 								</concat>
 							</target>
 						</configuration>
