@@ -1064,75 +1064,75 @@
 					<target>11</target>
 					<optimize>true</optimize>
 				</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-antrun-plugin</artifactId>
-					<version>1.8</version><!--$NO-MVN-MAN-VER$-->
-					<executions>
-						<execution>
-							<phase>process-resources</phase>
-							<id>ant-merge-files-import-postgres</id>
-							<goals>
-								<goal>run</goal>
-							</goals>
-							<configuration>
-								<target>
-									<mkdir dir="target/classes/sql/postgresql/" />
-									<concat destfile="target/classes/sql/postgresql/import-postgresql.sql">
-										<fileset file="src/main/resources/sql/common/import-header.sql" />
-										<fileset file="src/main/resources/sql/common/import-domains.sql" />
-										<fileset file="src/main/resources/sql/common/import-quota.sql" />
-										<fileset file="src/main/resources/sql/common/import-welcome-messages.sql" />
-										<fileset file="src/main/resources/sql/common/import-functionalities.sql" />
-										<fileset file="src/main/resources/sql/common/import-mail-activation.sql" />
-										<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-										<fileset file="src/main/resources/sql/common/import-settings.sql" />
-										<fileset file="src/main/resources/sql/common/import-footer.sql" />
-									</concat>
-								</target>
-							</configuration>
-						</execution>
-						<execution>
-							<id>ant-merge-files-mail-templates</id>
-							<goals>
-								<goal>run</goal>
-							</goals>
-							<phase>process-resources</phase>
-							<configuration>
-								<target>
-									<mkdir dir="target/classes/sql/postgresql/" />
-									<concat destfile="target/classes/sql/postgresql/import-all-emails.sql">
-										<fileset file="src/main/resources/sql/common/import-header.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-										<fileset file="src/main/resources/sql/common/import-footer.sql" />
-									</concat>
-								</target>
-							</configuration>
-						</execution>
-						<execution>
-							<id>ant-merge-files-mail-templates-h2</id>
-							<goals>
-								<goal>run</goal>
-							</goals>
-							<phase>generate-test-sources</phase>
-							<configuration>
-								<target>
-									<mkdir dir="target/classes/sql/h2/" />
-									<concat destfile="target/classes/sql/h2/import-all-emails.sql">
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									</concat>
-								</target>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version><!--$NO-MVN-MAN-VER$-->
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<id>ant-merge-files-import-postgres</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<mkdir dir="target/classes/sql/postgresql/" />
+								<concat destfile="target/classes/sql/postgresql/import-postgresql.sql">
+									<fileset file="src/main/resources/sql/common/import-header.sql" />
+									<fileset file="src/main/resources/sql/common/import-domains.sql" />
+									<fileset file="src/main/resources/sql/common/import-quota.sql" />
+									<fileset file="src/main/resources/sql/common/import-welcome-messages.sql" />
+									<fileset file="src/main/resources/sql/common/import-functionalities.sql" />
+									<fileset file="src/main/resources/sql/common/import-mail-activation.sql" />
+									<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset file="src/main/resources/sql/common/import-settings.sql" />
+									<fileset file="src/main/resources/sql/common/import-footer.sql" />
+								</concat>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ant-merge-files-mail-templates</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<phase>process-resources</phase>
+						<configuration>
+							<target>
+								<mkdir dir="target/classes/sql/postgresql/" />
+								<concat destfile="target/classes/sql/postgresql/import-all-emails.sql">
+									<fileset file="src/main/resources/sql/common/import-header.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset file="src/main/resources/sql/common/import-footer.sql" />
+								</concat>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ant-merge-files-mail-templates-h2</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<phase>generate-test-sources</phase>
+						<configuration>
+							<target>
+								<mkdir dir="target/classes/sql/h2/" />
+								<concat destfile="target/classes/sql/h2/import-all-emails.sql">
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+								</concat>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<!-- buildnumber-maven-plugin (compute timestamp, build number, ...)-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
