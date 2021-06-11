@@ -272,6 +272,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		Validate.notEmpty(quotaUuid, "quotaUuid must be set.");
 		Validate.notEmpty(accountUuid, "accountUuid must be set.");
 		User user = userService2.find(authUser, actor, accountUuid);
+		checkAdminPermission(authUser, user);
 		AccountQuota quota = accountQuotaService.find(authUser, quotaUuid);
 		if (!quota.getAccount().getLsUuid().equals(user.getLsUuid())) {
 			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
@@ -280,6 +281,26 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		Long realTimeUsedSpace = quotaService.getRealTimeUsedSpace(authUser, authUser, quotaUuid);
 		UserDtoQuotaDto quotaDto = new UserDtoQuotaDto(quota, realTimeUsedSpace);
 		return quotaDto;
+	}
+
+	@Override
+	public UserDtoQuotaDto updateUserQuota(String uuid, String quotaUuid, UserDtoQuotaDto dto) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Validate.notNull(dto, "quota dto must be not null.");
+		if (!Strings.isNullOrEmpty(quotaUuid)) {
+			dto.setUuid(quotaUuid);
+		}
+		Validate.notEmpty(quotaUuid, "quotaUuid must be set.");
+		User user = userService2.find(authUser, authUser, uuid);
+		checkAdminPermission(authUser, user);
+		AccountQuota quota = accountQuotaService.find(authUser, quotaUuid);
+		// should be moved to accountQuotaService.update ?
+		if (!quota.getAccount().getLsUuid().equals(user.getLsUuid())) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
+					"The chosen quota is not related to the requested account, please check the entered accountUuid and quotaUuid");
+		}
+		AccountQuota aq = accountQuotaService.update(authUser, dto.toObject());
+		return new UserDtoQuotaDto(aq, quotaService.getRealTimeUsedSpace(authUser, authUser, quotaUuid));
 	}
 
 	@Override

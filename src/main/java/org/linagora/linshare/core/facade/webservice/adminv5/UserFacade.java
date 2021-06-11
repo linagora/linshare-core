@@ -78,4 +78,6 @@ public interface UserFacade extends AdminGenericFacade {
 
 	SecondFactorDto delete2FA(String userUuid, String secondFactorUuid, SecondFactorDto dto) throws BusinessException;
 
+	UserDtoQuotaDto updateUserQuota(String uuid, String quotaUuid, UserDtoQuotaDto dto);
+
 }

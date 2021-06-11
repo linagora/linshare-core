@@ -48,16 +48,24 @@ public class UserDtoQuotaDto {
 	@Schema(description = "uuid")
 	private String uuid;
 
-	@Schema(description = "The value of the quota limit")
+	@Schema(description = "The value of the current account quota limit")
 	private Long quota;
+
+	@Schema(description = "The default quota value allowed for each account on his personal space. (Read only)")
+	private Long defaultQuota;
+	
+	@Schema(description = "If true, allow to override quota field for the current account"
+			+ "Otherwise the quota value can/will be updated by cascade by the defaultQuota value."
+			+ "Useless for root domain quota")
+	private Boolean quotaOverride;
 
 	@Schema(description = "The value of yesterday's used space (Read only)")
 	private Long yesterdayUsedSpace;
 
-	@Schema(description = "The used space. Read only.")
+	@Schema(description = "The used space. (Read only)")
 	protected Long usedSpace;
 
-	@Schema(description = "Return real time quota value.")
+	@Schema(description = "Real time used space of account quota. (Read only)")
 	private Long realTimeUsedSpace;
 
 	@Schema(description = "If set to true, uploads are disable due to server maintenance.")
@@ -72,13 +80,13 @@ public class UserDtoQuotaDto {
 	@Schema(description = "The maximum file size allowed.")
 	private Long maxFileSize;
 
-	@Schema(description = "The default maximum file size allowed.")
+	@Schema(description = "The default maximum file size allowed. (Read only)")
 	private Long defaultMaxFileSize;
 
-	@Schema(description = "The default value of the quota limit")
-	private Long defaultQuota;
+	@Schema(description = "If true, it is unlinked from its parent.")
+	private Boolean maxFileSizeOverride;
 
-	@Schema(description = "The account to which the quota belongs.")
+	@Schema(description = "The account to which the quota belongs. (Read only)")
 	private AccountLightDto account;
 
 	protected UserDtoQuotaDto() {
@@ -86,18 +94,31 @@ public class UserDtoQuotaDto {
 	}
 
 	public UserDtoQuotaDto(AccountQuota quota, Long realTimeUsedSpace) {
+		super();
 		this.uuid = quota.getUuid();
 		this.quota = quota.getQuota();
-		this.usedSpace = quota.getCurrentValue();
-		this.yesterdayUsedSpace = quota.getLastValue();
-		this.maintenance = quota.getMaintenance();
-		this.maxFileSize = quota.getMaxFileSize();
-		this.defaultMaxFileSize = quota.getContainerQuota().getDefaultMaxFileSize();
 		this.defaultQuota = quota.getContainerQuota().getDefaultAccountQuota();
-		this.account = new AccountLightDto(quota.getAccount());
+		this.quotaOverride = quota.getQuotaOverride();
+		this.yesterdayUsedSpace = quota.getLastValue();
+		this.usedSpace = quota.getCurrentValue();
 		this.realTimeUsedSpace = realTimeUsedSpace;
+		this.maintenance = quota.getMaintenance();
 		this.creationDate = quota.getCreationDate();
 		this.modificationDate = quota.getModificationDate();
+		this.maxFileSize = quota.getMaxFileSize();
+		this.defaultMaxFileSize = quota.getContainerQuota().getDefaultMaxFileSize();;
+		this.maxFileSizeOverride = quota.getMaxFileSizeOverride();
+		this.account = new AccountLightDto(quota.getAccount());;
+	}
+
+	public AccountQuota toObject() {
+		AccountQuota quota = new AccountQuota();
+		quota.setUuid(getUuid());
+		quota.setQuota(getQuota());
+		quota.setQuotaOverride(isQuotaOverride());
+		quota.setMaxFileSize(getMaxFileSize());
+		quota.setMaxFileSizeOverride(isMaxFileSizeOverride());
+		return quota;
 	}
 
 	public String getUuid() {
@@ -186,6 +207,22 @@ public class UserDtoQuotaDto {
 
 	public void setDefaultQuota(Long defaultQuota) {
 		this.defaultQuota = defaultQuota;
+	}
+
+	public Boolean isQuotaOverride() {
+		return quotaOverride;
+	}
+
+	public void setQuotaOverride(Boolean quotaOverride) {
+		this.quotaOverride = quotaOverride;
+	}
+
+	public Boolean isMaxFileSizeOverride() {
+		return maxFileSizeOverride;
+	}
+
+	public void setMaxFileSizeOverride(Boolean maxFileSizeOverride) {
+		this.maxFileSizeOverride = maxFileSizeOverride;
 	}
 
 	public AccountLightDto getAccount() {
