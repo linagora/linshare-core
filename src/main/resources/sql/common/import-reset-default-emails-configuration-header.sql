@@ -2,6 +2,7 @@ SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 \set ON_ERROR_STOP
 
+-- Please do not use it in production. Too dangerous
 BEGIN;
 
 ALTER TABLE mail_content_lang DISABLE TRIGGER ALL;
