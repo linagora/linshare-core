@@ -156,6 +156,14 @@ public class QuotaDto {
 		this.uuid = uuid;
 	}
 
+	public Long getYersterdayUsedSpace() {
+		return yersterdayUsedSpace;
+	}
+
+	public void setYersterdayUsedSpace(Long yersterdayUsedSpace) {
+		this.yersterdayUsedSpace = yersterdayUsedSpace;
+	}
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
