@@ -8,7 +8,7 @@
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-<!-- de.bwaldvogel.mongo.MongoServer does not support GRIDFS so we can use it in a embedded mode.
+<!-- de.bwaldvogel.mongo.MongoServer does not support GRIDFS so we can not use it in a embedded mode.
 So we disable the usage of GRIDFS by using  jcloud for files and thumbnails.
 see: springContext-storage-jcloud.xml -->
 	<bean name="server" class="de.bwaldvogel.mongo.MongoServer" destroy-method="shutdown" init-method="bind">
