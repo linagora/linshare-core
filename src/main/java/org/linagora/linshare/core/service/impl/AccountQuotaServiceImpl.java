@@ -111,7 +111,7 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 
 	@Override
 	public AccountQuota update(Account authUser, Account actor, String userUuid, AccountQuota accountQuota) {
-		Validate.notNull(actor, "Actor must be set.");
+		preChecks(authUser, actor);
 		Validate.notNull(accountQuota, "Account quota must be set.");
 		Validate.notEmpty(accountQuota.getUuid(), "Account quota uuid must be set.");
 		AccountQuota entity = find(authUser, actor, userUuid, accountQuota.getUuid());

@@ -284,7 +284,7 @@ public class UserRestServiceImpl implements UserRestService {
 
 	@Path("/{uuid}/quota/{quotaUuid: .*}")
 	@PUT
-	@Operation(summary = "find user's quota", responses = {
+	@Operation(summary = "Update user's quota", responses = {
 			@ApiResponse(
 					content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDtoQuotaDto.class))),
 					responseCode = "200"

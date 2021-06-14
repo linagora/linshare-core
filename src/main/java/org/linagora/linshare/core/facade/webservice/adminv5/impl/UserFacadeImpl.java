@@ -288,12 +288,13 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		Validate.notNull(dto.getQuota(), "quota must be set.");
 		if (!Strings.isNullOrEmpty(quotaUuid)) {
 			dto.setUuid(quotaUuid);
+		} else {
+			Validate.notEmpty(dto.getUuid(), "Dto's uuid must be set.");
 		}
-		Validate.notEmpty(quotaUuid, "quotaUuid must be set.");
 		User user = userService2.find(authUser, actor, userUuid);
 		checkAdminPermission(authUser, user);
 		AccountQuota aq = accountQuotaService.update(authUser, actor, userUuid, dto.toObject());
-		return new UserDtoQuotaDto(aq, quotaService.getRealTimeUsedSpace(authUser, authUser, quotaUuid));
+		return new UserDtoQuotaDto(aq, quotaService.getRealTimeUsedSpace(authUser, authUser, dto.getUuid()));
 	}
 
 	@Override
