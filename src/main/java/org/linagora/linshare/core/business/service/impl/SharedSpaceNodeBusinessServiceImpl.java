@@ -57,8 +57,6 @@ import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.google.common.collect.Sets;
-
 public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusinessService {
 
 	protected SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
@@ -135,8 +133,11 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	}
 
 	@Override
-	public PageContainer<SharedSpaceNodeNested> findAll(NodeType nodeType, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
-		Set<NodeType> types = Sets.newHashSet();
+	public PageContainer<SharedSpaceNodeNested> findAll(Set<NodeType> nodeTypes, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+		if (Objects.isNull(nodeTypes) || nodeTypes.isEmpty()) {
+			nodeTypes.add(NodeType.DRIVE);
+			nodeTypes.add(NodeType.WORK_GROUP);
+		}
 		ProjectionOperation projections = Aggregation.project(
 				Fields.from(
 						Fields.field("uuid"),
@@ -147,20 +148,14 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 						Fields.field("nodeType")
 						)
 				);
-		if (Objects.isNull(nodeType)) {
-			types.add(NodeType.DRIVE);
-			types.add(NodeType.WORK_GROUP);
-		} else {
-			types.add(nodeType);
-		}
 		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceNodeNested.class,
-				Aggregation.match(Criteria.where("nodeType").in(types)),
+				Aggregation.match(Criteria.where("nodeType").in(nodeTypes)),
 				Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
 				Aggregation.limit(Long.valueOf(container.getPageSize())),
 				Aggregation.sort(sort),
 				projections
 				);
-		List<SharedSpaceNodeNested> nodes = mongoTemplate.aggregate(aggregation, "shared_space_nodes", SharedSpaceNodeNested.class)
+		List<SharedSpaceNodeNested> nodes = mongoTemplate.aggregate(aggregation, SharedSpaceNode.class, SharedSpaceNodeNested.class)
 				.getMappedResults();
 		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(),
 				sharedSpaceNodeMongoRepository.count(), nodes);

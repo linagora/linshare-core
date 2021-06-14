@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -64,6 +65,6 @@ public interface SharedSpaceNodeBusinessService {
 
 	void loadLastUpdaterAuditTrace(SharedSpaceNode node) throws BusinessException;
 
-	PageContainer<SharedSpaceNodeNested> findAll(NodeType nodeType, PageContainer<SharedSpaceNodeNested> container, Sort sort);
+	PageContainer<SharedSpaceNodeNested> findAll(Set<NodeType> nodeTypes, PageContainer<SharedSpaceNodeNested> container, Sort sort);
 
 }

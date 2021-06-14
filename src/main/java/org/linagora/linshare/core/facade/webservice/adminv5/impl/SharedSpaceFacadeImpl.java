@@ -141,15 +141,15 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, SortOrder sortOrder,
-			SharedSpaceField sortField, NodeType nodeType, Integer pageNumber, Integer pageSize) {
+			SharedSpaceField sortField, Set<NodeType> nodeTypes, Integer pageNumber, Integer pageSize) {
 		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		User actor = getActor(authUser, actorUuid);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(pageNumber, pageSize);
 		Account account = null;
 		if (!Strings.isNullOrEmpty(accountUuid)) {
-			account = accountService.findByLsUuid(accountUuid);
+			account = accountService.findAccountByLsUuid(accountUuid);
 		}
-		return nodeService.findAll(authUser, actor, account, sortOrder, nodeType, sortField, container);
+		return nodeService.findAll(authUser, actor, account, sortOrder, nodeTypes, sortField, container);
 	}
 
 	@Override

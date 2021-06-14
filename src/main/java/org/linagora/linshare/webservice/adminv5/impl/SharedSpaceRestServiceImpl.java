@@ -36,6 +36,7 @@
 package org.linagora.linshare.webservice.adminv5.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -64,6 +65,8 @@ import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.adminv5.SharedSpaceRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
+
+import com.google.common.collect.Sets;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -174,13 +177,15 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The admin can choose the field to sort with the sharedSpace's list to retrieve, if not set the modification date order will be choosen by default.", required = false)
 				@QueryParam("sortField") @DefaultValue("modificationDate") String sortField,
 			@Parameter(description = "Filter the returned sharedSpaces by their types(WORK_GROUP/DRIVE).", required = false)
-				@QueryParam("nodeType") NodeType nodeType,
+				@QueryParam("nodeType") Set<String> nodeTypes,
 			@Parameter(description = "The admin can choose the page number to get.", required = false)
 				@QueryParam("page") Integer pageNumber,
 			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
 			@QueryParam("size") Integer pageSize) throws BusinessException {
+		Set<NodeType> types = Sets.newHashSet();
+		nodeTypes.forEach(type -> types.add(NodeType.valueOf(type)));
 		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, SortOrder.valueOf(sortOrder), SharedSpaceField.valueOf(sortField),
-				nodeType, pageNumber, pageSize);
+				types, pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}
 

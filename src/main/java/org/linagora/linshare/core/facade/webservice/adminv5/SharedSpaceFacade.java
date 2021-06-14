@@ -54,7 +54,7 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 public interface SharedSpaceFacade {
 
 	PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, SortOrder sortOrder, SharedSpaceField sortField,
-			NodeType nodeType, Integer pageNumber, Integer pageSize);
+			Set<NodeType> nodeTypes, Integer pageNumber, Integer pageSize);
 
 	SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException;
 

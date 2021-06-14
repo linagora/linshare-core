@@ -65,6 +65,20 @@ public class AccountServiceImpl implements AccountService {
 		return acc;
 	}
 
+	/**
+	 * The goal of this method is to raise an exception when the account is not
+	 * found, and to not change the old behavior with the old method findByLsUuid
+	 */
+	@Override
+	public Account findAccountByLsUuid(String uuid) {
+		Account account = accountRepository.findByLsUuid(uuid);
+		if (account == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"Account not found, please check the entered uuid");
+		}
+		return account;
+	}
+
 	@Override
 	public Account update(Account account) throws BusinessException {
 		return accountRepository.update(account);

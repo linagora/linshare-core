@@ -78,13 +78,13 @@ public interface SharedSpaceMemberBusinessService {
 	SharedSpaceMember findByNodeAndUuid(String nodeUuid, String uuid);
 
 	/**
-	 * Admins only
-	 * @param lsUuid
-	 * @param nodeType
-	 * @param container
-	 * @return
+	 * This method is used by Admins only
+	 * @param accountUuid String uuid of the account to filter by
+	 * @param nodeTypes is the type of sharedSpace to filter with (Drive/WORK_GROUP)
+	 * @param container contains the pageNumber, pageSize
+	 * @return {@link SharedSpaceNodeNested} pageContainer of SharedSpaceNodeNested
 	 */
-	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, NodeType nodeType, PageContainer<SharedSpaceNodeNested> container, Sort sort);
+	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, Set<NodeType> nodeTypes, PageContainer<SharedSpaceNodeNested> container, Sort sort);
 
 
 	List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid);

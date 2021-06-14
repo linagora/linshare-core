@@ -345,8 +345,11 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAllByAccount(String accountUuid,
-			NodeType nodeType, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
-		Set<NodeType> types = Sets.newHashSet();
+			Set<NodeType> nodeTypes, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+		if (Objects.isNull(nodeTypes) || nodeTypes.isEmpty()) {
+			nodeTypes.add(NodeType.DRIVE);
+			nodeTypes.add(NodeType.WORK_GROUP);
+		}
 		ProjectionOperation projections = Aggregation.project(
 				Fields.from(
 						Fields.field("uuid", "node.uuid"),
@@ -357,21 +360,15 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 						Fields.field("nodeType", "node.nodeType")
 						)
 				);
-				if (Objects.isNull(nodeType)) {
-					types.add(NodeType.DRIVE);
-					types.add(NodeType.WORK_GROUP);
-				} else {
-					types.add(nodeType);
-				}
 		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class,
 				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
-				Aggregation.match(Criteria.where("node.nodeType").in(types)),
+				Aggregation.match(Criteria.where("node.nodeType").in(nodeTypes)),
 				Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
 				Aggregation.limit(Long.valueOf(container.getPageSize())),
 				Aggregation.sort(sort),
 				projections
 				);
-		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
+		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class)
 				.getMappedResults();
 		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(), getCount(accountUuid), sharedSpaces);
 	}

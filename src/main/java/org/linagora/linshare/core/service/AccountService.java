@@ -54,4 +54,10 @@ public interface AccountService {
 	public Account update(Account account) throws BusinessException;
 
 	List<String> findAllKnownEmails(Account actor, String pattern);
+
+	/**
+	 * The goal of this method is to raise an exception when the account is not
+	 * found, and to not change the old behavior with the old method findByLsUuid
+	 */
+	Account findAccountByLsUuid(String uuid);
 }
