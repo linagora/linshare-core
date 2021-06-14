@@ -15,7 +15,7 @@
 		<property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
 		<!-- default sql loaded when use auto create mode for h2 database only -->
 		<!-- currently it is the same as tests. See src/test/resources/springContext-datasource.xml -->
-		<property name="hibernate.hbm2ddl.import_files">sql/common/import-domains.sql,sql/common/import-welcome-messages.sql,sql/common/import-functionalities.sql,sql/common/import-mail-activation.sql,sql/common/import-quota.sql,sql/common/import_mail_structure.sql,sql/h2/import-tests-domains-and-accounts.sql,sql/h2/import-all-emails.sql,sql/h2/import-embedded.sql</property>
+		<property name="hibernate.hbm2ddl.import_files">sql/common/import-domains.sql,sql/common/import-welcome-messages.sql,sql/common/import-functionalities.sql,sql/common/import-mail-activation.sql,sql/common/import-quota.sql,sql/common/import_mail_structure.sql,sql/h2/import-all-emails.sql,sql/h2/import-embedded.sql</property>
 		<mapping resource="org/linagora/linshare/core/domain/entities/typedefs/TypeDef.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/LogEntry.hbm.xml"/>
 
