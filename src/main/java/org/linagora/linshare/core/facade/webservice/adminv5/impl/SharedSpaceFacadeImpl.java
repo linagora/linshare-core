@@ -41,6 +41,7 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -140,7 +141,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, SortOrder sortOrder,
-			SharedSpaceField sortField, Integer pageNumber, Integer pageSize) {
+			SharedSpaceField sortField, NodeType nodeType, Integer pageNumber, Integer pageSize) {
 		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		User actor = getActor(authUser, actorUuid);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(pageNumber, pageSize);
@@ -148,7 +149,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 		if (!Strings.isNullOrEmpty(accountUuid)) {
 			account = accountService.findByLsUuid(accountUuid);
 		}
-		return nodeService.findAll(authUser, actor, account, sortOrder, sortField, container);
+		return nodeService.findAll(authUser, actor, account, sortOrder, nodeType, sortField, container);
 	}
 
 	@Override

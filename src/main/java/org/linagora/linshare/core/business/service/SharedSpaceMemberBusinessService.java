@@ -80,10 +80,11 @@ public interface SharedSpaceMemberBusinessService {
 	/**
 	 * Admins only
 	 * @param lsUuid
+	 * @param nodeType
 	 * @param container
 	 * @return
 	 */
-	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, PageContainer<SharedSpaceNodeNested> container, Sort sort);
+	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, NodeType nodeType, PageContainer<SharedSpaceNodeNested> container, Sort sort);
 
 
 	List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid);

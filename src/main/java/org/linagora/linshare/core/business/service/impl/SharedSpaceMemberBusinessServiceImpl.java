@@ -345,17 +345,32 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAllByAccount(String accountUuid,
-			PageContainer<SharedSpaceNodeNested> container, Sort sort) {
-		Aggregation aggregation = Aggregation.newAggregation(
+			NodeType nodeType, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+		Set<NodeType> types = Sets.newHashSet();
+		ProjectionOperation projections = Aggregation.project(
+				Fields.from(
+						Fields.field("uuid", "node.uuid"),
+						Fields.field("name", "node.name"),
+						Fields.field("parentUuid", "node.parentUuid"),
+						Fields.field("creationDate", "node.creationDate"),
+						Fields.field("modificationDate", "node.modificationDate"),
+						Fields.field("nodeType", "node.nodeType")
+						)
+				);
+				if (Objects.isNull(nodeType)) {
+					types.add(NodeType.DRIVE);
+					types.add(NodeType.WORK_GROUP);
+				} else {
+					types.add(nodeType);
+				}
+		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class,
 				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
-				Aggregation.project("node.uuid",
-						"node.name",
-						"node.nodeType",
-						"node.creationDate",
-						"node.modificationDate"),
+				Aggregation.match(Criteria.where("node.nodeType").in(types)),
 				Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
 				Aggregation.limit(Long.valueOf(container.getPageSize())),
-				Aggregation.sort(sort));
+				Aggregation.sort(sort),
+				projections
+				);
 		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, "shared_space_members", SharedSpaceNodeNested.class)
 				.getMappedResults();
 		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(), getCount(accountUuid), sharedSpaces);

@@ -37,6 +37,8 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
@@ -51,8 +53,11 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.Fields;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
+import com.google.common.collect.Sets;
 
 public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusinessService {
 
@@ -130,9 +135,9 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	}
 
 	@Override
-	public PageContainer<SharedSpaceNodeNested> findAll(PageContainer<SharedSpaceNodeNested> container, Sort sort) {
-		Aggregation aggregation = Aggregation.newAggregation(
-		Aggregation.project(
+	public PageContainer<SharedSpaceNodeNested> findAll(NodeType nodeType, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+		Set<NodeType> types = Sets.newHashSet();
+		ProjectionOperation projections = Aggregation.project(
 				Fields.from(
 						Fields.field("uuid"),
 						Fields.field("name"),
@@ -141,10 +146,20 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 						Fields.field("modificationDate"),
 						Fields.field("nodeType")
 						)
-				),
-		Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
-		Aggregation.limit(Long.valueOf(container.getPageSize())),
-		Aggregation.sort(sort));
+				);
+		if (Objects.isNull(nodeType)) {
+			types.add(NodeType.DRIVE);
+			types.add(NodeType.WORK_GROUP);
+		} else {
+			types.add(nodeType);
+		}
+		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceNodeNested.class,
+				Aggregation.match(Criteria.where("nodeType").in(types)),
+				Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
+				Aggregation.limit(Long.valueOf(container.getPageSize())),
+				Aggregation.sort(sort),
+				projections
+				);
 		List<SharedSpaceNodeNested> nodes = mongoTemplate.aggregate(aggregation, "shared_space_nodes", SharedSpaceNodeNested.class)
 				.getMappedResults();
 		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(),

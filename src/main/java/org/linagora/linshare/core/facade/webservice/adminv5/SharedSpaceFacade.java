@@ -40,6 +40,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -53,7 +54,7 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 public interface SharedSpaceFacade {
 
 	PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, SortOrder sortOrder, SharedSpaceField sortField,
-			Integer pageNumber, Integer pageSize);
+			NodeType nodeType, Integer pageNumber, Integer pageSize);
 
 	SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException;
 

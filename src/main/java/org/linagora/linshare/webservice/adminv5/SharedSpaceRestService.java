@@ -39,6 +39,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -54,7 +55,7 @@ public interface SharedSpaceRestService {
 
 	List<SharedSpaceMember> members(String uuid, String accountUuid) throws BusinessException;
 
-	Response findAll(String accountUuid, String sortOrder, String sortField, Integer pageNumber, Integer pageSize);
+	Response findAll(String accountUuid, String sortOrder, String sortField, NodeType nodeType, Integer pageNumber, Integer pageSize);
 
 	SharedSpaceMember findMember(String memberUuid) throws BusinessException;
 

@@ -236,9 +236,9 @@ public class SharedSpaceNodeServiceImplTest {
 		node2 = service.create(john, john, new SharedSpaceNode("John second node", null, NodeType.DRIVE));
 		node3 = service.create(foo, foo, new SharedSpaceNode("Foo first node", null, NodeType.WORK_GROUP));
 		node4 = service.create(foo, foo, new SharedSpaceNode("Foo second node", null, NodeType.DRIVE));
-		PageContainer<SharedSpaceNodeNested> allNodes = service.findAll(root, root, null, SortOrder.DESC, SharedSpaceField.creationDate, container);
+		PageContainer<SharedSpaceNodeNested> allNodes = service.findAll(root, root, null, SortOrder.DESC, null, SharedSpaceField.creationDate, container);
 		Assertions.assertEquals(foundNodes.size() + 4, allNodes.getPageResponse().getTotalElements());
-		PageContainer<SharedSpaceNodeNested> fooNodes = service.findAll(root, root, foo, SortOrder.DESC, SharedSpaceField.creationDate, container);
+		PageContainer<SharedSpaceNodeNested> fooNodes = service.findAll(root, root, foo, SortOrder.DESC, null, SharedSpaceField.creationDate, container);
 		Assertions.assertEquals(2, fooNodes.getPageResponse().getTotalElements());
 		Assertions.assertAll("One or both retrieved nodes do not correspond to foo's persisted nodes", () -> {
 			Assertions.assertEquals(node3.getUuid(), fooNodes.getPageResponse().getContent().get(1).getUuid());
