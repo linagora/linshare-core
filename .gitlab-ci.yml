@@ -1,9 +1,11 @@
 stages:
-  - check
+  - prepare
   - build
+  - test
 
 variables:
     MAVEN_OPTS: "-Djava.awt.headless=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+    GIT_DEPTH: "1"
 
 .cache-tpl: &cache-tpl
   key: "$CI_COMMIT_REF_SLUG"
@@ -17,9 +19,17 @@ variables:
   tags:
     - curl
 
+.build-docker-tpl: &build-docker-tpl
+  image: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
+  tags:
+    - docker
+  services:
+      - name: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
+        alias: docker-dind
+
 check_author:
   image: docker-registry.linagora.com:5000/lgs-releases/gitlab-integrity-checks:latest
-  stage: check
+  stage: prepare
   variables:
     GIT_DEPTH: "1"
   tags:
@@ -31,32 +41,61 @@ check_author:
       - tags@linagora/lgs/linshare/products/linshare-core
       - /^release-.*/@linagora/lgs/linshare/products/linshare-core
 
-prepare:
-  image: maven:3.6-jdk-11
-  stage: check
-  tags:
-    - docker
-  cache:
-    <<: *cache-tpl
-    policy: pull-push
-  script:
-    - mvn dependency:go-offline --batch-mode
-    - mvn dependency:resolve --batch-mode
-    - mvn dependency:resolve-plugins --batch-mode
-
 build:
-  stage: build
+  <<: *build-docker-tpl
+  stage: prepare
   tags:
     - docker
-  image: maven:3.6-jdk-11
-  cache:
-    <<: *cache-tpl
+  variables:
+    DOCKER_HOST: "tcp://docker-dind"
+    DOCKER_IMAGE_PRIVATE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
+  script:
+    - echo "FROM maven:3.6-jdk-11" > Dockerfile
+    - echo "RUN useradd -ms /bin/bash maven" >> Dockerfile
+    - echo "WORKDIR /home/maven/linshare" >> Dockerfile
+    - echo "COPY src /home/maven/linshare/src" >> Dockerfile
+    - echo "COPY pom.xml /home/maven/linshare/" >> Dockerfile
+    - echo "RUN chown -R maven:maven /home/maven/linshare" >> Dockerfile
+    - echo "USER maven" >> Dockerfile
+    - echo "ENV LINSHARE_HOME=/home/maven/linshare" >> Dockerfile
+    - echo "RUN mvn dependency:go-offline dependency:resolve dependency:resolve-plugins --batch-mode" >> Dockerfile
+    - echo "RUN mvn compile" >> Dockerfile
+    - echo "RUN mvn jetty:start  -P h2,local,mongo-java-server > /dev/null" >> Dockerfile
+    - echo "CMD mvn jetty:run -P h2,local,mongo-java-server" >> Dockerfile
+    - echo "EXPOSE 8080" >> Dockerfile
+    - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}" docker-registry.linagora.com:5000
+    - docker build . -t "${DOCKER_IMAGE_PRIVATE}:${CI_COMMIT_REF_SLUG}"
+    - docker push "${DOCKER_IMAGE_PRIVATE}:${CI_COMMIT_REF_SLUG}"
+    - docker logout docker-registry.linagora.com:5000
+
+test:
+  stage: test
+  tags:
+    - docker
+  variables:
+      DOCKER_IMAGE_PRIVATE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
+  image: "${DOCKER_IMAGE_PRIVATE}:${CI_COMMIT_REF_SLUG}"
   artifacts:
     reports:
       junit:
         - target/surefire-reports/TEST-*.xml
   script:
-    - apt-get update
-    - apt-get -y install libreoffice
-    - export LINSHARE_HOME=/tmp/linshare
     - mvn clean test
+
+test-api:
+  stage: test
+  image: debian:latest
+  tags:
+    - docker
+  variables:
+    DOCKER_IMAGE_PRIVATE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
+    GIT_DEPTH: "1"
+  services:
+    - name: "${DOCKER_IMAGE_PRIVATE}:${CI_COMMIT_REF_SLUG}"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
+      alias: ldap
+  script:
+    - echo "coucou2"
+    - apt update && apt install -y curl
+    - "curl -u 'user1@linshare.org:password1' http://linshare:8080/linshare/webservice/rest/user/v2/authentication/authorized -H 'Accept: application/json'"
