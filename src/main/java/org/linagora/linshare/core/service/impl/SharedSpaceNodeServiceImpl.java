@@ -298,18 +298,15 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 				null);
 		PageContainer<SharedSpaceNodeNested> sharedSpaces = new PageContainer<SharedSpaceNodeNested>();
-		checkRoles(authUser, actor, sharedSpaceRoles);
 		Sort sort = Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString());
 		if (Objects.nonNull(account)) {
-			Set<String> checkedRoles = checkRoles(authUser, actor, sharedSpaceRoles);
 			if (!domainPermissionBusinessService.isAdminForThisUser(actor, (User) account)) {
 				throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
 						"You are not authorized to retieve the sharedSpaces of this account: " + account.getLsUuid());
 			}
-			sharedSpaces = memberBusinessService.findAllByAccount(account.getLsUuid(), nodeTypes, checkedRoles, container, sort);
-		} else {
-			sharedSpaces = businessService.findAll(nodeTypes, container, sort);
 		}
+		Set<String> roleNames = checkRoles(authUser, actor, sharedSpaceRoles);
+		sharedSpaces = memberBusinessService.findAllSharedSpaces(account, nodeTypes, roleNames, container, sort);
 		return sharedSpaces;
 	}
 

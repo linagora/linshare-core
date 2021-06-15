@@ -46,6 +46,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -65,6 +66,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
@@ -345,11 +347,8 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public PageContainer<SharedSpaceNodeNested> findAllByAccount(String accountUuid,
-			Set<NodeType> nodeTypes, Set<String> checkedRoles, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
-		if (Objects.isNull(nodeTypes) || nodeTypes.isEmpty()) {
-			nodeTypes.addAll(EnumSet.allOf(NodeType.class));
-		}
+	public PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account,
+			Set<NodeType> nodeTypes, Set<String> roleNames, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
 		ProjectionOperation projections = Aggregation.project(
 				Fields.from(
 						Fields.field("uuid", "node.uuid"),
@@ -360,22 +359,23 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 						Fields.field("nodeType", "node.nodeType")
 						)
 				);
-		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class,
-				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
-				Aggregation.match(Criteria.where("node.nodeType").in(nodeTypes)),
-				Aggregation.match(Criteria.where("role.name").in(checkedRoles)),
-				Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
-				Aggregation.limit(Long.valueOf(container.getPageSize())),
-				Aggregation.sort(sort),
-				projections
-				);
-		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class)
-				.getMappedResults();
-		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(), getCount(accountUuid), sharedSpaces);
-	}
-
-	private Long getCount(String accountUuid) {
-		Query countQuery = new Query(Criteria.where("account.uuid").is(accountUuid));
-		return mongoTemplate.count(countQuery, SharedSpaceMember.class);
+		if (Objects.isNull(nodeTypes) || nodeTypes.isEmpty()) {
+			nodeTypes.addAll(EnumSet.allOf(NodeType.class));
+		}
+		List<AggregationOperation> aggregationOperations = Lists.newArrayList();
+		if (Objects.nonNull(account)) {
+			aggregationOperations.add(Aggregation.match(Criteria.where("account.uuid").is(account.getLsUuid())));
+		}
+		aggregationOperations.add(Aggregation.match(Criteria.where("node.nodeType").in(nodeTypes)));
+		aggregationOperations.add(Aggregation.match(Criteria.where("role.name").in(roleNames)));
+		aggregationOperations.add(Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())));
+		aggregationOperations.add(Aggregation.limit(Long.valueOf(container.getPageSize())));
+		aggregationOperations.add(Aggregation.sort(sort));
+		aggregationOperations.add(projections);
+		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
+		Set<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class)
+				.getMappedResults().stream().collect(Collectors.toSet());
+		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(),
+				Long.valueOf(sharedSpaces.size()), Lists.newArrayList(sharedSpaces));
 	}
 }

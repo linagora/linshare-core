@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -80,12 +81,12 @@ public interface SharedSpaceMemberBusinessService {
 	/**
 	 * This method is used by Admins only
 	 * @param nodeTypes is the type of sharedSpace to filter with (Drive/WORK_GROUP)
-	 * @param checkedRoles is the list of sharedSpaceRoles to filter with
+	 * @param roleNames is the list of sharedSpaceRoles to filter with
 	 * @param container contains the pageNumber, pageSize
-	 * @param accountUuid String uuid of the account to filter by
+	 * @param Account The account to filter by
 	 * @return {@link SharedSpaceNodeNested} pageContainer of SharedSpaceNodeNested
 	 */
-	PageContainer<SharedSpaceNodeNested> findAllByAccount(String lsUuid, Set<NodeType> nodeTypes, Set<String> checkedRoles, PageContainer<SharedSpaceNodeNested> container, Sort sort);
+	PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account, Set<NodeType> nodeTypes, Set<String> roleNames, PageContainer<SharedSpaceNodeNested> container, Sort sort);
 
 
 	List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid);
