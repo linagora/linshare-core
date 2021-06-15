@@ -4,7 +4,7 @@ stages:
   - test
 
 variables:
-    MAVEN_OPTS: "-Djava.awt.headless=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+    DOCKER_IMAGE_CORE_BASE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
     GIT_DEPTH: "1"
 
 .cache-tpl: &cache-tpl
@@ -48,7 +48,6 @@ build:
     - docker
   variables:
     DOCKER_HOST: "tcp://docker-dind"
-    DOCKER_IMAGE_PRIVATE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
   script:
     - echo "FROM maven:3.6-jdk-11" > Dockerfile
     - echo "RUN useradd -ms /bin/bash maven" >> Dockerfile
@@ -64,17 +63,15 @@ build:
     - echo "CMD mvn jetty:run -P h2,local,mongo-java-server" >> Dockerfile
     - echo "EXPOSE 8080" >> Dockerfile
     - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}" docker-registry.linagora.com:5000
-    - docker build . -t "${DOCKER_IMAGE_PRIVATE}:${CI_COMMIT_REF_SLUG}"
-    - docker push "${DOCKER_IMAGE_PRIVATE}:${CI_COMMIT_REF_SLUG}"
+    - docker build . -t "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
+    - docker push "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
     - docker logout docker-registry.linagora.com:5000
 
 test:
   stage: test
   tags:
     - docker
-  variables:
-      DOCKER_IMAGE_PRIVATE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
-  image: "${DOCKER_IMAGE_PRIVATE}:${CI_COMMIT_REF_SLUG}"
+  image: "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
   artifacts:
     reports:
       junit:
@@ -87,15 +84,11 @@ test-api:
   image: debian:latest
   tags:
     - docker
-  variables:
-    DOCKER_IMAGE_PRIVATE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
-    GIT_DEPTH: "1"
   services:
-    - name: "${DOCKER_IMAGE_PRIVATE}:${CI_COMMIT_REF_SLUG}"
+    - name: "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
     - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
       alias: ldap
   script:
-    - echo "coucou2"
     - apt update && apt install -y curl
     - "curl -u 'user1@linshare.org:password1' http://linshare:8080/linshare/webservice/rest/user/v2/authentication/authorized -H 'Accept: application/json'"
