@@ -178,6 +178,8 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("sortField") @DefaultValue("modificationDate") String sortField,
 			@Parameter(description = "Filter the returned sharedSpaces by their types(WORK_GROUP/DRIVE).", required = false)
 				@QueryParam("nodeType") Set<String> nodeTypes,
+			@Parameter(description = "Filter the returned sharedSpaces by member roles.", required = false)
+				@QueryParam("role") Set<String> sharedSpaceRoles,
 			@Parameter(description = "The admin can choose the page number to get.", required = false)
 				@QueryParam("page") Integer pageNumber,
 			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
@@ -185,7 +187,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		Set<NodeType> types = Sets.newHashSet();
 		nodeTypes.forEach(type -> types.add(NodeType.valueOf(type)));
 		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, SortOrder.valueOf(sortOrder), SharedSpaceField.valueOf(sortField),
-				types, pageNumber, pageSize);
+				types, sharedSpaceRoles, pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}
 

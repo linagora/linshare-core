@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -65,5 +66,9 @@ public interface SharedSpaceRoleService {
 
 	SharedSpaceRole findByNameAndNodeType(Account authUser, Account actor, String name, NodeType nodeType)
 			throws BusinessException;
+
+	Boolean exist(Account authUser, Account actor, String sharedSpaceRoleName);
+
+	Set<String> findAllSharedSpaceRoleNames(Account authUser, Account actor);
 }
 

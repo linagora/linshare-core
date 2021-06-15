@@ -319,6 +319,7 @@
 	<bean name="sharedSpaceRoleBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceRoleBusinessServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
+		<constructor-arg ref="mongoTemplate"/>
 	</bean>
 	<bean name="sharedSpacePermissionBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpacePermissionBusinessServiceImpl">

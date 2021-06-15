@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -345,10 +346,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAllByAccount(String accountUuid,
-			Set<NodeType> nodeTypes, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+			Set<NodeType> nodeTypes, Set<String> checkedRoles, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
 		if (Objects.isNull(nodeTypes) || nodeTypes.isEmpty()) {
-			nodeTypes.add(NodeType.DRIVE);
-			nodeTypes.add(NodeType.WORK_GROUP);
+			nodeTypes.addAll(EnumSet.allOf(NodeType.class));
 		}
 		ProjectionOperation projections = Aggregation.project(
 				Fields.from(
@@ -363,6 +363,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class,
 				Aggregation.match(Criteria.where("account.uuid").is(accountUuid)),
 				Aggregation.match(Criteria.where("node.nodeType").in(nodeTypes)),
+				Aggregation.match(Criteria.where("role.name").in(checkedRoles)),
 				Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())),
 				Aggregation.limit(Long.valueOf(container.getPageSize())),
 				Aggregation.sort(sort),

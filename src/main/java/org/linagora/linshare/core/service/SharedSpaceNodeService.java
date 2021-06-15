@@ -99,13 +99,14 @@ public interface SharedSpaceNodeService {
 	 * @param actor
 	 * @param account
 	 * @param sortOrder
+	 * @param nodeTypes
+	 * @param sharedSpaceRoles
 	 * @param sortField
 	 * @param container
-	 * @param nodeTypes
 	 * @return
 	 */
 	PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account, SortOrder sortOrder,
-			Set<NodeType> nodeTypes, SharedSpaceField sortField, PageContainer<SharedSpaceNodeNested> container);
+			Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, PageContainer<SharedSpaceNodeNested> container);
 
 	/**
 	 * user API only

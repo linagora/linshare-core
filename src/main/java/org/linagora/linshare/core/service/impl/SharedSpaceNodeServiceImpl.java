@@ -289,7 +289,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account,
-			SortOrder sortOrder, Set<NodeType> nodeTypes, SharedSpaceField sortField, PageContainer<SharedSpaceNodeNested> container) {
+			SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, PageContainer<SharedSpaceNodeNested> container) {
 		preChecks(authUser, actor);
 		if (!authUser.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
@@ -298,17 +298,32 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 				null);
 		PageContainer<SharedSpaceNodeNested> sharedSpaces = new PageContainer<SharedSpaceNodeNested>();
+		checkRoles(authUser, actor, sharedSpaceRoles);
 		Sort sort = Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString());
 		if (Objects.nonNull(account)) {
+			Set<String> checkedRoles = checkRoles(authUser, actor, sharedSpaceRoles);
 			if (!domainPermissionBusinessService.isAdminForThisUser(actor, (User) account)) {
 				throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
 						"You are not authorized to retieve the sharedSpaces of this account: " + account.getLsUuid());
 			}
-			sharedSpaces = memberBusinessService.findAllByAccount(account.getLsUuid(), nodeTypes, container, sort);
+			sharedSpaces = memberBusinessService.findAllByAccount(account.getLsUuid(), nodeTypes, checkedRoles, container, sort);
 		} else {
 			sharedSpaces = businessService.findAll(nodeTypes, container, sort);
 		}
 		return sharedSpaces;
+	}
+
+	private Set<String> checkRoles(Account authUser, Account actor, Set<String> sharedSpaceRoles) {
+		Set<String> checkedRoles = Sets.newHashSet();
+		for (String roleName : sharedSpaceRoles) {
+			if (ssRoleService.exist(authUser, actor, roleName)) {
+				checkedRoles.add(roleName);
+			}
+		}
+		if (checkedRoles.isEmpty()) {
+			checkedRoles.addAll(ssRoleService.findAllSharedSpaceRoleNames(authUser, actor));
+		}
+		return checkedRoles;
 	}
 
 }

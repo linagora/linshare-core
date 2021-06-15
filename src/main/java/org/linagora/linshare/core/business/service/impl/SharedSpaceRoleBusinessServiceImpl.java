@@ -36,19 +36,32 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
+import java.util.Set;
+
+import org.bson.Document;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
+import org.springframework.data.mongodb.core.MongoTemplate;
+
+import com.google.common.collect.Lists;
+import com.mongodb.client.MongoCollection;
 
 public class SharedSpaceRoleBusinessServiceImpl implements SharedSpaceRoleBusinessService {
 
 	private final SharedSpaceRoleMongoRepository sharedSpaceRoleMongoRepository;
 
-	public SharedSpaceRoleBusinessServiceImpl(SharedSpaceRoleMongoRepository sharedSpaceRoleMongoRepository) {
+	private final MongoTemplate mongoTemplate;
+
+	public SharedSpaceRoleBusinessServiceImpl(
+			SharedSpaceRoleMongoRepository sharedSpaceRoleMongoRepository,
+			MongoTemplate mongoTemplate) {
 		super();
 		this.sharedSpaceRoleMongoRepository = sharedSpaceRoleMongoRepository;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
@@ -76,4 +89,9 @@ public class SharedSpaceRoleBusinessServiceImpl implements SharedSpaceRoleBusine
 		return sharedSpaceRoleMongoRepository.findByNameAndType(name, nodeType);
 	}
 
+	@Override
+	public Set<String> findAllSharedSpaceRoleNames(Account authUser, Account actor) {
+		MongoCollection<Document> sharedSpaceRoles = mongoTemplate.getCollection("shared_space_roles");
+		return Set.copyOf(Lists.newArrayList(sharedSpaceRoles.distinct("name", String.class)));
+	}
 }

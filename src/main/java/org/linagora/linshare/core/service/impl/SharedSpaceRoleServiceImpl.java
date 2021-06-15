@@ -36,6 +36,8 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -131,5 +133,28 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 		checkReadPermission(authUser, actor, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
 				found);
 		return found;
+	}
+
+	@Override
+	public Boolean exist(Account authUser, Account actor, String sharedSpaceRoleName) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(sharedSpaceRoleName, "Missing required shared space role name.");
+		SharedSpaceRole found = sharedSpaceRoleBusinessService.findByName(sharedSpaceRoleName);
+		if (Objects.isNull(found)) {
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND,
+					"The role: " + sharedSpaceRoleName + " was not found");
+		}
+		checkReadPermission(authUser, actor, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
+				found);
+		return true;
+	}
+
+	@Override
+	public Set<String> findAllSharedSpaceRoleNames(Account authUser, Account actor) {
+		preChecks(authUser, actor);
+		checkListPermission(actor, authUser, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
+				null);
+		Set<String> roles = sharedSpaceRoleBusinessService.findAllSharedSpaceRoleNames(authUser, actor);
+		return roles;
 	}
 }
