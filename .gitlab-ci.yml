@@ -5,6 +5,7 @@ stages:
 
 variables:
     DOCKER_IMAGE_CORE_BASE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
+    DOCKER_IMAGE_CORE_TEST: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-test"
     GIT_DEPTH: "1"
 
 .cache-tpl: &cache-tpl
@@ -30,8 +31,6 @@ variables:
 check_author:
   image: docker-registry.linagora.com:5000/lgs-releases/gitlab-integrity-checks:latest
   stage: prepare
-  variables:
-    GIT_DEPTH: "1"
   tags:
     - ultralight
   script:
@@ -82,7 +81,7 @@ test:
 
 test-api:
   stage: test
-  image: debian:latest
+  image: "${DOCKER_IMAGE_CORE_TEST}:${CI_COMMIT_REF_SLUG}"
   tags:
     - docker
   services:
@@ -91,5 +90,5 @@ test-api:
     - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
       alias: ldap
   script:
-    - apt update && apt install -y curl
-    - "curl -u 'user1@linshare.org:password1' http://linshare:8080/linshare/webservice/rest/user/v2/authentication/authorized -H 'Accept: application/json'"
+    - cd /tmp/
+    - ./tests_linshare.py -v TestUserApiContactList
