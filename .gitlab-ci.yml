@@ -89,6 +89,7 @@ test-api:
       alias: linshare
     - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
       alias: ldap
+  allow_failure: true
   script:
     - cd /tmp/
     - ./tests_linshare.py -v TestUserApiContactList
