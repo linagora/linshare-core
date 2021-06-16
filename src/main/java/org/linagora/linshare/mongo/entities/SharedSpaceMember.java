@@ -45,6 +45,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.ldap.Role;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -289,4 +290,23 @@ public class SharedSpaceMember {
 	public boolean hasReadOnlyRight() {
 		return this.getRole().getName().equals("READER");
 	}
+
+	@XmlTransient
+	@JsonIgnore
+	public boolean hasDriveAdminRole() {
+		return this.getRole().getName().equals(Role.DRIVE_ADMIN.toString());
+	}
+
+	@XmlTransient
+	@JsonIgnore
+	public boolean hasDriveWriterRole() {
+		return this.getRole().getName().equals(Role.DRIVE_WRITER.toString());
+	}
+
+	@XmlTransient
+	@JsonIgnore
+	public boolean hasDriveReaderRole() {
+		return this.getRole().getName().equals(Role.DRIVE_READER.toString());
+	}
+
 }

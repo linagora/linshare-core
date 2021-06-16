@@ -273,6 +273,18 @@ public class SharedSpaceNode {
 		this.author = author;
 	}
 
+	@XmlTransient
+	@JsonIgnore
+	public boolean isDrive() {
+		return this.nodeType.equals(NodeType.DRIVE);
+	}
+
+	@XmlTransient
+	@JsonIgnore
+	public boolean isWorkGroup() {
+		return this.nodeType.equals(NodeType.WORK_GROUP);
+	}
+
 	@Override
 	public String toString() {
 		return "SharedSpaceNode [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid

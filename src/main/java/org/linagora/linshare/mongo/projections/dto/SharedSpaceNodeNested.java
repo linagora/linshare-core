@@ -38,11 +38,13 @@ package org.linagora.linshare.mongo.projections.dto;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @XmlRootElement(name = "SharedSpace")
@@ -140,6 +142,18 @@ public class SharedSpaceNodeNested {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	@XmlTransient
+	@JsonIgnore
+	public boolean isDrive() {
+		return this.nodeType.equals(NodeType.DRIVE);
+	}
+
+	@XmlTransient
+	@JsonIgnore
+	public boolean isWorkGroup() {
+		return this.nodeType.equals(NodeType.WORK_GROUP);
 	}
 
 	@Override

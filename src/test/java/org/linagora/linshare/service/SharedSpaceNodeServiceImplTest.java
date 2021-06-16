@@ -44,6 +44,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -55,10 +57,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
+import org.linagora.linshare.ldap.Role;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
+import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +97,16 @@ public class SharedSpaceNodeServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepo;
 
+	@Autowired
+	@Qualifier("sharedSpaceMemberBusinessService")
+	private SharedSpaceMemberBusinessService memberBusinessService;
+
+	@Autowired
+	private SharedSpaceMemberMongoRepository memberRepository;
+
+	@Autowired
+	private SharedSpaceRoleBusinessService roleBusinessService;
+
 	private Account john;
 
 	private Account foo;
@@ -104,6 +120,8 @@ public class SharedSpaceNodeServiceImplTest {
 	private SharedSpaceNode node3;
 
 	private SharedSpaceNode node4;
+
+	private SharedSpaceNode node5;
 
 	@Autowired
 	@Qualifier("sharedSpaceNodeService")
@@ -247,10 +265,30 @@ public class SharedSpaceNodeServiceImplTest {
 			Assertions.assertEquals(node3.getUuid(), fooNodes.getPageResponse().getContent().get(1).getUuid());
 			Assertions.assertEquals(node4.getUuid(), fooNodes.getPageResponse().getContent().get(0).getUuid());
 		});
+		// Find Foo's Drives (Filter by nodeType)
+		PageContainer<SharedSpaceNodeNested> fooDrives = service.findAll(root, root, foo, SortOrder.DESC, Sets.newHashSet(NodeType.DRIVE), Sets.newHashSet(), SharedSpaceField.creationDate, container);
+		Assertions.assertEquals(1, fooDrives.getPageResponse().getTotalElements());
+		Assertions.assertTrue(fooDrives.getPageResponse().getContent().get(0).isDrive());
+		// Find Foo's WorkGroups (Filter by nodeType)
+		PageContainer<SharedSpaceNodeNested> fooWGs = service.findAll(root, root, foo, SortOrder.DESC, Sets.newHashSet(NodeType.WORK_GROUP), Sets.newHashSet(), SharedSpaceField.creationDate, container);
+		Assertions.assertEquals(1, fooWGs.getPageResponse().getTotalElements());
+		Assertions.assertTrue(fooWGs.getPageResponse().getContent().get(0).isWorkGroup());
+		// Filter by Role
+		node5 = service.create(foo, foo, new SharedSpaceNode("My drive", null, NodeType.DRIVE));
+		SharedSpaceMember member = memberBusinessService.findByAccountAndNode(foo.getLsUuid(), node5.getUuid());
+		Assertions.assertTrue(member.hasDriveAdminRole());
+		member.setRole(new LightSharedSpaceRole(roleBusinessService.findByName(Role.DRIVE_READER.toString())));
+		memberRepository.save(member);
+		Assertions.assertTrue(member.hasDriveReaderRole());
+		fooDrives = service.findAll(root, root, foo, SortOrder.DESC, Sets.newHashSet(NodeType.DRIVE), Sets.newHashSet(), SharedSpaceField.creationDate, container);
+		Assertions.assertEquals(2, fooDrives.getPageResponse().getTotalElements());
+		PageContainer<SharedSpaceNodeNested> fooDriveReaderRole = service.findAll(root, root, foo, SortOrder.DESC, Sets.newHashSet(NodeType.DRIVE), Sets.newHashSet(Role.DRIVE_READER.toString()), SharedSpaceField.creationDate, container);
+		Assertions.assertEquals(1, fooDriveReaderRole.getPageResponse().getTotalElements());
 		service.delete(john, john, node1);
 		service.delete(john, john, node2);
 		service.delete(foo, foo, node3);
 		service.delete(foo, foo, node4);
+		service.delete(root, root, node5);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
