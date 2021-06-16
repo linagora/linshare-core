@@ -4,7 +4,7 @@ stages:
   - test
 
 variables:
-    DOCKER_IMAGE_CORE_BASE: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-base-image"
+    DOCKER_IMAGE_CORE_EMBEDDED: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-embedded-for-tests"
     DOCKER_IMAGE_CORE_TEST: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-test"
     GIT_DEPTH: "1"
 
@@ -63,15 +63,15 @@ build:
     - echo "CMD mvn jetty:run -P h2,local,mongo-java-server" >> Dockerfile
     - echo "EXPOSE 8080" >> Dockerfile
     - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}" docker-registry.linagora.com:5000
-    - docker build . -t "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
-    - docker push "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
+    - docker build . -t "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
+    - docker push "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
     - docker logout docker-registry.linagora.com:5000
 
 test:
   stage: test
   tags:
     - docker
-  image: "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
+  image: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
   artifacts:
     reports:
       junit:
@@ -85,7 +85,7 @@ test-api-branch-master:
   tags:
     - docker
   services:
-    - name: "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
+    - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
     - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
       alias: ldap
@@ -100,7 +100,7 @@ test-api-branch-with-same-name:
   tags:
     - docker
   services:
-    - name: "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
+    - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
     - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
       alias: ldap
