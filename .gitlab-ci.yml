@@ -79,7 +79,22 @@ test:
   script:
     - mvn clean test
 
-test-api:
+test-api-branch-master:
+  stage: test
+  image: "${DOCKER_IMAGE_CORE_TEST}:master"
+  tags:
+    - docker
+  services:
+    - name: "${DOCKER_IMAGE_CORE_BASE}:${CI_COMMIT_REF_SLUG}"
+      alias: linshare
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
+      alias: ldap
+  allow_failure: true
+  script:
+    - cd /tmp/
+    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
+
+test-api-branch-with-same-name:
   stage: test
   image: "${DOCKER_IMAGE_CORE_TEST}:${CI_COMMIT_REF_SLUG}"
   tags:
@@ -92,4 +107,4 @@ test-api:
   allow_failure: true
   script:
     - cd /tmp/
-    - ./tests_linshare.py -v TestUserApiContactList
+    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
