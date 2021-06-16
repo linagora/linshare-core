@@ -311,16 +311,16 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	}
 
 	private Set<String> checkRoles(Account authUser, Account actor, Set<String> sharedSpaceRoles) {
-		Set<String> checkedRoles = Sets.newHashSet();
+		Set<String> roleNames = Sets.newHashSet();
 		for (String roleName : sharedSpaceRoles) {
 			if (ssRoleService.exist(authUser, actor, roleName)) {
-				checkedRoles.add(roleName);
+				roleNames.add(roleName);
 			}
 		}
-		if (checkedRoles.isEmpty()) {
-			checkedRoles.addAll(ssRoleService.findAllSharedSpaceRoleNames(authUser, actor));
+		if (roleNames.isEmpty()) {
+			roleNames.addAll(ssRoleService.findAllSharedSpaceRoleNames(authUser, actor));
 		}
-		return checkedRoles;
+		return roleNames;
 	}
 
 }
