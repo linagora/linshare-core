@@ -57,6 +57,7 @@ build:
     - echo "RUN chown -R maven:maven /home/maven/linshare" >> Dockerfile
     - echo "USER maven" >> Dockerfile
     - echo "ENV LINSHARE_HOME=/home/maven/linshare" >> Dockerfile
+    - echo "ENV MAVEN_CONFIG=/home/maven/.m2" >> Dockerfile
     - echo "RUN mvn dependency:go-offline dependency:resolve dependency:resolve-plugins --batch-mode" >> Dockerfile
     - echo "RUN mvn compile" >> Dockerfile
     - echo "RUN mvn jetty:start  -P h2,local,mongo-java-server > /dev/null" >> Dockerfile
