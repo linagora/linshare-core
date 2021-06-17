@@ -142,6 +142,20 @@ public class UploadRequestEntryRepositoryImpl extends
 	}
 
 	@Override
+	public Boolean exist(UploadRequest uploadRequest, String entryUuid) {
+		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequestEntry");
+		urCrit.createAlias("uploadRequestEntry.uploadRequestUrl", "url");
+		urCrit.add(Restrictions.eq("url.uploadRequest", uploadRequest));
+		urCrit.setProjection(Projections.property("uuid"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(urCrit);
+		if(list.contains(entryUuid)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	public List<String> findAllEntriesForArchivedDeletedPurgedUR() {
 		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequestEntry");
 		urCrit.createAlias("uploadRequestEntry.uploadRequestUrl", "url");

@@ -525,6 +525,14 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	}
 
 	@Override
+	public Boolean exist(Account authUser, Account actor, String entryUuid, UploadRequest uploadRequest) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, UploadRequestEntry.class, BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN,
+				null);
+		return uploadRequestEntryBusinessService.exist(uploadRequest, entryUuid);
+	}
+
+	@Override
 	public FileAndMetaData thumbnail(Account authUser, Account actor, String uploadRequestEntryUuid,
 			ThumbnailType thumbnailType) {
 		preChecks(actor, actor);

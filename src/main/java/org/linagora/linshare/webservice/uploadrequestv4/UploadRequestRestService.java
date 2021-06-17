@@ -60,5 +60,5 @@ public interface UploadRequestRestService {
 	Response thumbnail(String uploadRequestEntryUuid, ThumbnailType thumbnailType, boolean base64)
 			throws BusinessException;
 
-	Response download(String uploadRequestEntryUuid) throws BusinessException;
+	Response download(String uploadRequestUrlUuid,  String password, String uploadRequestEntryUuid) throws BusinessException;
 }

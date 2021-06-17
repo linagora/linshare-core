@@ -171,7 +171,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		return uploadRequestUrlFacade.thumbnail(uploadRequestEntryUuid, base64, thumbnailType);
 	}
 
-	@Path("/{entryUuid}/download")
+	@Path("/{uploadRequestUrlUuid}/entries/{entryUuid}/download")
 	@GET
 	@Operation(summary = "Download a choosen upload request entry.", responses = {
 		@ApiResponse(
@@ -181,8 +181,12 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	})
 	@Override
 	public Response download(
-			@Parameter(description = "Upload request entry uuid.", required = true)
+			@Parameter(description = "UploadRequestUrl uuid that you want to download its entry.", required = true)
+				@PathParam(value = "uploadRequestUrlUuid") String uploadRequestUrlUuid,
+			@Parameter(description = "UploadRequestUrl's password, required if uploadRequest is secured.", required = true)
+				@HeaderParam("linshare-uploadrequest-password") String password,
+			@Parameter(description = "Upload request entry'uuid to download.", required = true)
 				@PathParam("entryUuid") String uploadRequestEntryUuid) throws BusinessException {
-		return uploadRequestUrlFacade.download(uploadRequestEntryUuid);
+		return uploadRequestUrlFacade.download(uploadRequestUrlUuid, password, uploadRequestEntryUuid);
 	}
 }

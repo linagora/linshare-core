@@ -341,4 +341,9 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	public List<UploadRequestEntry> findAllEntries(UploadRequest uploadRequest) {
 		return uploadRequestEntryRepository.findAllEntries(uploadRequest);
 	}
+
+	@Override
+	public Boolean exist(UploadRequest uploadRequest, String EntryUuid) {
+		return uploadRequestEntryRepository.exist(uploadRequest, EntryUuid);
+	}
 }

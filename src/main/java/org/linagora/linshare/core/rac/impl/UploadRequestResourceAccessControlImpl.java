@@ -58,6 +58,9 @@ public class UploadRequestResourceAccessControlImpl
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
+		if (authUser.hasUploadRequestRole()) {
+			return true;
+		}
 		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.UPLOAD_REQUEST_LIST, false);
 	}

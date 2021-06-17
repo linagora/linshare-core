@@ -66,5 +66,5 @@ public interface UploadRequestUrlFacade {
 
 	Response thumbnail(String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType);
 
-	Response download(String uploadRequestEntryUuid);
+	Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid);
 }

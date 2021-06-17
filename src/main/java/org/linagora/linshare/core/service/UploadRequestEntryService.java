@@ -80,4 +80,6 @@ public interface UploadRequestEntryService {
 
 	FileAndMetaData thumbnail(Account authUser, Account actor, String uploadRequestEntryUuid,
 			ThumbnailType thumbnailType);
+
+	Boolean exist(Account authUser, Account actor, String entryUuid, UploadRequest uploadRequest);
 }

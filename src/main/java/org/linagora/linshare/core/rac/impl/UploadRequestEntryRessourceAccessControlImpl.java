@@ -80,6 +80,9 @@ public class UploadRequestEntryRessourceAccessControlImpl extends EntryResourceA
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, UploadRequestEntry entry, Object... opt) {
+		if (authUser.hasUploadRequestRole()) {
+			return true;
+		}
 		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.UPLOAD_REQUEST_ENTRIES_LIST, false);
 	}

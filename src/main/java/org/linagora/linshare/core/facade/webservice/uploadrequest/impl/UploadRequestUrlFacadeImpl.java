@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
@@ -198,15 +199,29 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 	}
 
 	@Override
-	public Response download(String uploadRequestEntryUuid) {
+	public Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid) {
 		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntryUuid");
+		Validate.notEmpty(uploadRequestUrlUuid, "Missing required uploadRequestUrlUuid");
 		SystemAccount authUser = uploadRequestUrlService.getUploadRequestSystemAccount();
-		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.find(authUser, authUser,
+		UploadRequestEntry uploadRequestEntry = checkUploadRequestUrlAndGetEntry(authUser, uploadRequestUrlUuid, password,
 				uploadRequestEntryUuid);
 		ByteSource documentStream = uploadRequestEntryService.download(authUser, authUser, uploadRequestEntry.getUuid());
 		FileAndMetaData data = new FileAndMetaData(documentStream, uploadRequestEntry.getSize(),
 				uploadRequestEntry.getName(), uploadRequestEntry.getType());
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return response.build();
+	}
+
+	private UploadRequestEntry checkUploadRequestUrlAndGetEntry(Account authUser, String uploadRequestUrlUuid,
+			String password, String uploadRequestEntryUuid) {
+		UploadRequestUrl requestUrl = uploadRequestUrlService.find(uploadRequestUrlUuid, password);
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.find(authUser, authUser,
+				uploadRequestEntryUuid);
+		if (!uploadRequestEntryService.exist(authUser, authUser, uploadRequestEntry.getUuid(), requestUrl.getUploadRequest())) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN,
+					"The choosen uploadRequestUrl with uuid: " + requestUrl.getUuid()
+							+ " does not contain the uploadRequestEntry with uuid: " + uploadRequestEntry.getUuid());
+		}
+		return uploadRequestEntry;
 	}
 }

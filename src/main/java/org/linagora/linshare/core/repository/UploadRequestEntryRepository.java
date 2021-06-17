@@ -65,4 +65,6 @@ public interface UploadRequestEntryRepository extends
 	List<UploadRequestEntry> findAllEntries(UploadRequest uploadRequest);
 
 	List<String> findAllEntriesForArchivedDeletedPurgedUR();
+
+	Boolean exist(UploadRequest uploadRequest, String entryUuid);
 }
