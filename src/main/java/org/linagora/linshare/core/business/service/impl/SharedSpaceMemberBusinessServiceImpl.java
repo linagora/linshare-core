@@ -377,14 +377,25 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class)
 				.getMappedResults();
 		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(),
-				getCount(account, sharedSpaces), sharedSpaces);
+				getCount(account, nodeTypes, roleNames, projections), sharedSpaces);
 	}
 
-	private Long getCount(Account account, List<SharedSpaceNodeNested> sharedSpaces) {
-		Query countQuery = new Query();
-		if (Objects.nonNull(account)) {
-			return Long.valueOf(sharedSpaces.size());
+	private Long getCount(Account account, Set<NodeType> nodeTypes, Set<String> roleNames,
+			ProjectionOperation projections) {
+		List<AggregationOperation> aggregationOperations = Lists.newArrayList();
+		if (Objects.isNull(account)) {
+			return mongoTemplate.count(new Query(), SharedSpaceNode.class);
+
+		} else {
+			aggregationOperations.add(Aggregation.match(Criteria.where("account.uuid").is(account.getLsUuid())));
+			aggregationOperations.add(Aggregation.match(Criteria.where("node.nodeType").in(nodeTypes)));
+			aggregationOperations.add(Aggregation.match(Criteria.where("role.name").in(roleNames)));
+			aggregationOperations.add(Aggregation.group("node"));
+			aggregationOperations.add(projections);
+			Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
+			List<SharedSpaceNodeNested> results = mongoTemplate
+					.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class).getMappedResults();
+			return Long.valueOf(results.size());
 		}
-		return mongoTemplate.count(countQuery, SharedSpaceNode.class);
 	}
 }
