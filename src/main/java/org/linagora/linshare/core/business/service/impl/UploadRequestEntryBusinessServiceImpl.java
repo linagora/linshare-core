@@ -343,7 +343,7 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	}
 
 	@Override
-	public Boolean exist(UploadRequest uploadRequest, String EntryUuid) {
-		return uploadRequestEntryRepository.exist(uploadRequest, EntryUuid);
+	public Boolean exist(UploadRequest uploadRequest, String entryUuid) {
+		return uploadRequestEntryRepository.exist(uploadRequest, entryUuid);
 	}
 }

@@ -64,7 +64,7 @@ public interface UploadRequestUrlFacade {
 
 	void changePassword(String uuid, ChangeUploadRequestUrlPassword reset);
 
-	Response thumbnail(String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType);
+	Response thumbnail(String uploadRequestUrlUuid,  String password, String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType);
 
 	Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid);
 }

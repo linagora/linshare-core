@@ -189,10 +189,13 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 	}
 
 	@Override
-	public Response thumbnail(String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType) {
+	public Response thumbnail(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType) {
+		Validate.notEmpty(uploadRequestUrlUuid, "Missing required uploadRequestUrlUuid");
 		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntryUuid");
 		SystemAccount authUser = uploadRequestUrlService.getUploadRequestSystemAccount();
-		FileAndMetaData data = uploadRequestEntryService.thumbnail(authUser, authUser, uploadRequestEntryUuid,
+		UploadRequestEntry uploadRequestEntry = checkUploadRequestUrlAndGetEntry(authUser, uploadRequestUrlUuid, password,
+				uploadRequestEntryUuid);
+		FileAndMetaData data = uploadRequestEntryService.thumbnail(authUser, authUser, uploadRequestEntry.getUuid(),
 				thumbnailType);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(data, base64, thumbnailType);
 		return builder.build();
@@ -200,8 +203,8 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 
 	@Override
 	public Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid) {
-		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntryUuid");
 		Validate.notEmpty(uploadRequestUrlUuid, "Missing required uploadRequestUrlUuid");
+		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntryUuid");
 		SystemAccount authUser = uploadRequestUrlService.getUploadRequestSystemAccount();
 		UploadRequestEntry uploadRequestEntry = checkUploadRequestUrlAndGetEntry(authUser, uploadRequestUrlUuid, password,
 				uploadRequestEntryUuid);

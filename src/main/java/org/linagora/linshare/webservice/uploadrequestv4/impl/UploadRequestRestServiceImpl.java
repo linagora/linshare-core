@@ -151,7 +151,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		return uploadRequestUrlFacade.deleteUploadRequestEntry(requestUrlUuid, password, entryUuid, entry);
 	}
 
-	@Path("/{entryUuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
+	@Path("/{uploadRequestUrlUuid}/entries/{entryUuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
 	@Operation(summary = "Download the thumbnail of a choosen upload request entry.", responses = {
 		@ApiResponse(
@@ -161,6 +161,10 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	})
 	@Override
 	public Response thumbnail(
+			@Parameter(description = "UploadRequestUrl uuid that you want to get thumbnail of its entry.", required = true)
+				@PathParam(value = "uploadRequestUrlUuid") String uploadRequestUrlUuid,
+			@Parameter(description = "UploadRequestUrl's password, required if uploadRequest is secured.", required = true)
+				@HeaderParam("linshare-uploadrequest-password") String password,
 			@Parameter(description = "The upload requestEntry's uuid to which we will get the thumbnail.", required = true)
 				@PathParam("entryUuid") String uploadRequestEntryUuid,
 			@Parameter(description = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false)
@@ -168,7 +172,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@Parameter(description = "True to get an encoded base 64 response", required = false)
 				@QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		return uploadRequestUrlFacade.thumbnail(uploadRequestEntryUuid, base64, thumbnailType);
+		return uploadRequestUrlFacade.thumbnail(uploadRequestUrlUuid, password, uploadRequestEntryUuid, base64, thumbnailType);
 	}
 
 	@Path("/{uploadRequestUrlUuid}/entries/{entryUuid}/download")

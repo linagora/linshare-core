@@ -57,8 +57,8 @@ public interface UploadRequestRestService {
 
 	List<UploadRequestEntryDto> findAllEntries(String uuid, String password) throws BusinessException;
 
-	Response thumbnail(String uploadRequestEntryUuid, ThumbnailType thumbnailType, boolean base64)
+	Response thumbnail(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid, ThumbnailType thumbnailType, boolean base64)
 			throws BusinessException;
 
-	Response download(String uploadRequestUrlUuid,  String password, String uploadRequestEntryUuid) throws BusinessException;
+	Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid) throws BusinessException;
 }

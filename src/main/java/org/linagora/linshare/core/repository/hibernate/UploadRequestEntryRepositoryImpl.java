@@ -146,13 +146,10 @@ public class UploadRequestEntryRepositoryImpl extends
 		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequestEntry");
 		urCrit.createAlias("uploadRequestEntry.uploadRequestUrl", "url");
 		urCrit.add(Restrictions.eq("url.uploadRequest", uploadRequest));
-		urCrit.setProjection(Projections.property("uuid"));
-		@SuppressWarnings("unchecked")
-		List<String> list = listByCriteria(urCrit);
-		if(list.contains(entryUuid)) {
-			return true;
-		}
-		return false;
+		urCrit.add(Restrictions.eq("uuid", entryUuid));
+		urCrit.setProjection(Projections.rowCount());
+		Long longResult = DataAccessUtils.longResult(findByCriteria(urCrit));
+		return longResult > 0;
 	}
 
 	@Override
