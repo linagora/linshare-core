@@ -57,6 +57,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMemberWorkgroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
+import org.linagora.linshare.mongo.projections.dto.AggregateNodeCountResult;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
@@ -349,6 +350,17 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account,
 			Set<NodeType> nodeTypes, Set<String> roleNames, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+		if (Objects.isNull(nodeTypes) || nodeTypes.isEmpty()) {
+			nodeTypes.addAll(EnumSet.allOf(NodeType.class));
+		}
+		// common parameters for both 'count' and 'get' queries.
+		List<AggregationOperation> commonOperations = Lists.newArrayList();
+		commonOperations.add(Aggregation.match(Criteria.where("node.nodeType").in(nodeTypes)));
+		commonOperations.add(Aggregation.match(Criteria.where("role.name").in(roleNames)));
+		if (Objects.nonNull(account)) {
+			commonOperations.add(Aggregation.match(Criteria.where("account.uuid").is(account.getLsUuid())));
+		}
+		commonOperations.add(Aggregation.group("node"));
 		ProjectionOperation projections = Aggregation.project(
 				Fields.from(
 						Fields.field("uuid", "node.uuid"),
@@ -359,43 +371,24 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 						Fields.field("nodeType", "node.nodeType")
 						)
 				);
-		if (Objects.isNull(nodeTypes) || nodeTypes.isEmpty()) {
-			nodeTypes.addAll(EnumSet.allOf(NodeType.class));
-		}
-		List<AggregationOperation> aggregationOperations = Lists.newArrayList();
-		if (Objects.nonNull(account)) {
-			aggregationOperations.add(Aggregation.match(Criteria.where("account.uuid").is(account.getLsUuid())));
-		}
-		aggregationOperations.add(Aggregation.match(Criteria.where("node.nodeType").in(nodeTypes)));
-		aggregationOperations.add(Aggregation.match(Criteria.where("role.name").in(roleNames)));
+		commonOperations.add(projections);
+
+		// first query to get the count of matched elements
+		List<AggregationOperation> aggregationOperations = Lists.newArrayList(commonOperations);
+		aggregationOperations.add(Aggregation.count().as("count"));
+		Aggregation aggregation2 = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
+		List<AggregateNodeCountResult> results = mongoTemplate.aggregate(aggregation2, SharedSpaceMember.class, AggregateNodeCountResult.class).getMappedResults();
+		Long count = results.get(0).getCount();
+
+		// second query to get matched elements
+		aggregationOperations = Lists.newArrayList(commonOperations);
 		aggregationOperations.add(Aggregation.sort(sort));
-		aggregationOperations.add(Aggregation.group("node"));
 		aggregationOperations.add(Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())));
 		aggregationOperations.add(Aggregation.limit(Long.valueOf(container.getPageSize())));
-		aggregationOperations.add(projections);
 		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
 		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class)
 				.getMappedResults();
 		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(),
-				getCount(account, nodeTypes, roleNames, projections), sharedSpaces);
-	}
-
-	private Long getCount(Account account, Set<NodeType> nodeTypes, Set<String> roleNames,
-			ProjectionOperation projections) {
-		List<AggregationOperation> aggregationOperations = Lists.newArrayList();
-		if (Objects.isNull(account)) {
-			return mongoTemplate.count(new Query(), SharedSpaceNode.class);
-
-		} else {
-			aggregationOperations.add(Aggregation.match(Criteria.where("account.uuid").is(account.getLsUuid())));
-			aggregationOperations.add(Aggregation.match(Criteria.where("node.nodeType").in(nodeTypes)));
-			aggregationOperations.add(Aggregation.match(Criteria.where("role.name").in(roleNames)));
-			aggregationOperations.add(Aggregation.group("node"));
-			aggregationOperations.add(projections);
-			Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
-			List<SharedSpaceNodeNested> results = mongoTemplate
-					.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class).getMappedResults();
-			return Long.valueOf(results.size());
-		}
+				count, sharedSpaces);
 	}
 }
