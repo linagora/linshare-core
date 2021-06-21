@@ -170,6 +170,7 @@ public class SharedSpaceMemberServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		nodeBusinessService.delete(node);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 

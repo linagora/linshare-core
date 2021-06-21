@@ -161,4 +161,62 @@ public class SharedSpaceNodeNested {
 		return "SharedSpaceNodeNested [uuid=" + uuid + ", name=" + name + ", nodeType=" + nodeType + ", role=" + role
 				+ ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
+		result = prime * result + ((modificationDate == null) ? 0 : modificationDate.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
+		result = prime * result + ((parentUuid == null) ? 0 : parentUuid.hashCode());
+		result = prime * result + ((role == null) ? 0 : role.hashCode());
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SharedSpaceNodeNested other = (SharedSpaceNodeNested) obj;
+		if (creationDate == null) {
+			if (other.creationDate != null)
+				return false;
+		} else if (!creationDate.equals(other.creationDate))
+			return false;
+		if (modificationDate == null) {
+			if (other.modificationDate != null)
+				return false;
+		} else if (!modificationDate.equals(other.modificationDate))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (nodeType != other.nodeType)
+			return false;
+		if (parentUuid == null) {
+			if (other.parentUuid != null)
+				return false;
+		} else if (!parentUuid.equals(other.parentUuid))
+			return false;
+		if (role == null) {
+			if (other.role != null)
+				return false;
+		} else if (!role.equals(other.role))
+			return false;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		} else if (!uuid.equals(other.uuid))
+			return false;
+		return true;
+	}
 }

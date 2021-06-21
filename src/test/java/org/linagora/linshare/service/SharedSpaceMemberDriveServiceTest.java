@@ -177,6 +177,7 @@ public class SharedSpaceMemberDriveServiceTest {
 		Assertions.assertNotNull(addedDriveMember, "Member not added to the drive");
 		Assertions.assertNotNull(workgroupMember, "Member not added to the workgroup");
 		Assertions.assertEquals(writerDriveRole.getUuid(), addedDriveMember.getRole().getUuid());
+		ssNodeService.delete(john, john, drive);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -207,6 +208,7 @@ public class SharedSpaceMemberDriveServiceTest {
 		} catch (BusinessException ex) {
 			Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, ex.getErrorCode());
 		}
+		ssNodeService.delete(john, john, drive);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -254,6 +256,7 @@ public class SharedSpaceMemberDriveServiceTest {
 		//No role update for Jane on the second nested node
 		SharedSpaceMemberWorkgroup janeMemberSecondNodeUpdate = (SharedSpaceMemberWorkgroup) ssMemberService.findMemberByAccountUuid(john, john, jane.getLsUuid(), secondExpectedNode.getUuid());
 		Assertions.assertFalse(reader.getName().equals(janeMemberSecondNodeUpdate.getRole().getName()));
+		ssNodeService.delete(john, john, drive);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -289,6 +292,7 @@ public class SharedSpaceMemberDriveServiceTest {
 		} catch (BusinessException ex) {
 			Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, ex.getErrorCode());
 		}
+		ssNodeService.delete(john, john, drive);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

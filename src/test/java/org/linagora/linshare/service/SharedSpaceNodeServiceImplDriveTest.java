@@ -116,6 +116,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.DRIVE);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "Drive not created");
+		service.delete(authUser, authUser, expectedNode);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -127,6 +128,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "Drive not created");
 		Assertions.assertEquals(expectedNode.getName(), "EP_TEST_v233");
+		service.delete(authUser, authUser, expectedNode);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -140,6 +142,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		nodeToUpdate.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
 		service.update(authUser, authUser, nodeToUpdate);
 		Assertions.assertEquals(nodeToUpdate.getName(), "EP_TEST_v233");
+		service.delete(authUser, authUser, nodeToUpdate);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -150,6 +153,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "Drive not created");
 		Assertions.assertNotNull(service.find(authUser, authUser, expectedNode.getUuid()));
+		service.delete(authUser, authUser, expectedNode);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -165,6 +169,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		Assertions.assertNotNull(workgroup, "Workgroup not created");
 		List<SharedSpaceNodeNested> ssNested = service.findAllByAccount(authUser, authUser);
 		Assertions.assertEquals(before + 2, ssNested.size());
+		service.delete(authUser, authUser, expectedDrive);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -198,6 +203,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		});
 		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_FORBIDDEN, exception.getErrorCode());
 		Assertions.assertEquals("You are not authorized to create an entry.", exception.getMessage());
+		service.delete(authUser, authUser, expectedDrive);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
