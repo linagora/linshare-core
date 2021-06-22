@@ -50,6 +50,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
@@ -91,7 +92,7 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 	@Override
 	public Map<ThumbnailType, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata,
 			String mimeType) {
-		if (!isSupportedMimetype(mimeType) || (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
+		if (!isSupportedMimetype(mimeType)) {
 			logger.warn("Thumbnail generation is disabled.");
 			return Maps.newHashMap();
 		}
@@ -159,7 +160,7 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 				tempThumbFile.createNewFile();
 				DataHandler dataHandler = attachment.getDataHandler();
 				try (FileOutputStream fos = new FileOutputStream(tempThumbFile);) {
-					dataHandler.writeTo(fos);
+					IOUtils.copy(dataHandler.getInputStream(), fos);
 				}
 				metadataThumb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png", tempThumbFile.length(),
 						metadata.getFileName());
