@@ -39,11 +39,15 @@ import java.util.Objects;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 public class PageContainer<T> {
+
+	private static Logger logger = LoggerFactory.getLogger(PageContainer.class);
 
 	private static final Pageable DEFAULT_PAGE_REQUEST = PageRequest.of(0, 50);
 
@@ -89,8 +93,7 @@ public class PageContainer<T> {
 			this.pageResponse = new PageResponse<T>(totalElements, totalPage, list, isFirst, isLast);
 			if ((pageNumber + 1 > this.pageResponse.getTotalPages())
 					|| (pageSize > totalElements) && (!list.isEmpty()) && !this.pageResponse.isLast()) {
-				throw new BusinessException(BusinessErrorCode.WRONG_PAGE_PARAMETERS,
-						"Please check the number of the requested page");
+				logger.error("Please check the number of the requested page, you have exceeded the total elements or pages' number");
 			}
 		}
 	}
