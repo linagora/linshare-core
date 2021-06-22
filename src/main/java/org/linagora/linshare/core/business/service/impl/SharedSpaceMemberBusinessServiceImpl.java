@@ -378,7 +378,10 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		aggregationOperations.add(Aggregation.count().as("count"));
 		Aggregation aggregation2 = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
 		List<AggregateNodeCountResult> results = mongoTemplate.aggregate(aggregation2, SharedSpaceMember.class, AggregateNodeCountResult.class).getMappedResults();
-		Long count = results.get(0).getCount();
+		Long count = 0L;
+		if (results.size() > 0 && Objects.nonNull(results.get(0) != null)) {
+			count = results.get(0).getCount();
+		}
 
 		// second query to get matched elements
 		aggregationOperations = Lists.newArrayList(commonOperations);
