@@ -144,15 +144,23 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	@Override
 	public PageContainer<WorkGroupNode> findAll(Account authUser, Account actor, WorkGroup workGroup, String parentUuid,
-			String pattern, boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer,
-			Date creationDateAfter, Date creationDateBefore, Date modificationDateAfter, Date modificationDateBefore,
-			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField,
-			List<DocumentKind> documentKinds) {
+			String pattern, boolean withTree, boolean caseSensitive,
+			PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter, Date creationDateBefore, Date modificationDateAfter,
+			Date modificationDateBefore, List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder,
+			SharedSpaceNodeField sortField, List<DocumentKind> documentKinds) {
 		checkListPermission(authUser, actor, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_NODE_LIST_FORBIDDEN,
 				null, workGroup);
-		return workGroupNodeBusinessService.findAll(workGroup, parentUuid, pattern, caseSensitive, pageContainer,
+		PageContainer<WorkGroupNode> page = workGroupNodeBusinessService.findAll(workGroup, parentUuid, pattern, caseSensitive, pageContainer,
 				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, types, lastAuthor,
 				minSize, maxSize, sortOrder, sortField, documentKinds);
+		if (withTree) {
+			page.getPageResponse().getContent()
+			.parallelStream()
+			.forEach(
+					node -> node.setTreePath(getTreePath(workGroup, node))
+					);
+		}
+		return page;
 	}
 
 	@Override

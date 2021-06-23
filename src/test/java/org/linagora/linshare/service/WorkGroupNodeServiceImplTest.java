@@ -270,13 +270,14 @@ public class WorkGroupNodeServiceImplTest {
 		PageContainer<WorkGroupNode> pageContainer = new PageContainer<WorkGroupNode>(null, null);
 		// sorting has default values set from webservices. We should set them manually
 		// in the service.
-		PageContainer<WorkGroupNode> nodes = workGroupNodeService.findAll(john, john, workGroup, null, null, false,
-				pageContainer, null, null, null, null, null, null, null, null, SortOrder.DESC,
-				SharedSpaceNodeField.modificationDate, null);
+		boolean withTree = false;
+		PageContainer<WorkGroupNode> nodes = workGroupNodeService.findAll(john, john, workGroup, null, null, withTree,
+				false, pageContainer, null, null, null, null, null, null, null, null,
+				SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
 		// search on the wg should returns all folders/documents/revisions in all levels
 		Assertions.assertEquals(5, nodes.getPageResponse().getContent().size());
-		nodes = workGroupNodeService.findAll(john, john, workGroup, folder.getUuid(), null, false, pageContainer, null,
-				null, null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
+		nodes = workGroupNodeService.findAll(john, john, workGroup, folder.getUuid(), null, withTree, false, pageContainer,
+				null, null, null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
 		// search on the folder should returns all folders/documents/revisions in all
 		// levels
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
@@ -291,28 +292,29 @@ public class WorkGroupNodeServiceImplTest {
 		// disable pagination
 		PageContainer<WorkGroupNode> pageContainer = new PageContainer<WorkGroupNode>(null, null);
 		String pattern = "xyz";
-		PageContainer<WorkGroupNode> nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, false,
-				pageContainer, null, null, null, null, null, null, null, null, SortOrder.DESC,
-				SharedSpaceNodeField.modificationDate, null);
+		boolean withTree = false;
+		PageContainer<WorkGroupNode> nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, withTree,
+				false, pageContainer, null, null, null, null, null, null, null, null,
+				SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
 		// search on the workgroup should returns only folders/documents/revisions with
 		// name that contains given pattern
 		Assertions.assertEquals(2, nodes.getPageResponse().getContent().size());
 		pattern = "xYZ";
-		nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, false, pageContainer, null, null,
-				null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
+		nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, withTree, false, pageContainer, null,
+				null, null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
 		// search on the workgroup should returns only folders/documents/revisions with
 		// name that contains given pattern
 		Assertions.assertEquals(2, nodes.getPageResponse().getContent().size());
 		// caseSensitive enabled
 		boolean caseSensitive = true;
-		nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, caseSensitive, pageContainer, null,
-				null, null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
+		nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, withTree, caseSensitive, pageContainer,
+				null, null, null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
 		// search on the workgroup should returns only folders/documents/revisions with
 		// name that contains given pattern
 		Assertions.assertEquals(0, nodes.getPageResponse().getContent().size());
 		pattern = "";
-		nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, false, pageContainer, null, null,
-				null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
+		nodes = workGroupNodeService.findAll(john, john, workGroup, null, pattern, withTree, false, pageContainer, null,
+				null, null, null, null, null, null, null, SortOrder.DESC, SharedSpaceNodeField.modificationDate, null);
 		// search on the workgroup with name that contains empty pattern should returns
 		// all folders/documents/revisions
 		Assertions.assertEquals(5, nodes.getPageResponse().getContent().size());
@@ -341,46 +343,47 @@ public class WorkGroupNodeServiceImplTest {
 		SortOrder sortOrder = SortOrder.DESC;
 		SharedSpaceNodeField sortField = SharedSpaceNodeField.modificationDate;
 		String parent = folder.getUuid();
-		PageContainer<WorkGroupNode> nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false,
-				pageContainer, null, null, null, null, null, null, null, null, sortOrder, sortField, null);
+		boolean withTree = false;
+		PageContainer<WorkGroupNode> nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree,
+				false, pageContainer, null, null, null, null, null, null, null, null, sortOrder, sortField, null);
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
 
-		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
-				creationDateAfter, null, null, null, null, null, null, null, sortOrder, sortField, null);
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
+				pageContainer, creationDateAfter, null, null, null, null, null, null, null, sortOrder, sortField, null);
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
 
-		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
-				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, null, null, null,
-				null, sortOrder, sortField, null);
-		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
-
-		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
-				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes, null,
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
+				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, null, null,
 				null, null, sortOrder, sortField, null);
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
 
-		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
-				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes,
-				lastAuthor, null, null, sortOrder, sortField, null);
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
+				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes,
+				null, null, null, sortOrder, sortField, null);
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
 
-		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
-				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes,
-				lastAuthor, minSize, maxSize, sortOrder, sortField, null);
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
+				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
+				nodeTypes, lastAuthor, null, null, sortOrder, sortField, null);
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
 
-		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
-				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes,
-				lastAuthor, minSize, maxSize, sortOrder, sortField, documentKinds);
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
+				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
+				nodeTypes, lastAuthor, minSize, maxSize, sortOrder, sortField, null);
+		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
+
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
+				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
+				nodeTypes, lastAuthor, minSize, maxSize, sortOrder, sortField, documentKinds);
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
 
 		documentKinds.add(DocumentKind.OTHER);
 		// means we want documents that have mimeType not exists in all defaultSupported
 		// mimeTypes defined in DocumentKind Enum 
 		// see WorkgroupNodeBusinessServiceImpl.getDefaultSupportedMimetypes()
-		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, false, pageContainer,
-				creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore, nodeTypes,
-				lastAuthor, minSize, maxSize, sortOrder, sortField, documentKinds);
+		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
+				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
+				nodeTypes, lastAuthor, minSize, maxSize, sortOrder, sortField, documentKinds);
 		// documentKind of created workgroup documents is DOCUMENT, expected empty list
 		Assertions.assertEquals(0, nodes.getPageResponse().getContent().size());
 	}

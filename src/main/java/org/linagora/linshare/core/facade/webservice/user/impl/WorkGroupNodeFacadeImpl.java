@@ -139,7 +139,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 
 	@Override
 	public PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String parent,
-			String pattern, boolean caseSensitive, Integer pageNumber, Integer pageSize,
+			String pattern, boolean caseSensitive, boolean withTree, Integer pageNumber, Integer pageSize,
 			String creationDateAfter, String creationDateBefore, String modificationDateAfter, String modificationDateBefore,
 			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder,
 			SharedSpaceNodeField sortField, List<String> documentKinds) {
@@ -150,10 +150,10 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		List<DocumentKind> documentKindsConverted = Lists.newArrayList();
 		documentKinds.forEach(s -> documentKindsConverted.add(DocumentKind.valueOf(s)));
 		return service.findAll(authUser, actor, workGroup, parent, pattern,
-				caseSensitive, new PageContainer<WorkGroupNode>(pageNumber, pageSize),
-				getDateFromString(creationDateAfter), getDateFromString(creationDateBefore),
-				getDateFromString(modificationDateAfter), getDateFromString(modificationDateBefore), types, lastAuthor, minSize, maxSize, sortOrder,
-				sortField, documentKindsConverted);
+				withTree, caseSensitive,
+				new PageContainer<WorkGroupNode>(pageNumber, pageSize), getDateFromString(creationDateAfter),
+				getDateFromString(creationDateBefore), getDateFromString(modificationDateAfter), getDateFromString(modificationDateBefore), types, lastAuthor, minSize, maxSize,
+				sortOrder, sortField, documentKindsConverted);
 	}
 	
 	private Date getDateFromString(String dateString) {

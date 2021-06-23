@@ -47,7 +47,7 @@ public interface SharedSpaceNodeRestService extends WorkGroupNodeRestService {
 
 	NodeMetadataMto findMetaData(String sharedSpaceUuid, String sharedSpaceNodeUuid, Boolean storage) throws BusinessException;
 
-	Response findAll(String sharedSpaceUuid, String parent, String pattern, boolean caseSensitive,
+	Response search(String sharedSpaceUuid, String parent, String pattern, boolean caseSensitive, boolean withTree,
 			Integer pageNumber, Integer pageSize, String creationDateAfter, String creationDateBefore,
 			String modificationDateAfter, String modificationDateBefore, List<WorkGroupNodeType> types, String lastAuthor,
 			Long minSize, Long maxSize, String sortOrder, String sortField, List<String> documentKinds)

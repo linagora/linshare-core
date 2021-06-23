@@ -189,7 +189,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 		)
 	})
 	@Override
-	public Response findAll(
+	public Response search(
 			@Parameter(description = "The sharedSpace uuid.", required = true)
 				@PathParam("sharedSpaceUuid")
 					String sharedSpaceUuid,
@@ -200,8 +200,11 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 				@QueryParam("pattern")
 					String pattern,
 			@Parameter(description = "If true, perform pattern comparisons with case sensitivity.", required = false)
-				@QueryParam("caseSensitive")
+				@QueryParam("caseSensitive") @DefaultValue("false")
 						boolean caseSensitive,
+			@Parameter(description = "If true, the server will compute the path to this object (name and uuid of all ancestors.", required = false)
+				@QueryParam("tree") @DefaultValue("false")
+						boolean withTree,
 			@Parameter(description = "The page number", required = false)
 				@QueryParam("pageNumber")
 					Integer pageNumber,
@@ -239,12 +242,12 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 				@QueryParam("sortField") @DefaultValue("modificationDate")
 					String sortField,
 			@Parameter(description = "Filter by the kind of document (DOCUMENT/PDF/SPREADSHEET/IMAGE/VIDEO/AUDIO/ARCHIVE). To get other kind of documents use OTHER", required = false)
-				@QueryParam("documentKind")
+				@QueryParam("kind")
 					List<String> documentKinds)					
 			throws BusinessException {
 		return new PagingResponseBuilder<WorkGroupNode>().build(sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, parent, pattern, caseSensitive,
-						pageNumber, pageSize, creationDateAfter, creationDateBefore, modificationDateAfter,
-						modificationDateBefore, types, lastAuthor, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField), documentKinds));
+						withTree, pageNumber, pageSize, creationDateAfter, creationDateBefore,
+						modificationDateAfter, modificationDateBefore, types, lastAuthor, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField), documentKinds));
 	}
 
 	@Path("/{sharedSpaceNodeUuid}")

@@ -83,7 +83,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 	NodeMetadataMto findMetaData(String actorUuid, String sharedSpaceUuid, String sharedSpaceNodeUuid, boolean storage);
 
 	PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String parent,
-			String pattern, boolean caseSensitive, Integer pageNumber, Integer pageSize,
+			String pattern, boolean caseSensitive, boolean withTree, Integer pageNumber, Integer pageSize,
 			String creationDateAfter, String creationDateBefore, String modificationDateAfter, String modificationDateBefore,
 			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder order,
 			SharedSpaceNodeField sortField, List<String> documentKinds);

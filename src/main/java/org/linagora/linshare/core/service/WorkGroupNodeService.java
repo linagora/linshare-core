@@ -110,8 +110,8 @@ public interface WorkGroupNodeService {
 			throws BusinessException;
 
 	PageContainer<WorkGroupNode> findAll(Account authUser, Account actor, WorkGroup workGroup, String parentUuid,
-			String pattern, boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter,
-			Date creationDateBefore, Date modificationDateAfter, Date modificationDateBefore,
-			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder,
-			SharedSpaceNodeField sortField, List<DocumentKind> documentKinds);
+			String pattern, boolean withTree, boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer,
+			Date creationDateAfter, Date creationDateBefore, Date modificationDateAfter,
+			Date modificationDateBefore, List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize,
+			SortOrder sortOrder, SharedSpaceNodeField sortField, List<DocumentKind> documentKinds);
 }
