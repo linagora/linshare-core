@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -241,6 +242,17 @@ public class WorkGroupNode implements Cloneable {
 	}
 
 	public void setNodeType(WorkGroupNodeType nodeType) {
+		this.nodeType = nodeType;
+	}
+
+	// workaround: @JsonSubTypes and @JsonTypeInfo does not work when using Respponse.ok builder
+	// we used it only for pagination and the attribute 'type' was not computed.
+	@Transient
+	public WorkGroupNodeType getType() {
+		return nodeType;
+	}
+
+	public void setType(WorkGroupNodeType nodeType) {
 		this.nodeType = nodeType;
 	}
 
