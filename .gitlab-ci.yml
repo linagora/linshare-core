@@ -108,3 +108,6 @@ test-api-branch-with-same-name:
   script:
     - cd /tmp/
     - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
+  except:
+    refs:
+      - master@linagora/lgs/linshare/products/linshare-core
