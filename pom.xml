@@ -1330,28 +1330,6 @@
 					<failOnError>false</failOnError>
 				</configuration>
 			</plugin>
-			<!-- build-helper-maven-plugin : add embedded ldap directory sources to 
-				test path -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.9.1</version>
-				<executions>
-					<execution>
-						<id>add-test-source</id>
-						<phase>generate-test-sources</phase>
-						<inherited>false</inherited>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${project.basedir}/src/test/generated/cxf</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<!-- hibernate tool : ?? -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
