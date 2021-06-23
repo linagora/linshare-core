@@ -77,6 +77,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -349,7 +350,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account,
-			Set<NodeType> nodeTypes, Set<String> roleNames, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+			Set<NodeType> nodeTypes, Set<String> roleNames, String name, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
 		if (Objects.isNull(nodeTypes) || nodeTypes.isEmpty()) {
 			nodeTypes.addAll(EnumSet.allOf(NodeType.class));
 		}
@@ -359,6 +360,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		commonOperations.add(Aggregation.match(Criteria.where("role.name").in(roleNames)));
 		if (Objects.nonNull(account)) {
 			commonOperations.add(Aggregation.match(Criteria.where("account.uuid").is(account.getLsUuid())));
+		}
+		if (!Strings.isNullOrEmpty(name)) {
+			commonOperations.add(Aggregation.match(Criteria.where("node.name").regex("(?i).*" + name + ".*")));
 		}
 		commonOperations.add(Aggregation.group("node"));
 		ProjectionOperation projections = Aggregation.project(

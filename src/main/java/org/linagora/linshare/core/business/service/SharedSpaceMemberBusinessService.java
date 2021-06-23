@@ -82,11 +82,12 @@ public interface SharedSpaceMemberBusinessService {
 	 * This method is used by Admins only
 	 * @param nodeTypes is the type of sharedSpace to filter with (Drive/WORK_GROUP)
 	 * @param roleNames is the list of sharedSpaceRoles to filter with
+	 * @param name is the sharedSpaces' name to filter by
 	 * @param container contains the pageNumber, pageSize
 	 * @param Account The account to filter by
 	 * @return {@link SharedSpaceNodeNested} pageContainer of SharedSpaceNodeNested
 	 */
-	PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account, Set<NodeType> nodeTypes, Set<String> roleNames, PageContainer<SharedSpaceNodeNested> container, Sort sort);
+	PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account, Set<NodeType> nodeTypes, Set<String> roleNames, String name, PageContainer<SharedSpaceNodeNested> container, Sort sort);
 
 
 	List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid);

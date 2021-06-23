@@ -289,7 +289,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account,
-			SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, PageContainer<SharedSpaceNodeNested> container) {
+			SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, PageContainer<SharedSpaceNodeNested> container) {
 		preChecks(authUser, actor);
 		if (!authUser.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
@@ -306,7 +306,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			}
 		}
 		Set<String> roleNames = checkRoles(authUser, actor, sharedSpaceRoles);
-		sharedSpaces = memberBusinessService.findAllSharedSpaces(account, nodeTypes, roleNames, container, sort);
+		sharedSpaces = memberBusinessService.findAllSharedSpaces(account, nodeTypes, roleNames, name, container, sort);
 		return sharedSpaces;
 	}
 
