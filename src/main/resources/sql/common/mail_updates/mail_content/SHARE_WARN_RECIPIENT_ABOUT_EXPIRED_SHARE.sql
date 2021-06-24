@@ -13,11 +13,7 @@ UPDATE mail_content SET subject='[( #{subject(${share.name})})]',body='<!DOCTYPE
         <!--/* Main email  message content*/-->
         <p>
           <span data-th-utext="#{beginningMainMsg}"></span>
-          <span>
-             <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="#{fileNameEndOfLine(${share.name})}" th:href="@{${share.href}}" >
-                  filename.ext
-              </a>
-          </span>
+          <b><span data-th-text="#{fileNameEndOfLine(${share.name})}"></span></b>
           <span data-th-utext="#{endingMainMsg(${shareOwner.firstName},${shareOwner.lastName})}"></span>
           <!--/* Activation link for initialisation of the guest account */-->
              </p> <!--/* End of Main email  message content*/-->
