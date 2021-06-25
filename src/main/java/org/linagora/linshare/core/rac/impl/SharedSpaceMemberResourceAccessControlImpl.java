@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
@@ -77,8 +78,48 @@ public class SharedSpaceMemberResourceAccessControlImpl
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
-		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_DELETE, SharedSpaceActionType.DELETE, getSharedSpaceResourceType());
+		String nodeUuid = entry.getNode().getUuid();
+		String parentUuid = null;
+		SharedSpaceMemberDrive driveMember = null;
+		if (opt != null && opt.length > 0 && opt[0] != null) {
+			parentUuid = (String) opt[0];
+		}
+		SharedSpaceNode node = sharedSpaceNodeMongoRepository.findByUuid(nodeUuid);
+		if (!isFunctionalityEnabled(actor, node)) {
+			return false;
+		}
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_DELETE);
+		}
+		if (authUser.isInternal() || authUser.isGuest()) {
+			// could be either Drive or Workgroup member
+			SharedSpaceMember nodeMember = sharedSpaceMemberMongoRepository.findByAccountAndNode(actor.getLsUuid(),
+					nodeUuid);
+			if (nodeMember == null) {
+				return false;
+			} else if (parentUuid == null) {
+				// root workgroup: ssmember is membership of a stand-alone workgroup
+				return hasPermission(nodeMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
+						SharedSpaceResourceType.MEMBER);
+			} else {
+				driveMember = (SharedSpaceMemberDrive) sharedSpaceMemberMongoRepository
+						.findByAccountAndNode(actor.getLsUuid(), parentUuid);
+				if (driveMember == null) {
+					// ssmember is membership of a nested workgroup only and not member of the drive
+					return hasPermission(nodeMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
+							SharedSpaceResourceType.MEMBER);
+				} else {
+					// ssmember is membership of a drive and its nested workgroup
+					return hasPermission(nodeMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
+							SharedSpaceResourceType.MEMBER)
+							|| hasPermission(driveMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
+									SharedSpaceResourceType.MEMBER);
+				}
+			}
+		} else {
+			// TODO: Check administrator permissions (User with role Role.ADMIN)
+		}
+		return false;
 	}
 
 	@Override

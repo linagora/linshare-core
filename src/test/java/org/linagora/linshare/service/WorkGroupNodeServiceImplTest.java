@@ -156,7 +156,7 @@ public class WorkGroupNodeServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		ssnode = sharedSpaceNodeService.create(john, john,
-				new SharedSpaceNode("Workgroup_test", "My parent nodeUuid", NodeType.WORK_GROUP));
+				new SharedSpaceNode("Workgroup_test", NodeType.WORK_GROUP));
 		workGroup = threadService.find(john, john, ssnode.getUuid());
 		rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
 		WorkGroupNode wgn = new WorkGroupNode(new AccountMto(john), "MY_FOLDER", rootFolder.getUuid(),

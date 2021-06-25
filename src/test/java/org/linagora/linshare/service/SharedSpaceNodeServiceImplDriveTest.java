@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -53,8 +55,15 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
+import org.linagora.linshare.core.service.SharedSpaceRoleService;
+import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,11 +97,28 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
+	
+	@Autowired
+	@Qualifier("sharedSpaceMemberDriveService")
+	private SharedSpaceMemberFragmentService ssMemberDriveService;
+
+	@Autowired
+	@Qualifier("workgroupMemberService")
+	private SharedSpaceMemberFragmentService ssMemberWorkgroupService;
+	
+	@Autowired
+	@Qualifier("sharedSpaceMemberService")
+	private SharedSpaceMemberService memberService;
 
 	@Autowired
 	private FunctionalityReadOnlyService functionalityService;
 
-	private Account authUser;
+	@Autowired
+	private SharedSpaceRoleService ssRoleService;
+	
+	private Account authUser, jane;
+
+	private SharedSpaceRole adminDriveRole, readerDriveRole, reader, admin;
 
 	public SharedSpaceNodeServiceImplDriveTest() {
 		super();
@@ -101,7 +127,13 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		authUser = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
+		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
+		readerDriveRole = ssRoleService.findByName(root, root,"DRIVE_READER");
+		reader = ssRoleService.findByName(root, root, "READER");
+		admin = ssRoleService.findByName(root, root, "ADMIN");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -204,6 +236,162 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_FORBIDDEN, exception.getErrorCode());
 		Assertions.assertEquals("You are not authorized to create an entry.", exception.getMessage());
 		service.delete(authUser, authUser, expectedDrive);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteDriveByNotMember() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test a drive member not allowed to delete a drive where he is not a membership 
+		SharedSpaceNode johnDrive = service.create(authUser, authUser, new SharedSpaceNode("john drive", NodeType.DRIVE));
+		service.create(jane, jane, new SharedSpaceNode("jane Drive", NodeType.DRIVE));
+		BusinessException e = assertThrows(BusinessException.class, () -> {
+			service.delete(jane, jane, johnDrive);
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, e.getErrorCode());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteDriveByInvitedMemberDriveAdmin() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test an invited member with Drive Admin role can delete his Drive 
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
+		service.create(authUser, authUser, new SharedSpaceNode("nested-wg1", drive.getUuid(), NodeType.WORK_GROUP));
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 2);
+		// Add a member to the Drive
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(adminDriveRole, reader);
+		ssMemberDriveService.create(authUser, authUser, drive,
+				context, new SharedSpaceAccount((User) jane));
+		service.delete(jane, jane, drive);
+		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(authUser, authUser, drive.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, e.getErrorCode());
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 0);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteDriveByInvitedMemberDriveReader() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test an invited member with Drive Reader role NOT ALLOWED to delete his Drive 
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
+		service.create(authUser, authUser, new SharedSpaceNode("nested-wg1", drive.getUuid(), NodeType.WORK_GROUP));
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 2);
+		// Add a member to the Drive
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(readerDriveRole, admin);
+		ssMemberDriveService.create(authUser, authUser, drive,
+				context, new SharedSpaceAccount((User) jane));
+		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+			service.delete(jane, jane, drive);
+		});
+		Assertions.assertEquals(BusinessErrorCode.DRIVE_FORBIDDEN, e.getErrorCode());
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 2);
+		// a member with Admin role in nested workgroup can delete his workgroup
+		service.delete(jane, jane, nested1);
+		BusinessException e1 = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(authUser, authUser, nested1.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, e1.getErrorCode());
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 1);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteNestedByInvitedMemberAdmin() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test an invited member in nested workgroup with admin role delete his wg 
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 1);
+		// Add a member to the nested wg
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(admin);
+		ssMemberWorkgroupService.create(authUser, authUser, nested1,
+				context, new SharedSpaceAccount((User) jane));
+		// a member with Admin role in nested workgroup can delete his workgroup
+		service.delete(jane, jane, nested1);
+		BusinessException e1 = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(authUser, authUser, nested1.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, e1.getErrorCode());
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 0);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteNestedWorkgroup() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test delete a nested wg by a member that is a membership of it but not in the drive
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 1);
+		// Add a member to the nested wg
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(admin);
+		SharedSpaceMember member = ssMemberWorkgroupService.create(authUser, authUser, nested1,
+				context, new SharedSpaceAccount((User) jane));
+		// a member with Admin role in nested workgroup can delete his workgroup
+		service.delete(jane, jane, nested1);
+		BusinessException e1 = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(authUser, authUser, nested1.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, e1.getErrorCode());
+		BusinessException e2 = Assertions.assertThrows(BusinessException.class, () -> {
+			memberService.find(authUser, authUser, member.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e2.getErrorCode());
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 0);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteNestedWorkgroupByDriveMember() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test delete a nested wg by a drive member
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 1);
+		// Add a member to the nested wg
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(admin);
+		SharedSpaceMember localWgMember = ssMemberWorkgroupService.create(authUser, authUser, nested1,
+				context, new SharedSpaceAccount((User) jane));
+		// a drive member with Drive Admin role can delete nested workgroup
+		service.delete(authUser, authUser, nested1);
+		BusinessException e1 = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(authUser, authUser, nested1.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, e1.getErrorCode());
+		BusinessException e2 = Assertions.assertThrows(BusinessException.class, () -> {
+			memberService.find(authUser, authUser, localWgMember.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e2.getErrorCode());
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 0);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteDriveAndNestedWorkgroupByDriveMember() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test delete a drive and its wg by a drive member
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
+		// Add a local member to the nested wg
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(admin);
+		SharedSpaceMember localWgMember = ssMemberWorkgroupService.create(authUser, authUser, nested1,
+				context, new SharedSpaceAccount((User) jane));
+		// a drive member with Drive Admin role can delete drive and related nested workgroups
+		service.delete(authUser, authUser, drive);
+		BusinessException e1 = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(authUser, authUser, drive.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, e1.getErrorCode());
+		BusinessException e2 = Assertions.assertThrows(BusinessException.class, () -> {
+			memberService.find(authUser, authUser, localWgMember.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e2.getErrorCode());
+		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 0);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

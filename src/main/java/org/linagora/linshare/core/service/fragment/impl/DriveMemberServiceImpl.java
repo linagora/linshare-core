@@ -211,8 +211,8 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			// There is no members on this Drive
 			return null;
 		}
-		// We check the user has the right to delete members of this node
-		// If he can delete one member, he can delete them all
+		// We check the user has the right to delete members of this node drive
+		// If he can delete one drive member, he can delete them all
 		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMembersToDelete.get(0));
 		OnDeleteSharedSpaceContainer container = new OnDeleteSharedSpaceContainer();

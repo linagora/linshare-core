@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -155,7 +157,7 @@ public class SharedSpaceNodeServiceImplTest {
 	@Test
 	public void create() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		SharedSpaceNode node = new SharedSpaceNode("My first node", NodeType.WORK_GROUP);
 		SharedSpaceNode expectedNode = service.create(john, john, node);
 		Assertions.assertNotNull(expectedNode, "node not created");
 		Assertions.assertNotNull(expectedNode.getQuotaUuid());
@@ -204,7 +206,7 @@ public class SharedSpaceNodeServiceImplTest {
 	@Test
 	public void find() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		SharedSpaceNode node = new SharedSpaceNode("My first node", NodeType.WORK_GROUP);
 		SharedSpaceNode expectedNode = service.create(john, john, node);
 		Assertions.assertNotNull(expectedNode, "node not created");
 		SharedSpaceNode toFindNode = service.find(john, john, expectedNode.getUuid());
@@ -228,6 +230,18 @@ public class SharedSpaceNodeServiceImplTest {
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}
+	@Test
+	public void deleteWorkgroupByNotMember() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test member delete a workgroup where he is not a membership
+		SharedSpaceNode johnWorkGroup = service.create(john, john, new SharedSpaceNode("john workgroup", NodeType.WORK_GROUP));
+		service.create(jane, jane, new SharedSpaceNode("jane workgroup", NodeType.WORK_GROUP));
+		BusinessException e = assertThrows(BusinessException.class, () -> {
+			service.delete(jane, jane, johnWorkGroup);
+		});
+		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_FORBIDDEN, e.getErrorCode());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
 
 	@Test
 	public void update() throws BusinessException {
@@ -248,7 +262,7 @@ public class SharedSpaceNodeServiceImplTest {
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<SharedSpaceNode> foundNodes = service.findAll(root, root);
-		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		SharedSpaceNode node = new SharedSpaceNode("My first node", NodeType.WORK_GROUP);
 		node = service.create(john, john, node);
 		Assertions.assertEquals(foundNodes.size() + 1, service.findAll(root, root).size());
 		service.delete(john, john, node);

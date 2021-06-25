@@ -133,7 +133,7 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 		// We check the user has the right to delete members of this node
 		// If he can delete one member, he can delete them all
 		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				foundMembersToDelete.get(0));
+				foundMembersToDelete.get(0), node.getParentUuid());
 		OnDeleteSharedSpaceContainer container = new OnDeleteSharedSpaceContainer();
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());

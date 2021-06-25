@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -63,10 +64,12 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
+import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +106,8 @@ public class SharedSpaceMemberServiceImplTest {
 	private SharedSpaceRole adminRole;
 
 	private SharedSpaceRole readerRole;
+
+	private SharedSpaceRole readerDriveRole;
 
 	private LightSharedSpaceRole lightReaderRoleToPersist;
 
@@ -153,9 +158,10 @@ public class SharedSpaceMemberServiceImplTest {
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		adminRole = roleBusinessService.findByName("ADMIN");
 		readerRole = roleBusinessService.findByName("READER");
+		readerDriveRole = roleBusinessService.findByName("DRIVE_READER");
 		lightReaderRoleToPersist = new LightSharedSpaceRole(readerRole);
 		Validate.notNull(adminRole, "adminRole must be set");
-		node = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.WORK_GROUP);
+		node = new SharedSpaceNode("nodeTest", NodeType.WORK_GROUP);
 		nodeBusinessService.create(node);
 		lightNodePersisted = new GenericLightEntity(node.getUuid(), node.getUuid());
 		accountJhon = new SharedSpaceAccount(john);
@@ -266,6 +272,53 @@ public class SharedSpaceMemberServiceImplTest {
 		service.deleteAllMembers(john, john, node, LogActionCause.WORKGROUP_DELETION, null);
 		foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
 		Assertions.assertEquals(0, foundMembers.size(), "There are members left in the shared space node");
+	}
+	
+	@Test
+	public void testDeleteAllWorkgroupMembersByMemberNotAllowed() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test delete a workgroup by a user which has not a permission 
+		SharedSpaceNode wg = nodeBusinessService.create(new SharedSpaceNode("wg", NodeType.WORK_GROUP));
+		service.create(john, john, wg, adminRole, accountJhon);
+		service.create(john, john, wg, readerRole, accountJane);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.deleteAllMembers(jane, jane, wg, LogActionCause.WORKGROUP_DELETION, null);
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, exception.getErrorCode());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testDeleteAllWorkgroupMembersByNotMember() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test delete a workgroup by a user which is not a member of it
+		SharedSpaceNode wg = nodeBusinessService.create(new SharedSpaceNode("wg", NodeType.WORK_GROUP));
+		service.create(john, john, wg, adminRole, accountJhon);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.deleteAllMembers(jane, jane, wg, LogActionCause.WORKGROUP_DELETION, null);
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, exception.getErrorCode());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testDeleteAllByNotMember() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// test delete a drive by a user which is not a member of it
+		SharedSpaceNode drive = nodeBusinessService.create(new SharedSpaceNode("drive", NodeType.DRIVE));
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(readerDriveRole, adminRole);
+		service.create(john, john, drive, context, accountJhon);
+		SharedSpaceNode nested1 = nodeBusinessService
+				.create(new SharedSpaceNode("nested1", drive.getUuid(), NodeType.WORK_GROUP));
+		SharedSpaceNode nested2 = nodeBusinessService
+				.create(new SharedSpaceNode("nested2", drive.getUuid(), NodeType.WORK_GROUP));
+		service.create(john, john, nested1, adminRole, accountJhon);
+		service.create(john, john, nested2, adminRole, accountJhon);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.deleteAllMembers(jane, jane, drive, LogActionCause.DRIVE_DELETION, Arrays.asList(new SharedSpaceNodeNested(nested1), new SharedSpaceNodeNested(nested2)));
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, exception.getErrorCode());
+		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
