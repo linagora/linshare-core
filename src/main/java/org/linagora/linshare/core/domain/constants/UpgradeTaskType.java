@@ -272,7 +272,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Update nested SharedSpaceMembers with right value of seeAsNested
 	 */
-	UPGRADE_4_2_UPDATE_SEE_AS_NESTED_FIELD_IN_NESTED_SHARED_SPACE_MEMBERS;
+	UPGRADE_4_2_UPDATE_SEE_AS_NESTED_FIELD_IN_NESTED_SHARED_SPACE_MEMBERS,
+
+	/**
+	 * Add missing properties when creating a copy of an existing workgroupNode (file).
+	 */
+	UPGRADE_4_2_ADD_MISSING_PROPERTIES_TO_WORK_GROUP_NODE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

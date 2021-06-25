@@ -110,6 +110,14 @@
 					<constructor-arg ref="sharedSpaceMemberMongoRepository" />
 					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_2.AddMissingPropertiesToWorkGroupNodesUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="threadRepository" />
+					<constructor-arg ref="workGroupDocumentRevisionService" />
+					<constructor-arg ref="workGroupNodeMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

@@ -1286,6 +1286,33 @@ VALUES
   now(),
   now(),
   null);
+-- UPGRADE_4_2_ADD_MISSING_PROPERTIES_TO_WORK_GROUP_NODE
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (44,
+  'UNDEFINED',
+  'UPGRADE_4_2_ADD_MISSING_PROPERTIES_TO_WORK_GROUP_NODE',
+  'UPGRADE_4_2',
+  null,
+  null,
+  44,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);
 
 -- Mail content for WORKGROUP_WARN_DELETED_WORKGROUP
 INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,39,39,'','','',NOW(),true,'','b8fd5482-c47f-11eb-8529-0242ac130003',true);
