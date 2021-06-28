@@ -41,6 +41,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 public enum SharedSpaceNodeField {
 	name,
 	creationDate,
+	size,
 	modificationDate;
 
 }
