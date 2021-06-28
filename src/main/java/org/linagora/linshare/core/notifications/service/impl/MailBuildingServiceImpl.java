@@ -136,7 +136,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			String urlTemplateForWorkgroup,
 			String urlTemplateForDrive,
 			String urlTemplateForUploadRequestEntries,
-			String urlTemplateForUploadRequestUploadedFile
+			String urlTemplateForUploadRequestUploadedFile,
+			String urlTemplateForJwtToken
 			) throws Exception {
 		this.domainBusinessService = domainBusinessService;
 		this.templateEngine = new TemplateEngine();
@@ -205,7 +206,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
 				mailActivationBusinessService, fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments,
-				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForDrive, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile);
+				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForDrive, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile, urlTemplateForJwtToken);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -226,7 +227,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		String urlTemplateForWorkgroup,
 		String urlTemplateForDrive,
 		String urlTemplateForUploadRequestEntries,
-		String urlTemplateForUploadRequestUploadedFile
+		String urlTemplateForUploadRequestUploadedFile,
+		String urlTemplateForJwtToken
 	) {
 		Collection<EmailBuilder> values = emailBuilders.values();
 		for (EmailBuilder emailBuilder : values) {
@@ -244,6 +246,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setUrlTemplateForDrive(urlTemplateForDrive);
 			emailBuilder.setUrlTemplateForUploadRequestEntries(urlTemplateForUploadRequestEntries);
 			emailBuilder.setUrlTemplateForUploadRequestUploadedFile(urlTemplateForUploadRequestUploadedFile);
+			emailBuilder.setUrlTemplateForJwtToken(urlTemplateForJwtToken);
 		}
 	}
 

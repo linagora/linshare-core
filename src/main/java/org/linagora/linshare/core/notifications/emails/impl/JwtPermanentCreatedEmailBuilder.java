@@ -66,12 +66,15 @@ public class JwtPermanentCreatedEmailBuilder extends EmailBuilder {
 		User recipient = (User) emailCtx.getRecipient();
 		PermanentToken token = emailCtx.getJwtLongTime();
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+		String linshareURL = getLinShareUrl(owner);
+		String jwtTokenLink = getJwtTokenLink(linshareURL);
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("label", token.getLabel());
 		ctx.setVariable("description", token.getDescription());
 		ctx.setVariable("creationDate", token.getCreationDate());
 		ctx.setVariable("owner", owner);
 		ctx.setVariable("recipient", recipient);
+		ctx.setVariable("jwtTokenLink", jwtTokenLink);
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
@@ -87,9 +90,10 @@ public class JwtPermanentCreatedEmailBuilder extends EmailBuilder {
 		token.setCreationDate(new Date());
 		ctx.setVariable("label", token.getLabel());
 		ctx.setVariable("description", token.getDescription());
-		ctx.setVariable("creationDate", new Date());
+		ctx.setVariable("creationDate", token.getCreationDate());
 		ctx.setVariable("owner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("recipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		ctx.setVariable("jwtTokenLink", getJwtTokenLink(fakeLinshareURL));
 		res.add(ctx);
 		return res;
 	}

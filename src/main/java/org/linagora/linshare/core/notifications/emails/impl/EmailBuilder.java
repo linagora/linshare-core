@@ -150,6 +150,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected String urlTemplateForUploadRequestUploadedFile;
 
+	protected String urlTemplateForJwtToken;
+
 	public EmailBuilder() {
 		initSupportedTypes();
 	}
@@ -280,6 +282,14 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	public void setUrlTemplateForUploadRequestUploadedFile(String urlTemplateForUploadRequestUploadedFile) {
 		this.urlTemplateForUploadRequestUploadedFile = urlTemplateForUploadRequestUploadedFile;
+	}
+
+	public String getUrlTemplateForJwtToken() {
+		return urlTemplateForJwtToken;
+	}
+
+	public void setUrlTemplateForJwtToken(String urlTemplateForJwtPermanentToken) {
+		this.urlTemplateForJwtToken = urlTemplateForJwtPermanentToken;
 	}
 
 	@Override
@@ -697,6 +707,15 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		sb.append(linshareURL);
 		Formatter formatter = new Formatter(sb);
 		formatter.format(urlTemplateForReceivedShares, shareUuid);
+		formatter.close();
+		return sb.toString();
+	}
+
+	protected String getJwtTokenLink(String linshareURL) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlTemplateForJwtToken);
 		formatter.close();
 		return sb.toString();
 	}

@@ -75,6 +75,7 @@
 		<constructor-arg value="${linshare.user.url.drive.link}" />
 		<constructor-arg value="${linshare.user.url.download.uploadrequests.entries}"/>
 		<constructor-arg value="${linshare.user.url.download.uploadrequests.upload.file}"/>
+		<constructor-arg value="${linshare.user.jwt.token.link}"/>
 	</bean>
 
 	<bean name="ldapConnectionService"
