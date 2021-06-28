@@ -171,8 +171,8 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.JWT_PERMANENT_TOKEN, permanentToken);
 		jwtLongTimeBusinessService.delete(jwtLongTime);
-		EmailContext context = new JwtPermanentDeletedEmailContext(authUser, actor, permanentToken);
-		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
+		if (!actor.hasSuperAdminRole()) {
+			EmailContext context = new JwtPermanentDeletedEmailContext(authUser, actor, permanentToken);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}

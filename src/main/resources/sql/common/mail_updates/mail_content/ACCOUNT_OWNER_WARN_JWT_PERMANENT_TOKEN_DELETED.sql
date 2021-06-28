@@ -18,14 +18,19 @@ UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
                   <p>
                       <span th:if="(${owner.firstName} !=null AND ${owner.lastName} !=null)
                        AND (${owner.firstName} != ${recipient.firstName} AND ${recipient.lastName} != ${owner.lastName})"
-                                      data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}">
+                                      data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${label})}">
                       </span>
                        <span th:if="(${owner.firstName} !=null AND ${owner.lastName} !=null)
                        AND (${owner.firstName} == ${recipient.firstName} AND ${recipient.lastName} == ${owner.lastName})"
-                                      data-th-utext="#{mainMsgOwner(${owner.firstName},${owner.lastName},${workGroupName})}">
+                                      data-th-utext="#{mainMsgOwner(${owner.firstName},${owner.lastName},${label})}">
                       </span>
                      </span>
                   </p>
+                      <span data-th-utext="#{endMsg}"></span>
+                      <span>
+                             <a target="_blank" style="color:#1294dc;text-decoration:none;" data-th-text="#{tokenLinkEndOfLine(${jwtTokenLink})}" th:href="@{${jwtTokenLink}}" >
+                            </a>
+                     </span>
                   <!--/* End of Main email message content*/-->
                </div>
                <!--/* End of section-content*/-->
@@ -45,19 +50,25 @@ UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
       </div>
    </body>
 </html>',messages_french='subject = Suppression d''''un jeton d''''accès permanent
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> a supprimé un jeton d''''accès permanent pour votre compte.
-mainMsgOwner = Vous avez supprimé un jeton d''''accès permanent pour votre compte.
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> a supprimé un jeton d''''accès permanent: {2}, pour votre compte.
+mainMsgOwner = Vous avez supprimé un jeton d''''accès permanent: {2}, pour votre compte.
 tokenCreationDate = Date de création
+endMsg = Vous pouvez consulter les jetons d''''accès liés à votre compte
+tokenLinkEndOfLine = ici
 tokenLabel = Nom
 tokenDescription = Description
 tokenIdentifier = Identifiant',messages_english='subject = Deletion of a permanent authentication token
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent authentication token for your account.
-mainMsgOwner = You have deleted a permanent authentication token for your account.
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent authentication token: {2}, for your account.
+mainMsgOwner = You have deleted a permanent authentication token: {2}, for your account.
 tokenCreationDate = Creation date
+endMsg = You can review the active tokens tied to your account
+tokenLinkEndOfLine = here
 tokenLabel = Name
 tokenDescription = Description',messages_russian='subject = Удаление постоянного токена аутентификации
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> удалил постоянный токен аутентификации для вашего аккаунта.
-mainMsgOwner = You have deleted a permanent authentication token for your account.
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent authentication token: {2}, for your account.
+mainMsgOwner = You have deleted a permanent authentication token: {2}, for your account.
 tokenCreationDate = Дата создания
+endMsg = You can review the active tokens tied to your account
+tokenLinkEndOfLine = here
 tokenLabel = Имя
 tokenDescription = Описание' WHERE id=33;
