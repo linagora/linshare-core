@@ -1463,6 +1463,123 @@ beginningMainMsg =  У файла рассылки
 endingMainMsg = отправленного <b> {0} <span style="text-transform:uppercase">{1}</span></b> истек срок действия и он был удален <b>system</b>.
 subject = Срок действия файла рассылки {0} истек
 fileNameEndOfLine = {0}' WHERE id=27;
+
+-- Update UPLOAD_REQUEST_UPDATED_SETTINGS by adding access link
+UPDATE mail_content SET subject='[(#{subject(${subject.value})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName}, ${subject.value})}">
+                     </span>
+                     <span data-th-utext="#{secondaryMsg}">
+                     </span>
+                  </p>
+                  <!--/* If the sender has added a  customized message */-->
+                  <th:block data-th-if="(${message.modified})">
+                     <div th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
+                        <span id="message-title">
+                        <span data-th-text="#{msgFrom}">You have a message from</span>
+                        <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
+                        </span>
+                        <span id="message-content" data-th-text="*{message.value}" style="white-space: pre-line;">
+                        Hi Amy,<br>
+                        As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
+                        </span>
+                     </div>
+                  </th:block>
+                  <th:block data-th-replace="layout :: actionButtonLink(#{buttonMsg},${requestUrl})"/>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <span data-th-if="(${expiryDate.modified})">
+               <th:block data-th-replace="layout :: infoEditedDateArea(#{expiryDate},${expiryDate.oldValue},${expiryDate.value})"/>
+            </span>
+            <span data-th-if="(${activationDate.modified})">
+               <th:block data-th-replace="layout :: infoEditedDateArea(#{activationDate},${activationDate.oldValue},${activationDate.value})"/>
+            </span>
+            <span data-th-if="(${closureRight.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{closureRight},${closureRight.oldValue},${closureRight.value})"/>
+            </span>
+            <span data-th-if="(${deletionRight.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{deletionRight},${deletionRight.oldValue},${deletionRight.value})"/>
+            </span>
+            <span data-th-if="(${maxFileSize.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileSize},${maxFileSize.oldValue},${maxFileSize.value})"/>
+            </span>
+            <span data-th-if="(${maxFileNum.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileNum},${maxFileNum.oldValue},${maxFileNum.value})"/>
+            </span>
+            <span data-th-if="(${totalMaxDepotSize.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{depotSize},${totalMaxDepotSize.oldValue},${totalMaxDepotSize.value})"/>
+            </span>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>',messages_french='activationDate = Date d''activation
+closureRight = Droits de dépôt
+deletionRight = Droits de suppression
+depotSize = Taille du dépôt
+expiryDate = Date de clôture
+enableNotification = Activation des notifications
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a modifié des paramètres liés à l''''Invitation de dépôt <b>{2}</b>.
+maxFileNum = Nombre de Fichiers
+maxFileSize = Taille autorisée
+msgFrom = Nouveau message de
+name = {0} {1}
+nameOfDepot: Nom du dépôt
+secondaryMsg = Les modifications sont listées ci-dessous.
+subject = Modification des paramètres du dépôt : {0}
+buttonMsg = Accès',messages_english='activationDate = Activation date
+closureRight = Closure rights
+deletionRight = Deletion rights
+depotSize = Repository size
+expiryDate = Closure date
+enableNotification = Enable notifications
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  has updated some settings related to the Upload Request <b>{2}</b>.
+maxFileNum = File number
+maxFileSize = File size
+msgFrom =  New message from
+name = {0} {1}
+nameOfDepot: Name of the Upload Request
+secondaryMsg = Updated settings are listed below.
+subject = Updated Settings for Upload Request : {0}
+buttonMsg = Access',messages_russian='activationDate = Дата активации
+closureRight = Права закрытия
+deletionRight = Права удаления
+depotSize = Размер репозитория
+expiryDate = Дата закрытия
+enableNotification = Разрешить уведомления
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  обновил некоторые настройки запроса загрузки <b>{2}</b>.
+maxFileNum = Номер файла
+maxFileSize = Размер файла
+msgFrom =  Новое сообщение от
+name = {0} {1}
+nameOfDepot: Название загрузки
+secondaryMsg = Список обновленных настроек доступен ниже.
+subject = Обновленные настройки для запроса загрузки {0}
+buttonMsg = Access' WHERE id=23;
+
 -- Update root user's first and last name
 
 UPDATE account SET first_name='Super', last_name='Administrator' where ls_uuid='root@localhost.localdomain';

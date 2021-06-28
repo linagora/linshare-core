@@ -34,6 +34,7 @@ UPDATE mail_content SET subject='[(#{subject(${subject.value})})]',body='<!DOCTY
                         </span>
                      </div>
                   </th:block>
+                  <th:block data-th-replace="layout :: actionButtonLink(#{buttonMsg},${requestUrl})"/>
                   <!--/* End of Main email message content*/-->
                </div>
                <!--/* End of section-content*/-->
@@ -81,7 +82,8 @@ msgFrom = Nouveau message de
 name = {0} {1}
 nameOfDepot: Nom du dépôt
 secondaryMsg = Les modifications sont listées ci-dessous.
-subject = Modification des paramètres du dépôt : {0}',messages_english='activationDate = Activation date
+subject = Modification des paramètres du dépôt : {0}
+buttonMsg = Accès',messages_english='activationDate = Activation date
 closureRight = Closure rights
 deletionRight = Deletion rights
 depotSize = Repository size
@@ -94,7 +96,8 @@ msgFrom =  New message from
 name = {0} {1}
 nameOfDepot: Name of the Upload Request
 secondaryMsg = Updated settings are listed below.
-subject = Updated Settings for Upload Request : {0}',messages_russian='activationDate = Дата активации
+subject = Updated Settings for Upload Request : {0}
+buttonMsg = Access',messages_russian='activationDate = Дата активации
 closureRight = Права закрытия
 deletionRight = Права удаления
 depotSize = Размер репозитория
@@ -107,4 +110,5 @@ msgFrom =  Новое сообщение от
 name = {0} {1}
 nameOfDepot: Название загрузки
 secondaryMsg = Список обновленных настроек доступен ниже.
-subject = Обновленные настройки для запроса загрузки {0}' WHERE id=23;
+subject = Обновленные настройки для запроса загрузки {0}
+buttonMsg = Access' WHERE id=23;
