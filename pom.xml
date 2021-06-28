@@ -1767,7 +1767,7 @@
 		<jjwt.version>0.9.0</jjwt.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
-		<mozilla.rhino.version>1.7.10</mozilla.rhino.version>
+		<mozilla.rhino.version>1.7.12</mozilla.rhino.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<slf4j-release-version>1.7.25</slf4j-release-version>
