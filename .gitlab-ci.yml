@@ -87,7 +87,7 @@ test-api-branch-master:
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
-    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
       alias: ldap
   allow_failure: true
   script:
@@ -102,7 +102,7 @@ test-api-branch-with-same-name:
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
-    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:1.2
+    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
       alias: ldap
   allow_failure: true
   script:
