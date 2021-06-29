@@ -66,7 +66,7 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
       </th:block>
     </th:block>
     <!--/* End of lower message content for recipients of the upload request */-->
-    <th:block data-th-replace="layout :: infoDateArea(#{invitationCreationDate},${request.activationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{invitationActivationDate},${request.activationDate})"/>
     <th:block data-th-replace="layout :: infoDateArea(#{invitationClosureDate},${request.expirationDate})"/>
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
@@ -80,8 +80,8 @@ endingMainMsgSingular = Il y a au total <b>1 fichier </b> dans le dépôt.
 endingMainMsgSingularForRecipient = et vous avez actuellement envoyé  <b>1 fichier </b> dans le dépôt.
 filesInURDepot = Fichiers déposés
 formatMailSubject = : {0}
-invitationClosureDate =  Date d''''activation
-invitationCreationDate = Date de clôture
+invitationActivationDate = Date d''''activation
+invitationClosureDate =  Date de clôture
 recipientsURequest = Destinataires
 subjectForOwner =  Votre invitation de dépôt sera bientôt clôturée
 subjectForRecipient = L''''invitation au dépôt de {0} {1} sera bientôt clôturée
@@ -94,8 +94,8 @@ endingMainMsgSingular = There is a total of <b>1 file </b> in the repository.
 endingMainMsgSingularForRecipient = and you currently have sent <b>1 file </b>in the repository.
 filesInURDepot = Files uploaded
 formatMailSubject = : {0}
+invitationActivationDate = Activation date
 invitationClosureDate = Closure date
-invitationCreationDate = Activation date
 recipientsURequest = Recipients
 subjectForOwner =  Your invitation is about to be closed.
 subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
@@ -108,8 +108,8 @@ endingMainMsgSingular = Всего в репозитории of <b>1 файл </
 endingMainMsgSingularForRecipient = вы отправили <b>1 файл </b> в репозиторий.
 filesInURDepot = Загруженные файлы
 formatMailSubject = : {0}
+invitationActivationDate = Дата активации
 invitationClosureDate = Дата закрытия
-invitationCreationDate = Дата активации
 recipientsURequest = Получатели
 subjectForOwner =  Срок действия вашего приглашения заканчивается.
 subjectForRecipient =  {0} {1}''''s срок действия вашего приглашения заканчивается.
