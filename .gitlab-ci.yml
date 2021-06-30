@@ -84,6 +84,8 @@ test-api-branch-master:
   image: "${DOCKER_IMAGE_CORE_TEST}:master"
   tags:
     - docker
+  variables:
+    LS_TEST_DEBUG: 0
   services:
     - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
       alias: linshare
@@ -92,6 +94,7 @@ test-api-branch-master:
   allow_failure: true
   script:
     - cd /tmp/
+    - ./patch_gitlab.py
     - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
 
 test-api-branch-with-same-name:
@@ -99,14 +102,18 @@ test-api-branch-with-same-name:
   image: "${DOCKER_IMAGE_CORE_TEST}:${CI_COMMIT_REF_SLUG}"
   tags:
     - docker
+  variables:
+    LS_TEST_DEBUG: 0
+  # CI_DEBUG_TRACE: "true"
   services:
-    - name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
-      alias: linshare
-    - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
-      alias: ldap
+    - alias: ldap
+      name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
+    - alias: linshare
+      name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
   allow_failure: true
   script:
     - cd /tmp/
+    - ./patch_gitlab.py
     - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
   except:
     refs:
