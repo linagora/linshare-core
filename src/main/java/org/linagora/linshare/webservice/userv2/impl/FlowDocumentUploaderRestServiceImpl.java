@@ -345,10 +345,11 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	private void checkIfMaintenanceIsEnabled() {
 		boolean maintenance = accountQuotaFacade.maintenanceModeIsEnabled();
 		if (maintenance) {
+			logger.warn("Maintenance mode is enabled for this user. Uploads are disabled.");
 			 // Http error 501
 			throw new BusinessException(
 					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
-					"Maintenance mode is enable for this user. Uploads are disabled.");
+					"Maintenance mode is enabled for this user. Uploads are disabled.");
 		}
 	}
 

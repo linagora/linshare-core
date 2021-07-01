@@ -46,6 +46,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.objects.ChunkedFile;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +61,9 @@ public class FlowUploaderUtils {
 			String relativePath,
 			ConcurrentMap<String, ChunkedFile> chunkedFiles, boolean maintenance) {
 		if (maintenance) {
-			return buildReponse(Status.NO_CONTENT); // 204
+			logger.warn("Maintenance mode is enabled for this user. Uploads are disabled.");
+			ErrorDto errorDto = new ErrorDto(BusinessErrorCode.MODE_MAINTENANCE_ENABLED.getCode(), "Maintenance mode is enabled for this user. Uploads are disabled.");
+			return buildReponse(Status.UNSUPPORTED_MEDIA_TYPE, errorDto);
 			// https://github.com/flowjs/flow.js
 			// If this request returns a 200, 201 or 202 HTTP code, the chunks is assumed to have been completed.
 			// If request returns a permanent error status, upload is stopped.
@@ -69,26 +73,29 @@ public class FlowUploaderUtils {
 		identifier = cleanIdentifier(identifier);
 		boolean isValid = isValid(chunkNumber, chunkSize, totalSize, currentChunkSize, identifier,
 				filename, totalChunks);
-		// Throw HTTP 400 error code.
 		String msg = String.format(
-				"One parameter's value among multipart parameters is set to '0'. It should not: chunkNumber: %1$d | chunkSize: %2$d | totalSize: %3$d | identifier length: %4$d | filename length: %5$d | totalChunks: %6$d",
-				chunkNumber, chunkSize, totalSize, identifier.length(), filename.length(), totalChunks);
+				"One parameter's value among multipart parameters is set to '0'. It should not: chunkNumber: %1$d | chunkSize: %2$d | totalSize: %3$d | identifier: %4$s | filename: %5$s | totalChunks: %6$d",
+				chunkNumber, chunkSize, totalSize, identifier, filename, totalChunks);
+		// Throw HTTP 400 error code.
 		Validate.isTrue(isValid, msg);
 		if (chunkedFiles.containsKey(identifier)
 				&& chunkedFiles.get(identifier).hasChunk(chunkNumber)) {
 			// HTTP 200 : ok, we already get this chunk.
-			return buildReponse(Status.ACCEPTED);
+			return buildReponse(Status.ACCEPTED, null);
 		}
 		// HTTP 204 We did not have this chunk
-		return buildReponse(Status.NO_CONTENT);
+		return buildReponse(Status.NO_CONTENT, null);
 	}
 
-	private static Response buildReponse(Status status) {
+	private static Response buildReponse(Status status, ErrorDto payload) {
 		ResponseBuilder builder = Response.status(status);
 		// Fixing IE cache issue.
 		CacheControl cc = new CacheControl();
 		cc.setNoCache(true);
 		builder.cacheControl(cc);
+		if (payload != null) {
+			builder.entity(payload);
+		}
 		return builder.build();
 	}
 
