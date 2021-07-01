@@ -166,8 +166,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					throws BusinessException {
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
-		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize, currentChunkSize,
-				totalSize, identifier, filename, totalChunks);
+		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,	totalSize, currentChunkSize, identifier, filename, totalChunks);
 		checkIfMaintenanceIsEnabled();
 		FlowDto flow = new FlowDto(chunkNumber);
 		if (!isValid) {

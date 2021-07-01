@@ -138,8 +138,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = FlowUploaderUtils.cleanIdentifier(identifier);
-		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize, currentChunkSize,
-				totalSize, identifier, filename, totalChunks);
+		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize, totalSize, currentChunkSize, identifier, filename, totalChunks);
 		FlowDto flow = new FlowDto(chunkNumber);
 		if (!isValid) {
 			String msg = String.format(

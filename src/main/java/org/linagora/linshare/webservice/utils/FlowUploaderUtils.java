@@ -67,7 +67,7 @@ public class FlowUploaderUtils {
 		}
 		Validate.notEmpty(identifier, "Flow file identifier must be defined.");
 		identifier = cleanIdentifier(identifier);
-		boolean isValid = isValid(chunkNumber, chunkSize, currentChunkSize, totalSize, identifier,
+		boolean isValid = isValid(chunkNumber, chunkSize, totalSize, currentChunkSize, identifier,
 				filename, totalChunks);
 		// Throw HTTP 400 error code.
 		String msg = String.format(
@@ -99,13 +99,13 @@ public class FlowUploaderUtils {
 	public static boolean isValid(long chunkNumber, long chunkSize,
 			long totalSize, long currentChunkSize, String identifier, String filename, long totalChunks) {
 		logger.debug("Processing validation of multipart data ...");
-		logger.trace("chunkNumber {}",chunkNumber);
-		logger.trace("chnkSize {}", chunkSize);
-		logger.trace("currentChunkSize {}", currentChunkSize);
-		logger.trace("totalSize {}", totalSize );
-		logger.trace("identifier length {}", identifier.length());
-		logger.trace("filename length {}", filename.length());
-		logger.trace("totalChunks {}", totalChunks);
+		logger.trace("chunkNumber: {}",chunkNumber);
+		logger.trace("chnkSize: {}", chunkSize);
+		logger.trace("currentChunkSize: {}", currentChunkSize);
+		logger.trace("totalSize: {}", totalSize );
+		logger.trace("identifier: length {}", identifier);
+		logger.trace("filename: length {}", filename);
+		logger.trace("totalChunks: {}", totalChunks);
 		// Check if the request is sane
 		if (chunkNumber == 0 || chunkSize == 0 || currentChunkSize == 0 || totalSize == 0 || identifier.length() == 0
 				|| filename.length() == 0) {
