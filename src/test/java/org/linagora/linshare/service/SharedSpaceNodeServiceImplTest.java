@@ -324,4 +324,42 @@ public class SharedSpaceNodeServiceImplTest {
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testFailFindAllSharedSpacesWithPagination() throws BusinessException {
+		// Test failure of findAll SharedSpaces with wrong pageNumber and wrong  pageSize
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(0, 2);
+		PageContainer<SharedSpaceNodeNested> foundNodes = service.findAll(root, root, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
+		node1 = service.create(john, john, new SharedSpaceNode("John's first node", null, NodeType.WORK_GROUP));
+		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.DRIVE));
+		node3 = service.create(foo, foo, new SharedSpaceNode("Foo's first node", null, NodeType.WORK_GROUP));
+		node4 = service.create(foo, foo, new SharedSpaceNode("Foo's second node", null, NodeType.DRIVE));
+		node5 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
+		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.DRIVE));
+		PageContainer<SharedSpaceNodeNested> allNodes = service.findAll(root, root, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
+		Assertions.assertEquals(foundNodes.getPageResponse().getTotalElements() + 6, allNodes.getPageResponse().getTotalElements());
+		// PageContainer with wrongPageNumber
+		PageContainer<SharedSpaceNodeNested> wrongPageNumberContainer = new PageContainer<SharedSpaceNodeNested>(5, 3);
+		BusinessException e = assertThrows(BusinessException.class, () -> {
+			service.findAll(root, root, foo, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, wrongPageNumberContainer);
+		});
+		Assertions.assertEquals(BusinessErrorCode.WRONG_PAGE_PARAMETERS, e.getErrorCode());
+		// Search with wrongPageNumber for an empty list of elements
+		service.delete(foo, foo, node3);
+		service.delete(foo, foo, node4);
+		PageContainer<SharedSpaceNodeNested> fooNodes = service.findAll(root, root, foo, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
+		Assertions.assertEquals(0, fooNodes.getPageResponse().getTotalElements());
+		PageContainer<SharedSpaceNodeNested> fooNodesWrongPageNumberContainer = service.findAll(root, root, foo, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, wrongPageNumberContainer);
+		Assertions.assertEquals(fooNodesWrongPageNumberContainer.getPageResponse().getTotalElements(), fooNodes.getPageResponse().getTotalElements());
+		// PageContainer with wrongPageSize we will return all found elements
+		PageContainer<SharedSpaceNodeNested> wrongPageSizeContainer = new PageContainer<SharedSpaceNodeNested>(0, 30);
+		PageContainer<SharedSpaceNodeNested> allNodesWrongPageSizeContainer = service.findAll(root, root, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, wrongPageSizeContainer);
+		Assertions.assertEquals(allNodesWrongPageSizeContainer.getPageResponse().getTotalElements(),
+				allNodes.getPageResponse().getTotalElements() -2);
+		service.delete(john, john, node1);
+		service.delete(john, john, node2);
+		service.delete(jane, jane, node5);
+		service.delete(jane, jane, node6);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
 }
