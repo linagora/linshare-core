@@ -57,11 +57,15 @@ public class TimingOutInterceptor extends AbstractPhaseInterceptor<Message> {
 				"org.linagora.linshare.webservice.interceptor.start_time");
 		long elapsed = System.currentTimeMillis() - startTime;
 		String url = (String) message.getExchange().get(Message.REQUEST_URI);
+		Integer response_code = (Integer) message.get(Message.RESPONSE_CODE);
+		String method = (String) message.getExchange().get(Message.HTTP_REQUEST_METHOD);
 		// traces for flow uploader are skipped to avoid flooding.
-		if (!url.endsWith("webservice/rest/user/v2/flow.json")) {
-			String method = (String) message.getExchange().get(
-					Message.HTTP_REQUEST_METHOD);
-			logger.info(String.format("%s:%s : Request time: %d ms", method, url, elapsed));
+		if (url.endsWith("webservice/rest/user/v2/flow.json")) {
+			logger.trace(String.format("%s:%s:%s: Request time: %d ms", method, response_code, url, elapsed));
+		} else if (url.endsWith("webservice/rest/user/v4/flow.json")) {
+			logger.trace(String.format("%s:%s:%s: Request time: %d ms", method, response_code, url, elapsed));
+		} else {
+			logger.debug(String.format("%s:%s:%s: Request time: %d ms", method, response_code, url, elapsed));
 		}
 	}
 }
