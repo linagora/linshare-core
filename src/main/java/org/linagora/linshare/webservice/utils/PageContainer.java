@@ -39,15 +39,11 @@ import java.util.Objects;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 public class PageContainer<T> {
-
-	private static Logger logger = LoggerFactory.getLogger(PageContainer.class);
 
 	private static final Pageable DEFAULT_PAGE_REQUEST = PageRequest.of(0, 50);
 
@@ -87,30 +83,20 @@ public class PageContainer<T> {
 			} else {
 				this.pageSize = pageSize;
 			}
-			Integer totalPage = pageCount(this.pageSize, totalElements);
-			Boolean isFirst = isFirst(this.pageNumber, this.pageSize, totalPage, totalElements);
-			Boolean isLast = isLast(totalPage, totalElements.intValue());
-			this.pageResponse = new PageResponse<T>(totalElements, totalPage, list, isFirst, isLast);
-			if ((pageNumber + 1 > this.pageResponse.getTotalPages())
-					|| (pageSize > totalElements) && (!list.isEmpty()) && !this.pageResponse.isLast()) {
-				logger.error("Please check the number of the requested page, you have exceeded the total elements or pages' number");
+			Integer totalPagesCount = pageCount(this.pageSize, totalElements);
+			Boolean isFirst = isFirst(pageNumber, totalPagesCount, totalElements);
+			Boolean isLast = isLast(totalPagesCount, totalElements);
+			this.pageResponse = new PageResponse<T>(totalElements, totalPagesCount, list, isFirst, isLast);
+			if (pageNumber >= totalPagesCount && totalElements > 0) {
+				throw new BusinessException(BusinessErrorCode.WRONG_PAGE_PARAMETERS, String.format(
+						"knowing that the page number starts from 0, you have exceeded the total pages' count:  %1$s , or you may exceeded the total elements' count: %2$s, please check the entered pageNumber: %3$s , and pageSize: %4$s",
+						totalPagesCount, totalElements, pageNumber, pageSize));
 			}
 		}
 	}
 
-	public PageContainer(Page<T> page) {
-		super();
-		this.enabled = true;
-		this.pageNumber = page.getNumber();
-		if (pageNumber < 0) {
-			throw new ResourceNotFoundException("Page number can not be less than 0");
-		}
-		this.pageSize = page.getNumberOfElements();
-		this.pageResponse = new PageResponse<>(page);
-	}
-
-	private Boolean isLast(Integer pageCount, Integer totalElements) {
-		return (pageNumber > pageCount) || (pageSize >= totalElements) || (pageCount == 1);
+	private Boolean isLast(Integer pageCount, Long totalElements) {
+		return (pageNumber == pageCount - 1) || (pageSize >= totalElements) || (pageCount == 1) || (totalElements == 0);
 	}
 
 	private Integer pageCount(Integer pageSize, Long totalElements) {
@@ -122,8 +108,8 @@ public class PageContainer<T> {
 		return pageCount.intValue();
 	}
 
-	private Boolean isFirst(Integer pageNumber, Integer pageSize, Integer pageCount, Long totalElements) {
-		return (pageNumber == 0) || (pageSize >= totalElements) || (pageCount == 1);
+	private Boolean isFirst(Integer pageNumber, Integer pageCount, Long totalElements) {
+		return (pageNumber == 0) || (pageSize >= totalElements) || (pageCount == 1) || (totalElements == 0);
 	}
 
 	public Integer getPageNumber() {
