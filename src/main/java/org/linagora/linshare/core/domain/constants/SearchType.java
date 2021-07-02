@@ -38,7 +38,7 @@ package org.linagora.linshare.core.domain.constants;
 
 public enum SearchType {
 
-	SHARING, USERS, THREAD_MEMBERS, UPLOAD_REQUESTS;
+	SHARING, USERS, THREAD_MEMBERS, UPLOAD_REQUESTS, WORKGROUP_MEMBERS, WORKGROUP_AUTHORS;
 
 	public static SearchType fromString(String value) {
 		try {

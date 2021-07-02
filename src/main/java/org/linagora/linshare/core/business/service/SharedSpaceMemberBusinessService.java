@@ -41,6 +41,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
@@ -122,4 +123,13 @@ public interface SharedSpaceMemberBusinessService {
 	 * @return
 	 */
 	List<SharedSpaceNodeNested> findAllNodesByParent(String parentUuid);
+
+	/**
+	 * Autocomplete existing members by last name, first name or email
+	 * @param nodeUuid
+	 * @param pattern
+	 * @return
+	 * @throws BusinessException
+	 */
+	List<WorkgroupMemberAutoCompleteResultDto> autocomplete(String nodeUuid, String pattern) throws BusinessException;
 }

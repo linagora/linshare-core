@@ -57,11 +57,11 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
@@ -93,11 +93,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml" })
 public class SharedSpaceMemberServiceImplTest {
 
-	private static Logger logger = LoggerFactory.getLogger(RecipientFavouriteRepositoryImplTest.class);
-
-	@Autowired
-	@Qualifier("userService")
-	private UserService userService;
+	private static Logger logger = LoggerFactory.getLogger(SharedSpaceMemberServiceImplTest.class);
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -191,6 +187,39 @@ public class SharedSpaceMemberServiceImplTest {
 		// John add Jane as an admin of the shared space node
 		SharedSpaceMember janeMembership = service.create(john, john, node, adminRole, accountJane);
 		Assertions.assertNotNull(janeMembership, "Jane has not been added as a member of John's shared space");
+	}
+
+	@Test
+	public void testAutocompleteForExistingMembers() {
+		Account user3 = userRepository.findByMail("user3@linshare.org");
+
+		SharedSpaceMember janeMembership = service.create(john, john, node, adminRole, accountJane);
+		SharedSpaceMember user3Membership = service.create(john, john, node, adminRole, new SharedSpaceAccount(user3));
+
+		String wg_uuid = node.getUuid();
+		List<SharedSpaceMember> list = memberBusinessService.findBySharedSpaceNodeUuid(wg_uuid);
+		for (SharedSpaceMember sharedSpaceMember : list) {
+			logger.info(sharedSpaceMember .toString());
+		}
+		Assertions.assertEquals(3, list.size());
+
+		List<WorkgroupMemberAutoCompleteResultDto> autocomplete = memberBusinessService.autocomplete(wg_uuid, "jane");
+		Assertions.assertEquals(1, autocomplete.size());
+		Assertions.assertEquals(janeMembership.getUuid(), autocomplete.get(0).getSharedSpaceMemberUuid());
+		logger.info(autocomplete.get(0).toString());
+
+		autocomplete = memberBusinessService.autocomplete(wg_uuid, "user2");
+		Assertions.assertEquals(1, autocomplete.size());
+		Assertions.assertEquals(janeMembership.getUuid(), autocomplete.get(0).getSharedSpaceMemberUuid());
+
+		autocomplete = memberBusinessService.autocomplete(wg_uuid, "linshare.org");
+		Assertions.assertEquals(3, autocomplete.size());
+
+		autocomplete = memberBusinessService.autocomplete(wg_uuid, "user");
+		Assertions.assertEquals(3, autocomplete.size());
+
+		service.delete(john, john, janeMembership.getUuid());
+		service.delete(john, john, user3Membership.getUuid());
 	}
 
 	@Test

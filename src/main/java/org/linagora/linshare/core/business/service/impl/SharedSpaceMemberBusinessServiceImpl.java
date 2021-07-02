@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -398,4 +399,36 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(),
 				count, sharedSpaces);
 	}
+
+	@Override
+	public List<WorkgroupMemberAutoCompleteResultDto> autocomplete(String nodeUuid, String pattern)
+			throws BusinessException {
+		ProjectionOperation projections = Aggregation.project(
+			Fields.from(
+				Fields.field("identifier", "account.uuid"),
+				Fields.field("accountUuid", "account.uuid"),
+				Fields.field("firstName", "account.firstName"),
+				Fields.field("lastName", "account.lastName"),
+				Fields.field("mail", "account.mail"),
+				Fields.field("display", "account.name"),
+				Fields.field("sharedSpaceUuid", "node.uuid"),
+				Fields.field("sharedSpaceMemberUuid", "uuid")
+				)
+			);
+		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class,
+			Aggregation.match(Criteria.where("node.uuid").is(nodeUuid)),
+			Aggregation.match(
+				new Criteria().orOperator(
+					Criteria.where("account.name").regex("(?i).*" + pattern + ".*"),
+					Criteria.where(	"account.mail").regex("(?i).*" + pattern + ".*")
+				)
+			),
+			Aggregation.sort(Direction.DESC, "modificationDate"),
+			projections
+			);
+		AggregationResults<WorkgroupMemberAutoCompleteResultDto> aggregate = mongoTemplate.aggregate(
+				aggregation, "shared_space_members", WorkgroupMemberAutoCompleteResultDto.class);
+		return aggregate.getMappedResults();
+	}
+
 }

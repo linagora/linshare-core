@@ -54,6 +54,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultD
 import org.linagora.linshare.core.facade.webservice.user.dto.ListAutoCompleteResultDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.ThreadMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.UserAutoCompleteResultDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ContactListService;
@@ -174,6 +175,15 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 				Set<UserDto> userList = findUser(pattern);
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
 				result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
+			} else if (enumType.equals(SearchType.WORKGROUP_MEMBERS)) {
+				List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocomplete(authUser, authUser, threadUuid, pattern);
+				int range = (autocomplete.size() < AUTO_COMPLETE_LIMIT ? autocomplete.size() : AUTO_COMPLETE_LIMIT);
+				result.addAll(autocomplete.subList(0, range));
+			} else if (enumType.equals(SearchType.WORKGROUP_AUTHORS)) {
+				List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocomplete(authUser, authUser, threadUuid, pattern);
+				int range = (autocomplete.size() < AUTO_COMPLETE_LIMIT ? autocomplete.size() : AUTO_COMPLETE_LIMIT);
+				// TODO: How to get author of assets in a workgroup that does not belong to the workgroup anymore ?
+				result.addAll(autocomplete.subList(0, range));
 			} else {
 				throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, "Unexpected search type.");
 			}

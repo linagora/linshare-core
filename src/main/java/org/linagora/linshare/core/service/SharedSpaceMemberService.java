@@ -41,6 +41,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -78,5 +79,7 @@ public interface SharedSpaceMemberService extends SharedSpaceMemberFragmentServi
 	List<SharedSpaceMember> deleteAllUserMemberships(Account authUser, Account actor, String userUuid);
 
 	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
+
+	List<WorkgroupMemberAutoCompleteResultDto> autocomplete(Account authUser, Account actor, String nodeUuid, String pattern);
 
 }

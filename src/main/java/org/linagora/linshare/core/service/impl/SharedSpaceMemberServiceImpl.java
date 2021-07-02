@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -282,5 +283,15 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		SharedSpaceMemberFragmentService service = sharedSpaceBuildingService.get(type);
 		Validate.notNull(service, "Node type not supported");
 		return service;
+	}
+
+	@Override
+	public List<WorkgroupMemberAutoCompleteResultDto> autocomplete(Account authUser, Account actor, String nodeUuid, String pattern) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(nodeUuid, "SharedSpace node uuid must be set");
+		Validate.notEmpty(pattern, "pattern must be set");
+		// Just to be sure the current actor is part of the shared space.
+		findMemberByAccountUuid(authUser, actor, actor.getLsUuid(), nodeUuid);
+		return businessService.autocomplete(nodeUuid, pattern);
 	}
 }

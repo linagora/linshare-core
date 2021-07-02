@@ -54,10 +54,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 		@Type(value = AutoCompleteResultDto.class, name = "simple"),
 		@Type(value = UserAutoCompleteResultDto.class, name = "user"),
 		@Type(value = ThreadMemberAutoCompleteResultDto.class, name = "threadmember"),
+		@Type(value = WorkgroupMemberAutoCompleteResultDto.class, name = "sharedspace_member"),
 		@Type(value = ListAutoCompleteResultDto.class, name = "mailinglist"), })
 @XmlRootElement(name = "AutoCompleteResult")
 @XmlSeeAlso({ UserAutoCompleteResultDto.class,
 		ThreadMemberAutoCompleteResultDto.class,
+		WorkgroupMemberAutoCompleteResultDto.class,
 		ListAutoCompleteResultDto.class })
 @Schema(name = "AutoCompleteResult", description = "Auto complete result object")
 public class AutoCompleteResultDto {
