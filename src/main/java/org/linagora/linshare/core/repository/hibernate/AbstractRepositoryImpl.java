@@ -238,7 +238,8 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
 		Criteria executableCriteria = crit.getExecutableCriteria(getCurrentSession());
 		executableCriteria.setFirstResult(container.getPageNumber() * container.getPageSize());
 		executableCriteria.setMaxResults(container.getPageSize());
+		container.validateTotalPagesCount(countElements);
 		List<T> list = listByCriteria(crit);
-		return new PageContainer<T>(container.getPageNumber(), container.getPageSize(), countElements, list);
+		return container.loadData(list);
 	}
 }

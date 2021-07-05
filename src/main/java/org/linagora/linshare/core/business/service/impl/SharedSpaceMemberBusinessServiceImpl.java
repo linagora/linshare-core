@@ -394,10 +394,10 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		aggregationOperations.add(Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())));
 		aggregationOperations.add(Aggregation.limit(Long.valueOf(container.getPageSize())));
 		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
+		container.validateTotalPagesCount(count);
 		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class)
 				.getMappedResults();
-		return new PageContainer<SharedSpaceNodeNested>(container.getPageNumber(), container.getPageSize(),
-				count, sharedSpaces);
+		return container.loadData(sharedSpaces);
 	}
 
 	@Override

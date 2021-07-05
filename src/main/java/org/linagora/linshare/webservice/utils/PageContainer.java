@@ -36,10 +36,8 @@ package org.linagora.linshare.webservice.utils;
 import java.util.List;
 import java.util.Objects;
 
-import org.jclouds.rest.ResourceNotFoundException;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -51,65 +49,21 @@ public class PageContainer<T> {
 
 	private Integer pageSize;
 
-	private Boolean enabled;
-
 	private PageResponse<T> pageResponse;
 
+	private Long totalElements;
+
+	private List<T> list;
+
+	private Integer totalPagesCount;
 
 	public PageContainer() {
-		this.enabled = false;
 		this.pageResponse = new PageResponse<>();
 	}
 
 	public PageContainer(Integer pageNumber, Integer pageSize) {
-		this.pageSize = Objects.nonNull(pageSize) ? pageSize : DEFAULT_PAGE_REQUEST.getPageSize();
-		this.pageNumber = Objects.nonNull(pageNumber) ? pageNumber : DEFAULT_PAGE_REQUEST.getPageNumber();
-		this.enabled = getPagingStatus(pageNumber, pageSize);
-		this.pageResponse = new PageResponse<>();
-	}
-
-	public PageContainer(Integer pageNumber, Integer pageSize, Long totalElements, List<T> list) {
-		super();
-		// Pagination feature is disabled if all pagination attributes equal -1
-		this.enabled = getPagingStatus(pageNumber, pageSize);
-		if (enabled) {
-			if (pageNumber < 0) {
-				throw new BusinessException(BusinessErrorCode.WRONG_PAGE_PARAMETERS,
-						"Page number can not be less than 0");
-			}
-			this.pageNumber = pageNumber;
-			if (pageSize <= 0) {
-				this.pageSize = DEFAULT_PAGE_REQUEST.getPageSize();
-			} else {
-				this.pageSize = pageSize;
-			}
-			Integer totalPagesCount = pageCount(this.pageSize, totalElements);
-			Boolean isFirst = isFirst(pageNumber, totalPagesCount, totalElements);
-			Boolean isLast = isLast(totalPagesCount, totalElements);
-			this.pageResponse = new PageResponse<T>(totalElements, totalPagesCount, list, isFirst, isLast);
-			if (pageNumber >= totalPagesCount && totalElements > 0) {
-				throw new BusinessException(BusinessErrorCode.WRONG_PAGE_PARAMETERS, String.format(
-						"knowing that the page number starts from 0, you have exceeded the total pages' count:  %1$s , or you may exceeded the total elements' count: %2$s, please check the entered pageNumber: %3$s , and pageSize: %4$s",
-						totalPagesCount, totalElements, pageNumber, pageSize));
-			}
-		}
-	}
-
-	private Boolean isLast(Integer pageCount, Long totalElements) {
-		return (pageNumber == pageCount - 1) || (pageSize >= totalElements) || (pageCount == 1) || (totalElements == 0);
-	}
-
-	private Integer pageCount(Integer pageSize, Long totalElements) {
-		Integer localPageSize = pageSize;
-		Long pageCount = totalElements / localPageSize;
-		if (totalElements % pageSize != 0) {
-			pageCount++;
-		}
-		return pageCount.intValue();
-	}
-
-	private Boolean isFirst(Integer pageNumber, Integer pageCount, Long totalElements) {
-		return (pageNumber == 0) || (pageSize >= totalElements) || (pageCount == 1) || (totalElements == 0);
+		this.pageSize = validatePageSize(pageSize);
+		this.pageNumber = validatePageNumber(pageNumber);
 	}
 
 	public Integer getPageNumber() {
@@ -132,18 +86,54 @@ public class PageContainer<T> {
 		return DEFAULT_PAGE_REQUEST;
 	}
 
-	public Boolean isEnabled() {
-		return enabled;
+	public Long getTotalElements() {
+		return totalElements;
 	}
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
+	private Integer validatePageNumber(Integer pageNumber){
+		if (Objects.nonNull(pageNumber)) {
+			if (pageNumber < 0) {
+				throw new BusinessException(BusinessErrorCode.WRONG_PAGE_PARAMETERS,
+						"Page number can not be less than 0");
+			}
+			return pageNumber;
+		}
+		return DEFAULT_PAGE_REQUEST.getPageNumber();
 	}
 
-	@Override
-	public String toString() {
-		return "PageContainer [pageNumber=" + pageNumber + ", pageSize=" + pageSize + ", totalElements=" + ", enabled="
-				+ enabled + "]";
+	private Integer validatePageSize(Integer pageSize) {
+		if (Objects.isNull(pageSize) || pageSize <= 0) {
+			return DEFAULT_PAGE_REQUEST.getPageSize();
+		}
+		return pageSize;
+	}
+
+	public void validateTotalPagesCount(Long totalElements) {
+		this.totalElements = totalElements;
+		this.totalPagesCount = pageCount(totalElements);
+		if (pageNumber >= totalPagesCount && totalElements > 0) {
+			throw new BusinessException(BusinessErrorCode.WRONG_PAGE_PARAMETERS, String.format(
+					"knowing that the page number starts from 0, you have exceeded the total pages' count:  %1$s , or you may exceeded the total elements' count: %2$s, please check the entered pageNumber: %3$s , and pageSize: %4$s",
+					totalPagesCount, totalElements, pageNumber, pageSize));
+		}
+	}
+
+	private Integer pageCount(Long totalElements) {
+		Long pageCount = totalElements / pageSize;
+		if (totalElements % pageSize != 0) {
+			pageCount++;
+		}
+		return pageCount.intValue();
+	}
+
+	public PageContainer<T> loadData(List<T> list) {
+		this.list = list;
+		this.pageResponse = new PageResponse<T>(totalElements, totalPagesCount, list, isFirst(), isLast());
+		return this;
+	}
+
+	public List<T> getList() {
+		return list;
 	}
 
 	public PageResponse<T> getPageResponse() {
@@ -154,15 +144,17 @@ public class PageContainer<T> {
 		this.pageResponse = pageResponse;
 	}
 
-	public void updatePageResponse(Page<T> page) {
-		this.pageNumber = page.getNumber();
-		this.pageSize = page.getNumberOfElements();
-		this.pageResponse.update(page);
+	private Boolean isFirst() {
+		return (pageNumber == 0) || (pageSize >= totalElements) || (totalPagesCount == 1) || (totalElements == 0);
 	}
 
-	public Boolean getPagingStatus(Integer pageNumber, Integer pageSize) {
-		return ((Objects.isNull(pageNumber) && Objects.isNull(pageSize)) || (pageNumber == -1 && pageSize == -1))
-				? false
-				: true;
+	private Boolean isLast() {
+		return (pageNumber == totalPagesCount - 1) || (pageSize >= totalElements) || (totalPagesCount == 1) || (totalElements == 0);
+	}
+
+	@Override
+	public String toString() {
+		return "PageContainer [pageNumber=" + pageNumber + ", pageSize=" + pageSize + ", totalElements=" + totalElements
+				+ ", totalPagesCount=" + totalPagesCount + "]";
 	}
 }

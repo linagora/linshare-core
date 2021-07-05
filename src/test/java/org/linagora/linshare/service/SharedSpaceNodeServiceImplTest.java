@@ -274,6 +274,7 @@ public class SharedSpaceNodeServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(0, 2);
 		PageContainer<SharedSpaceNodeNested> foundNodes = service.findAll(root, root, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
+		Long foundNodesSize = foundNodes.getPageResponse().getTotalElements();
 		node1 = service.create(john, john, new SharedSpaceNode("John's first node", null, NodeType.WORK_GROUP));
 		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.DRIVE));
 		node3 = service.create(foo, foo, new SharedSpaceNode("Foo's first node", null, NodeType.WORK_GROUP));
@@ -281,7 +282,7 @@ public class SharedSpaceNodeServiceImplTest {
 		node5 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
 		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.DRIVE));
 		PageContainer<SharedSpaceNodeNested> allNodes = service.findAll(root, root, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
-		Assertions.assertEquals(foundNodes.getPageResponse().getTotalElements() + 6, allNodes.getPageResponse().getTotalElements());
+		Assertions.assertEquals(foundNodesSize + 6, allNodes.getPageResponse().getTotalElements());
 		PageContainer<SharedSpaceNodeNested> fooNodes = service.findAll(root, root, foo, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
 		Assertions.assertEquals(2, fooNodes.getPageResponse().getTotalElements());
 //		Assertions.assertAll("One or both retrieved nodes do not correspond to foo's persisted nodes", () -> {
@@ -330,6 +331,7 @@ public class SharedSpaceNodeServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(0, 2);
 		PageContainer<SharedSpaceNodeNested> foundNodes = service.findAll(root, root, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
+		Long foundNodesSize = foundNodes.getPageResponse().getTotalElements();
 		node1 = service.create(john, john, new SharedSpaceNode("John's first node", null, NodeType.WORK_GROUP));
 		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.DRIVE));
 		node3 = service.create(foo, foo, new SharedSpaceNode("Foo's first node", null, NodeType.WORK_GROUP));
@@ -337,7 +339,8 @@ public class SharedSpaceNodeServiceImplTest {
 		node5 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
 		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.DRIVE));
 		PageContainer<SharedSpaceNodeNested> allNodes = service.findAll(root, root, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
-		Assertions.assertEquals(foundNodes.getPageResponse().getTotalElements() + 6, allNodes.getPageResponse().getTotalElements());
+		Assertions.assertEquals(foundNodesSize + 6, allNodes.getPageResponse().getTotalElements());
+		Long allNodesSize = allNodes.getPageResponse().getTotalElements();
 		// PageContainer with wrongPageNumber
 		PageContainer<SharedSpaceNodeNested> wrongPageNumberContainer = new PageContainer<SharedSpaceNodeNested>(5, 3);
 		BusinessException e = assertThrows(BusinessException.class, () -> {
@@ -355,7 +358,7 @@ public class SharedSpaceNodeServiceImplTest {
 		PageContainer<SharedSpaceNodeNested> wrongPageSizeContainer = new PageContainer<SharedSpaceNodeNested>(0, 30);
 		PageContainer<SharedSpaceNodeNested> allNodesWrongPageSizeContainer = service.findAll(root, root, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, wrongPageSizeContainer);
 		Assertions.assertEquals(allNodesWrongPageSizeContainer.getPageResponse().getTotalElements(),
-				allNodes.getPageResponse().getTotalElements() -2);
+				allNodesSize -2);
 		service.delete(john, john, node1);
 		service.delete(john, john, node2);
 		service.delete(jane, jane, node5);

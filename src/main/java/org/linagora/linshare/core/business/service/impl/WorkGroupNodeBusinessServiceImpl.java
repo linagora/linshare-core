@@ -232,9 +232,9 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		query.with(paging);
 		query.with(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString()));
 		logger.debug(query.toString());
+		pageContainer.validateTotalPagesCount(count);
 		List<WorkGroupNode> nodes = mongoTemplate.find(query, WorkGroupNode.class);
-		return new PageContainer<WorkGroupNode>(pageContainer.getPageNumber(), pageContainer.getPageSize(), count,
-				nodes);
+		return pageContainer.loadData(nodes);
 	}
 
 	private Criteria filterCriteria(Object minValue, Object maxValue, String field) {
