@@ -70,12 +70,16 @@ public class UploadRequestCloseByOwnerEmailBuilder extends GenericUploadRequestE
 
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		List<MailContact> recipients = getRecipients(uploadRequestGroup);
-
+		// TODO: we need to refactor getUploadRequestDocuments in order to be more clear
+		// for both individual and collective modes
+		List<Document> documents = getUploadRequestDocuments(emailCtx.isWarnOwner(), request,
+				request.getUploadRequestURLs().iterator().next());
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", uploadRequestGroup.getBody());
 		ctx.setVariable("isCollective", request.getUploadRequestGroup().isCollective());
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
+		ctx.setVariable("documents", documents);
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
