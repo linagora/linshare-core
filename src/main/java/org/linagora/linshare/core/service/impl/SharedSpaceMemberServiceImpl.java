@@ -286,12 +286,24 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public List<WorkgroupMemberAutoCompleteResultDto> autocomplete(Account authUser, Account actor, String nodeUuid, String pattern) {
+	public List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnActiveMembers(Account authUser, Account actor, String nodeUuid, String pattern) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(nodeUuid, "SharedSpace node uuid must be set");
 		Validate.notEmpty(pattern, "pattern must be set");
 		// Just to be sure the current actor is part of the shared space.
 		findMemberByAccountUuid(authUser, actor, actor.getLsUuid(), nodeUuid);
-		return businessService.autocomplete(nodeUuid, pattern);
+		return businessService.autocompleteOnActiveMembers(nodeUuid, pattern);
 	}
+
+	@Override
+	public List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnAssetAuthor(Account authUser, Account actor,
+			String nodeUuid, String pattern) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(nodeUuid, "SharedSpace node uuid must be set");
+		Validate.notEmpty(pattern, "pattern must be set");
+		// Just to be sure the current actor is part of the shared space.
+		findMemberByAccountUuid(authUser, actor, actor.getLsUuid(), nodeUuid);
+		return businessService.autocompleteOnAssetAuthor(nodeUuid, pattern);
+	}
+
 }

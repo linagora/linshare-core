@@ -131,5 +131,7 @@ public interface SharedSpaceMemberBusinessService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	List<WorkgroupMemberAutoCompleteResultDto> autocomplete(String nodeUuid, String pattern) throws BusinessException;
+	List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnActiveMembers(String nodeUuid, String pattern) throws BusinessException;
+
+	List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnAssetAuthor(String nodeUuid, String pattern);
 }

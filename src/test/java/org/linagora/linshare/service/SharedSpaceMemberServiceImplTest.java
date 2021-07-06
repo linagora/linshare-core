@@ -54,21 +54,28 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
+import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +122,8 @@ public class SharedSpaceMemberServiceImplTest {
 
 	private User jane;
 
+	private WorkGroup workGroup;
+
 	private GenericLightEntity lightNodePersisted;
 
 	private SharedSpaceNode node;
@@ -141,6 +150,15 @@ public class SharedSpaceMemberServiceImplTest {
 	@Autowired
 	private MailBuildingService buildingService;
 
+	@Autowired
+	private WorkGroupNodeService workGroupNodeService;
+
+	@Autowired
+	private ThreadService threadService;
+
+	@Autowired
+	private ThreadRepository threadRepository;
+
 	public SharedSpaceMemberServiceImplTest() {
 		super();
 	}
@@ -157,7 +175,9 @@ public class SharedSpaceMemberServiceImplTest {
 		readerDriveRole = roleBusinessService.findByName("DRIVE_READER");
 		lightReaderRoleToPersist = new LightSharedSpaceRole(readerRole);
 		Validate.notNull(adminRole, "adminRole must be set");
+		workGroup = threadService.create(john, john, "WG-nodeTest");
 		node = new SharedSpaceNode("nodeTest", NodeType.WORK_GROUP);
+		node.setUuid(workGroup.getLsUuid());
 		nodeBusinessService.create(node);
 		lightNodePersisted = new GenericLightEntity(node.getUuid(), node.getUuid());
 		accountJhon = new SharedSpaceAccount(john);
@@ -172,6 +192,7 @@ public class SharedSpaceMemberServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		threadRepository.delete(workGroup);
 		nodeBusinessService.delete(node);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
@@ -201,24 +222,50 @@ public class SharedSpaceMemberServiceImplTest {
 		for (SharedSpaceMember sharedSpaceMember : list) {
 			logger.info(sharedSpaceMember .toString());
 		}
+		// john, jane, user3
 		Assertions.assertEquals(3, list.size());
 
-		List<WorkgroupMemberAutoCompleteResultDto> autocomplete = memberBusinessService.autocomplete(wg_uuid, "jane");
+		workGroupNodeService.create(
+				john, john, workGroup,
+				new WorkGroupFolder(new AccountMto(john), "folder john name", null, workGroup.getLsUuid()),
+				false, false);
+		workGroupNodeService.create(
+				jane, jane, workGroup,
+				new WorkGroupFolder(new AccountMto(jane), "folder jane name", null, workGroup.getLsUuid()),
+				false, false);
+		List<WorkGroupNode> findAll = workGroupNodeService.findAll(john, john, workGroup, null, true, null);
+		for (WorkGroupNode folder : findAll) {
+			logger.debug(folder.toString());
+		}
+		Assertions.assertEquals(2, findAll.size());
+
+		List<WorkgroupMemberAutoCompleteResultDto> autocomplete = memberBusinessService.autocompleteOnActiveMembers(wg_uuid, "jane");
 		Assertions.assertEquals(1, autocomplete.size());
 		Assertions.assertEquals(janeMembership.getUuid(), autocomplete.get(0).getSharedSpaceMemberUuid());
 		logger.info(autocomplete.get(0).toString());
 
-		autocomplete = memberBusinessService.autocomplete(wg_uuid, "user2");
+		autocomplete = memberBusinessService.autocompleteOnActiveMembers(wg_uuid, "user2");
 		Assertions.assertEquals(1, autocomplete.size());
 		Assertions.assertEquals(janeMembership.getUuid(), autocomplete.get(0).getSharedSpaceMemberUuid());
 
-		autocomplete = memberBusinessService.autocomplete(wg_uuid, "linshare.org");
+		autocomplete = memberBusinessService.autocompleteOnActiveMembers(wg_uuid, "linshare.org");
 		Assertions.assertEquals(3, autocomplete.size());
 
-		autocomplete = memberBusinessService.autocomplete(wg_uuid, "user");
+		autocomplete = memberBusinessService.autocompleteOnActiveMembers(wg_uuid, "user");
 		Assertions.assertEquals(3, autocomplete.size());
 
 		service.delete(john, john, janeMembership.getUuid());
+		autocomplete = memberBusinessService.autocompleteOnActiveMembers(wg_uuid, "user");
+		Assertions.assertEquals(2, autocomplete.size());
+
+		autocomplete = memberBusinessService.autocompleteOnAssetAuthor(wg_uuid, "user");
+		for (WorkgroupMemberAutoCompleteResultDto sharedSpaceMember : autocomplete) {
+			logger.debug(sharedSpaceMember.toString());
+		}
+		Assertions.assertEquals(2, autocomplete.size());
+		autocomplete = memberBusinessService.autocompleteOnAssetAuthor(wg_uuid, "jane");
+		Assertions.assertEquals(1, autocomplete.size());
+
 		service.delete(john, john, user3Membership.getUuid());
 	}
 

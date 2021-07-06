@@ -57,6 +57,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberWorkgroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.projections.dto.AggregateNodeCountResult;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
@@ -401,7 +402,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public List<WorkgroupMemberAutoCompleteResultDto> autocomplete(String nodeUuid, String pattern)
+	public List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnActiveMembers(String nodeUuid, String pattern)
 			throws BusinessException {
 		ProjectionOperation projections = Aggregation.project(
 			Fields.from(
@@ -427,7 +428,38 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 			projections
 			);
 		AggregationResults<WorkgroupMemberAutoCompleteResultDto> aggregate = mongoTemplate.aggregate(
-				aggregation, "shared_space_members", WorkgroupMemberAutoCompleteResultDto.class);
+				aggregation, SharedSpaceMember.class, WorkgroupMemberAutoCompleteResultDto.class);
+		return aggregate.getMappedResults();
+	}
+
+	@Override
+	public List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnAssetAuthor(String nodeUuid, String pattern) {
+		 ProjectionOperation projections = Aggregation.project(
+				Fields.from(
+						Fields.field("identifier", "_id"),
+						Fields.field("accountUuid", "_id"),
+						Fields.field("firstName", "lastAuthor.firstName"),
+						Fields.field("lastName", "lastAuthor.lastName"),
+						Fields.field("mail", "lastAuthor.mail"),
+						Fields.field("display", "lastAuthor.name"),
+						Fields.field("sharedSpaceUuid", "workGroup")
+						)
+				);
+		Aggregation aggregation = Aggregation.newAggregation(WorkGroupNode.class,
+			Aggregation.match(Criteria.where("workGroup").is(nodeUuid)),
+				Aggregation.match(
+						new Criteria().orOperator(
+								Criteria.where("lastAuthor.name").regex("(?i).*" + pattern + ".*"),
+								Criteria.where("lastAuthor.mail").regex("(?i).*" + pattern + ".*")
+								)
+						),
+			Aggregation.group("lastAuthor.uuid")
+				.last("lastAuthor").as("lastAuthor")
+				.last("workGroup").as("workGroup"),
+			projections
+			);
+		AggregationResults<WorkgroupMemberAutoCompleteResultDto> aggregate = mongoTemplate.aggregate(
+				aggregation, WorkGroupNode.class, WorkgroupMemberAutoCompleteResultDto.class);
 		return aggregate.getMappedResults();
 	}
 

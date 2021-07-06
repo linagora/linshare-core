@@ -59,11 +59,8 @@ public class WorkgroupMemberAutoCompleteResultDto extends AutoCompleteResultDto 
 	@Schema(description = "shared space uuid")
 	protected String sharedSpaceUuid;
 
-	@Schema(description = "shared space member uuid")
+	@Schema(description = "shared space member uuid (can be null)")
 	protected String sharedSpaceMemberUuid;
-
-	@Schema(description = "If he is still a member")
-	protected boolean isStillMember = true;
 
 	public WorkgroupMemberAutoCompleteResultDto() {
 	}
@@ -108,14 +105,6 @@ public class WorkgroupMemberAutoCompleteResultDto extends AutoCompleteResultDto 
 		this.sharedSpaceUuid = sharedSpaceUuid;
 	}
 
-	public boolean isStillMember() {
-		return isStillMember;
-	}
-
-	public void setStillMember(boolean isStillMember) {
-		this.isStillMember = isStillMember;
-	}
-
 	public String getSharedSpaceMemberUuid() {
 		return sharedSpaceMemberUuid;
 	}
@@ -126,10 +115,10 @@ public class WorkgroupMemberAutoCompleteResultDto extends AutoCompleteResultDto 
 
 	@Override
 	public String toString() {
-		return "WorkgroupMemberAutoCompleteResultDto [accountUuid=" + accountUuid + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", mail=" + mail + ", sharedSpaceUuid=" + sharedSpaceUuid
-				+ ", isStillMember=" + isStillMember + ", getIdentifier()=" + getIdentifier() + ", getDisplay()="
-				+ getDisplay() + "]";
+		return "WorkgroupMemberAutoCompleteResultDto [firstName=" + firstName + ", lastName=" + lastName + ", mail="
+				+ mail + ", accountUuid=" + accountUuid + ", sharedSpaceUuid=" + sharedSpaceUuid
+				+ ", sharedSpaceMemberUuid=" + sharedSpaceMemberUuid + ", getIdentifier()=" + getIdentifier()
+				+ ", getDisplay()=" + getDisplay() + "]";
 	}
 
 }

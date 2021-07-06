@@ -80,6 +80,8 @@ public interface SharedSpaceMemberService extends SharedSpaceMemberFragmentServi
 
 	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
 
-	List<WorkgroupMemberAutoCompleteResultDto> autocomplete(Account authUser, Account actor, String nodeUuid, String pattern);
+	List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnActiveMembers(Account authUser, Account actor, String nodeUuid, String pattern);
+
+	List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnAssetAuthor(Account authUser, Account actor, String nodeUuid, String pattern);
 
 }

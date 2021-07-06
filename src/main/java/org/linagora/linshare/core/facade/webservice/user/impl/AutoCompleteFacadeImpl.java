@@ -176,11 +176,11 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
 				result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
 			} else if (enumType.equals(SearchType.WORKGROUP_MEMBERS)) {
-				List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocomplete(authUser, authUser, threadUuid, pattern);
+				List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocompleteOnActiveMembers(authUser, authUser, threadUuid, pattern);
 				int range = (autocomplete.size() < AUTO_COMPLETE_LIMIT ? autocomplete.size() : AUTO_COMPLETE_LIMIT);
 				result.addAll(autocomplete.subList(0, range));
 			} else if (enumType.equals(SearchType.WORKGROUP_AUTHORS)) {
-				List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocomplete(authUser, authUser, threadUuid, pattern);
+				List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocompleteOnAssetAuthor(authUser, authUser, threadUuid, pattern);
 				int range = (autocomplete.size() < AUTO_COMPLETE_LIMIT ? autocomplete.size() : AUTO_COMPLETE_LIMIT);
 				// TODO: How to get author of assets in a workgroup that does not belong to the workgroup anymore ?
 				result.addAll(autocomplete.subList(0, range));
