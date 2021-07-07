@@ -353,6 +353,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account,
 			Set<NodeType> nodeTypes, Set<String> roleNames, String name, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+		Validate.notNull(container, "Container can not be null.");
+		Validate.notNull(container.getPageNumber(), "PageNumber can not be null.");
+		Validate.notNull(container.getPageSize(), "PageSize can not be null.");
 		if (Objects.isNull(nodeTypes) || nodeTypes.isEmpty()) {
 			nodeTypes.addAll(EnumSet.allOf(NodeType.class));
 		}

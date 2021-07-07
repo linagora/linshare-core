@@ -39,6 +39,7 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.TransientObjectException;
@@ -235,6 +236,9 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
     }
 
 	public PageContainer<T> findAll(DetachedCriteria crit, Long countElements, PageContainer<T> container) {
+		Validate.notNull(container, "Container can not be null.");
+		Validate.notNull(container.getPageNumber(), "PageNumber can not be null.");
+		Validate.notNull(container.getPageSize(), "PageSize can not be null.");
 		Criteria executableCriteria = crit.getExecutableCriteria(getCurrentSession());
 		executableCriteria.setFirstResult(container.getPageNumber() * container.getPageSize());
 		executableCriteria.setMaxResults(container.getPageSize());

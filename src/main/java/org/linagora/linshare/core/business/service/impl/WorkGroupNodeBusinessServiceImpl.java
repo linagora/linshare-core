@@ -49,6 +49,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryRevisionBusinessService;
 import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
@@ -178,6 +179,9 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			Date creationDateBefore, Date modificationDateAfter, Date modificationDateBefore, List<WorkGroupNodeType> types,
 			String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField,
 			List<DocumentKind> documentKinds) {
+		Validate.notNull(pageContainer, "Container can not be null.");
+		Validate.notNull(pageContainer.getPageNumber(), "PageNumber can not be null.");
+		Validate.notNull(pageContainer.getPageSize(), "PageSize can not be null.");
 		Query query = new Query();
 		query.addCriteria(
 				new Criteria().andOperator(filterCriteria(creationDateAfter, creationDateBefore, "creationDate"),
