@@ -323,4 +323,11 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		return roleNames;
 	}
 
+	@Override
+	public List<SharedSpaceNode> findAllRootWorkgroups(Account authUser, Account actor) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, null);
+		return businessService.findAllRootWorkgroups();
+	}
+
 }

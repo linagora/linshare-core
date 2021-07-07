@@ -154,7 +154,7 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 	@Override
 	public List<SharedSpaceNode> findAll() {
 		Account authUser = checkAuthentication();
-		return nodeService.findAll(authUser, authUser);
+		return nodeService.findAllRootWorkgroups(authUser, authUser);
 	}
 
 	@Override

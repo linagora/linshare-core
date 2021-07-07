@@ -118,4 +118,13 @@ public interface SharedSpaceNodeService {
 	 * @return
 	 */
 	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, boolean withRole, String parent);
+
+	@Deprecated
+	/**
+	 * Used for old Admins API only
+	 * @param authUser
+	 * @param actor
+	 * @return
+	 */
+	List<SharedSpaceNode> findAllRootWorkgroups(Account authUser, Account actor);
 }

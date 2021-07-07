@@ -124,4 +124,12 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	public List <SharedSpaceNode> searchByName(String name) throws BusinessException {
 		return sharedSpaceNodeMongoRepository.findByName(name);
 	}
+
+	@Override
+	public List<SharedSpaceNode> findAllRootWorkgroups() {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("nodeType").is(NodeType.WORK_GROUP));
+		query.addCriteria(Criteria.where("parentUuid").is(null));
+		return mongoTemplate.find(query, SharedSpaceNode.class);
+	}
 }

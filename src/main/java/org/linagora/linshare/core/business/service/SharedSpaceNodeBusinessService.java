@@ -59,4 +59,10 @@ public interface SharedSpaceNodeBusinessService {
 	List<SharedSpaceNode> findByParentUuidAndType(String parentUuid) throws BusinessException;
 
 	void loadLastUpdaterAuditTrace(SharedSpaceNode node) throws BusinessException;
+
+	@Deprecated
+	/**
+	 * Used for old Admins API only
+	 */
+	List<SharedSpaceNode> findAllRootWorkgroups();
 }
