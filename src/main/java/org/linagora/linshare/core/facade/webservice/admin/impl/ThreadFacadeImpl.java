@@ -99,7 +99,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 		User authUser = super.checkAuthentication(Role.SUPERADMIN);
 		Set<SharedSpaceNode> ssnodes = Sets.newHashSet();
 		if (pattern == null || pattern.isEmpty()) {
-			ssnodes.addAll(ssNodeService.findAll(authUser, authUser));
+			ssnodes.addAll(ssNodeService.findAllRootWorkgroups(authUser, authUser));
 //			workGroups.addAll(threadService.findAll(authUser, authUser));
 		} else {
 			ssnodes.addAll(ssNodeService.searchByName(authUser, authUser, pattern));

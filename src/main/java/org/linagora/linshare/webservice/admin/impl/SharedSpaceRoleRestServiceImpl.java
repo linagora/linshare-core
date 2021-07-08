@@ -38,6 +38,7 @@ package org.linagora.linshare.webservice.admin.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -99,7 +100,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	@Override
 	public List<SharedSpaceRole> findAll(
 			@Parameter(description = "Filter the roles by node type, if no nodeType entered, both workGroup and drive roles will be returned.", required = false)
-				@QueryParam("nodeType") NodeType nodeType) throws BusinessException {
+				@QueryParam("nodeType") @DefaultValue("WORK_GROUP") NodeType nodeType) throws BusinessException {
 		return ssRoleFacade.findAll(null, nodeType);
 	}
 	
