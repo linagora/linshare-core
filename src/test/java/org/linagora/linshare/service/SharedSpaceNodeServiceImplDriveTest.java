@@ -37,10 +37,14 @@ package org.linagora.linshare.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +55,7 @@ import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -58,12 +63,15 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
+import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.service.fragment.SharedSpaceMemberFragmentService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +120,12 @@ public class SharedSpaceNodeServiceImplDriveTest {
 
 	@Autowired
 	private FunctionalityReadOnlyService functionalityService;
+
+	@Autowired
+	private WorkGroupNodeService workGroupNodeService;
+
+	@Autowired
+	private ThreadService threadService;
 
 	@Autowired
 	private SharedSpaceRoleService ssRoleService;
@@ -392,6 +406,53 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		});
 		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e2.getErrorCode());
 		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 0);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteDriveAndNestedWorkgroup() throws BusinessException, IOException {
+		// test delete a drive and its wg
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// Create Drive and nested workgroups
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("first-nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
+		SharedSpaceNode nested2 = service.create(authUser, authUser, new SharedSpaceNode("second-nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
+		Assertions.assertNotNull(nested1);
+		Assertions.assertNotNull(nested2);
+		// Create workgroupNodes
+		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
+		File tempFile = File.createTempFile("linshare-default.properties", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		WorkGroup workGroup = threadService.find(authUser, authUser, nested1.getUuid());
+		WorkGroupNode groupNode = workGroupNodeService.create(authUser, (User) authUser, workGroup, tempFile,
+				tempFile.getName(), null, false);
+		Assertions.assertNotNull(groupNode);
+		// Add a local member to the nested wg
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(admin);
+		SharedSpaceMember localWgMember = ssMemberWorkgroupService.create(authUser, authUser, nested1,
+				context, new SharedSpaceAccount((User) jane));
+		// delete th Drive
+		service.delete(authUser, authUser, drive);
+		BusinessException e1 = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(authUser, authUser, drive.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, e1.getErrorCode());
+		BusinessException deletedMemberException = Assertions.assertThrows(BusinessException.class, () -> {
+			memberService.find(authUser, authUser, localWgMember.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, deletedMemberException.getErrorCode());
+		BusinessException deletedNestedWG1Exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(authUser, authUser, nested1.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, deletedNestedWG1Exception.getErrorCode());
+		BusinessException deletedNestedWG2Exception = Assertions.assertThrows(BusinessException.class, () -> {
+			service.find(authUser, authUser, nested2.getUuid());
+		});
+		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND, deletedNestedWG2Exception.getErrorCode());
+		BusinessException deletedWorkGroupNodeException = Assertions.assertThrows(BusinessException.class, () -> {
+			workGroupNodeService.find(authUser, authUser, workGroup, groupNode.getUuid(), false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND, deletedWorkGroupNodeException.getErrorCode());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

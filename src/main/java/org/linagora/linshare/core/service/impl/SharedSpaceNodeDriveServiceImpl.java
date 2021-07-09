@@ -42,12 +42,14 @@ import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
@@ -63,7 +65,11 @@ import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
+
+import com.google.common.collect.Lists;
 
 public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragmentServiceImpl {
 
@@ -113,13 +119,30 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.DRIVE_FORBIDDEN,
 				foundedNodeToDel);
 		List<SharedSpaceNodeNested> nodes = findAllWorkgroupsInNode(authUser, actor, foundedNodeToDel);
-		for (SharedSpaceNodeNested nested : nodes) {
-			SharedSpaceNode wg = find(authUser, actor, nested.getUuid());
-			memberService.deleteAllMembers(authUser, actor, wg, LogActionCause.DRIVE_DELETION, null);
-		}
+		List<AuditLogEntryUser> logs = Lists.newArrayList();
+		deleteNestedWorkgroups(authUser, actor, nodes, logs);
 		memberService.deleteAllMembers(authUser, actor, foundedNodeToDel, LogActionCause.DRIVE_DELETION, nodes);
 		businessService.delete(foundedNodeToDel);
-		saveLog(authUser, actor, LogAction.DELETE, foundedNodeToDel);
+		SharedSpaceNodeAuditLogEntry driveLog = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
+				AuditLogEntryType.DRIVE, foundedNodeToDel);
+		logs.add(driveLog);
+		logEntryService.insert(logs);
 		return foundedNodeToDel;
+	}
+
+	private void deleteNestedWorkgroups(Account authUser, Account actor, List<SharedSpaceNodeNested> nodes,
+			List<AuditLogEntryUser> logs) {
+		for (SharedSpaceNodeNested nested : nodes) {
+			WorkGroup workGroup = threadService.find(authUser, authUser, nested.getUuid());
+			threadService.deleteThread(authUser, authUser, workGroup);
+			SharedSpaceNode foundNestedWgToDelete = find(authUser, actor, nested.getUuid());
+			memberService.deleteAllMembers(authUser, actor, foundNestedWgToDelete, LogActionCause.DRIVE_DELETION,
+					null);
+			businessService.delete(foundNestedWgToDelete);
+			SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
+					AuditLogEntryType.WORKGROUP, foundNestedWgToDelete);
+			log.setCause(LogActionCause.DRIVE_DELETION);
+			logs.add(log);
+		}
 	}
 }
