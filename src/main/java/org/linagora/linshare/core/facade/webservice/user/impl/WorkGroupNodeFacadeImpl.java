@@ -141,7 +141,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	public PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String parent,
 			String pattern, boolean caseSensitive, boolean withTree, Integer pageNumber, Integer pageSize,
 			String creationDateAfter, String creationDateBefore, String modificationDateAfter, String modificationDateBefore,
-			List<WorkGroupNodeType> types, String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder,
+			List<WorkGroupNodeType> types, List<String> lastAuthors, Long minSize, Long maxSize, SortOrder sortOrder,
 			SharedSpaceNodeField sortField, List<String> documentKinds) {
 		Account authUser = checkAuthentication();
 		Validate.notEmpty(sharedSpaceUuid, "Missing required sharedSpace uuid");
@@ -152,7 +152,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		return service.findAll(authUser, actor, workGroup, parent, pattern,
 				withTree, caseSensitive,
 				new PageContainer<WorkGroupNode>(pageNumber, pageSize), getDateFromString(creationDateAfter),
-				getDateFromString(creationDateBefore), getDateFromString(modificationDateAfter), getDateFromString(modificationDateBefore), types, lastAuthor, minSize, maxSize,
+				getDateFromString(creationDateBefore), getDateFromString(modificationDateAfter), getDateFromString(modificationDateBefore), types, lastAuthors, minSize, maxSize,
 				sortOrder, sortField, documentKindsConverted);
 	}
 	

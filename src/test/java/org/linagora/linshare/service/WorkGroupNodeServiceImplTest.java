@@ -335,7 +335,7 @@ public class WorkGroupNodeServiceImplTest {
 		Date modificationDateBefore = addHoursToDate(wgCreationDate, 1);
 		List<WorkGroupNodeType> nodeTypes = Arrays.asList(WorkGroupNodeType.FOLDER, WorkGroupNodeType.DOCUMENT,
 				WorkGroupNodeType.DOCUMENT_REVISION);
-		String lastAuthor = john.getLsUuid();
+		List<String> lastAuthors = Lists.newArrayList(john.getLsUuid());
 		Long minSize = 0L;
 		Long maxSize = Long.MAX_VALUE;
 		List<DocumentKind> documentKinds = Lists.newArrayList();
@@ -364,17 +364,17 @@ public class WorkGroupNodeServiceImplTest {
 
 		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
 				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
-				nodeTypes, lastAuthor, null, null, sortOrder, sortField, null);
+				nodeTypes, lastAuthors, null, null, sortOrder, sortField, null);
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
 
 		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
 				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
-				nodeTypes, lastAuthor, minSize, maxSize, sortOrder, sortField, null);
+				nodeTypes, lastAuthors, minSize, maxSize, sortOrder, sortField, null);
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
 
 		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
 				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
-				nodeTypes, lastAuthor, minSize, maxSize, sortOrder, sortField, documentKinds);
+				nodeTypes, lastAuthors, minSize, maxSize, sortOrder, sortField, documentKinds);
 		Assertions.assertEquals(4, nodes.getPageResponse().getContent().size());
 
 		documentKinds.add(DocumentKind.OTHER);
@@ -383,7 +383,7 @@ public class WorkGroupNodeServiceImplTest {
 		// see WorkgroupNodeBusinessServiceImpl.getDefaultSupportedMimetypes()
 		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
 				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
-				nodeTypes, lastAuthor, minSize, maxSize, sortOrder, sortField, documentKinds);
+				nodeTypes, lastAuthors, minSize, maxSize, sortOrder, sortField, documentKinds);
 		// documentKind of created workgroup documents is DOCUMENT, expected empty list
 		Assertions.assertEquals(0, nodes.getPageResponse().getContent().size());
 	}

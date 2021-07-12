@@ -177,7 +177,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 	public PageContainer<WorkGroupNode> findAll(WorkGroup workGroup, String parentUuid, String pattern,
 			boolean caseSensitive, PageContainer<WorkGroupNode> pageContainer, Date creationDateAfter,
 			Date creationDateBefore, Date modificationDateAfter, Date modificationDateBefore, List<WorkGroupNodeType> types,
-			String lastAuthor, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField,
+			List<String> lastAuthors, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField,
 			List<DocumentKind> documentKinds) {
 		Validate.notNull(pageContainer, "Container can not be null.");
 		Validate.notNull(pageContainer.getPageNumber(), "PageNumber can not be null.");
@@ -187,8 +187,8 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 				new Criteria().andOperator(filterCriteria(creationDateAfter, creationDateBefore, "creationDate"),
 						filterCriteria(modificationDateAfter, modificationDateBefore, "modificationDate"),
 						filterCriteria(minSize, maxSize, "size")));
-		if (lastAuthor != null) {
-			query.addCriteria(Criteria.where("lastAuthor.uuid").is(lastAuthor));
+		if (lastAuthors != null) {
+			query.addCriteria(Criteria.where("lastAuthor.uuid").in(lastAuthors));
 		}
 		if (documentKinds != null && !documentKinds.isEmpty()) {
 			List<String> mimeTypes = Lists.newArrayList();

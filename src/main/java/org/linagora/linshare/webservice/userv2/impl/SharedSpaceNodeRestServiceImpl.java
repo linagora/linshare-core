@@ -228,7 +228,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 					List<WorkGroupNodeType> types,
 			@Parameter(description = "Filter by uuid of the user who performed last action on the node", required = false)
 				@QueryParam("lastAuthor")
-					String lastAuthor,
+					List<String> lastAuthors,
 			@Parameter(description = "Returns documents/revisions with size (in Bytes) greater or equal than minSize parameter", required = false)
 				@QueryParam("minSize")
 					Long minSize,
@@ -247,7 +247,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 			throws BusinessException {
 		return new PagingResponseBuilder<WorkGroupNode>().build(sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, parent, pattern, caseSensitive,
 						withTree, pageNumber, pageSize, creationDateAfter, creationDateBefore,
-						modificationDateAfter, modificationDateBefore, types, lastAuthor, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField), documentKinds));
+						modificationDateAfter, modificationDateBefore, types, lastAuthors, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField), documentKinds));
 	}
 
 	@Path("/{sharedSpaceNodeUuid}")
