@@ -187,7 +187,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 				new Criteria().andOperator(filterCriteria(creationDateAfter, creationDateBefore, "creationDate"),
 						filterCriteria(modificationDateAfter, modificationDateBefore, "modificationDate"),
 						filterCriteria(minSize, maxSize, "size")));
-		if (lastAuthors != null) {
+		if (lastAuthors != null && !lastAuthors.isEmpty()) {
 			query.addCriteria(Criteria.where("lastAuthor.uuid").in(lastAuthors));
 		}
 		if (documentKinds != null && !documentKinds.isEmpty()) {
