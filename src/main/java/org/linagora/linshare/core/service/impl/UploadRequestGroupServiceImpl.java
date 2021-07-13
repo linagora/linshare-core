@@ -549,11 +549,17 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			Validate.notEmpty(recipient.getMail(), "Mail must be set");
 			Contact contact = new Contact(recipient.getMail());
 			UploadRequest uploadRequest = new UploadRequest(uploadRequestGroup);
-			if (!uploadRequestGroup.isCollective()) {
+			if (uploadRequestGroup.isCollective()) {
+				uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+				List<Contact> recipients = Lists.newArrayList();
+				recipients.add(contact);
+				for (UploadRequestUrl u : uploadRequest.getUploadRequestURLs()) {
+					recipients.add(u.getContact());
+				}
+				container.setRecipients(recipients);
+			} else {
 				container = uploadRequestService.create(authUser, actor, uploadRequest, container);
 				uploadRequestGroup.getUploadRequests().add(uploadRequest);
-			} else {
-				uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 			}
 			container = uploadRequestUrlService.create(uploadRequest, contact, container);
 			recipientFavouriteRepository.incAndCreate(actor, contact.getMail());
