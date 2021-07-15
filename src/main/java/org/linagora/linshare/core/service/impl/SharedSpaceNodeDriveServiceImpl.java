@@ -119,8 +119,7 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.DRIVE_FORBIDDEN,
 				foundedNodeToDel);
 		List<SharedSpaceNodeNested> nodes = findAllWorkgroupsInNode(authUser, actor, foundedNodeToDel);
-		List<AuditLogEntryUser> logs = Lists.newArrayList();
-		deleteNestedWorkgroups(authUser, actor, nodes, logs);
+		List<AuditLogEntryUser> logs = deleteNestedWorkgroups(authUser, actor, nodes);
 		memberService.deleteAllMembers(authUser, actor, foundedNodeToDel, LogActionCause.DRIVE_DELETION, nodes);
 		businessService.delete(foundedNodeToDel);
 		SharedSpaceNodeAuditLogEntry driveLog = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
@@ -130,19 +129,20 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 		return foundedNodeToDel;
 	}
 
-	private void deleteNestedWorkgroups(Account authUser, Account actor, List<SharedSpaceNodeNested> nodes,
-			List<AuditLogEntryUser> logs) {
+	private List<AuditLogEntryUser> deleteNestedWorkgroups(Account authUser, Account actor, List<SharedSpaceNodeNested> nodes) {
+		List<AuditLogEntryUser> logs = Lists.newArrayList();
 		for (SharedSpaceNodeNested nested : nodes) {
 			WorkGroup workGroup = threadService.find(authUser, authUser, nested.getUuid());
 			threadService.deleteThread(authUser, authUser, workGroup);
 			SharedSpaceNode foundNestedWgToDelete = find(authUser, actor, nested.getUuid());
 			memberService.deleteAllMembers(authUser, actor, foundNestedWgToDelete, LogActionCause.DRIVE_DELETION,
 					null);
-			businessService.delete(foundNestedWgToDelete);
 			SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.WORKGROUP, foundNestedWgToDelete);
+			businessService.delete(foundNestedWgToDelete);
 			log.setCause(LogActionCause.DRIVE_DELETION);
 			logs.add(log);
 		}
+		return logs;
 	}
 }

@@ -187,7 +187,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 		createInitPermission("dd80afd5-9415-424d-b211-63669934efda", "Download a folder", SharedSpaceActionType.DOWNLOAD,
 				SharedSpaceResourceType.FOLDER, admin, writer, contributor, reader);
 		createInitPermission("fbe86462-174a-4d14-b6f1-ca4c6e127142", "Delete a folder", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.FOLDER, admin, writer);
+				SharedSpaceResourceType.FOLDER, admin, writer, drive_admin);
 		createInitPermission("3f92f534-44a1-4a78-9be0-368898d61473", "Create a file", SharedSpaceActionType.CREATE,
 				SharedSpaceResourceType.FILE, admin, writer, contributor);
 		createInitPermission("05e3372f-a78f-490c-9b48-d64dffd231b5", "Read a file", SharedSpaceActionType.READ,
@@ -195,7 +195,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 		createInitPermission("816b30ae-13ed-46a4-9284-fcaa65fc9e84", "Update a file", SharedSpaceActionType.UPDATE,
 				SharedSpaceResourceType.FILE, admin, writer, contributor);
 		createInitPermission("ea49ea0e-c14e-4f10-95bf-5dae8d01ab91", "Delete a file", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.FILE, admin, writer);
+				SharedSpaceResourceType.FILE, admin, writer, drive_admin);
 		createInitPermission("fd95b249-d142-47b4-9d17-3bb039e58f1a", "Download a file", SharedSpaceActionType.DOWNLOAD,
 				SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
 		createInitPermission("268d7402-91da-4cb9-9a0c-396d0e21c04f", "Download thumbnail a file", SharedSpaceActionType.DOWNLOAD_THUMBNAIL,

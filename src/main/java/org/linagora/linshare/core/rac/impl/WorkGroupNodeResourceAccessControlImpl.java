@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
@@ -47,6 +49,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.WorkGroupNodeResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
@@ -157,8 +160,39 @@ public class WorkGroupNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		return defaultSharedSpacePermissionAndFunctionalityCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE, SharedSpaceActionType.DELETE, getSharedSpaceResourceType(entry));
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE);
+		}
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (actor != null && authUser.equals(actor)) {
+				SharedSpaceMember foundMember = sharedSpaceMemberMongoRepository.findByAccountAndNode(actor.getLsUuid(),
+						entry.getWorkGroup());
+				if (Objects.isNull(foundMember)) {
+					return false;
+				}
+				if (foundMember.getNode().getParentUuid() == null) {
+					// ssmember is a member of a root workgroup 
+					return hasPermission(foundMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
+							getSharedSpaceResourceType(entry));
+				} else {
+					// ssmember is a member of a Drive or, if not, he is just a member of a nested workgroup
+					SharedSpaceMemberDrive memberDrive = (SharedSpaceMemberDrive) sharedSpaceMemberMongoRepository
+							.findByAccountAndNode(actor.getLsUuid(), foundMember.getNode().getParentUuid());
+					if (Objects.isNull(memberDrive)) {
+						// ssmember is a member of a nested workgroup only and not member of the drive
+						return hasPermission(foundMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
+								getSharedSpaceResourceType(entry));
+					} else {
+						// ssmember is a member of a drive and its nested workgroup
+						return hasPermission(foundMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
+								getSharedSpaceResourceType(entry))
+								|| hasPermission(memberDrive.getRole().getUuid(), SharedSpaceActionType.DELETE,
+										getSharedSpaceResourceType(entry));
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
