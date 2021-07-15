@@ -85,7 +85,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 	PageContainer<WorkGroupNode> findAll(String actorUuid, String sharedSpaceUuid, String parent,
 			String pattern, boolean caseSensitive, boolean withTree, Integer pageNumber, Integer pageSize,
 			String creationDateAfter, String creationDateBefore, String modificationDateAfter, String modificationDateBefore,
-			List<WorkGroupNodeType> types, List<String> lastAuthor, Long minSize, Long maxSize, SortOrder order,
+			List<WorkGroupNodeType> types, List<String> lastAuthors, Long minSize, Long maxSize, SortOrder order,
 			SharedSpaceNodeField sortField, List<String> documentKinds);
 
 }

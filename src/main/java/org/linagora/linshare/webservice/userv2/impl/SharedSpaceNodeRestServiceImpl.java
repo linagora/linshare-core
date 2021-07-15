@@ -224,10 +224,10 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 				@QueryParam("modificationDateBefore")
 					String modificationDateBefore,
 			@Parameter(description = "Filter by list of node types. See Enum to check available types (ROOT_FOLDER is not supported)", required = false)
-				@QueryParam("type")
+				@QueryParam("types")
 					List<WorkGroupNodeType> types,
 			@Parameter(description = "Filter by uuid of the user who performed last action on the node", required = false)
-				@QueryParam("lastAuthor")
+				@QueryParam("lastAuthors")
 					List<String> lastAuthors,
 			@Parameter(description = "Returns documents/revisions with size (in Bytes) greater or equal than minSize parameter", required = false)
 				@QueryParam("minSize")
@@ -242,9 +242,8 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 				@QueryParam("sortField") @DefaultValue("modificationDate")
 					String sortField,
 			@Parameter(description = "Filter by the kind of document (DOCUMENT/PDF/SPREADSHEET/IMAGE/VIDEO/AUDIO/ARCHIVE). To get other kind of documents use OTHER", required = false)
-				@QueryParam("kind")
-					List<String> documentKinds)					
-			throws BusinessException {
+				@QueryParam("kinds")
+					List<String> documentKinds) throws BusinessException {
 		return new PagingResponseBuilder<WorkGroupNode>().build(sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, parent, pattern, caseSensitive,
 						withTree, pageNumber, pageSize, creationDateAfter, creationDateBefore,
 						modificationDateAfter, modificationDateBefore, types, lastAuthors, minSize, maxSize, SortOrder.valueOf(sortOrder), SharedSpaceNodeField.valueOf(sortField), documentKinds));
