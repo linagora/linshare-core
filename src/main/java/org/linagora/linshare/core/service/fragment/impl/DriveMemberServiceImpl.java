@@ -129,14 +129,14 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		SharedSpaceMemberDrive toAdd = driveMemberBusinessService.create(account, node, role, nestedRole);
 		// Add the new member to all workgroups inside the drive
 		List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService.findByParentUuidAndType(node.getUuid());
-		List<SharedSpaceMember> nestedMembers = Lists.newArrayList();
 		for (SharedSpaceNode wgNode : nestedWorkgroups) {
 			if (!memberExistsInNode(account.getUuid(), wgNode.getUuid())) {
-				SharedSpaceMember wgMember = createWithoutCheckPermission(authUser, actor, wgNode, nestedRole, account);
-				nestedMembers.add(wgMember);
+				createWithoutCheckPermission(authUser, actor, wgNode, nestedRole, account);
 			}
 		}
 		if (!actor.getLsUuid().equals(account.getUuid())) {
+			List<SharedSpaceMember> nestedMembers = businessService.findLastFiveUpdatedNestedWorkgroups(node.getUuid(),
+					newMember.getLsUuid());
 			notify(new DriveWarnNewMemberEmailContext(toAdd, actor, newMember, nestedMembers));
 		}
 		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.DRIVE_MEMBER);

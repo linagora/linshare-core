@@ -466,4 +466,13 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return aggregate.getMappedResults();
 	}
 
+	@Override
+	public List<SharedSpaceMember> findLastFiveUpdatedNestedWorkgroups(String parentUuid, String accountUuid) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("account.uuid").is(accountUuid));
+		query.addCriteria(Criteria.where("node.parentUuid").is(parentUuid));
+		query.with(Sort.by(Sort.Direction.DESC, "node.modificationDate"));
+		query.limit(5);
+		return mongoTemplate.find(query, SharedSpaceMember.class);
+	}
 }

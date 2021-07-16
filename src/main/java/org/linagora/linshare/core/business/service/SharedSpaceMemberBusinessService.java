@@ -134,4 +134,6 @@ public interface SharedSpaceMemberBusinessService {
 	List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnActiveMembers(String nodeUuid, String pattern) throws BusinessException;
 
 	List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnAssetAuthor(String nodeUuid, String pattern);
+
+	List<SharedSpaceMember> findLastFiveUpdatedNestedWorkgroups(String parentUuid, String accountUuid);
 }
