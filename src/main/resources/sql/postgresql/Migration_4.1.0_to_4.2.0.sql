@@ -2055,6 +2055,50 @@ uploadFileBtn = Загрузить файл' WHERE id=12;
 
 UPDATE account SET first_name='Super', last_name='Administrator' where ls_uuid='root@localhost.localdomain';
 
+-- enable Upload Request mail activation
+UPDATE mail_activation SET system = false, enable = true WHERE identifier LIKE 'UPLOAD_REQUEST_%';
+-- -- activation policy update
+UPDATE policy SET status = true , default_status = true, policy = 0 ,system = true WHERE id IN (SELECT policy_activation_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%');
+-- -- configuration policy update
+UPDATE policy SET status = true , default_status = true, policy = 1 ,system = false WHERE id IN (SELECT policy_configuration_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%');
+-- -- delegation policy update
+UPDATE policy SET status = false , default_status = false, policy = 2 ,system = true WHERE id IN (SELECT policy_delegation_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%'); 
+
+-- Update default values (integer_max_value integer_default_value) of UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION and UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
+UPDATE functionality_unit
+SET    integer_max_value = 4
+WHERE  functionality_id IN (SELECT id
+                            FROM   functionality f
+                            WHERE
+              identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION')
+       AND integer_max_value = 1
+       AND integer_default_value = 3
+       AND unit_id IN (SELECT id
+                       FROM   unit
+                       WHERE  unit_value = 2
+                              AND unit_type = 0)
+       AND max_unit_id IN (SELECT id
+                       FROM   unit
+                       WHERE  unit_value = 2
+                              AND unit_type = 0);
+
+UPDATE functionality_unit
+SET    integer_max_value = 21,
+       integer_default_value = 7
+WHERE  functionality_id IN (SELECT id
+                            FROM   functionality f
+                            WHERE
+              identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION')
+       AND integer_max_value = 7
+       AND integer_default_value = 20
+       AND unit_id IN (SELECT id
+                       FROM   unit
+                       WHERE  unit_value = 0
+                              AND unit_type = 0)
+       AND max_unit_id IN (SELECT id
+                       FROM   unit
+                       WHERE  unit_value = 0
+                              AND unit_type = 0);
 ---- End of your queries
 
 -- LinShare version
