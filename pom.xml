@@ -1447,17 +1447,6 @@
 		</pluginManagement>
 	</build>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>bintray-central</id>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<name>bintray-plugins</name>
-			<url>http://dl.bintray.com/kongchen/maven</url>
-		</pluginRepository>
-	</pluginRepositories>
-
 	<reporting>
 		<!-- Adds a report detailing the components, mixins and base classes defined by this module. -->
 		<plugins>
