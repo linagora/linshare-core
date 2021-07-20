@@ -13,11 +13,11 @@
         * Linshare offers several features to securely exchange
         * User&amp;share allows Linshare to communicate with the fat client
 	</description>
-	<url>https://forge.linshare.org/projects/show/linshare</url>
+	<url>https://github.com/linagora/linshare</url>
 	<inceptionYear>2008</inceptionYear>
 	<issueManagement>
-		<system>LinShare Redmine Bugtracker</system>
-		<url>https://forge.linshare.org/projects/linshare/issues</url>
+		<system>LinShare GitHub</system>
+		<url>https://github.com/linagora/linshare/issues</url>
 	</issueManagement>
 	<ciManagement>
 		<system>Jenkins</system>
@@ -26,7 +26,7 @@
 
 	<scm>
 		<connection>scm:git:git://github.com/linagora/linshare-core.git</connection>
-        <developerConnection>scm:git:ssh://git@ci.linagora.com:7999/linagora/lgs/linshare/products/linshare-core.git</developerConnection>
+		<developerConnection>scm:git:ssh://git@ci.linagora.com:7999/linagora/lgs/linshare/products/linshare-core.git</developerConnection>
 		<tag>HEAD</tag>
 		<url>http://github.com/linagora/linshare-core/tree/master/</url>
 	</scm>
@@ -107,7 +107,7 @@
 	<licenses>
 		<license>
 			<name>GNU AFFERO GENERAL PUBLIC LICENSE</name>
-			<url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+			<url>https://github.com/linagora/linshare/blob/master/COPYING.md</url>
 		</license>
 	</licenses>
 
