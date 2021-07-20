@@ -38,7 +38,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -167,7 +166,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		entity.setBusinessExternalMailLocale(guest.getExternalMailLocale());
 		entity.setBusinessLastName(guest.getLastName());
 		entity.setBusinessFirstName(guest.getFirstName());
-		entity.setBusinessMail(guest.getMail());
 		entity.setExpirationDate(guest.getExpirationDate());
 		Guest update = guestRepository.update(entity);
 		if (wasRestricted == guest.isRestricted()) {
