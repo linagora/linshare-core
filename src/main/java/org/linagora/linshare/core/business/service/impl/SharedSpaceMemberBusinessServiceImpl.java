@@ -65,6 +65,8 @@ import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -82,8 +84,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.mongodb.client.result.UpdateResult;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
+
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected final SharedSpaceMemberMongoRepository repository;
 
@@ -125,7 +130,40 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		member.setRole(new LightSharedSpaceRole(checkRole(member.getRole().getUuid())));
 		member.setNode(new SharedSpaceNodeNested(checkNode(member.getNode().getUuid())));
 		member.setAccount(new SharedSpaceAccount(checkUser(member.getAccount().getUuid())));
-		return repository.insert(member);
+		member = repository.insert(member);
+		updateRelatedSharedSpaceResources(member, member.getModificationDate());
+		return member;
+	}
+
+	private void updateRelatedSharedSpaceResources(SharedSpaceMember member, Date modificationDate) {
+		// Updating SSnode
+		UpdateResult updateMulti = mongoTemplate.updateMulti(
+				new Query().addCriteria(new Criteria("uuid").is(member.getNode().getUuid())),
+				new Update().set("modificationDate", modificationDate),
+				SharedSpaceNode.class);
+		logger.trace("SharedSpaceNode: {}", updateMulti.toString());
+		// Updating nested SSnode in SSmember collection
+		updateMulti = mongoTemplate.updateMulti(
+				new Query().addCriteria(new Criteria("node.uuid").is(member.getNode().getUuid())),
+				new Update().set("node.modificationDate", modificationDate),
+				SharedSpaceMember.class);
+		logger.trace("SharedSpaceMembers: {}", updateMulti.toString());
+
+		// Testing if this SSnode have a parent (A drive)
+		String parentUuid = member.getNode().getParentUuid();
+		if (parentUuid != null) {
+			updateMulti = mongoTemplate.updateMulti(
+					new Query().addCriteria(new Criteria("uuid").is(parentUuid)),
+					new Update().set("modificationDate", modificationDate),
+					SharedSpaceNode.class);
+			logger.trace("Parent SharedSpaceNode: {}", updateMulti.toString());
+			// Updating nested SSnode in SSmember collection
+			updateMulti = mongoTemplate.updateMulti(
+					new Query().addCriteria(new Criteria("node.uuid").is(parentUuid).and("type").is(NodeType.DRIVE)),
+					new Update().set("node.modificationDate", modificationDate),
+					SharedSpaceMember.class);
+			logger.trace("Parent SharedSpaceMembers: {}", updateMulti.toString());
+		}
 	}
 
 	protected SharedSpaceRole checkRole(String roleUuid) {
@@ -166,6 +204,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public void delete(SharedSpaceMember memberToDelete) {
 		repository.delete(memberToDelete);
+		updateRelatedSharedSpaceResources(memberToDelete, new Date());
 	}
 
 	@Override
@@ -173,7 +212,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		Validate.notNull(memberToUpdate.getRole(), "The role must be set.");
 		foundMemberToUpdate.setRole(new LightSharedSpaceRole(checkRole(memberToUpdate.getRole().getUuid())));
 		foundMemberToUpdate.setModificationDate(new Date());
-		return checkSharedSpaceMemberTypeOnUpdate(foundMemberToUpdate);
+		SharedSpaceMember member = checkSharedSpaceMemberTypeOnUpdate(foundMemberToUpdate);
+		updateRelatedSharedSpaceResources(member, member.getModificationDate());
+		return member;
 	}
 
 	private SharedSpaceMember checkSharedSpaceMemberTypeOnUpdate(SharedSpaceMember member) {
