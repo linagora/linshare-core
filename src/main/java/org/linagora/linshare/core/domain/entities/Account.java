@@ -328,12 +328,6 @@ public abstract class Account {
 		this.mail = mail;
 	}
 
-	public void setBusinessMail(String value) {
-		if (value != null) {
-			this.setMail(value.toLowerCase());
-		}
-	}
-
 	/**
 	 * Role Helpers
 	 */
