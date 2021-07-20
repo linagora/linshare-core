@@ -233,11 +233,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
 					.getEnciphermentFunctionality(actor.getDomain());
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
-			Integer numberOfUploadedFiles = uploadRequestBusinessService.countNbrUploadedFiles(uploadRequestUrl.getUploadRequest());
 			upReqEntry = uploadRequestEntryBusinessService.createUploadRequestEntryDocument(actor, tempFile, size,
 					fileName, comment, checkIfIsCiphered, timeStampingUrl, mimeType, null, isFromCmis, metadata,
 					uploadRequestUrl);
-			createBusinessCheck(upReqEntry, numberOfUploadedFiles);
+			createBusinessCheck(upReqEntry);
 			addToQuota(actor, size);
 		} finally {
 			try {
@@ -255,8 +254,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		return upReqEntry;
 	}
 
-	private void createBusinessCheck(UploadRequestEntry entry, Integer numberOfUploadedFiles) throws BusinessException {
+	private void createBusinessCheck(UploadRequestEntry entry) throws BusinessException {
 		UploadRequest request = entry.getUploadRequestUrl().getUploadRequest();
+		Integer numberOfUploadedFiles = uploadRequestBusinessService.countNbrUploadedFiles(request);
+		Long totalUploadedEntriesSize = uploadRequestBusinessService.computeEntriesSize(request);
 		UploadRequestUrl requestUrl = entry.getUploadRequestUrl();
 		if (!request.getStatus().equals(UploadRequestStatus.ENABLED)) {
 			throw new BusinessException(
@@ -280,15 +281,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			}
 		}
 		if (request.getMaxDepositSize() != null) {
-			long totalSize = 0;
-			for (UploadRequestEntry ure : requestUrl.getUploadRequestEntries()) {
-				totalSize += ure.getSize();
-			}
-			totalSize += entry.getSize();
-			if (totalSize >= request.getMaxDepositSize()) {
+			if (totalUploadedEntriesSize + entry.getSize() > request.getMaxDepositSize()) {
 				throw new BusinessException(
 						BusinessErrorCode.UPLOAD_REQUEST_TOTAL_DEPOSIT_SIZE_TOO_LARGE,
-						"You already have reached the limit of your quota.");
+						"You already have reached the max deposit size limit.");
 			}
 		}
 	}
