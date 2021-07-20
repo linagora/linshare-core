@@ -474,7 +474,7 @@
 		<dependency>
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-parsers</artifactId>
-			<version>1.25</version>
+			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.jai-imageio</groupId>
@@ -1052,21 +1052,21 @@
 							</goals>
 							<configuration>
 								<target>
-									<mkdir dir="target/classes/sql/postgresql/" />
+									<mkdir dir="target/classes/sql/postgresql/"/>
 									<concat destfile="target/classes/sql/postgresql/import-postgresql.sql">
-										<fileset file="src/main/resources/sql/common/import-header.sql" />
-										<fileset file="src/main/resources/sql/common/import-domains.sql" />
-										<fileset file="src/main/resources/sql/common/import-quota.sql" />
-										<fileset file="src/main/resources/sql/common/import-welcome-messages.sql" />
-										<fileset file="src/main/resources/sql/common/import-functionalities.sql" />
-										<fileset file="src/main/resources/sql/common/import-mail-activation.sql" />
-										<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-										<fileset file="src/main/resources/sql/common/import-settings.sql" />
-										<fileset file="src/main/resources/sql/common/import-alias.sql" />
-										<fileset file="src/main/resources/sql/common/import-footer.sql" />
+										<fileset file="src/main/resources/sql/common/import-header.sql"/>
+										<fileset file="src/main/resources/sql/common/import-domains.sql"/>
+										<fileset file="src/main/resources/sql/common/import-quota.sql"/>
+										<fileset file="src/main/resources/sql/common/import-welcome-messages.sql"/>
+										<fileset file="src/main/resources/sql/common/import-functionalities.sql"/>
+										<fileset file="src/main/resources/sql/common/import-mail-activation.sql"/>
+										<fileset file="src/main/resources/sql/common/import_mail_structure.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql"/>
+										<fileset file="src/main/resources/sql/common/import-settings.sql"/>
+										<fileset file="src/main/resources/sql/common/import-alias.sql"/>
+										<fileset file="src/main/resources/sql/common/import-footer.sql"/>
 									</concat>
 								</target>
 							</configuration>
@@ -1079,13 +1079,13 @@
 							<phase>process-resources</phase>
 							<configuration>
 								<target>
-									<mkdir dir="target/classes/sql/postgresql/" />
+									<mkdir dir="target/classes/sql/postgresql/"/>
 									<concat destfile="target/classes/sql/postgresql/import-all-emails.sql">
-										<fileset file="src/main/resources/sql/common/import-header.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-										<fileset file="src/main/resources/sql/common/import-footer.sql" />
+										<fileset file="src/main/resources/sql/common/import-header.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql"/>
+										<fileset file="src/main/resources/sql/common/import-footer.sql"/>
 									</concat>
 								</target>
 							</configuration>
@@ -1098,11 +1098,11 @@
 							<phase>generate-test-sources</phase>
 							<configuration>
 								<target>
-									<mkdir dir="target/classes/sql/h2/" />
+									<mkdir dir="target/classes/sql/h2/"/>
 									<concat destfile="target/classes/sql/h2/import-all-emails.sql">
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql"/>
 									</concat>
 								</target>
 							</configuration>
@@ -1365,7 +1365,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -1453,7 +1453,7 @@
 								<phase>compile</phase>
 								<configuration>
 									<target name="copySql">
-										<copy file="${basedir}/src/test/resources/DISABLED-springContext-datasource-integration.xml" tofile="${project.build.outputDirectory}/springContext-datasource.xml" overwrite="true" />
+										<copy file="${basedir}/src/test/resources/DISABLED-springContext-datasource-integration.xml" tofile="${project.build.outputDirectory}/springContext-datasource.xml" overwrite="true"/>
 									</target>
 								</configuration>
 								<goals>
