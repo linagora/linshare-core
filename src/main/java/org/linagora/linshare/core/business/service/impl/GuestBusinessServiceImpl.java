@@ -175,7 +175,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		entity.setBusinessExternalMailLocale(guest.getExternalMailLocale());
 		entity.setBusinessLastName(guest.getLastName());
 		entity.setBusinessFirstName(guest.getFirstName());
-		entity.setBusinessMail(guest.getMail());
 		entity.setExpirationDate(guest.getExpirationDate());
 		Guest update = guestRepository.update(entity);
 		if (wasRestricted == guest.isRestricted()) {
