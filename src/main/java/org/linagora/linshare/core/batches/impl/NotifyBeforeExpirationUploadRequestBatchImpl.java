@@ -51,7 +51,6 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.UploadRequestReminderEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestWarnBeforeExpiryEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;

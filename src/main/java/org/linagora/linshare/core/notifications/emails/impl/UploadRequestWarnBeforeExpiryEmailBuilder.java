@@ -70,9 +70,9 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		UploadRequestUrl requestUrl = emailCtx.getRequestUrl();
 		UploadRequest request = emailCtx.getUploadRequest();
 
-		Date d2 = request.getNotificationDate();
-		Date d1 = request.getExpiryDate();
-		int days = (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+		Date d1 = request.getNotificationDate();
+		Date d2 = request.getExpiryDate();
+		int days = (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
 
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 
