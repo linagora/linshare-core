@@ -321,8 +321,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			List<User> restrictedContacts = Lists.newArrayList();
 			for (String mail : restrictedMails) {
 				try {
-					User user = userService.findOrCreateUser(mail,
-							actor.getDomainId());
+					User user = userService.findOrCreateUserWithDomainPolicies(mail, actor.getDomainId());
 					restrictedContacts.add(user);
 				} catch (BusinessException ex) {
 					logger.error("You can not restricted a guest to a simple email address. It must be an User.");
