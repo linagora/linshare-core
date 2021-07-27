@@ -43,4 +43,10 @@ public interface LDAPServerRestService {
 	Set<LDAPServerDto> findAll() throws BusinessException;
 
 	LDAPServerDto find(String uuid) throws BusinessException;
+
+	LDAPServerDto create(LDAPServerDto ldapServerDto) throws BusinessException;
+
+	LDAPServerDto update(LDAPServerDto ldapServerDto, String uuid) throws BusinessException;
+
+	LDAPServerDto delete(LDAPServerDto ldapServerDto, String uuid) throws BusinessException;
 }

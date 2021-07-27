@@ -46,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -75,5 +76,36 @@ public class LDAPServerFacadeImpl extends AdminGenericFacadeImpl implements LDAP
 		Validate.notEmpty(uuid, "ldap connection uuid must be set.");
 		LdapConnection ldapConnection = ldapConnectionService.find(uuid);
 		return new LDAPServerDto(ldapConnection);
+	}
+
+
+	@Override
+	public LDAPServerDto create(LDAPServerDto ldapServerDto) {
+		checkAuthentication(Role.SUPERADMIN);
+		Validate.notNull(ldapServerDto, "Ldap server to create must be set");
+		return new LDAPServerDto(ldapConnectionService.create(ldapServerDto.toLdapServerObject()));
+	}
+
+	@Override
+	public LDAPServerDto update(String uuid, LDAPServerDto ldapServerDto) {
+		checkAuthentication(Role.SUPERADMIN);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			ldapServerDto.setUuid(uuid);
+		}
+		Validate.notEmpty(ldapServerDto.getUuid(), "ldap Server's uuid must be set");
+		LdapConnection ldapConnection = ldapConnectionService.find(ldapServerDto.getUuid());
+		ldapConnection = ldapConnectionService.update(ldapServerDto.toLdapServerObject());
+		return new LDAPServerDto(ldapConnection);
+	}
+
+	@Override
+	public LDAPServerDto delete(String uuid, LDAPServerDto ldapServerDto) {
+		checkAuthentication(Role.SUPERADMIN);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			ldapServerDto.setUuid(uuid);
+		}
+		Validate.notEmpty(ldapServerDto.getUuid(), "ldap Server's uuid must be set");
+		LdapConnection conn = ldapConnectionService.delete(ldapServerDto.getUuid());
+		return new LDAPServerDto(conn);
 	}
 }

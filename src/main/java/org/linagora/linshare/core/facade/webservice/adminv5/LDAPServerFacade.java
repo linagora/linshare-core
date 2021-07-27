@@ -42,4 +42,10 @@ public interface LDAPServerFacade {
 	Set<LDAPServerDto> findAll();
 
 	LDAPServerDto find(String uuid);
+
+	LDAPServerDto create(LDAPServerDto ldapServerDto);
+
+	LDAPServerDto update(String uuid, LDAPServerDto ldapServerDto);
+
+	LDAPServerDto delete(String uuid, LDAPServerDto ldapServerDto);
 }

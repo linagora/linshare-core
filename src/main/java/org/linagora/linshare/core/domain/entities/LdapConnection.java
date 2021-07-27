@@ -68,7 +68,7 @@ public class LdapConnection {
 		this.securityCredentials = ldapConnectionDto.getSecurityCredentials();
 	}
 
-	protected LdapConnection() {
+	public LdapConnection() {
 	}
 
 	public LdapConnection(String label, String providerUrl, String securityAuth) {

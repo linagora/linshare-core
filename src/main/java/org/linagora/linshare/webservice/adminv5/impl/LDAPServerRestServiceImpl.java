@@ -36,7 +36,10 @@ package org.linagora.linshare.webservice.adminv5.impl;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -94,5 +97,43 @@ public class LDAPServerRestServiceImpl implements LDAPServerRestService {
 			@Parameter(description = "LDAP server's uuid", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return ldapServerFacade.find(uuid);
+	}
+
+	@Path("/")
+	@POST
+	@Operation(summary = "Create an LDAP server.", responses = {
+		@ApiResponse(content = @Content(schema = @Schema(implementation = LDAPServerDto.class)), responseCode = "200")
+	})
+	@Override
+	public LDAPServerDto create(
+			@Parameter(description = "The LDAP server to create.", required = false) LDAPServerDto ldapServerDto)
+			throws BusinessException {
+		return ldapServerFacade.create(ldapServerDto);
+	}
+
+	@Path("/{uuid: .*}")
+	@PUT
+	@Operation(summary = "Update an LDAP server.", responses = {
+		@ApiResponse(content = @Content(schema = @Schema(implementation = LDAPServerDto.class)), responseCode = "200")
+	})
+	@Override
+	public LDAPServerDto update(
+			@Parameter(description = "LDAP server to update", required = false) LDAPServerDto ldapServerDto,
+			@Parameter(description = "LDAP server's uuid to update, if null object is used", required = false)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return ldapServerFacade.update(uuid, ldapServerDto);
+	}
+
+	@Path("/{uuid: .*}")
+	@DELETE
+	@Operation(summary = "Delete an LDAP server.", responses = {
+		@ApiResponse(content = @Content(schema = @Schema(implementation = LDAPServerDto.class)), responseCode = "200")
+	})
+	@Override
+	public LDAPServerDto delete(
+			@Parameter(description = "LDAP server to delete.", required = false) LDAPServerDto ldapServerDto,
+			@Parameter(description = "LDAP server's uuid to delete, if null object is used", required = false)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return ldapServerFacade.delete(uuid, ldapServerDto);
 	}
 }
