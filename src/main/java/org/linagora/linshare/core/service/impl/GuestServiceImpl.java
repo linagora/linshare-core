@@ -333,15 +333,15 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest delete(Account actor, User owner, String lsUuid)
+	public Guest delete(Account authUser, User actor, String lsUuid)
 			throws BusinessException {
-		preChecks(actor, owner);
+		preChecks(authUser, actor);
 		Validate.notEmpty(lsUuid);
-		Guest original = find(actor, owner, lsUuid);
-		checkDeletePermission(actor, owner, Guest.class,
+		Guest original = find(authUser, actor, lsUuid);
+		checkDeletePermission(authUser, actor, Guest.class,
 				BusinessErrorCode.CANNOT_DELETE_USER, original);
-		guestBusinessService.delete(original);
-		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.DELETE, AuditLogEntryType.GUEST,
+		userService.deleteUser(authUser, original.getLsUuid());
+		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, actor, LogAction.DELETE, AuditLogEntryType.GUEST,
 				original);
 		logEntryService.insert(log);
 		return original;
@@ -350,7 +350,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	@Override
 	public void deleteUser(SystemAccount systemAccount, String uuid) {
 		Guest original = guestBusinessService.findByLsUuid(uuid);
-		userService.deleteUser(systemAccount, uuid);
+		userService.deleteUser(systemAccount, original.getLsUuid());
 		GuestAuditLogEntry log = new GuestAuditLogEntry(systemAccount, systemAccount, LogAction.DELETE, AuditLogEntryType.GUEST,
 				original);
 		log.setCause(LogActionCause.EXPIRATION);
