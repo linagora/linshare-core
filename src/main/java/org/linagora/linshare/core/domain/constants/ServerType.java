@@ -31,95 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5.dto;
+package org.linagora.linshare.core.domain.constants;
 
+public enum ServerType {
 
-import java.util.Date;
+	LDAP;
 
-import org.linagora.linshare.core.domain.constants.ServerType;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-
-public class AbstractServerDto {
-
-	@Schema(description = "Server's uuid", required = true)
-	protected String uuid;
-
-	@Schema(description = "Server's name", required = true)
-	protected String name;
-
-	@Schema(description = "Server's descripion", required = false)
-	protected String description;
-
-	@Schema(description = "Server's url", required = true)
-	protected String url;
-
-	@Schema(description = "Server's type", required = true)
-	protected ServerType serverType;
-
-	@Schema(description = "Server's creation date", required = true)
-	protected Date creationDate;
-
-	@Schema(description = "Server's modification date", required = true)
-	protected Date modificationDate;
-
-	protected AbstractServerDto() {
-		super();
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public ServerType getServerType() {
-		return serverType;
-	}
-
-	public void setServerType(ServerType serverType) {
-		this.serverType = serverType;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
+	public static ServerType fromString(String s) {
+		try {
+			return ServerType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException("Doesn't match an existing ServerType");
+		}
 	}
 }

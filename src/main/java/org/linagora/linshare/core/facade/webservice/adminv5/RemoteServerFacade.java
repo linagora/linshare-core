@@ -33,19 +33,23 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5;
 
-import java.util.Set;
+import java.util.List;
 
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
 
-public interface LDAPServerFacade {
+public interface RemoteServerFacade {
 
-	Set<LDAPServerDto> findAll();
+	List<AbstractServerDto> findAll();
 
-	LDAPServerDto find(String uuid);
+	AbstractServerDto find(String uuid);
 
-	LDAPServerDto create(LDAPServerDto ldapServerDto);
+	AbstractServerDto create(LDAPServerDto ldapServerDto);
 
-	LDAPServerDto update(String uuid, LDAPServerDto ldapServerDto);
+	AbstractServerDto update(String uuid, LDAPServerDto ldapServerDto);
 
-	LDAPServerDto delete(String uuid, LDAPServerDto ldapServerDto);
+	AbstractServerDto delete(String uuid, LDAPServerDto ldapServerDto);
+
+	List<DomainDto> findAllDomainsByLdapServer(String uuid);
 }

@@ -40,9 +40,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.LdapConnectionRepository;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.slf4j.Logger;
@@ -57,12 +59,16 @@ public class LdapConnectionServiceImpl implements LdapConnectionService {
 
 	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
+	private final AbstractDomainRepository abstractDomainRepository;
+
 	public LdapConnectionServiceImpl(
 			LdapConnectionRepository ldapConnectionRepository,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			AbstractDomainRepository abstractDomainRepository) {
 		super();
 		this.ldapConnectionRepository = ldapConnectionRepository;
 		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
+		this.abstractDomainRepository = abstractDomainRepository;
 	}
 
 	@Override
@@ -128,5 +134,12 @@ public class LdapConnectionServiceImpl implements LdapConnectionService {
 		Validate.notEmpty(uuid, "Ldap connection uuid must be set.");
 		LdapConnection ldapConnection = find(uuid);
 		return ldapConnectionRepository.isUsed(ldapConnection);
+	}
+
+	@Override
+	public List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection) {
+		Validate.notNull(ldapConnection, "ldapConnection must be set.");
+		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByRemoteServer(ldapConnection);
+		return domains;
 	}
 }

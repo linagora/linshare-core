@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -250,5 +251,17 @@ public class DomainDto {
 		} else if (!uuid.equals(other.uuid))
 			return false;
 		return true;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<AbstractDomain, DomainDto> toDto() {
+		return new Function<AbstractDomain, DomainDto>() {
+			@Override
+			public DomainDto apply(AbstractDomain arg0) {
+				return getLight(arg0);
+			}
+		};
 	}
 }

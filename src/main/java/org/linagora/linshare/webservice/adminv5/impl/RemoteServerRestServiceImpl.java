@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.adminv5.impl;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -46,9 +46,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.LDAPServerFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.RemoteServerFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
-import org.linagora.linshare.webservice.adminv5.LDAPServerRestService;
+import org.linagora.linshare.webservice.adminv5.RemoteServerRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -60,80 +62,95 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Path("/remote_servers")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class LDAPServerRestServiceImpl implements LDAPServerRestService {
+public class RemoteServerRestServiceImpl implements RemoteServerRestService {
 
-	private final LDAPServerFacade ldapServerFacade;
+	private final RemoteServerFacade ldapServerFacade;
 
 	
-	protected LDAPServerRestServiceImpl(
-			LDAPServerFacade lDAPServerFacade) {
+	protected RemoteServerRestServiceImpl(
+			RemoteServerFacade lDAPServerFacade) {
 		super();
 		this.ldapServerFacade = lDAPServerFacade;
 	}
 
 	@Path("/")
 	@GET
-	@Operation(summary = "Find all LDAP servers.", responses = {
+	@Operation(summary = "Find all remote servers.", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = LDAPServerDto.class))),
 			responseCode = "200"
 		)
 	})
 	@Override
-	public Set<LDAPServerDto> findAll() throws BusinessException {
+	public List<AbstractServerDto> findAll() throws BusinessException {
 		return ldapServerFacade.findAll();
 	}
 
 	@Path("/{uuid}")
 	@GET
-	@Operation(summary = "Find an LDAP server.", responses = {
+	@Operation(summary = "Find a remote server.", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = LDAPServerDto.class))),
 			responseCode = "200"
 		)
 	})
 	@Override
-	public LDAPServerDto find(
-			@Parameter(description = "LDAP server's uuid", required = true)
+	public AbstractServerDto find(
+			@Parameter(description = "Remote server's uuid", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return ldapServerFacade.find(uuid);
 	}
 
 	@Path("/")
 	@POST
-	@Operation(summary = "Create an LDAP server.", responses = {
+	@Operation(summary = "Create a remote server.", responses = {
 		@ApiResponse(content = @Content(schema = @Schema(implementation = LDAPServerDto.class)), responseCode = "200")
 	})
 	@Override
-	public LDAPServerDto create(
-			@Parameter(description = "The LDAP server to create.", required = false) LDAPServerDto ldapServerDto)
+	public AbstractServerDto create(
+			@Parameter(description = "The remote server to create.", required = false) LDAPServerDto ldapServerDto)
 			throws BusinessException {
 		return ldapServerFacade.create(ldapServerDto);
 	}
 
 	@Path("/{uuid: .*}")
 	@PUT
-	@Operation(summary = "Update an LDAP server.", responses = {
+	@Operation(summary = "Update a remote server.", responses = {
 		@ApiResponse(content = @Content(schema = @Schema(implementation = LDAPServerDto.class)), responseCode = "200")
 	})
 	@Override
-	public LDAPServerDto update(
-			@Parameter(description = "LDAP server to update", required = false) LDAPServerDto ldapServerDto,
-			@Parameter(description = "LDAP server's uuid to update, if null object is used", required = false)
+	public AbstractServerDto update(
+			@Parameter(description = "Remote server to update", required = false) LDAPServerDto ldapServerDto,
+			@Parameter(description = "Remote server's uuid to update, if null object is used", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return ldapServerFacade.update(uuid, ldapServerDto);
 	}
 
 	@Path("/{uuid: .*}")
 	@DELETE
-	@Operation(summary = "Delete an LDAP server.", responses = {
+	@Operation(summary = "Delete a remote server.", responses = {
 		@ApiResponse(content = @Content(schema = @Schema(implementation = LDAPServerDto.class)), responseCode = "200")
 	})
 	@Override
-	public LDAPServerDto delete(
-			@Parameter(description = "LDAP server to delete.", required = false) LDAPServerDto ldapServerDto,
-			@Parameter(description = "LDAP server's uuid to delete, if null object is used", required = false)
+	public AbstractServerDto delete(
+			@Parameter(description = "Remote server to delete.", required = false) LDAPServerDto ldapServerDto,
+			@Parameter(description = "Remote server's uuid to delete, if null object is used", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return ldapServerFacade.delete(uuid, ldapServerDto);
+	}
+
+	@Override
+	@Path("/{uuid}/domains")
+	@GET
+	@Operation(summary = "Find all domains using a chosen Remote server.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainDto.class))),
+			responseCode = "200"
+		)
+	})
+	public List<DomainDto> findAllDomainsByLdapServer(
+			@Parameter(description = "LDAP server's uuid", required = true)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return ldapServerFacade.findAllDomainsByLdapServer(uuid);
 	}
 }

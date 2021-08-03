@@ -34,14 +34,18 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.ServerType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
-import org.linagora.linshare.core.facade.webservice.adminv5.LDAPServerFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.RemoteServerFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LdapConnectionService;
@@ -49,63 +53,84 @@ import org.linagora.linshare.core.service.LdapConnectionService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
-public class LDAPServerFacadeImpl extends AdminGenericFacadeImpl implements LDAPServerFacade {
+public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements RemoteServerFacade {
 
-	private final LdapConnectionService ldapConnectionService;
+	private final Map<ServerType, LdapConnectionService> remoteServices;
 
-	public LDAPServerFacadeImpl(
+	public RemoteServerFacadeImpl(
 			final AccountService accountService,
-			final LdapConnectionService ldapConnectionService) {
+			final Map<ServerType, LdapConnectionService> remoteServices) {
 		super(accountService);
-		this.ldapConnectionService = ldapConnectionService;
+		this.remoteServices = remoteServices;
+	}
+
+	private LdapConnectionService getService(ServerType type) {
+		Validate.notNull(type, "Node type must be set");
+		LdapConnectionService remoteService = remoteServices.get(type);
+		Validate.notNull(remoteService, "Can not find a service that handle your serverType: " + type);
+		return remoteService;
 	}
 
 	@Override
-	public Set<LDAPServerDto> findAll() throws BusinessException {
+	public List<AbstractServerDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		List<LDAPServerDto> ldapConnections = ImmutableList
-				.copyOf(Lists.transform(ldapConnectionService.findAll(), LDAPServerDto.toDto()));
-		return Sets.newHashSet(ldapConnections);
+		LdapConnectionService remoteServer = getService(ServerType.LDAP);
+		List<AbstractServerDto> ldapConnections = ImmutableList
+				.copyOf(Lists.transform(remoteServer.findAll(), LDAPServerDto.toDto()));
+		return ldapConnections;
 	}
 
 	@Override
-	public LDAPServerDto find(String uuid) throws BusinessException {
+	public AbstractServerDto find(String uuid) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "ldap connection uuid must be set.");
-		LdapConnection ldapConnection = ldapConnectionService.find(uuid);
+		LdapConnectionService remoteServer = getService(ServerType.LDAP);
+		LdapConnection ldapConnection = remoteServer.find(uuid);
 		return new LDAPServerDto(ldapConnection);
 	}
 
 
 	@Override
-	public LDAPServerDto create(LDAPServerDto ldapServerDto) {
+	public AbstractServerDto create(LDAPServerDto ldapServerDto) {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(ldapServerDto, "Ldap server to create must be set");
-		return new LDAPServerDto(ldapConnectionService.create(ldapServerDto.toLdapServerObject()));
+		LdapConnectionService remoteServer = getService(ServerType.LDAP);
+		return new LDAPServerDto(remoteServer.create(ldapServerDto.toLdapServerObject()));
 	}
 
 	@Override
-	public LDAPServerDto update(String uuid, LDAPServerDto ldapServerDto) {
+	public AbstractServerDto update(String uuid, LDAPServerDto ldapServerDto) {
 		checkAuthentication(Role.SUPERADMIN);
 		if (!Strings.isNullOrEmpty(uuid)) {
 			ldapServerDto.setUuid(uuid);
 		}
-		Validate.notEmpty(ldapServerDto.getUuid(), "ldap Server's uuid must be set");
-		LdapConnection ldapConnection = ldapConnectionService.find(ldapServerDto.getUuid());
-		ldapConnection = ldapConnectionService.update(ldapServerDto.toLdapServerObject());
+		Validate.notEmpty(ldapServerDto.getUuid(), "Ldap Server's uuid must be set");
+		LdapConnectionService remoteServer = getService(ServerType.LDAP);
+		LdapConnection ldapConnection = remoteServer.find(ldapServerDto.getUuid());
+		ldapConnection = remoteServer.update(ldapServerDto.toLdapServerObject());
 		return new LDAPServerDto(ldapConnection);
 	}
 
 	@Override
-	public LDAPServerDto delete(String uuid, LDAPServerDto ldapServerDto) {
+	public AbstractServerDto delete(String uuid, LDAPServerDto ldapServerDto) {
 		checkAuthentication(Role.SUPERADMIN);
 		if (!Strings.isNullOrEmpty(uuid)) {
 			ldapServerDto.setUuid(uuid);
 		}
-		Validate.notEmpty(ldapServerDto.getUuid(), "ldap Server's uuid must be set");
-		LdapConnection conn = ldapConnectionService.delete(ldapServerDto.getUuid());
+		Validate.notEmpty(ldapServerDto.getUuid(), "Ldap server's uuid must be set");
+		LdapConnectionService remoteServer = getService(ServerType.LDAP);
+		LdapConnection conn = remoteServer.delete(ldapServerDto.getUuid());
 		return new LDAPServerDto(conn);
+	}
+
+	@Override
+	public List<DomainDto> findAllDomainsByLdapServer(String uuid) {
+		checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(uuid, "Ldap server's uuid must be set");
+		LdapConnectionService remoteServer = getService(ServerType.LDAP);
+		LdapConnection ldapConnection = remoteServer.find(uuid);
+		List<AbstractDomain> domains = remoteServer.findAllDomainsByRemoteServer(ldapConnection);
+		return ImmutableList.copyOf(Lists.transform(domains, DomainDto.toDto()));
 	}
 }

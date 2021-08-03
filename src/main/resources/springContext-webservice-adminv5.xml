@@ -31,8 +31,8 @@
 	<bean id="adminv5DomainRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainRestServiceImpl">
 		<constructor-arg ref="wsAdminV5DomainFacade" />
 	</bean>
-	<bean id="adminv5LdapServerRestService" class="org.linagora.linshare.webservice.adminv5.impl.LDAPServerRestServiceImpl">
-		<constructor-arg ref="wsAdminV5LdapServerFacade" />
+	<bean id="adminv5RemoteServerRestService" class="org.linagora.linshare.webservice.adminv5.impl.RemoteServerRestServiceImpl">
+		<constructor-arg ref="wsAdminV5RemoteServerFacade" />
 	</bean>
 	<jaxrs:server id="restAdminV5Container" address="/rest/admin/v5">
 		<jaxrs:serviceBeans>
@@ -43,7 +43,7 @@
 			<ref bean="adminv5EnumRestService"/>
 			<ref bean="adminSharedSpaceMemberRestService"/>
 			<ref bean="adminv5DomainRestService"/>
-			<ref bean="adminv5LdapServerRestService"/>
+			<ref bean="adminv5RemoteServerRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

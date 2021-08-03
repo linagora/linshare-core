@@ -162,4 +162,10 @@
 			<param name="identifierMethod">getTapestryLocale</param>
 			<param name="valueOfMethod">fromTapestryLocale</param>
 		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="ServerType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.ServerType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
 </hibernate-mapping>

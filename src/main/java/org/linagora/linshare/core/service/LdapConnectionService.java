@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -58,4 +59,6 @@ public interface LdapConnectionService {
 			throws BusinessException;
 
 	public boolean isUsed(String uuid);
+
+	public List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection);
 }

@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -275,5 +276,13 @@ public class AbstractDomainRepositoryImpl extends
 		crit.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
 		crit.add(Restrictions.isNotNull("driveProvider"));
 		return listByCriteria(crit);
+	}
+
+	@Override
+	public List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass(), "abstractDomain");
+		det.createAlias("abstractDomain.userProvider", "userProvider");
+		det.add(Restrictions.eq("userProvider.ldapConnection", ldapConnection));
+		return findByCriteria(det);
 	}
 }

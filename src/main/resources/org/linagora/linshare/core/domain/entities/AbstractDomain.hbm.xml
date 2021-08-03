@@ -95,7 +95,6 @@
 			<key column="domain_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.WelcomeMessages"/>
 		</set>
-
 		<list name="shareExpiryRules" table="share_expiry_rules" lazy="true">
 			<key>
 				<column name="domain_id" not-null="true" index="index_share_expiry_rule_id" />

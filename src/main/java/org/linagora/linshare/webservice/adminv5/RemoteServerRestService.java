@@ -33,20 +33,24 @@
  */
 package org.linagora.linshare.webservice.adminv5;
 
-import java.util.Set;
+import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
 
-public interface LDAPServerRestService {
+public interface RemoteServerRestService {
 
-	Set<LDAPServerDto> findAll() throws BusinessException;
+	List<AbstractServerDto> findAll() throws BusinessException;
 
-	LDAPServerDto find(String uuid) throws BusinessException;
+	AbstractServerDto find(String uuid) throws BusinessException;
 
-	LDAPServerDto create(LDAPServerDto ldapServerDto) throws BusinessException;
+	AbstractServerDto create(LDAPServerDto ldapServerDto) throws BusinessException;
 
-	LDAPServerDto update(LDAPServerDto ldapServerDto, String uuid) throws BusinessException;
+	AbstractServerDto update(LDAPServerDto ldapServerDto, String uuid) throws BusinessException;
 
-	LDAPServerDto delete(LDAPServerDto ldapServerDto, String uuid) throws BusinessException;
+	AbstractServerDto delete(LDAPServerDto ldapServerDto, String uuid) throws BusinessException;
+
+	List<DomainDto> findAllDomainsByLdapServer(String uuid) throws BusinessException;
 }

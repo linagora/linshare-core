@@ -44,7 +44,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "LdapServer")
-@Schema(name = "LdapServer", description = "An LDAP server connection")
+@Schema(name = "LdapServer", description = "A LDAP server connection")
 public class LDAPServerDto extends AbstractServerDto {
 
 	@Schema(description = "Ldap server's bindDn", required = false)
@@ -62,6 +62,8 @@ public class LDAPServerDto extends AbstractServerDto {
 		this.name = ldapConnection.getLabel();
 		this.url = ldapConnection.getProviderUrl();
 		this.bindDn = ldapConnection.getSecurityPrincipal();
+		this.bindPassword = ldapConnection.getSecurityCredentials();
+		this.serverType = ldapConnection.getServerType();
 		this.creationDate = ldapConnection.getCreationDate();
 		this.modificationDate = ldapConnection.getModificationDate();
 	}
@@ -73,6 +75,7 @@ public class LDAPServerDto extends AbstractServerDto {
 		connection.setProviderUrl(getUrl());
 		connection.setSecurityPrincipal(getBindDn());
 		connection.setSecurityCredentials(getBindPassword());
+		connection.setServerType(getServerType());
 		connection.setCreationDate(getCreationDate());
 		connection.setModificationDate(getModificationDate());
 		return connection;

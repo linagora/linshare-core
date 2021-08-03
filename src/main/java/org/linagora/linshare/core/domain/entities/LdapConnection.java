@@ -37,6 +37,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.ServerType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LdapConnectionDto;
 
 public class LdapConnection {
@@ -54,6 +55,8 @@ public class LdapConnection {
 	protected String securityPrincipal;
 
 	protected String securityCredentials;
+
+	protected ServerType serverType;
 
 	protected Date creationDate;
 
@@ -133,6 +136,14 @@ public class LdapConnection {
 
 	public void setSecurityCredentials(String securityCredentials) {
 		this.securityCredentials = securityCredentials;
+	}
+
+	public ServerType getServerType() {
+		return serverType;
+	}
+
+	public void setServerType(ServerType serverType) {
+		this.serverType = serverType;
 	}
 
 	public Date getCreationDate() {
