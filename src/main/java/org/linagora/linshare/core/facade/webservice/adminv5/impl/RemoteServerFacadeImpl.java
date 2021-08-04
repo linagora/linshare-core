@@ -66,7 +66,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	}
 
 	private LdapConnectionService getService(ServerType type) {
-		Validate.notNull(type, "Node type must be set");
+		Validate.notNull(type, "ServerType type must be set");
 		LdapConnectionService remoteService = remoteServices.get(type);
 		Validate.notNull(remoteService, "Can not find a service that handle your serverType: " + type);
 		return remoteService;

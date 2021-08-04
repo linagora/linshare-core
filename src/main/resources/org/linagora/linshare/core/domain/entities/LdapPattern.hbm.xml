@@ -19,6 +19,7 @@
 			<one-to-many
 				class="org.linagora.linshare.core.domain.entities.LdapAttribute" />
 		</map>
+		<property access="field" name="userFilterType" column="user_filter_type" not-null="true" lazy="false" type="UserFilterType" />
 		<subclass name="org.linagora.linshare.core.domain.entities.UserLdapPattern" discriminator-value="USER_LDAP_PATTERN" lazy="true">
 			<property name="authCommand" column="auth_command" type="text" not-null="false" lazy="false"/>
 			<property name="searchUserCommand" column="search_user_command" type="text" not-null="false" lazy="false"/>

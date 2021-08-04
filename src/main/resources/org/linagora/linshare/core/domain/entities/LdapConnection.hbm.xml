@@ -15,6 +15,6 @@
 		<property name="securityCredentials" column="security_credentials" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
-		<property access="field" name="serverType" column="server_type" not-null="false" lazy="false" type="ServerType" />
+		<property access="field" name="serverType" column="server_type" not-null="true" lazy="false" type="ServerType" />
 	</class>
 </hibernate-mapping>

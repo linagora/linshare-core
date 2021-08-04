@@ -37,4 +37,12 @@
 			</map>
 		</constructor-arg>
 	</bean>
+	<bean id="wsAdminV5DomainUserFilterFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.DomainUserFilterFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg>
+			<map>
+				<entry key="LDAP" value-ref="userProviderService" />
+			</map>
+		</constructor-arg>
+	</bean>
 </beans>	

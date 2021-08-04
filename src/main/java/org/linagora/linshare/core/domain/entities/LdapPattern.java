@@ -38,6 +38,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Map;
 
+import org.linagora.linshare.core.domain.constants.UserFilterType;
+
 import com.google.common.collect.Maps;
 
 public abstract class LdapPattern {
@@ -59,6 +61,8 @@ public abstract class LdapPattern {
 	protected Date modificationDate;
 
 	protected Map<String, LdapAttribute> attributes;
+
+	protected UserFilterType userFilterType;
 
 	public static final String USER_MAIL = "user_mail";
 	public static final String USER_FIRST_NAME = "user_firstname";
@@ -118,6 +122,14 @@ public abstract class LdapPattern {
 
 	public String getAttribute(String field) {
 		return attributes.get(field).getAttribute().trim().toLowerCase();
+	}
+
+	public UserFilterType getUserFilterType() {
+		return userFilterType;
+	}
+
+	public void setUserFilterType(UserFilterType userFilterType) {
+		this.userFilterType = userFilterType;
 	}
 
 	public Date getCreationDate() {
