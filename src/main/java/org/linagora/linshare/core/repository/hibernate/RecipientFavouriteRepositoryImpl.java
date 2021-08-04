@@ -278,6 +278,17 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 	}
 
 	@Override
+	public void deleteOneFavoriteOfUser(User owner, String recipient) throws IllegalArgumentException, BusinessException {
+		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
+		det.add(Restrictions.eq("owner", owner));
+		det.add(Restrictions.eq("recipient", recipient));
+		List<RecipientFavourite> recipients = findByCriteria(det);
+		for (RecipientFavourite recipientFavourite : recipients) {
+			delete(recipientFavourite);
+		}
+	}
+
+	@Override
 	public void updateEmail(final String currentEmail, final String newEmail)
 			throws BusinessException {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
