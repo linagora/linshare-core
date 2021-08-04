@@ -126,4 +126,6 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 * @param owner
 	 */
 	public void deleteFavoritesOfUser(U owner) throws IllegalArgumentException, BusinessException;
+
+	public void deleteOneFavoriteOfUser(U owner, T recipient) throws IllegalArgumentException, BusinessException;
 }

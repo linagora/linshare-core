@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -48,9 +49,12 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.utils.HashUtils;
+
+import com.google.common.collect.Sets;
 
 public class GuestBusinessServiceImpl implements GuestBusinessService {
 
@@ -62,13 +66,17 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	private final PasswordService passwordService;
 
+	private final RecipientFavouriteRepository recipientFavouriteRepository;
+
 	public GuestBusinessServiceImpl(final GuestRepository guestRepository,
 			final UserRepository<User> userRepository,
 			final AllowedContactRepository allowedContactRepository,
+			final RecipientFavouriteRepository recipientFavouriteRepository,
 			final PasswordService passwordService) {
 		this.guestRepository = guestRepository;
 		this.userRepository = userRepository;
 		this.allowedContactRepository = allowedContactRepository;
+		this.recipientFavouriteRepository = recipientFavouriteRepository;
 		this.passwordService = passwordService;
 	}
 
@@ -175,9 +183,17 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 				}
 				// update
 				allowedContactRepository.purge(update);
+				Set<String> contacts = Sets.newHashSet();
 				for (User contact : allowedContacts) {
 					allowedContactRepository.create(new AllowedContact(update,
 							contact));
+					contacts.add(contact.getMail());
+				}
+				List<String> recipients = recipientFavouriteRepository.getElementsOrderByWeight(update);
+				for (String recipient: recipients) {
+					if (!contacts.contains(recipient)) {
+						recipientFavouriteRepository.deleteOneFavoriteOfUser(update, recipient);
+					}
 				}
 			}
 		} else if (wasRestricted) {
@@ -190,9 +206,17 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 				if (allowedContacts == null || allowedContacts.isEmpty()) {
 					throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not update a restricted guest without a list of contacts.");
 				} else {
+					Set<String> contacts = Sets.newHashSet();
 					for (User contact : allowedContacts) {
 						allowedContactRepository.create(new AllowedContact(update,
 								contact));
+						contacts.add(contact.getMail());
+					}
+					List<String> recipients = recipientFavouriteRepository.getElementsOrderByWeight(update);
+					for (String recipient: recipients) {
+						if (!contacts.contains(recipient)) {
+							recipientFavouriteRepository.deleteOneFavoriteOfUser(update, recipient);
+						}
 					}
 				}
 			}
