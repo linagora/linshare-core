@@ -46,6 +46,7 @@ import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessServic
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
@@ -96,7 +97,7 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 	}
 
 	@Override
-	public WelcomeMessages find(User actor, String uuid)
+	public WelcomeMessages find(Account actor, String uuid)
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(uuid, "Welcome message uuid must be set.");

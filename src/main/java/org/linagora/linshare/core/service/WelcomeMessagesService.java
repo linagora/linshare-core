@@ -38,6 +38,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -47,7 +48,7 @@ public interface WelcomeMessagesService {
 	List<WelcomeMessages> findAll(User actor, String domainId, boolean parent)
 			throws BusinessException;
 
-	WelcomeMessages find(User actor, String uuid) throws BusinessException;
+	WelcomeMessages find(Account actor, String uuid) throws BusinessException;
 	
 	WelcomeMessages create(User actor, WelcomeMessages wlcm, String domainId)
 			throws BusinessException;

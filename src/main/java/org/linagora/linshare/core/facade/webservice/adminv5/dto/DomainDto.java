@@ -59,13 +59,13 @@ public class DomainDto {
 	@Schema(description = "Unique identifier of the resource")
 	private String uuid;
 
-	@Schema(description = "A common name, used to easily identify the resource.")
+	@Schema(description = "A common name, used to easily identify the resource. Required for creation.", required = true)
 	private String name;
 
-	@Schema(description = "An optional description of the domain. (only revealed if query param detail is true)")
+	@Schema(description = "An optional description of the domain. (only revealed if query param detail is true. It can be provided for creation.)")
 	private String description;
 
-	@Schema(description = "The kind of this domain. There is only four kinds: ROOT, TOP, SUB and GUEST domains")
+	@Schema(description = "The kind of this domain. There is only four kinds: ROOT, TOP, SUB and GUEST domains. Required for creation.", required = true)
 	private DomainType type;
 
 	@Schema(description = "creation date of this resource")
@@ -84,7 +84,7 @@ public class DomainDto {
 	@Schema(description = "Children domains. (only revealed if query param tree is true)")
 	private List<DomainDto> children;
 
-	@Schema(description = "Parent domain. (only revealed if query param tree is true)")
+	@Schema(description = "Parent domain. (only revealed if query param tree is true).  Required for creation.", required = true)
 	private DomainDto parent;
 
 	private DomainDto() {

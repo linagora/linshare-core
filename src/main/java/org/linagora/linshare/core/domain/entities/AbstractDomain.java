@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
+@SuppressWarnings("deprecation")
 public abstract class AbstractDomain {
 	/**
 	 * Database persistence identifier
@@ -117,6 +118,11 @@ public abstract class AbstractDomain {
 		this.uuid = null;
 	}
 
+	public AbstractDomain(String name, AbstractDomain parent) {
+		this(name);
+		this.setParentDomain(parent);
+	}
+
 	protected AbstractDomain(String label) {
 		this.label = label;
 		this.description = "";
@@ -142,6 +148,7 @@ public abstract class AbstractDomain {
 		this.uuid = UUID.randomUUID().toString();
 	}
 
+	@Deprecated
 	public AbstractDomain(DomainDto domainDto, AbstractDomain parent) {
 		this.uuid = domainDto.getIdentifier();
 		this.label = domainDto.getLabel();

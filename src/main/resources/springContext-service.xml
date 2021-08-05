@@ -130,6 +130,21 @@
 		<constructor-arg ref="groupProviderService"/>
 	</bean>
 
+	<bean name="domainService"
+		class="org.linagora.linshare.core.service.impl.DomainServiceImpl">
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="domainPolicyService" />
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="auditAdminMongoRepository" />
+		<constructor-arg ref="domainQuotaBusinessService" />
+		<constructor-arg ref="containerQuotaBusinessService" />
+		<constructor-arg ref="welcomeMessagesBusinessService" />
+		<constructor-arg ref="mailConfigBusinessService" />
+		<constructor-arg ref="mimePolicyBusinessService" />
+	</bean>
+
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">
 		<constructor-arg ref="userService" />
 	</bean>

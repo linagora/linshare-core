@@ -40,6 +40,7 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -104,6 +105,19 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 			@Parameter(description = "If true, more sensitive information about the domain will be provided.")
 				@QueryParam("detail") @DefaultValue("false") boolean detail) {
 		return domainFacade.find(uuid, tree, detail);
+	}
+
+	@Path("/")
+	@POST
+	@Operation(summary = "It allows root adminstrator to create a new domain.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public DomainDto create(DomainDto dto) {
+		return domainFacade.create(dto);
 	}
 
 }

@@ -38,24 +38,25 @@ package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.DomainFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DomainService;
 
 import com.google.common.collect.Sets;
 
 public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFacade {
 
-	private final AbstractDomainService abstractDomainService;
+	private final DomainService domainService;
 
-	public DomainFacadeImpl(AccountService accountService, AbstractDomainService abstractDomainService) {
+	public DomainFacadeImpl(AccountService accountService, DomainService domainService) {
 		super(accountService);
-		this.abstractDomainService = abstractDomainService;
+		this.domainService = domainService;
 	}
 
 	@Override
@@ -64,18 +65,18 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 		Set<DomainDto> domainDtos= Sets.newHashSet();
 		if (tree) {
 			String domainUuid = authUser.getDomain().getUuid();
-			AbstractDomain abstractDomain = abstractDomainService.findById(domainUuid);
+			AbstractDomain abstractDomain = domainService.find(authUser,domainUuid);
 			DomainDto dto = DomainDto.getTreeUp(abstractDomain);
-			for (AbstractDomain child : abstractDomainService.getSubDomainsByDomain(domainUuid)) {
+			for (AbstractDomain child : domainService.getSubDomainsByDomain(authUser, domainUuid)) {
 				DomainDto childDto = DomainDto.getTree(child);
-				for (AbstractDomain childNested : abstractDomainService.getSubDomainsByDomain(childDto.getUuid())) {
+				for (AbstractDomain childNested : domainService.getSubDomainsByDomain(authUser, childDto.getUuid())) {
 					childDto.addChild(DomainDto.getTree(childNested));
 				}
 				dto.addChild(childDto);
 			}
 			return Sets.newHashSet(dto);
 		} else {
-			List<AbstractDomain> entities = abstractDomainService.findAll(authUser);
+			List<AbstractDomain> entities = domainService.findAll(authUser);
 			for (AbstractDomain abstractDomain : entities) {
 				domainDtos.add(DomainDto.getLight(abstractDomain));
 			}
@@ -85,12 +86,14 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 
 	@Override
 	public DomainDto find(String domain, boolean tree, boolean detail) {
-		AbstractDomain abstractDomain = abstractDomainService.findById(domain);
+		// Missing Access control ?
+		User authUser = checkAuthentication(Role.ADMIN);
+		AbstractDomain abstractDomain = domainService.find(authUser, domain);
 		if (tree) {
 			DomainDto dto = DomainDto.getTreeUp(abstractDomain);
-			for (AbstractDomain child : abstractDomainService.getSubDomainsByDomain(domain)) {
+			for (AbstractDomain child : domainService.getSubDomainsByDomain(authUser, domain)) {
 				DomainDto childDto = DomainDto.getTree(child);
-				for (AbstractDomain childNested : abstractDomainService.getSubDomainsByDomain(childDto.getUuid())) {
+				for (AbstractDomain childNested : domainService.getSubDomainsByDomain(authUser, childDto.getUuid())) {
 					childDto.addChild(DomainDto.getTree(childNested));
 				}
 				dto.addChild(childDto);
@@ -102,4 +105,18 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 			return DomainDto.getLight(abstractDomain);
 		}
 	}
+
+	@Override
+	public DomainDto create(DomainDto dto) {
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(dto.getName(), "Name must be set.");
+		Validate.notNull(dto.getType(), "Domain type must be set.");
+		Validate.notNull(dto.getParent(), "Domain parent must be set.");
+		String parentUuid = dto.getParent().getUuid();
+		Validate.notEmpty(parentUuid, "Domain parent must be set.");
+		AbstractDomain parentDomain = domainService.find(authUser, parentUuid);
+		AbstractDomain create = domainService.create(authUser, dto.getName(), dto.getDescription(), dto.getType(), parentDomain);
+		return DomainDto.getLight(create);
+	}
+
 }

@@ -56,6 +56,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 // we need to ignore route property. It was added my Restangular (Javascript IHM)
 
+@Deprecated
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties({"route"})
 @XmlRootElement(name = "Domain")

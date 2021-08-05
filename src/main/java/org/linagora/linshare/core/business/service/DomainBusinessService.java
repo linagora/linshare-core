@@ -74,4 +74,6 @@ public interface DomainBusinessService {
 	Set<AbstractDomain> getSubDomainsByDomainAsASet(String uuid) throws BusinessException;
 
 	List<String> getSubDomainsByDomainIdentifiers(String uuid) throws BusinessException;
+
+	AbstractDomain create(AbstractDomain domain);
 }

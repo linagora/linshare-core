@@ -55,6 +55,11 @@ public class TopDomain extends AbstractDomain {
 		this.parentDomain = rootDomain;
 	}
 
+	public TopDomain(String name, AbstractDomain parent) {
+		super(name, parent);
+	}
+
+	@Deprecated
 	public TopDomain(DomainDto domainDto, AbstractDomain parent) {
 		super(domainDto, parent);
 	}

@@ -44,4 +44,6 @@ public interface DomainFacade {
 	Set<DomainDto> findAll(boolean tree);
 
 	DomainDto find(String domain, boolean tree, boolean detail);
+
+	DomainDto create(DomainDto dto);
 }

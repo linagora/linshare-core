@@ -51,6 +51,7 @@ public class RootDomain extends AbstractDomain {
 		this.defaultTapestryLocale=SupportedLanguage.ENGLISH;
 	}
 
+	@Deprecated
 	public RootDomain(DomainDto domainDto) {
 		super(domainDto, null);
 		this.defaultRole=Role.SUPERADMIN;

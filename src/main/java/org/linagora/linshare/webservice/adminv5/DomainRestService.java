@@ -45,4 +45,6 @@ public interface DomainRestService {
 
 	DomainDto find(String uuid, boolean tree, boolean detail);
 
+	DomainDto create(DomainDto dto);
+
 }

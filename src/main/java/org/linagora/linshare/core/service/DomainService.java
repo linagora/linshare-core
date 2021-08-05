@@ -33,48 +33,23 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.service;
+
+import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public class GuestDomain extends AbstractDomain {
+public interface DomainService {
 
-	public GuestDomain() {
-	}
+	AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent) throws BusinessException;
 
-	public GuestDomain(String label) {
-		super(label);
-	}
+	AbstractDomain find(Account actor, String uuid) throws BusinessException;
 
-	public GuestDomain(String name, AbstractDomain parent) {
-		super(name, parent);
-	}
+	List<AbstractDomain> findAll(Account actor);
 
-	@Deprecated
-	public GuestDomain(DomainDto domainDto, AbstractDomain parent) {
-		super(domainDto, parent);
-	}
+	List<AbstractDomain> getSubDomainsByDomain(Account actor, String uuid) throws BusinessException;
 
-	@Override
-	public DomainType getDomainType() {
-		return DomainType.GUESTDOMAIN;
-	}
-
-	@Override
-	public boolean isGuestDomain() {
-		return true;
-	}
-
-	@Override
-	public boolean isSubDomain() {
-		return true;
-	}
-
-	@Override
-	public void updateDomainWith(AbstractDomain d) {
-		super.updateDomainWith(d);
-		this.defaultRole = Role.SIMPLE;
-	}
 }

@@ -40,8 +40,11 @@ import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
 
+@SuppressWarnings( "deprecation" )
 public enum DomainType {
 
 	ROOTDOMAIN(0) {
@@ -49,11 +52,21 @@ public enum DomainType {
 		public RootDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
 			return new RootDomain(domainDto);
 		}
+
+		@Override
+		public AbstractDomain createDomain(String name, AbstractDomain parent) {
+			return new RootDomain(name);
+		}
 	},
 	TOPDOMAIN(1) {
 		@Override
 		public TopDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
 			return new TopDomain(domainDto, parent);
+		}
+
+		@Override
+		public TopDomain createDomain(String name, AbstractDomain parent) {
+			return new TopDomain(name, parent);
 		}
 	},
 	SUBDOMAIN(2) {
@@ -61,11 +74,29 @@ public enum DomainType {
 		public SubDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
 			return new SubDomain(domainDto, parent);
 		}
+
+		@Override
+		public SubDomain createDomain(String name, AbstractDomain parent) {
+			if (!parent.getDomainType().equals(DomainType.TOPDOMAIN)) {
+				throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
+						"You must create a sub domain inside a TopDomain.");
+			}
+			return new SubDomain(name, parent);
+		}
 	},
 	GUESTDOMAIN(3) {
 		@Override
 		public GuestDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
+			if (!parent.getDomainType().equals(DomainType.TOPDOMAIN)) {
+				throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
+						"You must create a guest domain inside a TopDomain.");
+			}
 			return new GuestDomain(domainDto, parent);
+		}
+
+		@Override
+		public GuestDomain createDomain(String name, AbstractDomain parent) {
+			return new GuestDomain(name, parent);
 		}
 	};
 
@@ -88,5 +119,8 @@ public enum DomainType {
 		throw new IllegalArgumentException("Doesn't match an existing DomainType");
 	}
 
+	@Deprecated
 	public abstract AbstractDomain getDomain(DomainDto domainDto, AbstractDomain parent);
+
+	public abstract AbstractDomain createDomain(String name, AbstractDomain parent);
 }

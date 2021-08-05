@@ -79,6 +79,7 @@ import org.linagora.linshare.core.service.WelcomeMessagesService;
 
 import com.google.common.collect.Sets;
 
+@SuppressWarnings( "deprecation" )
 public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		DomainFacade {
 
