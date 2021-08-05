@@ -57,6 +57,15 @@ public enum DomainType {
 		public AbstractDomain createDomain(String name, AbstractDomain parent) {
 			return new RootDomain(name);
 		}
+
+		@Override
+		public AbstractDomain toDomain(org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto dto) {
+			RootDomain domain = new RootDomain(dto.getName());
+			domain.setDescription(dto.getDescription());
+			domain.setDefaultRole(dto.getDefaultUserRole());
+			domain.setExternalMailLocale(dto.getDefaultEmailLanguage());
+			return domain;
+		}
 	},
 	TOPDOMAIN(1) {
 		@Override
@@ -67,6 +76,15 @@ public enum DomainType {
 		@Override
 		public TopDomain createDomain(String name, AbstractDomain parent) {
 			return new TopDomain(name, parent);
+		}
+
+		@Override
+		public AbstractDomain toDomain(org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto dto) {
+			TopDomain domain = new TopDomain(dto.getName());
+			domain.setDescription(dto.getDescription());
+			domain.setDefaultRole(dto.getDefaultUserRole());
+			domain.setExternalMailLocale(dto.getDefaultEmailLanguage());
+			return domain;
 		}
 	},
 	SUBDOMAIN(2) {
@@ -83,6 +101,15 @@ public enum DomainType {
 			}
 			return new SubDomain(name, parent);
 		}
+
+		@Override
+		public AbstractDomain toDomain(org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto dto) {
+			SubDomain domain = new SubDomain(dto.getName());
+			domain.setDescription(dto.getDescription());
+			domain.setDefaultRole(dto.getDefaultUserRole());
+			domain.setExternalMailLocale(dto.getDefaultEmailLanguage());
+			return domain;
+		}
 	},
 	GUESTDOMAIN(3) {
 		@Override
@@ -97,6 +124,15 @@ public enum DomainType {
 		@Override
 		public GuestDomain createDomain(String name, AbstractDomain parent) {
 			return new GuestDomain(name, parent);
+		}
+
+		@Override
+		public AbstractDomain toDomain(org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto dto) {
+			GuestDomain domain = new GuestDomain(dto.getName());
+			domain.setDescription(dto.getDescription());
+			domain.setDefaultRole(dto.getDefaultUserRole());
+			domain.setExternalMailLocale(dto.getDefaultEmailLanguage());
+			return domain;
 		}
 	};
 
@@ -123,4 +159,6 @@ public enum DomainType {
 	public abstract AbstractDomain getDomain(DomainDto domainDto, AbstractDomain parent);
 
 	public abstract AbstractDomain createDomain(String name, AbstractDomain parent);
+
+	public abstract AbstractDomain toDomain(org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto dto);
 }

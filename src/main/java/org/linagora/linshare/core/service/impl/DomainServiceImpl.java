@@ -56,6 +56,7 @@ import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -103,7 +104,7 @@ public class DomainServiceImpl extends DomainServiceCommonImp implements DomainS
 	public AbstractDomain find(Account actor, String uuid) throws BusinessException {
 		preChecks(actor);
 		Validate.notEmpty(uuid, "Domain uuid must be set.");
-		// access control check ?
+		// TODO: access control check ?
 		AbstractDomain domain = businessService.findById(uuid);
 		return domain;
 	}
@@ -131,6 +132,11 @@ public class DomainServiceImpl extends DomainServiceCommonImp implements DomainS
 	public AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent)
 			throws BusinessException {
 		preChecks(actor);
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "Only root is authorized to create domains.");
+		}
+		Validate.notEmpty(name, "Name must be set.");
+		Validate.notNull(type, "Domain type must be set.");
 		name = sanitizerInputHtmlBusinessService.strictClean(name);
 		AbstractDomain domain = type.createDomain(name, parent);
 		if (description == null) {
@@ -159,6 +165,53 @@ public class DomainServiceImpl extends DomainServiceCommonImp implements DomainS
 		createDomainQuotaAndContainerQuota(domain);
 		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.CREATE, AuditLogEntryType.DOMAIN, domain);
 		auditMongoRepository.insert(log);
+		return domain;
+	}
+
+	private boolean isAdminForThisUser(Account actor, AbstractDomain domain) {
+		if (actor.hasSuperAdminRole()) {
+			return true;
+		}
+		// nested administrators
+		if (actor.hasAdminRole()) {
+			if (actor.getDomain().equals(domain) ) {
+				return true;
+			} else if (actor.getDomain().isTopDomain()) {
+				// TODO: select count(*) from domain as d where d.parent_id = <domain.getId()> and domain.id = <actor.getDomainId()>;
+				// if count > 1 => ok
+			} else if (actor.getDomain().isSubDomain()) {
+				// there is no nested domain in a sub domain , he can only administrate his domain or nothing
+				return false;
+			} else if (actor.getDomain().isGuestDomain()) {
+				// there is no nested domain in a guest domain, he can only administrate his domain or nothing
+				return false;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public AbstractDomain update(Account actor, String domainUuid, AbstractDomain dto) throws BusinessException {
+		preChecks(actor);
+		AbstractDomain domain = find(actor, domainUuid);
+		if(!isAdminForThisUser(actor, domain)) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You are not authorized to update this domain.");
+		}
+		String name = sanitizerInputHtmlBusinessService.strictClean(dto.getLabel());
+		Validate.notEmpty(name, "Name can't be null or empty");
+		Validate.notNull(dto.getDefaultRole(), "Missing default user role");
+		Validate.notNull(dto.getExternalMailLocale(), "Missing default email language");
+		if (dto.getDescription()== null) {
+			dto.setDescription("");
+		} else {
+			dto.setDescription(sanitizerInputHtmlBusinessService.strictClean(dto.getDescription()));
+		}
+		// update entity
+		domain.setLabel(name);
+		domain.setDescription(dto.getDescription());
+		domain.setDefaultRole(dto.getDefaultRole());
+		domain.setExternalMailLocale(dto.getExternalMailLocale());
+		domain = businessService.update(domain);
 		return domain;
 	}
 }

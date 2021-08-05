@@ -41,6 +41,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -118,6 +119,23 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@Override
 	public DomainDto create(DomainDto dto) {
 		return domainFacade.create(dto);
+	}
+
+	@Path("/{uuid: .*}")
+	@PUT
+	@Operation(summary = "It allows adminstrator to update a domain.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public DomainDto update(
+			@Parameter(description = "Domain user filter's uuid to update, if null object is used", required = false)
+				@PathParam("uuid") String uuid,
+			@Parameter(description = "Domain dto with properties to update", required = false) 
+				DomainDto dto) {
+		return domainFacade.update(uuid, dto);
 	}
 
 }

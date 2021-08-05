@@ -51,4 +51,6 @@ public interface DomainService {
 	List<AbstractDomain> getSubDomainsByDomain(Account actor, String uuid) throws BusinessException;
 
 	AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent) throws BusinessException;
+
+	AbstractDomain update(Account actor, String domainUuid, AbstractDomain dto) throws BusinessException;
 }

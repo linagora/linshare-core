@@ -48,6 +48,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFacade {
@@ -109,14 +110,26 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 	@Override
 	public DomainDto create(DomainDto dto) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(dto.getName(), "Name must be set.");
-		Validate.notNull(dto.getType(), "Domain type must be set.");
-		Validate.notNull(dto.getParent(), "Domain parent must be set.");
+		Validate.notNull(dto.getParent(), "Domain parent object must be set.");
 		String parentUuid = dto.getParent().getUuid();
 		Validate.notEmpty(parentUuid, "Domain parent must be set.");
 		AbstractDomain parentDomain = domainService.find(authUser, parentUuid);
 		AbstractDomain create = domainService.create(authUser, dto.getName(), dto.getDescription(), dto.getType(), parentDomain);
-		return DomainDto.getLight(create);
+		return DomainDto.getFull(create);
+	}
+
+	@Override
+	public DomainDto update(String uuid, DomainDto dto) {
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		Validate.notNull(dto, "Missing payload.");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			dto.setUuid(uuid);
+		}
+		Validate.notEmpty(dto.getUuid(), "DomainDto's uuid or uuid path param must be set");
+		Validate.notNull(dto.getType(), "Missing domain type");
+		AbstractDomain domain = dto.getType().toDomain(dto);
+		AbstractDomain update = domainService.update(authUser, dto.getUuid(), domain);
+		return DomainDto.getFull(update);
 	}
 
 }

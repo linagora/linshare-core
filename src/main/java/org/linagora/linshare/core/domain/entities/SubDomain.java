@@ -44,6 +44,10 @@ public class SubDomain extends AbstractDomain {
 	public SubDomain() {
 	}
 
+	public SubDomain(String label) {
+		super(label);
+	}
+
 	public SubDomain(String name, AbstractDomain parent) {
 		super(name, parent);
 	}

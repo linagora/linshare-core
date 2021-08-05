@@ -46,4 +46,6 @@ public interface DomainFacade {
 	DomainDto find(String domain, boolean tree, boolean detail);
 
 	DomainDto create(DomainDto dto);
+
+	DomainDto update(String uuid, DomainDto dto);
 }
