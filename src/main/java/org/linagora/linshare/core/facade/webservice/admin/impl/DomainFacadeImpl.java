@@ -393,6 +393,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	public DomainDto delete(String domainId) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
+		if (domainId.equals("LinShareRootDomain")) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Can't remove domain LinShareRootDomain.");
+		}
 		userService.deleteAllUsersFromDomain(authUser, domainId);
 		AbstractDomain domain = abstractDomainService.markToPurge(authUser, domainId);
 		return DomainDto.getFull(domain);
