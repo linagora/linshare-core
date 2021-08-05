@@ -197,21 +197,51 @@ public class DomainServiceImpl extends DomainServiceCommonImp implements DomainS
 		if(!isAdminForThisUser(actor, domain)) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You are not authorized to update this domain.");
 		}
-		String name = sanitizerInputHtmlBusinessService.strictClean(dto.getLabel());
-		Validate.notEmpty(name, "Name can't be null or empty");
 		Validate.notNull(dto.getDefaultRole(), "Missing default user role");
 		Validate.notNull(dto.getExternalMailLocale(), "Missing default email language");
-		if (dto.getDescription()== null) {
-			dto.setDescription("");
-		} else {
-			dto.setDescription(sanitizerInputHtmlBusinessService.strictClean(dto.getDescription()));
-		}
 		// update entity
-		domain.setLabel(name);
-		domain.setDescription(dto.getDescription());
+		domain.setLabel(getNameForUpdate(actor, dto, domain));
+		domain.setDescription(getDescriptionForUpdate(actor, dto, domain));
+		// TODO missing role validation: [UPLOAD_REQUEST, SIMPLE, SUPERADMIN, DELEGATION, ANONYMOUS, SYSTEM, SAFE, ADMIN]
 		domain.setDefaultRole(dto.getDefaultRole());
 		domain.setExternalMailLocale(dto.getExternalMailLocale());
 		domain = businessService.update(domain);
 		return domain;
+	}
+
+	private String getNameForUpdate(Account actor, AbstractDomain dto, AbstractDomain domain) {
+		if (actor.hasSuperAdminRole()) {
+			String name = sanitizerInputHtmlBusinessService.strictClean(dto.getLabel());
+			Validate.notEmpty(name, "Name can't be null or empty");
+			return name;
+		} else {
+			if (!domain.getLabel().equals(dto.getLabel())) {
+				throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You are not authorized to update attribute 'name' of a domain.");
+			}
+			return domain.getLabel();
+		}
+	}
+
+	private String getDescriptionForUpdate(Account actor, AbstractDomain dto, AbstractDomain domain) {
+		if (actor.hasSuperAdminRole()) {
+			if (dto.getDescription() == null) {
+				return domain.getDescription();
+			} else {
+				String description = sanitizerInputHtmlBusinessService.strictClean(dto.getDescription());
+				if (description == null) {
+					description = "";
+				}
+				return description;
+			}
+		} else {
+			if (dto.getDescription() == null) {
+				return domain.getDescription();
+			} else {
+				if (!domain.getDescription().equals(dto.getDescription())) {
+					throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You are not authorized to update attribute 'description' of a domain.");
+				}
+			}
+			return domain.getDescription();
+		}
 	}
 }

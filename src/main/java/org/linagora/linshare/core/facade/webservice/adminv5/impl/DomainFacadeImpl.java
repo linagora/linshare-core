@@ -120,7 +120,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 
 	@Override
 	public DomainDto update(String uuid, DomainDto dto) {
-		User authUser = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto, "Missing payload.");
 		if (!Strings.isNullOrEmpty(uuid)) {
 			dto.setUuid(uuid);
