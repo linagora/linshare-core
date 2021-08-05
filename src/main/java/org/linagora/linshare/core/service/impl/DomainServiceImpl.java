@@ -163,6 +163,7 @@ public class DomainServiceImpl extends DomainServiceCommonImp implements DomainS
 
 		domain = businessService.create(domain);
 		createDomainQuotaAndContainerQuota(domain);
+		// audit for root only or all admins ? description field is only for root.
 		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.CREATE, AuditLogEntryType.DOMAIN, domain);
 		auditMongoRepository.insert(log);
 		return domain;
@@ -206,6 +207,7 @@ public class DomainServiceImpl extends DomainServiceCommonImp implements DomainS
 		domain.setDefaultRole(dto.getDefaultRole());
 		domain.setExternalMailLocale(dto.getExternalMailLocale());
 		domain = businessService.update(domain);
+		// TODO DomainAuditLogEntry ? audit for root only or all admins ? description field is only for root.
 		return domain;
 	}
 
