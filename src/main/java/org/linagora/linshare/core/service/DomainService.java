@@ -44,12 +44,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainService {
 
-	AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent) throws BusinessException;
-
 	AbstractDomain find(Account actor, String uuid) throws BusinessException;
 
 	List<AbstractDomain> findAll(Account actor);
 
 	List<AbstractDomain> getSubDomainsByDomain(Account actor, String uuid) throws BusinessException;
 
+	AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent) throws BusinessException;
 }

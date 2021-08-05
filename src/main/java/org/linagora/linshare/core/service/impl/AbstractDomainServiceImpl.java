@@ -59,9 +59,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
-import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.GroupProvider;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -94,7 +92,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class AbstractDomainServiceImpl implements AbstractDomainService {
+public class AbstractDomainServiceImpl extends DomainServiceCommonImp implements AbstractDomainService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractDomainServiceImpl.class);
@@ -111,8 +109,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final WelcomeMessagesBusinessService welcomeMessagesBusinessService;
 	private final AuditAdminMongoRepository auditMongoRepository;
 	private final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
-	private final DomainQuotaBusinessService domainQuotaBusinessService;
-	private final ContainerQuotaBusinessService containerQuotaBusinessService;
 	private final LogEntryService logEntryService;
 	private final FunctionalityService functionalityService;
 	private final MailFooterBusinessService mailFooterBusinessService;
@@ -120,7 +116,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final MimeTypeService mimeTypeService;
 	private final MailLayoutBusinessService mailLayoutBusinessService;
 	private final GroupProviderService groupProviderService;
-	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService ;
+
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
 			final DomainPolicyService domainPolicyService,
@@ -144,7 +140,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final MailLayoutBusinessService mailLayoutBusinessService,
 			final GroupProviderService groupProviderService, 
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
-		super();
+		super(sanitizerInputHtmlBusinessService, domainQuotaBusinessService, containerQuotaBusinessService);
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
 		this.userProviderService = userProviderService;
@@ -157,8 +153,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.welcomeMessagesBusinessService = welcomeMessagesBusinessService;
 		this.auditMongoRepository = auditMongoRepository;
 		this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
-		this.domainQuotaBusinessService = domainQuotaBusinessService;
-		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.logEntryService = logEntryService;
 		this.functionalityService = functionalityService;
 		this.mailFooterBusinessService = mailFooterBusinessService;
@@ -166,7 +160,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.mimeTypeService = mimeTypeService;
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
 		this.groupProviderService = groupProviderService;
-		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	@Override
@@ -817,33 +810,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return users;
 	}
 
-	private void createDomainQuotaAndContainerQuota(AbstractDomain domain) throws BusinessException {
-		AbstractDomain parentDomain = domain.getParentDomain();
-		boolean isSubdomain = false;
-		if (domain.getDomainType().equals(DomainType.SUBDOMAIN) || domain.isGuestDomain()) {
-			isSubdomain = true;
-		}
-		// Quota for the new domain
-		DomainQuota parentDomainQuota = domainQuotaBusinessService.find(parentDomain);
-		DomainQuota domainQuota = new DomainQuota(parentDomainQuota, domain);
-		if (isSubdomain) {
-			domainQuota.setDefaultQuota(null);
-			domainQuota.setDefaultQuotaOverride(null);
-			domainQuota.setDefaultDomainShared(null);
-			domainQuota.setDefaultDomainSharedOverride(null);
-		}
-		domainQuotaBusinessService.create(domainQuota);
-		// Quota containers for the new domain.
-		for (ContainerQuota parentContainerQuota : containerQuotaBusinessService.findAll(parentDomain)) {
-			ContainerQuota cq = new ContainerQuota(domain, parentDomain, domainQuota, parentContainerQuota);
-			if (isSubdomain) {
-				cq.setDefaultQuota(null);
-				cq.setDefaultQuotaOverride(null);
-			}
-			containerQuotaBusinessService.create(cq);
-		}
-	}
-	
 	@Override
 	public AbstractDomain markToPurge(Account actor, String domainId) {
 		AbstractDomain domain = findById(domainId);

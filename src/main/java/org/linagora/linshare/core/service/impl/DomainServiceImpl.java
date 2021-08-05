@@ -52,9 +52,7 @@ import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
-import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
@@ -68,15 +66,13 @@ import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
 import com.google.common.collect.Lists;
 
-public class DomainServiceImpl extends GenericAdminServiceImpl implements DomainService {
+public class DomainServiceImpl extends DomainServiceCommonImp implements DomainService {
 
 	protected final AbstractDomainService abstractDomainService;
 	protected final DomainBusinessService businessService;
 	protected final DomainPolicyService domainPolicyService;
 	protected final AbstractDomainRepository abstractDomainRepository;
 	protected final AuditAdminMongoRepository auditMongoRepository;
-	protected final DomainQuotaBusinessService domainQuotaBusinessService;
-	protected final ContainerQuotaBusinessService containerQuotaBusinessService;
 
 	protected final WelcomeMessagesBusinessService welcomeMessagesBusinessService;
 	protected final MailConfigBusinessService mailConfigBusinessService;
@@ -93,14 +89,12 @@ public class DomainServiceImpl extends GenericAdminServiceImpl implements Domain
 			ContainerQuotaBusinessService containerQuotaBusinessService,
 			WelcomeMessagesBusinessService welcomeMessagesBusinessService,
 			MailConfigBusinessService mailConfigBusinessService, MimePolicyBusinessService mimePolicyBusinessService) {
-		super(sanitizerInputHtmlBusinessService);
+		super(sanitizerInputHtmlBusinessService, domainQuotaBusinessService, containerQuotaBusinessService);
 		this.abstractDomainService = abstractDomainService;
 		this.businessService = businessService;
 		this.domainPolicyService = domainPolicyService;
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.auditMongoRepository = auditMongoRepository;
-		this.domainQuotaBusinessService = domainQuotaBusinessService;
-		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.welcomeMessagesBusinessService = welcomeMessagesBusinessService;
 		this.mailConfigBusinessService = mailConfigBusinessService;
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
@@ -166,32 +160,5 @@ public class DomainServiceImpl extends GenericAdminServiceImpl implements Domain
 		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.CREATE, AuditLogEntryType.DOMAIN, domain);
 		auditMongoRepository.insert(log);
 		return domain;
-	}
-
-	private void createDomainQuotaAndContainerQuota(AbstractDomain domain) throws BusinessException {
-		AbstractDomain parentDomain = domain.getParentDomain();
-		boolean isSubdomain = false;
-		if (domain.isSubDomain() || domain.isGuestDomain()) {
-			isSubdomain = true;
-		}
-		// Quota for the new domain
-		DomainQuota parentDomainQuota = domainQuotaBusinessService.find(parentDomain);
-		DomainQuota domainQuota = new DomainQuota(parentDomainQuota, domain);
-		if (isSubdomain) {
-			domainQuota.setDefaultQuota(null);
-			domainQuota.setDefaultQuotaOverride(null);
-			domainQuota.setDefaultDomainShared(null);
-			domainQuota.setDefaultDomainSharedOverride(null);
-		}
-		domainQuotaBusinessService.create(domainQuota);
-		// Quota containers for the new domain.
-		for (ContainerQuota parentContainerQuota : containerQuotaBusinessService.findAll(parentDomain)) {
-			ContainerQuota cq = new ContainerQuota(domain, parentDomain, domainQuota, parentContainerQuota);
-			if (isSubdomain) {
-				cq.setDefaultQuota(null);
-				cq.setDefaultQuotaOverride(null);
-			}
-			containerQuotaBusinessService.create(cq);
-		}
 	}
 }
