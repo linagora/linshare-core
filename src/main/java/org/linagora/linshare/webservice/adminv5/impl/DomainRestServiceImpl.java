@@ -131,7 +131,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	})
 	@Override
 	public DomainDto update(
-			@Parameter(description = "Domain user filter's uuid to update, if null object is used", required = false)
+			@Parameter(description = "Domain uuid to update, if null object.uuid is used", required = false)
 				@PathParam("uuid") String uuid,
 			@Parameter(description = "Domain dto with properties to update", required = false) 
 				DomainDto dto) {
