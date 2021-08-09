@@ -111,6 +111,7 @@ public class DomainServiceImpl extends DomainServiceCommonImp implements DomainS
 
 	@Override
 	public List<AbstractDomain> findAll(Account actor) {
+		preChecks(actor);
 		if (actor.hasSuperAdminRole()) {
 			return abstractDomainRepository.findAll();
 		} else {
