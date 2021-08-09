@@ -9,12 +9,12 @@ import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public class DomainServiceCommonImp extends GenericAdminServiceImpl {
+public class DomainServiceCommonImpl extends GenericAdminServiceImpl {
 
 	protected final DomainQuotaBusinessService domainQuotaBusinessService;
 	protected final ContainerQuotaBusinessService containerQuotaBusinessService;
 
-	public DomainServiceCommonImp(
+	public DomainServiceCommonImpl(
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			DomainQuotaBusinessService domainQuotaBusinessService,
 			ContainerQuotaBusinessService containerQuotaBusinessService) {

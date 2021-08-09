@@ -92,7 +92,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class AbstractDomainServiceImpl extends DomainServiceCommonImp implements AbstractDomainService {
+public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implements AbstractDomainService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractDomainServiceImpl.class);

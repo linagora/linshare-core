@@ -67,7 +67,7 @@ import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
 import com.google.common.collect.Lists;
 
-public class DomainServiceImpl extends DomainServiceCommonImp implements DomainService {
+public class DomainServiceImpl extends DomainServiceCommonImpl implements DomainService {
 
 	protected final AbstractDomainService abstractDomainService;
 	protected final DomainBusinessService businessService;
