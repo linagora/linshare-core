@@ -39,9 +39,9 @@ import org.linagora.linshare.core.domain.constants.UserFilterType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class AbstractUserFilterDto {
+public abstract class AbstractUserFilterDto {
 
-	@Schema(description = "User filter's uuid", required = true)
+	@Schema(description = "Unique identifier of the resource.", required = true)
 	protected String uuid;
 
 	@Schema(description = "User filter's name", required = true)
@@ -51,12 +51,12 @@ public class AbstractUserFilterDto {
 	protected String description;
 
 	@Schema(description = "User filter's type", required = true)
-	protected UserFilterType userFilterType;
+	protected UserFilterType type;
 
-	@Schema(description = "Server's creation date", required = true)
+	@Schema(description = "Server's creation date", required = false)
 	protected Date creationDate;
 
-	@Schema(description = "Server's modification date", required = true)
+	@Schema(description = "Server's modification date", required = false)
 	protected Date modificationDate;
 
 	protected AbstractUserFilterDto() {
@@ -87,12 +87,12 @@ public class AbstractUserFilterDto {
 		this.description = description;
 	}
 
-	public UserFilterType getUserFilterType() {
-		return userFilterType;
+	public UserFilterType getType() {
+		return type;
 	}
 
-	public void setUserFilterType(UserFilterType userFilterType) {
-		this.userFilterType = userFilterType;
+	public void setType(UserFilterType type) {
+		this.type = type;
 	}
 
 	public Date getCreationDate() {

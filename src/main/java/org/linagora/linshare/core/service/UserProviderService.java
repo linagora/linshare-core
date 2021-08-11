@@ -73,4 +73,5 @@ public interface UserProviderService {
 	User searchForAuth(AbstractDomain domain, UserProvider userProvider, String login) throws BusinessException;
 
 	public boolean canDeletePattern(String uuid);
+	List<AbstractDomain> findAllDomainsByUserFilter(Account authUser, UserLdapPattern domainUserFilter);
 }

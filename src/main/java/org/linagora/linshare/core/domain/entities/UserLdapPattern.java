@@ -38,6 +38,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.linagora.linshare.core.domain.constants.UserFilterType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
 
 public class UserLdapPattern extends LdapPattern {
@@ -58,7 +59,7 @@ public class UserLdapPattern extends LdapPattern {
 
 	private Integer completionSizeLimit;
 
-	protected UserLdapPattern() {
+	public UserLdapPattern() {
 	}
 	/**
 	 * For tests only.
@@ -230,4 +231,7 @@ public class UserLdapPattern extends LdapPattern {
 		return attributes.get(field).getAttribute().trim().toLowerCase();
 	}
 
+	public UserFilterType getType() {
+		return UserFilterType.LDAP;
+	}
 }

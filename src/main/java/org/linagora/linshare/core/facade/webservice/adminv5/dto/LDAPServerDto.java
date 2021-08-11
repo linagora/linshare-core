@@ -63,7 +63,7 @@ public class LDAPServerDto extends AbstractServerDto {
 		this.url = ldapConnection.getProviderUrl();
 		this.bindDn = ldapConnection.getSecurityPrincipal();
 		this.bindPassword = ldapConnection.getSecurityCredentials();
-		this.serverType = ldapConnection.getServerType();
+		this.serverType = ldapConnection.getType();
 		this.creationDate = ldapConnection.getCreationDate();
 		this.modificationDate = ldapConnection.getModificationDate();
 	}
@@ -75,7 +75,6 @@ public class LDAPServerDto extends AbstractServerDto {
 		connection.setProviderUrl(getUrl());
 		connection.setSecurityPrincipal(getBindDn());
 		connection.setSecurityCredentials(getBindPassword());
-		connection.setServerType(getServerType());
 		connection.setCreationDate(getCreationDate());
 		connection.setModificationDate(getModificationDate());
 		return connection;

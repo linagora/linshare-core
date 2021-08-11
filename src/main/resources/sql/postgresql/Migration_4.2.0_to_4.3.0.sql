@@ -83,16 +83,6 @@ SET client_min_messages = warning;
 
 ---- Here your queries
 
--- Update ldap_connection by adding the column server_type
-ALTER TABLE ldap_connection ADD COLUMN server_type varchar(255);
-UPDATE ldap_connection set server_type = 'LDAP';
-ALTER TABLE ldap_connection ALTER COLUMN server_type SET NOT NULL;
-
--- Update ldap_pattern by adding the column user_filter_type
-ALTER TABLE ldap_pattern ADD COLUMN user_filter_type varchar(255);
-UPDATE ldap_pattern set user_filter_type = 'LDAP';
-ALTER TABLE ldap_pattern ALTER COLUMN user_filter_type SET NOT NULL;
-
 ---- End of your queries
 
 -- Upgrade LinShare version

@@ -202,7 +202,6 @@ CREATE TABLE ldap_connection (
   security_auth        varchar(255),
   security_principal   varchar(255),
   security_credentials varchar(255),
-  server_type          varchar(255) NOT NULL,
   creation_date        timestamp NOT NULL,
   modification_date    timestamp NOT NULL,
   CONSTRAINT linshare_ldap_connection_pkey

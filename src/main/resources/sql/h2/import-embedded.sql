@@ -1,8 +1,8 @@
 -- ldap connection
 -- Since we do not have an ldap embedded server that we can use in a standalone embedded mode
 -- with jetty, I decided to at least define the same parameters as our ldap docker image for tests.
-INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date, server_type)
-	VALUES (50, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'baseLDAP', 'ldap://ldap:1389', 'simple', 'cn=linshare,dc=linshare,dc=org', 'linshare', now(), now(), 'LDAP');
+INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date)
+	VALUES (50, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'baseLDAP', 'ldap://ldap:1389', 'simple', 'cn=linshare,dc=linshare,dc=org', 'linshare', now(), now());
 
 -- user domain pattern
 INSERT INTO ldap_pattern(id, uuid, pattern_type, label,

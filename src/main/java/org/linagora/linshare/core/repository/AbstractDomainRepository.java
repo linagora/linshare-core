@@ -40,6 +40,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -123,5 +124,7 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	List<String> findAllDomainIdentifiersWithDriveProviders();
 
 	public List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection);
+
+	public List<AbstractDomain> findAllDomainsByUserFilter(UserLdapPattern domainUserFilter);
 
 }

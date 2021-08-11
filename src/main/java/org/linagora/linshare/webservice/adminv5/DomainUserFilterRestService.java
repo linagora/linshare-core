@@ -37,10 +37,20 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractUserFilterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPUserFilterDto;
 
 public interface DomainUserFilterRestService {
 
-	List<AbstractUserFilterDto> findAll() throws BusinessException;
+	List<AbstractUserFilterDto> findAll(boolean model) throws BusinessException;
 
 	AbstractUserFilterDto find(String uuid) throws BusinessException;
+
+	AbstractUserFilterDto create(LDAPUserFilterDto ldapUserFilterDto) throws BusinessException;
+
+	AbstractUserFilterDto update(String uuid, LDAPUserFilterDto ldapUserFilterDto) throws BusinessException;
+
+	AbstractUserFilterDto delete(String uuid, LDAPUserFilterDto ldapUserFilterDto) throws BusinessException;
+
+	List<DomainDto> findAllDomainsByLdapServer(String uuid) throws BusinessException;
 }

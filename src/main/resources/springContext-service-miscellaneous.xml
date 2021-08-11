@@ -92,6 +92,7 @@
 		<constructor-arg ref="userProviderRepository" />
 		<constructor-arg ref="ldapUserProviderRepository" />
 		<constructor-arg ref="auditAdminMongoRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
 
 	<bean id="mimePolicyService"

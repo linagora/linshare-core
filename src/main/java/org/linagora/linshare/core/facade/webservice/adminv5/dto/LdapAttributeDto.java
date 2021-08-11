@@ -31,25 +31,53 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractUserFilterDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPUserFilterDto;
+public class LdapAttributeDto {
 
-public interface DomainUserFilterFacade {
+	@Schema(description = "The key that will be used to retrieve the right attribute", required = true)
+	private String field;
 
-	List<AbstractUserFilterDto> findAll(boolean model);
+	@Schema(description = "The name of the LDAP attribute.", required = true)
+	private String attribute;
 
-	AbstractUserFilterDto find(String uuid);
+	@Schema(description = "Shows if the value is required when creating or updating this resource.", required = true)
+	private Boolean required;
 
-	AbstractUserFilterDto create(LDAPUserFilterDto ldapUserFilterDto);
+	public String getField() {
+		return field;
+	}
 
-	AbstractUserFilterDto update(String uuid, LDAPUserFilterDto ldapUserFilterDto);
+	public LdapAttributeDto() {
+		super();
+	}
 
-	AbstractUserFilterDto delete(String uuid, LDAPUserFilterDto ldapUserFilterDto);
+	public LdapAttributeDto(String field, String attribute) {
+		super();
+		this.field = field;
+		this.attribute = attribute;
+		this.required = true;
+	}
 
-	List<DomainDto> findAllDomainsByUserFilter(String uuid);
+	public void setField(String field) {
+		this.field = field;
+	}
+
+	public String getAttribute() {
+		return attribute;
+	}
+
+	public void setAttribute(String attribute) {
+		this.attribute = attribute;
+	}
+
+	public Boolean isRequired() {
+		return required;
+	}
+
+	public void setRequired(Boolean required) {
+		this.required = required;
+	}
 }

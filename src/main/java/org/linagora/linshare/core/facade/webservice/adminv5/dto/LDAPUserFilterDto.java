@@ -33,12 +33,16 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -47,41 +51,44 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(name = "LdapUserFilter", description = "A user filter is used to search users in an LDAP directory")
 public class LDAPUserFilterDto extends AbstractUserFilterDto {
 
-	@Schema(description = "AuthenticationQuery", required = false)
+	@Schema(description = "The query used for user's authentication.", required = true)
 	private String authenticationQuery;
 
-	@Schema(description = "SearchUserQuery", required = false)
+	@Schema(description = "The query used to search users.", required = true)
 	private String searchUserQuery;
 
-	@Schema(description = "AutoCompleteCommandOnAllAttributes", required = false)
+	@Schema(description = "This query is used by the autocomplete endpoint to search/discover users by all their attributes.", required = true)
 	private String autoCompleteCommandOnAllAttributes;
 
-	@Schema(description = "AutoCompleteCommandOnFirstAndLastName", required = false)
+	@Schema(description = "This query is used by the autocomplete endpoint to search/discover users by their first and last name.", required = true)
 	private String autoCompleteCommandOnFirstAndLastName;
 
-	@Schema(description = "userMailAttribute", required = false)
+	@Schema(description = "The user's mail attribute.", required = true)
 	private String userMailAttribute;
 
-	@Schema(description = "userFirstNameAttribute", required = false)
+	@Schema(description = "The user's firstName", required = true)
 	private String userFirstNameAttribute;
 
-	@Schema(description = "userLastNameAttribute", required = false)
+	@Schema(description = "The user's LastName", required = true)
 	private String userLastNameAttribute;
 
-	@Schema(description = "userUidAttribute", required = false)
+	@Schema(description = "The user's uid Attribute", required = true)
 	private String userUidAttribute;
 
-	@Schema(description = "SearchPageSize", required = false)
+	@Schema(description = "The size of the returned page, result of the search query", required = true)
 	private Integer searchPageSize;
 
-	@Schema(description = "SearchSizeLimit", required = false)
+	@Schema(description = "The limit size of the returned entries, result of the search query", required = true)
 	private Integer searchSizeLimit;
 
-	@Schema(description = "CompletionPageSize", required = false)
+	@Schema(description = "The size of the completion page size.", required = true)
 	private Integer completionPageSize;
 
-	@Schema(description = "CompletionSizeLimit", required = false)
+	@Schema(description = "The limit size completion", required = true)
 	private Integer completionSizeLimit;
+
+	@Schema(description = "The dictionary containing the diferent user filter's fields with their values", required = true)
+	private Map<String, LdapAttributeDto> attributes;
 
 	public LDAPUserFilterDto() {
 		super();
@@ -91,15 +98,17 @@ public class LDAPUserFilterDto extends AbstractUserFilterDto {
 		this.uuid = userLdapPattern.getUuid();
 		this.name = userLdapPattern.getLabel();
 		this.description = userLdapPattern.getDescription();
-		this.userFilterType = userLdapPattern.getUserFilterType();
+		this.type = userLdapPattern.getType();
 		this.authenticationQuery = userLdapPattern.getAuthCommand();
 		this.searchUserQuery = userLdapPattern.getSearchUserCommand();
 		this.autoCompleteCommandOnAllAttributes = userLdapPattern.getAutoCompleteCommandOnAllAttributes();
 		this.autoCompleteCommandOnFirstAndLastName = userLdapPattern.getAutoCompleteCommandOnFirstAndLastName();
-		this.userMailAttribute = userLdapPattern.getAttribute(UserLdapPattern.USER_MAIL);
-		this.userFirstNameAttribute = userLdapPattern.getAttribute(UserLdapPattern.USER_FIRST_NAME);
-		this.userLastNameAttribute = userLdapPattern.getAttribute(UserLdapPattern.USER_LAST_NAME);
-		this.userUidAttribute = userLdapPattern.getAttribute(UserLdapPattern.USER_UID);
+		Map<String, LdapAttributeDto> attributes = Maps.newHashMap();
+		for (String key : userLdapPattern.getAttributes().keySet()) {
+			attributes.put(key, new LdapAttributeDto(key,
+				userLdapPattern.getAttribute(key)));
+		}
+		this.attributes = attributes;
 		this.searchPageSize = userLdapPattern.getSearchPageSize();
 		this.searchSizeLimit = userLdapPattern.getSearchSizeLimit();
 		this.completionPageSize = userLdapPattern.getCompletionPageSize();
@@ -204,6 +213,18 @@ public class LDAPUserFilterDto extends AbstractUserFilterDto {
 		this.completionSizeLimit = completionSizeLimit;
 	}
 
+	public Map<String, LdapAttributeDto> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, LdapAttributeDto> attributes) {
+		this.attributes = attributes;
+	}
+
+	public String getAttribute(String key) {
+		return attributes.get(key).getAttribute().trim().toLowerCase();
+	}
+
 	/*
 	 * Transformers
 	 */
@@ -214,5 +235,26 @@ public class LDAPUserFilterDto extends AbstractUserFilterDto {
 				return new LDAPUserFilterDto(arg0);
 			}
 		};
+	}
+
+	public UserLdapPattern toLdapUserFilterObject() {
+		UserLdapPattern ldapPattern = new UserLdapPattern();
+		ldapPattern.setUuid(getUuid());
+		ldapPattern.setLabel(getName());
+		ldapPattern.setDescription(getDescription());
+		ldapPattern.setAuthCommand(getAuthenticationQuery());
+		ldapPattern.setSearchUserCommand(getSearchUserQuery());
+		ldapPattern.setAutoCompleteCommandOnAllAttributes(getAutoCompleteCommandOnAllAttributes());
+		ldapPattern.setAutoCompleteCommandOnFirstAndLastName(getAutoCompleteCommandOnFirstAndLastName());
+		Map<String, LdapAttribute> attributes = Maps.newHashMap();
+		for (String key : getAttributes().keySet()) {
+			attributes.put(key, new LdapAttribute(key, getAttribute(key)));
+		}
+		ldapPattern.setAttributes(attributes);
+		ldapPattern.setSearchPageSize(getSearchPageSize());
+		ldapPattern.setSearchSizeLimit(getSearchSizeLimit());
+		ldapPattern.setCompletionPageSize(getCompletionPageSize());
+		ldapPattern.setCompletionSizeLimit(getCompletionSizeLimit());
+		return ldapPattern;
 	}
 }

@@ -1,6 +1,6 @@
 -- ldap connection
-INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date, server_type)
-	VALUES (50, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'baseLDAP', 'ldap://localhost:33389', 'simple', null, null, now(), now(), 'LDAP');
+INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date)
+	VALUES (50, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'baseLDAP', 'ldap://localhost:33389', 'simple', null, null, now(), now());
 
 -- user domain pattern
 INSERT INTO ldap_pattern(id, uuid, pattern_type, label,

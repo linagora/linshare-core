@@ -56,8 +56,6 @@ public class LdapConnection {
 
 	protected String securityCredentials;
 
-	protected ServerType serverType;
-
 	protected Date creationDate;
 
 	protected Date modificationDate;
@@ -138,14 +136,6 @@ public class LdapConnection {
 		this.securityCredentials = securityCredentials;
 	}
 
-	public ServerType getServerType() {
-		return serverType;
-	}
-
-	public void setServerType(ServerType serverType) {
-		this.serverType = serverType;
-	}
-
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -162,9 +152,12 @@ public class LdapConnection {
 		this.modificationDate = modificationDate;
 	}
 
-	@Override
-	public String toString() {
-		return "LdapConnection [uuid=" + uuid + ", label=" + label + "]";
+	public ServerType getType() {
+		return ServerType.LDAP;
 	}
 
+	@Override
+	public String toString() {
+		return "LdapConnection [uuid=" + uuid + ", label=" + label + ", type=" + getType() + "]";
+	}
 }

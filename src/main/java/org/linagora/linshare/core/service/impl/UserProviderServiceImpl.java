@@ -60,6 +60,7 @@ import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.LdapUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
@@ -94,6 +95,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 
 	private final AuditAdminMongoRepository mongoRepository;
 
+	private final AbstractDomainRepository abstractDomainRepository;
+
 	public UserProviderServiceImpl(
 			DomainPatternRepository domainPatternRepository,
 			LDAPUserQueryService ldapQueryService,
@@ -101,7 +104,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			UserProviderRepository userProviderRepository,
 			AuditAdminMongoRepository mongoRepository,
 			UserRepository<User> userRepository,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			AbstractDomainRepository abstractDomainRepository) {
 		super(sanitizerInputHtmlBusinessService);
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
@@ -109,6 +113,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		this.ldapUserProviderRepository = ldapUserProviderRepository;
 		this.userRepository = userRepository;
 		this.mongoRepository = mongoRepository;
+		this.abstractDomainRepository = abstractDomainRepository;
 	}
 
 	@Override
@@ -233,7 +238,6 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_CANNOT_BE_UPDATED,
 					"System domain patterns cannot be updated");
 		}
-		Validate.notEmpty(domainPattern.getDescription(), "Pattern's description must be set.");
 		Validate.notNull(domainPattern.getCompletionPageSize(), "Pattern's completion page size must be set.");
 		Validate.notNull(domainPattern.getCompletionSizeLimit(), "Pattern's completion size limit must be set.");
 		Validate.notNull(domainPattern.getSearchPageSize(), "Pattern's search page size must be set.");
@@ -242,6 +246,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnAllAttributes(), "Patterns's auto complete command on all attributes must be set.");
 		Validate.notEmpty(domainPattern.getAutoCompleteCommandOnFirstAndLastName(), "Patterns's auto complete command on first name and last name must be set.");
 		Validate.notEmpty(domainPattern.getSearchUserCommand(), "Patterns's search command user must be set.");
+		pattern.setLabel(sanitize(domainPattern.getLabel()));
 		pattern.setDescription(sanitize(domainPattern.getDescription()));
 		pattern.setAuthCommand(domainPattern.getAuthCommand());
 		pattern.setSearchUserCommand(domainPattern.getSearchUserCommand());
@@ -585,4 +590,13 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		throw new BusinessException(BusinessErrorCode.DIRECTORY_UNAVAILABLE,
 				"Couldn't connect to the directory.");
 	}
+
+	@Override
+	public List<AbstractDomain> findAllDomainsByUserFilter(Account authUser, UserLdapPattern domainUserFilter) {
+		preChecks(authUser);
+		Validate.notNull(domainUserFilter, "domainUserFilter must be set.");
+		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByUserFilter(domainUserFilter);
+		return domains;
+	}
+
 }
