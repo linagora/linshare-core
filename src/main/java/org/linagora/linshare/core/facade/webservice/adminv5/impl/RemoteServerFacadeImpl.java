@@ -115,12 +115,14 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	@Override
 	public AbstractServerDto delete(String uuid, LDAPServerDto ldapServerDto) {
 		checkAuthentication(Role.SUPERADMIN);
-		if (!Strings.isNullOrEmpty(uuid)) {
-			ldapServerDto.setUuid(uuid);
+		if (Strings.isNullOrEmpty(uuid)) {
+			Validate.notNull(ldapServerDto, "Ldap server to delete must be set");
+			Validate.notEmpty(ldapServerDto.getUuid(), "Ldap server's uuid must be set");
+			uuid = ldapServerDto.getUuid();
 		}
-		Validate.notEmpty(ldapServerDto.getUuid(), "Ldap server's uuid must be set");
+		Validate.notEmpty(uuid, "Ldap server's uuid must be set");
 		LdapConnectionService remoteServer = getService(ServerType.LDAP);
-		LdapConnection conn = remoteServer.delete(ldapServerDto.getUuid());
+		LdapConnection conn = remoteServer.delete(uuid);
 		return new LDAPServerDto(conn);
 	}
 
