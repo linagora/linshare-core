@@ -106,7 +106,19 @@ public class AddDetailsToSharedSpaceNodeUpgradeTaskImpl extends GenericUpgradeTa
 		query.with(Sort.by(Direction.ASC, "resource.creationDate")).limit(1);
 		SharedSpaceNodeAuditLogEntry audit = mongoTemplate.findOne(query,
 				SharedSpaceNodeAuditLogEntry.class);
-		AccountMto accountMto = audit.getActor();
+		AccountMto accountMto;
+		if (audit == null) {
+			String msg = String.format("Author is missing for sharedSpace %1$s (%2$s). Using John DOE unknown-user@linshare.org instead.", sharedSpace.getName(), sharedSpace.getUuid());
+			console.logWarn(batchRunContext, total, position, msg);
+			accountMto = new AccountMto();
+			accountMto.setFirstName("John");
+			accountMto.setLastName("DOE");
+			accountMto.setName("John DOE");
+			accountMto.setMail("unknown-user@linshare.org");
+			accountMto.setUuid("176718dc-d37b-4d3e-8218-ca77652056f2");
+		} else {
+			accountMto = audit.getActor();
+		}
 		SharedSpaceAccount author = new SharedSpaceAccount();
 		author.setUuid(accountMto.getUuid());
 		author.setMail(accountMto.getMail());
