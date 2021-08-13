@@ -192,6 +192,7 @@ BEGIN
         RAISE NOTICE 'Computing all workgroup daily statistic';
         FOR work_group_row IN (SELECT DISTINCT(account_id) FROM statistic WHERE statistic_type = 'WORK_GROUP_DAILY_STAT') LOOP
             RAISE INFO 'Computing daily stats of workgroup with ID %', work_group_row.account_id;
+            is_first_row = TRUE;
             FOR stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_DAILY_STAT' AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
                 RAISE INFO 'ID STAT : %', stat_row.id;
                 IF   is_first_row THEN
@@ -226,6 +227,7 @@ BEGIN
         RAISE NOTICE 'Computing all workgroup weekly statistic';
         FOR work_group_row IN (SELECT DISTINCT(account_id) FROM statistic WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT') LOOP
             RAISE INFO 'Computing weekly stats of workgroup with ID %', work_group_row.account_id;
+            is_first_row = TRUE;
             FOR weekly_stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT' AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
                 current_create_operation_sum = 0;
                 current_delete_operation_sum = 0;
@@ -235,8 +237,10 @@ BEGIN
                     current_actual_operation_sum = weekly_stat_row.actual_operation_sum;
                     is_first_row = FALSE;
                 ELSE
-                    select
-                        sum(create_operation_sum), sum(delete_operation_sum), sum(diff_operation_sum)
+                    SELECT
+                        COALESCE(sum(create_operation_sum), 0),
+                        COALESCE(sum(delete_operation_sum), 0),
+                        COALESCE(sum(diff_operation_sum), 0)
                     INTO current_create_operation_sum, current_delete_operation_sum, current_diff_operation_sum
                     FROM statistic
                     WHERE statistic_type = 'WORK_GROUP_DAILY_STAT'
@@ -276,8 +280,11 @@ BEGIN
     BEGIN
         RAISE NOTICE 'Computing all workgroup monthly statistic';
         FOR work_group_row IN (SELECT DISTINCT(account_id) FROM statistic WHERE statistic_type = 'WORK_GROUP_MONTHLY_STAT') LOOP
+            is_first_row := TRUE;
+            current_actual_operation_sum = 0;
             RAISE INFO 'Computing monthly stats of workgroup with ID %', work_group_row.account_id;
             FOR monthly_stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_MONTHLY_STAT' AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
+                RAISE DEBUG 'is_first_row : %', is_first_row;
                 current_create_operation_sum = 0;
                 current_delete_operation_sum = 0;
                 current_diff_operation_sum = 0;
@@ -287,12 +294,18 @@ BEGIN
                     is_first_row = FALSE;
                 ELSE
                     SELECT
-                        sum(create_operation_sum), sum(delete_operation_sum), sum(diff_operation_sum)
+                        COALESCE(sum(create_operation_sum), 0),
+                        COALESCE(sum(delete_operation_sum), 0),
+                        COALESCE(sum(diff_operation_sum), 0)
                     INTO current_create_operation_sum, current_delete_operation_sum, current_diff_operation_sum
                     FROM statistic
                     WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT'
                         AND DATE_PART('month', monthly_stat_row.statistic_date::TIMESTAMP) =  DATE_PART('month', statistic_date::TIMESTAMP) + 1
                         AND account_id = work_group_row.account_id ;
+
+                    RAISE DEBUG 'current_create_operation_sum: %', current_create_operation_sum;
+                    RAISE DEBUG 'current_delete_operation_sum: %', current_delete_operation_sum;
+                    RAISE DEBUG 'current_diff_operation_sum: %', current_diff_operation_sum;
 
                     RAISE INFO 'MONTHLY STAT with ID "%" DATE : %', monthly_stat_row.id, monthly_stat_row.statistic_date;
                     RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
