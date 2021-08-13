@@ -88,7 +88,6 @@ public class AddMissingPropertiesToWorkGroupNodesUpgradeTaskImpl extends Generic
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		
 		Query query = Query.query(Criteria.where("nodeType").is("DOCUMENT").and("hasThumbnail").exists(false).and("sha256sum").exists(false));
 		return mongoTemplate.findDistinct(query, "uuid", WorkGroupDocument.class, String.class);
 	}
@@ -107,10 +106,15 @@ public class AddMissingPropertiesToWorkGroupNodesUpgradeTaskImpl extends Generic
 		WorkGroup toWg = threadRepository.findByLsUuid(copiedDocument.getWorkGroup());
 		WorkGroupDocumentRevision mostRecent = (WorkGroupDocumentRevision) revisionService.findMostRecent(toWg,
 				copiedDocument.getUuid());
-		copiedDocument.setSha256sum(mostRecent.getSha256sum());
-		copiedDocument.setHasThumbnail(mostRecent.getHasThumbnail());
-		workGroupNodeMongoRepository.save(copiedDocument);
-		res.setProcessed(true);
+		if (mostRecent == null) {
+			res.setProcessed(false);
+			logError(total, position, "WorkGroupDocumentRevision are missing for WorkGroupDocument: {}", batchRunContext, copiedDocument.getUuid());
+		} else {
+			copiedDocument.setSha256sum(mostRecent.getSha256sum());
+			copiedDocument.setHasThumbnail(mostRecent.getHasThumbnail());
+			workGroupNodeMongoRepository.save(copiedDocument);
+			res.setProcessed(true);
+		}
 		return res;
 
 	}
