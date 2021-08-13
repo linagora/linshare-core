@@ -1,7 +1,7 @@
 -- Postgresql migration script from LinShare 4.1.0 to 4.2.0
 
 BEGIN;
----- Prechecks 
+---- Prechecks
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET client_min_messages = info;
@@ -10,120 +10,120 @@ SET default_with_oids = false;
 
 CREATE OR REPLACE FUNCTION ls_check_user_connected() RETURNS void AS $$
 BEGIN
-	DECLARE database VARCHAR := (SELECT current_database());
-	DECLARE user_connected VARCHAR := (SELECT current_user);
-	DECLARE error VARCHAR := ('You are actually connected with the user "postgres", you should be connected with your LinShare database user, we are about to stop the migration script.');
-	BEGIN
-		RAISE INFO 'Connected to "%" with user "%"', database, user_connected;
-		IF (user_connected = 'postgres') THEN
-			RAISE WARNING '%', error;
-		--	DIRTY: did it to stop the process cause there is no clean way to do it.
-		--	Expected error: query has no destination for result data.
-			SELECT '';
-		END IF;
-	END;
+    DECLARE database VARCHAR := (SELECT current_database());
+    DECLARE user_connected VARCHAR := (SELECT current_user);
+    DECLARE error VARCHAR := ('You are actually connected with the user "postgres", you should be connected with your LinShare database user, we are about to stop the migration script.');
+    BEGIN
+        RAISE INFO 'Connected to "%" with user "%"', database, user_connected;
+        IF (user_connected = 'postgres') THEN
+            RAISE WARNING '%', error;
+        --  DIRTY: did it to stop the process cause there is no clean way to do it.
+        --  Expected error: query has no destination for result data.
+            SELECT '';
+        END IF;
+    END;
 END
 $$ LANGUAGE plpgsql;
 
 -- Fix LinShare DB version (4.1.0 instead of 2.4.0)
 CREATE OR REPLACE FUNCTION check_to_fix_version_from_2_4_to_4_1_0() RETURNS void AS $$
 BEGIN
-	DECLARE current_version VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
-	BEGIN
-		IF (current_version='2.4.0') THEN
-			IF(EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='functionality_unit' AND column_name='integer_max_value')) then
-				RAISE INFO 'Fixing LinShare DB version | Update from 2.4.0 to 4.1.0';
-	        	UPDATE version SET version='4.1.0' WHERE version='2.4.0';
-	        ELSE 
-	        	RAISE WARNING 'Your DB schema did not match with LinShare DB 4.1.0';
-	        END IF;
-	    ELSE
-	    	RAISE INFO 'No operation was performed. This script is applied only to fix LinShare DB version from 2.4.0 to 4.1.0';
-	    END IF;
-	END;
+    DECLARE current_version VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
+    BEGIN
+        IF (current_version='2.4.0') THEN
+            IF(EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='functionality_unit' AND column_name='integer_max_value')) then
+                RAISE INFO 'Fixing LinShare DB version | Update from 2.4.0 to 4.1.0';
+                UPDATE version SET version='4.1.0' WHERE version='2.4.0';
+            ELSE
+                RAISE WARNING 'Your DB schema did not match with LinShare DB 4.1.0';
+            END IF;
+        ELSE
+            RAISE INFO 'No operation was performed. This script is applied only to fix LinShare DB version from 2.4.0 to 4.1.0';
+        END IF;
+    END;
 END
 $$ LANGUAGE plpgsql;
 
 -- Check if can apply the patch to the current LinShare version 4.1.0
 CREATE OR REPLACE FUNCTION ls_prechecks_patch() RETURNS void AS $$
 BEGIN
-	DECLARE current_version VARCHAR := '4.1.0';
-	DECLARE start VARCHAR := concat('You are about to apply a database patch to LinShare : ', current_version);
-	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
-	DECLARE database_info VARCHAR = version();
-	DECLARE error VARCHAR := concat('This patch should only be applied to the version : ', current_version);
-	DECLARE connection_id INT := pg_backend_pid();
-	DECLARE row record;
-	BEGIN
-		RAISE NOTICE '%', start;
-		RAISE NOTICE 'Your current LinShare database version is: %', version_history_from;
-		RAISE NOTICE 'Your database history is :';
-		FOR row IN (SELECT * FROM version ORDER BY id DESC) LOOP
-			RAISE INFO '%', row.version;
-		END LOOP;
-		RAISE NOTICE 'Your database system information is : %', database_info;
-		IF (current_version <> version_history_from) THEN
-			RAISE WARNING 'You must be in version : % to run this script. You are actually in version: %', current_version, version_history_from;
-			IF EXISTS (SELECT * from version where version = current_version) THEN
-				RAISE WARNING '%', error;
-			END IF;
-			RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
-			RAISE INFO 'You should expect the following error : "query has no destination for result data".';
-	--		DIRTY: did it to stop the process cause there is no clean way to do it.
-	--		Expected error: query has no destination for result data.
-			select error;
-		END IF;
-	END;
+    DECLARE current_version VARCHAR := '4.1.0';
+    DECLARE start VARCHAR := concat('You are about to apply a database patch to LinShare : ', current_version);
+    DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
+    DECLARE database_info VARCHAR = version();
+    DECLARE error VARCHAR := concat('This patch should only be applied to the version : ', current_version);
+    DECLARE connection_id INT := pg_backend_pid();
+    DECLARE row record;
+    BEGIN
+        RAISE NOTICE '%', start;
+        RAISE NOTICE 'Your current LinShare database version is: %', version_history_from;
+        RAISE NOTICE 'Your database history is :';
+        FOR row IN (SELECT * FROM version ORDER BY id DESC) LOOP
+            RAISE INFO '%', row.version;
+        END LOOP;
+        RAISE NOTICE 'Your database system information is : %', database_info;
+        IF (current_version <> version_history_from) THEN
+            RAISE WARNING 'You must be in version : % to run this script. You are actually in version: %', current_version, version_history_from;
+            IF EXISTS (SELECT * from version where version = current_version) THEN
+                RAISE WARNING '%', error;
+            END IF;
+            RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
+            RAISE INFO 'You should expect the following error : "query has no destination for result data".';
+    --      DIRTY: did it to stop the process cause there is no clean way to do it.
+    --      Expected error: query has no destination for result data.
+            select error;
+        END IF;
+    END;
 END
 $$ LANGUAGE plpgsql;
 
--- Upgrade LinShare version function 
+-- Upgrade LinShare version function
 CREATE OR REPLACE FUNCTION ls_version() RETURNS void AS $$
 BEGIN
-	INSERT INTO version (id, version, creation_date) VALUES ((SELECT nextVal('hibernate_sequence')),'4.2.0', now());
+    INSERT INTO version (id, version, creation_date) VALUES ((SELECT nextVal('hibernate_sequence')),'4.2.0', now());
 END
 
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION ls_prechecks() RETURNS void AS $$
 BEGIN
-	DECLARE version_to VARCHAR := '4.2.0';
-	DECLARE version_from VARCHAR := '4.1.0';
-	DECLARE start VARCHAR := concat('You are about to upgrade from LinShare : ', version_from,  ' to ' , version_to);
-	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
-	DECLARE database_info VARCHAR = version();
-	DECLARE error VARCHAR := concat('Your database upgrade history indicates that you already upgraded to : ', version_to);
-	DECLARE nb_upgrade_tasks INT := (SELECT count(*)::int  FROM upgrade_task WHERE status != 'SUCCESS' AND status != 'SKIPPED');
-	DECLARE connection_id INT := pg_backend_pid();
-	DECLARE row record;
-	BEGIN
-		RAISE NOTICE '%', start;
-		RAISE NOTICE 'Your actual version is: %', version_history_from;
-		RAISE NOTICE 'Your database history is :';
-		FOR row IN (SELECT * FROM version ORDER BY id DESC) LOOP
-			RAISE INFO '%', row.version;
-		END LOOP;
-		RAISE NOTICE 'Your database system information is : %', database_info;
-		IF (version_from <> version_history_from) THEN
-			RAISE WARNING 'You must be in version : % to run this script. You are actually in version: %', version_from, version_history_from;
-			IF EXISTS (SELECT * from version where version = version_to) THEN
-				RAISE WARNING '%', error;
-			END IF;
-			RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
-			RAISE INFO 'You should expect the following error : "query has no destination for result data".';
-	--		DIRTY: did it to stop the process cause there is no clean way to do it.
-	--		Expected error: query has no destination for result data.
-			select error;
-		END IF;
-		IF (nb_upgrade_tasks > 0) THEN
-			RAISE WARNING 'Can not upgrade LinShare if all upgrade tasks are not completed with success !!!!';
-			RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
-			RAISE INFO 'You should expect the following error : "query has no destination for result data".';
-	--		DIRTY: did it to stop the process cause there is no clean way to do it.
-	--		Expected error: query has no destination for result data.
-			select error;
-		END IF;
-	END;
+    DECLARE version_to VARCHAR := '4.2.0';
+    DECLARE version_from VARCHAR := '4.1.0';
+    DECLARE start VARCHAR := concat('You are about to upgrade from LinShare : ', version_from,  ' to ' , version_to);
+    DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
+    DECLARE database_info VARCHAR = version();
+    DECLARE error VARCHAR := concat('Your database upgrade history indicates that you already upgraded to : ', version_to);
+    DECLARE nb_upgrade_tasks INT := (SELECT count(*)::int  FROM upgrade_task WHERE status != 'SUCCESS' AND status != 'SKIPPED');
+    DECLARE connection_id INT := pg_backend_pid();
+    DECLARE row record;
+    BEGIN
+        RAISE NOTICE '%', start;
+        RAISE NOTICE 'Your actual version is: %', version_history_from;
+        RAISE NOTICE 'Your database history is :';
+        FOR row IN (SELECT * FROM version ORDER BY id DESC) LOOP
+            RAISE INFO '%', row.version;
+        END LOOP;
+        RAISE NOTICE 'Your database system information is : %', database_info;
+        IF (version_from <> version_history_from) THEN
+            RAISE WARNING 'You must be in version : % to run this script. You are actually in version: %', version_from, version_history_from;
+            IF EXISTS (SELECT * from version where version = version_to) THEN
+                RAISE WARNING '%', error;
+            END IF;
+            RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
+            RAISE INFO 'You should expect the following error : "query has no destination for result data".';
+    --      DIRTY: did it to stop the process cause there is no clean way to do it.
+    --      Expected error: query has no destination for result data.
+            select error;
+        END IF;
+        IF (nb_upgrade_tasks > 0) THEN
+            RAISE WARNING 'Can not upgrade LinShare if all upgrade tasks are not completed with success !!!!';
+            RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
+            RAISE INFO 'You should expect the following error : "query has no destination for result data".';
+    --      DIRTY: did it to stop the process cause there is no clean way to do it.
+    --      Expected error: query has no destination for result data.
+            select error;
+        END IF;
+    END;
 END
 $$ LANGUAGE plpgsql;
 
@@ -145,34 +145,34 @@ DROP VIEW IF EXISTS alias_threads_list_destroyed;
 
 ---- Here your queries
 
--- Avoid duplicate unit_id in functionality_unit table function declaration 
+-- Avoid duplicate unit_id in functionality_unit table function declaration
 CREATE OR REPLACE FUNCTION ls_avoid_duplicate_unit_in_functionality_unit() RETURNS void AS $$
 BEGIN
-	DECLARE
-		functionality_row record;
-		functionality_unit_row record;
-		count_occurences integer;
-		new_unit_id integer;
-	BEGIN
-		RAISE INFO 'Removing duplicated unit_id in functionality_unit table...';
-		FOR functionality_row IN SELECT * FROM functionality WHERE domain_id <> 1 AND id IN (SELECT functionality_id FROM functionality_unit) LOOP
-			FOR functionality_unit_row IN SELECT * FROM functionality_unit where functionality_id = functionality_row.id LOOP
-				SELECT COUNT(*) INTO count_occurences FROM functionality_unit where max_unit_id = functionality_unit_row.max_unit_id; 
-				RAISE INFO 'Found functionality_unit with functionality_id "%" in sub domain', functionality_unit_row.functionality_id;
-				IF (count_occurences > 1)
-				THEN
-					INSERT INTO unit(id, unit_type, unit_value)
-						(  SELECT  nextVal('hibernate_sequence'), unit_type, unit_value FROM unit WHERE id = functionality_unit_row.unit_id )
-					RETURNING id INTO new_unit_id;
-					UPDATE functionality_unit SET max_unit_id = new_unit_id where functionality_id = functionality_unit_row.functionality_id;
-					RAISE INFO 'Duplicate found : Updating max_unit_id of functionality_unit with functionality_id "%"', functionality_unit_row.functionality_id;
-				END IF;
-			END LOOP;
-		END LOOP;
-		RAISE INFO 'End removing duplicated unit_id in functionality_unit table';
-	END;
+    DECLARE
+        functionality_row record;
+        functionality_unit_row record;
+        count_occurences integer;
+        new_unit_id integer;
+    BEGIN
+        RAISE INFO 'Removing duplicated unit_id in functionality_unit table...';
+        FOR functionality_row IN SELECT * FROM functionality WHERE domain_id <> 1 AND id IN (SELECT functionality_id FROM functionality_unit) LOOP
+            FOR functionality_unit_row IN SELECT * FROM functionality_unit where functionality_id = functionality_row.id LOOP
+                SELECT COUNT(*) INTO count_occurences FROM functionality_unit where max_unit_id = functionality_unit_row.max_unit_id;
+                RAISE INFO 'Found functionality_unit with functionality_id "%" in sub domain', functionality_unit_row.functionality_id;
+                IF (count_occurences > 1)
+                THEN
+                    INSERT INTO unit(id, unit_type, unit_value)
+                        (  SELECT  nextVal('hibernate_sequence'), unit_type, unit_value FROM unit WHERE id = functionality_unit_row.unit_id )
+                    RETURNING id INTO new_unit_id;
+                    UPDATE functionality_unit SET max_unit_id = new_unit_id where functionality_id = functionality_unit_row.functionality_id;
+                    RAISE INFO 'Duplicate found : Updating max_unit_id of functionality_unit with functionality_id "%"', functionality_unit_row.functionality_id;
+                END IF;
+            END LOOP;
+        END LOOP;
+        RAISE INFO 'End removing duplicated unit_id in functionality_unit table';
+    END;
 END
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
 
 -- Fix avoid duplicated unit_id in functionality_unit table
 SELECT ls_avoid_duplicate_unit_in_functionality_unit();
@@ -184,151 +184,151 @@ UPDATE statistic SET diff_operation_sum = create_operation_sum + delete_operatio
 
 CREATE OR REPLACE FUNCTION ls_compute_daily_workgroup_statistic() RETURNS void AS $$
 BEGIN
-	DECLARE current_actual_operation_sum BIGINT := 0;
-	DECLARE stat_row record;
-	DECLARE is_first_row boolean := TRUE;
-	DECLARE work_group_row record;
-	BEGIN
-		RAISE NOTICE 'Computing all workgroup daily statistic';
-		FOR work_group_row IN (SELECT DISTINCT(account_id) FROM statistic WHERE statistic_type = 'WORK_GROUP_DAILY_STAT') LOOP
-			RAISE INFO 'Computing daily stats of workgroup with ID %', work_group_row.account_id;
-			FOR stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_DAILY_STAT' AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
-				RAISE INFO 'ID STAT : %', stat_row.id;
-				IF	 is_first_row THEN
-					RAISE INFO 'First stat row skipped';
-					current_actual_operation_sum = stat_row.actual_operation_sum;
-					is_first_row = FALSE;
-				ELSE
-					RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
-					current_actual_operation_sum = current_actual_operation_sum + stat_row.diff_operation_sum;
-					RAISE INFO 'diff_operation_sum : %', stat_row. diff_operation_sum;
-					RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
-					UPDATE statistic SET actual_operation_sum = current_actual_operation_sum WHERE id = stat_row.id;
-				END IF;
-			END LOOP;
-		END LOOP;
-		RAISE NOTICE 'END Computing all workgroup daily statistic';
-	END;
+    DECLARE current_actual_operation_sum BIGINT := 0;
+    DECLARE stat_row record;
+    DECLARE is_first_row boolean := TRUE;
+    DECLARE work_group_row record;
+    BEGIN
+        RAISE NOTICE 'Computing all workgroup daily statistic';
+        FOR work_group_row IN (SELECT DISTINCT(account_id) FROM statistic WHERE statistic_type = 'WORK_GROUP_DAILY_STAT') LOOP
+            RAISE INFO 'Computing daily stats of workgroup with ID %', work_group_row.account_id;
+            FOR stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_DAILY_STAT' AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
+                RAISE INFO 'ID STAT : %', stat_row.id;
+                IF   is_first_row THEN
+                    RAISE INFO 'First stat row skipped';
+                    current_actual_operation_sum = stat_row.actual_operation_sum;
+                    is_first_row = FALSE;
+                ELSE
+                    RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
+                    current_actual_operation_sum = current_actual_operation_sum + stat_row.diff_operation_sum;
+                    RAISE INFO 'diff_operation_sum : %', stat_row. diff_operation_sum;
+                    RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
+                    UPDATE statistic SET actual_operation_sum = current_actual_operation_sum WHERE id = stat_row.id;
+                END IF;
+            END LOOP;
+        END LOOP;
+        RAISE NOTICE 'END Computing all workgroup daily statistic';
+    END;
 END
 $$ LANGUAGE plpgsql;
- 
+
 CREATE OR REPLACE FUNCTION ls_compute_weekly_workgroup_statistic() RETURNS void AS $$
 BEGIN
-	DECLARE current_actual_operation_sum BIGINT := 0;
-	DECLARE current_create_operation_sum BIGINT := 0;
-	DECLARE current_delete_operation_sum BIGINT := 0;
-	DECLARE current_diff_operation_sum BIGINT := 0;
-	DECLARE is_first_row boolean := TRUE;
-	DECLARE weekly_stat_row record;
-	DECLARE daily_stat_row record;
-	DECLARE work_group_row record;
-	BEGIN
-		RAISE NOTICE 'Computing all workgroup weekly statistic';
-		FOR work_group_row IN (SELECT DISTINCT(account_id) FROM statistic WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT') LOOP
-			RAISE INFO 'Computing weekly stats of workgroup with ID %', work_group_row.account_id;
-			FOR weekly_stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT' AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
-				current_create_operation_sum = 0;
-				current_delete_operation_sum = 0;
-				current_diff_operation_sum = 0;
-				IF is_first_row THEN
-					RAISE INFO 'First stat row skipped';
-					current_actual_operation_sum = weekly_stat_row.actual_operation_sum;
-					is_first_row = FALSE;
-				ELSE
-					select 
-						sum(create_operation_sum), sum(delete_operation_sum), sum(diff_operation_sum) 
-					INTO current_create_operation_sum, current_delete_operation_sum, current_diff_operation_sum
-					FROM statistic 
-					WHERE statistic_type = 'WORK_GROUP_DAILY_STAT' 
-						AND DATE_PART('day', weekly_stat_row.statistic_date::timestamp - statistic_date::timestamp) <= 7 
-						AND DATE_PART('day', weekly_stat_row.statistic_date::timestamp - statistic_date::timestamp) >= 0 
-						AND account_id = work_group_row.account_id ;
-					
-					RAISE INFO 'WEEKLY STAT with ID "%" DATE : %', weekly_stat_row.id, weekly_stat_row.statistic_date;
-					RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
-					current_actual_operation_sum = current_actual_operation_sum + current_diff_operation_sum;
-					RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
-					UPDATE statistic 
-						SET 
-							actual_operation_sum = current_actual_operation_sum,
-							create_operation_sum = current_create_operation_sum,
-							diff_operation_sum = current_diff_operation_sum,
-							delete_operation_sum = current_delete_operation_sum
-						WHERE id = weekly_stat_row.id;
-				END IF;
-			END LOOP;
-		END LOOP;
-		RAISE NOTICE 'END Computing all workgroup weekly statistic';
-	END;
+    DECLARE current_actual_operation_sum BIGINT := 0;
+    DECLARE current_create_operation_sum BIGINT := 0;
+    DECLARE current_delete_operation_sum BIGINT := 0;
+    DECLARE current_diff_operation_sum BIGINT := 0;
+    DECLARE is_first_row boolean := TRUE;
+    DECLARE weekly_stat_row record;
+    DECLARE daily_stat_row record;
+    DECLARE work_group_row record;
+    BEGIN
+        RAISE NOTICE 'Computing all workgroup weekly statistic';
+        FOR work_group_row IN (SELECT DISTINCT(account_id) FROM statistic WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT') LOOP
+            RAISE INFO 'Computing weekly stats of workgroup with ID %', work_group_row.account_id;
+            FOR weekly_stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT' AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
+                current_create_operation_sum = 0;
+                current_delete_operation_sum = 0;
+                current_diff_operation_sum = 0;
+                IF is_first_row THEN
+                    RAISE INFO 'First stat row skipped';
+                    current_actual_operation_sum = weekly_stat_row.actual_operation_sum;
+                    is_first_row = FALSE;
+                ELSE
+                    select
+                        sum(create_operation_sum), sum(delete_operation_sum), sum(diff_operation_sum)
+                    INTO current_create_operation_sum, current_delete_operation_sum, current_diff_operation_sum
+                    FROM statistic
+                    WHERE statistic_type = 'WORK_GROUP_DAILY_STAT'
+                        AND DATE_PART('day', weekly_stat_row.statistic_date::timestamp - statistic_date::timestamp) <= 7
+                        AND DATE_PART('day', weekly_stat_row.statistic_date::timestamp - statistic_date::timestamp) >= 0
+                        AND account_id = work_group_row.account_id ;
+
+                    RAISE INFO 'WEEKLY STAT with ID "%" DATE : %', weekly_stat_row.id, weekly_stat_row.statistic_date;
+                    RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
+                    current_actual_operation_sum = current_actual_operation_sum + current_diff_operation_sum;
+                    RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
+                    UPDATE statistic
+                        SET
+                            actual_operation_sum = current_actual_operation_sum,
+                            create_operation_sum = current_create_operation_sum,
+                            diff_operation_sum = current_diff_operation_sum,
+                            delete_operation_sum = current_delete_operation_sum
+                        WHERE id = weekly_stat_row.id;
+                END IF;
+            END LOOP;
+        END LOOP;
+        RAISE NOTICE 'END Computing all workgroup weekly statistic';
+    END;
 END
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION ls_compute_monthly_workgroup_statistic() RETURNS void AS $$
 BEGIN
-	DECLARE current_actual_operation_sum BIGINT := 0;
-	DECLARE current_create_operation_sum BIGINT := 0;
-	DECLARE current_delete_operation_sum BIGINT := 0;
-	DECLARE current_diff_operation_sum BIGINT := 0;
-	DECLARE is_first_row boolean := TRUE;
-	DECLARE monthly_stat_row record;
-	DECLARE weekly_stat_row record;
-	DECLARE work_group_row record;
-	BEGIN
-		RAISE NOTICE 'Computing all workgroup monthly statistic';
-		FOR work_group_row IN (SELECT DISTINCT(account_id) FROM statistic WHERE statistic_type = 'WORK_GROUP_MONTHLY_STAT') LOOP
-			RAISE INFO 'Computing monthly stats of workgroup with ID %', work_group_row.account_id;
-			FOR monthly_stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_MONTHLY_STAT' AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
-				current_create_operation_sum = 0;
-				current_delete_operation_sum = 0;
-				current_diff_operation_sum = 0;
-				IF is_first_row THEN
-					RAISE INFO 'First stat row skipped';
-					current_actual_operation_sum = monthly_stat_row.actual_operation_sum;
-					is_first_row = FALSE;
-				ELSE
-					SELECT 
-						sum(create_operation_sum), sum(delete_operation_sum), sum(diff_operation_sum) 
-					INTO current_create_operation_sum, current_delete_operation_sum, current_diff_operation_sum
-					FROM statistic 
-					WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT' 
-						AND DATE_PART('month', monthly_stat_row.statistic_date::TIMESTAMP) =  DATE_PART('month', statistic_date::TIMESTAMP) + 1
-						AND account_id = work_group_row.account_id ;
-					
-					RAISE INFO 'MONTHLY STAT with ID "%" DATE : %', monthly_stat_row.id, monthly_stat_row.statistic_date;
-					RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
-					current_actual_operation_sum = current_actual_operation_sum + current_diff_operation_sum;
-					RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
-					UPDATE statistic 
-						SET 
-							actual_operation_sum = current_actual_operation_sum,
-							create_operation_sum = current_create_operation_sum,
-							diff_operation_sum = current_diff_operation_sum,
-							delete_operation_sum = current_delete_operation_sum
-						WHERE id = monthly_stat_row.id;
-				END IF;
-			END LOOP;
-		END LOOP;
-		RAISE NOTICE 'End computing all workgroup monthly statistic';
-	END;
+    DECLARE current_actual_operation_sum BIGINT := 0;
+    DECLARE current_create_operation_sum BIGINT := 0;
+    DECLARE current_delete_operation_sum BIGINT := 0;
+    DECLARE current_diff_operation_sum BIGINT := 0;
+    DECLARE is_first_row boolean := TRUE;
+    DECLARE monthly_stat_row record;
+    DECLARE weekly_stat_row record;
+    DECLARE work_group_row record;
+    BEGIN
+        RAISE NOTICE 'Computing all workgroup monthly statistic';
+        FOR work_group_row IN (SELECT DISTINCT(account_id) FROM statistic WHERE statistic_type = 'WORK_GROUP_MONTHLY_STAT') LOOP
+            RAISE INFO 'Computing monthly stats of workgroup with ID %', work_group_row.account_id;
+            FOR monthly_stat_row IN (SELECT * FROM statistic WHERE statistic_type = 'WORK_GROUP_MONTHLY_STAT' AND account_id = work_group_row.account_id ORDER BY creation_date ASC) LOOP
+                current_create_operation_sum = 0;
+                current_delete_operation_sum = 0;
+                current_diff_operation_sum = 0;
+                IF is_first_row THEN
+                    RAISE INFO 'First stat row skipped';
+                    current_actual_operation_sum = monthly_stat_row.actual_operation_sum;
+                    is_first_row = FALSE;
+                ELSE
+                    SELECT
+                        sum(create_operation_sum), sum(delete_operation_sum), sum(diff_operation_sum)
+                    INTO current_create_operation_sum, current_delete_operation_sum, current_diff_operation_sum
+                    FROM statistic
+                    WHERE statistic_type = 'WORK_GROUP_WEEKLY_STAT'
+                        AND DATE_PART('month', monthly_stat_row.statistic_date::TIMESTAMP) =  DATE_PART('month', statistic_date::TIMESTAMP) + 1
+                        AND account_id = work_group_row.account_id ;
+
+                    RAISE INFO 'MONTHLY STAT with ID "%" DATE : %', monthly_stat_row.id, monthly_stat_row.statistic_date;
+                    RAISE INFO 'current_actual_operation_sum previous : %', current_actual_operation_sum;
+                    current_actual_operation_sum = current_actual_operation_sum + current_diff_operation_sum;
+                    RAISE INFO 'current_actual_operation_sum next : %', current_actual_operation_sum;
+                    UPDATE statistic
+                        SET
+                            actual_operation_sum = current_actual_operation_sum,
+                            create_operation_sum = current_create_operation_sum,
+                            diff_operation_sum = current_diff_operation_sum,
+                            delete_operation_sum = current_delete_operation_sum
+                        WHERE id = monthly_stat_row.id;
+                END IF;
+            END LOOP;
+        END LOOP;
+        RAISE NOTICE 'End computing all workgroup monthly statistic';
+    END;
 END
 $$ LANGUAGE plpgsql;
 
 --Delete duplicated rows in statistic table with same statistic_type and statistic_date
-DELETE FROM statistic 
-	WHERE id IN (
-	SELECT id 
-	FROM (
-		SELECT id, ROW_NUMBER() 
-			OVER( PARTITION BY statistic_date, statistic_type, account_id, domain_id ORDER BY  id ) AS row_num
-		FROM statistic ) partition_statistic
-	WHERE partition_statistic.row_num > 1 );
-	
+DELETE FROM statistic
+    WHERE id IN (
+    SELECT id
+    FROM (
+        SELECT id, ROW_NUMBER()
+            OVER( PARTITION BY statistic_date, statistic_type, account_id, domain_id ORDER BY  id ) AS row_num
+        FROM statistic ) partition_statistic
+    WHERE partition_statistic.row_num > 1 );
+
 --Delete recent statistic that will be computed by the batch
 DELETE FROM statistic
-	WHERE DATE_PART('day', NOW()::timestamp - statistic_date::timestamp) <= 7
-		AND DATE_PART('day', NOW()::timestamp - statistic_date::timestamp) >= 0
-		AND (statistic_type LIKE '%WEEKLY%' OR statistic_type LIKE '%MONTHLY%') ;
-		
+    WHERE DATE_PART('day', NOW()::timestamp - statistic_date::timestamp) <= 7
+        AND DATE_PART('day', NOW()::timestamp - statistic_date::timestamp) >= 0
+        AND (statistic_type LIKE '%WEEKLY%' OR statistic_type LIKE '%MONTHLY%') ;
+
 
 SELECT ls_compute_daily_workgroup_statistic();
 SELECT ls_compute_weekly_workgroup_statistic();
@@ -417,7 +417,7 @@ VALUES
   now(),
   now(),
   null);
-  
+
 -- TASK: UPGRADE_4_2_ADD_DETAILS_TO_SHARED_SPACE_NODES
 INSERT INTO upgrade_task
   (id,
@@ -489,15 +489,15 @@ UPDATE policy SET status = true , default_status = true, policy = 0 ,system = tr
 -- -- configuration policy update
 UPDATE policy SET status = true , default_status = true, policy = 1 ,system = false WHERE id IN (SELECT policy_configuration_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%');
 -- -- delegation policy update
-UPDATE policy SET status = false , default_status = false, policy = 2 ,system = true WHERE id IN (SELECT policy_delegation_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%'); 
+UPDATE policy SET status = false , default_status = false, policy = 2 ,system = true WHERE id IN (SELECT policy_delegation_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%');
 
  -- Remove mailing_list_contact_index from mailing_list_contact table
  ALTER TABLE mailing_list_contact DROP mailing_list_contact_index;
- 
+
  -- Refactor change mailing to contact in contact list tables
  ALTER INDEX mailing_list_index RENAME TO contact_list_index;
  ALTER INDEX mailing_list_contact_index RENAME TO contact_list_contact_index;
- 
+
  ALTER TABLE mailing_list RENAME TO contact_list;
  ALTER TABLE mailing_list_contact RENAME TO contact_list_contact;
  ALTER TABLE contact_list_contact RENAME COLUMN mailing_list_id TO contact_list_id;
@@ -507,7 +507,7 @@ UPDATE policy SET status = false , default_status = false, policy = 2 ,system = 
 ALTER TABLE domain_abstract ADD COLUMN drive_provider_id int8;
 
 -- Create the Drive provider
-	CREATE TABLE drive_provider (
+    CREATE TABLE drive_provider (
   id                  int8 NOT NULL,
   uuid               varchar(255) NOT NULL UNIQUE,
   provider_type      varchar(255) NOT NULL,
@@ -526,44 +526,44 @@ ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi1670 FOREIGN KEY (ldap_co
 
 -- Group ldap pattern
 INSERT INTO ldap_pattern(
-	id,
-	uuid,
-	pattern_type,
-	label,
-	system,
-	description,
-	auth_command,
-	search_user_command,
-	search_page_size,
-	search_size_limit,
-	auto_complete_command_on_first_and_last_name,
-	auto_complete_command_on_all_attributes, completion_page_size,
-	completion_size_limit,
-	creation_date,
-	modification_date,
-	search_all_groups_query,
-	search_group_query,
-	group_prefix)
-	VALUES(
-	6,
-	'c59078f1-2366-4360-baa0-6c089202e9a6',
-	'GROUP_LDAP_PATTERN',
-	'Ldap drives',
-	true,
-	'default-drive-pattern',
-	NULL,
-	NULL,
-	100,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NOW(),
-	NOW(),
-	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-*))");',
-	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-" + pattern + "))");',
-	'drive-');
+    id,
+    uuid,
+    pattern_type,
+    label,
+    system,
+    description,
+    auth_command,
+    search_user_command,
+    search_page_size,
+    search_size_limit,
+    auto_complete_command_on_first_and_last_name,
+    auto_complete_command_on_all_attributes, completion_page_size,
+    completion_size_limit,
+    creation_date,
+    modification_date,
+    search_all_groups_query,
+    search_group_query,
+    group_prefix)
+    VALUES(
+    6,
+    'c59078f1-2366-4360-baa0-6c089202e9a6',
+    'GROUP_LDAP_PATTERN',
+    'Ldap drives',
+    true,
+    'default-drive-pattern',
+    NULL,
+    NULL,
+    100,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NOW(),
+    NOW(),
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-*))");',
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-" + pattern + "))");',
+    'drive-');
 
 
 -- ldap attributes
@@ -637,7 +637,7 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
             <span style="color:#787878;font-size:13px">
               <th:block data-th-utext="#{displayDriveAndRole(${member.node.name},${member.role.name})}"/>
           </li>
-      </ul>  
+      </ul>
     </div>
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
@@ -646,7 +646,7 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au Drive: <br>
 simpleMainMsg = Vous avez été ajouté au Drive
 subject = Vous avez été ajouté au Drive {0}
-driveRight = Droit par défaut 
+driveRight = Droit par défaut
 driveNameTitle = Nom du Drive
 nestedWorkGroupsList=Vous avez automatiquement été ajouté aux groupes de travail suivants :
 displayDriveAndRole ={0} avec un rôle <span style="text-transform:uppercase">{1}</span>',messages_english='driveMemberCreationDateTitle = Creation date
@@ -702,7 +702,7 @@ UPDATE mail_content SET subject='[(#{subject(${driveName})})]',body='<!DOCTYPE h
       <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{driveRoleReadTitle})"/></p>
     </th:block>
     <th:block th:switch="${driveMember.nestedRole.name}">
-      <p th:case="''ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/></p>  
+      <p th:case="''ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/></p>
       <p th:case="''CONTRIBUTOR''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>
       <p th:case="''WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>
       <p th:case="''READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/></p>
@@ -718,7 +718,7 @@ UPDATE mail_content SET subject='[(#{subject(${driveName})})]',body='<!DOCTYPE h
         <span th:if="${nbrWorkgroupsUpdated > 3}">
              <li>...</li>
         </span>
-      </ul>  
+      </ul>
     </div>
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
@@ -733,7 +733,7 @@ workGroupRight =  Droit sur le groupe de travail
 driveNameTitle = Nom du Drive
 nestedWorkGroupsList = Liste des workgoups
 nbrWorkgoups = Nombre de groupe de travail mis à jours',messages_english='driveMemberUpdatedDateTitle = Updated date
-mainMsg = Your roles on the Drive 
+mainMsg = Your roles on the Drive
 mainMsgNext= and workgroups inside it, have been updated
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
 subject =  Your roles on the Drive {0} was updated.
@@ -742,7 +742,7 @@ workGroupRight = Workgroup right
 driveNameTitle = Drive Name
 nestedWorkGroupsList = Workgroups list
 nbrWorkgoups = Number of updated workGroups',messages_russian='driveMemberUpdatedDateTitle = Updated date
-mainMsg = Your roles on the Drive 
+mainMsg = Your roles on the Drive
 mainMsgNext= and workgroups inside it, have been updated
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
 subject =  Your roles on the Drive {0} was updated.
@@ -959,14 +959,14 @@ welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
    <br/>
     <span>
         <th:block th:if="${oldValue == null}">
-            null 
+            null
         </th:block>
         <th:block th:unless="${oldValue == null}">
             <th:block th:replace="${oldValue}" />
         </th:block>
         =>
         <th:block th:if="${newValue == null}">
-            null 
+            null
         </th:block>
         <th:block th:unless="${newValue == null}">
             <th:block th:replace="${newValue}" />
@@ -982,14 +982,14 @@ welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
         null
     </th:block>
     <th:block th:unless="${oldValue == null}">
-        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue,df)}" /> 
+        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue,df)}" />
     </th:block>
     =>
     <th:block th:if="${newValue == null}">
         null
     </th:block>
     <th:block th:unless="${newValue == null}">
-        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(newValue,df)}" /> 
+        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(newValue,df)}" />
     </th:block>
 </div>
 <!--/* Common header template */-->
@@ -1039,10 +1039,10 @@ border-top: 1px solid #e1e1e1;">
 <!--/* Common lower info title style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoStandardArea(titleInfo,contentInfo)">
      <div data-th-if="${contentInfo != null}">
-	   <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
+       <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
        <br/>
        <th:block th:replace="${contentInfo}" />
-	</div>
+    </div>
 </div>
 <!--/* Common button action style */-->
 <span   data-th-fragment="actionButtonLink(labelBtn,urlLink)">
@@ -1131,52 +1131,52 @@ data-th-text="${labelBtn}"  th:href="@{${urlLink}}">Button label</a>
 <!--/* Lists all recpients download states per file   */-->
 <div   style="margin-bottom:17px;"  data-th-fragment="infoFileListRecipientUpload(titleInfo,arrayFileLinks)">
      <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
-		<th:block style="color; #787878; font-size:10px;margin-top:10px; display: inline-block;" th:each="shareLink : ${arrayFileLinks}" >
-    		<div style="border-bottom: 1px solid #e3e3e3;display: inline-block;width: 100%;margin-bottom: 3px;">
-				<!--[if mso]>
-					&nbsp;&nbsp;
-				<![endif]-->
-				<a target="_blank" style="color:#1294dc;text-decoration:none;font-size:13px" th:href="@{${shareLink.href}}">
-    				<span align="left" style="display: inline-block; width: 96%;"  data-th-utext="${shareLink.name}">test-file.jpg</span>
-				</a>
-    			<span data-th-if="(${!shareLink.allDownloaded})" align="right" style="text-align: right; display: inline-block;height: 0;width: 6px;height: 6px;border-radius: 50%;background-color: #787878;"></span>
-    			<span data-th-if="(${shareLink.allDownloaded})" align="right" style="text-align: right; display: inline-block;height: 0;width: 6px;height: 6px;border-radius: 50%;background-color: #00b800;"></span>
-			</div>
-    		<ul style="padding: 5px 17px; margin: 0;list-style-type:disc;" >
- 				<th:block  th:each="recipientData: ${shareLink.shares}">
-   					<th:block data-th-if="(${!recipientData.downloaded})" >
-      					<li style="color:#787878;font-size:15px;"  >
-      						<th:block data-th-if="(${!#strings.isEmpty(recipientData.lastName)})" >
-        						<span style="color:#7f7f7f;font-size:13px;">
-          							<th:block  data-th-utext="${recipientData.firstName}"/>
-      								<th:block data-th-utext="${recipientData.lastName}"/>
-       							</span>
-     						</th:block>
-      						<span style="color:#7f7f7f;font-size:13px;" data-th-utext="${recipientData.mail}"data-th-if="(${#strings.isEmpty(recipientData.lastName)})">able.cornell@linshare.com </span>
-      					</li>
-   					</th:block>
-					<th:block data-th-if="(${recipientData.downloaded})">
-   						<li style="color:#00b800;font-size:15px;" >
-     						 <th:block data-th-if="(${!#strings.isEmpty(recipientData.lastName)})" >
-						        <span  style="color:#7f7f7f;font-size:13px;">
-						          <th:block  data-th-utext="${recipientData.firstName}"/>
-						          <th:block data-th-utext="${recipientData.lastName}"/>
-						       </span>
-     						</th:block>
-							<th:block  data-th-if="(${#strings.isEmpty(recipientData.lastName)})">
-  								<span style="color:#7f7f7f;font-size:13px;" data-th-utext="${recipientData.mail}"> able.cornell@linshare.com </span>
-  							</th:block>
-  						</li>
-   					</th:block>
-				</th:block>
-			</ul>
+        <th:block style="color; #787878; font-size:10px;margin-top:10px; display: inline-block;" th:each="shareLink : ${arrayFileLinks}" >
+            <div style="border-bottom: 1px solid #e3e3e3;display: inline-block;width: 100%;margin-bottom: 3px;">
+                <!--[if mso]>
+                    &nbsp;&nbsp;
+                <![endif]-->
+                <a target="_blank" style="color:#1294dc;text-decoration:none;font-size:13px" th:href="@{${shareLink.href}}">
+                    <span align="left" style="display: inline-block; width: 96%;"  data-th-utext="${shareLink.name}">test-file.jpg</span>
+                </a>
+                <span data-th-if="(${!shareLink.allDownloaded})" align="right" style="text-align: right; display: inline-block;height: 0;width: 6px;height: 6px;border-radius: 50%;background-color: #787878;"></span>
+                <span data-th-if="(${shareLink.allDownloaded})" align="right" style="text-align: right; display: inline-block;height: 0;width: 6px;height: 6px;border-radius: 50%;background-color: #00b800;"></span>
+            </div>
+            <ul style="padding: 5px 17px; margin: 0;list-style-type:disc;" >
+                <th:block  th:each="recipientData: ${shareLink.shares}">
+                    <th:block data-th-if="(${!recipientData.downloaded})" >
+                        <li style="color:#787878;font-size:15px;"  >
+                            <th:block data-th-if="(${!#strings.isEmpty(recipientData.lastName)})" >
+                                <span style="color:#7f7f7f;font-size:13px;">
+                                    <th:block  data-th-utext="${recipientData.firstName}"/>
+                                    <th:block data-th-utext="${recipientData.lastName}"/>
+                                </span>
+                            </th:block>
+                            <span style="color:#7f7f7f;font-size:13px;" data-th-utext="${recipientData.mail}"data-th-if="(${#strings.isEmpty(recipientData.lastName)})">able.cornell@linshare.com </span>
+                        </li>
+                    </th:block>
+                    <th:block data-th-if="(${recipientData.downloaded})">
+                        <li style="color:#00b800;font-size:15px;" >
+                             <th:block data-th-if="(${!#strings.isEmpty(recipientData.lastName)})" >
+                                <span  style="color:#7f7f7f;font-size:13px;">
+                                  <th:block  data-th-utext="${recipientData.firstName}"/>
+                                  <th:block data-th-utext="${recipientData.lastName}"/>
+                               </span>
+                            </th:block>
+                            <th:block  data-th-if="(${#strings.isEmpty(recipientData.lastName)})">
+                                <span style="color:#7f7f7f;font-size:13px;" data-th-utext="${recipientData.mail}"> able.cornell@linshare.com </span>
+                            </th:block>
+                        </li>
+                    </th:block>
+                </th:block>
+            </ul>
 </th:block>
 </div>' WHERE id=1;
 
 
 -- System account for anonymous share
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count) 
-	VALUES (4,'system-anonymous-share-account', 7, 'system-anonymous-share-account', now(),now(), 8, 'en', 'en','en', true, 0, 1, 'IN_USE', false, false, false, 0);
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count)
+    VALUES (4,'system-anonymous-share-account', 7, 'system-anonymous-share-account', now(),now(), 8, 'en', 'en','en', true, 0, 1, 'IN_USE', false, false, false, 0);
 
 -- TASK: UPGRADE_4_2_UPDATE_SYSTEM_TO_ANONYMOUS_ACCOUNT_ON_AUDIT_TRACES
 INSERT INTO upgrade_task
@@ -1333,25 +1333,25 @@ INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_c
 
 -- MailActivation : WORKGROUP_WARN_DELETED_WORKGROUP
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (330, true, true, 0, true);
+    VALUES (330, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (331, true, true, 1, false);
+    VALUES (331, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (332, false, false, 2, true);
+    VALUES (332, false, false, 2, true);
 -- --mail activation
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(40, false, 'WORKGROUP_WARN_DELETED_WORKGROUP', 330, 331, 332, 1, true);
+    VALUES(40, false, 'WORKGROUP_WARN_DELETED_WORKGROUP', 330, 331, 332, 1, true);
 
 -- MailActivation : DRIVE_WARN_DELETED_DRIVE
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (333, true, true, 0, true);
+    VALUES (333, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (334, true, true, 1, false);
+    VALUES (334, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (335, false, false, 2, true);
+    VALUES (335, false, false, 2, true);
 -- --mail activation
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(41, false, 'DRIVE_WARN_DELETED_DRIVE', 333, 334, 335, 1, true);
+    VALUES(41, false, 'DRIVE_WARN_DELETED_DRIVE', 333, 334, 335, 1, true);
 
 -- Mail content WORKGROUP_WARN_DELETED_WORKGROUP
 UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>
@@ -1420,7 +1420,7 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
             <span style="color:#787878;font-size:13px">
               <th:block data-th-utext="#{displayNestedNodeName(${node.name})}"/>
           </li>
-      </ul>  
+      </ul>
     </div>
     </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
@@ -2062,7 +2062,7 @@ UPDATE policy SET status = true , default_status = true, policy = 0 ,system = tr
 -- -- configuration policy update
 UPDATE policy SET status = true , default_status = true, policy = 1 ,system = false WHERE id IN (SELECT policy_configuration_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%');
 -- -- delegation policy update
-UPDATE policy SET status = false , default_status = false, policy = 2 ,system = true WHERE id IN (SELECT policy_delegation_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%'); 
+UPDATE policy SET status = false , default_status = false, policy = 2 ,system = true WHERE id IN (SELECT policy_delegation_id FROM mail_activation WHERE identifier LIKE 'UPLOAD_REQUEST_%');
 
 -- Update default values (integer_max_value integer_default_value) of UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION and UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
 UPDATE functionality_unit
