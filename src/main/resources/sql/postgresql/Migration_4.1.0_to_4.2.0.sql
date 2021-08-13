@@ -508,8 +508,8 @@ UPDATE policy SET status = false , default_status = false, policy = 2 ,system = 
  ALTER TABLE mailing_list_contact DROP mailing_list_contact_index;
 
  -- Refactor change mailing to contact in contact list tables
- ALTER INDEX mailing_list_index RENAME TO contact_list_index;
- ALTER INDEX mailing_list_contact_index RENAME TO contact_list_contact_index;
+ ALTER INDEX IF EXISTS mailing_list_index RENAME TO contact_list_index;
+ ALTER INDEX IF EXISTS mailing_list_contact_index RENAME TO contact_list_contact_index;
 
  ALTER TABLE mailing_list RENAME TO contact_list;
  ALTER TABLE mailing_list_contact RENAME TO contact_list_contact;
