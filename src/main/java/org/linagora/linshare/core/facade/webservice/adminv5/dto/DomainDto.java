@@ -87,6 +87,22 @@ public class DomainDto {
 	@Schema(description = "Parent domain. (only revealed if query param tree is true).  Required for creation.", required = true)
 	private DomainDto parent;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@Schema(description = "Welcome Message")
+	private GenericDto welcomeMessage;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@Schema(description = "Mail Configuration ")
+	private GenericDto mailConfiguration;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@Schema(description = "Mime Policy")
+	private GenericDto mimePolicy;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@Schema(description = "Domain Policy")
+	private GenericDto domainPolicy;
+
 	private DomainDto() {
 		super();
 	}
@@ -137,6 +153,18 @@ public class DomainDto {
 		dto.setModificationDate(domain.getModificationDate());
 		dto.setDefaultEmailLanguage(domain.getExternalMailLocale());
 		dto.setDefaultUserRole(domain.getDefaultRole());
+		dto.setWelcomeMessage(new GenericDto(
+				domain.getCurrentWelcomeMessage().getUuid(),
+				domain.getCurrentWelcomeMessage().getName()));
+		dto.setDomainPolicy(new GenericDto(
+				domain.getPolicy().getUuid(),
+				domain.getPolicy().getLabel()));
+		dto.setMimePolicy(new GenericDto(
+				domain.getMimePolicy().getUuid(),
+				domain.getMimePolicy().getName()));
+		dto.setMailConfiguration(new GenericDto(
+				domain.getCurrentMailConfiguration().getUuid(),
+				domain.getCurrentMailConfiguration().getName()));
 		return dto;
 	}
 
@@ -219,6 +247,38 @@ public class DomainDto {
 
 	public void setType(DomainType type) {
 		this.type = type;
+	}
+
+	public GenericDto getWelcomeMessage() {
+		return welcomeMessage;
+	}
+
+	public void setWelcomeMessage(GenericDto welcomeMessage) {
+		this.welcomeMessage = welcomeMessage;
+	}
+
+	public GenericDto getMailConfiguration() {
+		return mailConfiguration;
+	}
+
+	public void setMailConfiguration(GenericDto mailConfiguration) {
+		this.mailConfiguration = mailConfiguration;
+	}
+
+	public GenericDto getMimePolicy() {
+		return mimePolicy;
+	}
+
+	public void setMimePolicy(GenericDto mimePolicy) {
+		this.mimePolicy = mimePolicy;
+	}
+
+	public GenericDto getDomainPolicy() {
+		return domainPolicy;
+	}
+
+	public void setDomainPolicy(GenericDto domainPolicy) {
+		this.domainPolicy = domainPolicy;
 	}
 
 	public void addChild(DomainDto child) {
