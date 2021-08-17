@@ -39,9 +39,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.DomainFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
@@ -130,6 +133,24 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 		AbstractDomain domain = dto.getType().toDomain(dto);
 		AbstractDomain update = domainService.update(authUser, dto.getUuid(), domain);
 		return DomainDto.getFull(update);
+	}
+
+	@Override
+	public DomainDto delete(String uuid, DomainDto dto) {
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		if (Strings.isNullOrEmpty(uuid)) {
+			Validate.notNull(dto, "Missing domain uuid in the path param");
+			uuid = dto.getUuid();
+			Validate.notEmpty(uuid, "Missing domain uuid in the payload.");
+		}
+		if (uuid.equals(LinShareConstants.rootDomainIdentifier)) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You can't remove root domain.");
+		}
+		AbstractDomain domain = domainService.find(authUser, uuid);
+		// TODO: delete domain or mark it to purge
+		// TODO: delete all users into this domain
+		// TODO: Do we handle nested doamins or or forbid deletion if nested domains exist ? 
+		return DomainDto.getFull(domain);
 	}
 
 }

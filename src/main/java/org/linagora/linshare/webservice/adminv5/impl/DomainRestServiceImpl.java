@@ -38,6 +38,7 @@ package org.linagora.linshare.webservice.adminv5.impl;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -131,11 +132,28 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	})
 	@Override
 	public DomainDto update(
-			@Parameter(description = "Domain uuid to update, if null object.uuid is used", required = false)
+			@Parameter(description = "Domain uuid to update, if null, object.uuid is used", required = false)
 				@PathParam("uuid") String uuid,
 			@Parameter(description = "Domain dto with properties to update", required = false) 
 				DomainDto dto) {
 		return domainFacade.update(uuid, dto);
+	}
+
+	@Path("/{uuid: .*}")
+	@DELETE
+	@Operation(summary = "It allows adminstrator to delete a domain.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public DomainDto delete(
+			@Parameter(description = "Domain uuid to delete, if null, object.uuid is used", required = false)
+				@PathParam("uuid") String uuid,
+			@Parameter(description = "Domain dto to delete, only uuid is required if not set in the path", required = false) 
+				DomainDto dto) {
+		return domainFacade.delete(uuid, dto);
 	}
 
 }

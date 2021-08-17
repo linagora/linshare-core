@@ -49,4 +49,6 @@ public interface DomainRestService {
 
 	DomainDto update(String uuid, DomainDto dto);
 
+	DomainDto delete(String uuid, DomainDto dto);
+
 }

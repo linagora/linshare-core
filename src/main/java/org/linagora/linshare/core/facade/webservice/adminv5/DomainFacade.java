@@ -48,4 +48,6 @@ public interface DomainFacade {
 	DomainDto create(DomainDto dto);
 
 	DomainDto update(String uuid, DomainDto dto);
+
+	DomainDto delete(String uuid, DomainDto dto);
 }
