@@ -33,15 +33,15 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
-public enum UserFilterType {
+public enum GroupFilterType {
 
 	LDAP;
 
-	public static UserFilterType fromString(String s) {
+	public static GroupFilterType fromString(String s) {
 		try {
-			return UserFilterType.valueOf(s.toUpperCase());
+			return GroupFilterType.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing user filter type");
+			throw new IllegalArgumentException("Doesn't match an existing group filter type");
 		}
 	}
 }

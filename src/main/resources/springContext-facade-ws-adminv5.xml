@@ -45,4 +45,12 @@
 			</map>
 		</constructor-arg>
 	</bean>
+	<bean id="wsAdminV5DomainGroupFilterFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.DomainGroupFilterFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg>
+			<map>
+				<entry key="LDAP" value-ref="groupLdapPatternService" />
+			</map>
+		</constructor-arg>
+	</bean>
 </beans>	

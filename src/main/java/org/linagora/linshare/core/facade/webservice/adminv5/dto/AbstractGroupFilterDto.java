@@ -31,17 +31,83 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-public enum UserFilterType {
+import java.util.Date;
 
-	LDAP;
+import org.linagora.linshare.core.domain.constants.GroupFilterType;
 
-	public static UserFilterType fromString(String s) {
-		try {
-			return UserFilterType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing user filter type");
-		}
+import io.swagger.v3.oas.annotations.media.Schema;
+
+public abstract class AbstractGroupFilterDto {
+
+	@Schema(description = "Unique identifier of the resource.", required = true)
+	protected String uuid;
+
+	@Schema(description = "Group filter's name", required = true)
+	protected String name;
+
+	@Schema(description = "Group filter's description", required = false)
+	protected String description;
+
+	@Schema(description = "Group filter's type", required = true)
+	protected GroupFilterType type;
+
+	@Schema(description = "Group filter's creation date", required = false)
+	protected Date creationDate;
+
+	@Schema(description = "Group filter's modification date", required = false)
+	protected Date modificationDate;
+
+	protected AbstractGroupFilterDto() {
+		super();
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public GroupFilterType getType() {
+		return type;
+	}
+
+	public void setType(GroupFilterType type) {
+		this.type = type;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 }

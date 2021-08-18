@@ -53,10 +53,10 @@ public abstract class AbstractUserFilterDto {
 	@Schema(description = "User filter's type", required = true)
 	protected UserFilterType type;
 
-	@Schema(description = "Server's creation date", required = false)
+	@Schema(description = "User filter's creation date", required = false)
 	protected Date creationDate;
 
-	@Schema(description = "Server's modification date", required = false)
+	@Schema(description = "User filter's modification date", required = false)
 	protected Date modificationDate;
 
 	protected AbstractUserFilterDto() {

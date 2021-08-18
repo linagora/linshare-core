@@ -31,17 +31,25 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.facade.webservice.adminv5;
 
-public enum UserFilterType {
+import java.util.List;
 
-	LDAP;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractGroupFilterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPWorkGroupFilterDto;
 
-	public static UserFilterType fromString(String s) {
-		try {
-			return UserFilterType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing user filter type");
-		}
-	}
+public interface DomainGroupFilterFacade {
+
+	List<AbstractGroupFilterDto> findAll(boolean model);
+
+	AbstractGroupFilterDto find(String uuid);
+
+	AbstractGroupFilterDto create(LDAPWorkGroupFilterDto ldapWorkGroupFilterDto);
+
+	AbstractGroupFilterDto update(String uuid, LDAPWorkGroupFilterDto ldapWorkGroupFilterDto);
+
+	AbstractGroupFilterDto delete(String uuid, LDAPWorkGroupFilterDto ldapWorkGroupFilterDto);
+
+	List<DomainDto> findAllDomainsByGroupFilter(String uuid);
 }

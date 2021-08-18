@@ -38,6 +38,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.linagora.linshare.core.domain.constants.GroupFilterType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.GroupLdapPatternDto;
 
 public class GroupLdapPattern extends LdapPattern {
@@ -138,6 +139,14 @@ public class GroupLdapPattern extends LdapPattern {
 	@Override
 	public String toString() {
 		return "GroupLdapPattern [label=" + label + ", uuid=" + uuid + "]";
+	}
+
+	public GroupFilterType getType() {
+		return GroupFilterType.LDAP;
+	}
+
+	public String getAttribute(String field) {
+		return attributes.get(field).getAttribute().trim().toLowerCase();
 	}
 
 	@Override

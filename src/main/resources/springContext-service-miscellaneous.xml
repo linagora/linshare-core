@@ -131,6 +131,7 @@
 		class="org.linagora.linshare.core.service.impl.GroupLdapPatternServiceImpl">
 		<constructor-arg ref="groupPatternRepository" />
 		<constructor-arg ref="ldapGroupProviderRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
 
 	<bean name="groupProviderService"

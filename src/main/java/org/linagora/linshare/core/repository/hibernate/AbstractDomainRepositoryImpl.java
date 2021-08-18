@@ -47,6 +47,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -292,6 +293,14 @@ public class AbstractDomainRepositoryImpl extends
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass(), "abstractDomain");
 		det.createAlias("abstractDomain.userProvider", "userProvider");
 		det.add(Restrictions.eq("userProvider.pattern", domainUserFilter));
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<AbstractDomain> findAllDomainsByGroupFilter(GroupLdapPattern domainGroupFilter) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass(), "abstractDomain");
+		det.createAlias("abstractDomain.groupProvider", "groupProvider");
+		det.add(Restrictions.eq("groupProvider.groupPattern", domainGroupFilter));
 		return findByCriteria(det);
 	}
 }

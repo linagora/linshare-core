@@ -40,11 +40,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.GroupPatternRepository;
 import org.linagora.linshare.core.repository.LdapGroupProviderRepository;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
@@ -55,12 +57,16 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 
 	protected LdapGroupProviderRepository ldapGroupProviderRepository;
 
+	protected final AbstractDomainRepository abstractDomainRepository;
+
 	public GroupLdapPatternServiceImpl(GroupPatternRepository groupPatternRepository,
 			LdapGroupProviderRepository ldapGroupProviderRepository,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			AbstractDomainRepository abstractDomainRepository) {
 		super(sanitizerInputHtmlBusinessService);
 		this.groupPatternRepository = groupPatternRepository;
 		this.ldapGroupProviderRepository = ldapGroupProviderRepository;
+		this.abstractDomainRepository = abstractDomainRepository;
 	}
 
 	@Override
@@ -161,5 +167,18 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 	@Override
 	public List<GroupLdapPattern> findAllPublicGroupPatterns() {
 		return groupPatternRepository.findAllPublicGroupLdapPatterns();
+	}
+
+	@Override
+	public List<GroupLdapPattern> findAllSystemGroupLdapPatterns() {
+		return groupPatternRepository.findAllSystemGroupLdapPatterns();
+	}
+
+	@Override
+	public List<AbstractDomain> findAllDomainsByGroupFilter(Account authUser, GroupLdapPattern domainGroupFilter) {
+		preChecks(authUser);
+		Validate.notNull(domainGroupFilter, "domainGroupFilter must be set.");
+		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByGroupFilter(domainGroupFilter);
+		return domains;
 	}
 }
