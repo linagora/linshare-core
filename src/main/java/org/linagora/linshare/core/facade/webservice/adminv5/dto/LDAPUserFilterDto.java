@@ -63,16 +63,16 @@ public class LDAPUserFilterDto extends AbstractUserFilterDto {
 	@Schema(description = "This query is used by the autocomplete endpoint to search/discover users by their first and last name.", required = true)
 	private String autoCompleteCommandOnFirstAndLastName;
 
-	@Schema(description = "The user's mail attribute.", required = true)
+	@Schema(description = "The user's mail attribute (Ex: for OpenLDAP attribute = 'mail').", required = true)
 	private String userMailAttribute;
 
-	@Schema(description = "The user's firstName", required = true)
+	@Schema(description = "The user's firstName (Ex: for OpenLDAP attribute = 'givenName')", required = true)
 	private String userFirstNameAttribute;
 
-	@Schema(description = "The user's LastName", required = true)
+	@Schema(description = "The user's LastName (Ex: for OpenLDAP attribute = 'sn')", required = true)
 	private String userLastNameAttribute;
 
-	@Schema(description = "The user's uid Attribute", required = true)
+	@Schema(description = "The user's uid Attribute (Ex: for OpenLDAP attribute = 'uid')", required = true)
 	private String userUidAttribute;
 
 	@Schema(description = "The size of the returned page, result of the search query", required = true)
@@ -87,9 +87,6 @@ public class LDAPUserFilterDto extends AbstractUserFilterDto {
 	@Schema(description = "The limit size completion", required = true)
 	private Integer completionSizeLimit;
 
-	@Schema(description = "The dictionary containing the diferent user filter's fields with their values", required = true)
-	private Map<String, LdapAttributeDto> attributes;
-
 	public LDAPUserFilterDto() {
 		super();
 	}
@@ -103,12 +100,10 @@ public class LDAPUserFilterDto extends AbstractUserFilterDto {
 		this.searchUserQuery = userLdapPattern.getSearchUserCommand();
 		this.autoCompleteCommandOnAllAttributes = userLdapPattern.getAutoCompleteCommandOnAllAttributes();
 		this.autoCompleteCommandOnFirstAndLastName = userLdapPattern.getAutoCompleteCommandOnFirstAndLastName();
-		Map<String, LdapAttributeDto> attributes = Maps.newHashMap();
-		for (String key : userLdapPattern.getAttributes().keySet()) {
-			attributes.put(key, new LdapAttributeDto(key,
-				userLdapPattern.getAttribute(key)));
-		}
-		this.attributes = attributes;
+		this.userFirstNameAttribute = userLdapPattern.getAttribute(UserLdapPattern.USER_FIRST_NAME);
+		this.userLastNameAttribute = userLdapPattern.getAttribute(UserLdapPattern.USER_LAST_NAME);
+		this.userMailAttribute = userLdapPattern.getAttribute(UserLdapPattern.USER_MAIL);
+		this.userUidAttribute = userLdapPattern.getAttribute(UserLdapPattern.USER_UID);
 		this.searchPageSize = userLdapPattern.getSearchPageSize();
 		this.searchSizeLimit = userLdapPattern.getSearchSizeLimit();
 		this.completionPageSize = userLdapPattern.getCompletionPageSize();
@@ -213,18 +208,6 @@ public class LDAPUserFilterDto extends AbstractUserFilterDto {
 		this.completionSizeLimit = completionSizeLimit;
 	}
 
-	public Map<String, LdapAttributeDto> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(Map<String, LdapAttributeDto> attributes) {
-		this.attributes = attributes;
-	}
-
-	public String getAttribute(String key) {
-		return attributes.get(key).getAttribute().trim().toLowerCase();
-	}
-
 	/*
 	 * Transformers
 	 */
@@ -247,9 +230,10 @@ public class LDAPUserFilterDto extends AbstractUserFilterDto {
 		ldapPattern.setAutoCompleteCommandOnAllAttributes(getAutoCompleteCommandOnAllAttributes());
 		ldapPattern.setAutoCompleteCommandOnFirstAndLastName(getAutoCompleteCommandOnFirstAndLastName());
 		Map<String, LdapAttribute> attributes = Maps.newHashMap();
-		for (String key : getAttributes().keySet()) {
-			attributes.put(key, new LdapAttribute(key, getAttribute(key)));
-		}
+		attributes.put(UserLdapPattern.USER_FIRST_NAME, new LdapAttribute(UserLdapPattern.USER_FIRST_NAME, getUserFirstNameAttribute(), true));
+		attributes.put(UserLdapPattern.USER_LAST_NAME, new LdapAttribute(UserLdapPattern.USER_LAST_NAME, getUserLastNameAttribute(), true));
+		attributes.put(UserLdapPattern.USER_MAIL, new LdapAttribute(UserLdapPattern.USER_MAIL, getUserMailAttribute(), true));
+		attributes.put(UserLdapPattern.USER_UID, new LdapAttribute(UserLdapPattern.USER_UID, getUserUidAttribute(), false));
 		ldapPattern.setAttributes(attributes);
 		ldapPattern.setSearchPageSize(getSearchPageSize());
 		ldapPattern.setSearchSizeLimit(getSearchSizeLimit());
