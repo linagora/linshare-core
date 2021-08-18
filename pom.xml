@@ -511,6 +511,30 @@
 					<groupId>org.glassfish.jaxb</groupId>
 					<artifactId>jaxb-runtime</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>pdfbox</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>xmpbox</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>preflight</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>jempbox</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>jbig2-imageio</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>pdfbox-tools</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
