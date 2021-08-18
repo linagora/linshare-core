@@ -35,10 +35,13 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.UserFilterType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+@XmlRootElement(name = "UserFilter")
 public abstract class AbstractUserFilterDto {
 
 	@Schema(description = "Unique identifier of the resource.", required = true)
