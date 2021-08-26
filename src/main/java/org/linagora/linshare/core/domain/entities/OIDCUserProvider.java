@@ -35,11 +35,54 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+import java.util.UUID;
+
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 
 public class OIDCUserProvider extends UserProvider {
 
+	private String domainDiscriminator;
+
+	private Boolean checkExternalUserID;
+
+	public OIDCUserProvider() {
+		super();
+	}
+
+	public OIDCUserProvider(String domainDiscriminator, Boolean checkExternalUserID) {
+		super();
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+		this.uuid = UUID.randomUUID().toString();
+		this.domainDiscriminator = domainDiscriminator;
+		this.checkExternalUserID = checkExternalUserID;
+	}
+
+	public String getDomainDiscriminator() {
+		return domainDiscriminator;
+	}
+
+	public void setDomainDiscriminator(String domainDiscriminator) {
+		this.domainDiscriminator = domainDiscriminator;
+	}
+
+	public Boolean getCheckExternalUserID() {
+		return checkExternalUserID;
+	}
+
+	public void setCheckExternalUserID(Boolean checkExternlUserID) {
+		this.checkExternalUserID = checkExternlUserID;
+	}
+
+	@Override
+	public String toString() {
+		return "OIDCUserProvider [domainDiscriminator=" + domainDiscriminator + ", checkExternalUserID="
+				+ checkExternalUserID + ", uuid=" + uuid + "]";
+	}
+
 	// TODO: need to be fix :)
+	@Deprecated
 	@Override
 	public LDAPUserProviderDto toLDAPUserProviderDto() {
 		// TODO Auto-generated method stub

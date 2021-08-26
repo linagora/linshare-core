@@ -37,9 +37,11 @@
 	<bean id="adminv5DomainUserFilterRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainUserFilterRestServiceImpl">
 		<constructor-arg ref="wsAdminV5DomainUserFilterFacade" />
 	</bean>
-
 	<bean id="adminv5DomainGroupFilterRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainGroupFilterRestServiceImpl">
 		<constructor-arg ref="wsAdminV5DomainGroupFilterFacade" />
+	</bean>
+	<bean id="adminv5UserProviderRestService" class="org.linagora.linshare.webservice.adminv5.impl.UserProviderRestServiceImpl">
+		<constructor-arg ref="wsAdminV5userProviderFacade" />
 	</bean>
 	<jaxrs:server id="restAdminV5Container" address="/rest/admin/v5">
 		<jaxrs:serviceBeans>
@@ -53,6 +55,7 @@
 			<ref bean="adminv5RemoteServerRestService"/>
 			<ref bean="adminv5DomainUserFilterRestService"/>
 			<ref bean="adminv5DomainGroupFilterRestService"/>
+			<ref bean="adminv5UserProviderRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

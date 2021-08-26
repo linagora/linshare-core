@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2021 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,25 +33,22 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.adminv5;
 
-package org.linagora.linshare.core.domain.constants;
+import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractUserProviderDto;
 
-public enum UserProviderType {
+public interface UserProviderRestService {
 
-	LDAP_PROVIDER, OIDC_PROVIDER;
+	Set<AbstractUserProviderDto> findAll(String domain);
 
-	public static UserProviderType fromString(String s) {
-		try {
-			return UserProviderType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(
-					TechnicalErrorCode.DATA_INCOHERENCE,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
-	}
+	AbstractUserProviderDto find(String domain, String uuid);
+
+	AbstractUserProviderDto create(String domain, AbstractUserProviderDto dto);
+
+	AbstractUserProviderDto update(String domain, String uuid, AbstractUserProviderDto dto);
+
+	AbstractUserProviderDto delete(String domain, String uuid, AbstractUserProviderDto dto);
 
 }

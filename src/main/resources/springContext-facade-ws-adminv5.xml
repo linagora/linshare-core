@@ -53,4 +53,12 @@
 			</map>
 		</constructor-arg>
 	</bean>
+	<bean id="wsAdminV5userProviderFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.UserProviderFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="domainService" />
+		<constructor-arg ref="userProviderService" />
+		<constructor-arg ref="ldapConnectionService" />
+		<constructor-arg ref="userProviderRepository" />
+		<constructor-arg ref="ldapUserProviderRepository" />
+	</bean>
 </beans>	

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-	<class name="org.linagora.linshare.core.domain.entities.UserProvider" table="user_provider" lazy="true">
+	<class name="org.linagora.linshare.core.domain.entities.UserProvider" table="user_provider" lazy="false">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
@@ -12,14 +12,16 @@
 		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
-		<subclass name="org.linagora.linshare.core.domain.entities.LdapUserProvider" discriminator-value="LDAP_PROVIDER" lazy="true">
+		<subclass name="org.linagora.linshare.core.domain.entities.LdapUserProvider" discriminator-value="LDAP_PROVIDER">
 			<property name="baseDn" column="base_dn" type="string" length="255" not-null="false" lazy="true" />
 			<many-to-one name="ldapConnection" column="ldap_connection_id" class="org.linagora.linshare.core.domain.entities.LdapConnection" not-null="true" lazy="proxy" >
 			</many-to-one>
 			<many-to-one name="pattern" column="ldap_pattern_id" class="org.linagora.linshare.core.domain.entities.UserLdapPattern" not-null="true" lazy="proxy"  >
 			</many-to-one>
 		</subclass>
-		<subclass name="org.linagora.linshare.core.domain.entities.OIDCUserProvider" discriminator-value="OIDC" lazy="true">
+		<subclass name="org.linagora.linshare.core.domain.entities.OIDCUserProvider" discriminator-value="OIDC_PROVIDER">
+			<property name="domainDiscriminator" column="domain_discriminator" type="string" length="255" not-null="true" />
+			<property name="checkExternalUserID" column="check_external_user_id" type="boolean" not-null="false" lazy="false"/>
 		</subclass>
 	</class>
 </hibernate-mapping>

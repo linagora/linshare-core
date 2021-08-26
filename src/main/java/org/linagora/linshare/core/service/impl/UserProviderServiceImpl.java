@@ -151,7 +151,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		if (provider == null) {
 			throw new BusinessException(
 					BusinessErrorCode.USER_PROVIDER_NOT_FOUND,
-					"Domain pattern identifier no found.");
+					"LDAP User Provider identifier no found.");
 		}
 		return provider;
 	}
@@ -319,7 +319,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return user;
-			} else if (UserProviderType.OIDC.equals(up.getType())) {
+			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 				if(!authentication.isAuthenticated()) {
 					// it means we are trying to find/create this profile during authentication process.
@@ -362,7 +362,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return users;
-			} else if (UserProviderType.OIDC.equals(up.getType())) {
+			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				PageContainer<User> container = new PageContainer<>(0,50);
 				container = userRepository.findAll(domain, Order.asc("modificationDate"), mail, firstName,
 						lastName, null, null, null, null, null, container);
@@ -407,7 +407,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				}
 				users.stream().map(user -> {user.setDomain(domain); return user;});
 				return users;
-			} else if (UserProviderType.OIDC.equals(up.getType())) {
+			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				PageContainer<User> container = new PageContainer<>(0,50);
 				container = userRepository.findAll(domain, Order.asc("modificationDate"), pattern, null,
 						null, null, null, null, null, null, container);
@@ -452,7 +452,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				}
 				users.stream().map(user -> {user.setDomain(domain); return user;});
 				return users;
-			} else if (UserProviderType.OIDC.equals(up.getType())) {
+			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				PageContainer<User> container = new PageContainer<>(0,50);
 				container = userRepository.findAll(domain, Order.asc("modificationDate"), null, firstName,
 						lastName, null, null, null, null, null,
@@ -485,7 +485,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return result;
-			} else if (UserProviderType.OIDC.equals(up.getType())) {
+			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				User user = userRepository.findByMailAndDomain(domain.getUuid(), mail);
 				if (user != null)
 					return true;
@@ -516,7 +516,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return user;
-			} else if (UserProviderType.OIDC.equals(up.getType())) {
+			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				logger.debug("UserProviderType.OIDC does not provide an authentication through this method.");
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
@@ -547,7 +547,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					user.setDomain(domain);
 				}
 				return user;
-			} else if (UserProviderType.OIDC.equals(up.getType())) {
+			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 				if(authentication !=null && !authentication.isAuthenticated()) {
 					// It means we are trying to find this profile during authentication process.
