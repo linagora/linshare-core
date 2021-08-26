@@ -1662,8 +1662,8 @@
 
 	<properties>
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
-		<cxf.version>3.4.3</cxf.version>
-		<cxf.swagger.ui.version>3.49.0</cxf.swagger.ui.version>
+		<cxf.version>3.4.4</cxf.version>
+		<cxf.swagger.ui.version>3.51.2</cxf.swagger.ui.version>
 		<guava.version>30.1.1-jre</guava.version>
 		<h2.version>1.4.200</h2.version>
 		<hibernate.version>5.4.30.Final</hibernate.version>
