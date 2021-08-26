@@ -69,4 +69,9 @@ public class GenericDto {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public String toString() {
+		return "GenericDto [uuid=" + uuid + ", name=" + name + "]";
+	}
 }
