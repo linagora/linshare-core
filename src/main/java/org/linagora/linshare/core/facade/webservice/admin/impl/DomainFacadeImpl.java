@@ -41,10 +41,13 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.UserProviderType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.domain.entities.DriveProvider;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
+import org.linagora.linshare.core.domain.entities.GroupProvider;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
@@ -56,6 +59,7 @@ import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -239,7 +243,17 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		return ldapUserProvider;
 	}
 
-	private LdapUserProvider updateLdapUserProvider(DomainDto domainDto) {
+	private UserProvider updateLdapUserProvider(DomainDto domainDto) {
+		AbstractDomain domain = abstractDomainService.findById(domainDto.getIdentifier());
+		if (domain.getUserProvider() != null) {
+			// If current provider is ldap, we handle it, otherwise we will need to use the new api
+			UserProviderType type = domain.getUserProvider().getType();
+			if (!UserProviderType.LDAP_PROVIDER.equals(type)) {
+				String message = "Can update existing UserProvider (" + type + ") ! See new admin api. Update skipped.";
+				logger.error(message);
+				return domain.getUserProvider();
+			}
+		}
 		LdapUserProvider ldapUserProvider = null;
 		List<LDAPUserProviderDto> providers = domainDto.getProviders();
 		if (providers != null && !providers.isEmpty()) {
@@ -318,11 +332,11 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
 		AbstractDomain domain = getDomain(domainDto);
-		LdapUserProvider ldapUserProvider = updateLdapUserProvider(domainDto);
+		UserProvider ldapUserProvider = updateLdapUserProvider(domainDto);
 		domain.setUserProvider(ldapUserProvider);
-		LdapGroupProvider ldapGroupProvider = updateLdapGroupProvider(domainDto);
+		GroupProvider ldapGroupProvider = updateLdapGroupProvider(domainDto);
 		domain.setGroupProvider(ldapGroupProvider);
-		LdapDriveProvider ldapDriveProvider = updateLdapDriveProvider(domainDto);
+		DriveProvider ldapDriveProvider = updateLdapDriveProvider(domainDto);
 		domain.setDriveProvider(ldapDriveProvider);
 		return DomainDto.getFull(abstractDomainService.updateDomain(authUser, domain));
 	}

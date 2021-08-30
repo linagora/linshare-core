@@ -64,7 +64,11 @@ public abstract class UserProvider extends Provider {
 		this.userProviderType = userProviderType;
 	}
 
-	// TODO Just create and return an UserProviderDto or a map
+	/**
+	 * Do not use it any more. deprecated.
+	 * @return
+	 */
+	@Deprecated
 	public abstract LDAPUserProviderDto toLDAPUserProviderDto();
 
 }
