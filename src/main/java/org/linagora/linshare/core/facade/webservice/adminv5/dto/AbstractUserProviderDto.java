@@ -45,6 +45,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(
 	name = "UserProvider",
@@ -71,8 +72,11 @@ public abstract class AbstractUserProviderDto {
 	@Schema(description = "UserProvider's modification date", required = false)
 	protected Date modificationDate;
 
+
 	@Schema(required = true, description = "Default value is the only allowed and mandatory value.")
 	public abstract UserProviderType getType();
+	// we need to add this property for deserialization, jackson does not recognize  this property. weird.
+	protected UserProviderType type;
 
 	protected AbstractUserProviderDto() {
 		super();
