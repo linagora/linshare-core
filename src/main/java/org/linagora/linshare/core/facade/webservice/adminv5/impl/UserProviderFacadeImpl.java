@@ -61,7 +61,8 @@ import org.linagora.linshare.core.service.DomainService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.UserProviderService;
 
-import com.beust.jcommander.internal.Sets;
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements UserProviderFacade {
 
@@ -99,6 +100,10 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		if (up != null) {
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
 				res.add(new LDAPUserProviderDto(domain, (LdapUserProvider) up));
+			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
+				res.add(new OIDCUserProviderDto(domain, (OIDCUserProvider) up));
+			} else {
+				throw new BusinessException(BusinessErrorCode.USER_PROVIDER_UNSUPPORTED_TYPE, "UserProvider not supported yet");
 			}
 		}
 		return res;
@@ -113,10 +118,16 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 			logger.debug("UserProvider {} was not found", uuid);
 			throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 		}
+		return toDto(domain, up);
+	}
+
+	private AbstractUserProviderDto toDto(AbstractDomain domain, UserProvider up) {
 		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
 			return new LDAPUserProviderDto(domain, (LdapUserProvider) up);
+		} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
+			return new OIDCUserProviderDto(domain, (OIDCUserProvider) up);
 		}
-		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
+		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_UNSUPPORTED_TYPE, "UserProvider not supported yet");
 	}
 
 	@Override
@@ -149,6 +160,8 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionUuid);
 			UserLdapPattern pattern = userProviderService.findDomainPattern(userFilterUuid);
 			UserProvider userProvider = userProviderRepository.create(new LdapUserProvider(baseDn, ldapConnection, pattern));
+			// no update ? I think implicit opened transaction do the job
+			domain.setUserProvider(userProvider);
 			return new LDAPUserProviderDto(domain, (LdapUserProvider)userProvider);
 		} else if (UserProviderType.OIDC_PROVIDER.equals(dto.getType())) {
 			OIDCUserProviderDto userProviderDto = (OIDCUserProviderDto)dto;
@@ -157,6 +170,8 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 					new OIDCUserProvider(
 							userProviderDto.getDomainDiscriminator(),
 							userProviderDto.isCheckExternalUserID()));
+			// no update ? I think implicit opened transaction do the job
+			domain.setUserProvider(userProvider);
 			return new OIDCUserProviderDto(domain, (OIDCUserProvider)userProvider);
 		}
 		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
@@ -164,46 +179,80 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 
 	@Override
 	public AbstractUserProviderDto update(String domainUuid, String uuid, AbstractUserProviderDto dto) {
-		// TODO Auto-generated method stub
-		return null;
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		Validate.notNull(dto, "user provider must be set.");
+		Validate.notNull(dto.getType(), "user provider must be set.");
+		AbstractDomain domain = domainService.find(authUser, domainUuid);
+		// TODO: we need to put all the following lines of code in a new UserProviderService(s)
+		if (domain.isRootDomain() || domain.isGuestDomain()) {
+			throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not create an UserProvider for this kind of domain.");
+		}
+		if (Strings.isNullOrEmpty(uuid)) {
+			Validate.notNull(dto, "user provider must be set.");
+			uuid = dto.getUuid();
+			Validate.notEmpty(uuid, "Missing user provider uuid in the payload.");
+		}
+		UserProvider userProvider = findByService(uuid);
+		if (UserProviderType.LDAP_PROVIDER.equals(dto.getType())) {
+			LDAPUserProviderDto userProviderDto = (LDAPUserProviderDto)dto;
+			// user filter
+			Validate.notNull(userProviderDto.getUserFilter(), "UserFilter is mandatory for user provider update");
+			String userFilterUuid = userProviderDto.getUserFilter().getUuid();
+			Validate.notEmpty(userFilterUuid, "UserFilter uuid is mandatory for user provider update");
+			// ldap connection
+			Validate.notNull(userProviderDto.getLdapServer(), "LDAP Connection is mandatory for user provider update");
+			String ldapConnectionUuid = userProviderDto.getLdapServer().getUuid();
+			Validate.notEmpty(ldapConnectionUuid, "LDAP connection uuid is mandatory for user provider update");
+			// baseDn
+			String baseDn = userProviderDto.getBaseDn();
+			Validate.notEmpty(baseDn, "baseDn is mandatory for user provider update");
+
+			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionUuid);
+			UserLdapPattern pattern = userProviderService.findDomainPattern(userFilterUuid);
+
+			LdapUserProvider provider = (LdapUserProvider)userProvider;
+			provider.setBaseDn(baseDn);
+			provider.setLdapConnection(ldapConnection);
+			provider.setPattern(pattern);
+			userProvider = userProviderRepository.update(provider);
+			return new LDAPUserProviderDto(domain, (LdapUserProvider)userProvider);
+		} else if (UserProviderType.OIDC_PROVIDER.equals(dto.getType())) {
+			OIDCUserProviderDto userProviderDto = (OIDCUserProviderDto)dto;
+			Validate.notEmpty(userProviderDto.getDomainDiscriminator(), "Domain discriminator is mandatory for user provider update");
+			OIDCUserProvider provider = (OIDCUserProvider)userProvider;
+			provider.setCheckExternalUserID(userProviderDto.isCheckExternalUserID());
+			provider.setDomainDiscriminator(userProviderDto.getDomainDiscriminator());
+			userProvider = userProviderRepository.update(provider);
+			return new OIDCUserProviderDto(domain, (OIDCUserProvider)userProvider);
+		}
+		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 	}
 
 	@Override
 	public AbstractUserProviderDto delete(String domainUuid, String uuid, AbstractUserProviderDto dto) {
-		// TODO Auto-generated method stub
-		return null;
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		AbstractDomain domain = domainService.find(authUser, domainUuid);
+		// TODO: we need to put all the following lines of code in a new UserProviderService(s)
+		if (domain.isRootDomain() || domain.isGuestDomain()) {
+			throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not create an UserProvider for this kind of domain.");
+		}
+		if (Strings.isNullOrEmpty(uuid)) {
+			Validate.notNull(dto, "user provider must be set.");
+			uuid = dto.getUuid();
+			Validate.notEmpty(uuid, "Missing user provider uuid in the payload.");
+		}
+		UserProvider userProvider = findByService(uuid);
+		// no update ? I think implicit opened transaction do the job
+		domain.setUserProvider(null);
+		userProviderRepository.delete(userProvider);
+		return toDto(domain, userProvider);
 	}
 
-//	@Override
-//	public DomainDto update(String uuid, DomainDto dto) {
-//		User authUser = checkAuthentication(Role.ADMIN);
-//		Validate.notNull(dto, "Missing payload.");
-//		if (!Strings.isNullOrEmpty(uuid)) {
-//			dto.setUuid(uuid);
-//		}
-//		Validate.notEmpty(dto.getUuid(), "DomainDto's uuid or uuid path param must be set");
-//		Validate.notNull(dto.getType(), "Missing domain type");
-//		AbstractDomain domain = dto.getType().toDomain(dto);
-//		AbstractDomain update = domainService.update(authUser, dto.getUuid(), domain);
-//		return DomainDto.getFull(update);
-//	}
-//
-//	@Override
-//	public DomainDto delete(String uuid, DomainDto dto) {
-//		User authUser = checkAuthentication(Role.SUPERADMIN);
-//		if (Strings.isNullOrEmpty(uuid)) {
-//			Validate.notNull(dto, "Missing domain uuid in the path param");
-//			uuid = dto.getUuid();
-//			Validate.notEmpty(uuid, "Missing domain uuid in the payload.");
-//		}
-//		if (uuid.equals(LinShareConstants.rootDomainIdentifier)) {
-//			throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You can't remove root domain.");
-//		}
-//		AbstractDomain domain = domainService.find(authUser, uuid);
-//		// TODO: delete domain or mark it to purge
-//		// TODO: delete all users into this domain
-//		// TODO: Do we handle nested doamins or or forbid deletion if nested domains exist ? 
-//		return DomainDto.getFull(domain);
-//	}
-
+	private UserProvider findByService(String uuid) {
+		UserProvider userProvider = userProviderRepository.findByUuid(uuid);
+		if (userProvider == null) {
+			throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
+		}
+		return userProvider;
+	}
 }
