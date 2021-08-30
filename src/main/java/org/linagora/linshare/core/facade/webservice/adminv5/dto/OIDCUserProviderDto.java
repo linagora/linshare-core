@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.linagora.linshare.core.domain.constants.UserProviderType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
@@ -44,7 +42,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@XmlRootElement(name = "OIDCUserProvider")
 @Schema(name = "OIDCUserProvider", description = "A OIDC user provider")
 public class OIDCUserProviderDto extends AbstractUserProviderDto {
 

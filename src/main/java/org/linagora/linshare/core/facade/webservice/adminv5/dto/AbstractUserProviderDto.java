@@ -35,9 +35,6 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-
 import org.linagora.linshare.core.domain.constants.UserProviderType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -63,11 +60,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 	@Type(value = LDAPUserProviderDto.class, name="LDAP_PROVIDER"),
 	@Type(value = OIDCUserProviderDto.class, name="OIDC_PROVIDER"),
 })
-@XmlRootElement(name = "UserProvider")
-@XmlSeeAlso({
-	LDAPUserProviderDto.class,
-	OIDCUserProviderDto.class
-	})
 public abstract class AbstractUserProviderDto {
 
 	@Schema(description = "UserProvider's uuid", required = false)

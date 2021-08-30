@@ -33,9 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.linagora.linshare.core.domain.constants.UserProviderType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -45,7 +42,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@XmlRootElement(name = "LDAPUserProvider")
 @Schema(name = "LDAPUserProvider", description = "A LDAP user provider")
 public class LDAPUserProviderDto extends AbstractUserProviderDto {
 
@@ -135,7 +131,6 @@ public class LDAPUserProviderDto extends AbstractUserProviderDto {
 	private LdapServerDto ldapServer;
 
 	@Schema(required = true)
-	@XmlElement(name = "UserFilter")
 	private UserFilterDto userFilter;
 
 	@Schema(description = "BaseDn, starting point of the LDAP queries", required = true)
