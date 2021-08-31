@@ -16,9 +16,9 @@
 
 		<subclass name="org.linagora.linshare.core.domain.entities.LdapUserProvider" discriminator-value="LDAP_PROVIDER">
 			<property name="baseDn" column="base_dn" type="string" length="255" not-null="false" lazy="true" />
-			<many-to-one name="ldapConnection" column="ldap_connection_id" class="org.linagora.linshare.core.domain.entities.LdapConnection" not-null="true" lazy="proxy" >
+			<many-to-one name="ldapConnection" column="ldap_connection_id" class="org.linagora.linshare.core.domain.entities.LdapConnection" lazy="proxy" >
 			</many-to-one>
-			<many-to-one name="pattern" column="ldap_pattern_id" class="org.linagora.linshare.core.domain.entities.UserLdapPattern" not-null="true" lazy="proxy"  >
+			<many-to-one name="pattern" column="ldap_pattern_id" class="org.linagora.linshare.core.domain.entities.UserLdapPattern" lazy="proxy"  >
 			</many-to-one>
 		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.OIDCUserProvider" discriminator-value="OIDC_PROVIDER">
