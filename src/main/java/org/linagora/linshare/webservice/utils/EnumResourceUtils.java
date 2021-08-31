@@ -36,6 +36,7 @@
 
 package org.linagora.linshare.webservice.utils;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -70,14 +71,14 @@ public class EnumResourceUtils {
 	public List<String> getAllEnumsName() {
 		List<String> res = Lists.newArrayList();
 		List<String> excludedEnums = Lists.newArrayList();
-		excludedEnums.add("log_action_v1");
-		excludedEnums.add("upload_proposition_action_type");
-		excludedEnums.add("upload_proposition_exception_rule_type");
-		excludedEnums.add("upload_proposition_match_type");
-		excludedEnums.add("upload_proposition_rule_field_type");
-		excludedEnums.add("upload_proposition_rule_operator_type");
-		excludedEnums.add("upload_proposition_status");
-		excludedEnums.add("upload_request_history_event_type");
+		excludedEnums.add("LOG_ACTION_V1");
+		excludedEnums.add("UPLOAD_PROPOSITION_ACTION_TYPE");
+		excludedEnums.add("UPLOAD_PROPOSITION_EXCEPTION_RULE_TYPE");
+		excludedEnums.add("UPLOAD_PROPOSITION_MATCH_TYPE");
+		excludedEnums.add("UPLOAD_PROPOSITION_RULE_FIELD_TYPE");
+		excludedEnums.add("UPLOAD_PROPOSITION_RULE_OPERATOR_TYPE");
+		excludedEnums.add("UPLOAD_PROPOSITION_STATUS");
+		excludedEnums.add("UPLOAD_REQUEST_HISTORY_EVENT_TYPE");
 		// Iterate over all enums under ENUMS_PATH package
 		for (final Class<? extends Enum> e : new Reflections(ENUMS_PATH)
 				.getSubTypesOf(Enum.class)) {
@@ -86,6 +87,7 @@ public class EnumResourceUtils {
 				res.add(enumIn);
 			}
 		}
+		Collections.sort(res);
 		return res;
 	}
 
@@ -112,9 +114,9 @@ public class EnumResourceUtils {
 
 			for (Object o : clazz.getEnumConstants()) {
 				Enum<?> e = (Enum<?>) o;
-
 				ret.add(e.toString());
 			}
+			Collections.sort(ret);
 			return ret;
 		} catch (ClassNotFoundException cnf) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
@@ -127,6 +129,6 @@ public class EnumResourceUtils {
 	}
 
 	private String toUnderscore(String from) {
-		return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, from);
+		return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, from).toUpperCase();
 	}
 }
