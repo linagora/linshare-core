@@ -82,6 +82,17 @@ SET client_min_messages = warning;
 
 
 ---- Here your queries
+ALTER TABLE user_provider ADD COLUMN domain_discriminator VARCHAR(255);
+ALTER TABLE user_provider ADD COLUMN check_external_user_id  bool;
+ALTER TABLE user_provider ADD COLUMN use_email_locale_claim  bool;
+ALTER TABLE user_provider ADD COLUMN use_role_claim  bool;
+ALTER TABLE user_provider ADD COLUMN move_between_domain_claim bool;
+ALTER TABLE user_provider ADD COLUMN use_access_claim bool;
+
+ALTER TABLE user_provider ALTER COLUMN ldap_connection_id DROP NOT NULL;
+ALTER TABLE user_provider ALTER COLUMN ldap_pattern_id DROP NOT NULL;
+
+
 
 ---- End of your queries
 

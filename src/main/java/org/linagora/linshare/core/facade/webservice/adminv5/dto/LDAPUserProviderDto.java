@@ -141,10 +141,7 @@ public class LDAPUserProviderDto extends AbstractUserProviderDto {
 	}
 
 	public LDAPUserProviderDto(AbstractDomain domain, LdapUserProvider up) {
-		super();
-		this.uuid = up.getUuid();
-		this.creationDate = up.getCreationDate();
-		this.modificationDate = up.getModificationDate();
+		super(up);
 		this.ldapServer = new LdapServerDto(
 				up.getLdapConnection().getUuid(),
 				up.getLdapConnection().getLabel());
@@ -152,6 +149,7 @@ public class LDAPUserProviderDto extends AbstractUserProviderDto {
 				up.getPattern().getUuid(),
 				up.getPattern().getLabel());
 		this.baseDn = up.getBaseDn();
+		this.type = UserProviderType.LDAP_PROVIDER;
 	}
 
 

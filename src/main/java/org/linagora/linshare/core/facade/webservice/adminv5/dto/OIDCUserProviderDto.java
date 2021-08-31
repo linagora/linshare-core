@@ -50,8 +50,30 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 	private String domainDiscriminator;
 
 	@Schema(description = "Whether or not we should compare the external unique identifier we store at profile "
-			+ "creation with the one provided by OIDC when user authenticate himself", required = true)
-	private boolean checkExternalUserID;
+			+ "creation time with the one provided by OIDC when user authenticate himself",
+			required = false,
+			defaultValue = "false")
+	private Boolean checkExternalUserID;
+
+	@Schema(description = "Whether or not we should use access claim value to grant access to LinShare.",
+			required = false,
+			defaultValue = "false")
+	private Boolean useAccessClaim;
+
+	@Schema(description = "Whether or not we should use role claim value to use it for profile creation at login time.",
+			required = false,
+			defaultValue = "false")
+	private Boolean useRoleClaim;
+
+	@Schema(description = "Whether or not we should use email locale claim value to use it for profile creation at login time.",
+			required = false,
+			defaultValue = "false")
+	private Boolean useEmailLocaleClaim;
+
+//	@Schema(description = "Whether or not we should move a user from one domain to another automatically",
+//			required = false,
+//			defaultValue = "false")
+//	private Boolean useMoveBetweenDomainClaim;
 
 	@Schema(defaultValue = "OIDC_PROVIDER")
 	@Override
@@ -64,12 +86,13 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 	}
 
 	public OIDCUserProviderDto(AbstractDomain domain, OIDCUserProvider up) {
-		super();
-		this.uuid = up.getUuid();
-		this.creationDate = up.getCreationDate();
-		this.modificationDate = up.getModificationDate();
+		super(up);
 		this.checkExternalUserID = up.getCheckExternalUserID();
 		this.domainDiscriminator = up.getDomainDiscriminator();
+		this.useEmailLocaleClaim = up.getUseEmailLocaleClaim();
+		this.useAccessClaim = up.getUseAccessClaim();
+		this.useRoleClaim = up.getUseRoleClaim();
+		this.type = UserProviderType.OIDC_PROVIDER;
 	}
 
 	public String getDomainDiscriminator() {
@@ -80,18 +103,43 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 		this.domainDiscriminator = domainDiscriminator;
 	}
 
-	public boolean isCheckExternalUserID() {
+	public Boolean getCheckExternalUserID() {
 		return checkExternalUserID;
 	}
 
-	public void setCheckExternalUserID(boolean checkExternalUserID) {
+	public void setCheckExternalUserID(Boolean checkExternalUserID) {
 		this.checkExternalUserID = checkExternalUserID;
+	}
+
+	public Boolean getUseAccessClaim() {
+		return useAccessClaim;
+	}
+
+	public void setUseAccessClaim(Boolean useAccessClaim) {
+		this.useAccessClaim = useAccessClaim;
+	}
+
+	public Boolean getUseRoleClaim() {
+		return useRoleClaim;
+	}
+
+	public void setUseRoleClaim(Boolean useRoleClaim) {
+		this.useRoleClaim = useRoleClaim;
+	}
+
+	public Boolean getUseEmailLocaleClaim() {
+		return useEmailLocaleClaim;
+	}
+
+	public void setUseEmailLocaleClaim(Boolean useEmailLocaleClaim) {
+		this.useEmailLocaleClaim = useEmailLocaleClaim;
 	}
 
 	@Override
 	public String toString() {
-		return "OIDCUserProvider [domainDiscriminator=" + domainDiscriminator + ", checkExternalUserID="
-				+ checkExternalUserID + "]";
+		return "OIDCUserProviderDto [domainDiscriminator=" + domainDiscriminator + ", checkExternalUserID="
+				+ checkExternalUserID + ", useAccessClaim=" + useAccessClaim + ", useRoleClaim=" + useRoleClaim
+				+ ", useEmailLocaleClaim=" + useEmailLocaleClaim + "]";
 	}
 
 }

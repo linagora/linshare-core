@@ -152,7 +152,7 @@ public class UserProviderRepositoryImplTest {
 		int actualCount = ldapUserProviderRepository.findAll().size();
 		
 		
-		LdapUserProvider provider = new LdapUserProvider(baseDn,ldapconnexion,pattern);
+		LdapUserProvider provider = new LdapUserProvider(null, baseDn,ldapconnexion,pattern);
 		ldapUserProviderRepository.create(provider);
 		Assertions.assertNotNull(provider.getId());
 		

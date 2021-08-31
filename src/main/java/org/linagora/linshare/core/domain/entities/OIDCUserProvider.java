@@ -35,9 +35,6 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.Date;
-import java.util.UUID;
-
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 
 public class OIDCUserProvider extends UserProvider {
@@ -46,17 +43,26 @@ public class OIDCUserProvider extends UserProvider {
 
 	private Boolean checkExternalUserID;
 
+	private Boolean useAccessClaim;
+
+	private Boolean useRoleClaim;
+
+	private Boolean useEmailLocaleClaim;
+
+	private Boolean moveBetweenDomainClaim;
+
 	public OIDCUserProvider() {
 		super();
 	}
 
-	public OIDCUserProvider(String domainDiscriminator, Boolean checkExternalUserID) {
-		super();
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
-		this.uuid = UUID.randomUUID().toString();
+	public OIDCUserProvider(AbstractDomain domain, String domainDiscriminator) {
+		super(domain);
 		this.domainDiscriminator = domainDiscriminator;
-		this.checkExternalUserID = checkExternalUserID;
+		this.checkExternalUserID = false;
+		this.useAccessClaim = false;
+		this.useRoleClaim = false;
+		this.useEmailLocaleClaim = false;
+		this.moveBetweenDomainClaim = false;
 	}
 
 	public String getDomainDiscriminator() {
@@ -75,17 +81,50 @@ public class OIDCUserProvider extends UserProvider {
 		this.checkExternalUserID = checkExternlUserID;
 	}
 
+	public Boolean getUseAccessClaim() {
+		return useAccessClaim;
+	}
+
+	public void setUseAccessClaim(Boolean useAccessClaim) {
+		this.useAccessClaim = useAccessClaim;
+	}
+
+	public Boolean getUseRoleClaim() {
+		return useRoleClaim;
+	}
+
+	public void setUseRoleClaim(Boolean useRoleClaim) {
+		this.useRoleClaim = useRoleClaim;
+	}
+
+	public Boolean getUseEmailLocaleClaim() {
+		return useEmailLocaleClaim;
+	}
+
+	public void setUseEmailLocaleClaim(Boolean useEmailLocaleClaim) {
+		this.useEmailLocaleClaim = useEmailLocaleClaim;
+	}
+
+	public Boolean getMoveBetweenDomainClaim() {
+		return moveBetweenDomainClaim;
+	}
+
+	public void setMoveBetweenDomainClaim(Boolean moveBetweenDomainClaim) {
+		this.moveBetweenDomainClaim = moveBetweenDomainClaim;
+	}
+
 	@Override
 	public String toString() {
 		return "OIDCUserProvider [domainDiscriminator=" + domainDiscriminator + ", checkExternalUserID="
-				+ checkExternalUserID + ", uuid=" + uuid + "]";
+				+ checkExternalUserID + ", useAccessClaim=" + useAccessClaim + ", useRoleClaim=" + useRoleClaim
+				+ ", useEmailLocalClaim=" + useEmailLocaleClaim + ", moveBetweenDomainClaim="
+				+ moveBetweenDomainClaim + "]";
 	}
 
-	// TODO: need to be fix :)
 	@Deprecated
 	@Override
 	public LDAPUserProviderDto toLDAPUserProviderDto() {
-		// TODO Auto-generated method stub
+		// it is not used anymore, only kept for admin/v4 support.
 		return null;
 	}
 }

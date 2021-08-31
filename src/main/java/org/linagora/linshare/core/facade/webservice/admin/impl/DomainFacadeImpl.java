@@ -238,7 +238,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			Validate.notEmpty(baseDn, "baseDn is mandatory for user provider creation");
 			LdapConnection ldapConnection = ldapConnectionService.find(ldapUuid);
 			UserLdapPattern pattern = userProviderService.findDomainPattern(domainPatternUuid);
-			ldapUserProvider = userProviderService.create(new LdapUserProvider(baseDn, ldapConnection, pattern));
+			AbstractDomain domain = abstractDomainService.findById(domainDto.getIdentifier());
+			ldapUserProvider = userProviderService.create(new LdapUserProvider(domain, baseDn, ldapConnection, pattern));
 		}
 		return ldapUserProvider;
 	}
@@ -274,7 +275,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 				userProvider.setPattern(pattern);
 				ldapUserProvider = userProviderService.update(userProvider);
 			} else {
-				ldapUserProvider = userProviderService.create(new LdapUserProvider(baseDn, ldapConnection, pattern));
+				ldapUserProvider = userProviderService.create(new LdapUserProvider(domain, baseDn, ldapConnection, pattern));
 			}
 		}
 		return ldapUserProvider;

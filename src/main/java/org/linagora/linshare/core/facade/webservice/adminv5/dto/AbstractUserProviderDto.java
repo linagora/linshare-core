@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.UserProviderType;
+import org.linagora.linshare.core.domain.entities.UserProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -72,6 +73,8 @@ public abstract class AbstractUserProviderDto {
 	@Schema(description = "UserProvider's modification date", required = false)
 	protected Date modificationDate;
 
+	@Schema(description = "UserProvider's domain", required = false)
+	protected DomainDto domain;
 
 	@Schema(required = true, description = "Default value is the only allowed and mandatory value.")
 	public abstract UserProviderType getType();
@@ -80,6 +83,14 @@ public abstract class AbstractUserProviderDto {
 
 	protected AbstractUserProviderDto() {
 		super();
+	}
+
+	public AbstractUserProviderDto(UserProvider up) {
+		super();
+		this.uuid = up.getUuid();
+		this.creationDate = up.getCreationDate();
+		this.modificationDate = up.getModificationDate();
+		this.domain = DomainDto.getUltraLight(up.getDomain());
 	}
 
 	public String getUuid() {
@@ -104,5 +115,13 @@ public abstract class AbstractUserProviderDto {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public DomainDto getDomain() {
+		return domain;
+	}
+
+	public void setDomain(DomainDto domain) {
+		this.domain = domain;
 	}
 }

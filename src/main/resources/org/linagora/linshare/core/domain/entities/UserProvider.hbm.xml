@@ -12,6 +12,8 @@
 		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
+		<one-to-one name="domain" property-ref="userProvider"/>
+
 		<subclass name="org.linagora.linshare.core.domain.entities.LdapUserProvider" discriminator-value="LDAP_PROVIDER">
 			<property name="baseDn" column="base_dn" type="string" length="255" not-null="false" lazy="true" />
 			<many-to-one name="ldapConnection" column="ldap_connection_id" class="org.linagora.linshare.core.domain.entities.LdapConnection" not-null="true" lazy="proxy" >
@@ -21,6 +23,10 @@
 		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.OIDCUserProvider" discriminator-value="OIDC_PROVIDER">
 			<property name="domainDiscriminator" column="domain_discriminator" type="string" length="255" not-null="false" />
+			<property name="useAccessClaim" column="use_access_claim" type="boolean" not-null="false" lazy="false"/>
+			<property name="useRoleClaim" column="use_role_claim" type="boolean" not-null="false" lazy="false"/>
+			<property name="useEmailLocaleClaim" column="use_email_locale_claim" type="boolean" not-null="false" lazy="false"/>
+			<property name="moveBetweenDomainClaim" column="move_between_domain_claim" type="boolean" not-null="false" lazy="false"/>
 			<property name="checkExternalUserID" column="check_external_user_id" type="boolean" not-null="false" lazy="false"/>
 		</subclass>
 	</class>

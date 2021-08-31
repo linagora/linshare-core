@@ -36,16 +36,33 @@
 
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+import java.util.UUID;
+
 import org.linagora.linshare.core.domain.constants.UserProviderType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 
 public abstract class UserProvider extends Provider {
+
+	protected AbstractDomain domain;
 
 	protected UserProviderType userProviderType;
 
 	public UserProviderType getUserProviderType() {
 		return userProviderType;
 	}
+
+	public UserProvider() {
+		super();
+	}
+	public UserProvider(AbstractDomain domain) {
+		super();
+		this.domain = domain;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+		this.uuid = UUID.randomUUID().toString();
+	}
+
 
 	@Override
 	public String toString() {
@@ -62,6 +79,14 @@ public abstract class UserProvider extends Provider {
 
 	protected void setUserProviderType(UserProviderType userProviderType) {
 		this.userProviderType = userProviderType;
+	}
+
+	public AbstractDomain getDomain() {
+		return domain;
+	}
+
+	public void setDomain(AbstractDomain domain) {
+		this.domain = domain;
 	}
 
 	/**

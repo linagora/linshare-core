@@ -644,8 +644,14 @@ CREATE TABLE user_provider (
   base_dn            varchar(255),
   creation_date      timestamp NOT NULL,
   modification_date  timestamp NOT NULL,
-  ldap_connection_id int8 NOT NULL,
-  ldap_pattern_id    int8 NOT NULL,
+  ldap_connection_id int8,
+  ldap_pattern_id    int8,
+  domain_discriminator  varchar(255),
+  check_external_user_id  bool,
+  use_email_locale_claim  bool,
+  use_role_claim  bool,
+  move_between_domain_claim  bool,
+  use_access_claim bool,
   PRIMARY KEY (id));
 CREATE TABLE group_provider (
   id                  int8 NOT NULL,
@@ -855,6 +861,12 @@ CREATE UNIQUE INDEX account_ls_uuid
   ON account (ls_uuid);
 CREATE INDEX account_account_type
   ON account (account_type);
+CREATE INDEX account_mail
+  ON account (mail);
+CREATE INDEX account_first_name
+  ON account (first_name);
+CREATE INDEX account_last_name
+  ON account (last_name);
 CREATE INDEX cookie2
   ON cookie (identifier);
 CREATE INDEX cookie_i

@@ -73,6 +73,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 	private LdapConnectionService ldapConnectionService;
 
 	private UserProviderRepository userProviderRepository;
+
 	private LdapUserProviderRepository ldapUserProviderRepository;
 
 	public UserProviderFacadeImpl(
@@ -159,17 +160,27 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 
 			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionUuid);
 			UserLdapPattern pattern = userProviderService.findDomainPattern(userFilterUuid);
-			UserProvider userProvider = userProviderRepository.create(new LdapUserProvider(baseDn, ldapConnection, pattern));
+			UserProvider userProvider = userProviderRepository.create(new LdapUserProvider(domain, baseDn, ldapConnection, pattern));
 			// no update ? I think implicit opened transaction do the job
 			domain.setUserProvider(userProvider);
 			return new LDAPUserProviderDto(domain, (LdapUserProvider)userProvider);
 		} else if (UserProviderType.OIDC_PROVIDER.equals(dto.getType())) {
 			OIDCUserProviderDto userProviderDto = (OIDCUserProviderDto)dto;
 			Validate.notEmpty(userProviderDto.getDomainDiscriminator(), "Domain discriminator is mandatory for user provider creation");
-			UserProvider userProvider = userProviderRepository.create(
-					new OIDCUserProvider(
-							userProviderDto.getDomainDiscriminator(),
-							userProviderDto.isCheckExternalUserID()));
+			OIDCUserProvider userProvider = new OIDCUserProvider(domain, userProviderDto.getDomainDiscriminator());
+			if (userProviderDto.getCheckExternalUserID() != null) {
+				userProvider.setCheckExternalUserID(userProviderDto.getCheckExternalUserID());
+			}
+			if (userProviderDto.getUseAccessClaim() != null) {
+				userProvider.setUseAccessClaim(userProviderDto.getUseAccessClaim());
+			}
+			if (userProviderDto.getUseRoleClaim() != null) {
+				userProvider.setUseRoleClaim(userProviderDto.getUseRoleClaim());
+			}
+			if (userProviderDto.getUseEmailLocaleClaim() != null) {
+				userProvider.setUseEmailLocaleClaim(userProviderDto.getUseEmailLocaleClaim());
+			}
+			userProvider = (OIDCUserProvider) userProviderRepository.create(userProvider);
 			// no update ? I think implicit opened transaction do the job
 			domain.setUserProvider(userProvider);
 			return new OIDCUserProviderDto(domain, (OIDCUserProvider)userProvider);
@@ -219,9 +230,16 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		} else if (UserProviderType.OIDC_PROVIDER.equals(dto.getType())) {
 			OIDCUserProviderDto userProviderDto = (OIDCUserProviderDto)dto;
 			Validate.notEmpty(userProviderDto.getDomainDiscriminator(), "Domain discriminator is mandatory for user provider update");
+			Validate.notNull(userProviderDto.getCheckExternalUserID(), "checkExternalUserID is mandatory for user provider update");
+			Validate.notNull(userProviderDto.getUseAccessClaim(), "useAccessClaim is mandatory for user provider update");
+			Validate.notNull(userProviderDto.getUseRoleClaim(), "useRoleClaim is mandatory for user provider update");
+			Validate.notNull(userProviderDto.getUseEmailLocaleClaim(), "useEmailLocaleClaim is mandatory for user provider update");
 			OIDCUserProvider provider = (OIDCUserProvider)userProvider;
-			provider.setCheckExternalUserID(userProviderDto.isCheckExternalUserID());
 			provider.setDomainDiscriminator(userProviderDto.getDomainDiscriminator());
+			provider.setCheckExternalUserID(userProviderDto.getCheckExternalUserID());
+			provider.setUseAccessClaim(userProviderDto.getUseAccessClaim());
+			provider.setUseRoleClaim(userProviderDto.getUseRoleClaim());
+			provider.setUseEmailLocaleClaim(userProviderDto.getUseEmailLocaleClaim());
 			userProvider = userProviderRepository.update(provider);
 			return new OIDCUserProviderDto(domain, (OIDCUserProvider)userProvider);
 		}
