@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import org.linagora.linshare.core.domain.constants.UserProviderType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -88,7 +87,7 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 		super();
 	}
 
-	public OIDCUserProviderDto(AbstractDomain domain, OIDCUserProvider up) {
+	public OIDCUserProviderDto(OIDCUserProvider up) {
 		super(up);
 		this.checkExternalUserID = up.getCheckExternalUserID();
 		this.domainDiscriminator = up.getDomainDiscriminator();

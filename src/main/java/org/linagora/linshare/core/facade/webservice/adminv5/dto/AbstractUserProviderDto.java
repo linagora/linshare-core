@@ -74,7 +74,7 @@ public abstract class AbstractUserProviderDto {
 	protected Date modificationDate;
 
 	@Schema(description = "UserProvider's domain", required = false)
-	protected DomainDto domain;
+	protected DomainLightDto domain;
 
 	@Schema(required = true, description = "Default value is the only allowed and mandatory value.")
 	public abstract UserProviderType getType();
@@ -90,7 +90,7 @@ public abstract class AbstractUserProviderDto {
 		this.uuid = up.getUuid();
 		this.creationDate = up.getCreationDate();
 		this.modificationDate = up.getModificationDate();
-		this.domain = DomainDto.getUltraLight(up.getDomain());
+		this.domain = new DomainLightDto(up.getDomain());
 	}
 
 	public String getUuid() {
@@ -117,11 +117,11 @@ public abstract class AbstractUserProviderDto {
 		this.modificationDate = modificationDate;
 	}
 
-	public DomainDto getDomain() {
+	public DomainLightDto getDomain() {
 		return domain;
 	}
 
-	public void setDomain(DomainDto domain) {
+	public void setDomain(DomainLightDto domain) {
 		this.domain = domain;
 	}
 }

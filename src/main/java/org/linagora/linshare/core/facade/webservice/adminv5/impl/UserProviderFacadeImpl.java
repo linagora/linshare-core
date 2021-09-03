@@ -102,7 +102,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
 				res.add(new LDAPUserProviderDto(domain, (LdapUserProvider) up));
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
-				res.add(new OIDCUserProviderDto(domain, (OIDCUserProvider) up));
+				res.add(new OIDCUserProviderDto((OIDCUserProvider) up));
 			} else {
 				throw new BusinessException(BusinessErrorCode.USER_PROVIDER_UNSUPPORTED_TYPE, "UserProvider not supported yet");
 			}
@@ -126,7 +126,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
 			return new LDAPUserProviderDto(domain, (LdapUserProvider) up);
 		} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
-			return new OIDCUserProviderDto(domain, (OIDCUserProvider) up);
+			return new OIDCUserProviderDto((OIDCUserProvider) up);
 		}
 		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_UNSUPPORTED_TYPE, "UserProvider not supported yet");
 	}
@@ -183,7 +183,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 			userProvider = (OIDCUserProvider) userProviderRepository.create(userProvider);
 			// no update ? I think implicit opened transaction do the job
 			domain.setUserProvider(userProvider);
-			return new OIDCUserProviderDto(domain, (OIDCUserProvider)userProvider);
+			return new OIDCUserProviderDto((OIDCUserProvider)userProvider);
 		}
 		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 	}
@@ -241,7 +241,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 			provider.setUseRoleClaim(userProviderDto.getUseRoleClaim());
 			provider.setUseEmailLocaleClaim(userProviderDto.getUseEmailLocaleClaim());
 			userProvider = userProviderRepository.update(provider);
-			return new OIDCUserProviderDto(domain, (OIDCUserProvider)userProvider);
+			return new OIDCUserProviderDto((OIDCUserProvider)userProvider);
 		}
 		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 	}

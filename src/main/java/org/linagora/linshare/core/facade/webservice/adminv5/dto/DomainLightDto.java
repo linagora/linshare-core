@@ -48,10 +48,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(name = "DomainV5Light", description = "A LinShare's domain")
 public class DomainLightDto {
 
-	@Schema(description = "Unique identifier of the resource")
+	@Schema(description = "Domain's uuid")
 	private String uuid;
 
-	@Schema(description = "A common name, used to easily identify the resource.")
+	@Schema(description = "Domain's name")
 	private String name;
 
 	public DomainLightDto() {

@@ -240,6 +240,6 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 		if (userProvider == null) {
 			throw new AuthenticationServiceException("Can not find domain using domain discriminator: " + domainDiscriminator);
 		}
-		return new OIDCUserProviderDto(userProvider.getDomain(), userProvider);
+		return new OIDCUserProviderDto(userProvider);
 	}
 }
