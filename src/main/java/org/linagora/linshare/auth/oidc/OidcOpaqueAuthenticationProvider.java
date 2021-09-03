@@ -129,27 +129,59 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 		OAuth2User loadUser = oAuth2UserService.loadUser(req);
 
 		String email = authenticate.getName();
-		Validate.notEmpty(email, "Missing email value in claims.");
-		String domainDiscriminator = loadUser.getAttribute("domain_discriminator");
+		Validate.notEmpty(email, "Missing email claim.");
 		jwtAuthentication.put("email", email);
-		jwtAuthentication.put("domain_discriminator", domainDiscriminator);
-		Optional<OIDCUserProviderDto> providerDto = Optional.empty();
+		Optional<String> domainDiscriminator = Optional.ofNullable(loadUser.getAttribute("domain_discriminator"));
+		jwtAuthentication.put("domain_discriminator", domainDiscriminator.orElse(null));
+		String externalUid = loadUser.getAttribute("external_uid");
 		User foundUser = null;
 		// looking in the db first.
-		if (domainDiscriminator != null) {
-			providerDto = Optional.of(authentificationFacade.findOidcProvider(domainDiscriminator));
-			if (providerDto.get().getUseAccessClaim() ) {
+		if (domainDiscriminator.isPresent()) {
+			OIDCUserProviderDto providerDto = authentificationFacade.findOidcProvider(domainDiscriminator.get());
+			if (providerDto.getCheckExternalUserID() ) {
+				Validate.notEmpty(externalUid, "Missing external_uid claim.");
+			}
+			if (providerDto.getUseAccessClaim() ) {
 				String allowed = loadUser.getAttribute("linshare_access");
-				Validate.notEmpty(allowed, "Missing access value in claims.");
+				Validate.notEmpty(allowed, "Missing linshare_access claim.");
 				if (allowed.toLowerCase().equals(linshareAccessClaimValue)) {
 					logger.warn("Unauthorized access attempt : " + email);
 					throw new UsernameNotFoundException("You are not allowed to use this service.");
 				}
 			}
-			foundUser = authentificationFacade.findByLoginAndDomain(providerDto.get().getDomain().getUuid(), email);
+			foundUser = authentificationFacade.findByLoginAndDomain(providerDto.getDomain().getUuid(), email);
 			if (foundUser == null) {
 				// looking through user provider.
-				foundUser = authentificationFacade.ldapSearchForAuth(providerDto.get().getDomain().getUuid(), email);
+				foundUser = authentificationFacade.ldapSearchForAuth(providerDto.getDomain().getUuid(), email);
+			}
+			if (foundUser == null) {
+				logger.error("User not found: " + token);
+				throw new UsernameNotFoundException("Could not find user account : " + authenticate.getTokenAttributes().toString());
+			}
+			try {
+				// It means we are using a OIDC user provider, so we need to provide some extra properties to allow on-the-fly creation.
+				// It won't be use if the profile already exists.
+				jwtAuthentication.put("first_name", loadUser.getAttribute("name"));
+				jwtAuthentication.put("last_name", loadUser.getAttribute("family_name"));
+				jwtAuthentication.put("external_uid", externalUid);
+				jwtAuthentication.put("linshare_locale", loadUser.getAttribute("linshare_locale"));
+				jwtAuthentication.put("linshare_role", loadUser.getAttribute("linshare_role"));
+				// loading/creating the real entity
+				foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
+				if (!foundUser.getLdapUid().equals(externalUid)) {
+					if (providerDto.getCheckExternalUserID() ) {
+						logger.error("External uid has changed, same email but probably a different user. external_uid={}, {}", externalUid, foundUser);
+						throw new UsernameNotFoundException("Access rejected, external uid does not match with existing profile");
+					} else {
+						logger.debug("External uid has changed, same email but probably a different user. {}, {}", externalUid, foundUser);
+					}
+				}
+			} catch (BusinessException e) {
+				logger.error(e.getMessage(), e);
+				throw new AuthenticationServiceException(
+						"Could not create user account : "
+						+ foundUser.getDomainId() + " : "
+						+ foundUser.getMail(), e);
 			}
 		} else {
 			foundUser = authentificationFacade.findByLogin(email);
@@ -163,31 +195,21 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 					}
 				}
 			}
-		}
-		if (foundUser == null) {
-			logger.error("User not found: " + token);
-			throw new UsernameNotFoundException("Could not find user account : " + authenticate.getTokenAttributes().toString());
-		}
-		try {
-			if(providerDto.isPresent()) {
-				// It means we are using a OIDC user provider, so we need to provide some extra properties to allow on-the-fly creation.
-				// It won't be use if the profile already exists.
-				jwtAuthentication.put("first_name", loadUser.getAttribute("name"));
-				jwtAuthentication.put("last_name", loadUser.getAttribute("family_name"));
-				jwtAuthentication.put("external_uid", loadUser.getAttribute("external_uid"));
-				jwtAuthentication.put("linshare_locale", loadUser.getAttribute("linshare_locale"));
-				jwtAuthentication.put("linshare_role", loadUser.getAttribute("linshare_role"));
+			if (foundUser == null) {
+				logger.error("User not found: " + token);
+				throw new UsernameNotFoundException("Could not find user account : " + authenticate.getTokenAttributes().toString());
 			}
-			// loading/creating the real entity
-			foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
-		} catch (BusinessException e) {
-			logger.error(e.getMessage(), e);
-			throw new AuthenticationServiceException(
-					"Could not create user account : "
-					+ foundUser.getDomainId() + " : "
-					+ foundUser.getMail(), e);
+			try {
+				// loading/creating the real entity
+				foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
+			} catch (BusinessException e) {
+				logger.error(e.getMessage(), e);
+				throw new AuthenticationServiceException(
+						"Could not create user account : "
+						+ foundUser.getDomainId() + " : "
+						+ foundUser.getMail(), e);
+			}
 		}
-
 		logger.info(String.format("Successful authentication of  %1$s with OIDC opaque token : %2$s", foundUser.getLsUuid(), authenticate.getTokenAttributes().toString()));
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
 		grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_AUTH_OIDC));
