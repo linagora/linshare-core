@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import javax.naming.NamingException;
 
@@ -47,7 +48,9 @@ import org.hibernate.criterion.Order;
 import org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationToken;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.UserProviderType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -55,6 +58,7 @@ import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
+import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.UserProvider;
@@ -311,6 +315,11 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				try {
 					user = ldapQueryService.getUser(userProvider.getLdapConnection(),
 							userProvider.getBaseDn(), userProvider.getPattern(), mail);
+					if (user != null) {
+						user.setDomain(domain);
+						user.setRole(domain.getDefaultRole());
+						user.setExternalMailLocale(user.getDomain().getExternalMailLocale());
+					}
 				} catch (NamingException e) {
 					throwError(userProvider.getLdapConnection(), e);
 				} catch (IOException e) {
@@ -326,12 +335,44 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					// This code is ugly, it is a quick workaround.
 					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())){
 						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
-						return new Internal(
-								jwtAuthentication.getAttribute("first_name"),
-								jwtAuthentication.getAttribute("last_name"),
-								jwtAuthentication.getAttribute("email"),
-								jwtAuthentication.getAttribute("email"));
+						OIDCUserProvider oidcUp = (OIDCUserProvider) up;
+						String domainDiscriminator = jwtAuthentication.get("domain_discriminator");
+						if (oidcUp.getDomainDiscriminator().equals(domainDiscriminator)) {
+							String email = jwtAuthentication.get("email");
+							Validate.notEmpty(email, "Missing required attribute for email.");
+							String firstName = jwtAuthentication.get("first_name");
+							Validate.notEmpty(firstName, "Missing required attribute for first name.");
+							String lastName = jwtAuthentication.get("last_name");
+							Validate.notEmpty(lastName, "Missing required attribute for last name.");
+							Optional<String> externalUuid = Optional.ofNullable(jwtAuthentication.get("external_uid"));
+							Internal internal = new Internal(firstName, lastName, email, externalUuid.orElse(email));
+							internal.setDomain(domain);
+							if (oidcUp.getUseRoleClaim()) {
+//							<claim_admin> => "admin"
+								if (jwtAuthentication.get("linshare_role") != null) {
+									if (jwtAuthentication.get("linshare_role").toUpperCase().equals("ADMIN")) {
+										internal.setRole(Role.ADMIN);
+									} else {
+										internal.setRole(Role.SIMPLE);
+									}
+								}
+							} else {
+								internal.setRole(domain.getDefaultRole());
+							}
+							if (oidcUp.getUseEmailLocaleClaim()) {
+								if (jwtAuthentication.get("linshare_locale") != null) {
+									if (jwtAuthentication.get("linshare_locale").toUpperCase().equals("FR")) {
+										internal.setExternalMailLocale(Language.FRENCH);
+									} else {
+										internal.setExternalMailLocale(Language.ENGLISH);
+									}
+								}
+							} else {
+								internal.setExternalMailLocale(domain.getExternalMailLocale());
+							}
+							return internal;
 						}
+					}
 				} else {
 					// probably trying to discover a user.
 					logger.debug("UserProviderType.OIDC provider does not supported discovering new user.");
@@ -555,20 +596,17 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					// This code is ugly workaround
 					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())){
 						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
-						String domainUuid = jwtAuthentication.getAttribute("domain");
-						if (domainUuid.equals(domain.getUuid())) {
-							// if this user does not belong to this domain, we ignore him.
-							Internal internal = new Internal(
-									jwtAuthentication.getAttribute("first_name"),
-									jwtAuthentication.getAttribute("last_name"),
-									jwtAuthentication.getAttribute("email"),
-									jwtAuthentication.getAttribute("email"));
-							if (internal != null) {
-								internal.setDomain(domain);
-							}
+						OIDCUserProvider oidcUp = (OIDCUserProvider) up;
+						String domainDiscriminator = jwtAuthentication.get("domain_discriminator");
+						// if this user does not belong to this domain, we ignore him.
+						if (oidcUp.getDomainDiscriminator().equals(domainDiscriminator)) {
+							String email = jwtAuthentication.get("email");
+							Validate.notEmpty(email, "Missing required attribute for email.");
+							Internal internal = new Internal(null, null, email, null);
+							internal.setDomain(domain);
 							return internal;
 						} else {
-							logger.debug("Skipped.Provided domain uuid does not match current domain: {}, {}", domainUuid, domain.getUuid());
+							logger.debug("Skipped. Provided oidcDomainIdentifier does not match current domain: {}, {}", domainDiscriminator, domain.getUuid());
 						}
 					}
 				}

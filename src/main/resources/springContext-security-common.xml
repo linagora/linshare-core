@@ -130,6 +130,7 @@
 		<b:constructor-arg value="${oidc.issuerUri}"/>
 		<b:constructor-arg value="${oidc.client.id}"/>
 		<b:constructor-arg value="${oidc.client.secret}"/>
+		<b:constructor-arg value="${oidc.access.claim.value}"/>
 	</b:bean>
 
 	<b:bean id="jwtAuthenticationProvider"

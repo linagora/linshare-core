@@ -42,9 +42,12 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
+import org.linagora.linshare.core.repository.OIDCUserProviderRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -54,6 +57,7 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.AuthenticationAuditLogEntryUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationServiceException;
 
 public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
@@ -69,11 +73,14 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
 	private final UserRepository<User> userRepository;
 
+	private final OIDCUserProviderRepository oidcUserProviderRepository;
+
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public AuthentificationFacadeImpl(UserService userService, LogEntryService logEntryService,
 			AbstractDomainService abstractDomainService, UserProviderService userProviderService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
+			OIDCUserProviderRepository oidcUserProviderRepository,
 			UserRepository<User> userRepository) {
 		super();
 		this.userService = userService;
@@ -82,6 +89,7 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 		this.userProviderService = userProviderService;
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.oidcUserProviderRepository = oidcUserProviderRepository;
 	}
 
 	@Override
@@ -226,4 +234,12 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 		return true;
 	}
 
+	@Override
+	public OIDCUserProviderDto findOidcProvider(String domainDiscriminator) {
+		OIDCUserProvider userProvider = oidcUserProviderRepository.findByDomainDiscriminator(domainDiscriminator);
+		if (userProvider == null) {
+			throw new AuthenticationServiceException("Can not find domain using domain discriminator: " + domainDiscriminator);
+		}
+		return new OIDCUserProviderDto(userProvider.getDomain(), userProvider);
+	}
 }

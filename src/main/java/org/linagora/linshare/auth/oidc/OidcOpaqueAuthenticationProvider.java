@@ -36,6 +36,7 @@
 package org.linagora.linshare.auth.oidc;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.auth.AuthRole;
@@ -43,6 +44,7 @@ import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -82,10 +84,13 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 
 	private String issuerUri;
 
+	private String linshareAccessClaimValue;
+
 	public OidcOpaqueAuthenticationProvider(AuthentificationFacade authentificationFacade, Boolean useOIDC,
-			String issuerUri, String clientId, String clientSecret) {
+			String issuerUri, String clientId, String clientSecret, String linshareAccessClaimValue) {
 		super();
 		this.authentificationFacade = authentificationFacade;
+		this.linshareAccessClaimValue = linshareAccessClaimValue;
 		if (useOIDC) {
 			Validate.notEmpty(clientId, "Missing OIDC client ID");
 			Validate.notEmpty(clientSecret, "Missing OIDC client secret");
@@ -125,35 +130,26 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 
 		String email = authenticate.getName();
 		Validate.notEmpty(email, "Missing email value in claims.");
-		String domainUuid = loadUser.getAttribute("domain");
+		String domainDiscriminator = loadUser.getAttribute("domain_discriminator");
 		jwtAuthentication.put("email", email);
-		jwtAuthentication.put("domain", domainUuid);
-		jwtAuthentication.put("first_name", loadUser.getAttribute("name"));
-		jwtAuthentication.put("last_name", loadUser.getAttribute("family_name"));
-
+		jwtAuthentication.put("domain_discriminator", domainDiscriminator);
+		Optional<OIDCUserProviderDto> providerDto = Optional.empty();
 		User foundUser = null;
 		// looking in the db first.
-		if (domainUuid != null) {
-			if (!authentificationFacade.isExist(domainUuid)) {
-				logger.error("Provided domain uuid does not exit: {}", domainUuid);
-				throw new AuthenticationServiceException(
-						"Provided domain uuid does not exit: " + domainUuid);
-			} else {
-				foundUser = authentificationFacade.findByLoginAndDomain(domainUuid, email);
-				if (foundUser == null) {
-					// looking through user provider.
-					foundUser = authentificationFacade.ldapSearchForAuth(domainUuid, email);
+		if (domainDiscriminator != null) {
+			providerDto = Optional.of(authentificationFacade.findOidcProvider(domainDiscriminator));
+			if (providerDto.get().getUseAccessClaim() ) {
+				String allowed = loadUser.getAttribute("linshare_access");
+				Validate.notEmpty(allowed, "Missing access value in claims.");
+				if (allowed.toLowerCase().equals(linshareAccessClaimValue)) {
+					logger.warn("Unauthorized access attempt : " + email);
+					throw new UsernameNotFoundException("You are not allowed to use this service.");
 				}
-				if (foundUser == null) {
-					// looking through nested user providers.
-					List<String> domains = authentificationFacade.getAllSubDomainIdentifiers(domainUuid);
-					for (String domain : domains) {
-						foundUser = authentificationFacade.ldapSearchForAuth(domain, email);
-						if (foundUser != null) {
-							break;
-						}
-					}
-				}
+			}
+			foundUser = authentificationFacade.findByLoginAndDomain(providerDto.get().getDomain().getUuid(), email);
+			if (foundUser == null) {
+				// looking through user provider.
+				foundUser = authentificationFacade.ldapSearchForAuth(providerDto.get().getDomain().getUuid(), email);
 			}
 		} else {
 			foundUser = authentificationFacade.findByLogin(email);
@@ -173,6 +169,15 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 			throw new UsernameNotFoundException("Could not find user account : " + authenticate.getTokenAttributes().toString());
 		}
 		try {
+			if(providerDto.isPresent()) {
+				// It means we are using a OIDC user provider, so we need to provide some extra properties to allow on-the-fly creation.
+				// It won't be use if the profile already exists.
+				jwtAuthentication.put("first_name", loadUser.getAttribute("name"));
+				jwtAuthentication.put("last_name", loadUser.getAttribute("family_name"));
+				jwtAuthentication.put("external_uid", loadUser.getAttribute("external_uid"));
+				jwtAuthentication.put("linshare_locale", loadUser.getAttribute("linshare_locale"));
+				jwtAuthentication.put("linshare_role", loadUser.getAttribute("linshare_role"));
+			}
 			// loading/creating the real entity
 			foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
 		} catch (BusinessException e) {
@@ -197,6 +202,7 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 				.fromOidcIssuerLocation(issuerUri)
 				.clientId(clientId)
 				.clientSecret(clientSecret);
+		// Do not bother to add scopes here, they must be provided at authentication time, see the client(ex ui-user)
 		return clientRegistrationsBuilder.build();
 	}
 

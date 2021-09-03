@@ -421,18 +421,11 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 	@Override
 	public User findUserWithoutRestriction(AbstractDomain domain, String mail)
 			throws BusinessException {
-		User user = null;
 		if (domain.getUserProvider() != null) {
-			user = userProviderService.findUser(domain, domain.getUserProvider(), mail);
-			if (user != null) {
-				user.setDomain(domain);
-				user.setRole(user.getDomain().getDefaultRole());
-			}
-		} else {
-			logger.debug("UserProvider is null for domain : "
-					+ domain.getUuid());
+			return userProviderService.findUser(domain, domain.getUserProvider(), mail);
 		}
-		return user;
+		logger.debug("UserProvider is null for domain : " + domain.getUuid());
+		return null;
 	}
 
 	@Override

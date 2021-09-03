@@ -756,12 +756,13 @@ public class UserServiceImpl implements UserService {
 						.getUserCanUploadFunctionality(user.getDomain());
 				user.setCanUpload(userCanUploadFunc.getActivationPolicy()
 						.getStatus());
-				user.setCreationDate(new Date());
-				user.setLocale(user.getDomain().getDefaultTapestryLocale());
-				// TODO : FIXME : Waiting to get default external mail local from domain.
-				Language locale = Language.fromTapestryLocale(user.getLocale().getTapestryLocale());
-				user.setExternalMailLocale(locale);
-				user.setCmisLocale(user.getDomain().getDefaultTapestryLocale().toString());
+				// useless fields.
+				user.setLocale(SupportedLanguage.ENGLISH);
+				if (user.getExternalMailLocale() == null) {
+					user.setExternalMailLocale(Language.ENGLISH);
+				}
+				user.setLocale(SupportedLanguage.ENGLISH);
+				user.setCmisLocale(SupportedLanguage.ENGLISH.toString());
 				user = userRepository.create(user);
 				createQuotaUser(user);
 			}

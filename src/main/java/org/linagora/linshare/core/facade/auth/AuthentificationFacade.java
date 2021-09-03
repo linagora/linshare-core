@@ -40,6 +40,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
 
 public interface AuthentificationFacade {
 
@@ -76,4 +77,6 @@ public interface AuthentificationFacade {
 	public User checkStillInLdap(User user, String login) throws BusinessException;
 
 	public boolean isJwtLongTimeFunctionalityEnabled(String domainUuid);
+
+	OIDCUserProviderDto findOidcProvider(String oidcDomainIdentifier);
 }

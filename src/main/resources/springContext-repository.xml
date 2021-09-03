@@ -103,6 +103,9 @@
 	<bean name="userProviderRepository" class="org.linagora.linshare.core.repository.hibernate.UserProviderRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+	<bean name="oidcUserProviderRepository" class="org.linagora.linshare.core.repository.hibernate.OIDCUserProviderRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 	<bean name="domainAccessRuleRepository" class="org.linagora.linshare.core.repository.hibernate.DomainAccessRuleRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
