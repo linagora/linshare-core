@@ -58,4 +58,20 @@ public enum Role {
 		}
 		throw new IllegalArgumentException("Doesn't match an existing Role");
 	}
+
+	public static Role toDefaultRole(Role defaultRole, String wantedRole) {
+		if (wantedRole == null) {
+			return defaultRole;
+		}
+		Role found = null;
+		for (Role role : Role.values()) {
+			if (wantedRole.toUpperCase().equals(role.toString())) {
+				found = role;
+			}
+		}
+		if (found != null) {
+			return found;
+		}
+		return defaultRole;
+	}
 }

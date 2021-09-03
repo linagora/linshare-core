@@ -756,11 +756,10 @@ public class UserServiceImpl implements UserService {
 						.getUserCanUploadFunctionality(user.getDomain());
 				user.setCanUpload(userCanUploadFunc.getActivationPolicy()
 						.getStatus());
-				// useless fields.
-				user.setLocale(SupportedLanguage.ENGLISH);
 				if (user.getExternalMailLocale() == null) {
 					user.setExternalMailLocale(Language.ENGLISH);
 				}
+				// useless fields.
 				user.setLocale(SupportedLanguage.ENGLISH);
 				user.setCmisLocale(SupportedLanguage.ENGLISH.toString());
 				user = userRepository.create(user);

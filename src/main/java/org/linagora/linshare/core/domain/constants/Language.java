@@ -97,4 +97,20 @@ public enum Language {
 	public String getTapestryLocale() {
 		return tapestryLocale;
 	}
+
+	public static Language toDefaultLanguage(Language defaultLanguage, String wantedLanguage) {
+		if (wantedLanguage == null) {
+			return defaultLanguage;
+		}
+		Language found = null;
+		for (Language lang : Language.values()) {
+			if (wantedLanguage.toUpperCase().equals(lang.toString())) {
+				found = lang;
+			}
+		}
+		if (found != null) {
+			return found;
+		}
+		return defaultLanguage;
+	}
 }

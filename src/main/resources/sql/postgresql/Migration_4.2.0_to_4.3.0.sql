@@ -92,7 +92,12 @@ ALTER TABLE user_provider ADD COLUMN use_access_claim bool;
 ALTER TABLE user_provider ALTER COLUMN ldap_connection_id DROP NOT NULL;
 ALTER TABLE user_provider ALTER COLUMN ldap_pattern_id DROP NOT NULL;
 
-
+CREATE INDEX account_mail
+  ON account (mail);
+CREATE INDEX account_first_name
+  ON account (first_name);
+CREATE INDEX account_last_name
+  ON account (last_name);
 
 ---- End of your queries
 

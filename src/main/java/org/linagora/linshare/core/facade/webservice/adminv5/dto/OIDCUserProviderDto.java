@@ -46,26 +46,29 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class OIDCUserProviderDto extends AbstractUserProviderDto {
 
 	@Schema(description = "domain discriminator used when user login to know in which domain he belongs."
-			+ "Must be unique among all domains", required = true)
+			+ "Must be unique among all domains. (claim name: domain_discriminator)", required = true)
 	private String domainDiscriminator;
 
 	@Schema(description = "Whether or not we should compare the external unique identifier we store at profile "
-			+ "creation time with the one provided by OIDC when user authenticate himself",
+			+ "creation time with the one provided by OIDC when user authenticate himself. (claim name: external_uid)",
 			required = false,
 			defaultValue = "false")
 	private Boolean checkExternalUserID;
 
-	@Schema(description = "Whether or not we should use access claim value to grant access to LinShare.",
+	@Schema(description = "Whether or not we should use access claim value to grant access to LinShare. (claim name: linshare_access)."
+			+ "By default linshare_role should match the string value 'true', See linshare.properties file to change the default value.",
 			required = false,
 			defaultValue = "false")
 	private Boolean useAccessClaim;
 
-	@Schema(description = "Whether or not we should use role claim value to use it for profile creation at login time.",
+	@Schema(description = "Whether or not we should use role claim value to use it for profile creation at login time. (claim name: linshare_role)."
+			+ "Possible values for this claim: SIMPLE / ADMIN",
 			required = false,
 			defaultValue = "false")
 	private Boolean useRoleClaim;
 
-	@Schema(description = "Whether or not we should use email locale claim value to use it for profile creation at login time.",
+	@Schema(description = "Whether or not we should use email locale claim value to use it for profile creation at login time. (claim name: linshare_locale)."
+			+ "See Language enum/model for possible values for this claim.",
 			required = false,
 			defaultValue = "false")
 	private Boolean useEmailLocaleClaim;

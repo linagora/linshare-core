@@ -347,28 +347,18 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							Optional<String> externalUuid = Optional.ofNullable(jwtAuthentication.get("external_uid"));
 							Internal internal = new Internal(firstName, lastName, email, externalUuid.orElse(email));
 							internal.setDomain(domain);
+							internal.setRole(domain.getDefaultRole());
+							internal.setExternalMailLocale(domain.getExternalMailLocale());
 							if (oidcUp.getUseRoleClaim()) {
-//							<claim_admin> => "admin"
-								if (jwtAuthentication.get("linshare_role") != null) {
-									if (jwtAuthentication.get("linshare_role").toUpperCase().equals("ADMIN")) {
-										internal.setRole(Role.ADMIN);
-									} else {
-										internal.setRole(Role.SIMPLE);
-									}
-								}
-							} else {
-								internal.setRole(domain.getDefaultRole());
+								internal.setRole(Role.toDefaultRole(
+										domain.getDefaultRole(),
+										jwtAuthentication.get("linshare_role")));
 							}
 							if (oidcUp.getUseEmailLocaleClaim()) {
-								if (jwtAuthentication.get("linshare_locale") != null) {
-									if (jwtAuthentication.get("linshare_locale").toUpperCase().equals("FR")) {
-										internal.setExternalMailLocale(Language.FRENCH);
-									} else {
-										internal.setExternalMailLocale(Language.ENGLISH);
-									}
-								}
+								internal.setExternalMailLocale(Language.toDefaultLanguage(
+										domain.getExternalMailLocale(),
+										jwtAuthentication.get("linshare_locale")));
 							} else {
-								internal.setExternalMailLocale(domain.getExternalMailLocale());
 							}
 							return internal;
 						}
