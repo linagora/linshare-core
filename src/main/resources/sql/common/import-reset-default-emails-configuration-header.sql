@@ -5,10 +5,10 @@ SET client_min_messages = warning;
 -- Please do not use it in production. Too dangerous
 BEGIN;
 
-ALTER TABLE mail_content_lang DISABLE TRIGGER ALL;
-ALTER TABLE mail_content DISABLE TRIGGER ALL;
-ALTER TABLE mail_footer_lang DISABLE TRIGGER ALL;
-ALTER TABLE mail_footer DISABLE TRIGGER ALL;
+ALTER TABLE mail_content_lang DISABLE TRIGGER USER;
+ALTER TABLE mail_content DISABLE TRIGGER USER;
+ALTER TABLE mail_footer_lang DISABLE TRIGGER USER;
+ALTER TABLE mail_footer DISABLE TRIGGER USER;
 
 UPDATE domain_abstract SET mailconfig_id = null where mailconfig_id = 1;
 DELETE FROM mail_content_lang WHERE id < 1000;
