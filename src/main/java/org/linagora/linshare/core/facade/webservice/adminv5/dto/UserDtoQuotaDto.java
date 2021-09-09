@@ -106,9 +106,9 @@ public class UserDtoQuotaDto {
 		this.creationDate = quota.getCreationDate();
 		this.modificationDate = quota.getModificationDate();
 		this.maxFileSize = quota.getMaxFileSize();
-		this.defaultMaxFileSize = quota.getContainerQuota().getDefaultMaxFileSize();;
+		this.defaultMaxFileSize = quota.getContainerQuota().getDefaultMaxFileSize();
 		this.maxFileSizeOverride = quota.getMaxFileSizeOverride();
-		this.account = new AccountLightDto(quota.getAccount());;
+		this.account = new AccountLightDto(quota.getAccount());
 	}
 
 	public AccountQuota toObject() {

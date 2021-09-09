@@ -73,9 +73,8 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 	@Override
 	public Set<ContactListDto> findAll(String actorUuid, Boolean mine) throws BusinessException {
 		User authUser = checkAuthentication();
-		List<ContactList> lists;
 		User actor = getActor(authUser, actorUuid);
-		lists = contactListService.findAll(authUser, actor, mine);
+		List<ContactList> lists = contactListService.findAll(authUser, actor, mine);
 		return ImmutableSet.copyOf(Lists.transform(lists, ContactListDto.toDto()));
 	}
 
@@ -83,16 +82,15 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 	public Set<ContactListDto> findAllByMemberEmail(String actorUuid, Boolean mine, String email)
 			throws BusinessException {
 		User authUser = checkAuthentication();
-		List<ContactList> lists;
 		User actor = getActor(authUser, actorUuid);
-		lists = contactListService.findAllByMemberEmail(authUser, actor, mine, email);
+		List<ContactList> lists = contactListService.findAllByMemberEmail(authUser, actor, mine, email);
 		return ImmutableSet.copyOf(Lists.transform(lists, ContactListDto.toDto()));
 	}
 	
 	@Override
 	public ContactListDto find(String actorUuid, String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "List uuid must be set.");
 		User authUser = checkAuthentication();
+		Validate.notEmpty(uuid, "List uuid must be set.");
 		ContactList list;
 		User actor = getActor(authUser, actorUuid);
 		list = contactListService.find(authUser, actor, uuid);
@@ -101,9 +99,9 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 
 	@Override
 	public ContactListDto create(String actorUuid, ContactListDto dto) throws BusinessException {
-		Validate.notNull(dto, "Mailing list must be set.");
-		Validate.notNull(dto.getName(),"The contact list name must be set.");
 		User authUser = checkAuthentication();
+		Validate.notNull(dto, "Mailing list must be set.");
+		Validate.notEmpty(dto.getName(),"The contact list name must be set.");
 		ContactList list = dto.toObject();
 		User actor = getActor(authUser, actorUuid);
 		if (list.getOwner() == null) {
