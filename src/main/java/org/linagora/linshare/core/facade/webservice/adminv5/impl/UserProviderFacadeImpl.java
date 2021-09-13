@@ -144,12 +144,14 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		if (domain.getUserProvider() != null) {
 			throw new BusinessException(BusinessErrorCode.USER_PROVIDER_ALREADY_EXIST, "UserProvider already exists. Can't create more than one");
 		}
-		if (UserProviderType.LDAP_PROVIDER.equals(dto.getType())) {
-			return ldapUserProviderDto((LDAPUserProviderDto) dto, domain);
-		} else if (UserProviderType.OIDC_PROVIDER.equals(dto.getType())) {
-			return oidcUserProviderDto((OIDCUserProviderDto) dto, domain);
+		switch (dto.getType()) {
+			case LDAP_PROVIDER:
+				return ldapUserProviderDto((LDAPUserProviderDto) dto, domain);
+			case OIDC_PROVIDER:
+				return oidcUserProviderDto((OIDCUserProviderDto) dto, domain);
+			default:
+				throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 		}
-		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 	}
 
 	private LDAPUserProviderDto ldapUserProviderDto(LDAPUserProviderDto dto, AbstractDomain domain) {
