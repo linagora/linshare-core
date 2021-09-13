@@ -146,56 +146,56 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		}
 		switch (dto.getType()) {
 			case LDAP_PROVIDER:
-				return ldapUserProviderDto((LDAPUserProviderDto) dto, domain);
+				return createLdapUserProvider((LDAPUserProviderDto) dto, domain);
 			case OIDC_PROVIDER:
-				return oidcUserProviderDto((OIDCUserProviderDto) dto, domain);
+				return createOidcUserProvider((OIDCUserProviderDto) dto, domain);
 			default:
 				throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 		}
 	}
 
-	private LDAPUserProviderDto ldapUserProviderDto(LDAPUserProviderDto dto, AbstractDomain domain) {
-		LDAPUserProviderDto userProviderDto = dto;
+	private LDAPUserProviderDto createLdapUserProvider(LDAPUserProviderDto dto, AbstractDomain domain) {
 		// user filter
-		Validate.notNull(userProviderDto.getUserFilter(), "UserFilter is mandatory for user provider creation");
-		String userFilterUuid = userProviderDto.getUserFilter().getUuid();
+		Validate.notNull(dto.getUserFilter(), "UserFilter is mandatory for user provider creation");
+		String userFilterUuid = dto.getUserFilter().getUuid();
 		Validate.notEmpty(userFilterUuid, "UserFilter uuid is mandatory for user provider creation");
 		// ldap connection
-		Validate.notNull(userProviderDto.getLdapServer(), "LDAP Connection is mandatory for user provider creation");
-		String ldapConnectionUuid = userProviderDto.getLdapServer().getUuid();
+		Validate.notNull(dto.getLdapServer(), "LDAP Connection is mandatory for user provider creation");
+		String ldapConnectionUuid = dto.getLdapServer().getUuid();
 		Validate.notEmpty(ldapConnectionUuid, "LDAP connection uuid is mandatory for user provider creation");
 		// baseDn
-		String baseDn = userProviderDto.getBaseDn();
+		String baseDn = dto.getBaseDn();
 		Validate.notEmpty(baseDn, "baseDn is mandatory for user provider creation");
 
-		LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionUuid);
-		UserLdapPattern pattern = userProviderService.findDomainPattern(userFilterUuid);
-		UserProvider userProvider = userProviderRepository.create(new LdapUserProvider(domain, baseDn, ldapConnection, pattern));
+		LdapUserProvider userProvider =  (LdapUserProvider) userProviderRepository.create(
+				new LdapUserProvider(domain,
+						baseDn,
+						ldapConnectionService.find(ldapConnectionUuid),
+						userProviderService.findDomainPattern(userFilterUuid)));
 		// no update ? I think implicit opened transaction do the job
 		domain.setUserProvider(userProvider);
-		return new LDAPUserProviderDto(domain, (LdapUserProvider)userProvider);
+		return new LDAPUserProviderDto(domain, userProvider);
 	}
 
-	private OIDCUserProviderDto oidcUserProviderDto(OIDCUserProviderDto dto, AbstractDomain domain) {
-		OIDCUserProviderDto userProviderDto = dto;
-		Validate.notEmpty(userProviderDto.getDomainDiscriminator(), "Domain discriminator is mandatory for user provider creation");
-		OIDCUserProvider userProvider = new OIDCUserProvider(domain, userProviderDto.getDomainDiscriminator());
-		if (userProviderDto.getCheckExternalUserID() != null) {
-			userProvider.setCheckExternalUserID(userProviderDto.getCheckExternalUserID());
+	private OIDCUserProviderDto createOidcUserProvider(OIDCUserProviderDto dto, AbstractDomain domain) {
+		Validate.notEmpty(dto.getDomainDiscriminator(), "Domain discriminator is mandatory for user provider creation");
+		OIDCUserProvider userProvider = new OIDCUserProvider(domain, dto.getDomainDiscriminator());
+		if (dto.getCheckExternalUserID() != null) {
+			userProvider.setCheckExternalUserID(dto.getCheckExternalUserID());
 		}
-		if (userProviderDto.getUseAccessClaim() != null) {
-			userProvider.setUseAccessClaim(userProviderDto.getUseAccessClaim());
+		if (dto.getUseAccessClaim() != null) {
+			userProvider.setUseAccessClaim(dto.getUseAccessClaim());
 		}
-		if (userProviderDto.getUseRoleClaim() != null) {
-			userProvider.setUseRoleClaim(userProviderDto.getUseRoleClaim());
+		if (dto.getUseRoleClaim() != null) {
+			userProvider.setUseRoleClaim(dto.getUseRoleClaim());
 		}
-		if (userProviderDto.getUseEmailLocaleClaim() != null) {
-			userProvider.setUseEmailLocaleClaim(userProviderDto.getUseEmailLocaleClaim());
+		if (dto.getUseEmailLocaleClaim() != null) {
+			userProvider.setUseEmailLocaleClaim(dto.getUseEmailLocaleClaim());
 		}
-		userProvider = (OIDCUserProvider) userProviderRepository.create(userProvider);
+		OIDCUserProvider created = (OIDCUserProvider) userProviderRepository.create(userProvider);
 		// no update ? I think implicit opened transaction do the job
-		domain.setUserProvider(userProvider);
-		return new OIDCUserProviderDto((OIDCUserProvider)userProvider);
+		domain.setUserProvider(created);
+		return new OIDCUserProviderDto(created);
 	}
 
 	@Override
