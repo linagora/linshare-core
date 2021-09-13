@@ -103,6 +103,15 @@
 				<role>Developer</role>
 			</roles>
 		</developer>
+		<developer>
+			<id>aduprat</id>
+			<name>Antoine Duprat</name>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
 	</developers>
 	<licenses>
 		<license>
