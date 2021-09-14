@@ -187,4 +187,12 @@ public class FlowDto {
 		this.setLastChunk(true);
 		this.setChunkUploadSuccess(true);
 	}
+
+	@Override
+	public String toString() {
+		return "FlowDto [chunkNumber=" + chunkNumber + ", fileName=" + fileName + ", entry=" + entry + ", isLastChunk="
+				+ isLastChunk + ", chunkUploadSuccess=" + chunkUploadSuccess + ", isAsync=" + isAsync
+				+ ", asyncTaskUuid=" + asyncTaskUuid + ", errorMessage=" + errorMessage + ", errCode=" + errCode
+				+ ", frequence=" + frequence + "]";
+	}
 }
