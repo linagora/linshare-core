@@ -148,6 +148,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			logger.error(msg);
 			flow.setChunkUploadSuccess(false);
 			flow.setErrorMessage(msg);
+			logger.trace(flow.toString());
 			return flow;
 		}
 		try {
@@ -167,6 +168,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 						logger.error(msg);
 						flow.setChunkUploadSuccess(false);
 						flow.setErrorMessage(msg);
+						logger.trace(flow.toString());
 						return flow;
 					}
 				}
@@ -196,11 +198,11 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 					logger.error("chunk filename: {}", filename);
 				}
 				flow.setChunkUploadSuccess(true);
+				logger.trace(flow.toString());
 				return flow;
 			} else {
 				logger.debug("upload pending ");
 				flow.setChunkUploadSuccess(true);
-
 			}
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
@@ -214,6 +216,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			flow.setChunkUploadSuccess(false);
 			flow.setErrorMessage(e.getMessage());
 		}
+		logger.trace(flow.toString());
 		return flow;
 	}
 

@@ -177,6 +177,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			logger.error(msg);
 			flow.setChunkUploadSuccess(false);
 			flow.setErrorMessage(msg);
+			logger.trace(flow.toString());
 			return flow;
 		}
 		try {
@@ -196,6 +197,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 						logger.error(msg);
 						flow.setChunkUploadSuccess(false);
 						flow.setErrorMessage(msg);
+						logger.trace(flow.toString());
 						return flow;
 					}
 				}
@@ -218,6 +220,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 						logger.error(msg);
 						flow.setChunkUploadSuccess(false);
 						flow.setErrorMessage(msg);
+						logger.trace(flow.toString());
 						return flow;
 					}
 				}
@@ -272,6 +275,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 						}
 					}
 				}
+				logger.trace(flow.toString());
 				return flow;
 			} else {
 				logger.debug("upload pending ");
@@ -289,6 +293,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			flow.setChunkUploadSuccess(false);
 			flow.setErrorMessage(e.getMessage());
 		}
+		logger.trace(flow.toString());
 		return flow;
 	}
 
