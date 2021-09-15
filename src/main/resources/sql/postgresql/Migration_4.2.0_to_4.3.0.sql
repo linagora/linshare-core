@@ -99,6 +99,35 @@ CREATE INDEX account_first_name
 CREATE INDEX account_last_name
   ON account (last_name);
 
+-- Update ldap drive filter's type
+UPDATE ldap_pattern SET pattern_type = 'DRIVE_LDAP_PATTERN' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
+
+-- Update ldap drive filter's description
+UPDATE ldap_pattern SET description = 'default-drive-filter' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
+
+-- Update ldap drive filter's label
+UPDATE ldap_pattern SET label = 'Default Ldap Drive filter' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
+
+-- ldap attributes
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(22, 'mail', 'member_mail', false, true, true, false, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(23, 'givenName', 'member_firstname', false, true, true, false, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(24, 'cn', 'group_name_attr', false, true, true, true, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(25, 'member', 'extended_group_member_attr', false, true, true, true, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(26, 'sn', 'member_lastname', false, true, true, false, 6);
 ---- End of your queries
 
 -- Upgrade LinShare version

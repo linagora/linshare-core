@@ -31,13 +31,25 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.webservice.adminv5;
 
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
-import org.linagora.linshare.core.domain.entities.DriveProvider;
+import java.util.List;
 
-public interface DriveProviderRepository extends AbstractRepository<DriveProvider> {
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractDriveFilterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 
-	boolean isUsed(LdapDriveFilter pattern);
+public interface DomainDriveFilterRestService {
 
+	List<AbstractDriveFilterDto> findAll(boolean model) throws BusinessException;
+
+	AbstractDriveFilterDto find(String uuid) throws BusinessException;
+
+	AbstractDriveFilterDto create(AbstractDriveFilterDto dto) throws BusinessException;
+
+	AbstractDriveFilterDto update(String uuid, AbstractDriveFilterDto dto) throws BusinessException;
+
+	AbstractDriveFilterDto delete(String uuid, AbstractDriveFilterDto dto) throws BusinessException;
+
+	List<DomainDto> findAllDomainsByDriveFilter(String uuid) throws BusinessException;
 }

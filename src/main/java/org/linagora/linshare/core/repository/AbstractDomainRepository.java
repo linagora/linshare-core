@@ -38,6 +38,7 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -129,5 +130,7 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	public List<AbstractDomain> findAllDomainsByUserFilter(UserLdapPattern domainUserFilter);
 
 	public List<AbstractDomain> findAllDomainsByGroupFilter(GroupLdapPattern domainGroupFilter);
+
+	public List<AbstractDomain> findAllDomainsByDriveFilter(LdapDriveFilter domainDriveFilter);
 
 }

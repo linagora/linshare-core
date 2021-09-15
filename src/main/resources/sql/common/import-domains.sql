@@ -230,6 +230,68 @@ INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
 VALUES(17, 'sn', 'member_lastname', false, true, true, false, 4);
 
+-- Drive ldap pattern
+INSERT INTO ldap_pattern(
+    id,
+    uuid,
+    pattern_type,
+    label,
+    system,
+    description,
+    auth_command,
+    search_user_command,
+    search_page_size,
+    search_size_limit,
+    auto_complete_command_on_first_and_last_name,
+    auto_complete_command_on_all_attributes, completion_page_size,
+    completion_size_limit,
+    creation_date,
+    modification_date,
+    search_all_groups_query,
+    search_group_query,
+    group_prefix)
+    VALUES(
+    6,
+    'c59078f1-2366-4360-baa0-6c089202e9a6',
+    'DRIVE_LDAP_PATTERN',
+    'Default Ldap Drive filter',
+    true,
+    'default-drive-filter',
+    NULL,
+    NULL,
+    100,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NOW(),
+    NOW(),
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-*))");',
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-" + pattern + "))");',
+    'drive-');
+
+-- ldap attributes
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(22, 'mail', 'member_mail', false, true, true, false, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(23, 'givenName', 'member_firstname', false, true, true, false, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(24, 'cn', 'group_name_attr', false, true, true, true, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(25, 'member', 'extended_group_member_attr', false, true, true, true, 6);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(26, 'sn', 'member_lastname', false, true, true, false, 6);
+
 
 -- Demo ldap pattern.
 INSERT INTO ldap_pattern(

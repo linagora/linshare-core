@@ -61,4 +61,12 @@
 		<constructor-arg ref="userProviderRepository" />
 		<constructor-arg ref="ldapUserProviderRepository" />
 	</bean>
+	<bean id="wsAdminV5DomainDriveFilterFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.DomainDriveFilterFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg>
+			<map>
+				<entry key="LDAP" value-ref="LdapDriveFilterService" />
+			</map>
+		</constructor-arg>
+	</bean>
 </beans>	

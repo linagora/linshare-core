@@ -34,9 +34,13 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.DriveProvider;
+import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
 import org.linagora.linshare.core.repository.DriveProviderRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class DriveProviderRepositoryImpl extends AbstractRepositoryImpl<DriveProvider>
@@ -53,4 +57,12 @@ public class DriveProviderRepositoryImpl extends AbstractRepositoryImpl<DrivePro
 		return det;
 	}
 
+	@Override
+	public boolean isUsed(LdapDriveFilter pattern) {
+		DetachedCriteria det = DetachedCriteria.forClass(LdapDriveProvider.class);
+		det.add(Restrictions.eq("driveFilter", pattern));
+		det.setProjection(Projections.rowCount());
+		long longResult = DataAccessUtils.longResult(findByCriteria(det));
+		return longResult > 0;
+	}
 }

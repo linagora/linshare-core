@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
@@ -59,8 +60,8 @@ import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.LdapDriveFilterService;
 import org.linagora.linshare.core.service.DriveProviderService;
-import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.LDAPDriveSyncService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
 import org.linagora.linshare.core.service.LdapConnectionService;
@@ -124,7 +125,7 @@ public class LDAPDriveSyncServiceImplTest {
 	LdapConnectionService ldapConnectionService;
 
 	@Autowired
-	GroupLdapPatternService groupPatternService;
+	LdapDriveFilterService drivePatternService;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -137,7 +138,7 @@ public class LDAPDriveSyncServiceImplTest {
 
 	private LdapConnection ldapConnection;
 
-	private GroupLdapPattern groupPattern;
+	private LdapDriveFilter drivePattern;
 
 	private Map<String, LdapAttribute> attributes;
 
@@ -177,21 +178,21 @@ public class LDAPDriveSyncServiceImplTest {
 				new LdapAttribute(GroupLdapPattern.MEMBER_FIRST_NAME, "givenName"));
 		attributes.put(GroupLdapPattern.MEMBER_LAST_NAME, new LdapAttribute(GroupLdapPattern.MEMBER_LAST_NAME, "sn"));
 
-		groupPattern = new GroupLdapPattern();
-		groupPattern.setLabel("LabelGroup pattern");
-		groupPattern.setDescription("description");
-		groupPattern.setAttributes(attributes);
-		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-*))\");");
-		groupPattern.setSearchGroupQuery(
+		drivePattern = new LdapDriveFilter();
+		drivePattern.setLabel("LabelGroup pattern");
+		drivePattern.setDescription("description");
+		drivePattern.setAttributes(attributes);
+		drivePattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-*))\");");
+		drivePattern.setSearchGroupQuery(
 				"ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");");
-		groupPattern.setSearchPageSize(100);
-		groupPattern.setGroupPrefix("drive-");
+		drivePattern.setSearchPageSize(100);
+		drivePattern.setGroupPrefix("drive-");
 		Account root = datas.getRoot();
 		baseDn = "dc=linshare,dc=org";
-		groupPattern = groupPatternService.create(root, groupPattern);
+		drivePattern = drivePatternService.create(root, drivePattern);
 		ldapConnection = new LdapConnection("testldap", "ldap://localhost:33389", "anonymous");
 		ldapConnection = ldapConnectionService.create(ldapConnection);
-		LdapDriveProvider driveProvider = new LdapDriveProvider(groupPattern, "ou=groups,dc=linshare,dc=org", ldapConnection, false);
+		LdapDriveProvider driveProvider = new LdapDriveProvider(drivePattern, "ou=groups,dc=linshare,dc=org", ldapConnection, false);
 		driveProvider.setType(DriveProviderType.LDAP_PROVIDER);
 		driveProvider = driveProviderService.create(driveProvider);
 		domain.setDriveProvider(driveProvider);

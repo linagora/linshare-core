@@ -31,46 +31,58 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin.dto;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
-import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
+import org.linagora.linshare.core.domain.constants.DriveFilterType;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@XmlRootElement(name = "LDAPDriveProvider")
-@Schema(name = "LDAPDriveProvider", description = "Used to provide drives from an LDAP directory")
-public class LDAPDriveProviderDto {
 
-	@Schema(description = "uuid")
-	private String uuid;
-
-	@Schema(description = "LdapConnection")
-	private LightCommonDto connection;
-
-	@Schema(description = "GroupLdapPattern")
-	private LightCommonDto pattern;
-
-	@Schema(description = "BaseDn")
-	private String baseDn;
-
-	@Schema(description = "SearchInOtherDomains")
-	private Boolean searchInOtherDomains;
-
-	public LDAPDriveProviderDto() {
-		super();
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(
+	name = "LdapDriveFilter",
+	description = "A LdapDriveFilter",
+	discriminatorProperty = "type",
+	discriminatorMapping = {
+		@DiscriminatorMapping(value = "LDAP", schema = LDAPDriveFilterDto.class)
 	}
+)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+@JsonSubTypes({
+	@Type(value = LDAPDriveFilterDto.class, name="LDAP"),
+})
+public abstract class AbstractDriveFilterDto {
 
-	public LDAPDriveProviderDto(LdapDriveProvider driveProvider) {
-		this.uuid = driveProvider.getUuid();
-		this.connection = new LightCommonDto(driveProvider.getLdapConnection().getLabel(),
-				driveProvider.getLdapConnection().getUuid());
-		this.pattern = new LightCommonDto(driveProvider.getDriveFilter().getLabel(),
-				driveProvider.getDriveFilter().getUuid());
-		this.baseDn = driveProvider.getBaseDn();
-		this.searchInOtherDomains = driveProvider.getSearchInOtherDomains();
+	@Schema(description = "Unique identifier of the resource.", required = false)
+	protected String uuid;
+
+	@Schema(description = "Drive filter's name", required = true)
+	protected String name;
+
+	@Schema(description = "Drive filter's description", required = false)
+	protected String description;
+
+	@Schema(description = "Drive filter's type", required = true)
+	public abstract DriveFilterType getType();
+
+	protected DriveFilterType type;
+
+	@Schema(description = "Drive filter's creation date", required = false)
+	protected Date creationDate;
+
+	@Schema(description = "Drive filter's modification date", required = false)
+	protected Date modificationDate;
+
+	protected AbstractDriveFilterDto() {
+		super();
 	}
 
 	public String getUuid() {
@@ -81,36 +93,35 @@ public class LDAPDriveProviderDto {
 		this.uuid = uuid;
 	}
 
-	public String getBaseDn() {
-		return baseDn;
+	public String getName() {
+		return name;
 	}
 
-	public void setBaseDn(String baseDn) {
-		this.baseDn = baseDn;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public LightCommonDto getConnection() {
-		return connection;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setConnection(LightCommonDto connection) {
-		this.connection = connection;
+	public void setType(DriveFilterType type) {
+		this.type = type;
 	}
 
-	public LightCommonDto getPattern() {
-		return pattern;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public void setPattern(LightCommonDto pattern) {
-		this.pattern = pattern;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
-	public Boolean getSearchInOtherDomains() {
-		return searchInOtherDomains;
+	public Date getModificationDate() {
+		return modificationDate;
 	}
 
-	public void setSearchInOtherDomains(Boolean searchInOtherDomains) {
-		this.searchInOtherDomains = searchInOtherDomains;
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
-
 }

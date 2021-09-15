@@ -38,7 +38,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 
 public class LdapDriveProvider extends DriveProvider {
 
-	protected GroupLdapPattern groupPattern;
+	protected LdapDriveFilter driveFilter;
 
 	protected String baseDn;
 
@@ -50,21 +50,21 @@ public class LdapDriveProvider extends DriveProvider {
 		super();
 	}
 
-	public LdapDriveProvider(GroupLdapPattern groupPattern, String baseDn, LdapConnection ldapConnection,
+	public LdapDriveProvider(LdapDriveFilter driveFilter, String baseDn, LdapConnection ldapConnection,
 			Boolean searchInOtherDomains) {
 		super();
-		this.groupPattern = groupPattern;
+		this.driveFilter = driveFilter;
 		this.baseDn = baseDn;
 		this.ldapConnection = ldapConnection;
 		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
 	}
 
-	public GroupLdapPattern getGroupPattern() {
-		return groupPattern;
+	public LdapDriveFilter getDriveFilter() {
+		return driveFilter;
 	}
 
-	public void setGroupPattern(GroupLdapPattern groupPattern) {
-		this.groupPattern = groupPattern;
+	public void setDriveFilter(LdapDriveFilter driveFilter) {
+		this.driveFilter = driveFilter;
 	}
 
 	public String getBaseDn() {
@@ -98,7 +98,7 @@ public class LdapDriveProvider extends DriveProvider {
 		driveProvider.setUuid(uuid);
 		driveProvider.setBaseDn(baseDn);
 		driveProvider.setPattern(
-				new LightCommonDto(this.groupPattern.getLabel(), this.groupPattern.getUuid()));
+				new LightCommonDto(this.driveFilter.getLabel(), this.driveFilter.getUuid()));
 		driveProvider.setConnection(new LightCommonDto(this.ldapConnection.getLabel(), this.ldapConnection.getUuid()));
 		driveProvider.setSearchInOtherDomains(this.searchInOtherDomains);
 		return driveProvider;

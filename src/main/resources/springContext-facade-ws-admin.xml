@@ -36,6 +36,7 @@
 		<constructor-arg ref="driveProviderService"/>
 		<constructor-arg ref="groupLdapPatternService"/>
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="LdapDriveFilterService"/>
 	</bean>
 	<bean id="wsAdminDomainPolicyFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainPolicyFacadeImpl">

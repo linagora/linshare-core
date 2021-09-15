@@ -134,6 +134,13 @@
 		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
 
+	<bean name="LdapDriveFilterService"
+		class="org.linagora.linshare.core.service.impl.LdapDriveFilterServiceImpl">
+		<constructor-arg ref="ldapDriveFilterRepository" />
+		<constructor-arg ref="driveProviderRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
+	</bean>
+
 	<bean name="groupProviderService"
 		class="org.linagora.linshare.core.service.impl.GroupProviderServiceImpl">
 		<constructor-arg ref="groupProviderRepository" />

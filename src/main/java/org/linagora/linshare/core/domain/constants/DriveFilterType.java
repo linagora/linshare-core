@@ -31,13 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.domain.constants;
 
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
-import org.linagora.linshare.core.domain.entities.DriveProvider;
+public enum DriveFilterType {
 
-public interface DriveProviderRepository extends AbstractRepository<DriveProvider> {
+	LDAP;
 
-	boolean isUsed(LdapDriveFilter pattern);
-
+	public static DriveFilterType fromString(String s) {
+		try {
+			return DriveFilterType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException("Doesn't match an existing drive filter type");
+		}
+	}
 }

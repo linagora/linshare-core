@@ -275,6 +275,9 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="ldapDriveFilterRepository" class="org.linagora.linshare.core.repository.hibernate.LdapDriveFilterRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 	<bean name="groupPatternRepository" class="org.linagora.linshare.core.repository.hibernate.GroupPatternRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
