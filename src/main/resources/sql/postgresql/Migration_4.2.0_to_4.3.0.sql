@@ -99,14 +99,35 @@ CREATE INDEX account_first_name
 CREATE INDEX account_last_name
   ON account (last_name);
 
--- Update ldap drive filter's type
-UPDATE ldap_pattern SET pattern_type = 'DRIVE_LDAP_PATTERN' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
+-- Ldap Drive filter
+INSERT INTO ldap_pattern(
+    id,
+    uuid,
+    pattern_type,
+    label,
+    system,
+    description,
+    search_page_size,
+    creation_date,
+    modification_date,
+    search_all_groups_query,
+    search_group_query,
+    group_prefix)
+    SELECT 6,
+    'c59078f1-2366-4360-baa0-6c089202e9a6',
+    'DRIVE_LDAP_PATTERN',
+    'Default Ldap Drive filter',
+    true,
+    'Description of default LDAP Drive filter',
+    100,
+    NOW(),
+    NOW(),
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-*))");',
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-" + pattern + "))");',
+    'drive-' WHERE NOT EXISTS (SELECT id FROM ldap_pattern WHERE id = 6);
 
--- Update ldap drive filter's description
-UPDATE ldap_pattern SET description = 'default-drive-filter' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
-
--- Update ldap drive filter's label
-UPDATE ldap_pattern SET label = 'Default Ldap Drive filter' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
+-- Update ldap drive filter
+UPDATE ldap_pattern SET pattern_type = 'DRIVE_LDAP_PATTERN', description = 'Description of default LDAP Drive filter', label = 'Default Ldap Drive filter' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
 
 -- ldap attributes
 INSERT INTO ldap_attribute
