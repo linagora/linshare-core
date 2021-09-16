@@ -40,16 +40,22 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
+import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.LdapDriveFilterRepository;
 import org.linagora.linshare.core.repository.DriveProviderRepository;
+import org.linagora.linshare.core.repository.LdapDriveFilterRepository;
 import org.linagora.linshare.core.service.LdapDriveFilterService;
+import org.linagora.linshare.mongo.entities.logs.DriveFilterAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.LdapDriveFilterMto;
+import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
 public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implements LdapDriveFilterService {
 
@@ -59,14 +65,18 @@ public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implemen
 
 	protected final AbstractDomainRepository abstractDomainRepository;
 
+	private final AuditAdminMongoRepository auditAdminMongoRepository;
+
 	public LdapDriveFilterServiceImpl(LdapDriveFilterRepository drivePatternRepository,
 			DriveProviderRepository driveProviderRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			AbstractDomainRepository abstractDomainRepository) {
+			AbstractDomainRepository abstractDomainRepository,
+			AuditAdminMongoRepository auditAdminMongoRepository) {
 		super(sanitizerInputHtmlBusinessService);
 		this.drivePatternRepository = drivePatternRepository;
 		this.driveProviderRepository = driveProviderRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
+		this.auditAdminMongoRepository = auditAdminMongoRepository;
 	}
 
 	@Override
@@ -99,9 +109,12 @@ public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implemen
 		}
 		driveLdapPattern.setLabel(sanitize(driveLdapPattern.getLabel()));
 		driveLdapPattern.setDescription(sanitize(driveLdapPattern.getDescription()));
-		LdapDriveFilter createdGroupPattern = drivePatternRepository.create(driveLdapPattern);
-		// TODO AUDIT
-		return createdGroupPattern;
+		LdapDriveFilter createdDrivePattern = drivePatternRepository.create(driveLdapPattern);
+		LdapDriveFilterMto driveFilterMto = new LdapDriveFilterMto(createdDrivePattern);
+		DriveFilterAuditLogEntry log = new DriveFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
+				LogAction.CREATE, AuditLogEntryType.DRIVE_FILTER, driveFilterMto);
+		auditAdminMongoRepository.insert(log);
+		return createdDrivePattern;
 	}
 
 	@Override

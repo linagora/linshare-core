@@ -38,9 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.mongo.entities.mto.AbstractDriveFilterMto;
-import org.linagora.linshare.mongo.entities.mto.LdapDriveFilterMto;
 
 @XmlRootElement(name = "DriveFilterAuditLogEntry")
 public class DriveFilterAuditLogEntry extends AuditLogEntryAdmin {
@@ -54,9 +52,9 @@ public class DriveFilterAuditLogEntry extends AuditLogEntryAdmin {
 	}
 
 	public DriveFilterAuditLogEntry(Account authUser, String domainUuid, LogAction action, AuditLogEntryType type,
-			LdapDriveFilter driveFilter) {
+			AbstractDriveFilterMto driveFilter) {
 		super(authUser, domainUuid, action, type, driveFilter.getUuid());
-		this.resource = new LdapDriveFilterMto(driveFilter);
+		this.resource = driveFilter;
 	}
 
 	public AbstractDriveFilterMto getResource() {
@@ -75,5 +73,8 @@ public class DriveFilterAuditLogEntry extends AuditLogEntryAdmin {
 		this.resourceUpdated = resourceUpdated;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "DriveFilterAuditLogEntry [resource=" + resource + ", resourceUpdated=" + resourceUpdated + "]";
+	}
 }

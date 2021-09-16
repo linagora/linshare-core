@@ -34,6 +34,7 @@
 package org.linagora.linshare.mongo.entities.mto;
 
 import org.linagora.linshare.core.domain.constants.DriveFilterType;
+import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 
 public abstract class AbstractDriveFilterMto {
 
@@ -47,6 +48,13 @@ public abstract class AbstractDriveFilterMto {
 
 	protected AbstractDriveFilterMto() {
 		super();
+	}
+
+	protected AbstractDriveFilterMto(LdapDriveFilter driveFilter) {
+		this.uuid = driveFilter.getUuid();
+		this.label = driveFilter.getLabel();
+		this.description = driveFilter.getDescription();
+		this.type = driveFilter.getType();
 	}
 
 	public String getUuid() {
@@ -79,5 +87,10 @@ public abstract class AbstractDriveFilterMto {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractDriveFilterMto [uuid=" + uuid + ", label=" + label + ", type=" + type + "]";
 	}
 }

@@ -42,7 +42,7 @@ public class LdapDriveFilterMto extends AbstractDriveFilterMto {
 
 	private String groupName;
 
-	private String groupMember ;
+	private String groupMember;
 
 	private String memberMail;
 
@@ -63,9 +63,7 @@ public class LdapDriveFilterMto extends AbstractDriveFilterMto {
 	}
 
 	public LdapDriveFilterMto(LdapDriveFilter driveFilter) {
-		this.uuid = driveFilter.getUuid();
-		this.label = driveFilter.getLabel();
-		this.description = driveFilter.getDescription();
+		super(driveFilter);
 		this.searchAllGroupsQuery = driveFilter.getSearchAllGroupsQuery();
 		this.searchGroupQuery = driveFilter.getSearchGroupQuery();
 		this.groupPrefix = driveFilter.getGroupPrefix();

@@ -139,6 +139,7 @@
 		<constructor-arg ref="ldapDriveFilterRepository" />
 		<constructor-arg ref="driveProviderRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="auditAdminMongoRepository" />
 	</bean>
 
 	<bean name="groupProviderService"
