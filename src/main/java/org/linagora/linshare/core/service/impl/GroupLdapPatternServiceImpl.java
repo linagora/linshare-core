@@ -40,6 +40,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
@@ -50,6 +53,9 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.GroupPatternRepository;
 import org.linagora.linshare.core.repository.LdapGroupProviderRepository;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
+import org.linagora.linshare.mongo.entities.logs.GroupFilterAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.LdapGroupFilterMto;
+import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
 public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl implements GroupLdapPatternService {
 
@@ -59,14 +65,18 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 
 	protected final AbstractDomainRepository abstractDomainRepository;
 
+	private final AuditAdminMongoRepository auditAdminMongoRepository;
+
 	public GroupLdapPatternServiceImpl(GroupPatternRepository groupPatternRepository,
 			LdapGroupProviderRepository ldapGroupProviderRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			AbstractDomainRepository abstractDomainRepository) {
+			AbstractDomainRepository abstractDomainRepository,
+			AuditAdminMongoRepository auditAdminMongoRepository) {
 		super(sanitizerInputHtmlBusinessService);
 		this.groupPatternRepository = groupPatternRepository;
 		this.ldapGroupProviderRepository = ldapGroupProviderRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
+		this.auditAdminMongoRepository = auditAdminMongoRepository;
 	}
 
 	@Override
@@ -100,7 +110,10 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 		groupLdapPattern.setLabel(sanitize(groupLdapPattern.getLabel()));
 		groupLdapPattern.setDescription(sanitize(groupLdapPattern.getDescription()));
 		GroupLdapPattern createdGroupPattern = groupPatternRepository.create(groupLdapPattern);
-		// TODO AUDIT
+		LdapGroupFilterMto groupFilterMto = new LdapGroupFilterMto(createdGroupPattern);
+		GroupFilterAuditLogEntry log = new GroupFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
+				LogAction.CREATE, AuditLogEntryType.GROUP_FILTER, groupFilterMto);
+		auditAdminMongoRepository.insert(log);
 		return createdGroupPattern;
 	}
 
@@ -110,6 +123,9 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 		Validate.notNull(groupLdapPattern, "Group Ldap Pattern must be set");
 		Validate.notEmpty(groupLdapPattern.getUuid(), "Group Ldap Pattern UUID must be set");
 		GroupLdapPattern pattern = groupPatternRepository.find(groupLdapPattern.getUuid());
+		LdapGroupFilterMto groupFilterMto = new LdapGroupFilterMto(pattern);
+		GroupFilterAuditLogEntry log = new GroupFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
+				LogAction.UPDATE, AuditLogEntryType.GROUP_FILTER, groupFilterMto);
 		if (pattern == null) {
 			throw new BusinessException(BusinessErrorCode.GROUP_LDAP_PATTERN_NOT_FOUND, "no such group pattern");
 		}
@@ -143,6 +159,9 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 		pattern.getAttributes().get(GroupLdapPattern.MEMBER_MAIL)
 				.setAttribute(groupLdapPattern.getAttributes().get(GroupLdapPattern.MEMBER_MAIL).getAttribute());
 		pattern = groupPatternRepository.update(pattern);
+		LdapGroupFilterMto groupFilterUpdatedMto = new LdapGroupFilterMto(pattern);
+		log.setResourceUpdated(groupFilterUpdatedMto);
+		auditAdminMongoRepository.insert(log);
 		return pattern;
 	}
 
@@ -160,7 +179,11 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 			throw new BusinessException(BusinessErrorCode.GROUP_LDAP_PATTERN_CANNOT_BE_REMOVED,
 					"System group patterns cannot be removed");
 		}
+		LdapGroupFilterMto groupFilterMto = new LdapGroupFilterMto(pattern);
+		GroupFilterAuditLogEntry log = new GroupFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
+				LogAction.DELETE, AuditLogEntryType.GROUP_FILTER, groupFilterMto);
 		groupPatternRepository.delete(pattern);
+		auditAdminMongoRepository.insert(log);
 		return pattern;
 	}
 

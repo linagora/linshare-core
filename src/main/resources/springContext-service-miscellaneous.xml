@@ -132,6 +132,7 @@
 		<constructor-arg ref="groupPatternRepository" />
 		<constructor-arg ref="ldapGroupProviderRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="auditAdminMongoRepository" />
 	</bean>
 
 	<bean name="LdapDriveFilterService"
