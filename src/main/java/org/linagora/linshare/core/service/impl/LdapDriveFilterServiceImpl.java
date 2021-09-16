@@ -123,6 +123,9 @@ public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implemen
 		Validate.notNull(ldapDriveFilter, "Drive Ldap filter must be set");
 		Validate.notEmpty(ldapDriveFilter.getUuid(), "Drive Ldap filter UUID must be set");
 		LdapDriveFilter driveFilter = drivePatternRepository.find(ldapDriveFilter.getUuid());
+		LdapDriveFilterMto driveFilterToUpdateMto = new LdapDriveFilterMto(driveFilter);
+		DriveFilterAuditLogEntry log = new DriveFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
+				LogAction.UPDATE, AuditLogEntryType.DRIVE_FILTER, driveFilterToUpdateMto);
 		if (driveFilter == null) {
 			throw new BusinessException(BusinessErrorCode.DRIVE_LDAP_FILTER_NOT_FOUND, "no such drive filter");
 		}
@@ -149,6 +152,9 @@ public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implemen
 		driveFilter.getAttributes().get(LdapDriveFilter.MEMBER_FIRST_NAME).setAttribute(ldapDriveFilter.getAttributes().get(LdapDriveFilter.MEMBER_FIRST_NAME).getAttribute());
 		driveFilter.getAttributes().get(LdapDriveFilter.MEMBER_MAIL).setAttribute(ldapDriveFilter.getAttributes().get(LdapDriveFilter.MEMBER_MAIL).getAttribute());
 		driveFilter = drivePatternRepository.update(driveFilter);
+		LdapDriveFilterMto driveFilterUpdatedMto = new LdapDriveFilterMto(driveFilter);
+		log.setResourceUpdated(driveFilterUpdatedMto);
+		auditAdminMongoRepository.insert(log);
 		return driveFilter;
 	}
 
@@ -166,7 +172,11 @@ public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implemen
 			throw new BusinessException(BusinessErrorCode.DRIVE_LDAP_FILTER_CANNOT_BE_REMOVED,
 					"System drive filter cannot be removed");
 		}
+		LdapDriveFilterMto driveFilterMto = new LdapDriveFilterMto(driveFilter);
+		DriveFilterAuditLogEntry log = new DriveFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
+				LogAction.DELETE, AuditLogEntryType.DRIVE_FILTER, driveFilterMto);
 		drivePatternRepository.delete(driveFilter);
+		auditAdminMongoRepository.insert(log);
 		return driveFilter;
 	}
 
