@@ -55,6 +55,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractUserProv
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
 import org.linagora.linshare.core.repository.LdapUserProviderRepository;
+import org.linagora.linshare.core.repository.OIDCUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainService;
@@ -76,13 +77,16 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 
 	private LdapUserProviderRepository ldapUserProviderRepository;
 
+	private OIDCUserProviderRepository oidcUserProviderRepository;
+
 	public UserProviderFacadeImpl(
 			AccountService accountService,
 			DomainService domainService,
 			UserProviderService userProviderService,
 			LdapConnectionService ldapConnectionService,
 			UserProviderRepository userProviderRepository,
-			LdapUserProviderRepository ldapUserProviderRepository
+			LdapUserProviderRepository ldapUserProviderRepository,
+			OIDCUserProviderRepository oidcUserProviderRepository
 			) {
 		super(accountService);
 		this.domainService = domainService;
@@ -90,6 +94,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		this.ldapConnectionService = ldapConnectionService;
 		this.userProviderRepository = userProviderRepository;
 		this.ldapUserProviderRepository = ldapUserProviderRepository;
+		this.oidcUserProviderRepository = oidcUserProviderRepository;
 	}
 
 	@Override
@@ -191,6 +196,9 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		}
 		if (dto.getUseEmailLocaleClaim() != null) {
 			userProvider.setUseEmailLocaleClaim(dto.getUseEmailLocaleClaim());
+		}
+		if (oidcUserProviderRepository.findByDomainDiscriminator(dto.getDomainDiscriminator()) != null) {
+			throw new BusinessException(BusinessErrorCode.OIDC_USER_PROVIDER_DOMAIN_DISCRIMINATOR_ALREADY_EXISTS, "Domain discriminator should be unique.");
 		}
 		OIDCUserProvider created = (OIDCUserProvider) userProviderRepository.create(userProvider);
 		// no update ? I think implicit opened transaction do the job
