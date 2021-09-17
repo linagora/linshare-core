@@ -222,12 +222,14 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 			Validate.notEmpty(uuid, "Missing user provider uuid in the payload.");
 		}
 		UserProvider userProvider = findByService(uuid);
-		if (UserProviderType.LDAP_PROVIDER.equals(dto.getType())) {
-			return updateLdapUserProvider((LDAPUserProviderDto) dto, domain, userProvider);
-		} else if (UserProviderType.OIDC_PROVIDER.equals(dto.getType())) {
-			return updateOidcUserProvider((OIDCUserProviderDto) dto, userProvider);
+		switch (dto.getType()) {
+			case LDAP_PROVIDER:
+				return updateLdapUserProvider((LDAPUserProviderDto) dto, domain, userProvider);
+			case OIDC_PROVIDER:
+				return updateOidcUserProvider((OIDCUserProviderDto) dto, userProvider);
+			default:
+				throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 		}
-		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 	}
 
 	private OIDCUserProviderDto updateOidcUserProvider(OIDCUserProviderDto dto, UserProvider userProvider) {
