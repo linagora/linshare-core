@@ -232,8 +232,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		}
 	}
 
-	private OIDCUserProviderDto updateOidcUserProvider(OIDCUserProviderDto dto, UserProvider userProvider) {
-		OIDCUserProviderDto userProviderDto = dto;
+	private OIDCUserProviderDto updateOidcUserProvider(OIDCUserProviderDto userProviderDto, UserProvider userProvider) {
 		Validate.notEmpty(userProviderDto.getDomainDiscriminator(), "Domain discriminator is mandatory for user provider update");
 		Validate.notNull(userProviderDto.getCheckExternalUserID(), "checkExternalUserID is mandatory for user provider update");
 		Validate.notNull(userProviderDto.getUseAccessClaim(), "useAccessClaim is mandatory for user provider update");
@@ -245,12 +244,10 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		provider.setUseAccessClaim(userProviderDto.getUseAccessClaim());
 		provider.setUseRoleClaim(userProviderDto.getUseRoleClaim());
 		provider.setUseEmailLocaleClaim(userProviderDto.getUseEmailLocaleClaim());
-		userProvider = userProviderRepository.update(provider);
-		return new OIDCUserProviderDto((OIDCUserProvider) userProvider);
+		return new OIDCUserProviderDto((OIDCUserProvider) userProviderRepository.update(provider));
 	}
 
-	private LDAPUserProviderDto updateLdapUserProvider(LDAPUserProviderDto dto, AbstractDomain domain, UserProvider userProvider) {
-		LDAPUserProviderDto userProviderDto = dto;
+	private LDAPUserProviderDto updateLdapUserProvider(LDAPUserProviderDto userProviderDto, AbstractDomain domain, UserProvider userProvider) {
 		// user filter
 		Validate.notNull(userProviderDto.getUserFilter(), "UserFilter is mandatory for user provider update");
 		String userFilterUuid = userProviderDto.getUserFilter().getUuid();
@@ -263,15 +260,11 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		String baseDn = userProviderDto.getBaseDn();
 		Validate.notEmpty(baseDn, "baseDn is mandatory for user provider update");
 
-		LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionUuid);
-		UserLdapPattern pattern = userProviderService.findDomainPattern(userFilterUuid);
-
 		LdapUserProvider provider = (LdapUserProvider) userProvider;
 		provider.setBaseDn(baseDn);
-		provider.setLdapConnection(ldapConnection);
-		provider.setPattern(pattern);
-		userProvider = userProviderRepository.update(provider);
-		return new LDAPUserProviderDto(domain, (LdapUserProvider) userProvider);
+		provider.setLdapConnection(ldapConnectionService.find(ldapConnectionUuid));
+		provider.setPattern(userProviderService.findDomainPattern(userFilterUuid));
+		return new LDAPUserProviderDto(domain, (LdapUserProvider) userProviderRepository.update(provider));
 	}
 
 	@Override
