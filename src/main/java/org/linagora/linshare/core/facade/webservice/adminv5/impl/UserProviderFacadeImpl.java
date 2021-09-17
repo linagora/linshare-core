@@ -223,45 +223,53 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		}
 		UserProvider userProvider = findByService(uuid);
 		if (UserProviderType.LDAP_PROVIDER.equals(dto.getType())) {
-			LDAPUserProviderDto userProviderDto = (LDAPUserProviderDto)dto;
-			// user filter
-			Validate.notNull(userProviderDto.getUserFilter(), "UserFilter is mandatory for user provider update");
-			String userFilterUuid = userProviderDto.getUserFilter().getUuid();
-			Validate.notEmpty(userFilterUuid, "UserFilter uuid is mandatory for user provider update");
-			// ldap connection
-			Validate.notNull(userProviderDto.getLdapServer(), "LDAP Connection is mandatory for user provider update");
-			String ldapConnectionUuid = userProviderDto.getLdapServer().getUuid();
-			Validate.notEmpty(ldapConnectionUuid, "LDAP connection uuid is mandatory for user provider update");
-			// baseDn
-			String baseDn = userProviderDto.getBaseDn();
-			Validate.notEmpty(baseDn, "baseDn is mandatory for user provider update");
-
-			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionUuid);
-			UserLdapPattern pattern = userProviderService.findDomainPattern(userFilterUuid);
-
-			LdapUserProvider provider = (LdapUserProvider)userProvider;
-			provider.setBaseDn(baseDn);
-			provider.setLdapConnection(ldapConnection);
-			provider.setPattern(pattern);
-			userProvider = userProviderRepository.update(provider);
-			return new LDAPUserProviderDto(domain, (LdapUserProvider)userProvider);
+			return updateLdapUserProvider((LDAPUserProviderDto) dto, domain, userProvider);
 		} else if (UserProviderType.OIDC_PROVIDER.equals(dto.getType())) {
-			OIDCUserProviderDto userProviderDto = (OIDCUserProviderDto)dto;
-			Validate.notEmpty(userProviderDto.getDomainDiscriminator(), "Domain discriminator is mandatory for user provider update");
-			Validate.notNull(userProviderDto.getCheckExternalUserID(), "checkExternalUserID is mandatory for user provider update");
-			Validate.notNull(userProviderDto.getUseAccessClaim(), "useAccessClaim is mandatory for user provider update");
-			Validate.notNull(userProviderDto.getUseRoleClaim(), "useRoleClaim is mandatory for user provider update");
-			Validate.notNull(userProviderDto.getUseEmailLocaleClaim(), "useEmailLocaleClaim is mandatory for user provider update");
-			OIDCUserProvider provider = (OIDCUserProvider)userProvider;
-			provider.setDomainDiscriminator(userProviderDto.getDomainDiscriminator());
-			provider.setCheckExternalUserID(userProviderDto.getCheckExternalUserID());
-			provider.setUseAccessClaim(userProviderDto.getUseAccessClaim());
-			provider.setUseRoleClaim(userProviderDto.getUseRoleClaim());
-			provider.setUseEmailLocaleClaim(userProviderDto.getUseEmailLocaleClaim());
-			userProvider = userProviderRepository.update(provider);
-			return new OIDCUserProviderDto((OIDCUserProvider)userProvider);
+			return updateOidcUserProvider((OIDCUserProviderDto) dto, userProvider);
 		}
 		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
+	}
+
+	private OIDCUserProviderDto updateOidcUserProvider(OIDCUserProviderDto dto, UserProvider userProvider) {
+		OIDCUserProviderDto userProviderDto = dto;
+		Validate.notEmpty(userProviderDto.getDomainDiscriminator(), "Domain discriminator is mandatory for user provider update");
+		Validate.notNull(userProviderDto.getCheckExternalUserID(), "checkExternalUserID is mandatory for user provider update");
+		Validate.notNull(userProviderDto.getUseAccessClaim(), "useAccessClaim is mandatory for user provider update");
+		Validate.notNull(userProviderDto.getUseRoleClaim(), "useRoleClaim is mandatory for user provider update");
+		Validate.notNull(userProviderDto.getUseEmailLocaleClaim(), "useEmailLocaleClaim is mandatory for user provider update");
+		OIDCUserProvider provider = (OIDCUserProvider) userProvider;
+		provider.setDomainDiscriminator(userProviderDto.getDomainDiscriminator());
+		provider.setCheckExternalUserID(userProviderDto.getCheckExternalUserID());
+		provider.setUseAccessClaim(userProviderDto.getUseAccessClaim());
+		provider.setUseRoleClaim(userProviderDto.getUseRoleClaim());
+		provider.setUseEmailLocaleClaim(userProviderDto.getUseEmailLocaleClaim());
+		userProvider = userProviderRepository.update(provider);
+		return new OIDCUserProviderDto((OIDCUserProvider) userProvider);
+	}
+
+	private LDAPUserProviderDto updateLdapUserProvider(LDAPUserProviderDto dto, AbstractDomain domain, UserProvider userProvider) {
+		LDAPUserProviderDto userProviderDto = dto;
+		// user filter
+		Validate.notNull(userProviderDto.getUserFilter(), "UserFilter is mandatory for user provider update");
+		String userFilterUuid = userProviderDto.getUserFilter().getUuid();
+		Validate.notEmpty(userFilterUuid, "UserFilter uuid is mandatory for user provider update");
+		// ldap connection
+		Validate.notNull(userProviderDto.getLdapServer(), "LDAP Connection is mandatory for user provider update");
+		String ldapConnectionUuid = userProviderDto.getLdapServer().getUuid();
+		Validate.notEmpty(ldapConnectionUuid, "LDAP connection uuid is mandatory for user provider update");
+		// baseDn
+		String baseDn = userProviderDto.getBaseDn();
+		Validate.notEmpty(baseDn, "baseDn is mandatory for user provider update");
+
+		LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionUuid);
+		UserLdapPattern pattern = userProviderService.findDomainPattern(userFilterUuid);
+
+		LdapUserProvider provider = (LdapUserProvider) userProvider;
+		provider.setBaseDn(baseDn);
+		provider.setLdapConnection(ldapConnection);
+		provider.setPattern(pattern);
+		userProvider = userProviderRepository.update(provider);
+		return new LDAPUserProviderDto(domain, (LdapUserProvider) userProvider);
 	}
 
 	@Override
