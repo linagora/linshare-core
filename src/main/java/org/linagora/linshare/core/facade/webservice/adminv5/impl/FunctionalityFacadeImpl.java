@@ -37,28 +37,49 @@ package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.FunctionalityDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.FunctionalityService;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 
 public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements FunctionalityFacade {
 
-	public FunctionalityFacadeImpl(AccountService accountService) {
+	FunctionalityService service;
+
+	public FunctionalityFacadeImpl(
+			AccountService accountService,
+			FunctionalityService functionalityService) {
 		super(accountService);
+		this.service = functionalityService;
 	}
 
 	@Override
 	public FunctionalityDto find(String domainUuid, String funcIdentifier, boolean tree) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "domain uuid must be set.");
+		Validate.notEmpty(funcIdentifier, "functionality identifier must be set.");
+		Functionality func = service.find(authUser, domainUuid, funcIdentifier, tree);
+		return FunctionalityDto.toDto().apply(func);
 	}
 
 	@Override
 	public List<FunctionalityDto> findAll(String domainUuid, String parentIdentifier, boolean tree,
 			boolean withSubFunctionalities) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "domain uuid must be set.");
+		Iterable<Functionality> entities = service.findAll(authUser, domainUuid, parentIdentifier, tree, withSubFunctionalities);
+		Iterable<FunctionalityDto> transform = Iterables.transform(entities, FunctionalityDto.toDto());
+		return Ordering.natural().immutableSortedCopy(transform);
 	}
 
 	@Override

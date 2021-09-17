@@ -79,6 +79,6 @@
 		<bean id="wsAdminV5FunctionalityFacade"
 		class="org.linagora.linshare.core.facade.webservice.adminv5.impl.FunctionalityFacadeImpl">
 		<constructor-arg ref="accountService" />
-<!-- 		<constructor-arg ref="functionalityService" /> -->
+		<constructor-arg ref="functionalityService" />
 	</bean>
 </beans>	

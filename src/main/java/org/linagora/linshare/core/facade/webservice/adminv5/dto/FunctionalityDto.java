@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 
@@ -113,16 +115,19 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 	@Schema(description = "Delegation policy")
 	protected PolicyDto delegationPolicy;
 
+	@Schema(description = "functionalities")
+	protected List<FunctionalityDto> functionalities;
+
 	public FunctionalityDto() {
 		super();
 	}
 
-	public FunctionalityDto(Integer version, Functionality f) {
+	public FunctionalityDto(Functionality f) {
 		super();
 		this.domain = new DomainDto(f.getDomain());
 		this.identifier = f.getIdentifier();
 		this.parentIdentifier = f.getParentIdentifier();
-		this.hidden = f.getDisplayable();
+		this.hidden = !f.getDisplayable();
 		this.readonly= false;
 		// Activation policy
 		this.activationPolicy = new PolicyDto(f.getActivationPolicy());
@@ -211,14 +216,22 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 		this.type = type;
 	}
 
+	public List<FunctionalityDto> getFunctionalities() {
+		return functionalities;
+	}
+
+	public void setFunctionalities(List<FunctionalityDto> functionalities) {
+		this.functionalities = functionalities;
+	}
+
 	/**
 	 * Transformers
 	 */
-	public static Function<Functionality, FunctionalityDto> toDto(Integer version) {
+	public static Function<Functionality, FunctionalityDto> toDto() {
 		return new Function<Functionality, FunctionalityDto>() {
 			@Override
-			public FunctionalityDto apply(Functionality arg0) {
-				return new FunctionalityDto(version, arg0);
+			public FunctionalityDto apply(Functionality func) {
+				return new FunctionalityDto(func);
 			}
 		};
 	}
