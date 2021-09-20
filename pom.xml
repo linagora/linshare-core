@@ -851,6 +851,41 @@
 				<version>2.1.2</version>
 				<executions>
 					<execution>
+						<id>admin v5</id>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.adminv5</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.adminv5.impl</resourcePackage>
+								<resourcePackage>org.linagora.linshare.core.facade.webservice.adminv5.dto</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-admin-v5</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Admin v5 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+					<execution>
 						<id>admin v4</id>
 						<configuration>
 							<attachSwaggerArtifact>true</attachSwaggerArtifact>
@@ -867,8 +902,8 @@
 							<prettyPrint>true</prettyPrint>
 							<swaggerConfig>
 								<info>
-									<title>Admin v4 API (Alpha)</title>
-									<version>${project.version}-alpha</version>
+									<title>Admin v4 API</title>
+									<version>${project.version}</version>
 									<contact>
 										<name>LINAGORA/LinShare</name>
 										<url>https://github.com/linagora/linshare</url>

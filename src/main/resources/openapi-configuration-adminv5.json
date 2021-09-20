@@ -1,6 +1,8 @@
 {
 	"resourcePackages": [
-		"org.linagora.linshare.webservice.adminv5"
+		"org.linagora.linshare.webservice.adminv5",
+		"org.linagora.linshare.webservice.adminv5.impl",
+		"org.linagora.linshare.core.facade.webservice.adminv5.dto"
 	],
 	"prettyPrint": true,
 	"cacheTTL": 0,
