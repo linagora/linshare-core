@@ -34,7 +34,7 @@
  * Additional Terms applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv2.impl;
+package org.linagora.linshare.webservice.userv2.impl.only;
 
 import java.util.List;
 import java.util.Set;

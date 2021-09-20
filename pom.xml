@@ -994,6 +994,8 @@
 							<resourcePackages>
 								<resourcePackage>org.linagora.linshare.webservice.userv4</resourcePackage>
 								<resourcePackage>org.linagora.linshare.webservice.userv4.impl</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv2</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv2.impl</resourcePackage>
 							</resourcePackages>
 							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
 							<outputFilename>swagger-user-v4</outputFilename>

@@ -41,15 +41,15 @@
 		<constructor-arg ref="wsShareFacade" />
 	</bean>
 
-	<bean id="userv2WorkGroupMemberRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupMemberRestServiceImpl">
+	<bean id="userv2WorkGroupMemberRestService" class="org.linagora.linshare.webservice.userv2.impl.only.WorkGroupMemberRestServiceImpl">
 		<constructor-arg ref="wsThreadMemberFacade" />
 	</bean>
 
-	<bean id="userv2WorkGroupRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupRestServiceImpl">
+	<bean id="userv2WorkGroupRestService" class="org.linagora.linshare.webservice.userv2.impl.only.WorkGroupRestServiceImpl">
 		<constructor-arg ref="wsThreadFacade" />
 	</bean>
 
-	<bean id="userv2WorkGroupNodeRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupNodeRestServiceImpl">
+	<bean id="userv2WorkGroupNodeRestService" class="org.linagora.linshare.webservice.userv2.impl.only.WorkGroupNodeRestServiceImpl">
 		<constructor-arg ref="wsWorkGroupNodeFacade" />
 		<constructor-arg ref="wsThreadEntryAsyncFacade" />
 		<constructor-arg ref="wsAsyncTaskFacade" />
@@ -58,11 +58,11 @@
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
-	<bean id="userv2WorkGroupNodeLightRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupNodeLightRestServiceImpl">
+	<bean id="userv2WorkGroupNodeLightRestService" class="org.linagora.linshare.webservice.userv2.impl.only.WorkGroupNodeLightRestServiceImpl">
 		<constructor-arg ref="wsWorkGroupNodeFacade" />
 	</bean>
 
-	<bean id="userv2UserPreferenceRestService" class="org.linagora.linshare.webservice.userv2.impl.UserPreferenceRestServiceImpl">
+	<bean id="userv2UserPreferenceRestService" class="org.linagora.linshare.webservice.userv2.impl.only.UserPreferenceRestServiceImpl">
 		<constructor-arg ref="wsUserPreferenceFacade"/>
 	</bean>
 
@@ -163,7 +163,7 @@
 	</bean>	
 
 	<bean id="userv2SharedSpaceLegacyNodeRestService"
-		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceNodeLegacyRestServiceImpl">
+		class="org.linagora.linshare.webservice.userv2.impl.only.SharedSpaceNodeLegacyRestServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
 		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>
