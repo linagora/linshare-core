@@ -135,7 +135,7 @@ public class GroupProviderRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@Operation(summary = "It allows root adminstrator to create a new group provider.", responses = {
+	@Operation(summary = "It allows root administrator to create a new group provider.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(
@@ -172,7 +172,7 @@ public class GroupProviderRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid: .*}")
 	@PUT
-	@Operation(summary = "It allows adminstrator to update a groupProvider.", responses = {
+	@Operation(summary = "It allows administrator to update a groupProvider.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(
@@ -197,7 +197,7 @@ public class GroupProviderRestServiceImpl extends WebserviceBase implements
 				@PathParam("domainUuid") String domainUuid,
 			@Parameter(description = "groupProvider's uuid to update, if null, object.uuid is used", required = false)
 				@PathParam("uuid") String uuid,
-			@RequestBody(description = "groupProvider dto with properties to update", required = true,
+			@RequestBody(description = "groupProvider dto with properties to update", required = false,
 				content = @Content(
 					schema = @Schema(
 						oneOf = {LDAPGroupProviderDto.class},
@@ -211,7 +211,7 @@ public class GroupProviderRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid: .*}")
 	@DELETE
-	@Operation(summary = "It allows adminstrator to delete a groupProvider.", responses = {
+	@Operation(summary = "It allows administrator to delete a groupProvider.", responses = {
 			@ApiResponse(
 				responseCode = "200",
 				content = @Content(
@@ -236,7 +236,7 @@ public class GroupProviderRestServiceImpl extends WebserviceBase implements
 				@PathParam("domainUuid") String domainUuid,
 			@Parameter(description = "groupProvider uuid to delete, if null, object.uuid is used", required = false)
 				@PathParam("uuid") String uuid,
-			@RequestBody(description = "groupProvider uuid to delete, if null, object.uuid is used", required = true,
+			@RequestBody(description = "groupProvider uuid to delete, if null, object.uuid is used", required = false,
 				content = @Content(
 					schema = @Schema(
 						oneOf = {LDAPGroupProviderDto.class},

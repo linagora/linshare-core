@@ -88,7 +88,8 @@ public abstract class AbstractGroupProviderDto {
 		this.uuid = groupProvider.getUuid();
 		this.creationDate = groupProvider.getCreationDate();
 		this.modificationDate = groupProvider.getModificationDate();
-//		this.domain = new DomainLightDto(groupProvider.get);
+		this.domain = new DomainLightDto(groupProvider.getDomain());
+		this.type = groupProvider.getType();
 	}
 
 	public String getUuid() {

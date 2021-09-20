@@ -34,8 +34,10 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import org.linagora.linshare.core.domain.constants.GroupProviderType;
+import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.Function;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -134,11 +136,21 @@ public class LDAPGroupProviderDto extends AbstractGroupProviderDto {
 	@Schema(description = "BaseDn, starting point of the LDAP queries", required = true)
 	protected String baseDn;
 
-	@Schema(description = "searchInOtherDomains", required = true)
+	@Schema(description = "If true it will search in other LDAP domains.", required = true)
 	protected Boolean searchInOtherDomains;
 
 	protected LDAPGroupProviderDto() {
 		super();
+	}
+
+	public LDAPGroupProviderDto(LdapGroupProvider groupProvider) {
+		super(groupProvider);
+		this.ldapServer = new LdapServerDto(groupProvider.getLdapConnection().getUuid(),
+				groupProvider.getLdapConnection().getClass().getName());
+		this.groupFilter = new GroupFilterDto(groupProvider.getGroupPattern().getUuid(),
+				groupProvider.getGroupPattern().getLabel());
+		this.baseDn = groupProvider.getBaseDn();
+		this.searchInOtherDomains = groupProvider.getSearchInOtherDomains();
 	}
 
 	@Override
@@ -176,6 +188,18 @@ public class LDAPGroupProviderDto extends AbstractGroupProviderDto {
 
 	public void setSearchInOtherDomains(Boolean searchInOtherDomains) {
 		this.searchInOtherDomains = searchInOtherDomains;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<LdapGroupProvider, LDAPGroupProviderDto> toDto() {
+		return new Function<LdapGroupProvider, LDAPGroupProviderDto>() {
+			@Override
+			public LDAPGroupProviderDto apply(LdapGroupProvider groupProvider) {
+				return new LDAPGroupProviderDto(groupProvider);
+			}
+		};
 	}
 
 	@Override

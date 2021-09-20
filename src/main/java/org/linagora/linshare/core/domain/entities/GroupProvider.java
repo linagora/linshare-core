@@ -40,6 +40,8 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderD
 
 public abstract class GroupProvider extends Provider {
 
+	protected AbstractDomain domain;
+
 	protected GroupProviderType type;
 
 	public GroupProviderType getType() {
@@ -50,14 +52,23 @@ public abstract class GroupProvider extends Provider {
 		this.type = type;
 	}
 
-	@Override
-	public String toString() {
-		return "GroupProvider [Type=" + type + ", uuid=" + uuid + "]";
-	}
-
 	public abstract LDAPGroupProviderDto toLDAPGroupProviderDto();
 
 	public Boolean getSearchInOtherDomains() {
 		return false;
 	}
+
+	public AbstractDomain getDomain() {
+		return domain;
+	}
+
+	public void setDomain(AbstractDomain domain) {
+		this.domain = domain;
+	}
+
+	@Override
+	public String toString() {
+		return "GroupProvider [Type=" + type + ", uuid=" + uuid + "]";
+	}
+
 }
