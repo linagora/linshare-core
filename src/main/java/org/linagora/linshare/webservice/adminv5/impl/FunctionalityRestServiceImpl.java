@@ -63,7 +63,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-@Path("{domainUuid}/functionalities")
+@Path("domains/{domainUuid}/functionalities")
 @Produces({ MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON })
 public class FunctionalityRestServiceImpl implements

@@ -45,10 +45,14 @@ import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedUnitParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.UnlimitedParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalitySizeDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityTimeDto;
+
+import com.google.common.collect.Lists;
 
 public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
@@ -61,6 +65,18 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	protected Boolean valueUsed;
 
 	protected Boolean maxValueUsed;
+
+	// FIXME: To be handle by the database.
+	public static List<String> unlimitedFunctionalityNames = Lists.newArrayList(
+			FunctionalityNames.SHARE_EXPIRATION.toString(),
+			FunctionalityNames.WORK_GROUP__DOWNLOAD_ARCHIVE.toString(),
+			FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE.toString(),
+			FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_FILE_SIZE.toString(),
+			FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_FILE_COUNT.toString(),
+			FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION.toString(),
+			FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION.toString(),
+			FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString()
+	);
 
 	public UnitValueFunctionality() {
 		super();
@@ -367,8 +383,114 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public String toString() {
-		return "UnitValueFunctionality [unit=" + unit + ", maxUnit=" + maxUnit + ", maxValue=" + maxValue + "] (" + domain.getUuid() + ")";
+	public org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> getParameter() {
+		NestedUnitParameterDto<?> defaut = null;
+		NestedUnitParameterDto<?> maximum = null;
+		UnlimitedParameterDto unlimited = null;
+		if (getUnit() instanceof FileSizeUnitClass && getMaxUnit() instanceof FileSizeUnitClass) {
+			if (this.maxValueUsed) {
+				// there is no default value for functionality parameters. sad.
+				Integer parentValue = this.getMaxValue();
+				FileSizeUnitClass maxUnit = (FileSizeUnitClass) getMaxUnit();
+				FileSizeUnit parentUnit = maxUnit.getUnitValue();
+				if (this.ancestorFunc != null) {
+					parentValue = ((UnitValueFunctionality)this.ancestorFunc).getMaxValue();
+					Unit<?> ancestorMaxUnit = ((UnitValueFunctionality)this.ancestorFunc).getMaxUnit();
+					FileSizeUnitClass parentUnitClass = (FileSizeUnitClass) ancestorMaxUnit.getUnitValue();
+					parentUnit = parentUnitClass.getUnitValue();
+				}
+				maximum = new NestedUnitParameterDto<FileSizeUnit>(
+						this.maxValue,
+						parentValue,
+						maxUnit.getUnitValue(),
+						parentUnit,
+						FileSizeUnit.strValues()
+						);
+				// FIXME: To be handle by the database.
+				if (unlimitedFunctionalityNames.contains(this.identifier)) {
+					unlimited = new UnlimitedParameterDto(maxValue == -1, parentValue == -1);
+				} else {
+					unlimited = new UnlimitedParameterDto();
+				}
+			}
+			if (this.valueUsed) {
+				// there is no default value for functionality parameters. sad.
+				Integer parentValue = this.value;
+				FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
+				FileSizeUnit parentUnit = sizeUnit.getUnitValue();
+				if (this.ancestorFunc != null) {
+					parentValue = ((UnitValueFunctionality)this.ancestorFunc).getValue();
+					Unit<?> ancestorUnit = ((UnitValueFunctionality) this.ancestorFunc).getUnit();
+					FileSizeUnitClass parentSizeUnit = (FileSizeUnitClass) ancestorUnit.getUnitValue();
+					parentUnit = parentSizeUnit.getUnitValue();
+				}
+				defaut = new NestedUnitParameterDto<FileSizeUnit>(
+						this.value,
+						parentValue,
+						sizeUnit.getUnitValue(),
+						parentUnit,
+						FileSizeUnit.strValues()
+						);
+			}
+		} else if (getUnit() instanceof TimeUnitClass && getMaxUnit() instanceof TimeUnitClass) {
+			if (this.maxValueUsed) {
+				// there is no default value for functionality parameters. sad.
+				Integer parentValue = this.getMaxValue();
+				TimeUnitClass maxUnit = (TimeUnitClass) getMaxUnit();
+				TimeUnit parentUnit = maxUnit.getUnitValue();
+				if (this.ancestorFunc != null) {
+					parentValue = ((UnitValueFunctionality)this.ancestorFunc).getMaxValue();
+					Unit<?> ancestorMaxUnit = ((UnitValueFunctionality)this.ancestorFunc).getMaxUnit();
+					TimeUnitClass parentUnitClass = (TimeUnitClass) ancestorMaxUnit.getUnitValue();
+					parentUnit = parentUnitClass.getUnitValue();
+				}
+				maximum = new NestedUnitParameterDto<TimeUnit>(
+						this.maxValue,
+						parentValue,
+						maxUnit.getUnitValue(),
+						parentUnit,
+						TimeUnit.strValues()
+						);
+				// FIXME: To be handle by the database.
+				if (unlimitedFunctionalityNames.contains(this.identifier)) {
+					unlimited = new UnlimitedParameterDto(maxValue == -1, parentValue == -1);
+				} else {
+					unlimited = new UnlimitedParameterDto();
+				}
+			}
+			if (this.valueUsed) {
+				// there is no default value for functionality parameters. sad.
+				Integer parentValue = this.value;
+				TimeUnitClass sizeUnit = (TimeUnitClass) getUnit();
+				TimeUnit parentUnit = sizeUnit.getUnitValue();
+				if (this.ancestorFunc != null) {
+					parentValue = ((UnitValueFunctionality)this.ancestorFunc).getValue();
+					Unit<?> ancestorUnit = ((UnitValueFunctionality) this.ancestorFunc).getUnit();
+					TimeUnitClass parentSizeUnit = (TimeUnitClass) ancestorUnit.getUnitValue();
+					parentUnit = parentSizeUnit.getUnitValue();
+				}
+				defaut = new NestedUnitParameterDto<TimeUnit>(
+						this.value,
+						parentValue,
+						sizeUnit.getUnitValue(),
+						parentUnit,
+						TimeUnit.strValues()
+						);
+			}
+		}
+		return new org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<Integer>(
+			this.system,
+			!this.getParentAllowParametersUpdate(),
+			defaut,
+			maximum,
+			unlimited
+		);
 	}
-	
+
+	@Override
+	public String toString() {
+		return "UnitValueFunctionality [unit=" + unit + ", maxUnit=" + maxUnit + ", maxValue=" + maxValue
+				+ ", valueUsed=" + valueUsed + ", maxValueUsed=" + maxValueUsed + ", domain=" + domain + "]";
+	}
+
 }

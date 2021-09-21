@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2021 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,71 +33,47 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
-import java.math.BigInteger;
 import java.util.List;
 
-import com.google.common.collect.Lists;
+public class NestedUnitParameterDto<U> extends NestedParameterDto<Integer> {
 
-/** File size unit.
- */
-public enum FileSizeUnit {
-    KILO(0),
-    MEGA(1),
-    GIGA(2);
+	protected U unit;
 
-	private int value;
+	protected U parentUnit;
 
-	private FileSizeUnit(final int value) {
-		this.value = value;
+	protected List<String> units;
+
+	public NestedUnitParameterDto(Integer value, Integer parentValue, U unit, U parentUnit, List<String> units) {
+		super(value, parentValue);
+		this.unit = unit;
+		this.parentUnit = parentUnit;
+		this.units = units;
 	}
 
-	public int toInt() {
-		return value;
+	public U getUnit() {
+		return unit;
 	}
 
-	public static FileSizeUnit fromInt(final int value) {
-		for (FileSizeUnit unit : values()) {
-			if (unit.value == value) {
-				return unit;
-			}
-		}
-		throw new IllegalArgumentException(
-				"Doesn't match an existing FileSizeUnit");
+	public void setUnit(U unit) {
+		this.unit = unit;
 	}
 
-	public long getPlainSize(final long size) {
-		return size * BigInteger.valueOf(2).pow(10 * (value + 1)).longValue();
+	public U getParentUnit() {
+		return parentUnit;
 	}
 
-	public long getSiSize(final long size) {
-		return size * BigInteger.valueOf(1000).pow(value + 1).longValue();
+	public void setParentUnit(U parentUnit) {
+		this.parentUnit = parentUnit;
 	}
 
-	public long fromPlainSize(final long size) {
-		return size / BigInteger.valueOf(2).pow(10 * (value + 1)).longValue();
+	public List<String> getUnits() {
+		return units;
 	}
 
-	public long fromSiSize(final long size) {
-		return size / BigInteger.valueOf(1000).pow(value + 1).longValue();
+	public void setUnits(List<String> units) {
+		this.units = units;
 	}
 
-	public static FileSizeUnit getMaxExactPlainSizeUnit(final long size) {
-		FileSizeUnit maxUnit = FileSizeUnit.KILO;
-		for (FileSizeUnit unit: FileSizeUnit.values()) {
-			if (size % BigInteger.valueOf(2).pow(10 * (unit.value + 1)).longValue() == 0) {
-				maxUnit = unit;
-			}
-		}
-		return maxUnit;
-	}
-
-	public static List<String> strValues() {
-		List<String> list = Lists.newArrayList();
-		for (FileSizeUnit unit : values()) {
-			list.add(unit.toString());
-		}
-		return list;
-	}
 }

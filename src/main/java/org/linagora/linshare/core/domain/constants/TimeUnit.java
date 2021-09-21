@@ -36,6 +36,9 @@
 package org.linagora.linshare.core.domain.constants;
 
 import java.util.Calendar;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * Defines a unit of time.
@@ -88,4 +91,11 @@ public enum TimeUnit {
 		return fromInt((int) value);
 	}
 
+	public static List<String> strValues() {
+		List<String> list = Lists.newArrayList();
+		for (TimeUnit unit : values()) {
+			list.add(unit.toString());
+		}
+		return list;
+	}
 }
