@@ -42,6 +42,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityEnumLangDto;
@@ -113,4 +114,19 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 		}
 		return f;
 	}
+
+	@Override
+	public org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> getParameter() {
+		// there is no default value for functionality parameters. sad.
+		Language parentValue = this.value;
+		if (this.ancestorFunc != null) {
+			parentValue = ((LanguageEnumValueFunctionality)this.ancestorFunc).getValue();
+		}
+		NestedParameterDto<Language> defaut = new NestedParameterDto<Language>(this.value, parentValue);
+		return new org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<Language>(
+			this.system,
+			!this.getParentAllowParametersUpdate(),
+			defaut);
+	}
+
 }
