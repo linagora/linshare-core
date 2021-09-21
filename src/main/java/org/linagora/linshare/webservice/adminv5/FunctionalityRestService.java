@@ -42,9 +42,9 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.FunctionalityDto
 
 public interface FunctionalityRestService {
 
-	List<FunctionalityDto> findAll(String domainUuid, String parentIdentifier, boolean tree, boolean withSubFunctionalities) throws BusinessException;
+	List<FunctionalityDto> findAll(String domainUuid, String parentIdentifier, boolean withSubFunctionalities) throws BusinessException;
 
-	FunctionalityDto find(String domainUuid, String identifier, boolean tree)
+	FunctionalityDto find(String domainUuid, String identifier)
 			throws BusinessException;
 
 	FunctionalityDto update(String domainUuid, String identifier, FunctionalityDto func) throws BusinessException;

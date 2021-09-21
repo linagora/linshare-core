@@ -42,8 +42,8 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 
 
 public class Functionality extends AbstractFunctionality {
@@ -83,6 +83,10 @@ public class Functionality extends AbstractFunctionality {
 
 	public List<ParameterDto> getParameters(Integer version) {
 		return new ArrayList<ParameterDto>();
+	}
+
+	public org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> getParameter() {
+		return null;
 	}
 
 	@Override

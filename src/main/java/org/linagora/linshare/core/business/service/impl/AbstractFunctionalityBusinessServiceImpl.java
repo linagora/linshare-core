@@ -169,6 +169,9 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 		// ancestor functionality could be null
 		// It is loaded in advance for performance purpose
 		T ancestorFunc = getParentFunctionality(domain, functionality.getIdentifier());
+		if (ancestorFunc != null) {
+			functionality.setAncestorFunc((AbstractFunctionality)ancestorFunc.clone());
+		}
 		boolean parentAllowAPUpdate = activationPolicyIsMutable(functionality, domain, ancestorFunc);
 		boolean parentAllowCPUpdate = false;
 		boolean parentAllowDPUpdate = false;

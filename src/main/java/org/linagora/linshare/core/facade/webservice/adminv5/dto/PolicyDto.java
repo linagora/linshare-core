@@ -76,6 +76,10 @@ public class PolicyDto {
 			this.parentValue = parentValue;
 		}
 
+		public boolean isOverriden() {
+			return !parentValue == value;
+		}
+
 		@Override
 		public String toString() {
 			return "Config [value=" + value + ", parentValue=" + parentValue + "]";
@@ -99,7 +103,7 @@ public class PolicyDto {
 		super();
 	}
 
-	public PolicyDto(Policy policy) {
+	public PolicyDto(Policy policy, Policy ancestor) {
 		super();
 		if (policy.isSystem()) {
 			this.hidden = true;
@@ -108,11 +112,17 @@ public class PolicyDto {
 			this.hidden = false;
 			this.readonly = !policy.getParentAllowUpdate();
 		}
-		// FIXME: parentValue: should be ancestor value, default value should be used when there is no ancestor
 		boolean parentValue = policy.getDefaultStatus();
+		if (ancestor != null) {
+			parentValue = ancestor.getStatus();
+		}
 		this.enable = new Config(policy.getStatus(), parentValue);
 		boolean allowOverrideValue = policy.getPolicy().equals(Policies.ALLOWED);
 		this.allowOverride = new Config(allowOverrideValue, policy.getParentAllowUpdate());
+	}
+
+	public PolicyDto(Policy policy) {
+		this(policy, null);
 	}
 
 	public boolean isHidden() {

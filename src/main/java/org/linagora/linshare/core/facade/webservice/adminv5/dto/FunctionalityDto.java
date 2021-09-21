@@ -35,10 +35,11 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import java.util.List;
-
+import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AbstractFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
@@ -92,7 +93,7 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 	protected String identifier;
 
 	@Schema(description = "Type")
-	protected String type;
+	protected FunctionalityType type;
 
 	@Schema(description = "Identifier of the parent functionality")
 	protected String parentIdentifier;
@@ -115,8 +116,8 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 	@Schema(description = "Delegation policy")
 	protected PolicyDto delegationPolicy;
 
-	@Schema(description = "functionalities")
-	protected List<FunctionalityDto> functionalities;
+	@Schema(description = "parameter")
+	protected ParameterDto<?> parameter;
 
 	public FunctionalityDto() {
 		super();
@@ -126,17 +127,30 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 		super();
 		this.domain = new DomainDto(f.getDomain());
 		this.identifier = f.getIdentifier();
+		this.type = f.getType();
 		this.parentIdentifier = f.getParentIdentifier();
+		// FIXME
 		this.hidden = !f.getDisplayable();
 		this.readonly= false;
-		// Activation policy
-		this.activationPolicy = new PolicyDto(f.getActivationPolicy());
-		// Configuration policy
-		this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
-		// Delegation policy
-		if (f.getDelegationPolicy() != null) {
-			this.delegationPolicy = new PolicyDto(f.getDelegationPolicy());
+		AbstractFunctionality ancestorFunc = f.getAncestorFunc();
+		if (ancestorFunc != null) {
+			// Activation policy
+			this.activationPolicy = new PolicyDto(f.getActivationPolicy(), ancestorFunc.getActivationPolicy());
+			// Configuration policy
+			this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy(), ancestorFunc.getConfigurationPolicy());
+			// Delegation policy
+			if (f.getDelegationPolicy() != null) {
+				this.delegationPolicy = new PolicyDto(f.getDelegationPolicy(), ancestorFunc.getDelegationPolicy());
+			}
+		} else {
+			this.activationPolicy = new PolicyDto(f.getActivationPolicy());
+			this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
+			// Delegation policy
+			if (f.getDelegationPolicy() != null) {
+				this.delegationPolicy = new PolicyDto(f.getDelegationPolicy());
+			}
 		}
+		this.parameter = f.getParameter();
 	}
 
 	@Override
@@ -208,20 +222,20 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 		this.delegationPolicy = delegationPolicy;
 	}
 
-	public String getType() {
+	public FunctionalityType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(FunctionalityType type) {
 		this.type = type;
 	}
 
-	public List<FunctionalityDto> getFunctionalities() {
-		return functionalities;
+	public ParameterDto<?> getParameter() {
+		return parameter;
 	}
 
-	public void setFunctionalities(List<FunctionalityDto> functionalities) {
-		this.functionalities = functionalities;
+	public void setParameter(ParameterDto<?> parameter) {
+		this.parameter = parameter;
 	}
 
 	/**

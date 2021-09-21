@@ -42,6 +42,8 @@ import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.UnlimitedParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityIntegerDto;
@@ -215,4 +217,33 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		this.maxValueUsed = maxValueUsed;
 	}
 
+	@Override
+	public org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> getParameter() {
+		NestedParameterDto<Integer> defaut = null;
+		NestedParameterDto<Integer> maximum = null;
+		UnlimitedParameterDto unlimited = null;
+		if (this.valueUsed) {
+			// there is no default value for functionality parameters. sad.
+			Integer parentValue = this.value;
+			if (this.ancestorFunc != null) {
+				parentValue = ((IntegerValueFunctionality)this.ancestorFunc).getValue();
+			}
+			defaut = new NestedParameterDto<Integer>(this.value, parentValue);
+		}
+		if (this.maxValueUsed) {
+			Integer parentValue = this.getMaxValue();
+			if (this.ancestorFunc != null) {
+				parentValue = ((IntegerValueFunctionality)this.ancestorFunc).getMaxValue();
+			}
+			maximum = new NestedParameterDto<Integer>(this.maxValue, parentValue);
+			unlimited = new UnlimitedParameterDto();
+		}
+		return new org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<Integer>(
+			this.system,
+			!this.getParentAllowParametersUpdate(),
+			defaut,
+			maximum,
+			unlimited
+		);
+	}
 }

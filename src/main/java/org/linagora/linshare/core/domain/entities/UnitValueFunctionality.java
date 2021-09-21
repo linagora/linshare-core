@@ -368,7 +368,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	@Override
 	public String toString() {
-		return "UnitValueFunctionality [unit=" + unit + ", maxUnit=" + maxUnit + ", maxValue=" + maxValue + "]";
+		return "UnitValueFunctionality [unit=" + unit + ", maxUnit=" + maxUnit + ", maxValue=" + maxValue + "] (" + domain.getUuid() + ")";
 	}
 	
 }

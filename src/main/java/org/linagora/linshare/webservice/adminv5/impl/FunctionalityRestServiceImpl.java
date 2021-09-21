@@ -100,12 +100,10 @@ public class FunctionalityRestServiceImpl implements
 				@PathParam(value = "domainUuid") String domainUuid,
 			@Parameter(description = "Functionality parent identifier, in order to list nested functionalities", required = false)
 				@QueryParam(value = "parentIdentifier") String parentIdentifier,
-			@Parameter(description = "Return all functionalities as a tree", required = false)
-				@QueryParam("tree") @DefaultValue("false") boolean tree,
 			@Parameter(description = "Return all functionalities (root and nested ones) in one list", required = false)
 				@QueryParam("subs") @DefaultValue("false") boolean withSubFunctionalities)
 			throws BusinessException {
-		return functionalityFacade.findAll(domainUuid, parentIdentifier, tree, withSubFunctionalities);
+		return functionalityFacade.findAll(domainUuid, parentIdentifier, withSubFunctionalities);
 	}
 
 	@Path("/{identifier}")
@@ -131,11 +129,9 @@ public class FunctionalityRestServiceImpl implements
 			@Parameter(description = "domain's uuid.", required = true)
 				@PathParam(value = "domainUuid") String domainUuid,
 			@Parameter(description = "Functionality identifier", required = true)
-				@PathParam(value = "identifier") String identifier,
-			@Parameter(description = "Return all functionalities as a tree", required = false)
-				@QueryParam("tree") @DefaultValue("false") boolean tree)
+				@PathParam(value = "identifier") String identifier)
 			throws BusinessException {
-		return functionalityFacade.find(domainUuid, identifier, tree);
+		return functionalityFacade.find(domainUuid, identifier);
 	}
 
 	@Path("/{uuid: .*}")

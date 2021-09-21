@@ -80,6 +80,19 @@ public abstract class AbstractFunctionality implements Cloneable {
 	protected Set<AbstractFunctionality> children = new HashSet<AbstractFunctionality>();
 
 	/**
+	 * For a quick workaround. sorry.
+	 */
+	protected AbstractFunctionality ancestorFunc;
+
+	public AbstractFunctionality getAncestorFunc() {
+		return ancestorFunc;
+	}
+
+	public void setAncestorFunc(AbstractFunctionality ancestorFunc) {
+		this.ancestorFunc = ancestorFunc;
+	}
+
+	/**
 	 * Logger available to subclasses.
 	 */
 	protected final Logger logger = LoggerFactory.getLogger(Functionality.class);

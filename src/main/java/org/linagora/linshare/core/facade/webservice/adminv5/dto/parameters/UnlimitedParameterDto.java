@@ -33,24 +33,64 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
-package org.linagora.linshare.core.facade.webservice.adminv5;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.FunctionalityDto;
+@Schema(name = "Unlimited")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UnlimitedParameterDto {
 
-public interface FunctionalityFacade extends AdminGenericFacade {
+	@Schema(description = "True if unlimited is supported.")
+	protected Boolean supported = false;
 
-	FunctionalityDto find(String domainUuid, String funcIdentifier)
-			throws BusinessException;
+	@Schema(description = "The current value")
+	protected Boolean value;
 
-	List<FunctionalityDto> findAll(String domainUuid, String parentIdentifier, boolean withSubFunctionalities) throws BusinessException;
+	@Schema(description = "The current value of my domain ancestor (parent domain)")
+	protected Boolean parentValue;
 
-	FunctionalityDto update(FunctionalityDto func) throws BusinessException;
+	public UnlimitedParameterDto() {
+		super();
+	}
 
-	FunctionalityDto delete(FunctionalityDto func) throws BusinessException;
+	public UnlimitedParameterDto(Boolean value, Boolean parentValue) {
+		super();
+		this.supported = true;
+		this.value = value;
+		this.parentValue = parentValue;
+	}
+
+	public Boolean getSupported() {
+		return supported;
+	}
+
+	public void setSupported(Boolean supported) {
+		this.supported = supported;
+	}
+
+	public Boolean getValue() {
+		return value;
+	}
+
+	public void setValue(Boolean value) {
+		this.value = value;
+	}
+
+	public Boolean getParentValue() {
+		return parentValue;
+	}
+
+	public void setParentValue(Boolean parentValue) {
+		this.parentValue = parentValue;
+	}
+
+	@Override
+	public String toString() {
+		return "UnlimitedParameterDto [supported=" + supported + ", value=" + value + ", parentValue=" + parentValue
+				+ "]";
+	}
 
 }

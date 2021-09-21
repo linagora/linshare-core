@@ -33,24 +33,51 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
-package org.linagora.linshare.core.facade.webservice.adminv5;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.FunctionalityDto;
+@Schema(name = "Parameter")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class NestedParameterDto<T> {
 
-public interface FunctionalityFacade extends AdminGenericFacade {
+	@Schema(description = "The current value")
+	protected T value;
 
-	FunctionalityDto find(String domainUuid, String funcIdentifier)
-			throws BusinessException;
+	@Schema(description = "The current value of my domain ancestor (parent domain)")
+	protected T parentValue;
 
-	List<FunctionalityDto> findAll(String domainUuid, String parentIdentifier, boolean withSubFunctionalities) throws BusinessException;
+	public NestedParameterDto(T value, T parentValue) {
+		super();
+		this.value = value;
+		this.parentValue = parentValue;
+	}
 
-	FunctionalityDto update(FunctionalityDto func) throws BusinessException;
+	public T getValue() {
+		return value;
+	}
 
-	FunctionalityDto delete(FunctionalityDto func) throws BusinessException;
+	public void setValue(T value) {
+		this.value = value;
+	}
+
+	public T getParentValue() {
+		return parentValue;
+	}
+
+	public boolean isOverriden() {
+		return !parentValue.equals(value);
+	}
+
+	public void setParentValue(T parentValue) {
+		this.parentValue = parentValue;
+	}
+
+	@Override
+	public String toString() {
+		return "NestedDefaultParameterDto [value=" + value + ", parentValue=" + parentValue + "]";
+	}
 
 }

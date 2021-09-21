@@ -64,20 +64,19 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 	}
 
 	@Override
-	public FunctionalityDto find(String domainUuid, String funcIdentifier, boolean tree) throws BusinessException {
+	public FunctionalityDto find(String domainUuid, String funcIdentifier) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainUuid, "domain uuid must be set.");
 		Validate.notEmpty(funcIdentifier, "functionality identifier must be set.");
-		Functionality func = service.find(authUser, domainUuid, funcIdentifier, tree);
+		Functionality func = service.find(authUser, domainUuid, funcIdentifier, false);
 		return FunctionalityDto.toDto().apply(func);
 	}
 
 	@Override
-	public List<FunctionalityDto> findAll(String domainUuid, String parentIdentifier, boolean tree,
-			boolean withSubFunctionalities) throws BusinessException {
+	public List<FunctionalityDto> findAll(String domainUuid, String parentIdentifier, boolean withSubFunctionalities) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainUuid, "domain uuid must be set.");
-		Iterable<Functionality> entities = service.findAll(authUser, domainUuid, parentIdentifier, tree, withSubFunctionalities);
+		Iterable<Functionality> entities = service.findAll(authUser, domainUuid, parentIdentifier, false, withSubFunctionalities);
 		Iterable<FunctionalityDto> transform = Iterables.transform(entities, FunctionalityDto.toDto());
 		return Ordering.natural().immutableSortedCopy(transform);
 	}
