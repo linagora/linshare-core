@@ -204,33 +204,39 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public DomainDto create(DomainDto domainDto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		AbstractDomain domain = getDomain(domainDto);
-		switch (domain.getDomainType()) {
+		AbstractDomain domain = null;
+		LdapUserProvider ldapUserProvider = null;
+		LdapGroupProvider ldapGroupProvider = null;
+		LdapDriveProvider ldapDriveProvider = null;
+		AbstractDomain domainObject = getDomain(domainDto);
+		switch (domainObject.getDomainType()) {
 		case TOPDOMAIN:
-			LdapUserProvider ldapUserProvider = createLdapUserProviderIfNeeded(domainDto);
-			LdapGroupProvider ldapGroupProvider = createLdapGroupProviderIfNeeded(domainDto);
-			LdapDriveProvider ldapDriveProvider = createLdapDriveProviderIfNeeded(domainDto);
+			domain = abstractDomainService.createTopDomain(authUser, (TopDomain) domainObject);
+			ldapUserProvider = createLdapUserProviderIfNeeded(domainDto, domain);
+			ldapGroupProvider = createLdapGroupProviderIfNeeded(domainDto);
+			ldapDriveProvider = createLdapDriveProviderIfNeeded(domainDto);
 			domain.setUserProvider(ldapUserProvider);
 			domain.setGroupProvider(ldapGroupProvider);
 			domain.setDriveProvider(ldapDriveProvider);
-			return DomainDto.getFull(abstractDomainService.createTopDomain(authUser, (TopDomain) domain));
+			return DomainDto.getFull(abstractDomainService.updateDomain(authUser, domain));
 		case SUBDOMAIN:
-			LdapUserProvider ldapUserProvider2 = createLdapUserProviderIfNeeded(domainDto);
-			domain.setUserProvider(ldapUserProvider2);
-			LdapGroupProvider ldapGroupProvider2 = createLdapGroupProviderIfNeeded(domainDto);
-			domain.setGroupProvider(ldapGroupProvider2);
-			LdapDriveProvider ldapDriveProvider2 = createLdapDriveProviderIfNeeded(domainDto);
-			domain.setDriveProvider(ldapDriveProvider2);
-			return DomainDto.getFull(abstractDomainService.createSubDomain(authUser, (SubDomain) domain));
+			domain = abstractDomainService.createSubDomain(authUser, (SubDomain) domainObject);
+			ldapUserProvider = createLdapUserProviderIfNeeded(domainDto, domain);
+			ldapGroupProvider = createLdapGroupProviderIfNeeded(domainDto);
+			ldapDriveProvider = createLdapDriveProviderIfNeeded(domainDto);
+			domain.setUserProvider(ldapUserProvider);
+			domain.setGroupProvider(ldapGroupProvider);
+			domain.setDriveProvider(ldapDriveProvider);
+			return DomainDto.getFull(abstractDomainService.updateDomain(authUser, domain));
 		case GUESTDOMAIN:
-			return DomainDto.getFull(abstractDomainService.createGuestDomain(authUser, (GuestDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createGuestDomain(authUser, (GuestDomain) domainObject));
 		default:
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
 					"Try to create a root domain");
 		}
 	}
 
-	private LdapUserProvider createLdapUserProviderIfNeeded(DomainDto domainDto) {
+	private LdapUserProvider createLdapUserProviderIfNeeded(DomainDto domainDto, AbstractDomain domain) {
 		LdapUserProvider ldapUserProvider = null;
 		List<LDAPUserProviderDto> providers = domainDto.getProviders();
 		if (providers != null && !providers.isEmpty()) {
@@ -244,7 +250,6 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			Validate.notEmpty(baseDn, "baseDn is mandatory for user provider creation");
 			LdapConnection ldapConnection = ldapConnectionService.find(ldapUuid);
 			UserLdapPattern pattern = userProviderService.findDomainPattern(domainPatternUuid);
-			AbstractDomain domain = abstractDomainService.findById(domainDto.getIdentifier());
 			ldapUserProvider = userProviderService.create(new LdapUserProvider(domain, baseDn, ldapConnection, pattern));
 		}
 		return ldapUserProvider;
