@@ -137,7 +137,7 @@ public class GroupProviderServiceImplTest {
 			groupProviderService.delete(groupProvider);
 			groupProviderService.find(groupProvider.getUuid());
 		});
-		Assertions.assertEquals(BusinessErrorCode.GROUP_LDAP_PROVIDER_NOT_FOUND, exception.getErrorCode());
+		Assertions.assertEquals(BusinessErrorCode.GROUP_PROVIDER_NOT_FOUND, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

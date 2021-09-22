@@ -54,7 +54,7 @@ public class LDAPGroupProviderDto extends AbstractGroupProviderDto {
 		@Schema(description = "LdapServer's name", required = false)
 		protected String name;
 
-		protected LdapServerDto() {
+		public LdapServerDto() {
 			super();
 		}
 
@@ -95,7 +95,7 @@ public class LDAPGroupProviderDto extends AbstractGroupProviderDto {
 		@Schema(description = "GroupFilter's name", required = false)
 		protected String name;
 
-		protected GroupFilterDto() {
+		public GroupFilterDto() {
 			super();
 		}
 
@@ -128,10 +128,10 @@ public class LDAPGroupProviderDto extends AbstractGroupProviderDto {
 	}
 
 	@Schema(description = "It indicates the related ldap server to this group provider.", required = true)
-	private LdapServerDto ldapServer;
+	protected LdapServerDto ldapServer;
 
 	@Schema(description = "It indicates the related group filter to this group provider.", required = true)
-	private GroupFilterDto groupFilter;
+	protected GroupFilterDto groupFilter;
 
 	@Schema(description = "BaseDn, starting point of the LDAP queries", required = true)
 	protected String baseDn;
@@ -139,7 +139,7 @@ public class LDAPGroupProviderDto extends AbstractGroupProviderDto {
 	@Schema(description = "If true it will search in other LDAP domains.", required = true)
 	protected Boolean searchInOtherDomains;
 
-	protected LDAPGroupProviderDto() {
+	public LDAPGroupProviderDto() {
 		super();
 	}
 
@@ -153,6 +153,7 @@ public class LDAPGroupProviderDto extends AbstractGroupProviderDto {
 		this.searchInOtherDomains = groupProvider.getSearchInOtherDomains();
 	}
 
+	@Schema(defaultValue = "LDAP_PROVIDER")
 	@Override
 	public GroupProviderType getType() {
 		return GroupProviderType.LDAP_PROVIDER;

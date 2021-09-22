@@ -47,7 +47,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPGroupProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.GroupProviderFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractGroupProviderDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
@@ -98,7 +98,7 @@ public class GroupProviderRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Set<AbstractGroupProviderDto> findAll(
 			@Parameter(description = "The domain uuid.")
-			@PathParam("domainUuid") String domain) {
+				@PathParam("domainUuid") String domain) {
 		return groupProviderFacade.findAll(domain);
 	}
 

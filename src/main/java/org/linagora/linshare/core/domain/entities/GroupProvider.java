@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 import org.linagora.linshare.core.domain.constants.GroupProviderType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
 
@@ -43,6 +45,16 @@ public abstract class GroupProvider extends Provider {
 	protected AbstractDomain domain;
 
 	protected GroupProviderType type;
+
+	public GroupProvider() {
+		super();
+	}
+
+	public GroupProvider(AbstractDomain domain) {
+		this.domain = domain;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+	}
 
 	public GroupProviderType getType() {
 		return type;

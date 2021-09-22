@@ -63,6 +63,10 @@
 	</bean>
 	<bean id="wsAdminV5GroupProviderFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.GroupProviderFacadeImpl">
 		<constructor-arg ref="accountService" />
+		<constructor-arg ref="domainService" />
+		<constructor-arg ref="groupProviderService" />
+		<constructor-arg ref="ldapConnectionService" />
+		<constructor-arg ref="groupLdapPatternService" />
 	</bean>
 	<bean id="wsAdminV5DomainDriveFilterFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.DomainDriveFilterFacadeImpl">
 		<constructor-arg ref="accountService" />

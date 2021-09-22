@@ -63,7 +63,7 @@ public class GroupProviderServiceImpl extends GenericAdminServiceImpl implements
 		LdapGroupProvider provider = ldapGroupProviderRepository.findByUuid(uuid);
 		if (provider == null) {
 			throw new BusinessException(
-					BusinessErrorCode.GROUP_LDAP_PROVIDER_NOT_FOUND,
+					BusinessErrorCode.GROUP_PROVIDER_NOT_FOUND,
 					"Group provider identifier no found.");
 		}
 		return provider;

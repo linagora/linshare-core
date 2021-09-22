@@ -61,6 +61,15 @@ public class LdapGroupProvider extends GroupProvider {
 		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
 	}
 
+	public LdapGroupProvider(AbstractDomain domain, GroupLdapPattern groupPattern, String baseDn, LdapConnection ldapConnection,
+			Boolean searchInOtherDomains) {
+		super(domain);
+		this.groupPattern = groupPattern;
+		this.baseDn = baseDn;
+		this.ldapConnection = ldapConnection;
+		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
+	}
+
 	public GroupLdapPattern getGroupPattern() {
 		return groupPattern;
 	}
