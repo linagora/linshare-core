@@ -43,10 +43,6 @@ public enum FunctionalityType {
 	UNIT(3),
 	UNIT_SIZE(4),
 	UNIT_TIME(5),
-	UNIT_BOOLEAN(6), // deprecated
-	UNIT_BOOLEAN_TIME(7), // deprecated
-	RANGE_UNIT(8),
-	UNIT_BOOLEAN_SIZE(8), // deprecated
 	BOOLEAN(9),
 	ENUM_LANG(10);
 
