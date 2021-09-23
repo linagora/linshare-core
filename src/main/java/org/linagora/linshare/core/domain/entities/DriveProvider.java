@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 import org.linagora.linshare.core.domain.constants.DriveProviderType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
 
@@ -40,7 +42,19 @@ import com.google.common.base.MoreObjects;
 
 public abstract class DriveProvider extends Provider {
 
+	protected AbstractDomain domain;
+
 	protected DriveProviderType type;
+
+	public DriveProvider() {
+		super();
+	}
+
+	public DriveProvider(AbstractDomain domain) {
+		this.domain = domain;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+	}
 
 	public DriveProviderType getType() {
 		return type;
@@ -48,6 +62,14 @@ public abstract class DriveProvider extends Provider {
 
 	public void setType(DriveProviderType type) {
 		this.type = type;
+	}
+
+	public AbstractDomain getDomain() {
+		return domain;
+	}
+
+	public void setDomain(AbstractDomain domain) {
+		this.domain = domain;
 	}
 
 	@Override

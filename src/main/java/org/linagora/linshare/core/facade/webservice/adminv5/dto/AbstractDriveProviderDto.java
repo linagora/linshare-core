@@ -53,7 +53,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 	description = "A DriveProvider",
 	discriminatorProperty = "type",
 	discriminatorMapping = {
-		@DiscriminatorMapping(value = "LDAP_PROVIDER", schema = LDAPGroupProviderDto.class),
+		@DiscriminatorMapping(value = "LDAP_PROVIDER", schema = LDAPDriveProviderDto.class),
 	}
 )
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)

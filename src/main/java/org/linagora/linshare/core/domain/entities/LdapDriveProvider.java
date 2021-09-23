@@ -59,6 +59,15 @@ public class LdapDriveProvider extends DriveProvider {
 		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
 	}
 
+	public LdapDriveProvider(AbstractDomain domain, LdapDriveFilter driveFilter, String baseDn, LdapConnection ldapConnection,
+			Boolean searchInOtherDomains) {
+		super(domain);
+		this.driveFilter = driveFilter;
+		this.baseDn = baseDn;
+		this.ldapConnection = ldapConnection;
+		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
+	}
+
 	public LdapDriveFilter getDriveFilter() {
 		return driveFilter;
 	}

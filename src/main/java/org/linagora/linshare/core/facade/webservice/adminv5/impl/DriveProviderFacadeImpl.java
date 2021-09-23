@@ -127,7 +127,7 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 		if (domain.isRootDomain() || domain.isGuestDomain()) {
 			throw new BusinessException(BusinessErrorCode.DRIVE_PROVIDER_FORBIDDEN, "You can not manage a DriveProvider for this kind of domain.");
 		}
-		if (domain.getUserProvider() != null) {
+		if (domain.getDriveProvider() != null) {
 			throw new BusinessException(BusinessErrorCode.DRIVE_PROVIDER_ALREADY_EXIST, "DriveProvider already exists. Can't create more than one");
 		}
 		if (dto.getType().equals(DriveProviderType.LDAP_PROVIDER)) {
