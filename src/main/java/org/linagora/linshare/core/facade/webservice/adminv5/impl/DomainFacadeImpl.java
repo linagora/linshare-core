@@ -42,6 +42,9 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AllowDomain;
+import org.linagora.linshare.core.domain.entities.DenyAllDomain;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -49,6 +52,7 @@ import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacad
 import org.linagora.linshare.core.facade.webservice.adminv5.DomainFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.DomainService;
 
 import com.google.common.base.Strings;
@@ -58,9 +62,15 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 
 	private final DomainService domainService;
 
-	public DomainFacadeImpl(AccountService accountService, DomainService domainService) {
+	private final DomainPolicyService domainPolicyService;
+
+	public DomainFacadeImpl(
+			AccountService accountService,
+			DomainService domainService,
+			DomainPolicyService domainPolicyService) {
 		super(accountService);
 		this.domainService = domainService;
+		this.domainPolicyService = domainPolicyService;
 	}
 
 	@Override
@@ -111,14 +121,21 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 	}
 
 	@Override
-	public DomainDto create(DomainDto dto) {
+	public DomainDto create(boolean dedicatedDomainPolicy, DomainDto dto) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto.getParent(), "Domain parent object must be set.");
 		String parentUuid = dto.getParent().getUuid();
 		Validate.notEmpty(parentUuid, "Domain parent must be set.");
 		AbstractDomain parentDomain = domainService.find(authUser, parentUuid);
-		AbstractDomain create = domainService.create(authUser, dto.getName(), dto.getDescription(), dto.getType(), parentDomain);
-		return DomainDto.getFull(create);
+		AbstractDomain created = domainService.create(authUser, dto.getName(), dto.getDescription(), dto.getType(), parentDomain);
+		if(dedicatedDomainPolicy) {
+			DomainPolicy policy = new DomainPolicy(dto.getName());
+			policy.getDomainAccessPolicy().addRule(new AllowDomain(created));
+			policy.getDomainAccessPolicy().addRule(new DenyAllDomain());
+			DomainPolicy domainPolicy = domainPolicyService.create(policy);
+			created.setPolicy(domainPolicy);
+		}
+		return DomainDto.getFull(created);
 	}
 
 	@Override

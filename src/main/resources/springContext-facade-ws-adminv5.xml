@@ -29,6 +29,7 @@
 	<bean id="wsAdminV5DomainFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.DomainFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="domainService" />
+		<constructor-arg ref="domainPolicyService" />
 	</bean>
 	<bean id="wsAdminV5RemoteServerFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.RemoteServerFacadeImpl">
 		<constructor-arg>

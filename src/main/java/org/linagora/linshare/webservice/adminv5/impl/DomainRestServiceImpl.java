@@ -118,8 +118,11 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		)
 	})
 	@Override
-	public DomainDto create(DomainDto dto) {
-		return domainFacade.create(dto);
+	public DomainDto create(
+			@Parameter(description = "Create a dedicated domain policy, allowing the domain to only communicate with itself.")
+				@QueryParam("dedicatedDomainPolicy") @DefaultValue("false") boolean dedicatedDomainPolicy,
+			DomainDto dto) {
+		return domainFacade.create(dedicatedDomainPolicy, dto);
 	}
 
 	@Path("/{uuid: .*}")

@@ -45,7 +45,7 @@ public interface DomainRestService {
 
 	DomainDto find(String uuid, boolean tree, boolean detail);
 
-	DomainDto create(DomainDto dto);
+	DomainDto create(boolean dedicatedDomainPolicy, DomainDto dto);
 
 	DomainDto update(String uuid, DomainDto dto);
 
