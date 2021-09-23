@@ -230,11 +230,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			if (dto.getDescription() == null) {
 				return domain.getDescription();
 			} else {
-				String description = sanitizerInputHtmlBusinessService.strictClean(dto.getDescription());
-				if (description == null) {
-					description = "";
-				}
-				return description;
+				return sanitizerInputHtmlBusinessService.clean(dto.getDescription());
 			}
 		} else {
 			if (dto.getDescription() == null) {

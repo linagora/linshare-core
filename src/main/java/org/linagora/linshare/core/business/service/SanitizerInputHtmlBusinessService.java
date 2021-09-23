@@ -42,6 +42,8 @@ public interface SanitizerInputHtmlBusinessService {
 
 	String strictClean(String entry) throws IllegalArgumentException;
 
+	String clean(String entry) throws IllegalArgumentException;
+
 	String sanitizeFileName(String fileName) throws BusinessException;
 
 	String sanitizeDuplicatedContactListName(String contactListName) throws BusinessException;

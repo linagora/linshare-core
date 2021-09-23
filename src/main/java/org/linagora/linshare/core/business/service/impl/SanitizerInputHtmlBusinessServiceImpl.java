@@ -73,6 +73,18 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 	}
 
 	/**
+	 * This function clean all inputs that contains untrusted HTML that complies
+	 * with default {@link PolicyFactory}.
+	 * 
+	 * @param entry It can contains untrusted HTML elements.
+	 * @return String cleaned from all HTML and trimmed. It could be an empty string.
+	 */
+	@Override
+	public String clean(String entry) throws IllegalArgumentException {
+		return policyFactory.sanitize(entry).trim();
+	}
+
+	/**
 	 * It can be used for sanitize the uploaded or updated file names
 	 * 
 	 * @param fileName contains untrusted HTML elements.
