@@ -127,7 +127,7 @@ public class GroupProviderFacadeImpl extends AdminGenericFacadeImpl implements G
 		if (domain.isRootDomain() || domain.isGuestDomain()) {
 			throw new BusinessException(BusinessErrorCode.GROUP_PROVIDER_FORBIDDEN, "You can not manage a GroupProvider for this kind of domain.");
 		}
-		if (domain.getUserProvider() != null) {
+		if (domain.getGroupProvider() != null) {
 			throw new BusinessException(BusinessErrorCode.GROUP_PROVIDER_ALREADY_EXIST, "GroupProvider already exists. Can't create more than one");
 		}
 		if (dto.getType().equals(GroupProviderType.LDAP_PROVIDER)) {
@@ -158,7 +158,6 @@ public class GroupProviderFacadeImpl extends AdminGenericFacadeImpl implements G
 						connection,
 						dto.getSearchInOtherDomains()));
 		domain.setGroupProvider(groupProvider);
-		domainService.update(authUser, domain.getUuid(), domain);
 		return new LDAPGroupProviderDto(groupProvider);
 	}
 
@@ -224,7 +223,6 @@ public class GroupProviderFacadeImpl extends AdminGenericFacadeImpl implements G
 		if (isDomainBelonging(domain, groupProvider)) {
 			groupProviderService.delete(groupProvider);
 			domain.setGroupProvider(null);
-			domainService.update(authUser, domain.getUuid(), domain);
 			return new LDAPGroupProviderDto((LdapGroupProvider) groupProvider);
 		} else {
 			throw new BusinessException(BusinessErrorCode.GROUP_PROVIDER_NOT_FOUND,
