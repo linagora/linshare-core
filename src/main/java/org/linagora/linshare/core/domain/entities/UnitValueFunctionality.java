@@ -46,6 +46,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedUnitParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.UnitParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.UnlimitedParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
@@ -478,7 +479,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 						);
 			}
 		}
-		return new org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<Integer>(
+		return new UnitParameterDto(
 			this.system,
 			!this.getParentAllowParametersUpdate(),
 			defaut,

@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.IntegerParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.UnlimitedParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
@@ -238,7 +239,7 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 			maximum = new NestedParameterDto<Integer>(this.maxValue, parentValue);
 			unlimited = new UnlimitedParameterDto();
 		}
-		return new org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<Integer>(
+		return new IntegerParameterDto(
 			this.system,
 			!this.getParentAllowParametersUpdate(),
 			defaut,

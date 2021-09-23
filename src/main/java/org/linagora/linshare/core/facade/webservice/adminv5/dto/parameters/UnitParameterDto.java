@@ -35,23 +35,23 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
-public class IntegerParameterDto extends ParameterDto<Integer> {
+public class UnitParameterDto extends ParameterDto<Integer> {
 
-	public IntegerParameterDto() {
+	public UnitParameterDto() {
 		super();
 	}
 
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
+	public UnitParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
 			NestedParameterDto<Integer> maximum, UnlimitedParameterDto unlimited) {
 		super(hidden, readonly, defaut, maximum, unlimited);
 	}
 
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
+	public UnitParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
 			NestedParameterDto<Integer> maximum) {
 		super(hidden, readonly, defaut, maximum);
 	}
 
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut) {
+	public UnitParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut) {
 		super(hidden, readonly, defaut);
 	}
 

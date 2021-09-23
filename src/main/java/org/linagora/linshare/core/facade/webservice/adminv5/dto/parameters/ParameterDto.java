@@ -41,7 +41,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "Parameter")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ParameterDto <T> {
+public abstract class ParameterDto <T> {
 
 	@Schema(description = "Indicate if this Parameter should be displayed or hidden")
 	protected boolean hidden;

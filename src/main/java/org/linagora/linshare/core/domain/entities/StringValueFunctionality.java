@@ -41,6 +41,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.StringParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityStringDto;
@@ -121,7 +122,7 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 			parentValue = ((StringValueFunctionality)this.ancestorFunc).getValue();
 		}
 		NestedParameterDto<String> defaut = new NestedParameterDto<String>(this.value, parentValue);
-		return new org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<String>(
+		return new StringParameterDto(
 			this.system,
 			!this.getParentAllowParametersUpdate(),
 			defaut);

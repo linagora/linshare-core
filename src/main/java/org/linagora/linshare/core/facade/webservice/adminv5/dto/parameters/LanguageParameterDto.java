@@ -35,30 +35,32 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
-public class IntegerParameterDto extends ParameterDto<Integer> {
+import org.linagora.linshare.core.domain.constants.Language;
 
-	public IntegerParameterDto() {
+public class LanguageParameterDto extends ParameterDto<Language> {
+
+	public LanguageParameterDto() {
 		super();
 	}
 
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
-			NestedParameterDto<Integer> maximum, UnlimitedParameterDto unlimited) {
+	public LanguageParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Language> defaut,
+			NestedParameterDto<Language> maximum, UnlimitedParameterDto unlimited) {
 		super(hidden, readonly, defaut, maximum, unlimited);
 	}
 
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
-			NestedParameterDto<Integer> maximum) {
+	public LanguageParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Language> defaut,
+			NestedParameterDto<Language> maximum) {
 		super(hidden, readonly, defaut, maximum);
 	}
 
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut) {
+	public LanguageParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Language> defaut) {
 		super(hidden, readonly, defaut);
 	}
 
 	@Override
 	public String toString() {
-		return "IntegerParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", defaut=" + defaut + ", maximum="
-				+ maximum + "]";
+		return "LanguageParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", defaut=" + defaut + ", maximum="
+				+ maximum + ", unlimited=" + unlimited + "]";
 	}
 
 }

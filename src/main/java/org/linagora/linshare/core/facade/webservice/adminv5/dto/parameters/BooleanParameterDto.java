@@ -35,30 +35,30 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
-public class IntegerParameterDto extends ParameterDto<Integer> {
+public class BooleanParameterDto extends ParameterDto<Boolean> {
 
-	public IntegerParameterDto() {
+	public BooleanParameterDto() {
 		super();
 	}
 
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
-			NestedParameterDto<Integer> maximum, UnlimitedParameterDto unlimited) {
+	public BooleanParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Boolean> defaut,
+			NestedParameterDto<Boolean> maximum, UnlimitedParameterDto unlimited) {
 		super(hidden, readonly, defaut, maximum, unlimited);
 	}
 
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
-			NestedParameterDto<Integer> maximum) {
+	public BooleanParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Boolean> defaut,
+			NestedParameterDto<Boolean> maximum) {
 		super(hidden, readonly, defaut, maximum);
 	}
 
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut) {
+	public BooleanParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Boolean> defaut) {
 		super(hidden, readonly, defaut);
 	}
 
 	@Override
 	public String toString() {
-		return "IntegerParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", defaut=" + defaut + ", maximum="
-				+ maximum + "]";
+		return "BooleanParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", defaut=" + defaut + ", maximum="
+				+ maximum + ", unlimited=" + unlimited + "]";
 	}
 
 }
