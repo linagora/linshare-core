@@ -57,6 +57,8 @@ import org.linagora.linshare.mongo.entities.logs.GroupFilterAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.LdapGroupFilterMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
+import com.google.common.base.Strings;
+
 public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl implements GroupLdapPatternService {
 
 	protected GroupPatternRepository groupPatternRepository;
@@ -134,13 +136,14 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 					"System group patterns cannot be updated");
 		}
 		Validate.notEmpty(groupLdapPattern.getLabel(), "Pattern's label must be set.");
-		Validate.notEmpty(groupLdapPattern.getDescription(), "Pattern's description must be set.");
 		Validate.notNull(groupLdapPattern.getSearchPageSize(), "Pattern's search page size must be set.");
 		Validate.notNull(groupLdapPattern.getSearchAllGroupsQuery(), "Pattern's search all groups query must be set.");
 		Validate.notEmpty(groupLdapPattern.getSearchGroupQuery(), "Pattern's search group query must be set.");
 
 		pattern.setLabel(sanitize(groupLdapPattern.getLabel()));
-		pattern.setDescription(sanitize(groupLdapPattern.getDescription()));
+		if (!Strings.isNullOrEmpty(groupLdapPattern.getDescription())) {
+			pattern.setDescription(sanitize(groupLdapPattern.getDescription()));
+		}
 		pattern.setSearchPageSize(groupLdapPattern.getSearchPageSize());
 		pattern.setSearchAllGroupsQuery(groupLdapPattern.getSearchAllGroupsQuery());
 		pattern.setSearchGroupQuery(groupLdapPattern.getSearchGroupQuery());

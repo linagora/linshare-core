@@ -57,6 +57,8 @@ import org.linagora.linshare.mongo.entities.logs.DriveFilterAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.LdapDriveFilterMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
+import com.google.common.base.Strings;
+
 public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implements LdapDriveFilterService {
 
 	protected LdapDriveFilterRepository drivePatternRepository;
@@ -134,13 +136,14 @@ public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implemen
 					"System drive filters cannot be updated");
 		}
 		Validate.notEmpty(ldapDriveFilter.getLabel(), "Drive Ldap filter's label must be set.");
-		Validate.notEmpty(ldapDriveFilter.getDescription(), "Drive Ldap filter's description must be set.");
 		Validate.notNull(ldapDriveFilter.getSearchPageSize(), "Drive Ldap filter's search page size must be set.");
 		Validate.notNull(ldapDriveFilter.getSearchAllGroupsQuery(), "Drive Ldap filter's search all groups query must be set.");
 		Validate.notEmpty(ldapDriveFilter.getSearchGroupQuery(), "Drive Ldap filter's search group query must be set.");
 
 		driveFilter.setLabel(sanitize(ldapDriveFilter.getLabel()));
-		driveFilter.setDescription(sanitize(ldapDriveFilter.getDescription()));
+		if (!Strings.isNullOrEmpty(ldapDriveFilter.getDescription())) {
+			driveFilter.setDescription(sanitize(ldapDriveFilter.getDescription()));
+		}
 		driveFilter.setSearchPageSize(ldapDriveFilter.getSearchPageSize());
 		driveFilter.setSearchAllGroupsQuery(ldapDriveFilter.getSearchAllGroupsQuery());
 		driveFilter.setSearchGroupQuery(ldapDriveFilter.getSearchGroupQuery());
