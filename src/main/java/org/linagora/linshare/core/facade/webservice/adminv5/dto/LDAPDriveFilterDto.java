@@ -81,10 +81,7 @@ public class LDAPDriveFilterDto extends AbstractDriveFilterDto {
 	}
 
 	public LDAPDriveFilterDto(LdapDriveFilter driveLdapPattern) {
-		this.uuid = driveLdapPattern.getUuid();
-		this.name = driveLdapPattern.getLabel();
-		this.description = driveLdapPattern.getDescription();
-		this.type = driveLdapPattern.getType();
+		super(driveLdapPattern);
 		this.groupNameAttribute = driveLdapPattern.getAttribute(LdapDriveFilter.GROUP_NAME);
 		this.groupMemberAttribute = driveLdapPattern.getAttribute(LdapDriveFilter.GROUP_MEMBER);
 		this.memberFirstNameAttribute = driveLdapPattern.getAttribute(LdapDriveFilter.MEMBER_FIRST_NAME);

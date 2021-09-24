@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.DriveFilterType;
+import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -83,6 +84,15 @@ public abstract class AbstractDriveFilterDto {
 
 	protected AbstractDriveFilterDto() {
 		super();
+	}
+
+	public AbstractDriveFilterDto(LdapDriveFilter driveLdapPattern) {
+		this.uuid = driveLdapPattern.getUuid();
+		this.name = driveLdapPattern.getLabel();
+		this.description = driveLdapPattern.getDescription();
+		this.type = driveLdapPattern.getType();
+		this.creationDate = driveLdapPattern.getCreationDate();
+		this.modificationDate = driveLdapPattern.getModificationDate();
 	}
 
 	public String getUuid() {
