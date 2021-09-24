@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.GroupFilterType;
+import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -61,6 +62,15 @@ public abstract class AbstractGroupFilterDto {
 
 	protected AbstractGroupFilterDto() {
 		super();
+	}
+
+	public AbstractGroupFilterDto(GroupLdapPattern groupLdapPattern) {
+		this.uuid = groupLdapPattern.getUuid();
+		this.name = groupLdapPattern.getLabel();
+		this.description = groupLdapPattern.getDescription();
+		this.type = groupLdapPattern.getType();
+		this.creationDate = groupLdapPattern.getCreationDate();
+		this.modificationDate = groupLdapPattern.getModificationDate();
 	}
 
 	public String getUuid() {

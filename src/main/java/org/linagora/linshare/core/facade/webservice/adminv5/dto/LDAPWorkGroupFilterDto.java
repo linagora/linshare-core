@@ -83,10 +83,7 @@ public class LDAPWorkGroupFilterDto extends AbstractGroupFilterDto {
 	}
 
 	public LDAPWorkGroupFilterDto(GroupLdapPattern groupLdapPattern) {
-		this.uuid = groupLdapPattern.getUuid();
-		this.name = groupLdapPattern.getLabel();
-		this.description = groupLdapPattern.getDescription();
-		this.type = groupLdapPattern.getType();
+		super(groupLdapPattern);
 		this.groupNameAttribute = groupLdapPattern.getAttribute(GroupLdapPattern.GROUP_NAME);
 		this.groupMemberAttribute = groupLdapPattern.getAttribute(GroupLdapPattern.GROUP_MEMBER);
 		this.memberFirstNameAttribute = groupLdapPattern.getAttribute(GroupLdapPattern.MEMBER_FIRST_NAME);
