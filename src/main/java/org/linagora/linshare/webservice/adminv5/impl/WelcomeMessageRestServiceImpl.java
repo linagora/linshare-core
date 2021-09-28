@@ -40,19 +40,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.UserProviderFacade;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractUserProviderDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPUserProviderDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.WelcomeMessageFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.adminv5.UserProviderRestService;
 import org.linagora.linshare.webservice.adminv5.WelcomeMessageRestService;
 
 import javax.ws.rs.Consumes;
@@ -65,14 +59,16 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
-import java.util.Set;
 
 @Path("/domains/{domainUuid}/welcome_messages")
 @Produces({ MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON })
 public class WelcomeMessageRestServiceImpl extends WebserviceBase implements WelcomeMessageRestService {
 
-	public WelcomeMessageRestServiceImpl() {
+	private final WelcomeMessageFacade welcomeMessageFacade;
+
+	public WelcomeMessageRestServiceImpl(WelcomeMessageFacade welcomeMessageFacade) {
+		this.welcomeMessageFacade = welcomeMessageFacade;
 	}
 
 	@Path("/")
@@ -132,9 +128,9 @@ public class WelcomeMessageRestServiceImpl extends WebserviceBase implements Wel
 	public WelcomeMessageDto create(
 			@Parameter(description = "domain's uuid.", required = true)
 				@PathParam("domainUuid") String domainUuid,
-			@Parameter(description = "Welcome message to create.", required = true) WelcomeMessageDto welcomeMessageDto)
+			@Parameter(description = "Welcome message to create (uuid is required because we will duplicate an existing WelcomeMessage)", required = true) WelcomeMessageDto welcomeMessageDto)
 			throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		return welcomeMessageFacade.create(domainUuid, welcomeMessageDto);
 	}
 
 	@Path("/{uuid: .*}")

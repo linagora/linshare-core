@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -55,7 +56,7 @@ import java.util.Map;
 public class WelcomeMessageDto {
 
 	@Schema(name = "Domain", description = "A LinShare's domain")
-	public class DomainDto {
+	public static class DomainDto {
 
 		@Schema(description = "Domain's uuid",
 				required = true)
@@ -122,23 +123,32 @@ public class WelcomeMessageDto {
 
 	@Schema(description = "Welcome message entries (updatable)",
 			required = true)
-	protected Map<SupportedLanguage, WelcomeMessagesEntry> entries;
+	protected Map<SupportedLanguage, String> entries;
+
+	public static WelcomeMessageDto from(WelcomeMessages welcomeMessage) {
+		WelcomeMessageDto welcomeMessageDto = new WelcomeMessageDto();
+		welcomeMessageDto.setUuid(welcomeMessage.getUuid());
+		welcomeMessageDto.setName(welcomeMessage.getName());
+		welcomeMessageDto.setCreationDate(welcomeMessage.getCreationDate());
+		welcomeMessageDto.setDescription(welcomeMessage.getDescription());
+		welcomeMessageDto.setModificationDate(welcomeMessage.getModificationDate());
+		welcomeMessageDto.setDomain(new DomainDto(welcomeMessage.getDomain()));
+		welcomeMessageDto.setAssignedToCurentDomain(false);
+		welcomeMessageDto.setReadOnly(false);
+		welcomeMessageDto.setEntries(entries(welcomeMessage.getWelcomeMessagesEntries()));
+		return welcomeMessageDto;
+	}
+
+	private static Map<SupportedLanguage, String> entries(Map<SupportedLanguage, WelcomeMessagesEntry> entries) {
+		Map<SupportedLanguage, String> map = new HashMap<>();
+		for (Map.Entry<SupportedLanguage, WelcomeMessagesEntry> entry : entries.entrySet()) {
+			map.put(entry.getKey(), entry.getValue().getValue());
+		}
+		return map;
+	}
 
 	public WelcomeMessageDto() {
 		super();
-	}
-
-	public WelcomeMessageDto(WelcomeMessages welcomeMessage) {
-		super();
-		this.uuid = welcomeMessage.getUuid();
-		this.name = welcomeMessage.getName();
-		this.creationDate = welcomeMessage.getCreationDate();
-		this.description = welcomeMessage.getDescription();
-		this.modificationDate = welcomeMessage.getModificationDate();
-		this.domain = new DomainDto(welcomeMessage.getDomain());
-		this.assignedToCurentDomain = false;
-		this.readOnly = false;
-		this.entries = welcomeMessage.getWelcomeMessagesEntries();
 	}
 
 	public String getUuid() {
@@ -205,11 +215,11 @@ public class WelcomeMessageDto {
 		this.readOnly = readOnly;
 	}
 
-	public Map<SupportedLanguage, WelcomeMessagesEntry> getEntries() {
+	public Map<SupportedLanguage, String> getEntries() {
 		return entries;
 	}
 
-	public void setEntries(Map<SupportedLanguage, WelcomeMessagesEntry> entries) {
+	public void setEntries(Map<SupportedLanguage, String> entries) {
 		this.entries = entries;
 	}
 

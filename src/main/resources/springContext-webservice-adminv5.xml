@@ -54,6 +54,9 @@
 	<bean id="adminv5FunctionalityRestService" class="org.linagora.linshare.webservice.adminv5.impl.FunctionalityRestServiceImpl">
 		<constructor-arg ref="wsAdminV5FunctionalityFacade" />
 	</bean>
+	<bean id="adminv5WelcomeMessageRestService" class="org.linagora.linshare.webservice.adminv5.impl.WelcomeMessageRestServiceImpl">
+		<constructor-arg ref="wsAdminV5WelcomeMessageFacade"/>
+	</bean>
 	<jaxrs:server id="restAdminV5Container" address="/rest/admin/v5">
 		<jaxrs:serviceBeans>
 			<ref bean="adminv5UserRestService" />
@@ -71,6 +74,7 @@
 			<ref bean="adminv5FunctionalityRestService"/>
 			<ref bean="adminv5GroupProviderRestService"/>
 			<ref bean="adminv5DriveProviderRestService"/>
+			<ref bean="adminv5WelcomeMessageRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

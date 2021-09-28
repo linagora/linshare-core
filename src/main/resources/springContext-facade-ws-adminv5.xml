@@ -84,9 +84,14 @@
 			</map>
 		</constructor-arg>
 	</bean>
-		<bean id="wsAdminV5FunctionalityFacade"
+	<bean id="wsAdminV5FunctionalityFacade"
 		class="org.linagora.linshare.core.facade.webservice.adminv5.impl.FunctionalityFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityService" />
 	</bean>
-</beans>	
+	<bean id="wsAdminV5WelcomeMessageFacade"
+			  class="org.linagora.linshare.core.facade.webservice.adminv5.impl.WelcomeMessageFacadeImpl">
+		<constructor-arg ref="domainService" />
+		<constructor-arg ref="welcomeMessagesService" />
+	</bean>
+</beans>
