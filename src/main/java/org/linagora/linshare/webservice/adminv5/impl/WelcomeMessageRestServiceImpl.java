@@ -103,7 +103,7 @@ public class WelcomeMessageRestServiceImpl extends WebserviceBase implements Wel
 			@Parameter(description = "welcomeMessage's uuid.", required = true)
 				@PathParam("uuid") String welcomeMessageUuid
 				) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		return welcomeMessageFacade.find(domainUuid, welcomeMessageUuid);
 	}
 
 	@Path("/")

@@ -81,7 +81,25 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 
 	@Override
 	public WelcomeMessageDto find(String domainUuid, String welcomeMessageUuid) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Domain uuid uuid must be set.");
+		Validate.notEmpty(welcomeMessageUuid, "Welcome message uuid must be set.");
+		WelcomeMessages welcomeMessage = welcomeMessagesService.find(authUser, welcomeMessageUuid);
+		AbstractDomain domain = welcomeMessage.getDomain();
+		if (belongsToAnotherDomain(domainUuid, domain)) {
+			LOGGER.info("The welcome message %s is belonging to domain %s (not %s)",
+					welcomeMessage.getUuid(),
+					domain.getUuid(),
+					domainUuid);
+			throw new BusinessException(
+					BusinessErrorCode.WELCOME_MESSAGES_NOT_FOUND,
+					"Welcome message with uuid :" + welcomeMessageUuid + " not found.");
+		}
+		return WelcomeMessageDto.from(welcomeMessage);
+	}
+
+	private boolean belongsToAnotherDomain(String domainUuid, AbstractDomain domain) {
+		return !domain.getUuid().equals(domainUuid);
 	}
 
 	@Override
