@@ -136,7 +136,7 @@ public class DriveProviderServiceImplTest {
 			driveProviderService.delete(driveProvider);
 			driveProviderService.find(driveProvider.getUuid());
 		});
-		Assertions.assertEquals(BusinessErrorCode.DRIVE_LDAP_FILTER_NOT_FOUND, exception.getErrorCode());
+		Assertions.assertEquals(BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

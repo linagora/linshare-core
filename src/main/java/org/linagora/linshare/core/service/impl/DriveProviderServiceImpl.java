@@ -62,7 +62,7 @@ public class DriveProviderServiceImpl extends GenericAdminServiceImpl implements
 		LdapDriveProvider provider = ldapDriveProviderRepository.findByUuid(uuid);
 		if (provider == null) {
 			throw new BusinessException(
-					BusinessErrorCode.DRIVE_LDAP_FILTER_NOT_FOUND,
+					BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND,
 					"Drive provider identifier no found.");
 		}
 		return provider;
