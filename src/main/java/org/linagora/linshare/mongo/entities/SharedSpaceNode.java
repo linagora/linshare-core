@@ -107,6 +107,9 @@ public class SharedSpaceNode {
 	@Schema(description = "Author of the shared space")
 	protected SharedSpaceAccount author;
 
+	@Schema(description = "The domain's uuid to which the current sharedSpace belongs.")
+	protected String domainUuid;
+
 	public SharedSpaceNode() {
 		super();
 	}
@@ -130,10 +133,11 @@ public class SharedSpaceNode {
 		this.modificationDate = new Date();
 	}
 
-	public SharedSpaceNode(String name, String parentUuid, NodeType nodeType,
+	public SharedSpaceNode(String domainUuid, String name, String parentUuid, NodeType nodeType,
 			VersioningParameters versioningParameters, String description, SharedSpaceAccount author) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
+		this.domainUuid = domainUuid;
 		this.name = name;
 		this.parentUuid = parentUuid;
 		this.nodeType = nodeType;
@@ -273,6 +277,14 @@ public class SharedSpaceNode {
 		this.author = author;
 	}
 
+	public String getDomainUuid() {
+		return domainUuid;
+	}
+
+	public void setDomainUuid(String domainUuid) {
+		this.domainUuid = domainUuid;
+	}
+
 	@XmlTransient
 	@JsonIgnore
 	public boolean isDrive() {
@@ -289,7 +301,7 @@ public class SharedSpaceNode {
 	public String toString() {
 		return "SharedSpaceNode [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
 				+ ", nodeType=" + nodeType + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate
-				+ ", versioningParameters=" + versioningParameters + ", quotaUuid=" + quotaUuid + "]";
+				+ ", versioningParameters=" + versioningParameters + ", quotaUuid=" + quotaUuid + ", domainUuid="
+				+ domainUuid + "]";
 	}
-
 }

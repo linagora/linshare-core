@@ -86,7 +86,7 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		Validate.notNull(node, "Missing required input shared space node.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(), node.getParentUuid(), node.getNodeType(),
+		SharedSpaceNode toCreate = new SharedSpaceNode(authUser.getDomainId(), node.getName(), node.getParentUuid(), node.getNodeType(),
 				node.getVersioningParameters(), node.getDescription(), new SharedSpaceAccount(actor));
 		return nodeService.create(authUser, actor, toCreate);
 	}

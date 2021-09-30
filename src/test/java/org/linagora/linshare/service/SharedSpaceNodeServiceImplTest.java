@@ -247,9 +247,9 @@ public class SharedSpaceNodeServiceImplTest {
 	public void update() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		VersioningParameters param = new VersioningParameters(false);
-		SharedSpaceNode nodeToUpdate = new SharedSpaceNode("nodeName ToUpdate", null, NodeType.WORK_GROUP, param, "optional description", new SharedSpaceAccount(john));
+		SharedSpaceNode nodeToUpdate = new SharedSpaceNode(john.getDomainId(), "nodeName ToUpdate", null, NodeType.WORK_GROUP, param, "optional description", new SharedSpaceAccount(john));
 		SharedSpaceNode createdNodeToUpdate = service.create(john, john, nodeToUpdate);
-		SharedSpaceNode updatedNode = new SharedSpaceNode("nodeName Updated", null, NodeType.WORK_GROUP, param, "optional description", new SharedSpaceAccount(john));
+		SharedSpaceNode updatedNode = new SharedSpaceNode(john.getDomainId(), "nodeName Updated", null, NodeType.WORK_GROUP, param, "optional description", new SharedSpaceAccount(john));
 		updatedNode.setUuid(createdNodeToUpdate.getUuid());
 		service.update(john, john, updatedNode);
 		Assertions.assertEquals(updatedNode.getName(),

@@ -90,7 +90,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(node, "Missing required input shared space node.");
-		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(), node.getParentUuid(), node.getNodeType(),
+		SharedSpaceNode toCreate = new SharedSpaceNode(authUser.getDomainId(), node.getName(), node.getParentUuid(), node.getNodeType(),
 				node.getVersioningParameters(), node.getDescription(), new SharedSpaceAccount(actor));
 		return nodeService.create(authUser, actor, toCreate);
 	}
