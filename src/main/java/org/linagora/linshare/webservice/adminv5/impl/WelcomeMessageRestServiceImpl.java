@@ -82,8 +82,8 @@ public class WelcomeMessageRestServiceImpl extends WebserviceBase implements Wel
 	@Override
 	public List<WelcomeMessageDto> findAll(
 			@Parameter(description = "The domain uuid.")
-				@PathParam("domainUuid") String domain) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+				@PathParam("domainUuid") String domainUuid) {
+		return welcomeMessageFacade.findAll(domainUuid);
 	}
 
 	@Path("/{uuid}")

@@ -76,7 +76,11 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 
 	@Override
 	public List<WelcomeMessageDto> findAll(String domainUuid) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		User authUser = checkAuthentication(Role.ADMIN);
+		return welcomeMessagesService.findAll(authUser, domainUuid, true)
+				.stream()
+				.map(WelcomeMessageDto::from)
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 	@Override
