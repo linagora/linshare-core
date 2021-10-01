@@ -149,6 +149,29 @@ VALUES(25, 'member', 'extended_group_member_attr', false, true, true, true, 6);
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
 VALUES(26, 'sn', 'member_lastname', false, true, true, false, 6);
+
+
+-- UPGRADE_4_3_ADD_DOMAIN_TO_SHARED_SPACE
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date)
+VALUES
+  (45,
+  'UNDEFINED',
+  'UPGRADE_4_3_ADD_DOMAIN_TO_SHARED_SPACE',
+  'UPGRADE_4_3',
+  45,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now());
 ---- End of your queries
 
 -- Upgrade LinShare version

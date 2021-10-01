@@ -277,7 +277,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Add missing properties when creating a copy of an existing workgroupNode (file).
 	 */
-	UPGRADE_4_2_ADD_MISSING_PROPERTIES_TO_WORK_GROUP_NODE;
+	UPGRADE_4_2_ADD_MISSING_PROPERTIES_TO_WORK_GROUP_NODE,
+
+	/**
+	 * Add domain uuid to sharedSpace
+	 */
+	UPGRADE_4_3_ADD_DOMAIN_TO_SHARED_SPACE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
