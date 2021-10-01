@@ -35,6 +35,9 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
@@ -44,9 +47,11 @@ import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.WelcomeMessageFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
@@ -56,6 +61,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements WelcomeMessageFacade {
@@ -137,7 +143,27 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 
 	@Override
 	public WelcomeMessageDto update(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Domain uuid uuid must be set.");
+		Validate.notNull(welcomeMessageDto, "Welcome message object must be set.");
+		if (!Strings.isNullOrEmpty(welcomeMessageUuid)) {
+			welcomeMessageDto.setUuid(welcomeMessageUuid);
+		}
+		Validate.notEmpty(welcomeMessageDto.getUuid(), "Welcome message uuid must be set.");
+		AbstractDomain domain = domainService.find(authUser, domainUuid);
+		WelcomeMessages welcomeMessage = welcomeMessagesService.find(authUser, welcomeMessageUuid);
+		if (belongsToAnotherDomain(domainUuid, welcomeMessage.getDomain())) {
+			LOGGER.info("The welcome message %s is belonging to domain %s (not %s)",
+					welcomeMessageUuid,
+					domain.getUuid(),
+					domainUuid);
+			throw new BusinessException(
+					BusinessErrorCode.WELCOME_MESSAGES_NOT_FOUND,
+					"Welcome message with uuid :" + welcomeMessageUuid + " not found.");
+		}
+		List<String> domainUuids = null;
+		return WelcomeMessageDto.from(
+				welcomeMessagesService.update(authUser, toEntity(domain, welcomeMessageDto), domainUuids));
 	}
 
 	@Override

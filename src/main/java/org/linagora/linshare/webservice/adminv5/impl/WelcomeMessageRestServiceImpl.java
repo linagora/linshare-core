@@ -159,7 +159,7 @@ public class WelcomeMessageRestServiceImpl extends WebserviceBase implements Wel
 				@PathParam("uuid") String welcomeMessageUuid,
 			@Parameter(description = "Welcome message to update.", required = true) WelcomeMessageDto welcomeMessageDto)
 			throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		return welcomeMessageFacade.update(domainUuid, welcomeMessageUuid, welcomeMessageDto);
 	}
 
 	@Path("/{uuid: .*}")
