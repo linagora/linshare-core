@@ -41,7 +41,6 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.WelcomeMessageFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
@@ -184,10 +183,10 @@ public class WelcomeMessageRestServiceImpl extends WebserviceBase implements Wel
 	public WelcomeMessageDto delete(
 			@Parameter(description = "domain's uuid.", required = true)
 				@PathParam("domainUuid") String domainUuid,
-			@Parameter(description = "welcomeMessage's uuid, if null, object.uuid is used.", required = false)
+			@Parameter(description = "welcomeMessage's uuid to delete.", required = false)
 				@PathParam("uuid") String welcomeMessageUuid,
-			@Parameter(description = "Welcome message to delete.", required = true) WelcomeMessageDto welcomeMessageDto)
+			@Parameter(description = "Welcome message to update.", required = true) WelcomeMessageDto welcomeMessageDto)
 			throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		return welcomeMessageFacade.delete(domainUuid, welcomeMessageUuid, welcomeMessageDto);
 	}
 }

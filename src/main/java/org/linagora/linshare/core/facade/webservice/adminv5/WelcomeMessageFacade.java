@@ -36,11 +36,9 @@
 package org.linagora.linshare.core.facade.webservice.adminv5;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
 
 import java.util.List;
-import java.util.Set;
 
 public interface WelcomeMessageFacade {
 

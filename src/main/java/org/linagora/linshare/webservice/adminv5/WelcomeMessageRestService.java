@@ -36,8 +36,6 @@
 package org.linagora.linshare.webservice.adminv5;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractDriveFilterDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
 
 import java.util.List;
