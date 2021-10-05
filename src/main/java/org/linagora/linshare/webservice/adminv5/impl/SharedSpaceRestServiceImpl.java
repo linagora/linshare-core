@@ -170,8 +170,10 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	})
 	@Override
 	public Response findAll(
-			@Parameter(description = "If the admin specify the account he will retrieve the list of the choosen account, else all shared spaces of all accounts domains will be returned.", required = false)
+			@Parameter(description = "If the admin specify the account he will retrieve the list of shared Spaces of the choosen account, else all shared spaces of all accounts domains will be returned.", required = false)
 				@QueryParam("account") String accountUuid,
+			@Parameter(description = "If the admin specify the domain he will retrieve the list of shared Spaces of the choosen domain, else all shared spaces of all domains will be returned.", required = false)
+				@QueryParam("domain") String domainUuid,
 			@Parameter(description = "The admin can choose the order of sorting the sharedSpace's list to retrieve, if not set the ascending order will be applied by default.", required = false)
 				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
 			@Parameter(description = "The admin can choose the field to sort with the sharedSpace's list to retrieve, if not set the modification date order will be choosen by default.", required = false)
@@ -183,13 +185,12 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "Search pattern that contains matching sequence in name of sharedSpace.", required = false)
 				@QueryParam("name") String name,
 			@Parameter(description = "The admin can choose the page number to get.", required = false)
-				@QueryParam("page") Integer pageNumber,
-			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
+				@QueryParam("page") Integer pageNumber, @Parameter(description = "The admin can choose the number of elements to get.", required = false)
 			@QueryParam("size") Integer pageSize) throws BusinessException {
 		Set<NodeType> types = Sets.newHashSet();
 		nodeTypes.forEach(type -> types.add(NodeType.valueOf(type)));
-		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, SortOrder.valueOf(sortOrder), SharedSpaceField.valueOf(sortField),
-				types, sharedSpaceRoles, name, pageNumber, pageSize);
+		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, domainUuid, SortOrder.valueOf(sortOrder),
+				SharedSpaceField.valueOf(sortField), types, sharedSpaceRoles, name, pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}
 

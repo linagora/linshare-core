@@ -65,6 +65,8 @@ public class SharedSpaceNodeNested {
 
 	protected Date modificationDate;
 
+	protected String domainUuid;
+
 	public SharedSpaceNodeNested(String uuid, String name, String parentUuid, NodeType nodeType, Date creationDate,
 			Date modificationDate) {
 		super();
@@ -86,6 +88,7 @@ public class SharedSpaceNodeNested {
 		this.nodeType = node.getNodeType();
 		this.creationDate = node.getCreationDate();
 		this.modificationDate = node.getModificationDate();
+		this.domainUuid = node.getDomainUuid();
 	}
 
 	public String getUuid() {
@@ -144,6 +147,14 @@ public class SharedSpaceNodeNested {
 		this.modificationDate = modificationDate;
 	}
 
+	public String getDomainUuid() {
+		return domainUuid;
+	}
+
+	public void setDomainUuid(String domainUuid) {
+		this.domainUuid = domainUuid;
+	}
+
 	@XmlTransient
 	@JsonIgnore
 	public boolean isDrive() {
@@ -159,7 +170,8 @@ public class SharedSpaceNodeNested {
 	@Override
 	public String toString() {
 		return "SharedSpaceNodeNested [uuid=" + uuid + ", name=" + name + ", nodeType=" + nodeType + ", role=" + role
-				+ ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + "]";
+				+ ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", domainUuid="
+				+ domainUuid + "]";
 	}
 
 	@Override

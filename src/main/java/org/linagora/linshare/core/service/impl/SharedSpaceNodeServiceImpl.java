@@ -48,6 +48,7 @@ import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessSer
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -289,7 +290,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account,
-			SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, PageContainer<SharedSpaceNodeNested> container) {
+			AbstractDomain domain, SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, PageContainer<SharedSpaceNodeNested> container) {
 		preChecks(authUser, actor);
 		if (!authUser.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
@@ -305,8 +306,14 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 						"You are not authorized to retieve the sharedSpaces of this account: " + account.getLsUuid());
 			}
 		}
+		if (Objects.nonNull(domain)) {
+			if (!domainPermissionBusinessService.isAdminforThisDomain(actor, domain)) {
+				throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN,
+						"You are not authorized to retieve the sharedSpaces of this domain: " + domain.getUuid());
+			}
+		}
 		Set<String> roleNames = checkRoles(authUser, actor, sharedSpaceRoles);
-		sharedSpaces = memberBusinessService.findAllSharedSpaces(account, nodeTypes, roleNames, name, container, sort);
+		sharedSpaces = memberBusinessService.findAllSharedSpaces(account, domain, nodeTypes, roleNames, name, container, sort);
 		return sharedSpaces;
 	}
 

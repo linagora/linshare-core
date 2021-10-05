@@ -55,8 +55,8 @@ public interface SharedSpaceRestService {
 
 	List<SharedSpaceMember> members(String uuid, String accountUuid) throws BusinessException;
 
-	Response findAll(String accountUuid, String sortOrder, String sortField, Set<String> nodeTypes, Set<String> roles,
-			String name, Integer pageNumber, Integer pageSize);
+	Response findAll(String accountUuid, String domainUuid, String sortOrder, String sortField, Set<String> nodeTypes,
+			Set<String> roles, String name, Integer pageNumber, Integer pageSize);
 
 	SharedSpaceMember findMember(String memberUuid) throws BusinessException;
 

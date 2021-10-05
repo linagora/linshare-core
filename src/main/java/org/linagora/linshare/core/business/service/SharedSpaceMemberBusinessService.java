@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
@@ -81,6 +82,7 @@ public interface SharedSpaceMemberBusinessService {
 
 	/**
 	 * This method is used by Admins only
+	 * @param domain TODO
 	 * @param nodeTypes is the type of sharedSpace to filter with (Drive/WORK_GROUP)
 	 * @param roleNames is the list of sharedSpaceRoles to filter with
 	 * @param name is the sharedSpaces' name to filter by
@@ -88,7 +90,7 @@ public interface SharedSpaceMemberBusinessService {
 	 * @param Account The account to filter by
 	 * @return {@link SharedSpaceNodeNested} pageContainer of SharedSpaceNodeNested
 	 */
-	PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account, Set<NodeType> nodeTypes, Set<String> roleNames, String name, PageContainer<SharedSpaceNodeNested> container, Sort sort);
+	PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account, AbstractDomain domain, Set<NodeType> nodeTypes, Set<String> roleNames, String name, PageContainer<SharedSpaceNodeNested> container, Sort sort);
 
 
 	List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid);

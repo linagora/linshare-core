@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
@@ -51,6 +52,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.SharedSpaceFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
@@ -69,12 +71,16 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 
 	private final AuditLogEntryService auditLogEntryService;
 
+	private final AbstractDomainService abstractDomainService;
+
 	public SharedSpaceFacadeImpl(AccountService accountService,
 			SharedSpaceNodeService nodeService,
-			AuditLogEntryService auditLogEntryService) {
+			AuditLogEntryService auditLogEntryService,
+			AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.nodeService = nodeService;
 		this.auditLogEntryService = auditLogEntryService;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -90,7 +96,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(node, "Missing required input shared space node.");
-		SharedSpaceNode toCreate = new SharedSpaceNode(authUser.getDomainId(), node.getName(), node.getParentUuid(), node.getNodeType(),
+		SharedSpaceNode toCreate = new SharedSpaceNode(actor.getDomainId(), node.getName(), node.getParentUuid(), node.getNodeType(),
 				node.getVersioningParameters(), node.getDescription(), new SharedSpaceAccount(actor));
 		return nodeService.create(authUser, actor, toCreate);
 	}
@@ -140,8 +146,8 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 	}
 
 	@Override
-	public PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, SortOrder sortOrder,
-			SharedSpaceField sortField, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, String name, Integer pageNumber, Integer pageSize) {
+	public PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, String domainUuid,
+			SortOrder sortOrder, SharedSpaceField sortField, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, String name, Integer pageNumber, Integer pageSize) {
 		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		User actor = getActor(authUser, actorUuid);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(pageNumber, pageSize);
@@ -149,7 +155,11 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 		if (!Strings.isNullOrEmpty(accountUuid)) {
 			account = accountService.findAccountByLsUuid(accountUuid);
 		}
-		return nodeService.findAll(authUser, actor, account, sortOrder, nodeTypes, sharedSpaceRoles, sortField, name, container);
+		AbstractDomain domain = null;
+		if (!Strings.isNullOrEmpty(domainUuid)) {
+			domain = abstractDomainService.findById(domainUuid);
+		}
+		return nodeService.findAll(authUser, actor, account, domain, sortOrder, nodeTypes, sharedSpaceRoles, sortField, name, container);
 	}
 
 	@Override

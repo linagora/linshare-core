@@ -48,12 +48,12 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 public class AddDomainToSharedSpaceUpgraTaskImpl extends GenericUpgradeTaskImpl {
 
@@ -63,20 +63,16 @@ public class AddDomainToSharedSpaceUpgraTaskImpl extends GenericUpgradeTaskImpl 
 
 	private UserRepository<User> userRepository;
 
-	private SharedSpaceMemberMongoRepository memberRepository;
-
 	public AddDomainToSharedSpaceUpgraTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			MongoTemplate mongoTemplate,
 			SharedSpaceNodeMongoRepository nodeMongoRepository,
-			UserRepository<User> userRepository,
-			SharedSpaceMemberMongoRepository memberRepository) {
+			UserRepository<User> userRepository) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.mongoTemplate = mongoTemplate;
 		this.nodeMongoRepository = nodeMongoRepository;
 		this.userRepository = userRepository;
-		this.memberRepository = memberRepository;
 	}
 
 	@Override
@@ -109,11 +105,11 @@ public class AddDomainToSharedSpaceUpgraTaskImpl extends GenericUpgradeTaskImpl 
 			sharedSpace.setDomainUuid(user.getDomainId());
 			nodeMongoRepository.save(sharedSpace);
 			// We need to update all nested nodes on sharedSpaceMembers list
-			List<SharedSpaceMember> members = memberRepository.findByNodeUuid(sharedSpace.getUuid());
-			for (SharedSpaceMember sharedSpaceMember : members) {
-				sharedSpaceMember.getNode().setDomainUuid(sharedSpace.getDomainUuid());
-				memberRepository.save(sharedSpaceMember);
-			}
+			Query query = new Query();
+			query.addCriteria(Criteria.where("node.uuid").is(sharedSpace.getUuid()));
+			Update update = new Update();
+			update.set("node.domainUuid", sharedSpace.getDomainUuid());
+			mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
 			res.setProcessed(true);
 		} else {
 			// Which domain should we assign to the retrieved SharedSpace with a fake author

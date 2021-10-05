@@ -46,6 +46,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -393,7 +394,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAllSharedSpaces(Account account,
-			Set<NodeType> nodeTypes, Set<String> roleNames, String name, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
+			AbstractDomain domain, Set<NodeType> nodeTypes, Set<String> roleNames, String name, PageContainer<SharedSpaceNodeNested> container, Sort sort) {
 		Validate.notNull(container, "Container can not be null.");
 		Validate.notNull(container.getPageNumber(), "PageNumber can not be null.");
 		Validate.notNull(container.getPageSize(), "PageSize can not be null.");
@@ -406,6 +407,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		commonOperations.add(Aggregation.match(Criteria.where("role.name").in(roleNames)));
 		if (Objects.nonNull(account)) {
 			commonOperations.add(Aggregation.match(Criteria.where("account.uuid").is(account.getLsUuid())));
+		}
+		if (Objects.nonNull(domain)) {
+			commonOperations.add(Aggregation.match(Criteria.where("node.domainUuid").is(domain.getUuid())));
 		}
 		if (!Strings.isNullOrEmpty(name)) {
 			commonOperations.add(Aggregation.match(Criteria.where("node.name").regex("(?i).*" + name + ".*")));

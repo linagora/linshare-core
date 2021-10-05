@@ -103,7 +103,7 @@ public class SharedSpaceWorkGroupServiceImpl extends AbstractSharedSpaceFragment
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not create this kind of sharedSpace with this method.");
 		}
-		SharedSpaceNode toCreate = new SharedSpaceNode(authUser.getDomainId(), sanitize(node.getName()), node.getParentUuid(), node.getNodeType(),
+		SharedSpaceNode toCreate = new SharedSpaceNode(actor.getDomainId(), sanitize(node.getName()), node.getParentUuid(), node.getNodeType(),
 				node.getVersioningParameters(), sanitize(node.getDescription()), new SharedSpaceAccount((User) actor));
 		SharedSpaceNode created = simpleCreate(authUser, actor, toCreate);
 		SharedSpaceNode parent = null;
