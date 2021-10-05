@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
@@ -99,7 +98,7 @@ public interface SharedSpaceNodeService {
 	 * @param authUser
 	 * @param actor
 	 * @param account
-	 * @param domain
+	 * @param domains
 	 * @param sortOrder
 	 * @param nodeTypes
 	 * @param sharedSpaceRoles
@@ -108,7 +107,7 @@ public interface SharedSpaceNodeService {
 	 * @param container
 	 * @return
 	 */
-	PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account, AbstractDomain domain,
+	PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account, List<String> domains,
 			SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, PageContainer<SharedSpaceNodeNested> container);
 
 	/**

@@ -118,7 +118,14 @@
 					<constructor-arg ref="workGroupNodeMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
-				<bean class="org.linagora.linshare.core.upgrade.v4_3.AddDomainToSharedSpaceUpgraTaskImpl">
+				<bean class="org.linagora.linshare.core.upgrade.v4_3.AddDomainToWorkGroupUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+					<constructor-arg ref="threadRepository" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v4_3.AddDomainToDriveUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />

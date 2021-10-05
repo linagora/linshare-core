@@ -86,6 +86,7 @@ public class SharedSpaceWorkGroupServiceImpl extends org.linagora.linshare.core.
 		Validate.notEmpty(ldapGroup.getName(), "The name of the LDAP group must be set");
 		Validate.notEmpty(ldapGroup.getExternalId(), "The external ID must be set");
 		ldapGroup.setName(sanitize(ldapGroup.getName()));
+		ldapGroup.setDomainUuid(actor.getDomainId());
 		checkVersioningParameter(actor.getDomain(), ldapGroup);
 		checkCreatePermission(actor, actor, SharedSpaceLDAPGroup.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		return simpleCreate(actor, actor, ldapGroup);

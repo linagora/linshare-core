@@ -172,8 +172,8 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	public Response findAll(
 			@Parameter(description = "If the admin specify the account he will retrieve the list of shared Spaces of the choosen account, else all shared spaces of all accounts domains will be returned.", required = false)
 				@QueryParam("account") String accountUuid,
-			@Parameter(description = "If the admin specify the domain he will retrieve the list of shared Spaces of the choosen domain, else all shared spaces of all domains will be returned.", required = false)
-				@QueryParam("domain") String domainUuid,
+			@Parameter(description = "If the admin choose a list of domains he will retrieve the list of shared Spaces related to choosen domains, else all shared spaces of all domains will be returned.", required = false)
+				@QueryParam("domains") List<String> domainUuids,
 			@Parameter(description = "The admin can choose the order of sorting the sharedSpace's list to retrieve, if not set the ascending order will be applied by default.", required = false)
 				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
 			@Parameter(description = "The admin can choose the field to sort with the sharedSpace's list to retrieve, if not set the modification date order will be choosen by default.", required = false)
@@ -189,7 +189,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@QueryParam("size") Integer pageSize) throws BusinessException {
 		Set<NodeType> types = Sets.newHashSet();
 		nodeTypes.forEach(type -> types.add(NodeType.valueOf(type)));
-		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, domainUuid, SortOrder.valueOf(sortOrder),
+		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, domainUuids, SortOrder.valueOf(sortOrder),
 				SharedSpaceField.valueOf(sortField), types, sharedSpaceRoles, name, pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}

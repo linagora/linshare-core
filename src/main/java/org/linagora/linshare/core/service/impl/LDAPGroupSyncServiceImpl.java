@@ -130,6 +130,8 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 				return ldapGroup;
 			}
 			ldapGroup.setName(node.getName());
+			// TODO: To be checked with drive synchro
+			ldapGroup.setDomainUuid(node.getDomainUuid());
 			// Complete update : The member is notified his access has been changed
 			resultContext.add(LdapBatchMetaDataType.UPDATED_GROUPS);
 			return (SharedSpaceLDAPGroup) nodeService.update(actor, actor, ldapGroup);

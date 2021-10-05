@@ -36,6 +36,7 @@ package org.linagora.linshare.core.upgrade.v4_3;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -45,6 +46,7 @@ import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -55,19 +57,20 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-public class AddDomainToSharedSpaceUpgraTaskImpl extends GenericUpgradeTaskImpl {
+public class AddDomainToDriveUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
-	private MongoTemplate mongoTemplate;
+	private final MongoTemplate mongoTemplate;
 
-	private SharedSpaceNodeMongoRepository nodeMongoRepository;
+	private final SharedSpaceNodeMongoRepository nodeMongoRepository;
 
-	private UserRepository<User> userRepository;
+	private final UserRepository<User> userRepository;
 
-	public AddDomainToSharedSpaceUpgraTaskImpl(
+	public AddDomainToDriveUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			MongoTemplate mongoTemplate,
 			SharedSpaceNodeMongoRepository nodeMongoRepository,
+			ThreadRepository threadRepository,
 			UserRepository<User> userRepository) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.mongoTemplate = mongoTemplate;
@@ -77,15 +80,14 @@ public class AddDomainToSharedSpaceUpgraTaskImpl extends GenericUpgradeTaskImpl 
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_4_3_ADD_DOMAIN_TO_SHARED_SPACE;
+		return UpgradeTaskType.UPGRADE_4_3_ADD_DOMAIN_TO_DRIVE;
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		// What about wg and drives synchronized for LDAP
 		Query query = Query.query(Criteria.where
-				("domainUuid").exists(false).and
-				("author").exists(true));
+				("nodeType").is(NodeType.DRIVE).and
+				("domainUuid").exists(false));
 		List<String> nodes = mongoTemplate.findDistinct(query, "uuid", SharedSpaceNode.class, String.class);
 		return nodes;
 	}
@@ -99,22 +101,44 @@ public class AddDomainToSharedSpaceUpgraTaskImpl extends GenericUpgradeTaskImpl 
 		if (sharedSpace == null) {
 			return res;
 		}
-		// we do not retrieve the fake user `unknown-user@linshare.org` because it does not have a domain
-		if (!sharedSpace.getAuthor().getMail().equals("unknown-user@linshare.org")) {
-			User user = userRepository.findByLsUuid(sharedSpace.getAuthor().getUuid());
-			sharedSpace.setDomainUuid(user.getDomainId());
-			nodeMongoRepository.save(sharedSpace);
-			// We need to update all nested nodes on sharedSpaceMembers list
-			Query query = new Query();
-			query.addCriteria(Criteria.where("node.uuid").is(sharedSpace.getUuid()));
-			Update update = new Update();
-			update.set("node.domainUuid", sharedSpace.getDomainUuid());
-			mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
-			res.setProcessed(true);
-		} else {
-			// Which domain should we assign to the retrieved SharedSpace with a fake author
-		}
+		User user = userRepository.findActivateAndDestroyedByLsUuid(sharedSpace.getAuthor().getUuid());
+		sharedSpace.setDomainUuid(user.getDomainId());
+		nodeMongoRepository.save(sharedSpace);
+		updateDriveMembers(sharedSpace);
+		updateNestedWorkgroups(sharedSpace);
+		updateNestedWorkgroupsMembers(sharedSpace);
+		res.setProcessed(true);
 		return res;
+
+	}
+
+	private void updateNestedWorkgroupsMembers(SharedSpaceNode sharedSpace) {
+		// Update all members of nested workgroups of the drive
+		Query query3 = new Query();
+		query3.addCriteria(Criteria.where("node.parentUuid").is(sharedSpace.getUuid()));
+		Update update3 = new Update();
+		update3.set("node.domainUuid", sharedSpace.getDomainUuid());
+		mongoTemplate.updateMulti(query3, update3, SharedSpaceMember.class);
+	}
+
+	private void updateNestedWorkgroups(SharedSpaceNode sharedSpace) {
+		// Update all nested workgroups
+		Query query2 = new Query();
+		query2.addCriteria(Criteria.where
+				("parentUuid").is(sharedSpace.getUuid()).and
+				("nodeType").is(NodeType.WORK_GROUP));
+		Update update2 = new Update();
+		update2.set("domainUuid", sharedSpace.getDomainUuid());
+		mongoTemplate.updateMulti(query2, update2, SharedSpaceNode.class);
+	}
+
+	private void updateDriveMembers(SharedSpaceNode sharedSpace) {
+		// Update all Drive memebers
+		Query query = new Query();
+		query.addCriteria(Criteria.where("node.uuid").is(sharedSpace.getUuid()));
+		Update update = new Update();
+		update.set("node.domainUuid", sharedSpace.getDomainUuid());
+		mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
 	}
 
 	@Override
@@ -124,9 +148,9 @@ public class AddDomainToSharedSpaceUpgraTaskImpl extends GenericUpgradeTaskImpl 
 		SharedSpaceNode resource = res.getResource();
 		logInfo(batchRunContext, total, position, resource + " has been updated.");
 		if (res.getProcessed()) {
-			logInfo(batchRunContext, total, position, "SharedSpaceNode has been updated: " + resource.toString());
+			logInfo(batchRunContext, total, position, "Drive has been updated: " + resource.toString());
 		} else {
-			logInfo(batchRunContext, total, position, "SharedSpaceNode has been skipped : " + resource.toString());
+			logInfo(batchRunContext, total, position, "Drive has been skipped : " + resource.toString());
 		}
 	}
 
@@ -137,7 +161,7 @@ public class AddDomainToSharedSpaceUpgraTaskImpl extends GenericUpgradeTaskImpl 
 		BatchResultContext<SharedSpaceNode> res = (BatchResultContext<SharedSpaceNode>) exception.getContext();
 		SharedSpaceNode resource = res.getResource();
 		logError(total, position, exception.getMessage(), batchRunContext);
-		logger.error("Error occured while processing SharedSpaceNode update : {} . BatchBusinessException", resource,
+		logger.error("Error occured while processing Drive update : {} . BatchBusinessException", resource,
 				exception);
 	}
 }

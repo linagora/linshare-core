@@ -151,7 +151,7 @@ INSERT INTO ldap_attribute
 VALUES(26, 'sn', 'member_lastname', false, true, true, false, 6);
 
 
--- UPGRADE_4_3_ADD_DOMAIN_TO_SHARED_SPACE
+-- UPGRADE_4_3_ADD_DOMAIN_TO_WORK_GROUP
  INSERT INTO upgrade_task
   (id,
   uuid,
@@ -165,9 +165,31 @@ VALUES(26, 'sn', 'member_lastname', false, true, true, false, 6);
 VALUES
   (45,
   'UNDEFINED',
-  'UPGRADE_4_3_ADD_DOMAIN_TO_SHARED_SPACE',
+  'UPGRADE_4_3_ADD_DOMAIN_TO_WORK_GROUP',
   'UPGRADE_4_3',
   45,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now());
+ 
+  -- UPGRADE_4_3_ADD_DOMAIN_TO_DRIVE
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date)
+VALUES
+  (46,
+  'UNDEFINED',
+  'UPGRADE_4_3_ADD_DOMAIN_TO_DRIVE',
+  'UPGRADE_4_3',
+  46,
   'NEW',
   'REQUIRED',
   now(),

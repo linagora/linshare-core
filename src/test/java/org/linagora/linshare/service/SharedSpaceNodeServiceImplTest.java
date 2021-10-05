@@ -75,6 +75,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 
@@ -316,8 +317,16 @@ public class SharedSpaceNodeServiceImplTest {
 		// Filter by Name
 		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByName = service.findAll(root, root, null, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, "SECOND NODE", container);
 		Assertions.assertEquals(2, fooSharedSpaceByName.getPageResponse().getTotalElements());
+		// Filter by domain
+		john.setRole(org.linagora.linshare.core.domain.constants.Role.ADMIN);
+		userRepo.update((User) john);
+		Assertions.assertTrue(john.hasAdminRole());
+		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByDomain = service.findAll(john, john, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByDomain.getPageResponse().getContent()) {
+			Assertions.assertEquals(john.getDomainId(), sharedSpaceNodeNested.getDomainUuid());
+		}
 		service.delete(john, john, node1);
-		service.delete(john, john, node2);
+		service.delete(root, root, node2);
 		service.delete(foo, foo, node3);
 		service.delete(foo, foo, node4);
 		service.delete(jane, jane, node5);

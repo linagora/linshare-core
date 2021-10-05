@@ -280,9 +280,14 @@ public enum UpgradeTaskType {
 	UPGRADE_4_2_ADD_MISSING_PROPERTIES_TO_WORK_GROUP_NODE,
 
 	/**
-	 * Add domain uuid to sharedSpace
+	 * Add domain uuid to workgroup
 	 */
-	UPGRADE_4_3_ADD_DOMAIN_TO_SHARED_SPACE;
+	UPGRADE_4_3_ADD_DOMAIN_TO_WORK_GROUP,
+
+	/**
+	 * Add domain uuid to drive
+	 */
+	UPGRADE_4_3_ADD_DOMAIN_TO_DRIVE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
