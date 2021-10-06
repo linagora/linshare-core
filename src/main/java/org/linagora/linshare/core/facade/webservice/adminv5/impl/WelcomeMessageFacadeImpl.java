@@ -78,9 +78,11 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 	@Override
 	public List<WelcomeMessageDto> findAll(String domainUuid) {
 		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Domain uuid uuid must be set.");
+		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		return welcomeMessagesService.findAll(authUser, domainUuid, true)
 				.stream()
-				.map(WelcomeMessageDto::from)
+				.map(welcomeMessage -> WelcomeMessageDto.from(welcomeMessage, domain))
 				.collect(Collectors.toUnmodifiableList());
 	}
 
@@ -100,7 +102,7 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 					BusinessErrorCode.WELCOME_MESSAGES_NOT_FOUND,
 					"Welcome message with uuid :" + welcomeMessageUuid + " not found.");
 		}
-		return WelcomeMessageDto.from(welcomeMessage);
+		return WelcomeMessageDto.from(welcomeMessage, domain);
 	}
 
 	private boolean belongsToAnotherDomain(String domainUuid, AbstractDomain domain) {
@@ -114,7 +116,8 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		Validate.notNull(welcomeMessageDto, "Welcome message must be set.");
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		return WelcomeMessageDto.from(
-				welcomeMessagesService.create(authUser, toEntity(domain, welcomeMessageDto), domainUuid));
+				welcomeMessagesService.create(authUser, toEntity(domain, welcomeMessageDto), domainUuid),
+				domain);
 	}
 
 	private WelcomeMessages toEntity(AbstractDomain domain, WelcomeMessageDto welcomeMessageDto) {
@@ -158,7 +161,8 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		}
 		List<String> domainUuids = null;
 		return WelcomeMessageDto.from(
-				welcomeMessagesService.update(authUser, toEntity(domain, welcomeMessageDto), domainUuids));
+				welcomeMessagesService.update(authUser, toEntity(domain, welcomeMessageDto), domainUuids),
+				domain);
 	}
 
 	@Override
@@ -182,6 +186,7 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 					"Welcome message with uuid :" + welcomeMessageDto.getUuid() + " not found.");
 		}
 		return WelcomeMessageDto.from(
-				welcomeMessagesService.delete(authUser, welcomeMessageDto.getUuid()));
+				welcomeMessagesService.delete(authUser, welcomeMessageDto.getUuid()),
+				domain);
 	}
 }

@@ -125,7 +125,7 @@ public class WelcomeMessageDto {
 			required = true)
 	protected Map<SupportedLanguage, String> entries;
 
-	public static WelcomeMessageDto from(WelcomeMessages welcomeMessage) {
+	public static WelcomeMessageDto from(WelcomeMessages welcomeMessage, AbstractDomain domain) {
 		WelcomeMessageDto welcomeMessageDto = new WelcomeMessageDto();
 		welcomeMessageDto.setUuid(welcomeMessage.getUuid());
 		welcomeMessageDto.setName(welcomeMessage.getName());
@@ -134,7 +134,7 @@ public class WelcomeMessageDto {
 		welcomeMessageDto.setModificationDate(welcomeMessage.getModificationDate());
 		welcomeMessageDto.setDomain(new DomainDto(welcomeMessage.getDomain()));
 		welcomeMessageDto.setAssignedToCurentDomain(false);
-		welcomeMessageDto.setReadOnly(false);
+		welcomeMessageDto.setReadOnly(!welcomeMessage.getDomain().equals(domain));
 		welcomeMessageDto.setEntries(entries(welcomeMessage.getWelcomeMessagesEntries()));
 		return welcomeMessageDto;
 	}
