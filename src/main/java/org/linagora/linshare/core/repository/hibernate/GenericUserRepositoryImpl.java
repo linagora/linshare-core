@@ -56,6 +56,7 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountRepositoryImpl<U> implements UserRepository<U> {
 
@@ -171,7 +172,9 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	private DetachedCriteria getAllCriteria(AbstractDomain domain) {
 		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
 		detachedCrit.add(Restrictions.eq("destroyed", 0L));
-		if(!Objects.isNull(domain)) {
+		detachedCrit.add(Restrictions.not(Restrictions.in("class", Lists.newArrayList(AccountType.ROOT.toInt(),
+				AccountType.TECHNICAL_ACCOUNT.toInt()))));
+		if (!Objects.isNull(domain)) {
 			detachedCrit.add(Restrictions.eq("domain", domain));
 		}
 		return detachedCrit;
