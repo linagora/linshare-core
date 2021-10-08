@@ -140,7 +140,7 @@ public class WelcomeMessageDto {
 	protected DomainDto domain;
 
 	@Schema(description = "Is welcome message assigned to current domain")
-	protected boolean assignedToCurentDomain;
+	protected boolean assignedToCurrentDomain;
 
 	@Schema(description = "Is welcome message read only")
 	protected boolean readOnly;
@@ -157,7 +157,7 @@ public class WelcomeMessageDto {
 		welcomeMessageDto.setDescription(welcomeMessage.getDescription());
 		welcomeMessageDto.setModificationDate(welcomeMessage.getModificationDate());
 		welcomeMessageDto.setDomain(new DomainDto(welcomeMessage.getDomain()));
-		welcomeMessageDto.setAssignedToCurentDomain(false);
+		welcomeMessageDto.setAssignedToCurrentDomain(false);
 		welcomeMessageDto.setReadOnly(!welcomeMessage.getDomain().equals(domain));
 		welcomeMessageDto.setEntries(entries(welcomeMessage.getWelcomeMessagesEntries()));
 		return welcomeMessageDto;
@@ -223,12 +223,12 @@ public class WelcomeMessageDto {
 		this.domain = domain;
 	}
 
-	public boolean isAssignedToCurentDomain() {
-		return assignedToCurentDomain;
+	public boolean isAssignedToCurrentDomain() {
+		return assignedToCurrentDomain;
 	}
 
-	public void setAssignedToCurentDomain(boolean assignedToCurentDomain) {
-		this.assignedToCurentDomain = assignedToCurentDomain;
+	public void setAssignedToCurrentDomain(boolean assignedToCurrentDomain) {
+		this.assignedToCurrentDomain = assignedToCurrentDomain;
 	}
 
 	public boolean isReadOnly() {
@@ -256,7 +256,7 @@ public class WelcomeMessageDto {
 				.add("description", description)
 				.add("modificationDate", modificationDate)
 				.add("domain", domain)
-				.add("assignedToCurentDomain", assignedToCurentDomain)
+				.add("assignedToCurrentDomain", assignedToCurrentDomain)
 				.add("readOnly", readOnly)
 				.toString();
 	}
