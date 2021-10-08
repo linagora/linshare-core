@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -49,8 +48,6 @@ import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessSer
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
-import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -62,7 +59,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
@@ -111,8 +107,6 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
 
-	private final AbstractDomainService abstractDomainService;
-
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
@@ -127,8 +121,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			DriveMemberBusinessService driveMemberBusinessService,
 			Map<NodeType, SharedSpaceFragmentService> serviceBuilders,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			DomainPermissionBusinessService domainPermissionBusinessService,
-			AbstractDomainService abstractDomainService) {
+			DomainPermissionBusinessService domainPermissionBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
 		this.memberService = memberService;
@@ -143,7 +136,6 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.driveMemberBusinessService = driveMemberBusinessService;
 		this.serviceBuilders = serviceBuilders;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
-		this.abstractDomainService = abstractDomainService;
 	}
 
 	private SharedSpaceFragmentService getService(NodeType type) {
@@ -313,31 +305,12 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 						"You are not authorized to retieve the sharedSpaces of this account: " + account.getLsUuid());
 			}
 		}
-		List<String> allowedDomainUuids = checkDomainAdministration(actor, domains);
+		List<String> allowedDomainUuids = domainPermissionBusinessService
+				.checkDomainAdministrationForListingSharedSpaces(actor, domains);
 		Set<String> roleNames = checkRoles(authUser, actor, sharedSpaceRoles);
-		sharedSpaces = memberBusinessService.findAllSharedSpaces(account, allowedDomainUuids, nodeTypes, roleNames, name, container, sort);
+		sharedSpaces = memberBusinessService.findAllSharedSpaces(account, allowedDomainUuids, nodeTypes, roleNames,
+				name, container, sort);
 		return sharedSpaces;
-	}
-
-	private List<String> checkDomainAdministration(Account actor, List<String> domains) {
-		List<String> allowedDomainUuids = Lists.newArrayList();
-		if (!CollectionUtils.isEmpty(domains)) {
-			for (String uuid : domains) {
-				AbstractDomain domain = abstractDomainService.findById(uuid);
-				if (!Role.SUPERADMIN.equals(actor.getRole())) {
-					if (!domainPermissionBusinessService.isAdminforThisDomain(actor, domain)) {
-						throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN,
-								"You are not authorized to retieve the sharedSpaces of this domain: "
-										+ domain.getUuid());
-					}
-					allowedDomainUuids.add(domain.getUuid());
-				}
-			}
-			if (allowedDomainUuids.isEmpty()) {
-				logger.debug("You are not admin on any of the entered domain, please check the entered information.");
-			}
-		}
-		return allowedDomainUuids;
 	}
 
 	private Set<String> checkRoles(Account authUser, Account actor, Set<String> sharedSpaceRoles) {

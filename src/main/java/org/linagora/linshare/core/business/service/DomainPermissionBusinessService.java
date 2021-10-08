@@ -54,4 +54,6 @@ public interface DomainPermissionBusinessService {
 	List<AbstractDomain> getMyAdministredDomains(Account actor);
 
 	List<String> getAdministredDomainsIdentifiers(Account actor, String domainUuid);
+
+	List<String> checkDomainAdministrationForListingSharedSpaces(Account actor, List<String> domains);
 }

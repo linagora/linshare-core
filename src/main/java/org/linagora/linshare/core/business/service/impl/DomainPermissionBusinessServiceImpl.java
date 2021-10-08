@@ -38,14 +38,17 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -53,6 +56,8 @@ public class DomainPermissionBusinessServiceImpl implements
 		DomainPermissionBusinessService {
 
 	private final DomainBusinessService domainBusinessService;
+
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public DomainPermissionBusinessServiceImpl(
 			final DomainBusinessService domainBusinessService) {
@@ -68,6 +73,28 @@ public class DomainPermissionBusinessServiceImpl implements
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public List<String> checkDomainAdministrationForListingSharedSpaces(Account actor, List<String> domains) {
+		List<String> allowedDomainUuids = Lists.newArrayList();
+		if (Role.SUPERADMIN.equals(actor.getRole())) {
+			allowedDomainUuids = domains;
+		} else {
+			if (CollectionUtils.isEmpty(domains)) {
+				allowedDomainUuids = getAdministredDomainsIdentifiers(actor, actor.getDomainId());
+			} else {
+				for (String uuid : domains) {
+					AbstractDomain domain = domainBusinessService.findById(uuid);
+					if (isAdminforThisDomain(actor, domain)) {
+						allowedDomainUuids.add(domain.getUuid());
+					} else {
+						logger.debug("You are not admin of this domain: {}", uuid);
+					}
+				}
+			}
+		}
+		return allowedDomainUuids;
 	}
 
 	@Override
