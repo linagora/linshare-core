@@ -35,19 +35,19 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public abstract class AbstractDomain {
@@ -506,5 +506,15 @@ public abstract class AbstractDomain {
 
 	public void setDriveProvider(DriveProvider driveProvider) {
 		this.driveProvider = driveProvider;
+	}
+
+	public boolean isAncestry(String domainUuid) {
+		if (parentDomain == null) {
+			return uuid.equals(domainUuid);
+		}
+		if (uuid.equals(domainUuid)) {
+			return true;
+		}
+		return parentDomain.isAncestry(domainUuid);
 	}
 }

@@ -1,8 +1,8 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
- * 
+ *
  * Copyright (C) 2021 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,12 +20,12 @@
  * commercial brands. Other Additional Terms apply, see
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for more
  * details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -33,25 +33,18 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto.DomainDto;
 
-import java.util.List;
+public class WelcomeMessageDtoTest {
 
-public interface WelcomeMessageFacade {
-
-	List<WelcomeMessageDto> findAll(String domainUuid) throws BusinessException;
-
-	WelcomeMessageDto find(String domainUuid, String welcomeMessageUuid) throws BusinessException;
-
-	WelcomeMessageDto create(String domainUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
-
-	WelcomeMessageDto update(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
-
-	WelcomeMessageDto delete(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
-
-	WelcomeMessageDto assign(String domainUuid, String welcomeMessageUuid, WelcomeMessageAssignDto assignDto) throws BusinessException;
+	@Test
+	public void domainDtoShouldConformToBeanContract() {
+		EqualsVerifier.simple()
+				.forClass(DomainDto.class)
+				.verify();
+	}
 }

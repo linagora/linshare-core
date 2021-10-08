@@ -1,8 +1,8 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
- * 
+ *
  * Copyright (C) 2021 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,12 +20,12 @@
  * commercial brands. Other Additional Terms apply, see
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for more
  * details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -33,25 +33,72 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5;
+package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.linagora.linshare.core.domain.constants.DomainType;
 
-public interface WelcomeMessageFacade {
+import java.util.UUID;
 
-	List<WelcomeMessageDto> findAll(String domainUuid) throws BusinessException;
+public class AbstractDomainTest {
 
-	WelcomeMessageDto find(String domainUuid, String welcomeMessageUuid) throws BusinessException;
+	private static class MyDomain extends AbstractDomain {
 
-	WelcomeMessageDto create(String domainUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
+		public MyDomain(AbstractDomain parent) {
+			super("Name", parent);
+			this.uuid = UUID.randomUUID().toString();
+		}
 
-	WelcomeMessageDto update(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
+		@Override
+		public DomainType getDomainType() {
+			return null;
+		}
+	}
 
-	WelcomeMessageDto delete(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
+	@Test
+	public void isAncestryShouldReturnTrueWhenSameDomain() {
+		MyDomain domain = new MyDomain(null);
 
-	WelcomeMessageDto assign(String domainUuid, String welcomeMessageUuid, WelcomeMessageAssignDto assignDto) throws BusinessException;
+		assertThat(domain.isAncestry(domain.getUuid()))
+				.isTrue();
+	}
+
+	@Test
+	public void isAncestryShouldReturnTrueWhenSameDomainWithParent() {
+		MyDomain parent = new MyDomain(null);
+		MyDomain domain = new MyDomain(parent);
+
+		assertThat(domain.isAncestry(domain.getUuid()))
+				.isTrue();
+	}
+
+	@Test
+	public void isAncestryShouldReturnTrueWhenParentDomain() {
+		MyDomain parent = new MyDomain(null);
+		MyDomain domain = new MyDomain(parent);
+
+		assertThat(domain.isAncestry(parent.getUuid()))
+				.isTrue();
+	}
+
+	@Test
+	public void isAncestryShouldReturnTrueWhenGrandParentDomain() {
+		MyDomain grandParent = new MyDomain(null);
+		MyDomain parent = new MyDomain(grandParent);
+		MyDomain domain = new MyDomain(parent);
+
+		assertThat(domain.isAncestry(grandParent.getUuid()))
+				.isTrue();
+	}
+
+	@Test
+	public void isAncestryShouldReturnFalseWhenDomainIsNotAnAncestral() {
+		MyDomain otherDomain = new MyDomain(null);
+		MyDomain domain = new MyDomain(null);
+
+		assertThat(domain.isAncestry(otherDomain.getUuid()))
+				.isFalse();
+	}
 }

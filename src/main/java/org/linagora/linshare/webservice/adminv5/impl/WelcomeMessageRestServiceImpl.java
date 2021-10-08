@@ -43,6 +43,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.WelcomeMessageFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -188,5 +189,34 @@ public class WelcomeMessageRestServiceImpl extends WebserviceBase implements Wel
 			@Parameter(description = "Welcome message to update.", required = true) WelcomeMessageDto welcomeMessageDto)
 			throws BusinessException {
 		return welcomeMessageFacade.delete(domainUuid, welcomeMessageUuid, welcomeMessageDto);
+	}
+
+	@Path("/{uuid}/assign")
+	@PUT
+	@Operation(summary = "It allows to assign a welcome message.", responses = {
+			@ApiResponse(
+					responseCode = "200",
+					content = @Content(
+							schema = @Schema(implementation = WelcomeMessageDto.class)
+					)
+			),
+			@ApiResponse(
+					responseCode = "40X",
+					content = @Content(
+							schema = @Schema(
+									implementation = ErrorDto.class
+							)
+					)
+			)
+	})
+	@Override
+	public WelcomeMessageDto assign(
+			@Parameter(description = "domain's uuid.", required = true)
+				@PathParam("domainUuid") String domainUuid,
+			@Parameter(description = "welcomeMessage's uuid to assign.", required = true)
+				@PathParam("uuid") String welcomeMessageUuid,
+			@Parameter(description = "Welcome message assign object.", required = true) WelcomeMessageAssignDto assignDto)
+			throws BusinessException {
+		return welcomeMessageFacade.assign(domainUuid, welcomeMessageUuid, assignDto);
 	}
 }

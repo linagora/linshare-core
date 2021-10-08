@@ -36,6 +36,7 @@
 package org.linagora.linshare.webservice.adminv5;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
 
 import java.util.List;
@@ -51,4 +52,6 @@ public interface WelcomeMessageRestService {
 	WelcomeMessageDto update(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
 
 	WelcomeMessageDto delete(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
+
+	WelcomeMessageDto assign(String domainUuid, String welcomeMessageUuid, WelcomeMessageAssignDto assignDto) throws BusinessException;
 }

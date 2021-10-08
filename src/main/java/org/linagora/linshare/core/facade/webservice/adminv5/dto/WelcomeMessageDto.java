@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -88,6 +89,29 @@ public class WelcomeMessageDto {
 
 		public void setName(String name) {
 			this.name = name;
+		}
+
+		@Override
+		public final boolean equals(Object other) {
+			if (other instanceof  DomainDto) {
+				DomainDto domainDto = (DomainDto) other;
+				return Objects.equals(uuid, domainDto.getUuid())
+					&& Objects.equals(name, domainDto.getName());
+			}
+			return false;
+		}
+
+		@Override
+		public final int hashCode() {
+			return Objects.hash(uuid, name);
+		}
+
+		@Override
+		public String toString() {
+			return MoreObjects.toStringHelper(this)
+					.add("uuid", uuid)
+					.add("name", name)
+					.toString();
 		}
 	}
 

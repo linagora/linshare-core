@@ -47,6 +47,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.WelcomeMessageFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainService;
@@ -54,6 +55,7 @@ import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,6 +189,34 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		}
 		return WelcomeMessageDto.from(
 				welcomeMessagesService.delete(authUser, welcomeMessageDto.getUuid()),
+				domain);
+	}
+
+	@Override
+	public WelcomeMessageDto assign(String domainUuid, String welcomeMessageUuid, WelcomeMessageAssignDto assignDto) throws BusinessException {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Domain uuid uuid must be set.");
+		Validate.notNull(assignDto, "Welcome message object must be set.");
+		Validate.notEmpty(welcomeMessageUuid, "Welcome message uuid must be set.");
+
+		AbstractDomain domain = domainService.find(authUser, domainUuid);
+		WelcomeMessages welcomeMessage = welcomeMessagesService.find(authUser, welcomeMessageUuid);
+		if (!domain.isAncestry(welcomeMessage.getDomain().getUuid())) {
+			LOGGER.info("The welcome message %s is not belonging to the domain %s or its parent",
+					welcomeMessageUuid,
+					domainUuid);
+			throw new BusinessException(
+					BusinessErrorCode.WELCOME_MESSAGES_NOT_FOUND,
+					"Welcome message with uuid :" + welcomeMessageUuid + " not found.");
+		}
+		List<String> domainUuids = new ArrayList<>();
+		if (assignDto.isAssign()) {
+			domainUuids.add(domain.getUuid());
+		}
+		return WelcomeMessageDto.from(
+				welcomeMessagesService.update(authUser,
+						welcomeMessagesService.find(authUser, welcomeMessageUuid),
+						domainUuids),
 				domain);
 	}
 }

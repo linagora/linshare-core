@@ -33,25 +33,51 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.apache.commons.lang3.Validate;
 
-import java.util.List;
 
-public interface WelcomeMessageFacade {
+@JsonDeserialize(builder = WelcomeMessageAssignDto.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(
+	name = "WelcomeMessageAssign",
+	description = "Welcome message assign"
+)
+public class WelcomeMessageAssignDto {
 
-	List<WelcomeMessageDto> findAll(String domainUuid) throws BusinessException;
+	public static Builder builder() {
+		return new Builder();
+	}
 
-	WelcomeMessageDto find(String domainUuid, String welcomeMessageUuid) throws BusinessException;
+	@JsonPOJOBuilder(withPrefix = "")
+	public static class Builder {
+		private Boolean assign;
 
-	WelcomeMessageDto create(String domainUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
+		public Builder assign(boolean assign) {
+			this.assign = assign;
+			return this;
+		}
 
-	WelcomeMessageDto update(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
+		public WelcomeMessageAssignDto build() {
+			Validate.notNull(assign, "assign must be set.");
+			return new WelcomeMessageAssignDto(assign);
+		}
+	}
 
-	WelcomeMessageDto delete(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
+	@Schema(description = "Assign to current domain",
+			required = true)
+	private final boolean assign;
 
-	WelcomeMessageDto assign(String domainUuid, String welcomeMessageUuid, WelcomeMessageAssignDto assignDto) throws BusinessException;
+	private WelcomeMessageAssignDto(boolean assign) {
+		this.assign = assign;
+	}
+
+	public boolean isAssign() {
+		return assign;
+	}
 }
