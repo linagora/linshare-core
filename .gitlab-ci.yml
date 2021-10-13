@@ -94,10 +94,13 @@ test-api-branch-pytest-master:
     - name: docker-registry.linagora.com:5000/linshare-releases/linshare-ldap-for-tests:2.0
       alias: ldap
   allow_failure: true
+  artifacts:
+    when: always
+    reports:
+      junit: /tmp/report.xml
   script:
-    - cd /tmp/
-    - ./patch_gitlab.py
-    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
+    - cd /tmp
+    - tox
   only:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core
@@ -116,10 +119,13 @@ test-api-branch-maintenance-x:
     - alias: linshare
       name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
   allow_failure: true
+  artifacts:
+    when: always
+    reports:
+      junit: /tmp/report.xml
   script:
-    - cd /tmp/
-    - ./patch_gitlab.py
-    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
+    - cd /tmp
+    - tox
   only:
     refs:
       - /^maintenance-.*/@linagora/lgs/linshare/products/linshare-core
@@ -138,10 +144,13 @@ test-api-branch-with-same-name:
     - alias: linshare
       name: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
   allow_failure: true
+  artifacts:
+    when: always
+    reports:
+      junit: /tmp/report.xml
   script:
-    - cd /tmp/
-    - ./patch_gitlab.py
-    - ./tests_linshare.py -v $(grep "(AdminTestCase" tests_linshare.py| cut -d' ' -f 2| cut -d '(' -f 1 |grep -vE "TestAdminApiJwt|TestAdminApiFunctionalites|TestMailAttachment|TestUserApiJwtPermanentToken|TestUpdateCanCreateGuest|TestFindQuota|TestAdminApiDriveProvider|TestSharedSpaceAdminV5ApiEnums" | tr '\n' ' ')
+    - cd /tmp
+    - tox
   except:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core
