@@ -69,7 +69,7 @@ build:
     - docker push "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
     - docker logout docker-registry.linagora.com:5000
 
-test:
+test-java:
   stage: test
   tags:
     - docker
