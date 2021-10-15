@@ -35,13 +35,16 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.service.NotifierService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -56,18 +59,13 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.service.NotifierService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * This class builds an email notification and sends the email.
@@ -102,6 +100,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 	/** Is SSL enabled **/
 	private final boolean sslEnable;
 
+	private final String sslProtocols;
+
 	/** Class logger */
 	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
 	
@@ -118,7 +118,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 			boolean needsAuth,
 			String charset,
 			boolean startTlsEnable,
-			boolean sslEnable) {
+			boolean sslEnable,
+			String sslProtocols) {
 		this.smtpServer = smtpServer;
 		this.smtpPort = smtpPort;
 		this.smtpUser = smtpUser;
@@ -127,6 +128,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 		this.charset = charset;
 		this.startTlsEnable = startTlsEnable;
 		this.sslEnable = sslEnable;
+		this.sslProtocols = sslProtocols;
 	}
 
 	public static boolean isPureAscii(String v) {
@@ -267,6 +269,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		} else if (startTlsEnable) {
 			props.put("mail.smtp.starttls.enable", "true");
+			props.put("mail.smtp.ssl.protocols", sslProtocols);
 		}
 		props.put("mail.smtp.port", String.valueOf(smtpPort));
 
