@@ -38,6 +38,8 @@ mail.smtp.auth.needed=false
 mail.smtp.charset=UTF-8
 # StartTls mode (Set to true to enable it)
 mail.smtp.starttls.enable=false
+# Needed when starttls is true, default value "TLSv1.3", multiple values can be separated by space "TLSv1.2 TLSv1.3"
+mail.smtp.ssl.protocols=TLSv1.2
 # SSL Mode (If you enable SSL Mode it will override startTls mode)
 mail.smtp.ssl.enable=false
 
