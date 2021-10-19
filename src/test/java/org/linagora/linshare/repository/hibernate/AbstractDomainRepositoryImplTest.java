@@ -179,7 +179,7 @@ public class AbstractDomainRepositoryImplTest {
 	public void testFindAllTopDomain() throws BusinessException{
 		List<AbstractDomain> list = abstractDomainRepository.findAllTopDomain();
 		// one by default + 2 topdomain for tests.
-		Assertions.assertEquals(3, list.size());
+		Assertions.assertEquals(4, list.size());
 	}
 
 	@Test
@@ -191,7 +191,7 @@ public class AbstractDomainRepositoryImplTest {
 	@Test
 	public void testFindSubDomain() throws BusinessException{
 		List<String> list = abstractDomainRepository.getAllSubDomainIdentifiers("LinShareRootDomain");
-		Assertions.assertEquals(1, list.size());
+		Assertions.assertEquals(2, list.size());
 	}
 	
 	@Test

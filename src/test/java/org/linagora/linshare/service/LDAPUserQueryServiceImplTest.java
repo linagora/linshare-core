@@ -76,7 +76,6 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
-		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
@@ -84,12 +83,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class LDAPUserQueryServiceImplTest {
 
 	protected Logger logger = LoggerFactory.getLogger(LDAPUserQueryServiceImplTest.class);
-
-	private String userMail1;
-
-	private String userPassword1;
-	
-	private String strPattern;
 
 	@Autowired
 	private LDAPUserQueryService ldapQueryService;
@@ -100,7 +93,13 @@ public class LDAPUserQueryServiceImplTest {
 
 	private Map<String, LdapAttribute> attributes;
 
-	private String baseDn;
+	private static final String BASE_DN = "ou=People,dc=linshare,dc=org";
+	private static final String TOP_DOMAIN2_BASE_DN = "ou=People2,dc=linshare,dc=org";
+	private static final String USER1_MAIL = LinShareTestConstants.JOHN_ACCOUNT;
+	private static final String AMY_TOP_DOMAIN2_MAIL = LinShareTestConstants.AMY_WOLSH_ACCOUNT;
+	private static final String PASSWORD_USER1 = "password1";
+	private static final String PASSWORD_AMY_TOP_DOMAIN2 = "secret";
+	private static final String STR_PATTERN = "linpki";
 
 	private void logUser(User user) {
 		logger.debug(user.getAccountRepresentation());
@@ -115,9 +114,6 @@ public class LDAPUserQueryServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
 		ldapConn = new LdapConnection("testldap", "ldap://localhost:33389", "anonymous");
-		baseDn = "ou=People,dc=linshare,dc=org";
-		baseDn = "dc=linshare,dc=org";
-		
 		// auto complete command using first name, last name or mail attributes
 		String auto_complete_command_on_all_attributes = "ldap.search(domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*)(|(mail=\" + pattern + \")(sn=\" + pattern + \")(givenName=\" + pattern + \")))\");";
 		
@@ -130,13 +126,9 @@ public class LDAPUserQueryServiceImplTest {
 		
 		initDefault(auto_complete_command_on_all_attributes, auto_complete_command_on_first_and_last_name, search_command, auth_command, 0, 0);
 
-		this.userMail1 = "user1@linshare.org";
-		this.userPassword1 = "password1";
-		this.strPattern = "linpki";
-		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
-	
+
 	private void initDefault(String auto_complete_command_on_all_attributes,
 			String auto_complete_command_on_first_and_last_name,
 			String search_command,
@@ -161,33 +153,6 @@ public class LDAPUserQueryServiceImplTest {
 				false);
 	}
 
-//	@BeforeEach
-	public void setUp2() throws Exception {
-		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		
-		baseDn = "ou=users,dc=int5.linshare.dev,dc=local";
-		baseDn = "dc=int5.linshare.dev,dc=local";
-		ldapConn = new LdapConnection("testldap", "	ldap://linshare-obm2.linagora.dc1:389", "anonymous");
-
-		// auto complete command using first name, last name or mail attributes
-		String auto_complete_command_on_all_attributes = "ldap.search(domain, \"(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(mail=\" + pattern + \")(sn=\" + pattern + \")(givenName=\" + pattern + \")))\");";
-		
-		// auto complete command using first name and last name attributes (association)
-		String auto_complete_command_on_first_and_last_name = "ldap.search(domain, \"(&(objectClass=obmUser)(mail=*)(givenName=*)(sn=*)(|(&(sn=\" + first_name + \")(givenName=\" + last_name + \"))(&(sn=\" + last_name + \")(givenName=\" + first_name + \"))))\");";
-		
-		String search_command = "ldap.search(domain, \"(&(objectClass=obmUser)(mail=\" + mail + \")(sn=\" + first_name + \")(givenName=\" + last_name + \"))\");";
-
-		String auth_command = "ldap.search(domain, \"(&(objectClass=obmUser)(givenName=*)(sn=*)(|(mail=\" + login + \")(uid=\" + login + \")))\");";
-		
-		initDefault(auto_complete_command_on_all_attributes, auto_complete_command_on_first_and_last_name, search_command, auth_command, 500, 5);
-
-		this.userMail1 = "aaliyah.alvarez@int5.linshare.dev";
-		this.userPassword1 = "secret";
-		this.strPattern = "abdel";
-		
-		logger.debug(LinShareTestConstants.END_SETUP);
-	}
-
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
@@ -198,21 +163,31 @@ public class LDAPUserQueryServiceImplTest {
 	public void testAuth() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, userPassword1);
+		User user = ldapQueryService.auth(ldapConn, BASE_DN, domainPattern, USER1_MAIL, PASSWORD_USER1);
 		Date date_after = new Date();
 		Assertions.assertNotNull(user);
 		logUser(user);
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void testAuthAmyWolshTopDomain2() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User amy = ldapQueryService.auth(ldapConn, TOP_DOMAIN2_BASE_DN, domainPattern,
+				AMY_TOP_DOMAIN2_MAIL, PASSWORD_AMY_TOP_DOMAIN2);
+		Assertions.assertNotNull(amy);
+		logUser(amy);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void testAuthWrongPassword() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
 		User user = null;
 		try {
-			user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, "eeee");
+			user = ldapQueryService.auth(ldapConn, BASE_DN, domainPattern, USER1_MAIL, "eeee");
 		} catch (BadCredentialsException e) {
 
 		}
@@ -227,7 +202,7 @@ public class LDAPUserQueryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
 		try {
-			ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1 + "undefined", userPassword1);
+			ldapQueryService.auth(ldapConn, BASE_DN, domainPattern, USER1_MAIL + "undefined", PASSWORD_USER1);
 			Assertions.assertTrue(false);
 		} catch (NameNotFoundException e) {
 			// spring exception when user is not found
@@ -243,12 +218,12 @@ public class LDAPUserQueryServiceImplTest {
 	public void testUserExist() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		Boolean exist = ldapQueryService.isUserExist(ldapConn, baseDn, domainPattern, userMail1);
+		Boolean exist = ldapQueryService.isUserExist(ldapConn, BASE_DN, domainPattern, USER1_MAIL);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		Assertions.assertEquals(exist, true);
 
-		exist = ldapQueryService.isUserExist(ldapConn, baseDn, domainPattern, userMail1 + "undefined");
+		exist = ldapQueryService.isUserExist(ldapConn, BASE_DN, domainPattern, USER1_MAIL + "undefined");
 		Assertions.assertEquals(exist, false);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -257,7 +232,7 @@ public class LDAPUserQueryServiceImplTest {
 	public void testSearchUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		List<User> user = ldapQueryService.searchUser(ldapConn, baseDn, domainPattern, userMail1, null, null);
+		List<User> user = ldapQueryService.searchUser(ldapConn, BASE_DN, domainPattern, USER1_MAIL, null, null);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
 		logger.info("Result count : " + String.valueOf(user.size()));
@@ -268,7 +243,7 @@ public class LDAPUserQueryServiceImplTest {
 	public void testCompleteUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		List<User> users = ldapQueryService.completeUser(ldapConn, baseDn, domainPattern, strPattern);
+		List<User> users = ldapQueryService.completeUser(ldapConn, BASE_DN, domainPattern, STR_PATTERN);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
 		logger.info("Result count : " + String.valueOf(users.size()));
@@ -279,7 +254,7 @@ public class LDAPUserQueryServiceImplTest {
 	public void testGetUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		User user = ldapQueryService.getUser(ldapConn, baseDn, domainPattern, userMail1);
+		User user = ldapQueryService.getUser(ldapConn, BASE_DN, domainPattern, USER1_MAIL);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
 		Assertions.assertNotNull(user);
@@ -292,11 +267,19 @@ public class LDAPUserQueryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
 		domainPattern.getAttributes().put(UserLdapPattern.USER_FIRST_NAME, new LdapAttribute(UserLdapPattern.USER_FIRST_NAME, "plopName", true));
-		User user = ldapQueryService.getUser(ldapConn, baseDn, domainPattern, userMail1);
+		User user = ldapQueryService.getUser(ldapConn, BASE_DN, domainPattern, USER1_MAIL);
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
 		Assertions.assertNull(user);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testGetUserFromTopDomain2() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User amy = ldapQueryService.getUser(ldapConn, TOP_DOMAIN2_BASE_DN, domainPattern,
+				AMY_TOP_DOMAIN2_MAIL);
+		Assertions.assertNotNull(amy);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }

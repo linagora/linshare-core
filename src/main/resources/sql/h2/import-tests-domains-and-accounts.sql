@@ -23,10 +23,15 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 	VALUES (53, 'user_uid', 'uid', false, true, true, 50, false);
 
--- user provider
+-- First user provider used on subDomain
 INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modification_date, ldap_connection_id, ldap_pattern_id)
-	VALUES (50, '93fd0e8b-fa4c-495d-978f-132e157c2292', 'LDAP_PROVIDER', 'dc=linshare,dc=org', now(), now(), 50, 50);
+	VALUES (50, '93fd0e8b-fa4c-495d-978f-132e157c2292', 'LDAP_PROVIDER', 'ou=People,dc=linshare,dc=org', now(), now(), 50, 50);
 
+-- Second user provider used on TopDomain2
+INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modification_date, ldap_connection_id, ldap_pattern_id)
+	VALUES (51, 'c278197e-301e-11ec-8d3d-0242ac130003', 'LDAP_PROVIDER', 'ou=People2,dc=linshare,dc=org', now(), now(), 50, 50);
+
+-- MyDomain creation with its domains' tree
 INSERT INTO domain_abstract(
 	id, type , uuid, label,
 	enable, template, description, default_role, 
@@ -53,9 +58,25 @@ VALUES
 	1, 2, 4, null,
 	1, now(), now());
 
+-- Top domain 2
+INSERT INTO domain_abstract(
+	id, type , uuid, label,
+	enable, template, description, default_role, 
+	default_locale, purge_step, user_provider_id, 
+	domain_policy_id, parent_id, auth_show_order, mailconfig_id, 
+	welcome_messages_id, creation_date, modification_date) 
+VALUES
+-- Top domain2
+	(5, 1, 'TopDomain2', 'TopDomain2', 
+	true, false, 'a simple description', 0, 
+	'en','IN_USE', 51,
+	1, 1, 2, null,
+	1, now(), now());
+
 SET @my_domain_id = SELECT 2;
 SET @my_sub_domain_id = SELECT 3;
 SET @guest_domain_id = SELECT 4;
+SET @second_domain_id = SELECT 5;
 
 UPDATE domain_abstract SET mime_policy_id = 1;
 UPDATE domain_abstract SET mailconfig_id = 1;
@@ -436,6 +457,83 @@ SET @quota_on_guest_domain_container_workgroup_id = SELECT 9;
 -- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 -- max_file_size : 10000000000  : 10 Go
 -- account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
+
+
+
+	-- TopDomain2 QUOTA
+INSERT INTO quota(
+	id, uuid, creation_date, modification_date, batch_modification_date,
+	current_value, last_value, domain_id, domain_parent_id,
+	quota, quota_override, quota_warning, default_quota,
+	default_quota_override, quota_type, current_value_for_subdomains)
+VALUES (
+	15, '164783e8-b9d1-11e5-87e9-bfc0aac92859', NOW(), NOW(), NOW(),
+	6666666, 0, @second_domain_id , 1,
+	1000000000000, false, 1000000000000, 1000000000000,
+	 false, 'DOMAIN_QUOTA', 0);
+UPDATE quota SET 
+	domain_shared_override = false,
+	domain_shared = false 
+	WHERE id = 15;
+UPDATE quota SET 
+	default_domain_shared_override = false,
+	default_domain_shared = false
+	WHERE id = 15;
+SET @quota_second_domain_id = SELECT 15;
+-- quota : 1 To
+-- quota_warning : 1000000000000 : 1 To
+-- default_quota : 1000000000000 : 1 To (1 To per sub domain)
+
+-- 'CONTAINER_QUOTA', 'USER' for TopDomain2
+INSERT INTO quota(
+	id, uuid, creation_date, modification_date, batch_modification_date,
+	quota_domain_id, current_value, last_value, domain_id, domain_parent_id,
+	quota, quota_override, quota_warning, default_quota, default_quota_override,
+	default_max_file_size, default_max_file_size_override, default_account_quota, default_account_quota_override,
+	max_file_size, max_file_size_override, account_quota, account_quota_override,
+	quota_type, container_type, shared)
+VALUES (
+	16, '37226d66-b9d2-11e5-b4d8-f7b730443247', NOW(), NOW(), NOW(),
+	@quota_second_domain_id , 0, 0, @second_domain_id , 1,
+	400000000000, false, 400000000000, 400000000000, false,
+	10000000000, false, 100000000000, false,
+	10000000000, false, 100000000000, false,
+	'CONTAINER_QUOTA', 'USER', false);
+SET @quota_on_second_domain_container_user_id = SELECT 16;	
+-- quota : 400000000000 : 400 Go for all users
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 100000000000 : 100 Go
+-- max_file_size : 10000000000  : 10 Go
+-- account_quota : 100000000000 : 100 Go
+
+-- 'CONTAINER_QUOTA', 'WORK_GROUP' for TopDomain2
+INSERT INTO quota(id, uuid, creation_date, modification_date,
+	batch_modification_date, quota_domain_id, current_value, last_value, 
+	domain_id, domain_parent_id, quota, quota_override, 
+	quota_warning, default_quota, default_quota_override, default_max_file_size, 
+	default_max_file_size_override, default_account_quota, default_account_quota_override, max_file_size, 
+	max_file_size_override, account_quota, account_quota_override, quota_type, 
+	container_type, shared)
+VALUES (
+	20, '002310d0-b9d3-11e5-9413-d3f63c53e830', NOW(), NOW(), NOW(),
+	@quota_second_domain_id , 0, 0, @second_domain_id , 1,
+	400000000000, false, 400000000000, 400000000000, false,
+	10000000000, false, 400000000000, false,
+	10000000000, false, 400000000000, false,
+	'CONTAINER_QUOTA', 'WORK_GROUP', false);
+SET @quota_second_domain_container_workgroup_id = SELECT 20;
+-- quota : 400000000000 : 400 Go for all workgroups
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
+-- max_file_size : 10000000000  : 10 Go
+-- account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
+
+
+
 
 UPDATE domain_abstract SET mailconfig_id = 1;
 

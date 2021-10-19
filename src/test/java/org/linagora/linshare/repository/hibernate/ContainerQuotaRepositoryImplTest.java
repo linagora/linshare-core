@@ -123,10 +123,10 @@ public class ContainerQuotaRepositoryImplTest {
 		List<ContainerQuota> containers = containerQuotaRepository.findAll();
 		List<AccountQuota> accounts = accountQuotaRepository.findAll();
 		// check initial conditions
-		/// LinShareRootDomain, MyDomain, MySubDomain and GuestDomain, 
-		assertEquals(4, domainsQuotas.size());
+		/// LinShareRootDomain, MyDomain, MySubDomain, GuestDomain and the second domain
+		assertEquals(5, domainsQuotas.size());
 		// 2 containers by domain
-		assertEquals(8, containers.size());
+		assertEquals(10, containers.size());
 		// root , jane, john, foo , workgroup_id_20, workgroup_id_21  ,inconsistent (see script import-tests-domain-quota-updates.sql) &  
 		assertEquals(7, accounts.size());
 	}
@@ -264,7 +264,7 @@ public class ContainerQuotaRepositoryImplTest {
 		Long newQuotaValue = 8L;
 		count = containerQuotaRepository.cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(root.getDomain(), newQuotaValue, ContainerQuotaType.USER);
 		// Only one top domain.
-		assertEquals(Long.valueOf(1), count);
+		assertEquals(Long.valueOf(2), count);
 
 		container = containerQuotaRepository.find(topDomain, ContainerQuotaType.USER);
 		assertEquals(newQuotaValue, container.getDefaultQuota());
@@ -307,8 +307,8 @@ public class ContainerQuotaRepositoryImplTest {
 
 		Long newQuotaValue = 8L;
 		count = containerQuotaRepository.cascadeDefaultQuotaToQuotaOfChildrenDomains(root.getDomain(), newQuotaValue, ContainerQuotaType.USER);
-		// Only one top domain.
-		assertEquals(Long.valueOf(1), count);
+		// Two top domains.
+		assertEquals(Long.valueOf(2), count);
 
 		container = containerQuotaRepository.find(topDomain, ContainerQuotaType.USER);
 		assertEquals(quotaValue, container.getDefaultQuota());
@@ -348,7 +348,7 @@ public class ContainerQuotaRepositoryImplTest {
 		Long newQuotaValue = 8L;
 		count = containerQuotaRepository.cascadeDefaultQuota(container.getDomain(), newQuotaValue, container.getContainerQuotaType());
 		// 2 in topdomain ( 1 quota and 1 defaultquota), 2 in subdomain, 2 in guestdomain 
-		assertEquals(Long.valueOf(6), count);
+		assertEquals(Long.valueOf(8), count);
 
 		container = containerQuotaRepository.find(guestDomain, ContainerQuotaType.USER);
 		assertEquals(newQuotaValue, container.getDefaultQuota());

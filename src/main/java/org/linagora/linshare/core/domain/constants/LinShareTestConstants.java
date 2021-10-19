@@ -90,6 +90,11 @@ public class LinShareTestConstants {
 	public static final String GUEST_DOMAIN = "GuestDomain";
 
 	/**
+	 * Second domain
+	 */
+	public static final String TOP_DOMAIN2 = "TopDomain2";
+
+	/**
 	 * Root account, on root domain
 	 */
 	public static final String ROOT_ACCOUNT = "root@localhost.localdomain";
@@ -113,5 +118,10 @@ public class LinShareTestConstants {
 	 * Guest account, on guest domain
 	 */
 	public static final String GUEST_ACCOUNT = "guest@linshare.org";
+
+	/**
+	 * Amy wolsh account, on topDomain2
+	 */
+	public static final String AMY_WOLSH_ACCOUNT = "amy.wolsh@linshare.org";
 
 }

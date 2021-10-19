@@ -243,3 +243,45 @@ dn: cn=writers,cn=drive-drive-4,ou=Groups4,dc=linshare,dc=org
 cn: writers
 objectClass: groupOfNames
 member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: ou=People2,dc=linshare,dc=org
+ou: People2
+objectClass: organizationalUnit
+objectClass: top
+description: People2 subtree
+
+dn: uid=amy.wolsh,ou=People2,dc=linshare,dc=org
+uid: amy.wolsh
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: WOLSH
+givenName: Amy
+cn: Amy WOLSH
+userPassword: secret
+mail: amy.wolsh@linshare.org
+
+dn: uid=peter.wilson,ou=People2,dc=linshare,dc=org
+uid: peter.wilson
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: WILSON
+givenName: Peter
+cn: Smith, Peter WILSON
+userPassword: secret
+mail: peter.wilson@linshare.org
+
+dn: uid=cornell.able,ou=People2,dc=linshare,dc=org
+uid: cornell.able
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: ABLE
+givenName: Cornell
+cn: Cornell ABLE
+userPassword: secret
+mail: cornell.able@linshare.org

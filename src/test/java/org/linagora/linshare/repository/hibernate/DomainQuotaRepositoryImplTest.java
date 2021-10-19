@@ -117,7 +117,7 @@ public class DomainQuotaRepositoryImplTest {
 		// MyDomain : 1 domain, 2 containers, 5 accounts (3 users (1 inconsistent from import-tests-domain-quota-updates.sql) & 2 workgroups)
 		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2
 		// containers, 1 account)
-		assertEquals(Long.valueOf(19), count);
+		assertEquals(Long.valueOf(22), count);
 		Quota quota = accountQuotaRepository.find(jane);
 		assertEquals(true, quota.getMaintenance());
 		quota = accountQuotaRepository.find(root);
@@ -204,7 +204,7 @@ public class DomainQuotaRepositoryImplTest {
 		Long newQuotaValue = 8L;
 		count = domainQuotaRepository.cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(root.getDomain(),
 				newQuotaValue);
-		assertEquals(Long.valueOf(1), count);
+		assertEquals(Long.valueOf(2), count);
 
 		quota = domainQuotaRepository.find(guestDomain);
 		assertEquals(quotaValue, quota.getDefaultQuota());
@@ -231,7 +231,7 @@ public class DomainQuotaRepositoryImplTest {
 
 		Long newQuotaValue = 8L;
 		count = domainQuotaRepository.cascadeDefaultQuotaToQuotaOfChildrenDomains(root.getDomain(), newQuotaValue);
-		assertEquals(Long.valueOf(1), count);
+		assertEquals(Long.valueOf(2), count);
 
 		quota = domainQuotaRepository.find(guestDomain);
 		assertEquals(quotaValue, quota.getDefaultQuota());
@@ -309,7 +309,7 @@ public class DomainQuotaRepositoryImplTest {
 		Long newQuotaValue = 8L;
 		count = domainQuotaRepository.cascadeDefaultQuota(root.getDomain(), newQuotaValue);
 		// 1 top (2 quotas), 1 sub (2 quotas), 1 sub (2 quotas),
-		assertEquals(Long.valueOf(6), count);
+		assertEquals(Long.valueOf(8), count);
 
 		quota = domainQuotaRepository.find(topDomain);
 		assertEquals(newQuotaValue, quota.getDefaultQuota());
