@@ -54,7 +54,7 @@ public class LDAPUserProviderDto extends AbstractUserProviderDto {
 		@Schema(description = "LdapServer's name", required = false)
 		protected String name;
 
-		protected LdapServerDto() {
+		public LdapServerDto() {
 			super();
 		}
 
@@ -95,7 +95,7 @@ public class LDAPUserProviderDto extends AbstractUserProviderDto {
 		@Schema(description = "UserFilter's name", required = false)
 		protected String name;
 
-		protected UserFilterDto() {
+		public UserFilterDto() {
 			super();
 		}
 
