@@ -37,6 +37,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
@@ -44,9 +45,15 @@ import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.FileSizeUnitDefaultAndMaximumParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.FileSizeUnitDefaultParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.FileSizeUnitMaximumParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedUnitParameterDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.UnitParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.TimeUnitDefaultAndMaximumParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.TimeUnitDefaultParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.TimeUnitMaximumParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.UnlimitedParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
@@ -385,8 +392,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	@Override
 	public org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> getParameter() {
-		NestedUnitParameterDto<?> defaut = null;
-		NestedUnitParameterDto<?> maximum = null;
+		Optional<NestedUnitParameterDto<?>> defaut = Optional.empty();
+		Optional<NestedUnitParameterDto<?>> maximum = Optional.empty();
 		UnlimitedParameterDto unlimited = null;
 		if (getUnit() instanceof FileSizeUnitClass && getMaxUnit() instanceof FileSizeUnitClass) {
 			if (this.maxValueUsed) {
@@ -400,13 +407,13 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					FileSizeUnitClass parentUnitClass = (FileSizeUnitClass) ancestorMaxUnit.getUnitValue();
 					parentUnit = parentUnitClass.getUnitValue();
 				}
-				maximum = new NestedUnitParameterDto<FileSizeUnit>(
+				maximum = Optional.of(new NestedUnitParameterDto<FileSizeUnit>(
 						this.maxValue,
 						parentValue,
 						maxUnit.getUnitValue(),
 						parentUnit,
 						FileSizeUnit.strValues()
-						);
+						));
 				// FIXME: To be handle by the database.
 				if (unlimitedFunctionalityNames.contains(this.identifier)) {
 					unlimited = new UnlimitedParameterDto(maxValue == -1, parentValue == -1);
@@ -425,15 +432,23 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					FileSizeUnitClass parentSizeUnit = (FileSizeUnitClass) ancestorUnit.getUnitValue();
 					parentUnit = parentSizeUnit.getUnitValue();
 				}
-				defaut = new NestedUnitParameterDto<FileSizeUnit>(
+				defaut = Optional.of(new NestedUnitParameterDto<FileSizeUnit>(
 						this.value,
 						parentValue,
 						sizeUnit.getUnitValue(),
 						parentUnit,
 						FileSizeUnit.strValues()
-						);
+						));
 			}
-		} else if (getUnit() instanceof TimeUnitClass && getMaxUnit() instanceof TimeUnitClass) {
+			if (defaut.isPresent() && maximum.isPresent()) {
+				return new FileSizeUnitDefaultAndMaximumParameterDto(this.system, !this.getParentAllowParametersUpdate(), defaut, maximum, unlimited);
+			} else if (defaut.isPresent()) {
+				return new FileSizeUnitDefaultParameterDto(this.system, !this.getParentAllowParametersUpdate(), defaut);
+			} else {
+				return new FileSizeUnitMaximumParameterDto(this.system, !this.getParentAllowParametersUpdate(), maximum, unlimited);
+			}
+		}
+		if (getUnit() instanceof TimeUnitClass && getMaxUnit() instanceof TimeUnitClass) {
 			if (this.maxValueUsed) {
 				// there is no default value for functionality parameters. sad.
 				Integer parentValue = this.getMaxValue();
@@ -445,13 +460,13 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					TimeUnitClass parentUnitClass = (TimeUnitClass) ancestorMaxUnit.getUnitValue();
 					parentUnit = parentUnitClass.getUnitValue();
 				}
-				maximum = new NestedUnitParameterDto<TimeUnit>(
+				maximum = Optional.of(new NestedUnitParameterDto<TimeUnit>(
 						this.maxValue,
 						parentValue,
 						maxUnit.getUnitValue(),
 						parentUnit,
 						TimeUnit.strValues()
-						);
+						));
 				// FIXME: To be handle by the database.
 				if (unlimitedFunctionalityNames.contains(this.identifier)) {
 					unlimited = new UnlimitedParameterDto(maxValue == -1, parentValue == -1);
@@ -470,22 +485,23 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					TimeUnitClass parentSizeUnit = (TimeUnitClass) ancestorUnit.getUnitValue();
 					parentUnit = parentSizeUnit.getUnitValue();
 				}
-				defaut = new NestedUnitParameterDto<TimeUnit>(
+				defaut = Optional.of(new NestedUnitParameterDto<TimeUnit>(
 						this.value,
 						parentValue,
 						sizeUnit.getUnitValue(),
 						parentUnit,
 						TimeUnit.strValues()
-						);
+				));
+			}
+			if (defaut.isPresent() && maximum.isPresent()) {
+				return new TimeUnitDefaultAndMaximumParameterDto(this.system, !this.getParentAllowParametersUpdate(), defaut, maximum, unlimited);
+			} else if (defaut.isPresent()) {
+				return new TimeUnitDefaultParameterDto(this.system, !this.getParentAllowParametersUpdate(), defaut);
+			} else {
+				return new TimeUnitMaximumParameterDto(this.system, !this.getParentAllowParametersUpdate(), maximum, unlimited);
 			}
 		}
-		return new UnitParameterDto(
-			this.system,
-			!this.getParentAllowParametersUpdate(),
-			defaut,
-			maximum,
-			unlimited
-		);
+		throw new TechnicalException("unsupported type.");
 	}
 
 	@Override

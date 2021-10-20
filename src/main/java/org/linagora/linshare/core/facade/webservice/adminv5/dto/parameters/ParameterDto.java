@@ -36,10 +36,43 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "Parameter")
+@Schema(
+	name = "Parameter",
+	description = "A UserProvider",
+	discriminatorProperty = "type",
+	discriminatorMapping = {
+			@DiscriminatorMapping(value = "BOOLEAN", schema = BooleanParameterDto.class),
+			@DiscriminatorMapping(value = "STRING", schema = StringParameterDto.class),
+			@DiscriminatorMapping(value = "INTEGER", schema = IntegerParameterDto.class),
+			@DiscriminatorMapping(value = "LANGUAGE", schema = LanguageParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_SIZE_DEFAULT", schema = TimeUnitDefaultParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_SIZE_MAX", schema = TimeUnitMaximumParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_SIZE_ALL", schema = TimeUnitDefaultAndMaximumParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_TIME_DEFAULT", schema = FileSizeUnitDefaultParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_TIME_MAX", schema = FileSizeUnitMaximumParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_TIME_ALL", schema = FileSizeUnitDefaultAndMaximumParameterDto.class)
+	}
+)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+@JsonSubTypes({
+	@Type(value = BooleanParameterDto.class, name="BOOLEAN"),
+	@Type(value = StringParameterDto.class, name="STRING"),
+	@Type(value = IntegerParameterDto.class, name="INTEGER"),
+	@Type(value = LanguageParameterDto.class, name="LANGUAGE"),
+	@Type(value = TimeUnitDefaultParameterDto.class, name="UNIT_SIZE_DEFAULT"),
+	@Type(value = TimeUnitMaximumParameterDto.class, name="UNIT_SIZE_MAX"),
+	@Type(value = TimeUnitDefaultAndMaximumParameterDto.class, name="UNIT_SIZE_ALL"),
+	@Type(value = FileSizeUnitDefaultParameterDto.class, name="UNIT_TIME_DEFAULT"),
+	@Type(value = FileSizeUnitMaximumParameterDto.class, name="UNIT_TIME_MAX"),
+	@Type(value = FileSizeUnitDefaultAndMaximumParameterDto.class, name="UNIT_TIME_ALL"),
+})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class ParameterDto <T> {
 

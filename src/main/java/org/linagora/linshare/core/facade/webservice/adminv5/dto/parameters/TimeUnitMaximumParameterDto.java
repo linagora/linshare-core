@@ -35,30 +35,18 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
-public class UnitParameterDto extends ParameterDto<Integer> {
+import java.util.Optional;
 
-	public UnitParameterDto() {
-		super();
-	}
+public class TimeUnitMaximumParameterDto extends ParameterDto<Integer> {
 
-	public UnitParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
-			NestedParameterDto<Integer> maximum, UnlimitedParameterDto unlimited) {
-		super(hidden, readonly, defaut, maximum, unlimited);
-	}
-
-	public UnitParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
-			NestedParameterDto<Integer> maximum) {
-		super(hidden, readonly, defaut, maximum);
-	}
-
-	public UnitParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut) {
-		super(hidden, readonly, defaut);
+	public TimeUnitMaximumParameterDto(boolean hidden, boolean readonly,
+			Optional<NestedUnitParameterDto<?>> maximum, UnlimitedParameterDto unlimited) {
+		super(hidden, readonly, null, maximum.get(), unlimited);
 	}
 
 	@Override
 	public String toString() {
-		return "IntegerParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", defaut=" + defaut + ", maximum="
-				+ maximum + "]";
+		return "TimeUnitMaximumParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", maximum=" + maximum
+				+ ", unlimited=" + unlimited + "]";
 	}
-
 }
