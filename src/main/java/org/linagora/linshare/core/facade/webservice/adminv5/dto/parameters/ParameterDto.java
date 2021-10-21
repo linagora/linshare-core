@@ -42,10 +42,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 @Schema(
 	name = "Parameter",
-	description = "A UserProvider",
+	description = "A Parameter",
 	discriminatorProperty = "type",
 	discriminatorMapping = {
 			@DiscriminatorMapping(value = "BOOLEAN", schema = BooleanParameterDto.class),
@@ -62,7 +63,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 			@DiscriminatorMapping(value = "UNIT_TIME_ALL", schema = FileSizeUnitDefaultAndMaximumParameterDto.class)
 	}
 )
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = false)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
 @JsonSubTypes({
 	@Type(value = BooleanParameterDto.class, name="BOOLEAN"),
 	@Type(value = StringParameterDto.class, name="STRING"),
@@ -86,14 +87,17 @@ public abstract class ParameterDto <T> {
 	@Schema(description = "Indicate if this Parameter should be displayed in read only mode")
 	protected boolean readonly;
 
-	@Schema(name = "Default", description = "Describe is this policy is enable or not")
+	@Schema(name = "default", description = "Default value")
 	protected NestedParameterDto<T> defaut;
 
-	@Schema(name = "Maximum", description = "Describe if this policy can be overriden")
+	@Schema(name = "maximum", description = "Maximum value")
 	protected NestedParameterDto<T> maximum;
 
-	@Schema(name = "Unlimited", description = "TODO")
+	@Schema(name = "unlimited", description = "True to ignore maximum value.")
 	protected UnlimitedParameterDto unlimited;
+
+	@Schema(name = "type", description = "Parameter type.", accessMode = AccessMode.READ_ONLY)
+	protected String type;
 
 	public ParameterDto() {
 		super();
@@ -170,6 +174,14 @@ public abstract class ParameterDto <T> {
 
 	public void setUnlimited(UnlimitedParameterDto unlimited) {
 		this.unlimited = unlimited;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	@Override
