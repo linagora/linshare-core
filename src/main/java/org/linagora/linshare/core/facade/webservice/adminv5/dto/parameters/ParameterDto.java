@@ -62,7 +62,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 			@DiscriminatorMapping(value = "UNIT_TIME_ALL", schema = FileSizeUnitDefaultAndMaximumParameterDto.class)
 	}
 )
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = false)
 @JsonSubTypes({
 	@Type(value = BooleanParameterDto.class, name="BOOLEAN"),
 	@Type(value = StringParameterDto.class, name="STRING"),

@@ -35,7 +35,9 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -48,6 +50,10 @@ public class NestedParameterDto<T> {
 
 	@Schema(description = "The current value of my domain ancestor (parent domain)")
 	protected T parentValue;
+
+	public NestedParameterDto() {
+		super();
+	}
 
 	public NestedParameterDto(T value, T parentValue) {
 		super();
@@ -67,8 +73,13 @@ public class NestedParameterDto<T> {
 		return parentValue;
 	}
 
+	@JsonProperty
 	public boolean isOverriden() {
 		return !parentValue.equals(value);
+	}
+
+	@JsonIgnore
+	public void setOverriden(boolean noop) {
 	}
 
 	public void setParentValue(T parentValue) {

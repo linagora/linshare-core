@@ -45,6 +45,10 @@ public class NestedUnitParameterDto<U> extends NestedParameterDto<Integer> {
 
 	protected List<String> units;
 
+	public NestedUnitParameterDto() {
+		super();
+	}
+
 	public NestedUnitParameterDto(Integer value, Integer parentValue, U unit, U parentUnit, List<String> units) {
 		super(value, parentValue);
 		this.unit = unit;

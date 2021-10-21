@@ -38,7 +38,9 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.Policy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -53,6 +55,10 @@ public class PolicyDto {
 
 		@Schema(description = "The current value of my domain ancestor (parent domain)")
 		protected boolean parentValue;
+
+		public Config() {
+			super();
+		}
 
 		public Config(boolean value, boolean parentValue) {
 			super();
@@ -76,8 +82,13 @@ public class PolicyDto {
 			this.parentValue = parentValue;
 		}
 
+		@JsonProperty
 		public boolean isOverriden() {
 			return !parentValue == value;
+		}
+
+		@JsonIgnore
+		public void setOverriden(boolean noop) {
 		}
 
 		@Override

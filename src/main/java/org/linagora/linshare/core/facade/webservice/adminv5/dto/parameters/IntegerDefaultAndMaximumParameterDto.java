@@ -41,6 +41,10 @@ import com.google.common.base.MoreObjects;
 
 public class IntegerDefaultAndMaximumParameterDto extends ParameterDto<Integer> {
 
+	public IntegerDefaultAndMaximumParameterDto() {
+		super();
+	}
+
 	public IntegerDefaultAndMaximumParameterDto(boolean hidden, boolean readonly,
 			Optional<NestedParameterDto<Integer>> defaut, Optional<NestedParameterDto<Integer>> maximum,
 			UnlimitedParameterDto unlimited) {
