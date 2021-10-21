@@ -35,16 +35,22 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
+import java.util.Optional;
+
 import com.google.common.base.MoreObjects;
 
-public class StringParameterDto extends ParameterDto<String> {
+public class IntegerDefaultParameterDto extends ParameterDto<Integer> {
 
-	public StringParameterDto() {
+	public IntegerDefaultParameterDto() {
 		super();
 	}
 
-	public StringParameterDto(boolean hidden, boolean readonly, NestedParameterDto<String> defaut) {
-		super(hidden, readonly, defaut);
+	public IntegerDefaultParameterDto(boolean hidden, boolean readonly,
+			Optional<NestedParameterDto<Integer>> defaut) {
+		super();
+		this.hidden = hidden;
+		this.readonly = readonly;
+		this.defaut = defaut.get();
 	}
 
 	@Override

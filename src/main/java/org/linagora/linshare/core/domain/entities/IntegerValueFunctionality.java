@@ -37,12 +37,15 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.IntegerParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.IntegerDefaultAndMaximumParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.IntegerDefaultParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.IntegerMaximumParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.UnlimitedParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
@@ -220,8 +223,8 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 
 	@Override
 	public org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> getParameter() {
-		NestedParameterDto<Integer> defaut = null;
-		NestedParameterDto<Integer> maximum = null;
+		Optional<NestedParameterDto<Integer>> defaut = Optional.empty();
+		Optional<NestedParameterDto<Integer>> maximum = Optional.empty();
 		UnlimitedParameterDto unlimited = null;
 		if (this.valueUsed) {
 			// there is no default value for functionality parameters. sad.
@@ -229,22 +232,22 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 			if (this.ancestorFunc != null) {
 				parentValue = ((IntegerValueFunctionality)this.ancestorFunc).getValue();
 			}
-			defaut = new NestedParameterDto<Integer>(this.value, parentValue);
+			defaut = Optional.of(new NestedParameterDto<Integer>(this.value, parentValue));
 		}
 		if (this.maxValueUsed) {
 			Integer parentValue = this.getMaxValue();
 			if (this.ancestorFunc != null) {
 				parentValue = ((IntegerValueFunctionality)this.ancestorFunc).getMaxValue();
 			}
-			maximum = new NestedParameterDto<Integer>(this.maxValue, parentValue);
+			maximum = Optional.of(new NestedParameterDto<Integer>(this.maxValue, parentValue));
 			unlimited = new UnlimitedParameterDto();
 		}
-		return new IntegerParameterDto(
-			this.system,
-			!this.getParentAllowParametersUpdate(),
-			defaut,
-			maximum,
-			unlimited
-		);
+		if (defaut.isPresent() && maximum.isPresent()) {
+			return new IntegerDefaultAndMaximumParameterDto(this.system, !this.getParentAllowParametersUpdate(), defaut, maximum, unlimited);
+		} else if (defaut.isPresent()) {
+			return new IntegerDefaultParameterDto(this.system, !this.getParentAllowParametersUpdate(), defaut);
+		} else {
+			return new IntegerMaximumParameterDto(this.system, !this.getParentAllowParametersUpdate(), maximum, unlimited);
+		}
 	}
 }

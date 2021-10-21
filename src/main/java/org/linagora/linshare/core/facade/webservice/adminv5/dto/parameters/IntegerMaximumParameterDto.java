@@ -35,16 +35,24 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
+import java.util.Optional;
+
 import com.google.common.base.MoreObjects;
 
-public class StringParameterDto extends ParameterDto<String> {
+public class IntegerMaximumParameterDto extends ParameterDto<Integer> {
 
-	public StringParameterDto() {
+	public IntegerMaximumParameterDto() {
 		super();
 	}
 
-	public StringParameterDto(boolean hidden, boolean readonly, NestedParameterDto<String> defaut) {
-		super(hidden, readonly, defaut);
+	public IntegerMaximumParameterDto(boolean hidden, boolean readonly,
+			Optional<NestedParameterDto<Integer>> maximum,
+			UnlimitedParameterDto unlimited) {
+		super();
+		this.hidden = hidden;
+		this.readonly = readonly;
+		this.maximum = maximum.get();
+		this.unlimited = unlimited;
 	}
 
 	@Override
@@ -52,7 +60,8 @@ public class StringParameterDto extends ParameterDto<String> {
 		return MoreObjects.toStringHelper(this)
 				.add("hidden", hidden)
 				.add("readonly", readonly)
-				.add("defaut", defaut)
+				.add("maximum", maximum)
+				.add("unlimited", unlimited)
 				.toString();
 	}
 }

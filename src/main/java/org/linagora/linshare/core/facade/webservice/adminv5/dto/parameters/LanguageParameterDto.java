@@ -37,20 +37,12 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import org.linagora.linshare.core.domain.constants.Language;
 
+import com.google.common.base.MoreObjects;
+
 public class LanguageParameterDto extends ParameterDto<Language> {
 
 	public LanguageParameterDto() {
 		super();
-	}
-
-	public LanguageParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Language> defaut,
-			NestedParameterDto<Language> maximum, UnlimitedParameterDto unlimited) {
-		super(hidden, readonly, defaut, maximum, unlimited);
-	}
-
-	public LanguageParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Language> defaut,
-			NestedParameterDto<Language> maximum) {
-		super(hidden, readonly, defaut, maximum);
 	}
 
 	public LanguageParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Language> defaut) {
@@ -59,8 +51,11 @@ public class LanguageParameterDto extends ParameterDto<Language> {
 
 	@Override
 	public String toString() {
-		return "LanguageParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", defaut=" + defaut + ", maximum="
-				+ maximum + ", unlimited=" + unlimited + "]";
+		return MoreObjects.toStringHelper(this)
+				.add("hidden", hidden)
+				.add("readonly", readonly)
+				.add("defaut", defaut)
+				.toString();
 	}
 
 }

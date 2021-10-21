@@ -35,20 +35,12 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
+import com.google.common.base.MoreObjects;
+
 public class BooleanParameterDto extends ParameterDto<Boolean> {
 
 	public BooleanParameterDto() {
 		super();
-	}
-
-	public BooleanParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Boolean> defaut,
-			NestedParameterDto<Boolean> maximum, UnlimitedParameterDto unlimited) {
-		super(hidden, readonly, defaut, maximum, unlimited);
-	}
-
-	public BooleanParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Boolean> defaut,
-			NestedParameterDto<Boolean> maximum) {
-		super(hidden, readonly, defaut, maximum);
 	}
 
 	public BooleanParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Boolean> defaut) {
@@ -57,8 +49,11 @@ public class BooleanParameterDto extends ParameterDto<Boolean> {
 
 	@Override
 	public String toString() {
-		return "BooleanParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", defaut=" + defaut + ", maximum="
-				+ maximum + ", unlimited=" + unlimited + "]";
+		return MoreObjects.toStringHelper(this)
+				.add("hidden", hidden)
+				.add("readonly", readonly)
+				.add("defaut", defaut)
+				.toString();
 	}
 
 }

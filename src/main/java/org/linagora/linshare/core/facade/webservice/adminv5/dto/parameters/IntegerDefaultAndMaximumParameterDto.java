@@ -35,30 +35,32 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
-public class IntegerParameterDto extends ParameterDto<Integer> {
+import java.util.Optional;
 
-	public IntegerParameterDto() {
+import com.google.common.base.MoreObjects;
+
+public class IntegerDefaultAndMaximumParameterDto extends ParameterDto<Integer> {
+
+	public IntegerDefaultAndMaximumParameterDto(boolean hidden, boolean readonly,
+			Optional<NestedParameterDto<Integer>> defaut, Optional<NestedParameterDto<Integer>> maximum,
+			UnlimitedParameterDto unlimited) {
 		super();
-	}
-
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
-			NestedParameterDto<Integer> maximum, UnlimitedParameterDto unlimited) {
-		super(hidden, readonly, defaut, maximum, unlimited);
-	}
-
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut,
-			NestedParameterDto<Integer> maximum) {
-		super(hidden, readonly, defaut, maximum);
-	}
-
-	public IntegerParameterDto(boolean hidden, boolean readonly, NestedParameterDto<Integer> defaut) {
-		super(hidden, readonly, defaut);
+		this.hidden = hidden;
+		this.readonly = readonly;
+		this.defaut = defaut.get();
+		this.maximum = maximum.get();
+		this.unlimited = unlimited;
 	}
 
 	@Override
 	public String toString() {
-		return "IntegerParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", defaut=" + defaut + ", maximum="
-				+ maximum + "]";
+		return MoreObjects.toStringHelper(this)
+				.add("hidden", hidden)
+				.add("readonly", readonly)
+				.add("defaut", defaut)
+				.add("maximum", maximum)
+				.add("unlimited", unlimited)
+				.toString();
 	}
 
 }

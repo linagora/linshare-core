@@ -50,7 +50,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 	discriminatorMapping = {
 			@DiscriminatorMapping(value = "BOOLEAN", schema = BooleanParameterDto.class),
 			@DiscriminatorMapping(value = "STRING", schema = StringParameterDto.class),
-			@DiscriminatorMapping(value = "INTEGER", schema = IntegerParameterDto.class),
+			@DiscriminatorMapping(value = "INTEGER_DEFAULT", schema = IntegerDefaultParameterDto.class),
+			@DiscriminatorMapping(value = "INTEGER_MAX", schema = IntegerMaximumParameterDto.class),
+			@DiscriminatorMapping(value = "INTEGER_ALL", schema = IntegerDefaultAndMaximumParameterDto.class),
 			@DiscriminatorMapping(value = "LANGUAGE", schema = LanguageParameterDto.class),
 			@DiscriminatorMapping(value = "UNIT_SIZE_DEFAULT", schema = TimeUnitDefaultParameterDto.class),
 			@DiscriminatorMapping(value = "UNIT_SIZE_MAX", schema = TimeUnitMaximumParameterDto.class),
@@ -64,7 +66,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonSubTypes({
 	@Type(value = BooleanParameterDto.class, name="BOOLEAN"),
 	@Type(value = StringParameterDto.class, name="STRING"),
-	@Type(value = IntegerParameterDto.class, name="INTEGER"),
+	@Type(value = IntegerDefaultParameterDto.class, name="INTEGER_DEFAULT"),
+	@Type(value = IntegerMaximumParameterDto.class, name="INTEGER_MAX"),
+	@Type(value = IntegerDefaultAndMaximumParameterDto.class, name="INTEGER_ALL"),
 	@Type(value = LanguageParameterDto.class, name="LANGUAGE"),
 	@Type(value = TimeUnitDefaultParameterDto.class, name="UNIT_SIZE_DEFAULT"),
 	@Type(value = TimeUnitMaximumParameterDto.class, name="UNIT_SIZE_MAX"),
