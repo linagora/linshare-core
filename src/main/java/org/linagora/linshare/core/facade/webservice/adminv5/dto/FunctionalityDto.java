@@ -43,6 +43,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.Param
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -107,13 +108,13 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 	@Schema(description = "Domain")
 	protected DomainDto domain;
 
-	@Schema(description = "Activation policy")
+	@Schema(description = "Activation policy", name = "activationPolicy")
 	protected PolicyDto activationPolicy;
 
-	@Schema(description = "Configuration policy")
+	@Schema(description = "Configuration policy", name = "configurationPolicy")
 	protected PolicyDto configurationPolicy;
 
-	@Schema(description = "Delegation policy")
+	@Schema(description = "Delegation policy", name = "delegationPolicy")
 	protected PolicyDto delegationPolicy;
 
 	@Schema(description = "parameter")
@@ -248,5 +249,21 @@ public class FunctionalityDto implements Comparable<FunctionalityDto> {
 				return new FunctionalityDto(func);
 			}
 		};
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("identifier", identifier)
+				.add("type", type)
+				.add("parentIdentifier", parentIdentifier)
+				.add("hidden", hidden)
+				.add("readonly", readonly)
+				.add("domain", domain)
+				.add("activationPolicy", activationPolicy)
+				.add("configurationPolicy", configurationPolicy)
+				.add("delegationPolicy", delegationPolicy)
+				.add("parameter", parameter)
+				.toString();
 	}
 }

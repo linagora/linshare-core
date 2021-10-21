@@ -39,6 +39,12 @@ import org.linagora.linshare.core.domain.constants.Language;
 
 import com.google.common.base.MoreObjects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+		name = "LanguageParameter",
+		description = "A parameter supporting languages"
+)
 public class LanguageParameterDto extends ParameterDto<Language> {
 
 	public LanguageParameterDto() {

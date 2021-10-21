@@ -39,6 +39,12 @@ import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+		name = "IntegerDefaultAndMaximumParameter",
+		description = "A parameter supporting default and maximum integer values"
+)
 public class IntegerDefaultAndMaximumParameterDto extends ParameterDto<Integer> {
 
 	public IntegerDefaultAndMaximumParameterDto() {

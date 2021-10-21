@@ -38,11 +38,30 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.common.base.MoreObjects;
 
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
-@Schema(name = "Parameter")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(
+	name = "NestedParameter",
+	description = "A NestedParameter",
+	discriminatorProperty = "type",
+	discriminatorMapping = {
+			@DiscriminatorMapping(value = "DEFAULT", schema = NestedParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT", schema = NestedUnitParameterDto.class),
+	}
+)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = false)
+@JsonSubTypes({
+	@Type(value = NestedParameterDto.class, name="DEFAULT"),
+	@Type(value = NestedUnitParameterDto.class, name="UNIT"),
+})
 public class NestedParameterDto<T> {
 
 	@Schema(description = "The current value")
@@ -73,6 +92,7 @@ public class NestedParameterDto<T> {
 		return parentValue;
 	}
 
+	@Schema(description = "Tell if parent value was overriden.", accessMode = AccessMode.READ_ONLY)
 	@JsonProperty
 	public boolean isOverriden() {
 		return !parentValue.equals(value);
@@ -88,7 +108,11 @@ public class NestedParameterDto<T> {
 
 	@Override
 	public String toString() {
-		return "NestedDefaultParameterDto [value=" + value + ", parentValue=" + parentValue + "]";
+		return MoreObjects.toStringHelper(this)
+				.add("value", value)
+				.add("parentValue", parentValue)
+				.add("isOverriden", isOverriden())
+				.toString();
 	}
 
 }

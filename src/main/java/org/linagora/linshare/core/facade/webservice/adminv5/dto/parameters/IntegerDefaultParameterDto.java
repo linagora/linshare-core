@@ -39,6 +39,12 @@ import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+		name = "IntegerDefaultParameter",
+		description = "A parameter supporting default integer value"
+)
 public class IntegerDefaultParameterDto extends ParameterDto<Integer> {
 
 	public IntegerDefaultParameterDto() {

@@ -37,6 +37,12 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+		name = "FileSizeUnitMaximumParameterDto",
+		description = "A parameter supporting maximum file size value"
+)
 public class FileSizeUnitMaximumParameterDto extends ParameterDto<Integer> {
 
 	public FileSizeUnitMaximumParameterDto(boolean hidden, boolean readonly,

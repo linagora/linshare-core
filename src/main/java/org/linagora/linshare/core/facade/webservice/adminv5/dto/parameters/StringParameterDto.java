@@ -37,6 +37,13 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import com.google.common.base.MoreObjects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+
+@Schema(
+		name = "StringParameter",
+		description = "A parameter supporting string values"
+)
 public class StringParameterDto extends ParameterDto<String> {
 
 	public StringParameterDto() {

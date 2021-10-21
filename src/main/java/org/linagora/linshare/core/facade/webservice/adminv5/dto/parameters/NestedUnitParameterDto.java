@@ -37,6 +37,18 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.MoreObjects;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(
+	name = "NestedUnitParameter",
+	description = "A NestedUnitParameter",
+	hidden = true
+)
 public class NestedUnitParameterDto<U> extends NestedParameterDto<Integer> {
 
 	protected U unit;
@@ -80,4 +92,15 @@ public class NestedUnitParameterDto<U> extends NestedParameterDto<Integer> {
 		this.units = units;
 	}
 
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("value", value)
+				.add("parentValue", parentValue)
+				.add("isOverriden", isOverriden())
+				.add("unit", unit)
+				.add("parentUnit", parentUnit)
+				.add("units", units)
+				.toString();
+	}
 }

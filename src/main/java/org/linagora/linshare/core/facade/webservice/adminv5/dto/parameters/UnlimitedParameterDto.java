@@ -38,18 +38,21 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 @Schema(name = "Unlimited")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UnlimitedParameterDto {
 
-	@Schema(description = "True if unlimited is supported.")
+	@Schema(description = "True if unlimited is supported.",
+			accessMode = AccessMode.READ_ONLY)
 	protected Boolean supported = false;
 
 	@Schema(description = "The current value")
 	protected Boolean value;
 
-	@Schema(description = "The current value of my domain ancestor (parent domain)")
+	@Schema(description = "The current value of my domain ancestor (parent domain)",
+			accessMode = AccessMode.READ_ONLY)
 	protected Boolean parentValue;
 
 	public UnlimitedParameterDto() {

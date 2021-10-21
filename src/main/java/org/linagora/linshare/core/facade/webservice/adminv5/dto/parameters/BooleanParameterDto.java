@@ -37,6 +37,12 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import com.google.common.base.MoreObjects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+		name = "BooleanParameter",
+		description = "A boolean parameter"
+)
 public class BooleanParameterDto extends ParameterDto<Boolean> {
 
 	public BooleanParameterDto() {

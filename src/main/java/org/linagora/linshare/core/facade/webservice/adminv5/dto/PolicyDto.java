@@ -41,8 +41,10 @@ import org.linagora.linshare.core.domain.entities.Policy;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 @Schema(name = "Policy")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -53,7 +55,8 @@ public class PolicyDto {
 		@Schema(description = "The current value")
 		protected boolean value;
 
-		@Schema(description = "The current value of my domain ancestor (parent domain)")
+		@Schema(description = "The current value of my domain ancestor (parent domain)",
+				accessMode = AccessMode.READ_ONLY)
 		protected boolean parentValue;
 
 		public Config() {
@@ -82,6 +85,7 @@ public class PolicyDto {
 			this.parentValue = parentValue;
 		}
 
+		@Schema(description = "Tell if parent value was overriden.", accessMode = AccessMode.READ_ONLY)
 		@JsonProperty
 		public boolean isOverriden() {
 			return !parentValue == value;
@@ -98,16 +102,18 @@ public class PolicyDto {
 
 	}
 
-	@Schema(description = "Indicate if this policy should be displayed or hidden")
+	@Schema(description = "Indicate if this policy should be displayed or hidden",
+			accessMode = AccessMode.READ_ONLY)
 	protected boolean hidden;
 
-	@Schema(description = "Indicate if this policy should be displayed in read only mode")
+	@Schema(description = "Indicate if this policy should be displayed in read only mode",
+			accessMode = AccessMode.READ_ONLY)
 	protected boolean readonly;
 
-	@Schema(name = "Enable", description = "Describe is this policy is enable or not")
+	@Schema(name = "enable", description = "Describe is this policy is enable or not")
 	protected Config enable;
 
-	@Schema(name = "AllowOverride", description = "Describe if this policy can be overriden")
+	@Schema(name = "allowOverride", description = "Describe if this policy can be overriden")
 	protected Config allowOverride;
 
 	public PolicyDto() {
@@ -170,8 +176,12 @@ public class PolicyDto {
 
 	@Override
 	public String toString() {
-		return "PolicyDto [hidden=" + hidden + ", readonly=" + readonly + ", enable=" + enable + ", allowOverride="
-				+ allowOverride + "]";
+		return MoreObjects.toStringHelper(this)
+				.add("hidden", hidden)
+				.add("readonly", readonly)
+				.add("enable", enable)
+				.add("allowOverride", allowOverride)
+				.toString();
 	}
 
 }

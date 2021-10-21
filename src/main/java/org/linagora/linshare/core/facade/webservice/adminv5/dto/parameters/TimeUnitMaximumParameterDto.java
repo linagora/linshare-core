@@ -37,6 +37,12 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+		name = "TimeUnitMaximumParameter",
+		description = "A parameter supporting maximum time unit value"
+)
 public class TimeUnitMaximumParameterDto extends ParameterDto<Integer> {
 
 	public TimeUnitMaximumParameterDto(boolean hidden, boolean readonly,

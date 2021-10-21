@@ -37,6 +37,12 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+		name = "TimeUnitDefaultParameter",
+		description = "A parameter supporting default time unit value"
+)
 public class TimeUnitDefaultParameterDto extends ParameterDto<Integer> {
 
 	public TimeUnitDefaultParameterDto() {

@@ -37,6 +37,12 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+		name = "FileSizeUnitDefaultParameter",
+		description = "A parameter supporting default file size value"
+)
 public class FileSizeUnitDefaultParameterDto extends ParameterDto<Integer> {
 
 	public FileSizeUnitDefaultParameterDto() {
