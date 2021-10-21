@@ -33,74 +33,22 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
-
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.common.base.MoreObjects;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(
-	name = "NestedUnitParameter",
-	description = "A NestedUnitParameter",
-	hidden = true
+		name = "NestedBooleanParameter",
+		description = "A Boolean NestedParameter"
 )
-public class NestedUnitParameterDto<U> extends NestedParameterDto<Integer> {
+public class NestedBooleanParameterDto extends NestedParameterDto<Boolean> {
 
-	protected U unit;
-
-	protected U parentUnit;
-
-	protected List<String> units;
-
-	public NestedUnitParameterDto() {
+	public NestedBooleanParameterDto() {
 		super();
 	}
 
-	public NestedUnitParameterDto(Integer value, Integer parentValue, U unit, U parentUnit, List<String> units) {
+	public NestedBooleanParameterDto(Boolean value, Boolean parentValue) {
 		super(value, parentValue);
-		this.unit = unit;
-		this.parentUnit = parentUnit;
-		this.units = units;
 	}
 
-	public U getUnit() {
-		return unit;
-	}
-
-	public void setUnit(U unit) {
-		this.unit = unit;
-	}
-
-	public U getParentUnit() {
-		return parentUnit;
-	}
-
-	public void setParentUnit(U parentUnit) {
-		this.parentUnit = parentUnit;
-	}
-
-	public List<String> getUnits() {
-		return units;
-	}
-
-	public void setUnits(List<String> units) {
-		this.units = units;
-	}
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("value", value)
-				.add("parentValue", parentValue)
-				.add("isOverriden", isOverriden())
-				.add("unit", unit)
-				.add("parentUnit", parentUnit)
-				.add("units", units)
-				.toString();
-	}
 }

@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedParameterDto;
 
 import com.google.common.base.MoreObjects;
 

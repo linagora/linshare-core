@@ -33,28 +33,24 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested;
 
-import java.util.Optional;
-
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedUnitParameterDto;
+import org.linagora.linshare.core.domain.constants.Language;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(
-		name = "TimeUnitMaximumParameter",
-		description = "A parameter supporting maximum time unit value"
+		name = "NestedLanguageParameter",
+		description = "A Language NestedParameter"
 )
-public class TimeUnitMaximumParameterDto extends ParameterDto<Integer> {
+public class NestedLanguageParameterDto extends NestedParameterDto<Language> {
 
-	public TimeUnitMaximumParameterDto(boolean hidden, boolean readonly,
-			Optional<NestedUnitParameterDto<?>> maximum, UnlimitedParameterDto unlimited) {
-		super(hidden, readonly, null, maximum.get(), unlimited);
+	public NestedLanguageParameterDto() {
+		super();
 	}
 
-	@Override
-	public String toString() {
-		return "TimeUnitMaximumParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", maximum=" + maximum
-				+ ", unlimited=" + unlimited + "]";
+	public NestedLanguageParameterDto(Language value, Language parentValue) {
+		super(value, parentValue);
 	}
+
 }

@@ -33,28 +33,27 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested;
 
-import java.util.Optional;
+import java.util.List;
 
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedUnitParameterDto;
+import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(
-		name = "TimeUnitMaximumParameter",
-		description = "A parameter supporting maximum time unit value"
+		name = "NestedFileSizeParameter",
+		description = "A file size NestedParameter"
 )
-public class TimeUnitMaximumParameterDto extends ParameterDto<Integer> {
+public class NestedFileSizeParameterDto extends NestedUnitParameterDto<FileSizeUnit> {
 
-	public TimeUnitMaximumParameterDto(boolean hidden, boolean readonly,
-			Optional<NestedUnitParameterDto<?>> maximum, UnlimitedParameterDto unlimited) {
-		super(hidden, readonly, null, maximum.get(), unlimited);
+	public NestedFileSizeParameterDto() {
+		super();
 	}
 
-	@Override
-	public String toString() {
-		return "TimeUnitMaximumParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", maximum=" + maximum
-				+ ", unlimited=" + unlimited + "]";
+	public NestedFileSizeParameterDto(Integer value, Integer parentValue, FileSizeUnit unit, FileSizeUnit parentUnit,
+			List<String> units) {
+		super(value, parentValue, unit, parentUnit, units);
 	}
+
 }

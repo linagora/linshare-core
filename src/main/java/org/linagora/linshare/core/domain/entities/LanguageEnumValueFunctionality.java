@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.LanguageParameterDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedLanguageParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityEnumLangDto;
@@ -123,7 +123,7 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 		if (this.ancestorFunc != null) {
 			parentValue = ((LanguageEnumValueFunctionality)this.ancestorFunc).getValue();
 		}
-		NestedParameterDto<Language> defaut = new NestedParameterDto<Language>(this.value, parentValue);
+		NestedLanguageParameterDto defaut = new NestedLanguageParameterDto(this.value, parentValue);
 		return new LanguageParameterDto(
 			this.system,
 			!this.getParentAllowParametersUpdate(),

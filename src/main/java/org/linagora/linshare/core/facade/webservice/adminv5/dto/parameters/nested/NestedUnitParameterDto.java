@@ -33,77 +33,63 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.MoreObjects;
 
-import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(
-	name = "NestedParameter",
-	description = "A NestedParameter",
-	discriminatorProperty = "type",
-	discriminatorMapping = {
-			@DiscriminatorMapping(value = "DEFAULT", schema = NestedParameterDto.class),
-			@DiscriminatorMapping(value = "UNIT", schema = NestedUnitParameterDto.class),
-	}
+	name = "NestedUnitParameter",
+	description = "A Time Unit NestedParameter",
+	hidden = true
 )
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = false)
-@JsonSubTypes({
-	@Type(value = NestedParameterDto.class, name="DEFAULT"),
-	@Type(value = NestedUnitParameterDto.class, name="UNIT"),
-})
-public class NestedParameterDto<T> {
+public abstract class NestedUnitParameterDto<U> extends NestedParameterDto<Integer> {
 
-	@Schema(description = "The current value")
-	protected T value;
+	protected U unit;
 
-	@Schema(description = "The current value of my domain ancestor (parent domain)")
-	protected T parentValue;
+	protected U parentUnit;
 
-	public NestedParameterDto() {
+	protected List<String> units;
+
+	public NestedUnitParameterDto() {
 		super();
 	}
 
-	public NestedParameterDto(T value, T parentValue) {
-		super();
-		this.value = value;
-		this.parentValue = parentValue;
+	public NestedUnitParameterDto(Integer value, Integer parentValue, U unit, U parentUnit, List<String> units) {
+		super(value, parentValue);
+		this.unit = unit;
+		this.parentUnit = parentUnit;
+		this.units = units;
 	}
 
-	public T getValue() {
-		return value;
+	public U getUnit() {
+		return unit;
 	}
 
-	public void setValue(T value) {
-		this.value = value;
+	public void setUnit(U unit) {
+		this.unit = unit;
 	}
 
-	public T getParentValue() {
-		return parentValue;
+	public U getParentUnit() {
+		return parentUnit;
 	}
 
-	@Schema(description = "Tell if parent value was overriden.", accessMode = AccessMode.READ_ONLY)
-	@JsonProperty
-	public boolean isOverriden() {
-		return !parentValue.equals(value);
+	public void setParentUnit(U parentUnit) {
+		this.parentUnit = parentUnit;
 	}
 
-	@JsonIgnore
-	public void setOverriden(boolean noop) {
+	public List<String> getUnits() {
+		return units;
 	}
 
-	public void setParentValue(T parentValue) {
-		this.parentValue = parentValue;
+	public void setUnits(List<String> units) {
+		this.units = units;
 	}
 
 	@Override
@@ -112,7 +98,9 @@ public class NestedParameterDto<T> {
 				.add("value", value)
 				.add("parentValue", parentValue)
 				.add("isOverriden", isOverriden())
+				.add("unit", unit)
+				.add("parentUnit", parentUnit)
+				.add("units", units)
 				.toString();
 	}
-
 }

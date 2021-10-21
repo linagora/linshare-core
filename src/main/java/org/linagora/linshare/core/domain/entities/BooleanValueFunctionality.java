@@ -41,7 +41,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.BooleanParameterDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedBooleanParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityBooleanDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
@@ -144,7 +144,7 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 		if (this.ancestorFunc != null) {
 			parentValue = ((BooleanValueFunctionality)this.ancestorFunc).getValue();
 		}
-		NestedParameterDto<Boolean> defaut = new NestedParameterDto<Boolean>(this.value, parentValue);
+		NestedBooleanParameterDto defaut = new NestedBooleanParameterDto(this.value, parentValue);
 		return new BooleanParameterDto(
 			this.system,
 			!this.getParentAllowParametersUpdate(),

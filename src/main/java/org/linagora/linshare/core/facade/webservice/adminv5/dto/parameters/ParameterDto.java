@@ -35,9 +35,12 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedParameterDto;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.google.common.base.MoreObjects;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -186,7 +189,12 @@ public abstract class ParameterDto <T> {
 
 	@Override
 	public String toString() {
-		return "ParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", defaut=" + defaut + ", maximum="
-				+ maximum + ", unlimited=" + unlimited + "]";
+		return MoreObjects.toStringHelper(this)
+				.add("hidden", hidden)
+				.add("readonly", readonly)
+				.add("defaut", defaut)
+				.add("maximum", maximum)
+				.add("unlimited", unlimited)
+				.toString();
 	}
 }

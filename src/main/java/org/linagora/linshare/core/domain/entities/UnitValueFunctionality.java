@@ -50,11 +50,13 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdmin
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.FileSizeUnitDefaultAndMaximumParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.FileSizeUnitDefaultParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.FileSizeUnitMaximumParameterDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.NestedUnitParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.TimeUnitDefaultAndMaximumParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.TimeUnitDefaultParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.TimeUnitMaximumParameterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.UnlimitedParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedFileSizeParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedTimeParameterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedUnitParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalitySizeDto;
@@ -407,7 +409,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					FileSizeUnitClass parentUnitClass = (FileSizeUnitClass) ancestorMaxUnit.getUnitValue();
 					parentUnit = parentUnitClass.getUnitValue();
 				}
-				maximum = Optional.of(new NestedUnitParameterDto<FileSizeUnit>(
+				maximum = Optional.of(new NestedFileSizeParameterDto(
 						this.maxValue,
 						parentValue,
 						maxUnit.getUnitValue(),
@@ -432,7 +434,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					FileSizeUnitClass parentSizeUnit = (FileSizeUnitClass) ancestorUnit.getUnitValue();
 					parentUnit = parentSizeUnit.getUnitValue();
 				}
-				defaut = Optional.of(new NestedUnitParameterDto<FileSizeUnit>(
+				defaut = Optional.of(new NestedFileSizeParameterDto(
 						this.value,
 						parentValue,
 						sizeUnit.getUnitValue(),
@@ -460,7 +462,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					TimeUnitClass parentUnitClass = (TimeUnitClass) ancestorMaxUnit.getUnitValue();
 					parentUnit = parentUnitClass.getUnitValue();
 				}
-				maximum = Optional.of(new NestedUnitParameterDto<TimeUnit>(
+				maximum = Optional.of(new NestedTimeParameterDto(
 						this.maxValue,
 						parentValue,
 						maxUnit.getUnitValue(),
@@ -485,7 +487,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					TimeUnitClass parentSizeUnit = (TimeUnitClass) ancestorUnit.getUnitValue();
 					parentUnit = parentSizeUnit.getUnitValue();
 				}
-				defaut = Optional.of(new NestedUnitParameterDto<TimeUnit>(
+				defaut = Optional.of(new NestedTimeParameterDto(
 						this.value,
 						parentValue,
 						sizeUnit.getUnitValue(),

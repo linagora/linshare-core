@@ -33,28 +33,22 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
-
-import java.util.Optional;
-
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedUnitParameterDto;
+package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(
-		name = "TimeUnitMaximumParameter",
-		description = "A parameter supporting maximum time unit value"
+		name = "NestedStringParameter",
+		description = "A String NestedParameter"
 )
-public class TimeUnitMaximumParameterDto extends ParameterDto<Integer> {
+public class NestedStringParameterDto extends NestedParameterDto<String> {
 
-	public TimeUnitMaximumParameterDto(boolean hidden, boolean readonly,
-			Optional<NestedUnitParameterDto<?>> maximum, UnlimitedParameterDto unlimited) {
-		super(hidden, readonly, null, maximum.get(), unlimited);
+	public NestedStringParameterDto() {
+		super();
 	}
 
-	@Override
-	public String toString() {
-		return "TimeUnitMaximumParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", maximum=" + maximum
-				+ ", unlimited=" + unlimited + "]";
+	public NestedStringParameterDto(String value, String parentValue) {
+		super(value, parentValue);
 	}
+
 }

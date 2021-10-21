@@ -37,6 +37,8 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters;
 
 import java.util.Optional;
 
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested.NestedParameterDto;
+
 import com.google.common.base.MoreObjects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
