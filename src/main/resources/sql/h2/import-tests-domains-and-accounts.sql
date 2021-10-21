@@ -118,12 +118,20 @@ VALUES
 	'en', 'en', true, '{bcrypt}$2a$10$GX1j3pNgFcg8LfANc4w9h.oivxTErSnP/6YYpVLX.pdqTLjdF6Dfm', 
 	0, @guest_domain_id , 'IN_USE', 'Guest', 
 	'Test', true, '', false, 
+	true, false, 0),
+	-- amy wolsh topDomain2
+	(50, 'amy.wolsh@linshare.org', 2, 'aebe1b64-39c0-11e5-9fa8-080027b8254j', 
+	now(), now(), 0, 'en', 
+	'en', 'en', true, null, 
+	0, @second_domain_id , 'IN_USE', 'Foo2', 
+	'Bar2', true, '', false, 
 	true, false, 0);
 
 	SET @john_do_id = SELECT 10;
 	SET @jane_simth_id = SELECT 11;
 	SET @foo_bar_id = SELECT 12;
 	SET @guest1_id = SELECT 13;
+	SET @amy_wolsh_id = SELECT 50;
 
 	-- WORKGROUPS 
 INSERT INTO account(
@@ -161,6 +169,7 @@ SET @workgroup_21_id = SELECT 21;
 SET @workgroup_22_id = SELECT 22;
 SET @workgroup_23_id = SELECT 23;
 
+
 	-- MyDomain QUOTA
 INSERT INTO quota(
 	id, uuid, creation_date, modification_date, batch_modification_date,
@@ -184,6 +193,24 @@ SET @quota_my_domain_id = SELECT 2;
 -- quota : 1 To
 -- quota_warning : 1000000000000 : 1 To
 -- default_quota : 1000000000000 : 1 To (1 To per sub domain)
+
+-- Second Domain ACCOUNT_QUOTA - AMY
+INSERT INTO quota (
+	id, uuid, creation_date, modification_date, batch_modification_date,
+	quota_domain_id, quota_container_id, current_value, last_value,
+	domain_id, account_id, domain_parent_id, quota,
+	quota_override, max_file_size_override, maintenance,
+	quota_warning, max_file_size, container_type, quota_type)
+VALUES (
+	144, 'a2b4ed6e-4039-4f45-9a33-d906a3fd2fd9', NOW(), NOW(), NOW(),
+	@quota_second_domain_id, @quota_on_second_domain_container_user_id , 0, 0,
+	@second_domain_id , @amy_wolsh_id , 1, 1000000000,
+	false, false, false,
+	1000000000, 1000000000, null, 'ACCOUNT_QUOTA');
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 144;
+SET @quota_account_amy_id = SELECT 144;
+-- quota : 100 Go
+-- max_file_size : 10 Go
 
 -- 'CONTAINER_QUOTA', 'USER' for MyDomain
 INSERT INTO quota(

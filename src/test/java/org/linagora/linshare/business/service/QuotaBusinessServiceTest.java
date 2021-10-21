@@ -176,7 +176,7 @@ public class QuotaBusinessServiceTest {
 		Assertions.assertEquals(496, (long) janeAccountQuota.getLastValue());
 
 		List<String> listDomain = accountQuotaBusinessService.findDomainUuidByBatchModificationDate(yesterday());
-		Assertions.assertEquals(1, listDomain.size());
+		Assertions.assertEquals(2, listDomain.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

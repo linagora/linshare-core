@@ -128,7 +128,7 @@ public class ContainerQuotaRepositoryImplTest {
 		// 2 containers by domain
 		assertEquals(10, containers.size());
 		// root , jane, john, foo , workgroup_id_20, workgroup_id_21  ,inconsistent (see script import-tests-domain-quota-updates.sql) &  
-		assertEquals(7, accounts.size());
+		assertEquals(8, accounts.size());
 	}
 
 	@Test

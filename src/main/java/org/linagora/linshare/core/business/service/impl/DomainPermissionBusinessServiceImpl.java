@@ -47,6 +47,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +81,12 @@ public class DomainPermissionBusinessServiceImpl implements
 	public List<String> checkDomainAdministrationForListingSharedSpaces(Account actor, List<String> domains) {
 		List<String> allowedDomainUuids = Lists.newArrayList();
 		if (Role.SUPERADMIN.equals(actor.getRole())) {
-			allowedDomainUuids = domains;
+			if (!CollectionUtils.isEmpty(domains)) {
+				for (String uuid : domains) {
+					AbstractDomain domain = domainBusinessService.findById(uuid);
+					allowedDomainUuids.add(domain.getUuid());
+				}
+			}
 		} else {
 			if (CollectionUtils.isEmpty(domains)) {
 				allowedDomainUuids = getAdministredDomainsIdentifiers(actor, actor.getDomainId());
@@ -90,6 +97,8 @@ public class DomainPermissionBusinessServiceImpl implements
 						allowedDomainUuids.add(domain.getUuid());
 					} else {
 						logger.debug("You are not admin of this domain: {}", uuid);
+						throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN,
+								"You are not admin for this domain: " + domain.getUuid());
 					}
 				}
 			}

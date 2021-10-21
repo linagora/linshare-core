@@ -117,7 +117,7 @@ public class DomainQuotaRepositoryImplTest {
 		// MyDomain : 1 domain, 2 containers, 5 accounts (3 users (1 inconsistent from import-tests-domain-quota-updates.sql) & 2 workgroups)
 		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2
 		// containers, 1 account)
-		assertEquals(Long.valueOf(22), count);
+		assertEquals(Long.valueOf(23), count);
 		Quota quota = accountQuotaRepository.find(jane);
 		assertEquals(true, quota.getMaintenance());
 		quota = accountQuotaRepository.find(root);

@@ -38,6 +38,7 @@ package org.linagora.linshare.service;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -116,6 +117,8 @@ public class SharedSpaceNodeServiceImplTest {
 
 	private Account jane;
 
+	private Account amy;
+
 	private Account root;
 
 	private SharedSpaceNode node1;
@@ -147,6 +150,7 @@ public class SharedSpaceNodeServiceImplTest {
 		john = userRepo.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		foo = userRepo.findByMail(LinShareTestConstants.FOO_ACCOUNT);
 		jane= userRepo.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		amy = userRepo.findByMail(LinShareTestConstants.AMY_WOLSH_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -236,11 +240,13 @@ public class SharedSpaceNodeServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test member delete a workgroup where he is not a membership
 		SharedSpaceNode johnWorkGroup = service.create(john, john, new SharedSpaceNode("john workgroup", NodeType.WORK_GROUP));
-		service.create(jane, jane, new SharedSpaceNode("jane workgroup", NodeType.WORK_GROUP));
+		SharedSpaceNode janeWorkGroup = service.create(jane, jane, new SharedSpaceNode("jane workgroup", NodeType.WORK_GROUP));
 		BusinessException e = assertThrows(BusinessException.class, () -> {
 			service.delete(jane, jane, johnWorkGroup);
 		});
 		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_FORBIDDEN, e.getErrorCode());
+		service.delete(john, john, johnWorkGroup);
+		service.delete(jane, jane, janeWorkGroup);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -317,21 +323,60 @@ public class SharedSpaceNodeServiceImplTest {
 		// Filter by Name
 		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByName = service.findAll(root, root, null, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, "SECOND NODE", container);
 		Assertions.assertEquals(2, fooSharedSpaceByName.getPageResponse().getTotalElements());
-		// Filter by domain
-		john.setRole(org.linagora.linshare.core.domain.constants.Role.ADMIN);
-		userRepo.update((User) john);
-		Assertions.assertTrue(john.hasAdminRole());
-		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByDomain = service.findAll(john, john, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
-		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByDomain.getPageResponse().getContent()) {
-			Assertions.assertEquals(john.getDomainId(), sharedSpaceNodeNested.getDomainUuid());
-		}
-		service.delete(john, john, node1);
+		service.delete(root, root, node1);
 		service.delete(root, root, node2);
 		service.delete(foo, foo, node3);
 		service.delete(foo, foo, node4);
 		service.delete(jane, jane, node5);
 		service.delete(jane, jane, node6);
 		service.delete(root, root, node7);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testFindAllDomainAdministrationForPagingSharedSpaces() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(0, 10);
+		node1 = service.create(john, john, new SharedSpaceNode("John's first node", null, NodeType.WORK_GROUP));
+		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.DRIVE));
+		node3 = service.create(foo, foo, new SharedSpaceNode("Foo's first node", null, NodeType.WORK_GROUP));
+		node4 = service.create(foo, foo, new SharedSpaceNode("Foo's second node", null, NodeType.DRIVE));
+		node5 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
+		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.DRIVE));
+		node7 = service.create(amy, amy, new SharedSpaceNode("foo2 first node", null, NodeType.DRIVE));
+		// Filter SharedSpaces by domain by an ADMIN -> It will return just sharedSpaces of his domain
+		john.setRole(org.linagora.linshare.core.domain.constants.Role.ADMIN);
+		userRepo.update((User) john);
+		Assertions.assertTrue(john.hasAdminRole());
+		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByDomainByAdmin = service.findAll(john, john, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByDomainByAdmin.getPageResponse().getContent()) {
+			Assertions.assertEquals(john.getDomainId(), sharedSpaceNodeNested.getDomainUuid());
+		}
+		// Filter SharedSpaces by domain by an ADMIN with empty domains list -> it will return the domain's sharedSpaces where he s admin
+		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByDomainByAdminEmptyDomainList = service.findAll(john, john, null, Lists.newArrayList(), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, container);
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByDomainByAdminEmptyDomainList.getPageResponse().getContent()) {
+			Assertions.assertEquals(john.getDomainId(), sharedSpaceNodeNested.getDomainUuid());
+		}
+		// Filter SharedSpaces by domain by a ROOT -> it will return both foo2 and john's domains' sharedSpaces
+		List<String> domainUuids = Lists.newArrayList(john.getDomainId(), amy.getDomainId());
+		Set<String> returnedDoaminsUuids = Sets.newHashSet();
+		Account account = null;
+		String name = null;
+		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByDomainByRoot = service.findAll(root, root, account, Lists.newArrayList(), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, name, container);
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByDomainByRoot.getPageResponse().getContent()) {
+			returnedDoaminsUuids.add(sharedSpaceNodeNested.getDomainUuid());
+			logger.debug("This is the domain uuid added to the set to return: {}", sharedSpaceNodeNested.getDomainUuid());
+		}
+		logger.debug("This is the list of the existent domains uuids: {}", domainUuids);
+		logger.debug("This is the list of the final returned domains uuids: {}", returnedDoaminsUuids);
+//		Assertions.assertTrue(returnedDoaminsUuids.containsAll(domainUuids));
+		service.delete(root, root, node1);
+		service.delete(root, root, node2);
+		service.delete(foo, foo, node3);
+		service.delete(foo, foo, node4);
+		service.delete(jane, jane, node5);
+		service.delete(jane, jane, node6);
+		service.delete(amy, amy, node7);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

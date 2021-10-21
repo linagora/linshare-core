@@ -142,7 +142,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, List<String> domainUuids,
 			SortOrder sortOrder, SharedSpaceField sortField, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, String name, Integer pageNumber, Integer pageSize) {
-		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		Account authUser = checkAuthentication(Role.ADMIN);
 		User actor = getActor(authUser, actorUuid);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(pageNumber, pageSize);
 		Account account = null;

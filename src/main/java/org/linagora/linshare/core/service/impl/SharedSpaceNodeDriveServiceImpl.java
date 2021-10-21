@@ -99,6 +99,7 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 					"Can not create this kind of sharedSpace with this method.");
 		}
 		node.setName(sanitize(node.getName()));
+		node.setDomainUuid(actor.getDomainId());
 		SharedSpaceNode created = super.create(authUser, actor, node);
 		// TODO: workaround to avoid to rely on account type
 		if (!(actor instanceof SystemAccount)) {

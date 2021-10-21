@@ -92,3 +92,49 @@ update quota set
 	where id=@quota_workgroup_21_id;
 
 
+
+
+-- Second, DOMAIN_QUOTA
+update quota set
+	current_value=1096,
+	last_value=500,
+	quota=1900,
+	quota_warning=1800,
+	max_file_size=5,
+	default_max_file_size=5
+	where id=@quota_second_domain_id;
+
+-- CONTAINER_QUOTA - USER
+update quota set
+	current_value=496,
+	last_value=0,
+	quota=1900,
+	quota_warning=1300,
+	max_file_size=5,
+	default_max_file_size=5,
+	batch_modification_date=now()
+	where id=@quota_on_second_domain_container_user_id;
+
+-- MyDomain, CONTAINER_QUOTA - USER Amy wolsh 
+update quota set
+	current_value=496,
+	last_value=0,
+	quota=1900,
+	quota_warning=1300,
+	max_file_size=5,
+	default_max_file_size=5,
+	batch_modification_date=now()
+	where id=@quota_account_amy_id;
+
+	-- Second Domain, CONTAINER_QUOTA - WORKGROUP
+update quota set
+	current_value=900,
+	last_value=200,
+	quota=2000,
+	quota_warning=1500,
+	max_file_size=5,
+	default_max_file_size=5,
+	default_account_quota=2000,
+	account_quota=2000,
+	batch_modification_date=now()
+	where id=@quota_second_domain_container_workgroup_id;
