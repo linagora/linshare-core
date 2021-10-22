@@ -419,4 +419,26 @@ public class UploadRequestEntryServiceImplTest {
 		Assertions.assertEquals(uploadRequestEntry.getUuid(), recoveredUREUuid);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void testforbidEntryCreationExceedingMaxDepostSize() throws BusinessException, IOException, ParseException {
+		// In this test we will forbid the entry creation if exceeds the max deposit size
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
+		Assertions.assertNotNull(enabledUploadRequest);
+		UploadRequestUrl url = enabledUploadRequest.getUploadRequestURLs().iterator().next();
+		Assertions.assertNotNull(url);
+		enabledUploadRequest.setMaxDepositSize((long) 10000);
+		uploadRequestService.update(john, john, enabledUploadRequest.getUuid(), enabledUploadRequest, false);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null, url);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_TOTAL_DEPOSIT_SIZE_TOO_LARGE,
+				exception.getErrorCode());
+		enabledUploadRequest.setMaxDepositSize((long) 100000);
+		uploadRequestService.update(john, john, enabledUploadRequest.getUuid(), enabledUploadRequest, false);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }
