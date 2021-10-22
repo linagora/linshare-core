@@ -131,10 +131,13 @@ public class SharedSpaceMemberBusinessServiceImplTest {
 	public void testFindAllNestedNodeByAccountUuid() {
 		// Create shared spaces (drive, workgroup, nested workgroup into a drive)
 		SharedSpaceNode workgroupOnTop = new SharedSpaceNode("workgroup_top_level", null, NodeType.WORK_GROUP);
+		workgroupOnTop.setDomainUuid(jane.getDomainId());
 		nodeRpository.insert(workgroupOnTop);
 		SharedSpaceNode drive = new SharedSpaceNode("drive", null, NodeType.DRIVE);
+		drive.setDomainUuid(jane.getDomainId());
 		nodeRpository.insert(drive);
 		SharedSpaceNode nestedWorkgroup = new SharedSpaceNode("nested_workgroup", drive.getUuid(), NodeType.WORK_GROUP);
+		nestedWorkgroup.setDomainUuid(jane.getDomainId());
 		nodeRpository.insert(nestedWorkgroup);
 		// nested nodes where member Jane will be added
 		SharedSpaceNodeNested nodeWorkgroupOnTop = new SharedSpaceNodeNested(workgroupOnTop);

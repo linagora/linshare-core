@@ -202,7 +202,8 @@ public class AdvancedStatisticBatchTest {
 		Validate.notNull(adminRole, "adminRole must be set");
 		SharedSpaceNode node = new SharedSpaceNode(label, null, NodeType.WORK_GROUP);
 		node.setUuid(groupUuid);
-		sharedSpaceNodeBusinessService.create(node);
+		node.setDomainUuid(account.getDomainId());
+		node = sharedSpaceNodeBusinessService.create(node);
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(adminRole);
 		memberService.create(jane, jane, node, context, new SharedSpaceAccount((User) account));
 	}

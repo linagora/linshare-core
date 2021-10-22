@@ -148,20 +148,12 @@ public class SharedSpaceNode {
 		this.author = author;
 	}
 
-	public SharedSpaceNode(String name, String uuid, NodeType nodeType, Date creationDate, Date modificationDate) {
-		super();
-		this.uuid = uuid;
-		this.name = name;
-		this.nodeType = nodeType;
-		this.creationDate = creationDate;
-		this.modificationDate = modificationDate;
-	}
-
 	public SharedSpaceNode(SharedSpaceNode node) {
 		super();
 		this.uuid = node.getUuid();
 		this.name = node.getName();
 		this.parentUuid = node.getParentUuid();
+		this.domainUuid = node.getDomainUuid();
 		this.nodeType = node.getNodeType();
 		this.versioningParameters = node.getVersioningParameters();
 		this.creationDate = node.getCreationDate();

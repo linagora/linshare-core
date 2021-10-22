@@ -85,6 +85,7 @@ public class SharedSpaceNodeNested {
 		this.uuid = node.getUuid();
 		this.name = node.getName();
 		this.parentUuid = node.getParentUuid();
+		this.domainUuid = node.getDomainUuid();
 		this.nodeType = node.getNodeType();
 		this.creationDate = node.getCreationDate();
 		this.modificationDate = node.getModificationDate();

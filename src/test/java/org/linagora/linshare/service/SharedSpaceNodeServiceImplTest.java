@@ -42,6 +42,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,6 +74,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -94,6 +97,7 @@ import com.google.common.collect.Sets;
 		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class SharedSpaceNodeServiceImplTest {
 	private static Logger logger = LoggerFactory.getLogger(SharedSpaceNodeServiceImplTest.class);
 
@@ -343,7 +347,7 @@ public class SharedSpaceNodeServiceImplTest {
 		node4 = service.create(foo, foo, new SharedSpaceNode("Foo's second node", null, NodeType.DRIVE));
 		node5 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
 		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.DRIVE));
-		node7 = service.create(amy, amy, new SharedSpaceNode("foo2 first node", null, NodeType.DRIVE));
+		node7 = service.create(amy, amy, new SharedSpaceNode("Amy's first node", null, NodeType.DRIVE));
 		// Filter SharedSpaces by domain by an ADMIN -> It will return just sharedSpaces of his domain
 		john.setRole(org.linagora.linshare.core.domain.constants.Role.ADMIN);
 		userRepo.update((User) john);
@@ -369,7 +373,7 @@ public class SharedSpaceNodeServiceImplTest {
 		}
 		logger.debug("This is the list of the existent domains uuids: {}", domainUuids);
 		logger.debug("This is the list of the final returned domains uuids: {}", returnedDoaminsUuids);
-//		Assertions.assertTrue(returnedDoaminsUuids.containsAll(domainUuids));
+		Assertions.assertTrue(CollectionUtils.isEqualCollection(domainUuids, returnedDoaminsUuids));
 		service.delete(root, root, node1);
 		service.delete(root, root, node2);
 		service.delete(foo, foo, node3);

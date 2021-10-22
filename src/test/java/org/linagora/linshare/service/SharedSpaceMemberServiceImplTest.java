@@ -178,6 +178,7 @@ public class SharedSpaceMemberServiceImplTest {
 		workGroup = threadService.create(john, john, "WG-nodeTest");
 		node = new SharedSpaceNode("nodeTest", NodeType.WORK_GROUP);
 		node.setUuid(workGroup.getLsUuid());
+		node.setDomainUuid(john.getDomainId());
 		nodeBusinessService.create(node);
 		lightNodePersisted = new GenericLightEntity(node.getUuid(), node.getUuid());
 		accountJhon = new SharedSpaceAccount(john);
@@ -353,8 +354,10 @@ public class SharedSpaceMemberServiceImplTest {
 	@Test
 	public void testDeleteAllWorkgroupMembersByMemberNotAllowed() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode wg = new SharedSpaceNode("wg", NodeType.WORK_GROUP);
+		wg.setDomainUuid(john.getDomainId());
 		// test delete a workgroup by a user which has not a permission 
-		SharedSpaceNode wg = nodeBusinessService.create(new SharedSpaceNode("wg", NodeType.WORK_GROUP));
+		nodeBusinessService.create(wg);
 		service.create(john, john, wg, adminRole, accountJhon);
 		service.create(john, john, wg, readerRole, accountJane);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
@@ -368,7 +371,8 @@ public class SharedSpaceMemberServiceImplTest {
 	public void testDeleteAllWorkgroupMembersByNotMember() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test delete a workgroup by a user which is not a member of it
-		SharedSpaceNode wg = nodeBusinessService.create(new SharedSpaceNode("wg", NodeType.WORK_GROUP));
+		SharedSpaceNode wg =nodeBusinessService.create(new SharedSpaceNode("wg", NodeType.WORK_GROUP));
+		wg.setDomainUuid(john.getDomainId());
 		service.create(john, john, wg, adminRole, accountJhon);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			service.deleteAllMembers(jane, jane, wg, LogActionCause.WORKGROUP_DELETION, null);
@@ -382,12 +386,13 @@ public class SharedSpaceMemberServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test delete a drive by a user which is not a member of it
 		SharedSpaceNode drive = nodeBusinessService.create(new SharedSpaceNode("drive", NodeType.DRIVE));
+		drive.setDomainUuid(john.getDomainId());
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(readerDriveRole, adminRole);
 		service.create(john, john, drive, context, accountJhon);
-		SharedSpaceNode nested1 = nodeBusinessService
-				.create(new SharedSpaceNode("nested1", drive.getUuid(), NodeType.WORK_GROUP));
-		SharedSpaceNode nested2 = nodeBusinessService
-				.create(new SharedSpaceNode("nested2", drive.getUuid(), NodeType.WORK_GROUP));
+		SharedSpaceNode nested1 = nodeBusinessService.create(new SharedSpaceNode("nested1", drive.getUuid(), NodeType.WORK_GROUP));
+		nested1.setDomainUuid(john.getDomainId());
+		SharedSpaceNode nested2 = nodeBusinessService.create(new SharedSpaceNode("nested2", drive.getUuid(), NodeType.WORK_GROUP));
+		nested2.setDomainUuid(john.getDomainId());
 		service.create(john, john, nested1, adminRole, accountJhon);
 		service.create(john, john, nested2, adminRole, accountJhon);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
