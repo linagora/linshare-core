@@ -1755,7 +1755,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<slf4j-release-version>1.7.32</slf4j-release-version>
-		<spring.version>5.2.16.RELEASE</spring.version>
+		<spring.version>5.2.18.RELEASE</spring.version>
 		<spring-data.version>Moore-SR13</spring-data.version>
 		<spring-security-release-version>5.4.9</spring-security-release-version>
 		<sql.driver.postgresql>42.3.0</sql.driver.postgresql>
