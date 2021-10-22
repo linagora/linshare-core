@@ -1744,7 +1744,7 @@
 		<guava.version>30.1.1-jre</guava.version>
 		<h2.version>1.4.200</h2.version>
 		<hibernate.version>5.4.30.Final</hibernate.version>
-		<jackson.version>2.12.3</jackson.version>
+		<jackson.version>2.13.0</jackson.version>
 		<hibernate.validator.version>6.2.0.Final</hibernate.validator.version>
 		<jclouds.version>2.4.0</jclouds.version>
 		<jjwt.version>0.11.2</jjwt.version>
