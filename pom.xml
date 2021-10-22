@@ -397,7 +397,7 @@
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>oauth2-oidc-sdk</artifactId>
-			<version>9.7</version>
+			<version>9.19</version>
 		</dependency>
 		<!-- spring security - end -->
 
@@ -794,7 +794,7 @@
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
-			<version>0.9.12</version>
+			<version>0.10.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
@@ -837,7 +837,7 @@
 		<dependency>
 			<groupId>org.passay</groupId>
 			<artifactId>passay</artifactId>
-			<version>1.6.0</version>
+			<version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>
@@ -1754,11 +1754,11 @@
 		<mozilla.rhino.version>1.7.13</mozilla.rhino.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servlet.context.version>3.0.1</servlet.context.version>
-		<slf4j-release-version>1.7.30</slf4j-release-version>
+		<slf4j-release-version>1.7.32</slf4j-release-version>
 		<spring.version>5.2.16.RELEASE</spring.version>
 		<spring-data.version>Moore-SR13</spring-data.version>
-		<spring-security-release-version>5.4.8</spring-security-release-version>
-		<sql.driver.postgresql>42.2.20</sql.driver.postgresql>
+		<spring-security-release-version>5.4.9</spring-security-release-version>
+		<sql.driver.postgresql>42.3.0</sql.driver.postgresql>
 		<thymeleaf.version>3.0.12.RELEASE</thymeleaf.version>
 	</properties>
 </project>
