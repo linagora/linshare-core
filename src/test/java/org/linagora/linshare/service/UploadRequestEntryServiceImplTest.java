@@ -152,8 +152,9 @@ public class UploadRequestEntryServiceImplTest {
 
 	private Contact yoda;
 
-	private final InputStream stream = Thread.currentThread().getContextClassLoader()
-			.getResourceAsStream("linshare-default.properties");
+	private InputStream stream;
+
+	private InputStream stream2;
 
 	private final String fileName = "linshare-default.properties";
 
@@ -173,6 +174,8 @@ public class UploadRequestEntryServiceImplTest {
 		AbstractDomain subDomain = abstractDomainRepository.findById(LinShareTestConstants.SUB_DOMAIN);
 		yoda = repository.findByMail("yoda@linshare.org");
 		john.setDomain(subDomain);
+		stream = getStream("linshare-default.properties");
+		stream2 = getStream("linshare.properties.sample");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -180,6 +183,10 @@ public class UploadRequestEntryServiceImplTest {
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
+	}
+
+	private InputStream getStream(String resourceName) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceName);
 	}
 
 	private UploadRequest createdUploadRequest() throws ParseException {
@@ -417,6 +424,33 @@ public class UploadRequestEntryServiceImplTest {
 		uploadRequestBusinessService.updateStatus(enabledUploadRequest, UploadRequestStatus.DELETED);
 		Assertions.assertTrue(enabledUploadRequest.isDeleted());
 		Assertions.assertEquals(uploadRequestEntry.getUuid(), recoveredUREUuid);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testforbidEntryCreationExceedingMaxNumber() throws BusinessException, IOException, ParseException {
+		// In this test we will forbid the entry creation if exceeds the max count
+		// number
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequest enabledUploadRequest = enabledUploadRequest();
+		Assertions.assertNotNull(enabledUploadRequest);
+		UploadRequestUrl url = enabledUploadRequest.getUploadRequestURLs().iterator().next();
+		Assertions.assertNotNull(url);
+		enabledUploadRequest.setMaxFileCount(1);
+		enabledUploadRequest = uploadRequestService.update(john, john, enabledUploadRequest.getUuid(),
+				enabledUploadRequest, false);
+		Assertions.assertEquals(1, enabledUploadRequest.getMaxFileCount());
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		File tempFile2 = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream2, tempFile2);
+		uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null, url);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestEntryService.create(jane, jane, tempFile2, fileName, comment, false, null, url);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_TOO_MANY_FILES, exception.getErrorCode());
+		enabledUploadRequest.setMaxFileCount(3);
+		uploadRequestService.update(john, john, enabledUploadRequest.getUuid(), enabledUploadRequest, false);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

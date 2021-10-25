@@ -274,10 +274,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		}
 		if (request.getMaxFileCount() != null) {
 			// already reach the limit
-			if (numberOfUploadedFiles + 1 > request.getMaxFileCount()) {
-				throw new BusinessException(
-						BusinessErrorCode.UPLOAD_REQUEST_TOO_MANY_FILES,
-						"You already have reached the uploaded file limit.");
+			if (numberOfUploadedFiles > request.getMaxFileCount()) {
+				String errMsg = String.format("You already have reached the uploaded file limit: %1$s",
+						request.getMaxFileCount());
+				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_TOO_MANY_FILES, errMsg);
 			}
 		}
 		if (request.getMaxDepositSize() != null) {
