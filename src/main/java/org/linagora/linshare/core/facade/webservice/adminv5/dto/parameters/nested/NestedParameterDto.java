@@ -58,8 +58,8 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 			@DiscriminatorMapping(value = "STRING", schema = NestedStringParameterDto.class),
 			@DiscriminatorMapping(value = "LANGUAGE", schema = NestedLanguageParameterDto.class),
 			@DiscriminatorMapping(value = "INTEGER", schema = NestedIntegerParameterDto.class),
-			@DiscriminatorMapping(value = "INTEGER", schema = NestedFileSizeParameterDto.class),
-			@DiscriminatorMapping(value = "INTEGER", schema = NestedTimeParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_SIZE", schema = NestedFileSizeParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_TIME", schema = NestedTimeParameterDto.class),
 	}
 )
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = false)
