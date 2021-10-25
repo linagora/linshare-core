@@ -38,14 +38,18 @@ package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.FunctionalityDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.PolicyDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
 
@@ -83,7 +87,41 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 
 	@Override
 	public FunctionalityDto update(FunctionalityDto func) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+		User authUser = checkAuthentication(Role.ADMIN);
+
+		Validate.notNull(func, "functionality object must be set.");
+		Validate.notNull(func.getDomain(), "domain object must be set.");
+		String domainUuid = func.getDomain().getUuid();
+		Validate.notEmpty(domainUuid, "domain uuid must be set.");
+		Validate.notEmpty(func.getIdentifier(), "functionality identifier must be set.");
+
+		Functionality entity = service.find(authUser, domainUuid, func.getIdentifier(), false);
+
+		updatePolicy(entity.getActivationPolicy(), func.getActivationPolicy(), entity.getIdentifier(), "activation policy");
+		updatePolicy(entity.getConfigurationPolicy(), func.getConfigurationPolicy(), entity.getIdentifier(), "configuration policy");
+		updatePolicy(entity.getDelegationPolicy(), func.getDelegationPolicy(), entity.getIdentifier(), "delegation policy");
+
+		Functionality update = service.update(authUser, domainUuid, entity);
+		return FunctionalityDto.toDto().apply(update);
+	}
+
+	private void updatePolicy(Policy policyEntity, PolicyDto policyDto, String identifier, String policyName) {
+		if (policyEntity != null) {
+			logger.debug("No delefation policy for functionality: %s", identifier);
+			Validate.notNull(policyDto, policyName + " object is missing");
+			Validate.notNull(policyDto.getEnable(), "Enable object of " + policyName + " is missing");
+			Validate.notNull(policyDto.getAllowOverride(), "AllowOverride object of "+ policyName + " is missing");
+			policyEntity.setStatus(policyDto.getEnable().isValue());
+			if (policyDto.getAllowOverride().isValue()) {
+				policyEntity.setPolicy(Policies.ALLOWED);
+			} else {
+				if (policyDto.getEnable().isValue()) {
+					policyEntity.setPolicy(Policies.MANDATORY);
+				} else {
+					policyEntity.setPolicy(Policies.FORBIDDEN);
+				}
+			}
+		}
 	}
 
 	@Override
