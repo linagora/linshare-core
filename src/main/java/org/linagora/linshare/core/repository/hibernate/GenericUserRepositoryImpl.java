@@ -134,7 +134,31 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	public PageContainer<U> findAll(AbstractDomain domain, Order sortOrder, String mail, String firstName,
 			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,
 			PageContainer<U> container) {
-		DetachedCriteria detachedCrit = getAllCriteria(domain);
+		DetachedCriteria detachedCrit = getAllCriteria(domain, mail, firstName, lastName, restricted, canCreateGuest,
+				canUpload, role, type);
+		detachedCrit.addOrder(sortOrder);
+		Long totalNumberElements = count(domain, mail, firstName, lastName, restricted, canCreateGuest, canUpload, role,
+				type);
+		return findAll(detachedCrit, totalNumberElements, container);
+	}
+
+	private Long count(AbstractDomain domain, String mail, String firstName, String lastName, Boolean restricted,
+			Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type) {
+		DetachedCriteria detachedCrit = getAllCriteria(domain, mail, firstName, lastName, restricted, canCreateGuest,
+				canUpload, role, type);
+		detachedCrit.setProjection(Projections.rowCount());
+		return (Long) detachedCrit.getExecutableCriteria(getCurrentSession()).uniqueResult();
+	}
+
+	private DetachedCriteria getAllCriteria(AbstractDomain domain, String mail, String firstName,
+			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type) {
+		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
+		detachedCrit.add(Restrictions.eq("destroyed", 0L));
+		detachedCrit.add(Restrictions.not(Restrictions.in("class", Lists.newArrayList(AccountType.ROOT.toInt(),
+				AccountType.TECHNICAL_ACCOUNT.toInt()))));
+		if (!Objects.isNull(domain)) {
+			detachedCrit.add(Restrictions.eq("domain", domain));
+		}
 		if (!Strings.isNullOrEmpty(mail)) {
 			detachedCrit.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
 		}
@@ -158,24 +182,6 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		}
 		if (Objects.nonNull(type)) {
 			detachedCrit.add(Restrictions.in("class", type.toInt()));
-		}
-		detachedCrit.addOrder(sortOrder);
-		return findAll(detachedCrit, count(domain), container);
-	}
-
-	private Long count(AbstractDomain domain) {
-		DetachedCriteria detachedCrit = getAllCriteria(domain);
-		detachedCrit.setProjection(Projections.rowCount());
-		return (Long) detachedCrit.getExecutableCriteria(getCurrentSession()).uniqueResult();
-	}
-
-	private DetachedCriteria getAllCriteria(AbstractDomain domain) {
-		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
-		detachedCrit.add(Restrictions.eq("destroyed", 0L));
-		detachedCrit.add(Restrictions.not(Restrictions.in("class", Lists.newArrayList(AccountType.ROOT.toInt(),
-				AccountType.TECHNICAL_ACCOUNT.toInt()))));
-		if (!Objects.isNull(domain)) {
-			detachedCrit.add(Restrictions.eq("domain", domain));
 		}
 		return detachedCrit;
 	}

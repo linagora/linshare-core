@@ -68,6 +68,8 @@ import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
@@ -81,7 +83,9 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.UserService2;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,10 +148,13 @@ public class UserServiceImplTest {
 	private DomainAccessPolicyRepository domainAccessRepository;
 
 	@Autowired
+	private UserService2 userService2;
+
+	@Autowired
 	private GuestService guestService;
 
 	private User john;
-	
+
 	private Account root;
 
 	private TechnicalAccount technicalAccount;
@@ -937,5 +944,37 @@ public class UserServiceImplTest {
 		Assertions.assertTrue(john.isLocked(), "Initial conditions: John should be locked");
 		userService.unlockUser(root, john);
 		Assertions.assertFalse(john.isLocked(), "John still locked");
+	}
+
+	@Test
+	public void testFindAllUsersWithPagination() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PageContainer<User> container = new PageContainer<User>(0, 2);
+		SortOrder order = SortOrder.DESC;
+		UserFields field = UserFields.modificationDate;
+		String mail = null;
+		String firstName = null;
+		String lastName = null;
+		String role = null;
+		String type = null;
+		Boolean restricted = null;
+		Boolean canUpload = null;
+		Boolean canCreateGuest = null;
+		//filter users by John's domain
+		AbstractDomain domain1 = abstractDomainRepository.findById(john.getDomainId());
+		PageContainer<User> usersByJohnsDomain = userService2.findAll(root, root, domain1, order, field, mail, firstName,
+				lastName, restricted, canCreateGuest, canUpload, role, type, container);
+		Assertions.assertEquals(3, usersByJohnsDomain.getTotalElements());
+		//filter users by Amy's domain
+		AbstractDomain domain2 = abstractDomainRepository.findById(LinShareTestConstants.TOP_DOMAIN2);
+		PageContainer<User> usersByAmysDomain = userService2.findAll(root, root, domain2, order, field, mail, firstName,
+				lastName, restricted, canCreateGuest, canUpload, role, type, container);
+		Assertions.assertEquals(1, usersByAmysDomain.getTotalElements());
+		// Filter users by john's mail
+		mail = LinShareTestConstants.JOHN_ACCOUNT;
+		PageContainer<User> usersByMail = userService2.findAll(root, root, domain1, order, field, mail, firstName,
+				lastName, restricted, canCreateGuest, canUpload, role, type, container);
+		Assertions.assertEquals(1, usersByMail.getTotalElements());
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
