@@ -33,9 +33,9 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.ServerType;
@@ -50,9 +50,9 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements RemoteServerFacade {
 
@@ -75,10 +75,11 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	@Override
 	public List<AbstractServerDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		LdapConnectionService remoteServer = getService(ServerType.LDAP);
-		List<AbstractServerDto> ldapConnections = ImmutableList
-				.copyOf(Lists.transform(remoteServer.findAll(), LDAPServerDto.toDto()));
-		return ldapConnections;
+		return getService(ServerType.LDAP)
+				.findAll()
+				.stream()
+				.map(LDAPServerDto::from)
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 		Validate.notEmpty(uuid, "ldap connection uuid must be set.");
 		LdapConnectionService remoteServer = getService(ServerType.LDAP);
 		LdapConnection ldapConnection = remoteServer.find(uuid);
-		return new LDAPServerDto(ldapConnection);
+		return LDAPServerDto.from(ldapConnection);
 	}
 
 
@@ -96,20 +97,22 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(ldapServerDto, "Ldap server to create must be set");
 		LdapConnectionService remoteServer = getService(ServerType.LDAP);
-		return new LDAPServerDto(remoteServer.create(ldapServerDto.toLdapServerObject()));
+		return LDAPServerDto.from(remoteServer.create(ldapServerDto.toLdapServerObject()));
 	}
 
 	@Override
 	public AbstractServerDto update(String uuid, LDAPServerDto ldapServerDto) {
 		checkAuthentication(Role.SUPERADMIN);
 		if (!Strings.isNullOrEmpty(uuid)) {
-			ldapServerDto.setUuid(uuid);
+			ldapServerDto = LDAPServerDto.builder(ldapServerDto)
+					.uuid(uuid)
+					.build();
 		}
 		Validate.notEmpty(ldapServerDto.getUuid(), "Ldap Server's uuid must be set");
 		LdapConnectionService remoteServer = getService(ServerType.LDAP);
 		LdapConnection ldapConnection = remoteServer.find(ldapServerDto.getUuid());
 		ldapConnection = remoteServer.update(ldapServerDto.toLdapServerObject());
-		return new LDAPServerDto(ldapConnection);
+		return LDAPServerDto.from(ldapConnection);
 	}
 
 	@Override
@@ -123,7 +126,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 		Validate.notEmpty(uuid, "Ldap server's uuid must be set");
 		LdapConnectionService remoteServer = getService(ServerType.LDAP);
 		LdapConnection conn = remoteServer.delete(uuid);
-		return new LDAPServerDto(conn);
+		return LDAPServerDto.from(conn);
 	}
 
 	@Override

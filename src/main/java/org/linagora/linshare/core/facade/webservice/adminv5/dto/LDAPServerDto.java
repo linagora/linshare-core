@@ -33,39 +33,91 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.linagora.linshare.core.domain.constants.ServerType;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.common.base.Function;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-
+@JsonDeserialize(builder = LDAPServerDto.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "LdapServer")
 @Schema(name = "LdapServer", description = "A LDAP server connection")
 public class LDAPServerDto extends AbstractServerDto {
 
-	@Schema(description = "Ldap server's bindDn", required = false)
-	private String bindDn;
-
-	@Schema(description = "Ldap server's password", required = false)
-	private String bindPassword;
-
-	protected LDAPServerDto() {
-		super();
+	public static LDAPServerDto from(LdapConnection ldapConnection) {
+		return builder()
+			.bindDn(ldapConnection.getSecurityPrincipal())
+			.bindPassword(ldapConnection.getSecurityCredentials())
+			.uuid(ldapConnection.getUuid())
+			.name(ldapConnection.getLabel())
+			.url(ldapConnection.getProviderUrl())
+			.serverType(ldapConnection.getType())
+			.creationDate(ldapConnection.getCreationDate())
+			.modificationDate(ldapConnection.getModificationDate())
+			.build();
 	}
 
-	public LDAPServerDto(LdapConnection ldapConnection) {
-		this.uuid = ldapConnection.getUuid();
-		this.name = ldapConnection.getLabel();
-		this.url = ldapConnection.getProviderUrl();
-		this.bindDn = ldapConnection.getSecurityPrincipal();
-		this.bindPassword = ldapConnection.getSecurityCredentials();
-		this.serverType = ldapConnection.getType();
-		this.creationDate = ldapConnection.getCreationDate();
-		this.modificationDate = ldapConnection.getModificationDate();
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	public static Builder builder(LDAPServerDto ldapServerDto) {
+		return (Builder) new Builder()
+			.bindDn(ldapServerDto.getBindDn())
+			.bindPassword(ldapServerDto.getBindPassword())
+			.uuid(ldapServerDto.getUuid())
+			.name(ldapServerDto.getName())
+			.url(ldapServerDto.getUrl())
+			.serverType(ldapServerDto.getServerType())
+			.creationDate(ldapServerDto.getCreationDate())
+			.modificationDate(ldapServerDto.getModificationDate());
+	}
+
+	@JsonPOJOBuilder(withPrefix = "")
+	public static class Builder extends AbstractServerDtoBuilder<LDAPServerDto> {
+		private String bindDn;
+		private String bindPassword;
+
+		public Builder bindDn(String bindDn) {
+			this.bindDn = bindDn;
+			return this;
+		}
+
+		public Builder bindPassword(String bindPassword) {
+			this.bindPassword = bindPassword;
+			return this;
+		}
+
+		@Override
+		public LDAPServerDto build() {
+			validation();
+			return new LDAPServerDto(bindDn, bindPassword, uuid, name, description, url, serverType, creationDate, modificationDate);
+		}
+	}
+
+	@Schema(description = "Ldap server's bindDn", required = false)
+	private final String bindDn;
+
+	@Schema(description = "Ldap server's password", required = false)
+	private final String bindPassword;
+
+	private LDAPServerDto(String bindDn, String bindPassword, String uuid, String name, String description, String url, ServerType serverType, Date creationDate, Date modificationDate) {
+		super(uuid, name, description, url, serverType, creationDate, modificationDate);
+		this.bindDn = bindDn;
+		this.bindPassword = bindPassword;
+	}
+
+	public String getBindDn() {
+		return bindDn;
+	}
+
+	public String getBindPassword() {
+		return bindPassword;
 	}
 
 	public LdapConnection toLdapServerObject() {
@@ -78,33 +130,5 @@ public class LDAPServerDto extends AbstractServerDto {
 		connection.setCreationDate(getCreationDate());
 		connection.setModificationDate(getModificationDate());
 		return connection;
-	}
-
-	public String getBindDn() {
-		return bindDn;
-	}
-
-	public void setBindDn(String bindDn) {
-		this.bindDn = bindDn;
-	}
-
-	public String getBindPassword() {
-		return bindPassword;
-	}
-
-	public void setBindPassword(String bindPassword) {
-		this.bindPassword = bindPassword;
-	}
-
-	/*
-	 * Transformers
-	 */
-	public static Function<LdapConnection, LDAPServerDto> toDto() {
-		return new Function<LdapConnection, LDAPServerDto>() {
-			@Override
-			public LDAPServerDto apply(LdapConnection arg0) {
-				return new LDAPServerDto(arg0);
-			}
-		};
 	}
 }
