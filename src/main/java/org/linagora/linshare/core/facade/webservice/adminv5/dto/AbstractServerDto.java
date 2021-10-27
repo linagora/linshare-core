@@ -34,13 +34,12 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 
-import java.util.Date;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.linagora.linshare.core.domain.constants.ServerType;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Date;
 
-public class AbstractServerDto {
+public abstract class AbstractServerDto {
 
 	@Schema(description = "Server's uuid", required = true)
 	protected String uuid;
