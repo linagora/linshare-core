@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
@@ -130,4 +131,11 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 			defaut);
 	}
 
+	@Override
+	public void updateFunctionalityValuesOnlyFromDto(
+			org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> param) {
+		Validate.isTrue(param.getType().equals("LANGUAGE"), "Wrong parameter type");
+		NestedLanguageParameterDto dto = (NestedLanguageParameterDto) param.getDefaut();
+		this.setValue(dto.getValue());
+	}
 }

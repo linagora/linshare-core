@@ -58,12 +58,12 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 			@DiscriminatorMapping(value = "INTEGER_MAX", schema = IntegerMaximumParameterDto.class),
 			@DiscriminatorMapping(value = "INTEGER_ALL", schema = IntegerDefaultAndMaximumParameterDto.class),
 			@DiscriminatorMapping(value = "LANGUAGE", schema = LanguageParameterDto.class),
-			@DiscriminatorMapping(value = "UNIT_SIZE_DEFAULT", schema = TimeUnitDefaultParameterDto.class),
-			@DiscriminatorMapping(value = "UNIT_SIZE_MAX", schema = TimeUnitMaximumParameterDto.class),
-			@DiscriminatorMapping(value = "UNIT_SIZE_ALL", schema = TimeUnitDefaultAndMaximumParameterDto.class),
-			@DiscriminatorMapping(value = "UNIT_TIME_DEFAULT", schema = FileSizeUnitDefaultParameterDto.class),
-			@DiscriminatorMapping(value = "UNIT_TIME_MAX", schema = FileSizeUnitMaximumParameterDto.class),
-			@DiscriminatorMapping(value = "UNIT_TIME_ALL", schema = FileSizeUnitDefaultAndMaximumParameterDto.class)
+			@DiscriminatorMapping(value = "UNIT_TIME_DEFAULT", schema = TimeUnitDefaultParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_TIME_MAX", schema = TimeUnitMaximumParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_TIME_ALL", schema = TimeUnitDefaultAndMaximumParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_SIZE_DEFAULT", schema = FileSizeUnitDefaultParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_SIZE_MAX", schema = FileSizeUnitMaximumParameterDto.class),
+			@DiscriminatorMapping(value = "UNIT_SIZE_ALL", schema = FileSizeUnitDefaultAndMaximumParameterDto.class)
 	}
 )
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
@@ -74,12 +74,12 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 	@Type(value = IntegerMaximumParameterDto.class, name="INTEGER_MAX"),
 	@Type(value = IntegerDefaultAndMaximumParameterDto.class, name="INTEGER_ALL"),
 	@Type(value = LanguageParameterDto.class, name="LANGUAGE"),
-	@Type(value = TimeUnitDefaultParameterDto.class, name="UNIT_SIZE_DEFAULT"),
-	@Type(value = TimeUnitMaximumParameterDto.class, name="UNIT_SIZE_MAX"),
-	@Type(value = TimeUnitDefaultAndMaximumParameterDto.class, name="UNIT_SIZE_ALL"),
-	@Type(value = FileSizeUnitDefaultParameterDto.class, name="UNIT_TIME_DEFAULT"),
-	@Type(value = FileSizeUnitMaximumParameterDto.class, name="UNIT_TIME_MAX"),
-	@Type(value = FileSizeUnitDefaultAndMaximumParameterDto.class, name="UNIT_TIME_ALL"),
+	@Type(value = TimeUnitDefaultParameterDto.class, name="UNIT_TIME_DEFAULT"),
+	@Type(value = TimeUnitMaximumParameterDto.class, name="UNIT_TIME_MAX"),
+	@Type(value = TimeUnitDefaultAndMaximumParameterDto.class, name="UNIT_TIME_ALL"),
+	@Type(value = FileSizeUnitDefaultParameterDto.class, name="UNIT_SIZE_DEFAULT"),
+	@Type(value = FileSizeUnitMaximumParameterDto.class, name="UNIT_SIZE_MAX"),
+	@Type(value = FileSizeUnitDefaultAndMaximumParameterDto.class, name="UNIT_SIZE_ALL"),
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class ParameterDto <T> {

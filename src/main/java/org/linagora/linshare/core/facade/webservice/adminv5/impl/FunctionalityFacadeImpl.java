@@ -45,7 +45,6 @@ import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.FunctionalityDto;
@@ -99,27 +98,31 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 
 		updatePolicy(entity.getActivationPolicy(), func.getActivationPolicy(), entity.getIdentifier(), "activation policy");
 		updatePolicy(entity.getConfigurationPolicy(), func.getConfigurationPolicy(), entity.getIdentifier(), "configuration policy");
-		updatePolicy(entity.getDelegationPolicy(), func.getDelegationPolicy(), entity.getIdentifier(), "delegation policy");
+		if (entity.getDelegationPolicy() != null) {
+			updatePolicy(entity.getDelegationPolicy(), func.getDelegationPolicy(), entity.getIdentifier(), "delegation policy");
+		} else {
+			logger.debug("No delegation policy for functionality: %s", entity.getIdentifier());
+		}
+
+		// copy of parameters.
+		entity.updateFunctionalityValuesOnlyFromDto(func.getParameter());
 
 		Functionality update = service.update(authUser, domainUuid, entity);
 		return FunctionalityDto.toDto().apply(update);
 	}
 
 	private void updatePolicy(Policy policyEntity, PolicyDto policyDto, String identifier, String policyName) {
-		if (policyEntity != null) {
-			logger.debug("No delefation policy for functionality: %s", identifier);
-			Validate.notNull(policyDto, policyName + " object is missing");
-			Validate.notNull(policyDto.getEnable(), "Enable object of " + policyName + " is missing");
-			Validate.notNull(policyDto.getAllowOverride(), "AllowOverride object of "+ policyName + " is missing");
-			policyEntity.setStatus(policyDto.getEnable().isValue());
-			if (policyDto.getAllowOverride().isValue()) {
-				policyEntity.setPolicy(Policies.ALLOWED);
+		Validate.notNull(policyDto, policyName + " object is missing");
+		Validate.notNull(policyDto.getEnable(), "Enable object of " + policyName + " is missing");
+		Validate.notNull(policyDto.getAllowOverride(), "AllowOverride object of "+ policyName + " is missing");
+		policyEntity.setStatus(policyDto.getEnable().isValue());
+		if (policyDto.getAllowOverride().isValue()) {
+			policyEntity.setPolicy(Policies.ALLOWED);
+		} else {
+			if (policyDto.getEnable().isValue()) {
+				policyEntity.setPolicy(Policies.MANDATORY);
 			} else {
-				if (policyDto.getEnable().isValue()) {
-					policyEntity.setPolicy(Policies.MANDATORY);
-				} else {
-					policyEntity.setPolicy(Policies.FORBIDDEN);
-				}
+				policyEntity.setPolicy(Policies.FORBIDDEN);
 			}
 		}
 	}

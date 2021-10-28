@@ -138,6 +138,10 @@ public class Functionality extends AbstractFunctionality {
 		// no data in this class.
 	}
 
+	public void updateFunctionalityValuesOnlyFromDto(org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> param) {
+		// no data in this class.
+	}
+
 	/**
 	 * Need to be override by every subclasses.
 	 * @param enable TODO

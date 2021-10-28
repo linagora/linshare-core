@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
@@ -504,6 +505,61 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			}
 		}
 		throw new TechnicalException("unsupported type.");
+	}
+
+	@Override
+	public void updateFunctionalityValuesOnlyFromDto(
+			org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> param) {
+		switch (param.getType()) {
+			case "UNIT_SIZE_DEFAULT":
+			case "UNIT_SIZE_MAX":
+			case "UNIT_SIZE_ALL":
+				if (this.valueUsed) {
+					Validate.notNull(param.getDefaut(), "Default object value must be set");
+					NestedFileSizeParameterDto dto = (NestedFileSizeParameterDto) param.getDefaut();
+					Validate.notNull(dto.getValue(), "Default value must be set");
+					this.setValue(dto.getValue());
+					FileSizeUnitClass sizeUnit = (FileSizeUnitClass) this.getUnit();
+					sizeUnit.setUnitValue(dto.getUnit());
+				}
+				if (this.maxValueUsed) {
+					Validate.notNull(param.getMaximum(), "Maximum object value must be set");
+					NestedFileSizeParameterDto dto = (NestedFileSizeParameterDto) param.getMaximum();
+					Validate.notNull(dto.getValue(), "Maximum value must be set");
+					this.setMaxValue(dto.getValue());
+					FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
+					sizeMaxUnit.setUnitValue(dto.getUnit());
+					// TODO: unlimited
+				}
+				break;
+			case "UNIT_TIME_DEFAULT":
+			case "UNIT_TIME_MAX":
+			case "UNIT_TIME_ALL":
+				if (this.valueUsed) {
+					Validate.notNull(param.getDefaut(), "Default object value must be set");
+					NestedTimeParameterDto dto = (NestedTimeParameterDto) param.getDefaut();
+					Validate.notNull(dto.getValue(), "Default value must be set");
+					this.setValue(dto.getValue());
+					TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+					timeUnit.setUnitValue(dto.getUnit());
+				}
+				if (this.maxValueUsed) {
+					Validate.notNull(param.getMaximum(), "Maximum object value must be set");
+					NestedTimeParameterDto dto = (NestedTimeParameterDto) param.getMaximum();
+					Validate.notNull(dto.getValue(), "Maximum value must be set");
+					if (FunctionalityNames.GUESTS__EXPIRATION.toString().equals(this.getIdentifier()) && dto.getValue() == -1) {
+						logger.error("GUEST__EXPIRATION max_value can not be updated to unlimited");
+						throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT,"GUESTS__EXPIRATION max_value can not be updated to unlimited");
+					}
+					this.setMaxValue(dto.getValue());
+					TimeUnitClass timeUnit = (TimeUnitClass) getMaxUnit();
+					timeUnit.setUnitValue(dto.getUnit());
+					// TODO: unlimited
+				}
+				break;
+			default:
+				throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Wrong parameter type");
+		}
 	}
 
 	@Override

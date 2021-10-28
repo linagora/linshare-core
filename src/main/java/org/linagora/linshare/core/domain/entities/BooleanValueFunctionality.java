@@ -38,6 +38,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.BooleanParameterDto;
@@ -149,5 +150,13 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 			this.system,
 			!this.getParentAllowParametersUpdate(),
 			defaut);
+	}
+
+	@Override
+	public void updateFunctionalityValuesOnlyFromDto(
+			org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> param) {
+		Validate.isTrue(param.getType().equals("BOOLEAN"), "Wrong parameter type");
+		NestedBooleanParameterDto dto = (NestedBooleanParameterDto) param.getDefaut();
+		this.setValue(dto.getValue());
 	}
 }

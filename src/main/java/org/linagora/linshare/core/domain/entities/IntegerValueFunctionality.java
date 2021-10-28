@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -249,6 +250,25 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 			return new IntegerDefaultParameterDto(this.system, !this.getParentAllowParametersUpdate(), defaut);
 		} else {
 			return new IntegerMaximumParameterDto(this.system, !this.getParentAllowParametersUpdate(), maximum, unlimited);
+		}
+	}
+
+	@Override
+	public void updateFunctionalityValuesOnlyFromDto(
+			org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> param) {
+		Validate.isTrue(param.getType().equals("INTEGER"), "Wrong parameter type");
+		if (this.valueUsed) {
+			Validate.notNull(param.getDefaut(), "Default object value must be set");
+			NestedIntegerParameterDto dto = (NestedIntegerParameterDto) param.getDefaut();
+			Validate.notNull(dto.getValue(), "Default value must be set");
+			this.setValue(dto.getValue());
+		}
+		if (this.maxValueUsed) {
+			Validate.notNull(param.getMaximum(), "Maximum object value must be set");
+			NestedIntegerParameterDto dto = (NestedIntegerParameterDto) param.getMaximum();
+			Validate.notNull(dto.getValue(), "Maximum value must be set");
+			this.setMaxValue(dto.getValue());
+			// TODO: unlimited
 		}
 	}
 }
