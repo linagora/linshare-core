@@ -281,10 +281,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			}
 		}
 		if (request.getMaxDepositSize() != null) {
-			if (totalUploadedEntriesSize + entry.getSize() > request.getMaxDepositSize()) {
-				throw new BusinessException(
-						BusinessErrorCode.UPLOAD_REQUEST_TOTAL_DEPOSIT_SIZE_TOO_LARGE,
-						"You already have reached the max deposit size limit.");
+			if (totalUploadedEntriesSize > request.getMaxDepositSize()) {
+				String errMsg = String.format("You already have reached the max deposit size limit : %1$s",
+						request.getMaxDepositSize());
+				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_TOTAL_DEPOSIT_SIZE_TOO_LARGE, errMsg);
 			}
 		}
 	}
