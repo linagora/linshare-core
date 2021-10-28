@@ -91,6 +91,7 @@ public abstract class AbstractServerDtoBuilder<T extends AbstractServerDto> {
 	public void validation() {
 		Validate.notBlank(name, "name must be set.");
 		Validate.notBlank(url, "url must be set.");
+		Validate.notNull(serverType, "Server type must be set");
 	}
 
 	public abstract T build();

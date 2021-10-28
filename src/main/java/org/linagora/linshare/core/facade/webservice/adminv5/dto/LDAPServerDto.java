@@ -40,12 +40,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.linagora.linshare.core.domain.constants.ServerType;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
+import java.util.Optional;
 
 @JsonDeserialize(builder = LDAPServerDto.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@XmlRootElement(name = "LdapServer")
 @Schema(name = "LdapServer", description = "A LDAP server connection")
 public class LDAPServerDto extends AbstractServerDto {
 
@@ -56,9 +55,22 @@ public class LDAPServerDto extends AbstractServerDto {
 			.uuid(ldapConnection.getUuid())
 			.name(ldapConnection.getLabel())
 			.url(ldapConnection.getProviderUrl())
-			.serverType(ldapConnection.getType())
+			.serverType(ldapConnection.getServerType())
 			.creationDate(ldapConnection.getCreationDate())
 			.modificationDate(ldapConnection.getModificationDate())
+			.build();
+	}
+
+	public static LDAPServerDto from(String uuid, LDAPServerDto ldapServerDto) {
+		return builder()
+			.bindDn(ldapServerDto.getBindDn())
+			.bindPassword(ldapServerDto.getBindPassword())
+			.uuid(uuid)
+			.name(ldapServerDto.getName())
+			.url(ldapServerDto.getUrl())
+			.serverType(ldapServerDto.getServerType())
+			.creationDate(ldapServerDto.getCreationDate())
+			.modificationDate(ldapServerDto.getModificationDate())
 			.build();
 	}
 
@@ -120,9 +132,9 @@ public class LDAPServerDto extends AbstractServerDto {
 		return bindPassword;
 	}
 
-	public LdapConnection toLdapServerObject() {
+	public LdapConnection toLdapServerObject(Optional<String> uuid) {
 		LdapConnection connection = new LdapConnection();
-		connection.setUuid(getUuid());
+		connection.setUuid(uuid.orElse(getUuid()));
 		connection.setLabel(getName());
 		connection.setProviderUrl(getUrl());
 		connection.setSecurityPrincipal(getBindDn());

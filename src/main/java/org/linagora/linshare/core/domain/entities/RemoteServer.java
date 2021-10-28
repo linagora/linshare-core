@@ -36,73 +36,73 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.ServerType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LdapConnectionDto;
 
-public class LdapConnection extends RemoteServer {
+import java.util.Date;
 
-	protected String providerUrl;
+public abstract class RemoteServer {
 
-	protected String securityAuth;
+	protected long id;
 
-	protected String securityPrincipal;
+	protected ServerType serverType;
 
-	protected String securityCredentials;
+	protected String uuid;
 
-	public LdapConnection() {
-		super();
-		this.serverType = ServerType.LDAP;
+	protected String label;
+
+	protected Date creationDate;
+
+	protected Date modificationDate;
+
+	public long getId() {
+		return id;
 	}
 
-	public LdapConnection(LdapConnectionDto ldapConnectionDto) {
-		super();
-		this.serverType = ServerType.LDAP;
-		this.label = ldapConnectionDto.getLabel();
-		this.uuid = ldapConnectionDto.getUuid();
-		this.providerUrl = ldapConnectionDto.getProviderUrl();
-		this.securityAuth = ldapConnectionDto.getSecurityAuth();
-		this.securityPrincipal = ldapConnectionDto.getSecurityPrincipal();
-		this.securityCredentials = ldapConnectionDto.getSecurityCredentials();
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	public LdapConnection(String label, String providerUrl, String securityAuth) {
-		super();
-		this.serverType = ServerType.LDAP;
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
 		this.label = label;
-		this.providerUrl = providerUrl;
-		this.securityAuth = securityAuth;
-		this.securityCredentials = null;
-		this.securityPrincipal = null;
 	}
 
-	public String getProviderUrl() {
-		return providerUrl;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public void setProviderUrl(String providerUrl) {
-		this.providerUrl = providerUrl;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
-	public String getSecurityAuth() {
-		return securityAuth;
+	public Date getModificationDate() {
+		return modificationDate;
 	}
 
-	public void setSecurityAuth(String securityAuth) {
-		this.securityAuth = securityAuth;
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
-	public String getSecurityPrincipal() {
-		return securityPrincipal;
+	public ServerType getServerType() {
+		return serverType;
 	}
 
-	public void setSecurityPrincipal(String securityPrincipal) {
-		this.securityPrincipal = securityPrincipal;
+	public void setServerType(ServerType serverType) {
+		this.serverType = serverType;
 	}
 
-	public String getSecurityCredentials() {
-		return securityCredentials;
-	}
-
-	public void setSecurityCredentials(String securityCredentials) {
-		this.securityCredentials = securityCredentials;
+	@Override
+	public String toString() {
+		return "RemoteServer [uuid=" + uuid + ", label=" + label + ", type=" + getServerType() + "]";
 	}
 }

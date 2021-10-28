@@ -194,9 +194,10 @@ CREATE TABLE functionality_unit (
   CONSTRAINT linshare_functionality_unit_pkey
     PRIMARY KEY (functionality_id));
 
-CREATE TABLE ldap_connection (
+CREATE TABLE remote_server (
   id                    int8 NOT NULL,
   uuid                 varchar(255) NOT NULL UNIQUE,
+  server_type          varchar(255) NOT NULL,
   label                varchar(255) NOT NULL,
   provider_url         varchar(255) NOT NULL,
   security_auth        varchar(255),
@@ -204,7 +205,7 @@ CREATE TABLE ldap_connection (
   security_credentials varchar(255),
   creation_date        timestamp NOT NULL,
   modification_date    timestamp NOT NULL,
-  CONSTRAINT linshare_ldap_connection_pkey
+  CONSTRAINT linshare_remote_server_pkey
     PRIMARY KEY (id));
 CREATE TABLE log_entry (
   id                int8 NOT NULL,
@@ -1023,12 +1024,12 @@ ALTER TABLE upload_request_group ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (
 ALTER TABLE upload_request_group ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE functionality_enum_lang ADD CONSTRAINT FKfunctional140416 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
-ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr166740 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr166740 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr806790 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs163989 FOREIGN KEY (user_provider_id) REFERENCES user_provider (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs253989 FOREIGN KEY (group_provider_id) REFERENCES group_provider (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs303989 FOREIGN KEY (drive_provider_id) REFERENCES drive_provider (id);
-ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
@@ -1061,9 +1062,9 @@ ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi688067 FOREIGN KEY (mail_layo
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task970702 FOREIGN KEY (upgrade_task_id) REFERENCES upgrade_task (id);
 ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi815203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
-ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
 ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi820203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
-ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi1670 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi1670 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
 ALTER TABLE mail_attachment ADD CONSTRAINT FKmail_attachment35169 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 ALTER TABLE password_history ADD CONSTRAINT FKpass_hist220240 FOREIGN KEY (account_id) REFERENCES account (id);
 

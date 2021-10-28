@@ -34,11 +34,30 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.linagora.linshare.core.domain.constants.ServerType;
 
 import java.util.Date;
 
+@Schema(
+	name = "Server",
+	description = "A Server",
+	discriminatorProperty = "serverType",
+	discriminatorMapping = {
+		@DiscriminatorMapping(value = "LDAP", schema = LDAPServerDto.class),
+		@DiscriminatorMapping(value = "TWAKE", schema = TwakeServerDto.class)
+	}
+)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "serverType", visible = true)
+@JsonSubTypes({
+	@JsonSubTypes.Type(value = LDAPServerDto.class, name="LDAP"),
+	@JsonSubTypes.Type(value = TwakeServerDto.class, name="TWAKE")
+})
 public abstract class AbstractServerDto {
 
 	@Schema(description = "Server's uuid", required = true)
@@ -47,7 +66,7 @@ public abstract class AbstractServerDto {
 	@Schema(description = "Server's name", required = true)
 	protected final String name;
 
-	@Schema(description = "Server's descripion", required = false)
+	@Schema(description = "Server's description", required = false)
 	protected final String description;
 
 	@Schema(description = "Server's url", required = true)

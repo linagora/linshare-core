@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.RemoteServer" table="remote_server" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<discriminator column="server_type" type="string"/>
+		<property name="serverType" column="server_type" unique="true" type="serverType" not-null="true" lazy="false" insert="false" update="false"/>
+		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="label" column="label" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
+
+		<subclass name="org.linagora.linshare.core.domain.entities.LdapConnection" discriminator-value="LDAP">
+			<property name="providerUrl" column="provider_url" type="string" length="255" not-null="true" lazy="false"/>
+			<property name="securityAuth" column="security_auth" type="string" length="255" not-null="false" lazy="false"/>
+			<property name="securityPrincipal" column="security_principal" type="string" length="255" not-null="false" lazy="false"/>
+			<property name="securityCredentials" column="security_credentials" type="string" length="255" not-null="false" lazy="false"/>
+		</subclass>
+	</class>
+</hibernate-mapping>

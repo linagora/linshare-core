@@ -33,7 +33,19 @@
  */
 package org.linagora.linshare.webservice.adminv5.impl;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.RemoteServerFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.TwakeServerDto;
+import org.linagora.linshare.webservice.adminv5.RemoteServerRestService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -44,24 +56,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.RemoteServerFacade;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
-import org.linagora.linshare.webservice.adminv5.RemoteServerRestService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.List;
 
 @Path("/remote_servers")
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_JSON })
 public class RemoteServerRestServiceImpl implements RemoteServerRestService {
 
 	private final RemoteServerFacade ldapServerFacade;
@@ -77,7 +76,12 @@ public class RemoteServerRestServiceImpl implements RemoteServerRestService {
 	@GET
 	@Operation(summary = "Find all remote servers.", responses = {
 		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = LDAPServerDto.class))),
+			content = @Content(array = @ArraySchema(
+				schema = @Schema(
+					oneOf = {LDAPServerDto.class, TwakeServerDto.class},
+					type = "object"
+				))
+			),
 			responseCode = "200"
 		)
 	})
@@ -90,7 +94,12 @@ public class RemoteServerRestServiceImpl implements RemoteServerRestService {
 	@GET
 	@Operation(summary = "Find a remote server.", responses = {
 		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = LDAPServerDto.class))),
+			content = @Content(array = @ArraySchema(
+				schema = @Schema(
+					oneOf = {LDAPServerDto.class, TwakeServerDto.class},
+					type = "object"
+				))
+			),
 			responseCode = "200"
 		)
 	})
@@ -104,39 +113,63 @@ public class RemoteServerRestServiceImpl implements RemoteServerRestService {
 	@Path("/")
 	@POST
 	@Operation(summary = "Create a remote server.", responses = {
-		@ApiResponse(content = @Content(schema = @Schema(implementation = LDAPServerDto.class)), responseCode = "200")
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(
+				schema = @Schema(
+					oneOf = {LDAPServerDto.class, TwakeServerDto.class},
+					type = "object"
+				))
+			),
+			responseCode = "200"
+		)
 	})
 	@Override
 	public AbstractServerDto create(
-			@Parameter(description = "The remote server to create.", required = false) LDAPServerDto ldapServerDto)
+			@Parameter(description = "The remote server to create.", required = true) AbstractServerDto serverDto)
 			throws BusinessException {
-		return ldapServerFacade.create(ldapServerDto);
+		return ldapServerFacade.create(serverDto);
 	}
 
 	@Path("/{uuid: .*}")
 	@PUT
 	@Operation(summary = "Update a remote server.", responses = {
-		@ApiResponse(content = @Content(schema = @Schema(implementation = LDAPServerDto.class)), responseCode = "200")
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(
+				schema = @Schema(
+					oneOf = {LDAPServerDto.class, TwakeServerDto.class},
+					type = "object"
+				))
+			),
+			responseCode = "200"
+		)
 	})
 	@Override
 	public AbstractServerDto update(
-			@Parameter(description = "Remote server to update", required = false) LDAPServerDto ldapServerDto,
+			@Parameter(description = "Remote server to update", required = true) AbstractServerDto serverDto,
 			@Parameter(description = "Remote server's uuid to update, if null object is used", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
-		return ldapServerFacade.update(uuid, ldapServerDto);
+		return ldapServerFacade.update(uuid, serverDto);
 	}
 
 	@Path("/{uuid: .*}")
 	@DELETE
 	@Operation(summary = "Delete a remote server.", responses = {
-		@ApiResponse(content = @Content(schema = @Schema(implementation = LDAPServerDto.class)), responseCode = "200")
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(
+				schema = @Schema(
+					oneOf = {LDAPServerDto.class, TwakeServerDto.class},
+					type = "object"
+				))
+			),
+			responseCode = "200"
+		)
 	})
 	@Override
 	public AbstractServerDto delete(
-			@Parameter(description = "Remote server to delete.", required = false) LDAPServerDto ldapServerDto,
+			@Parameter(description = "Remote server to delete", required = false) AbstractServerDto serverDto,
 			@Parameter(description = "Remote server's uuid to delete, if null object is used", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
-		return ldapServerFacade.delete(uuid, ldapServerDto);
+		return ldapServerFacade.delete(uuid, serverDto);
 	}
 
 	@Override

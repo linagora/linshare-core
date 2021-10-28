@@ -33,12 +33,11 @@
  */
 package org.linagora.linshare.webservice.adminv5;
 
-import java.util.List;
-
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
+
+import java.util.List;
 
 public interface RemoteServerRestService {
 
@@ -46,11 +45,11 @@ public interface RemoteServerRestService {
 
 	AbstractServerDto find(String uuid) throws BusinessException;
 
-	AbstractServerDto create(LDAPServerDto ldapServerDto) throws BusinessException;
+	AbstractServerDto create(AbstractServerDto serverDto) throws BusinessException;
 
-	AbstractServerDto update(LDAPServerDto ldapServerDto, String uuid) throws BusinessException;
+	AbstractServerDto update(AbstractServerDto serverDto, String uuid) throws BusinessException;
 
-	AbstractServerDto delete(LDAPServerDto ldapServerDto, String uuid) throws BusinessException;
+	AbstractServerDto delete(AbstractServerDto serverDto, String uuid) throws BusinessException;
 
 	List<DomainDto> findAllDomainsByLdapServer(String uuid) throws BusinessException;
 }

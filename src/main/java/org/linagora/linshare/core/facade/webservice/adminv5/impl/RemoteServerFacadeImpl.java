@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.ServerType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.RemoteServerFacade;
@@ -52,6 +53,7 @@ import org.linagora.linshare.core.service.LdapConnectionService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements RemoteServerFacade {
@@ -85,7 +87,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	@Override
 	public AbstractServerDto find(String uuid) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(uuid, "ldap connection uuid must be set.");
+		Validate.notEmpty(uuid, "Server uuid must be set.");
 		LdapConnectionService remoteServer = getService(ServerType.LDAP);
 		LdapConnection ldapConnection = remoteServer.find(uuid);
 		return LDAPServerDto.from(ldapConnection);
@@ -93,39 +95,51 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 
 
 	@Override
-	public AbstractServerDto create(LDAPServerDto ldapServerDto) {
+	public AbstractServerDto create(AbstractServerDto serverDto) {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notNull(ldapServerDto, "Ldap server to create must be set");
-		LdapConnectionService remoteServer = getService(ServerType.LDAP);
-		return LDAPServerDto.from(remoteServer.create(ldapServerDto.toLdapServerObject()));
+		Validate.notNull(serverDto, "Server to create must be set");
+		ServerType serverType = serverDto.getServerType();
+		switch (serverType) {
+			case LDAP:
+				LDAPServerDto ldapServerDto = (LDAPServerDto) serverDto;
+				LdapConnectionService remoteServer = getService(ServerType.LDAP);
+				return LDAPServerDto.from(remoteServer.create(ldapServerDto.toLdapServerObject(Optional.empty())));
+			case TWAKE:
+		}
+		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
 	}
 
 	@Override
-	public AbstractServerDto update(String uuid, LDAPServerDto ldapServerDto) {
+	public AbstractServerDto update(String uuid, AbstractServerDto serverDto) {
 		checkAuthentication(Role.SUPERADMIN);
-		if (!Strings.isNullOrEmpty(uuid)) {
-			ldapServerDto = LDAPServerDto.builder(ldapServerDto)
-					.uuid(uuid)
-					.build();
+		String finalUuid = uuid;
+		if (Strings.isNullOrEmpty(finalUuid)) {
+			finalUuid = serverDto.getUuid();
 		}
-		Validate.notEmpty(ldapServerDto.getUuid(), "Ldap Server's uuid must be set");
-		LdapConnectionService remoteServer = getService(ServerType.LDAP);
-		LdapConnection ldapConnection = remoteServer.find(ldapServerDto.getUuid());
-		ldapConnection = remoteServer.update(ldapServerDto.toLdapServerObject());
-		return LDAPServerDto.from(ldapConnection);
+		Validate.notEmpty(finalUuid, "Server's uuid must be set");
+		ServerType serverType = serverDto.getServerType();
+		switch (serverType) {
+			case LDAP:
+				LDAPServerDto ldapServerDto = (LDAPServerDto) serverDto;
+				LdapConnectionService remoteServer = getService(ServerType.LDAP);
+				LdapConnection ldapConnection = remoteServer.update(ldapServerDto.toLdapServerObject(Optional.of(finalUuid)));
+				LDAPServerDto from = LDAPServerDto.from(ldapConnection);
+				return from;
+			case TWAKE:
+		}
+		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
 	}
 
 	@Override
-	public AbstractServerDto delete(String uuid, LDAPServerDto ldapServerDto) {
+	public AbstractServerDto delete(String uuid, AbstractServerDto serverDto) {
 		checkAuthentication(Role.SUPERADMIN);
-		if (Strings.isNullOrEmpty(uuid)) {
-			Validate.notNull(ldapServerDto, "Ldap server to delete must be set");
-			Validate.notEmpty(ldapServerDto.getUuid(), "Ldap server's uuid must be set");
-			uuid = ldapServerDto.getUuid();
+		String finalUuid = uuid;
+		if (Strings.isNullOrEmpty(finalUuid)) {
+			finalUuid = serverDto.getUuid();
 		}
-		Validate.notEmpty(uuid, "Ldap server's uuid must be set");
+		Validate.notEmpty(finalUuid, "Server's uuid must be set");
 		LdapConnectionService remoteServer = getService(ServerType.LDAP);
-		LdapConnection conn = remoteServer.delete(uuid);
+		LdapConnection conn = remoteServer.delete(finalUuid);
 		return LDAPServerDto.from(conn);
 	}
 

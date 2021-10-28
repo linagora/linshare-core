@@ -7,10 +7,10 @@ SET default_with_oids = false;
 
 -- Jeu de données de tests
 
-INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date)
-	VALUES (1, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'linshare-obm', 'ldap://linshare-obm2.linagora.dc1:389', 'simple', '', '', now(), now());
-INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date)
-	VALUES (2, 'f5550163-8f06-4310-91c4-1e174f5c62fd', 'linshare-obm-ip', 'ldap://172.16.18.67:389', 'simple', '', '', now(), now());
+INSERT INTO remote_server(id, uuid, server_type, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date)
+	VALUES (1, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'LDAP', 'linshare-obm', 'ldap://linshare-obm2.linagora.dc1:389', 'simple', '', '', now(), now());
+INSERT INTO remote_server(id, uuid, server_type, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date)
+	VALUES (2, 'f5550163-8f06-4310-91c4-1e174f5c62fd', 'LDAP', 'linshare-obm-ip', 'ldap://172.16.18.67:389', 'simple', '', '', now(), now());
 
 
 -- system domain pattern

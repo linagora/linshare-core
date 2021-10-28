@@ -35,7 +35,7 @@ package org.linagora.linshare.core.domain.constants;
 
 public enum ServerType {
 
-	LDAP;
+	LDAP, TWAKE;
 
 	public static ServerType fromString(String s) {
 		try {

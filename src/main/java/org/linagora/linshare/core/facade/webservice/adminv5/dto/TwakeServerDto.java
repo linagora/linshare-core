@@ -34,16 +34,16 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.ServerType;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
+@JsonDeserialize(builder = TwakeServerDto.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@XmlRootElement(name = "TwakeServer")
 @Schema(name = "TwakeServer", description = "A Twake server connection")
 public class TwakeServerDto extends AbstractServerDto {
 

@@ -39,8 +39,8 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 
 public interface LdapConnectionRepository extends AbstractRepository<LdapConnection> {
 
-	public LdapConnection findByUuid(String uuid);
+	LdapConnection findByUuid(String uuid);
 
-	public boolean isUsed(LdapConnection ldapConnection);
+	boolean isUsed(LdapConnection ldapConnection);
 
 }

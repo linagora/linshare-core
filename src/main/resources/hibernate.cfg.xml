@@ -25,7 +25,7 @@
 		<mapping resource="org/linagora/linshare/core/domain/entities/DriveProvider.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/ContactProvider.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/AllowedContact.hbm.xml"/>
-		<mapping resource="org/linagora/linshare/core/domain/entities/LdapConnection.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/RemoteServer.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/Policy.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/Functionality.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/Unit.hbm.xml"/>
