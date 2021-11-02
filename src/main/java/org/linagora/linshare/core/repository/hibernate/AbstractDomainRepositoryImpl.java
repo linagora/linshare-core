@@ -309,7 +309,7 @@ public class AbstractDomainRepositoryImpl extends
 	public List<AbstractDomain> findAllDomainsByDriveFilter(LdapDriveFilter domainGroupFilter) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass(), "abstractDomain");
 		det.createAlias("abstractDomain.driveProvider", "driveProvider");
-		det.add(Restrictions.eq("driveProvider.drivePattern", domainGroupFilter));
+		det.add(Restrictions.eq("driveProvider.driveFilter", domainGroupFilter));
 		return findByCriteria(det);
 	}
 }
