@@ -104,6 +104,9 @@ public class AddMissingPropertiesToWorkGroupNodesUpgradeTaskImpl extends Generic
 			return res;
 		}
 		WorkGroup toWg = threadRepository.findByLsUuid(copiedDocument.getWorkGroup());
+		if (toWg == null) {
+			toWg = threadRepository.findDeleted(copiedDocument.getWorkGroup());
+		}
 		WorkGroupDocumentRevision mostRecent = (WorkGroupDocumentRevision) revisionService.findMostRecent(toWg,
 				copiedDocument.getUuid());
 		if (mostRecent == null) {
