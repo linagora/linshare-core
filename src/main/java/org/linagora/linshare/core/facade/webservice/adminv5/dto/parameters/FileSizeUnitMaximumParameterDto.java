@@ -52,6 +52,10 @@ public class FileSizeUnitMaximumParameterDto extends ParameterDto<Integer> {
 		super(hidden, readonly, null, maximum.get(), unlimited);
 	}
 
+	public FileSizeUnitMaximumParameterDto() {
+		super();
+	}
+
 	@Override
 	public String toString() {
 		return "FileSizeUnitMaximumParameterDto [hidden=" + hidden + ", readonly=" + readonly + ", maximum=" + maximum
