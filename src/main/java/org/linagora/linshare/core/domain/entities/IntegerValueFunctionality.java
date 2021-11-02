@@ -256,19 +256,26 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public void updateFunctionalityValuesOnlyFromDto(
 			org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.ParameterDto<?> param) {
-		Validate.isTrue(param.getType().equals("INTEGER"), "Wrong parameter type");
-		if (this.valueUsed) {
-			Validate.notNull(param.getDefaut(), "Default object value must be set");
-			NestedIntegerParameterDto dto = (NestedIntegerParameterDto) param.getDefaut();
-			Validate.notNull(dto.getValue(), "Default value must be set");
-			this.setValue(dto.getValue());
-		}
-		if (this.maxValueUsed) {
-			Validate.notNull(param.getMaximum(), "Maximum object value must be set");
-			NestedIntegerParameterDto dto = (NestedIntegerParameterDto) param.getMaximum();
-			Validate.notNull(dto.getValue(), "Maximum value must be set");
-			this.setMaxValue(dto.getValue());
-			// TODO: unlimited
-		}
+		switch (param.getType()) {
+			case "INTEGER_DEFAULT":
+			case "INTEGER_MAX":
+			case "INTEGER_ALL":
+				if (this.valueUsed) {
+					Validate.notNull(param.getDefaut(), "Default object value must be set");
+					NestedIntegerParameterDto dto = (NestedIntegerParameterDto) param.getDefaut();
+					Validate.notNull(dto.getValue(), "Default value must be set");
+					this.setValue(dto.getValue());
+				}
+				if (this.maxValueUsed) {
+					Validate.notNull(param.getMaximum(), "Maximum object value must be set");
+					NestedIntegerParameterDto dto = (NestedIntegerParameterDto) param.getMaximum();
+					Validate.notNull(dto.getValue(), "Maximum value must be set");
+					this.setMaxValue(dto.getValue());
+					// TODO: unlimited
+				}
+				break;
+			default:
+				throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Wrong parameter type: " + param.getType());
+			}
 	}
 }
