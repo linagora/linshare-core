@@ -134,7 +134,7 @@ public class FunctionalityRestServiceImpl implements
 		return functionalityFacade.find(domainUuid, identifier);
 	}
 
-	@Path("/{uuid: .*}")
+	@Path("/{identifier: .*}")
 	@PUT
 	@Operation(summary = "It allows adminstrator to update a functionality.", responses = {
 		@ApiResponse(
@@ -161,10 +161,10 @@ public class FunctionalityRestServiceImpl implements
 			@Parameter(description = "functionality to update", required = true)
 				FunctionalityDto func)
 			throws BusinessException {
-		return functionalityFacade.update(func);
+		return functionalityFacade.update(domainUuid, identifier, func);
 	}
 
-	@Path("/{uuid: .*}")
+	@Path("/{identifier: .*}")
 	@DELETE
 	@Operation(summary = "It allows adminstrator to reset a functionality.", responses = {
 		@ApiResponse(
@@ -190,6 +190,6 @@ public class FunctionalityRestServiceImpl implements
 				@PathParam(value = "identifier") String identifier, 
 			@Parameter(description = "functionality to reset (restore parent's values", required = false)
 				FunctionalityDto func) throws BusinessException {
-		return functionalityFacade.delete(func);
+		return functionalityFacade.delete(domainUuid, identifier, func);
 	}
 }

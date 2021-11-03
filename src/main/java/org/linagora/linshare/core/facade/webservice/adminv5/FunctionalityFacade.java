@@ -49,8 +49,8 @@ public interface FunctionalityFacade extends AdminGenericFacade {
 
 	List<FunctionalityDto> findAll(String domainUuid, String parentIdentifier, boolean withSubFunctionalities) throws BusinessException;
 
-	FunctionalityDto update(FunctionalityDto func) throws BusinessException;
+	FunctionalityDto update(String domainUuid, String funcIdentifier, FunctionalityDto dto) throws BusinessException;
 
-	FunctionalityDto delete(FunctionalityDto func) throws BusinessException;
+	FunctionalityDto delete(String domainUuid, String funcIdentifier, FunctionalityDto dto) throws BusinessException;
 
 }

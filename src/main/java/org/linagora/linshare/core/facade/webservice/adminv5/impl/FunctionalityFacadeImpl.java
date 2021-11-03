@@ -43,7 +43,6 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.FunctionalityFacade;
@@ -85,27 +84,27 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 	}
 
 	@Override
-	public FunctionalityDto update(FunctionalityDto func) throws BusinessException {
+	public FunctionalityDto update(String domainUuid, String funcIdentifier, FunctionalityDto dto) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
-
-		Validate.notNull(func, "functionality object must be set.");
-		Validate.notNull(func.getDomain(), "domain object must be set.");
-		String domainUuid = func.getDomain().getUuid();
+		Validate.notNull(dto, "functionality object must be set.");
 		Validate.notEmpty(domainUuid, "domain uuid must be set.");
-		Validate.notEmpty(func.getIdentifier(), "functionality identifier must be set.");
+		if (funcIdentifier == null) {
+			funcIdentifier = dto.getIdentifier();
+		}
+		Validate.notEmpty(funcIdentifier, "functionality identifier must be set.");
 
-		Functionality entity = service.find(authUser, domainUuid, func.getIdentifier(), false);
+		Functionality entity = service.find(authUser, domainUuid, funcIdentifier, false);
 
-		updatePolicy(entity.getActivationPolicy(), func.getActivationPolicy(), entity.getIdentifier(), "activation policy");
-		updatePolicy(entity.getConfigurationPolicy(), func.getConfigurationPolicy(), entity.getIdentifier(), "configuration policy");
+		updatePolicy(entity.getActivationPolicy(), dto.getActivationPolicy(), entity.getIdentifier(), "activation policy");
+		updatePolicy(entity.getConfigurationPolicy(), dto.getConfigurationPolicy(), entity.getIdentifier(), "configuration policy");
 		if (entity.getDelegationPolicy() != null) {
-			updatePolicy(entity.getDelegationPolicy(), func.getDelegationPolicy(), entity.getIdentifier(), "delegation policy");
+			updatePolicy(entity.getDelegationPolicy(), dto.getDelegationPolicy(), entity.getIdentifier(), "delegation policy");
 		} else {
 			logger.debug("No delegation policy for functionality: %s", entity.getIdentifier());
 		}
 
 		// copy of parameters.
-		entity.updateFunctionalityValuesOnlyFromDto(func.getParameter());
+		entity.updateFunctionalityValuesOnlyFromDto(dto.getParameter());
 
 		Functionality update = service.update(authUser, domainUuid, entity);
 		return FunctionalityDto.toDto().apply(update);
@@ -128,8 +127,18 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 	}
 
 	@Override
-	public FunctionalityDto delete(FunctionalityDto func) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "TODO");
+	public FunctionalityDto delete(String domainUuid, String funcIdentifier, FunctionalityDto dto) throws BusinessException {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "domain uuid must be set.");
+		if (funcIdentifier == null) {
+			if (dto != null) {
+				funcIdentifier = dto.getIdentifier();
+			}
+		}
+		Validate.notEmpty(funcIdentifier, "functionality identifier must be set.");
+		service.delete(authUser, domainUuid, funcIdentifier);
+		Functionality entity = service.find(authUser, domainUuid, funcIdentifier, false);
+		return FunctionalityDto.toDto().apply(entity);
 	}
 
 }
