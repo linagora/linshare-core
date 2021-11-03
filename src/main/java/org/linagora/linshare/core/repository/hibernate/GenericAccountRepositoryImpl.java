@@ -218,7 +218,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
 		criteria.add(Restrictions.gt("destroyed", 0L));
-		return DataAccessUtils.requiredSingleResult(findByCriteria(criteria));
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}
 
 	@Override
