@@ -194,6 +194,13 @@ VALUES
   'REQUIRED',
   now(),
   now());
+
+-- Remote server (previously ldap_connection)
+ALTER TABLE ldap_connection ADD COLUMN server_type VARCHAR(255) DEFAULT 'LDAP' NOT NULL;
+ALTER TABLE ldap_connection ALTER COLUMN server_type DROP DEFAULT;
+
+ALTER TABLE ldap_connection RENAME TO remote_server;
+
 ---- End of your queries
 
 -- Upgrade LinShare version
