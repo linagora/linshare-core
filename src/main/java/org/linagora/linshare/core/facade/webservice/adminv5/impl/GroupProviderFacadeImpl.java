@@ -56,7 +56,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -67,7 +67,7 @@ public class GroupProviderFacadeImpl extends AdminGenericFacadeImpl implements G
 
 	private GroupProviderService groupProviderService;
 
-	private LdapConnectionService ldapConnectionService;
+	private RemoteServerService ldapConnectionService;
 
 	private GroupLdapPatternService groupLdapPatternService;
 
@@ -75,7 +75,7 @@ public class GroupProviderFacadeImpl extends AdminGenericFacadeImpl implements G
 			AccountService accountService,
 			DomainService domainService,
 			GroupProviderService groupProviderService,
-			LdapConnectionService ldapConnectionService,
+			RemoteServerService ldapConnectionService,
 			GroupLdapPatternService groupLdapPatternService) {
 		super(accountService);
 		this.domainService = domainService;

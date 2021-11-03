@@ -46,11 +46,11 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.LdapConnectionRepository;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LdapConnectionServiceImpl implements LdapConnectionService {
+public class LdapConnectionServiceImpl implements RemoteServerService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(LdapConnectionServiceImpl.class);

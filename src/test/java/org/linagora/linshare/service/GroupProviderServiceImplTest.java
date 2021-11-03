@@ -56,7 +56,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class GroupProviderServiceImplTest {
 	private GroupLdapPatternService groupLdapPatternService;
 
 	@Autowired
-	private LdapConnectionService ldapConnectionService;
+	private RemoteServerService ldapConnectionService;
 
 	@Autowired
 	private AccountService accountService;

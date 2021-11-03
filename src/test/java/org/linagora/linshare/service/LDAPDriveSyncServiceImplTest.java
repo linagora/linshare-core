@@ -64,7 +64,7 @@ import org.linagora.linshare.core.service.LdapDriveFilterService;
 import org.linagora.linshare.core.service.DriveProviderService;
 import org.linagora.linshare.core.service.LDAPDriveSyncService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl;
 import org.linagora.linshare.ldap.LdapDriveMemberObject;
@@ -122,7 +122,7 @@ public class LDAPDriveSyncServiceImplTest {
 	private DriveProviderService driveProviderService;
 
 	@Autowired
-	LdapConnectionService ldapConnectionService;
+	RemoteServerService ldapConnectionService;
 
 	@Autowired
 	LdapDriveFilterService drivePatternService;

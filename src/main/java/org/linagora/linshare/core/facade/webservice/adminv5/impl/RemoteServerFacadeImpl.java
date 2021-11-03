@@ -49,7 +49,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDt
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 
 import java.util.List;
 import java.util.Map;
@@ -58,18 +58,18 @@ import java.util.stream.Collectors;
 
 public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements RemoteServerFacade {
 
-	private final Map<ServerType, LdapConnectionService> remoteServices;
+	private final Map<ServerType, RemoteServerService> remoteServices;
 
 	public RemoteServerFacadeImpl(
 			final AccountService accountService,
-			final Map<ServerType, LdapConnectionService> remoteServices) {
+			final Map<ServerType, RemoteServerService> remoteServices) {
 		super(accountService);
 		this.remoteServices = remoteServices;
 	}
 
-	private LdapConnectionService getService(ServerType type) {
+	private RemoteServerService getService(ServerType type) {
 		Validate.notNull(type, "ServerType type must be set");
-		LdapConnectionService remoteService = remoteServices.get(type);
+		RemoteServerService remoteService = remoteServices.get(type);
 		Validate.notNull(remoteService, "Can not find a service that handle your serverType: " + type);
 		return remoteService;
 	}
@@ -88,7 +88,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	public AbstractServerDto find(String uuid) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "Server uuid must be set.");
-		LdapConnectionService remoteServer = getService(ServerType.LDAP);
+		RemoteServerService remoteServer = getService(ServerType.LDAP);
 		LdapConnection ldapConnection = remoteServer.find(uuid);
 		return LDAPServerDto.from(ldapConnection);
 	}
@@ -102,7 +102,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 		switch (serverType) {
 			case LDAP:
 				LDAPServerDto ldapServerDto = (LDAPServerDto) serverDto;
-				LdapConnectionService remoteServer = getService(ServerType.LDAP);
+				RemoteServerService remoteServer = getService(ServerType.LDAP);
 				return LDAPServerDto.from(remoteServer.create(ldapServerDto.toLdapServerObject(Optional.empty())));
 			case TWAKE:
 		}
@@ -121,7 +121,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 		switch (serverType) {
 			case LDAP:
 				LDAPServerDto ldapServerDto = (LDAPServerDto) serverDto;
-				LdapConnectionService remoteServer = getService(ServerType.LDAP);
+				RemoteServerService remoteServer = getService(ServerType.LDAP);
 				LdapConnection ldapConnection = remoteServer.update(ldapServerDto.toLdapServerObject(Optional.of(finalUuid)));
 				LDAPServerDto from = LDAPServerDto.from(ldapConnection);
 				return from;
@@ -138,8 +138,8 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 			finalUuid = serverDto.getUuid();
 		}
 		Validate.notEmpty(finalUuid, "Server's uuid must be set");
-		LdapConnectionService remoteServer = getService(ServerType.LDAP);
-		LdapConnection conn = remoteServer.delete(finalUuid);
+		RemoteServerService remoteServer = getService(ServerType.LDAP);
+		LdapConnection conn = remoteServer.delete(uuid);
 		return LDAPServerDto.from(conn);
 	}
 
@@ -147,7 +147,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	public List<DomainDto> findAllDomainsByLdapServer(String uuid) {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "Ldap server's uuid must be set");
-		LdapConnectionService remoteServer = getService(ServerType.LDAP);
+		RemoteServerService remoteServer = getService(ServerType.LDAP);
 		LdapConnection ldapConnection = remoteServer.find(uuid);
 		List<AbstractDomain> domains = remoteServer.findAllDomainsByRemoteServer(ldapConnection);
 		return ImmutableList.copyOf(Lists.transform(domains, DomainDto.toDto()));

@@ -57,7 +57,7 @@ import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +105,7 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	AbstractDomainService abstractDomainService;
 
 	@Autowired
-	LdapConnectionService ldapConnectionService;
+	RemoteServerService ldapConnectionService;
 
 	@Autowired
 	GroupLdapPatternService groupPatternService;

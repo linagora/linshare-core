@@ -35,13 +35,13 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.List;
-
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface LdapConnectionService {
+import java.util.List;
+
+public interface RemoteServerService {
 
 	LdapConnection create(LdapConnection ldapConnection)
 			throws BusinessException;

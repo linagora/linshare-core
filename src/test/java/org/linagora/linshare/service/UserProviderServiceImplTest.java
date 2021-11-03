@@ -53,7 +53,7 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +85,7 @@ public class UserProviderServiceImplTest {
 	private static String securityAuth= "simple";
 
 	@Autowired
-	private LdapConnectionService ldapConnectionService;
+	private RemoteServerService ldapConnectionService;
 
 	@Autowired
 	private UserProviderService userProviderService;

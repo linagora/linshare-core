@@ -54,7 +54,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LdapDriveFilterService;
 import org.linagora.linshare.core.service.DriveProviderService;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class DriveProviderServiceImplTest {
 	private LdapDriveFilterService driveLdapPatternService;
 
 	@Autowired
-	private LdapConnectionService ldapConnectionService;
+	private RemoteServerService ldapConnectionService;
 
 	@Autowired
 	private AccountService accountService;

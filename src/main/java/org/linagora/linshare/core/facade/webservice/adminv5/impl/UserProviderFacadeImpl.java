@@ -57,7 +57,7 @@ import org.linagora.linshare.core.repository.OIDCUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainService;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.UserProviderService;
 
 import com.google.common.base.Strings;
@@ -69,7 +69,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 
 	private UserProviderService userProviderService;
 
-	private LdapConnectionService ldapConnectionService;
+	private RemoteServerService ldapConnectionService;
 
 	private UserProviderRepository userProviderRepository;
 
@@ -81,7 +81,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 			AccountService accountService,
 			DomainService domainService,
 			UserProviderService userProviderService,
-			LdapConnectionService ldapConnectionService,
+			RemoteServerService ldapConnectionService,
 			UserProviderRepository userProviderRepository,
 			LdapUserProviderRepository ldapUserProviderRepository,
 			OIDCUserProviderRepository oidcUserProviderRepository

@@ -77,7 +77,7 @@ import org.linagora.linshare.core.service.LdapDriveFilterService;
 import org.linagora.linshare.core.service.DriveProviderService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
-import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
@@ -93,7 +93,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final UserProviderService userProviderService;
 
-	private final LdapConnectionService ldapConnectionService;
+	private final RemoteServerService ldapConnectionService;
 
 	private final DomainPolicyService domainPolicyService;
 
@@ -116,7 +116,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			final UserProviderService userProviderService,
 			final DomainPolicyService domainPolicyService,
 			final WelcomeMessagesService welcomeMessagesService,
-			final LdapConnectionService ldapConnectionService,
+			final RemoteServerService ldapConnectionService,
 			final QuotaService quotaService,
 			final GroupProviderService groupProviderService,
 			final GroupLdapPatternService groupLdapPatternService,
