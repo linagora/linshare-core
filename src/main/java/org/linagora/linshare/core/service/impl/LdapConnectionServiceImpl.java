@@ -50,7 +50,7 @@ import org.linagora.linshare.core.service.RemoteServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LdapConnectionServiceImpl implements RemoteServerService {
+public class LdapConnectionServiceImpl implements RemoteServerService<LdapConnection> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(LdapConnectionServiceImpl.class);

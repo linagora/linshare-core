@@ -55,13 +55,13 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
-import org.linagora.linshare.core.service.RemoteServerService;
+import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
 
 public class SynchronizeLDAPGroupsInDrivesBatchImpl extends GenericBatchImpl {
 
 	private final AbstractDomainRepository domainRepository;
 
-	private final RemoteServerService connectionService;
+	private final LdapConnectionServiceImpl connectionService;
 
 	private final GroupLdapPatternService patternService;
 
@@ -70,7 +70,7 @@ public class SynchronizeLDAPGroupsInDrivesBatchImpl extends GenericBatchImpl {
 	public SynchronizeLDAPGroupsInDrivesBatchImpl(
 			AccountRepository<Account> accountRepository,
 			AbstractDomainRepository domainRepository,
-			RemoteServerService connectionService,
+			LdapConnectionServiceImpl connectionService,
 			GroupLdapPatternService patternService,
 			LDAPGroupSyncService syncService) {
 		super(accountRepository);

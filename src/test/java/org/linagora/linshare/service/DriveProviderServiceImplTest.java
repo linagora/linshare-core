@@ -45,16 +45,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.LdapDriveFilterService;
 import org.linagora.linshare.core.service.DriveProviderService;
-import org.linagora.linshare.core.service.RemoteServerService;
+import org.linagora.linshare.core.service.LdapDriveFilterService;
+import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class DriveProviderServiceImplTest {
 	private LdapDriveFilterService driveLdapPatternService;
 
 	@Autowired
-	private RemoteServerService ldapConnectionService;
+	private LdapConnectionServiceImpl ldapConnectionService;
 
 	@Autowired
 	private AccountService accountService;

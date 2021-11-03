@@ -69,9 +69,9 @@ import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
+import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +115,7 @@ public class AbstractDomainServiceImplTest {
 	private UserProviderService userProviderService;
 
 	@Autowired
-	private RemoteServerService ldapConnectionService;
+	private LdapConnectionServiceImpl ldapConnectionService;
 
 	@Autowired
 	private AccountService accountService;

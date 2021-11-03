@@ -55,8 +55,8 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPDriveProvide
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainService;
 import org.linagora.linshare.core.service.DriveProviderService;
-import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.LdapDriveFilterService;
+import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -67,7 +67,7 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 
 	private DriveProviderService driveProviderService;
 
-	private RemoteServerService ldapConnectionService;
+	private LdapConnectionServiceImpl ldapConnectionService;
 
 	private LdapDriveFilterService driveLdapFilterService;
 
@@ -75,7 +75,7 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 			AccountService accountService,
 			DomainService domainService,
 			DriveProviderService driveProviderService,
-			RemoteServerService ldapConnectionService,
+			LdapConnectionServiceImpl ldapConnectionService,
 			LdapDriveFilterService driveLdapFilterService) {
 		super(accountService);
 		this.domainService = domainService;

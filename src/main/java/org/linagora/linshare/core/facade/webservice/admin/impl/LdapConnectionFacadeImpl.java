@@ -46,15 +46,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LdapConnectionFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LdapConnectionDto;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.RemoteServerService;
+import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
 
 public class LdapConnectionFacadeImpl extends AdminGenericFacadeImpl implements LdapConnectionFacade {
 
-	private final RemoteServerService ldapConnectionService;
+	private final LdapConnectionServiceImpl ldapConnectionService;
 
 	public LdapConnectionFacadeImpl(
 			final AccountService accountService,
-			final RemoteServerService ldapConnectionService) {
+			final LdapConnectionServiceImpl ldapConnectionService) {
 		super(accountService);
 		this.ldapConnectionService = ldapConnectionService;
 	}

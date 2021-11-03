@@ -36,29 +36,29 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.RemoteServer;
 import org.linagora.linshare.core.exception.BusinessException;
 
 import java.util.List;
 
-public interface RemoteServerService {
+public interface RemoteServerService<T extends RemoteServer> {
 
-	LdapConnection create(LdapConnection ldapConnection)
+	T create(T remoteServer)
 			throws BusinessException;
 
-	List<LdapConnection> findAll()
+	List<T> findAll()
 			throws BusinessException;
 
-	LdapConnection find(String uuid)
+	T find(String uuid)
 			throws BusinessException;
 
-	LdapConnection update(LdapConnection ldapConnection)
+	T update(T remoteServer)
 			throws BusinessException;
 
-	LdapConnection delete(String uuid)
+	T delete(String uuid)
 			throws BusinessException;
 
 	boolean isUsed(String uuid);
 
-	List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection);
+	List<AbstractDomain> findAllDomainsByRemoteServer(T remoteServer);
 }

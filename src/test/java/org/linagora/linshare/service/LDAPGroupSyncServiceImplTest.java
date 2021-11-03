@@ -69,9 +69,9 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
-import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl;
+import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.Role;
@@ -132,7 +132,7 @@ public class LDAPGroupSyncServiceImplTest {
 	private GroupProviderService groupProviderService;
 
 	@Autowired
-	RemoteServerService ldapConnectionService;
+	LdapConnectionServiceImpl ldapConnectionService;
 
 	@Autowired
 	GroupLdapPatternService groupPatternService;

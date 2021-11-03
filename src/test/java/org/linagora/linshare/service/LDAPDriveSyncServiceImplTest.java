@@ -49,10 +49,10 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -60,13 +60,13 @@ import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.LdapDriveFilterService;
 import org.linagora.linshare.core.service.DriveProviderService;
 import org.linagora.linshare.core.service.LDAPDriveSyncService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
-import org.linagora.linshare.core.service.RemoteServerService;
+import org.linagora.linshare.core.service.LdapDriveFilterService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl;
+import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
 import org.linagora.linshare.ldap.LdapDriveMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.Role;
@@ -122,7 +122,7 @@ public class LDAPDriveSyncServiceImplTest {
 	private DriveProviderService driveProviderService;
 
 	@Autowired
-	RemoteServerService ldapConnectionService;
+	LdapConnectionServiceImpl ldapConnectionService;
 
 	@Autowired
 	LdapDriveFilterService drivePatternService;

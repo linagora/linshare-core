@@ -1,8 +1,8 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
- * 
+ *
  * Copyright (C) 2015-2021 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,12 +20,12 @@
  * commercial brands. Other Additional Terms apply, see
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for more
  * details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -46,11 +46,11 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.DriveProvider;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.GroupProvider;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
 import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -73,15 +73,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.core.service.LdapDriveFilterService;
 import org.linagora.linshare.core.service.DriveProviderService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
-import org.linagora.linshare.core.service.RemoteServerService;
+import org.linagora.linshare.core.service.LdapDriveFilterService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
+import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
 
 import com.google.common.collect.Sets;
 
@@ -93,7 +93,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final UserProviderService userProviderService;
 
-	private final RemoteServerService ldapConnectionService;
+	private final LdapConnectionServiceImpl ldapConnectionService;
 
 	private final DomainPolicyService domainPolicyService;
 
@@ -116,7 +116,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			final UserProviderService userProviderService,
 			final DomainPolicyService domainPolicyService,
 			final WelcomeMessagesService welcomeMessagesService,
-			final RemoteServerService ldapConnectionService,
+			final LdapConnectionServiceImpl ldapConnectionService,
 			final QuotaService quotaService,
 			final GroupProviderService groupProviderService,
 			final GroupLdapPatternService groupLdapPatternService,
