@@ -43,22 +43,22 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface LdapConnectionService {
 
-	public LdapConnection create(LdapConnection ldapConnection)
+	LdapConnection create(LdapConnection ldapConnection)
 			throws BusinessException;
 
-	public List<LdapConnection> findAll()
+	List<LdapConnection> findAll()
 			throws BusinessException;
 
-	public LdapConnection find(String uuid)
+	LdapConnection find(String uuid)
 			throws BusinessException;
 
-	public LdapConnection update(LdapConnection ldapConnection)
+	LdapConnection update(LdapConnection ldapConnection)
 			throws BusinessException;
 
-	public LdapConnection delete(String uuid)
+	LdapConnection delete(String uuid)
 			throws BusinessException;
 
-	public boolean isUsed(String uuid);
+	boolean isUsed(String uuid);
 
-	public List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection);
+	List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection);
 }
