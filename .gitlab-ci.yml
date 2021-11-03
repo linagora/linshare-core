@@ -81,7 +81,7 @@ test-java:
   script:
     - mvn clean test
 
-test-api-branch-pytest-master:
+test-api-branch-with-master:
   stage: test
   image: "${DOCKER_IMAGE_CORE_TEST}:master"
   tags:
@@ -104,6 +104,7 @@ test-api-branch-pytest-master:
   only:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core
+      - /^feature-master-.*/@linagora/lgs/linshare/products/linshare-core
 
 test-api-branch-maintenance-x:
   stage: test
