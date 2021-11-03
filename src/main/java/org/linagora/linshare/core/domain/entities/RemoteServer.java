@@ -49,6 +49,8 @@ public abstract class RemoteServer {
 
 	protected String label;
 
+	protected String providerUrl;
+
 	protected Date creationDate;
 
 	protected Date modificationDate;
@@ -77,6 +79,22 @@ public abstract class RemoteServer {
 		this.label = label;
 	}
 
+	public ServerType getServerType() {
+		return serverType;
+	}
+
+	public void setServerType(ServerType serverType) {
+		this.serverType = serverType;
+	}
+
+	public String getProviderUrl() {
+		return providerUrl;
+	}
+
+	public void setProviderUrl(String providerUrl) {
+		this.providerUrl = providerUrl;
+	}
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -91,14 +109,6 @@ public abstract class RemoteServer {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
-	}
-
-	public ServerType getServerType() {
-		return serverType;
-	}
-
-	public void setServerType(ServerType serverType) {
-		this.serverType = serverType;
 	}
 
 	@Override

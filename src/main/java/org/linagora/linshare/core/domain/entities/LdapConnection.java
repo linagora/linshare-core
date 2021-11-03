@@ -40,8 +40,6 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.LdapConnectionDto;
 
 public class LdapConnection extends RemoteServer {
 
-	protected String providerUrl;
-
 	protected String securityAuth;
 
 	protected String securityPrincipal;
@@ -72,14 +70,6 @@ public class LdapConnection extends RemoteServer {
 		this.securityAuth = securityAuth;
 		this.securityCredentials = null;
 		this.securityPrincipal = null;
-	}
-
-	public String getProviderUrl() {
-		return providerUrl;
-	}
-
-	public void setProviderUrl(String providerUrl) {
-		this.providerUrl = providerUrl;
 	}
 
 	public String getSecurityAuth() {
