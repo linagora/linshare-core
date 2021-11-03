@@ -40,11 +40,10 @@ import org.linagora.linshare.core.domain.constants.UnitType;
 
 public class FileSizeUnitClass extends Unit<FileSizeUnit> {
 
-		
 	public FileSizeUnitClass() {
 		super();
 	}
-	
+
 	@Override
 	public UnitType getUnitType() {
 		return UnitType.SIZE;

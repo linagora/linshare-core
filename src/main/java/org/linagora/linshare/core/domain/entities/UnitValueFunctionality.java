@@ -407,7 +407,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				if (this.ancestorFunc != null) {
 					parentValue = ((UnitValueFunctionality)this.ancestorFunc).getMaxValue();
 					Unit<?> ancestorMaxUnit = ((UnitValueFunctionality)this.ancestorFunc).getMaxUnit();
-					FileSizeUnitClass parentUnitClass = (FileSizeUnitClass) ancestorMaxUnit.getUnitValue();
+					FileSizeUnitClass parentUnitClass = (FileSizeUnitClass)ancestorMaxUnit;
 					parentUnit = parentUnitClass.getUnitValue();
 				}
 				maximum = Optional.of(new NestedFileSizeParameterDto(
@@ -432,7 +432,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				if (this.ancestorFunc != null) {
 					parentValue = ((UnitValueFunctionality)this.ancestorFunc).getValue();
 					Unit<?> ancestorUnit = ((UnitValueFunctionality) this.ancestorFunc).getUnit();
-					FileSizeUnitClass parentSizeUnit = (FileSizeUnitClass) ancestorUnit.getUnitValue();
+					FileSizeUnitClass parentSizeUnit = (FileSizeUnitClass) ancestorUnit;
 					parentUnit = parentSizeUnit.getUnitValue();
 				}
 				defaut = Optional.of(new NestedFileSizeParameterDto(
@@ -460,7 +460,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				if (this.ancestorFunc != null) {
 					parentValue = ((UnitValueFunctionality)this.ancestorFunc).getMaxValue();
 					Unit<?> ancestorMaxUnit = ((UnitValueFunctionality)this.ancestorFunc).getMaxUnit();
-					TimeUnitClass parentUnitClass = (TimeUnitClass) ancestorMaxUnit.getUnitValue();
+					TimeUnitClass parentUnitClass = (TimeUnitClass) ancestorMaxUnit;
 					parentUnit = parentUnitClass.getUnitValue();
 				}
 				maximum = Optional.of(new NestedTimeParameterDto(
@@ -485,7 +485,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				if (this.ancestorFunc != null) {
 					parentValue = ((UnitValueFunctionality)this.ancestorFunc).getValue();
 					Unit<?> ancestorUnit = ((UnitValueFunctionality) this.ancestorFunc).getUnit();
-					TimeUnitClass parentSizeUnit = (TimeUnitClass) ancestorUnit.getUnitValue();
+					TimeUnitClass parentSizeUnit = (TimeUnitClass) ancestorUnit;
 					parentUnit = parentSizeUnit.getUnitValue();
 				}
 				defaut = Optional.of(new NestedTimeParameterDto(
