@@ -45,13 +45,13 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.LdapConnectionRepository;
+import org.linagora.linshare.core.repository.RemoteServerRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class LdapConnectionRepositoryImpl extends
 		AbstractRepositoryImpl<LdapConnection> implements
-		LdapConnectionRepository {
+		RemoteServerRepository<LdapConnection> {
 
 	public LdapConnectionRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);

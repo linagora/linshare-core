@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.LdapConnectionRepository;
+import org.linagora.linshare.core.repository.hibernate.LdapConnectionRepositoryImpl;
 import org.linagora.linshare.core.service.RemoteServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,14 +55,14 @@ public class LdapConnectionServiceImpl implements RemoteServerService<LdapConnec
 	private static final Logger logger = LoggerFactory
 			.getLogger(LdapConnectionServiceImpl.class);
 
-	private final LdapConnectionRepository ldapConnectionRepository;
+	private final LdapConnectionRepositoryImpl ldapConnectionRepository;
 
 	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
 	private final AbstractDomainRepository abstractDomainRepository;
 
 	public LdapConnectionServiceImpl(
-			LdapConnectionRepository ldapConnectionRepository,
+			LdapConnectionRepositoryImpl ldapConnectionRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			AbstractDomainRepository abstractDomainRepository) {
 		super();

@@ -35,12 +35,12 @@
  */
 package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.RemoteServer;
 
-public interface LdapConnectionRepository extends AbstractRepository<LdapConnection> {
+public interface RemoteServerRepository<T extends RemoteServer> extends AbstractRepository<T> {
 
-	LdapConnection findByUuid(String uuid);
+	T findByUuid(String uuid);
 
-	boolean isUsed(LdapConnection ldapConnection);
+	boolean isUsed(T remoteServer);
 
 }

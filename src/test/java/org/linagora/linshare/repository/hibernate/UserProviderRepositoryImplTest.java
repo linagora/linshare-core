@@ -52,8 +52,8 @@ import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
-import org.linagora.linshare.core.repository.LdapConnectionRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
+import org.linagora.linshare.core.repository.hibernate.LdapConnectionRepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +81,7 @@ public class UserProviderRepositoryImplTest {
 	private UserProviderRepository ldapUserProviderRepository;
 	
 	@Autowired
-	private LdapConnectionRepository ldapConnectionRepository;
+	private LdapConnectionRepositoryImpl ldapConnectionRepository;
 	
 	@Autowired
 	private DomainPatternRepository domainPatternRepository;
