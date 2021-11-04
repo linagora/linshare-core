@@ -35,18 +35,19 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.common.base.MoreObjects;
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.MoreObjects;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -157,10 +158,18 @@ public class WelcomeMessageDto {
 		welcomeMessageDto.setDescription(welcomeMessage.getDescription());
 		welcomeMessageDto.setModificationDate(welcomeMessage.getModificationDate());
 		welcomeMessageDto.setDomain(new DomainDto(welcomeMessage.getDomain()));
-		welcomeMessageDto.setAssignedToCurrentDomain(false);
+		welcomeMessageDto.setAssignedToCurrentDomain(isAssignedToCurrentDomain(welcomeMessage, domain));
 		welcomeMessageDto.setReadOnly(!welcomeMessage.getDomain().equals(domain));
 		welcomeMessageDto.setEntries(entries(welcomeMessage.getWelcomeMessagesEntries()));
 		return welcomeMessageDto;
+	}
+
+	private static boolean isAssignedToCurrentDomain(WelcomeMessages welcomeMessage, AbstractDomain domain) {
+		WelcomeMessages currentWelcomeMessage = domain.getCurrentWelcomeMessage();
+		if (currentWelcomeMessage == null) {
+			return false;
+		}
+		return currentWelcomeMessage.getUuid().equals(welcomeMessage.getUuid());
 	}
 
 	private static Map<SupportedLanguage, String> entries(Map<SupportedLanguage, WelcomeMessagesEntry> entries) {
