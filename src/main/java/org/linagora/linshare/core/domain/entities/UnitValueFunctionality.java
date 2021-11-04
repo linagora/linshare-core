@@ -230,24 +230,30 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				timeUnit.setUnitValue(TimeUnit.valueOf(unit));
 			}
 		}
-		if (this.getMaxValueUsed()) {
-			if (FunctionalityNames.GUESTS__EXPIRATION.toString().equals(this.getIdentifier()) && parameterDto.getMaxInteger() == -1) {
-				logger.error("GUEST__EXPIRATION max_value can not be updated to unlimited");
-				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT,"GUESTS__EXPIRATION max_value can not be updated to unlimited");
-			} 
-			this.maxValue = parameterDto.getMaxInteger();
-			String unitMax = null;
-			if (version >= 4) {
-				unitMax = parameterDto.getMaxString().trim().toUpperCase();
-			}
-			if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
-				FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
-				if (version >= 4) {
-					sizeMaxUnit.setUnitValue(FileSizeUnit.valueOf(unitMax));
+		if (version >= 4) {
+			if (this.getMaxValueUsed()) {
+				if (!this.getUnlimitedUsed() && parameterDto.getMaxInteger() == -1) {
+					logger.error("This functionality does not support unlimited value using -1 as max value: %s",
+							this.identifier);
+					throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT,
+							"This functionality does not support unlimited value using -1 as max value: " + this.identifier);
 				}
-			} else if (type.equals(FunctionalityType.UNIT_TIME.toString())) {
-				TimeUnitClass timeMaxUnit = (TimeUnitClass) getMaxUnit();
-				if (version >= 4) {
+				if (this.getUnlimitedUsed()) {
+					if(parameterDto.getMaxInteger() == -1) {
+						this.setUnlimited(true);
+					} else {
+						this.setUnlimited(false);
+						this.maxValue = parameterDto.getMaxInteger();
+					}
+				} else {
+					this.maxValue = parameterDto.getMaxInteger();
+				}
+				String unitMax = parameterDto.getMaxString().trim().toUpperCase();
+				if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
+					FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
+					sizeMaxUnit.setUnitValue(FileSizeUnit.valueOf(unitMax));
+				} else if (type.equals(FunctionalityType.UNIT_TIME.toString())) {
+					TimeUnitClass timeMaxUnit = (TimeUnitClass) getMaxUnit();
 					timeMaxUnit.setUnitValue(TimeUnit.valueOf(unitMax));
 				}
 			}
@@ -287,8 +293,16 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				parameterDto.setInteger(this.getValue());
 			}
 			if (this.getMaxValueUsed()) {
-				parameterDto.setMaxInteger(this.getMaxValue());
 				parameterDto.setMaxString(maxCurrentUnit);
+				if (this.getUnlimitedUsed()) {
+					if(this.getUnlimited()) {
+						parameterDto.setMaxInteger(-1);
+					} else {
+						parameterDto.setMaxInteger(this.getMaxValue());
+					}
+				} else {
+					parameterDto.setMaxInteger(this.getMaxValue());
+				}
 			}
 			parameterDto.setDefaultValueUsed(this.getValueUsed());
 			parameterDto.setMaxValueUsed(this.getMaxValueUsed());

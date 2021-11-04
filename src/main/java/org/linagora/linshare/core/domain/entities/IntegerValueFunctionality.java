@@ -131,7 +131,7 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		super.updateFunctionalityFrom(functionality);
 		this.updateFunctionalityValuesOnlyFrom(functionality);
 	}
-	
+
 	@Override
 	public void updateFunctionalityValuesOnlyFrom(AbstractFunctionality functionality) {
 		IntegerValueFunctionality f = (IntegerValueFunctionality)functionality;
@@ -152,7 +152,16 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 				this.value = parameterDto.getInteger();
 			}
 			if (version >= 4 && this.getMaxValueUsed()) {
-				this.maxValue = parameterDto.getMaxInteger();
+				if (this.getUnlimitedUsed()) {
+					if(parameterDto.getMaxInteger() == -1) {
+						this.setUnlimited(true);
+					} else {
+						this.setUnlimited(false);
+						this.maxValue = parameterDto.getMaxInteger();
+					}
+				} else {
+					this.maxValue = parameterDto.getMaxInteger();
+				}
 			}
 		}
 	}
@@ -167,8 +176,16 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		}
 		if (version >= 4) {
 			if (this.getMaxValueUsed()) {
-				parameterDto.setMaxInteger(this.getMaxValue());
 				parameterDto.setMaxValueUsed(this.getMaxValueUsed());
+				if (this.getUnlimitedUsed()) {
+					if(this.getUnlimited()) {
+						parameterDto.setMaxInteger(-1);
+					} else {
+						parameterDto.setMaxInteger(this.getMaxValue());
+					}
+				} else {
+					parameterDto.setMaxInteger(this.getMaxValue());
+				}
 			}
 			parameterDto.setDefaultValueUsed(this.getValueUsed());
 		}
