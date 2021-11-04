@@ -88,6 +88,10 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="twakeConnectionRepository" class="org.linagora.linshare.core.repository.hibernate.TwakeConnectionRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="policyRepository" class="org.linagora.linshare.core.repository.hibernate.PolicyRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
