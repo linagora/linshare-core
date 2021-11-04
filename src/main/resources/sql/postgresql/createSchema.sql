@@ -207,6 +207,8 @@ CREATE TABLE remote_server (
   security_auth        varchar(255),
   security_principal   varchar(255),
   security_credentials varchar(255),
+  client_id            varchar(255),
+  client_secret        varchar(255),
   creation_date        timestamp NOT NULL,
   modification_date    timestamp NOT NULL,
   CONSTRAINT linshare_remote_server_pkey

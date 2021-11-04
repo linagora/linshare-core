@@ -201,6 +201,9 @@ ALTER TABLE ldap_connection ALTER COLUMN server_type DROP DEFAULT;
 
 ALTER TABLE ldap_connection RENAME TO remote_server;
 
+ALTER TABLE remote_server ADD COLUMN client_id VARCHAR(255);
+ALTER TABLE remote_server ADD COLUMN client_secret VARCHAR(255);
+
 ALTER TABLE functionality_integer ADD COLUMN unlimited_value bool DEFAULT 'false' NOT NULL;
 ALTER TABLE functionality_integer ADD COLUMN unlimited_value_used bool DEFAULT 'false' NOT NULL;
 ALTER TABLE functionality_unit ADD COLUMN unlimited_value bool DEFAULT 'false' NOT NULL;
@@ -221,6 +224,7 @@ UPDATE functionality_unit SET integer_max_value = 900
 	AND
 		integer_max_value = -1;
 UPDATE functionality_unit SET unlimited_value = TRUE, integer_max_value = 0 WHERE integer_max_value = -1;
+
 ---- End of your queries
 
 -- Upgrade LinShare version

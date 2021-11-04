@@ -19,5 +19,10 @@
 			<property name="securityPrincipal" column="security_principal" type="string" length="255" not-null="false" lazy="false"/>
 			<property name="securityCredentials" column="security_credentials" type="string" length="255" not-null="false" lazy="false"/>
 		</subclass>
+
+		<subclass name="org.linagora.linshare.core.domain.entities.TwakeConnection" discriminator-value="TWAKE">
+			<property name="clientId" column="client_id" type="string" length="255" not-null="false" lazy="false"/>
+			<property name="clientSecret" column="client_secret" type="string" length="255" not-null="false" lazy="false"/>
+		</subclass>
 	</class>
 </hibernate-mapping>
