@@ -37,6 +37,8 @@
         <property name="maxValue" column="integer_max_value" type="integer"/>
         <property name="valueUsed" column="default_value_used" type="boolean"/>
         <property name="maxValueUsed" column="max_value_used" type="boolean"/>
+        <property name="unlimited" column="unlimited_value" type="boolean"/>
+        <property name="unlimitedUsed" column="unlimited_value_used" type="boolean"/>
     </joined-subclass>
     
     <joined-subclass name="BooleanValueFunctionality" table="functionality_boolean">
@@ -54,6 +56,8 @@
         <property name="maxValue" column="integer_max_value" type="integer"/>
         <property name="valueUsed" column="default_value_used" type="boolean"/>
         <property name="maxValueUsed" column="max_value_used" type="boolean"/>
+        <property name="unlimited" column="unlimited_value" type="boolean"/>
+        <property name="unlimitedUsed" column="unlimited_value_used" type="boolean"/>
         <many-to-one name="unit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_id" unique="true" cascade="all" lazy="false" />
         <many-to-one name="maxUnit" class="org.linagora.linshare.core.domain.entities.Unit" column="max_unit_id" unique="true" cascade="all" lazy="false" />
     </joined-subclass>

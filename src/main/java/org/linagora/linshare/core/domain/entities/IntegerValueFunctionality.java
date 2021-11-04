@@ -62,6 +62,10 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 
 	protected Boolean maxValueUsed;
 
+	protected Boolean unlimited;
+
+	protected Boolean unlimitedUsed;
+
 	public IntegerValueFunctionality() {
 		super();
 	}
@@ -242,7 +246,15 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 				parentValue = ((IntegerValueFunctionality)this.ancestorFunc).getMaxValue();
 			}
 			maximum = Optional.of(new NestedIntegerParameterDto(this.maxValue, parentValue));
-			unlimited = new UnlimitedParameterDto();
+			if (this.unlimitedUsed) {
+				Boolean parentUnlimitedValue = this.unlimited;
+				if (this.ancestorFunc != null) {
+					parentUnlimitedValue = ((IntegerValueFunctionality)this.ancestorFunc).getUnlimited();
+				}
+				unlimited = new UnlimitedParameterDto(this.unlimited, parentUnlimitedValue);
+			} else {
+				unlimited = new UnlimitedParameterDto();
+			}
 		}
 		if (defaut.isPresent() && maximum.isPresent()) {
 			return new IntegerDefaultAndMaximumParameterDto(this.system, !this.getParentAllowParametersUpdate(), defaut, maximum, unlimited);
@@ -271,11 +283,31 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 					NestedIntegerParameterDto dto = (NestedIntegerParameterDto) param.getMaximum();
 					Validate.notNull(dto.getValue(), "Maximum value must be set");
 					this.setMaxValue(dto.getValue());
-					// TODO: unlimited
+					if (this.unlimitedUsed) {
+						Validate.notNull(param.getUnlimited(), "Unlimited must be set");
+						Validate.notNull(param.getUnlimited().getValue(), "Unlimited value must be set");
+						this.setUnlimited(param.getUnlimited().getValue());
+					}
 				}
 				break;
 			default:
 				throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Wrong parameter type: " + param.getType());
 			}
+	}
+
+	public Boolean getUnlimited() {
+		return unlimited;
+	}
+
+	public void setUnlimited(Boolean unlimited) {
+		this.unlimited = unlimited;
+	}
+
+	public Boolean getUnlimitedUsed() {
+		return unlimitedUsed;
+	}
+
+	public void setUnlimitedUsed(Boolean unlimitedUsed) {
+		this.unlimitedUsed = unlimitedUsed;
 	}
 }

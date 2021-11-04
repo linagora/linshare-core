@@ -63,8 +63,6 @@ import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalitySizeDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityTimeDto;
 
-import com.google.common.collect.Lists;
-
 public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	protected Unit<?> unit;
@@ -77,17 +75,9 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	protected Boolean maxValueUsed;
 
-	// FIXME: To be handle by the database.
-	public static List<String> unlimitedFunctionalityNames = Lists.newArrayList(
-			FunctionalityNames.SHARE_EXPIRATION.toString(),
-			FunctionalityNames.WORK_GROUP__DOWNLOAD_ARCHIVE.toString(),
-			FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE.toString(),
-			FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_FILE_SIZE.toString(),
-			FunctionalityNames.UPLOAD_REQUEST__MAXIMUM_FILE_COUNT.toString(),
-			FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION.toString(),
-			FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION.toString(),
-			FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString()
-	);
+	protected Boolean unlimited;
+
+	protected Boolean unlimitedUsed;
 
 	public UnitValueFunctionality() {
 		super();
@@ -417,9 +407,12 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 						parentUnit,
 						FileSizeUnit.strValues()
 						));
-				// FIXME: To be handle by the database.
-				if (unlimitedFunctionalityNames.contains(this.identifier)) {
-					unlimited = new UnlimitedParameterDto(maxValue == -1, parentValue == -1);
+				if (this.unlimitedUsed) {
+					Boolean parentUnlimitedValue = this.unlimited;
+					if (this.ancestorFunc != null) {
+						parentUnlimitedValue = ((UnitValueFunctionality)this.ancestorFunc).getUnlimited();
+					}
+					unlimited = new UnlimitedParameterDto(this.unlimited, parentUnlimitedValue);
 				} else {
 					unlimited = new UnlimitedParameterDto();
 				}
@@ -470,9 +463,12 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 						parentUnit,
 						TimeUnit.strValues()
 						));
-				// FIXME: To be handle by the database.
-				if (unlimitedFunctionalityNames.contains(this.identifier)) {
-					unlimited = new UnlimitedParameterDto(maxValue == -1, parentValue == -1);
+				if (this.unlimitedUsed) {
+					Boolean parentUnlimitedValue = this.unlimited;
+					if (this.ancestorFunc != null) {
+						parentUnlimitedValue = ((UnitValueFunctionality)this.ancestorFunc).getUnlimited();
+					}
+					unlimited = new UnlimitedParameterDto(this.unlimited, parentUnlimitedValue);
 				} else {
 					unlimited = new UnlimitedParameterDto();
 				}
@@ -529,7 +525,11 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					this.setMaxValue(dto.getValue());
 					FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
 					sizeMaxUnit.setUnitValue(dto.getUnit());
-					// TODO: unlimited
+					if (this.unlimitedUsed) {
+						Validate.notNull(param.getUnlimited(), "Unlimited must be set");
+						Validate.notNull(param.getUnlimited().getValue(), "Unlimited value must be set");
+						this.setUnlimited(param.getUnlimited().getValue());
+					}
 				}
 				break;
 			case "UNIT_TIME_DEFAULT":
@@ -554,7 +554,11 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					this.setMaxValue(dto.getValue());
 					TimeUnitClass timeUnit = (TimeUnitClass) getMaxUnit();
 					timeUnit.setUnitValue(dto.getUnit());
-					// TODO: unlimited
+					if (this.unlimitedUsed) {
+						Validate.notNull(param.getUnlimited(), "Unlimited must be set");
+						Validate.notNull(param.getUnlimited().getValue(), "Unlimited value must be set");
+						this.setUnlimited(param.getUnlimited().getValue());
+					}
 				}
 				break;
 			default:
@@ -568,4 +572,19 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				+ ", valueUsed=" + valueUsed + ", maxValueUsed=" + maxValueUsed + ", domain=" + domain + "]";
 	}
 
+	public Boolean getUnlimited() {
+		return unlimited;
+	}
+
+	public void setUnlimited(Boolean unlimited) {
+		this.unlimited = unlimited;
+	}
+
+	public Boolean getUnlimitedUsed() {
+		return unlimitedUsed;
+	}
+
+	public void setUnlimitedUsed(Boolean unlimitedUsed) {
+		this.unlimitedUsed = unlimitedUsed;
+	}
 }

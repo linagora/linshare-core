@@ -201,6 +201,20 @@ ALTER TABLE ldap_connection ALTER COLUMN server_type DROP DEFAULT;
 
 ALTER TABLE ldap_connection RENAME TO remote_server;
 
+ALTER TABLE functionality_integer ADD COLUMN unlimited_value bool DEFAULT 'false' NOT NULL;
+ALTER TABLE functionality_integer ADD COLUMN unlimited_value_used bool DEFAULT 'false' NOT NULL;
+ALTER TABLE functionality_unit ADD COLUMN unlimited_value bool DEFAULT 'false' NOT NULL;
+ALTER TABLE functionality_unit ADD COLUMN unlimited_value_used bool DEFAULT 'false' NOT NULL;
+
+UPDATE functionality_integer SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT');
+UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'SHARE_EXPIRATION');
+UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE');
+UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE');
+UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION');
+UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION');
+UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION');
+
+UPDATE functionality_unit SET unlimited_value = TRUE, integer_max_value = 0 WHERE integer_max_value = -1;
 ---- End of your queries
 
 -- Upgrade LinShare version
