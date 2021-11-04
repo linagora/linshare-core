@@ -214,6 +214,12 @@ UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id
 UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION');
 UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION');
 
+
+UPDATE functionality_unit SET integer_max_value = 900
+	WHERE
+		functionality_id IN (SELECT id FROM functionality WHERE identifier = 'WORK_GROUP__DOWNLOAD_ARCHIVE')
+	AND
+		integer_max_value = -1;
 UPDATE functionality_unit SET unlimited_value = TRUE, integer_max_value = 0 WHERE integer_max_value = -1;
 ---- End of your queries
 

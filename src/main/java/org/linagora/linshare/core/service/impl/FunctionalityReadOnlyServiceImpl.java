@@ -448,7 +448,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 		}
 		logger.debug(func.getIdentifier() + " has a delegation policy");
 		Integer maxInteger = func.getMaxValue();
-		if ((maxInteger != -1) && currentInteger > maxInteger) {
+		if (!func.getUnlimited() && currentInteger > maxInteger) {
 			String errorMessage = buildErrorMessage(func, currentInteger.toString(), maxInteger.toString());
 			logger.warn(errorMessage);
 			throw new BusinessException(errorCode, errorMessage);
@@ -482,9 +482,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 		}
 		logger.debug(func.getIdentifier() + " has a delegation policy");
 		// check if there is limitation of maximum value
-		// -1 mean no limit
 		Date now = getCalendarWithoutTime(timeService.dateNow()).getTime();
-		if (func.getMaxValue() == -1 && (currentDate.after(now) || currentDate.equals(now))) {
+		if (func.getUnlimited() && (currentDate.after(now) || currentDate.equals(now))) {
 			return currentDate;
 		}
 		Calendar c = new GregorianCalendar();
@@ -514,9 +513,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return defaultDate;
 		}
 		// check if there is limitation of maximum value
-		// -1 mean no limit
 		Date now = getCalendarTime(timeService.dateNow()).getTime();
-		if (func.getMaxValue() == -1 && (currentDate.after(now) || currentDate.equals(now))) {
+		if (func.getUnlimited() && (currentDate.after(now) || currentDate.equals(now))) {
 			return currentDate;
 		}
 		Calendar c = getCalendarTime(now);
@@ -545,8 +543,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return defaultDate;
 		}
 		// check if there is limitation of maximum value
-		// -1 mean no limit
-		if (func.getMaxValue() == -1 && (currentDate.after(activationDate) || currentDate.equals(activationDate))) {
+		if (func.getUnlimited() && (currentDate.after(activationDate) || currentDate.equals(activationDate))) {
 			return currentDate;
 		}
 		Calendar c = getCalendarTime(activationDate);
@@ -573,12 +570,15 @@ public class FunctionalityReadOnlyServiceImpl implements
 			return defaultSize;
 		}
 		logger.debug(func.getIdentifier() + " has a delegation policy");
-		Integer rawMaxValue = func.getMaxValue();
-		Long maxSize = ((FileSizeUnitClass) func.getMaxUnit()).getSiSize(rawMaxValue);
-		if (rawMaxValue != -1 && currentSize > maxSize) {
-			String errorMessage = buildErrorMessage(func, currentSize.toString(), maxSize.toString());
-			logger.warn(errorMessage);
-			throw new BusinessException(errorCode, errorMessage);
+		// TODO fix unlimited
+		if (!func.getUnlimited()) {
+			Integer rawMaxValue = func.getMaxValue();
+			Long maxSize = ((FileSizeUnitClass) func.getMaxUnit()).getSiSize(rawMaxValue);
+			if (currentSize > maxSize) {
+				String errorMessage = buildErrorMessage(func, currentSize.toString(), maxSize.toString());
+				logger.warn(errorMessage);
+				throw new BusinessException(errorCode, errorMessage);
+			}
 		}
 		return currentSize;
 	}

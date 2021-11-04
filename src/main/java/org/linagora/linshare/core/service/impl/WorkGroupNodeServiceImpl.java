@@ -601,7 +601,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 					"Can not download this folder, Functionality is disabled. ");
 		}
 		Long computedArchiveSize = workGroupNodeBusinessService.computeNodeSize(workGroup, pattern, WorkGroupNodeType.DOCUMENT);
-		if ((archiveDownload.getMaxValue() != -1) && computedArchiveSize > archiveDownload.getMaxSiSize()) {
+		if (computedArchiveSize > archiveDownload.getMaxSiSize()) {
 			logger.error("Can not download this folder, The Folder size is too large.",
 					archiveDownload.getMaxSiSize());
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_DOWNLOAD_ARCHIVE_SIZE_TOO_LARGE,
