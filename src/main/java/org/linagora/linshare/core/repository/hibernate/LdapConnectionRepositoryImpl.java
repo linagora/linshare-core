@@ -35,49 +35,24 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.RemoteServerRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
-public class LdapConnectionRepositoryImpl extends
-		AbstractRepositoryImpl<LdapConnection> implements
-		RemoteServerRepository<LdapConnection> {
+public class LdapConnectionRepositoryImpl extends RemoteServerRepository<LdapConnection> {
 
 	public LdapConnectionRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 
 	@Override
-	public LdapConnection create(LdapConnection entity)
-			throws BusinessException {
-		entity.setCreationDate(new Date());
-		entity.setModificationDate(new Date());
-		entity.setUuid(UUID.randomUUID().toString());
-		return super.create(entity);
-	}
-
-	@Override
-	public LdapConnection update(LdapConnection entity)
-			throws BusinessException {
-		entity.setModificationDate(new Date());
-		return super.update(entity);
-	}
-
-	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(LdapConnection entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(LdapConnection.class)
-				.add(Restrictions.eq("uuid", entity.getUuid()));
-		return det;
+	protected DetachedCriteria detachedCriteria() {
+		return DetachedCriteria.forClass(LdapConnection.class);
 	}
 
 	@Override
@@ -88,18 +63,4 @@ public class LdapConnectionRepositoryImpl extends
 		det.setProjection(Projections.rowCount());
 		return DataAccessUtils.longResult(findByCriteria(det)) > 0;
 	}
-
-	@Override
-	public LdapConnection findByUuid(String uuid) {
-		List<LdapConnection> conns = findByCriteria(Restrictions.eq("uuid",
-				uuid));
-		if (conns == null || conns.isEmpty()) {
-			return null;
-		} else if (conns.size() == 1) {
-			return conns.get(0);
-		} else {
-			throw new IllegalStateException("Uuid must be unique");
-		}
-	}
-
 }

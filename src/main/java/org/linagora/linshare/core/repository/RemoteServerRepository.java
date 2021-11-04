@@ -35,12 +35,50 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.Date;
+import java.util.UUID;
+
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.RemoteServer;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.hibernate.AbstractRepositoryImpl;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
-public interface RemoteServerRepository<T extends RemoteServer> extends AbstractRepository<T> {
+public abstract class RemoteServerRepository<T extends RemoteServer> extends AbstractRepositoryImpl<T> {
 
-	T findByUuid(String uuid);
+	public RemoteServerRepository(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
 
-	boolean isUsed(T remoteServer);
+	@Override
+	public T create(T entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
+
+	@Override
+	public T update(T entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
+	}
+
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(T entity) {
+		return detachedCriteria()
+			.add(Restrictions.eq("uuid", entity.getUuid()));
+	}
+
+	protected abstract DetachedCriteria detachedCriteria();
+
+	public T findByUuid(String uuid) {
+		return DataAccessUtils.singleResult(
+			findByCriteria(Restrictions.eq("uuid", uuid)));
+	}
+
+	public abstract boolean isUsed(T remoteServer);
 
 }
