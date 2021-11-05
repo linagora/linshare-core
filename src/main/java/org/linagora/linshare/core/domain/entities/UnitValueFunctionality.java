@@ -89,6 +89,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		this.unit = unit;
 		this.valueUsed = true;
 		this.maxValueUsed = false;
+		this.unlimited = false;
+		this.unlimitedUsed = false;
 	}
 	
 	public UnitValueFunctionality(String identifier, boolean system, Policy activationPolicy,
@@ -99,6 +101,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		this.maxUnit = maxUnit;
 		this.valueUsed = valueUsed;
 		this.maxValueUsed = maxValueUsed;
+		this.unlimited = false;
+		this.unlimitedUsed = false;
 	}
 
 	@Override
@@ -153,13 +157,21 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 					return false;
 				}
 			}
-			
 			if (maxUnit == null) {
 				if(unitFunc.getMaxUnit() != null) {
 					return false;
 				}
 			} else {
 				if(!maxUnit.businessEquals(unitFunc.getMaxUnit())) {
+					return false;
+				}
+			}
+			if (unlimited == null) {
+				if(unitFunc.getUnlimited() != null) {
+					return false;
+				}
+			} else {
+				if(!unlimited.equals(unitFunc.getUnlimited())) {
 					return false;
 				}
 			}
@@ -206,6 +218,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		if (this.getMaxValueUsed()) {
 			this.maxValue = f.getMaxValue();
 			this.maxUnit.updateUnitFrom(f.getMaxUnit());
+			this.unlimited = f.getUnlimited();
 		}
 	}
 
@@ -583,7 +596,10 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	@Override
 	public String toString() {
 		return "UnitValueFunctionality [unit=" + unit + ", maxUnit=" + maxUnit + ", maxValue=" + maxValue
-				+ ", valueUsed=" + valueUsed + ", maxValueUsed=" + maxValueUsed + ", domain=" + domain + "]";
+				+ ", valueUsed=" + valueUsed + ", maxValueUsed=" + maxValueUsed
+				+ ", unlimited=" + unlimited
+				+ ", unlimitedUsed=" + unlimitedUsed
+				+ ", domain=" + domain + "]";
 	}
 
 	public Boolean getUnlimited() {

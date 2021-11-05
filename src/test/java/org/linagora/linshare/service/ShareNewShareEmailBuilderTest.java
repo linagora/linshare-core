@@ -244,7 +244,7 @@ public class ShareNewShareEmailBuilderTest {
 		});
 		Assertions.assertEquals(e2.getErrorCode(), BusinessErrorCode.SHARE_EXPIRY_DATE_INVALID);
 		// test with no limit in share functionality
-		entity.setMaxValue(-1);
+		entity.setUnlimited(true);
 		functionalityService.update(admin, shareFunc.getDomain().getUuid(), entity);
 		Date expiryDateUnlimited = new Date(Long.MAX_VALUE);
 		sc.setExpiryDate(expiryDateUnlimited);

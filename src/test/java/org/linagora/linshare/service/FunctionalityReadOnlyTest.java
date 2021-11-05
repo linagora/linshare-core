@@ -131,8 +131,7 @@ public class FunctionalityReadOnlyTest {
 	public void testUploadRequestMaxFileCountFunctionality_GetUnlimitedIntegerValue() {
 		IntegerValueFunctionality func = functionalityService
 				.getUploadRequestMaxFileCountFunctionality(domain);
-		// the max value is -1 so unlimited value is allowed
-		func.setMaxValue(-1);
+		func.setUnlimited(true);
 		Integer maxValue = Integer.MAX_VALUE;
 		Integer integerValue = functionalityService.getIntegerValue(func, maxValue,
 				BusinessErrorCode.UPLOAD_REQUEST_INTEGER_VALUE_INVALID);
@@ -168,7 +167,7 @@ public class FunctionalityReadOnlyTest {
 	public void testUploadRequestMaxDepositSizeFunctionalityUnlimited_GetSizeValue() {
 		SizeUnitValueFunctionality func = functionalityService.getUploadRequestMaxDepositSizeFunctionality(domain);
 		func.getActivationPolicy().setStatus(true);
-		func.setMaxValue(-1);
+		func.setUnlimited(true);
 		// the user value is the greatest integer possible and is returned.
 		long currentValue = Integer.MAX_VALUE;
 		long sizeValue = functionalityService.getSizeValue(func, currentValue,
@@ -218,12 +217,13 @@ public class FunctionalityReadOnlyTest {
 		Assertions.assertEquals(userActivationDate1, activationDate);
 		// Case 3:
 		// There is no limit we need to return the current activation date
-		func.setMaxValue(-1);
+		func.setUnlimited(true);
 		functionalityBusinessService.update(domain.getUuid(), func);
 		Assertions.assertEquals(userActivationDate1, activationDate);
 		// Case 4:
 		// The activation date is after maximum delay before activation | expected throw
 		// a business exception
+		func.setUnlimited(false);
 		func.setMaxValue(1); // maximum delay before activation is 1 month
 		functionalityBusinessService.update(domain.getUuid(), func);
 		Calendar c1 = Calendar.getInstance();

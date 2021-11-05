@@ -344,8 +344,8 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  	VALUES(32, false, 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION', 65, 66, 67, 1, 'UPLOAD_REQUEST', true, now(), now());
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (7, 0, 2),(17, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
-	VALUES (32, -1, 7, 17, 0, true, true);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used, unlimited_value, unlimited_value_used)
+	VALUES (32, 0, 7, 17, 0, true, true, true, true);
 
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -635,9 +635,14 @@ UPDATE functionality_integer SET unlimited_value_used = TRUE WHERE functionality
 UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'SHARE_EXPIRATION');
 UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE');
 UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE');
-UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION');
+UPDATE functionality_unit SET unlimited_value_used = TRUE, unlimited_value = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION');
 UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION');
 UPDATE functionality_unit SET unlimited_value_used = TRUE WHERE functionality_id in (SELECT id FROM functionality WHERE identifier = 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION');
 
+UPDATE functionality_unit SET integer_max_value = 900
+	WHERE
+		functionality_id IN (SELECT id FROM functionality WHERE identifier = 'WORK_GROUP__DOWNLOAD_ARCHIVE')
+	AND
+		integer_max_value = -1;
 UPDATE functionality_unit SET unlimited_value = TRUE, integer_max_value = 0 WHERE integer_max_value = -1;
 

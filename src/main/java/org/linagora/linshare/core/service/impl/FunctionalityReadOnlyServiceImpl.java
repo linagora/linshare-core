@@ -486,14 +486,22 @@ public class FunctionalityReadOnlyServiceImpl implements
 		if (func.getUnlimited() && (currentDate.after(now) || currentDate.equals(now))) {
 			return currentDate;
 		}
-		Calendar c = new GregorianCalendar();
-		c.setTime(now);
-		c.add(func.toCalendarMaxValue(), func.getMaxValue());
-		Date maxDate = getCalendarWithoutTime(c.getTime()).getTime(); // Maximum value allowed
-		if (currentDate.before(now) || currentDate.after(maxDate)) {
-			String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(now), dateFormat.format(maxDate));
-			logger.warn(errorMessage);
-			throw new BusinessException(errorCode, errorMessage);
+		if (func.getUnlimited()) {
+			if (currentDate.before(now)) {
+				String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(now), "Unlimited");
+				logger.warn(errorMessage);
+				throw new BusinessException(errorCode, errorMessage);
+			}
+		} else {
+			Calendar c = new GregorianCalendar();
+			c.setTime(now);
+			c.add(func.toCalendarMaxValue(), func.getMaxValue());
+			Date maxDate = getCalendarWithoutTime(c.getTime()).getTime(); // Maximum value allowed
+			if (currentDate.before(now) || currentDate.after(maxDate)) {
+				String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(now), dateFormat.format(maxDate));
+				logger.warn(errorMessage);
+				throw new BusinessException(errorCode, errorMessage);
+			}
 		}
 		return currentDate;
 	}
@@ -517,13 +525,21 @@ public class FunctionalityReadOnlyServiceImpl implements
 		if (func.getUnlimited() && (currentDate.after(now) || currentDate.equals(now))) {
 			return currentDate;
 		}
-		Calendar c = getCalendarTime(now);
-		c.add(func.toCalendarMaxValue(), func.getMaxValue());
-		Date maxDate = roundToUpperHour(c.getTime()); // Maximum value allowed
-		if (currentDate.before(now) || currentDate.after(maxDate)) {
-			String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(now), dateFormat.format(maxDate));
-			logger.warn(errorMessage);
-			throw new BusinessException(errorCode, errorMessage);
+		if (func.getUnlimited()) {
+			if (currentDate.before(now)) {
+				String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(now), "unlimited");
+				logger.warn(errorMessage);
+				throw new BusinessException(errorCode, errorMessage);
+			}
+		} else {
+			Calendar c = getCalendarTime(now);
+			c.add(func.toCalendarMaxValue(), func.getMaxValue());
+			Date maxDate = roundToUpperHour(c.getTime()); // Maximum value allowed
+			if (currentDate.before(now) || currentDate.after(maxDate)) {
+				String errorMessage = buildErrorMessage(func, dateFormat.format(currentDate), dateFormat.format(now), dateFormat.format(maxDate));
+				logger.warn(errorMessage);
+				throw new BusinessException(errorCode, errorMessage);
+			}
 		}
 		return currentDate;
 	}
