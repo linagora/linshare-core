@@ -85,6 +85,13 @@
 		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
 
+	<bean name="twakeConnectionService"
+		  class="org.linagora.linshare.core.service.impl.TwakeConnectionServiceImpl">
+		<constructor-arg ref="twakeConnectionRepository" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
+		<constructor-arg ref="abstractDomainRepository" />
+	</bean>
+
 	<bean name="userProviderService"
 		class="org.linagora.linshare.core.service.impl.UserProviderServiceImpl">
 		<constructor-arg ref="domainPatternRepository" />

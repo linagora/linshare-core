@@ -35,6 +35,7 @@
 		<constructor-arg>
 			<map>
 				<entry key="LDAP" value-ref="ldapConnectionService" />
+				<entry key="TWAKE" value-ref="twakeConnectionService" />
 			</map>
 		</constructor-arg>
 	</bean>
