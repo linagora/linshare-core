@@ -42,103 +42,28 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.hibernate.LdapConnectionRepositoryImpl;
-import org.linagora.linshare.core.service.RemoteServerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class LdapConnectionServiceImpl implements RemoteServerService<LdapConnection> {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(LdapConnectionServiceImpl.class);
-
-	private final LdapConnectionRepositoryImpl ldapConnectionRepository;
-
-	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
-
-	private final AbstractDomainRepository abstractDomainRepository;
+public class LdapConnectionServiceImpl extends RemoteServerServiceImpl<LdapConnection> {
 
 	public LdapConnectionServiceImpl(
 			LdapConnectionRepositoryImpl ldapConnectionRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			AbstractDomainRepository abstractDomainRepository) {
-		super();
-		this.ldapConnectionRepository = ldapConnectionRepository;
-		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
-		this.abstractDomainRepository = abstractDomainRepository;
+		super(ldapConnectionRepository, sanitizerInputHtmlBusinessService, abstractDomainRepository);
 	}
 
 	@Override
-	public LdapConnection create(LdapConnection ldapConnection)
-			throws BusinessException {
-		Validate.notEmpty(ldapConnection.getLabel(),
-				"ldap connection label must be set.");
-		ldapConnection.setLabel(sanitize(ldapConnection.getLabel()));
-		return ldapConnectionRepository.create(ldapConnection);
-	}
-
-	private String sanitize (String input) {
-		return sanitizerInputHtmlBusinessService.strictClean(input);
-	}
-
-	@Override
-	public List<LdapConnection> findAll() throws BusinessException {
-		return ldapConnectionRepository.findAll();
-	}
-
-	@Override
-	public LdapConnection find(String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "Ldap connection uuid must be set.");
-		LdapConnection connection = ldapConnectionRepository.findByUuid(uuid);
-		if (connection == null)
-			throw new BusinessException(
-					BusinessErrorCode.LDAP_CONNECTION_NOT_FOUND,
-					"Can not found ldap connection with uuid: " + uuid + ".");
-		return connection;
-	}
-
-	@Override
-	public LdapConnection update(LdapConnection ldapConnection)
-			throws BusinessException {
-		Validate.notNull(ldapConnection, "Ldap connection must be set.");
-		Validate.notEmpty(ldapConnection.getUuid(),
-				"Ldap connection uuid must be set.");
-		LdapConnection ldapConn = find(ldapConnection.getUuid());
-		ldapConn.setLabel(sanitize(ldapConnection.getLabel()));
-		ldapConn.setProviderUrl(ldapConnection.getProviderUrl());
-		ldapConn.setSecurityAuth(ldapConnection.getSecurityAuth());
-		ldapConn.setSecurityCredentials(ldapConnection.getSecurityCredentials());
-		ldapConn.setSecurityPrincipal(ldapConnection.getSecurityPrincipal());
-		return ldapConnectionRepository.update(ldapConn);
-	}
-
-	@Override
-	public LdapConnection delete(String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "Ldap connection uuid must be set.");
-		LdapConnection ldapConnection = find(uuid);
-		if (ldapConnectionRepository.isUsed(ldapConnection)) {
-			throw new BusinessException(
-					BusinessErrorCode.LDAP_CONNECTION_STILL_IN_USE,
-					"Cannot delete connection because still used by domains");
-		}
-		logger.debug("delete ldap connexion : " + uuid);
-		ldapConnectionRepository.delete(ldapConnection);
-		return ldapConnection;
-	}
-
-	@Override
-	public boolean isUsed(String uuid) {
-		Validate.notEmpty(uuid, "Ldap connection uuid must be set.");
-		LdapConnection ldapConnection = find(uuid);
-		return ldapConnectionRepository.isUsed(ldapConnection);
+	protected void updateFields(LdapConnection remoteServer, LdapConnection updateRemoteServer) {
+		updateRemoteServer.setSecurityAuth(remoteServer.getSecurityAuth());
+		updateRemoteServer.setSecurityCredentials(remoteServer.getSecurityCredentials());
+		updateRemoteServer.setSecurityPrincipal(remoteServer.getSecurityPrincipal());
 	}
 
 	@Override
 	public List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection) {
-		Validate.notNull(ldapConnection, "ldapConnection must be set.");
+		Validate.notNull(ldapConnection, "Ldap connection must be set.");
 		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByRemoteServer(ldapConnection);
 		return domains;
 	}
