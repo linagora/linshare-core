@@ -62,7 +62,6 @@ public class DomainAccessPolicy {
 
 	public DomainAccessPolicy() {
 		super();
-		this.rules = new ArrayList<DomainAccessRule>();
 	}
 
 	public DomainAccessPolicy(long persistenceId) {

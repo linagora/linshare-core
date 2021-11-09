@@ -47,4 +47,9 @@ public class DenyAllDomain extends DomainAccessRule {
 	public DomainAccessRuleType getDomainAccessRuleType() {
 		return DomainAccessRuleType.DENY_ALL;
 	}
+
+	@Override
+	public String toString() {
+		return "DenyAllDomain";
+	}
 }

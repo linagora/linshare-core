@@ -49,6 +49,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.facade.webservice.adminv5.DomainFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -121,8 +122,13 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	public DomainDto create(
 			@Parameter(description = "Create a dedicated domain policy, allowing the domain to only communicate with itself.")
 				@QueryParam("dedicatedDomainPolicy") @DefaultValue("false") boolean dedicatedDomainPolicy,
+			@Parameter(description = "Add this domain to an existing domain policy using ALLOW.")
+				@QueryParam("addItToDomainPolicy") String addItToDomainPolicy,
 			DomainDto dto) {
-		return domainFacade.create(dedicatedDomainPolicy, dto);
+		if (dedicatedDomainPolicy && addItToDomainPolicy != null) {
+			throw new IllegalArgumentException("You can't use dedicatedDomainPolicy and addItToDomainPolicy at the same time.");
+		}
+		return domainFacade.create(dto, dedicatedDomainPolicy, addItToDomainPolicy);
 	}
 
 	@Path("/{uuid: .*}")

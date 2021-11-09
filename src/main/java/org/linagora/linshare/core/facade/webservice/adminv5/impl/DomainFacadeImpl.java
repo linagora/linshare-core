@@ -121,7 +121,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 	}
 
 	@Override
-	public DomainDto create(boolean dedicatedDomainPolicy, DomainDto dto) {
+	public DomainDto create(DomainDto dto, boolean dedicatedDomainPolicy, String addItToDomainPolicy) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto.getParent(), "Domain parent object must be set.");
 		String parentUuid = dto.getParent().getUuid();
@@ -130,9 +130,13 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 		AbstractDomain created = domainService.create(authUser, dto.getName(), dto.getDescription(), dto.getType(), parentDomain);
 		if(dedicatedDomainPolicy) {
 			DomainPolicy policy = new DomainPolicy(dto.getName());
+			DomainPolicy domainPolicy = domainPolicyService.create(policy);
 			policy.getDomainAccessPolicy().addRule(new AllowDomain(created));
 			policy.getDomainAccessPolicy().addRule(new DenyAllDomain());
-			DomainPolicy domainPolicy = domainPolicyService.create(policy);
+			created.setPolicy(domainPolicy);
+		} else if (addItToDomainPolicy != null)	{
+			DomainPolicy domainPolicy = domainPolicyService.find(addItToDomainPolicy);
+			domainPolicy.getDomainAccessPolicy().getRules().add(0, new AllowDomain(created));
 			created.setPolicy(domainPolicy);
 		}
 		return DomainDto.getFull(created);

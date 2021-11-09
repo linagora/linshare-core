@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
 
-	<class name="DomainAccessRule" table="domain_access_rule" abstract="true" discriminator-value= "-1">
+	<class name="DomainAccessRule" table="domain_access_rule" abstract="true" discriminator-value= "-1" lazy="false">
 		<id name="persistenceId" type="long">
 			<column name="id" not-null="true" index="index_domain_access_rule_id"/>
 			<generator class="native" />

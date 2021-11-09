@@ -42,8 +42,14 @@ public class AllowAllDomain extends DomainAccessRule {
 	public AllowAllDomain() {
 	}
 
-    @Override
+	@Override
 	public DomainAccessRuleType getDomainAccessRuleType() {
 		return DomainAccessRuleType.ALLOW_ALL;
 	}
+
+	@Override
+	public String toString() {
+		return "AllowAllDomain";
+	}
+
 }

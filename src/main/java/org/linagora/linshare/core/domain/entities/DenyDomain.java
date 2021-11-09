@@ -68,4 +68,9 @@ public class DenyDomain extends DomainAccessRule {
 		return DomainAccessRuleType.DENY;
 	}
 
+	@Override
+	public String toString() {
+		return "DenyDomain [domain=" + domain + "]";
+	}
+
 }

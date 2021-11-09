@@ -69,4 +69,9 @@ public class AllowDomain extends DomainAccessRule {
 		return DomainAccessRuleType.ALLOW;
 	}
 
+	@Override
+	public String toString() {
+		return "AllowDomain [domain=" + domain + "]";
+	}
+
 }
