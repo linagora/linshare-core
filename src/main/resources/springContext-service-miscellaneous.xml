@@ -78,6 +78,11 @@
 		<constructor-arg value="${linshare.user.jwt.token.link}"/>
 	</bean>
 
+	<bean name="commonRemoteServerService"
+		  class="org.linagora.linshare.core.service.impl.CommonRemoteServerServiceImpl">
+		<constructor-arg ref="commonConnectionRepository" />
+	</bean>
+
 	<bean name="ldapConnectionService"
 		class="org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl">
 		<constructor-arg ref="ldapConnectionRepository" />

@@ -33,19 +33,35 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
+import java.util.Date;
+import java.util.Optional;
+
+import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.ServerType;
+import org.linagora.linshare.core.domain.entities.TwakeConnection;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.domain.constants.ServerType;
-
-import java.util.Date;
 
 @JsonDeserialize(builder = TwakeServerDto.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "TwakeServer", description = "A Twake server connection")
 public class TwakeServerDto extends AbstractServerDto {
+
+	public static TwakeServerDto from(TwakeConnection twakeConnection) {
+		return builder()
+			.clientId(twakeConnection.getClientId())
+			.clientSecret(twakeConnection.getClientSecret())
+			.uuid(twakeConnection.getUuid())
+			.name(twakeConnection.getLabel())
+			.url(twakeConnection.getProviderUrl())
+			.serverType(twakeConnection.getServerType())
+			.creationDate(twakeConnection.getCreationDate())
+			.modificationDate(twakeConnection.getModificationDate())
+			.build();
+	}
 
 	public static Builder builder() {
 		return new Builder();
@@ -94,5 +110,17 @@ public class TwakeServerDto extends AbstractServerDto {
 
 	public String getClientSecret() {
 		return clientSecret;
+	}
+
+	public TwakeConnection toTwakeServerObject(Optional<String> uuid) {
+		TwakeConnection connection = new TwakeConnection();
+		connection.setUuid(uuid.orElse(getUuid()));
+		connection.setLabel(getName());
+		connection.setProviderUrl(getUrl());
+		connection.setClientId(getClientId());
+		connection.setClientSecret(getClientSecret());
+		connection.setCreationDate(getCreationDate());
+		connection.setModificationDate(getModificationDate());
+		return connection;
 	}
 }

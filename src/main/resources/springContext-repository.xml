@@ -84,6 +84,10 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="commonConnectionRepository" class="org.linagora.linshare.core.repository.hibernate.CommonConnectionRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="ldapConnectionRepository" class="org.linagora.linshare.core.repository.hibernate.LdapConnectionRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>

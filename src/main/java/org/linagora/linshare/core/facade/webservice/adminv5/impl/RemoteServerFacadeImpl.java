@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.ServerType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.TwakeConnection;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
@@ -50,8 +51,10 @@ import org.linagora.linshare.core.facade.webservice.adminv5.RemoteServerFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.TwakeServerDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.RemoteServerService;
+import org.linagora.linshare.core.service.impl.CommonRemoteServerServiceImpl;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -59,12 +62,15 @@ import com.google.common.collect.Lists;
 
 public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements RemoteServerFacade {
 
+	private final CommonRemoteServerServiceImpl commonRemoteServerService;
 	private final Map<ServerType, RemoteServerService<?>> remoteServices;
 
 	public RemoteServerFacadeImpl(
 			final AccountService accountService,
+			final CommonRemoteServerServiceImpl commonRemoteServerService,
 			final Map<ServerType, RemoteServerService<?>> remoteServices) {
 		super(accountService);
+		this.commonRemoteServerService = commonRemoteServerService;
 		this.remoteServices = remoteServices;
 	}
 
@@ -92,11 +98,30 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	public AbstractServerDto find(String uuid) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "Server uuid must be set.");
-		RemoteServerService remoteServer = getService(ServerType.LDAP);
-		LdapConnection ldapConnection = (LdapConnection) remoteServer.find(uuid);
-		return LDAPServerDto.from(ldapConnection);
+		Optional<ServerType> serverType = commonRemoteServerService.findServerTypeByUuid(uuid);
+		if (!serverType.isPresent()) {
+			throw new BusinessException(
+				BusinessErrorCode.REMOTE_SERVER_NOT_FOUND,
+				"Can not found remote server connection with uuid: " + uuid + ".");
+		}
+		switch (serverType.get()) {
+			case LDAP:
+				return findLdapServer(uuid);
+			case TWAKE:
+				return findTwakeServer(uuid);
+		}
+		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
 	}
 
+	private AbstractServerDto findLdapServer(String uuid) {
+		RemoteServerService<LdapConnection> remoteServer = (RemoteServerService<LdapConnection>) getService(ServerType.LDAP);
+		return LDAPServerDto.from(remoteServer.find(uuid));
+	}
+
+	private TwakeServerDto findTwakeServer(String uuid) {
+		RemoteServerService<TwakeConnection> remoteServer = (RemoteServerService<TwakeConnection>) getService(ServerType.TWAKE);
+		return TwakeServerDto.from(remoteServer.find(uuid));
+	}
 
 	@Override
 	public AbstractServerDto create(AbstractServerDto serverDto) {
@@ -105,12 +130,21 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 		ServerType serverType = serverDto.getServerType();
 		switch (serverType) {
 			case LDAP:
-				LDAPServerDto ldapServerDto = (LDAPServerDto) serverDto;
-				RemoteServerService<LdapConnection> remoteServer = (RemoteServerService<LdapConnection>) getService(ServerType.LDAP);
-				return LDAPServerDto.from(remoteServer.create(ldapServerDto.toLdapServerObject(Optional.empty())));
+				return createLdapRemoteServer((LDAPServerDto) serverDto);
 			case TWAKE:
+				return createTwakeRemoteServer((TwakeServerDto) serverDto);
 		}
 		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+	}
+
+	private LDAPServerDto createLdapRemoteServer(LDAPServerDto ldapServerDto) {
+		RemoteServerService<LdapConnection> remoteServer = (RemoteServerService<LdapConnection>) getService(ServerType.LDAP);
+		return LDAPServerDto.from(remoteServer.create(ldapServerDto.toLdapServerObject(Optional.empty())));
+	}
+
+	private TwakeServerDto createTwakeRemoteServer(TwakeServerDto twakeServerDto) {
+		RemoteServerService<TwakeConnection> remoteServer = (RemoteServerService<TwakeConnection>) getService(ServerType.TWAKE);
+		return TwakeServerDto.from(remoteServer.create(twakeServerDto.toTwakeServerObject(Optional.empty())));
 	}
 
 	@Override
@@ -124,14 +158,23 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 		ServerType serverType = serverDto.getServerType();
 		switch (serverType) {
 			case LDAP:
-				LDAPServerDto ldapServerDto = (LDAPServerDto) serverDto;
-				RemoteServerService<LdapConnection> remoteServer = (RemoteServerService<LdapConnection>) getService(ServerType.LDAP);
-				LdapConnection ldapConnection = remoteServer.update(ldapServerDto.toLdapServerObject(Optional.of(finalUuid)));
-				LDAPServerDto from = LDAPServerDto.from(ldapConnection);
-				return from;
+				return updateLdapServer((LDAPServerDto) serverDto, finalUuid);
 			case TWAKE:
+				return updateTwakeServer((TwakeServerDto) serverDto, finalUuid);
 		}
 		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+	}
+
+	private LDAPServerDto updateLdapServer(LDAPServerDto ldapServerDto, String uuid) {
+		RemoteServerService<LdapConnection> remoteServer = (RemoteServerService<LdapConnection>) getService(ServerType.LDAP);
+		LdapConnection ldapConnection = remoteServer.update(ldapServerDto.toLdapServerObject(Optional.of(uuid)));
+		return LDAPServerDto.from(ldapConnection);
+	}
+
+	private TwakeServerDto updateTwakeServer(TwakeServerDto twakeServerDto, String uuid) {
+		RemoteServerService<TwakeConnection> remoteServer = (RemoteServerService<TwakeConnection>) getService(ServerType.TWAKE);
+		TwakeConnection twakeConnection = remoteServer.update(twakeServerDto.toTwakeServerObject(Optional.of(uuid)));
+		return TwakeServerDto.from(twakeConnection);
 	}
 
 	@Override
@@ -142,9 +185,29 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 			finalUuid = serverDto.getUuid();
 		}
 		Validate.notEmpty(finalUuid, "Server's uuid must be set");
-		RemoteServerService remoteServer = getService(ServerType.LDAP);
-		LdapConnection conn = (LdapConnection) remoteServer.delete(finalUuid);
-		return LDAPServerDto.from(conn);
+		Optional<ServerType> serverType = commonRemoteServerService.findServerTypeByUuid(finalUuid);
+		if (!serverType.isPresent()) {
+			throw new BusinessException(
+				BusinessErrorCode.REMOTE_SERVER_NOT_FOUND,
+				"Can not found remote server connection with uuid: " + finalUuid + ".");
+		}
+		switch (serverType.get()) {
+			case LDAP:
+				return deleteLdapServer(finalUuid);
+			case TWAKE:
+				return deleteTwakeServer(finalUuid);
+		}
+		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+	}
+
+	private LDAPServerDto deleteLdapServer(String uuid) {
+		RemoteServerService<LdapConnection> remoteServer = (RemoteServerService<LdapConnection>) getService(ServerType.LDAP);
+		return LDAPServerDto.from(remoteServer.delete(uuid));
+	}
+
+	private TwakeServerDto deleteTwakeServer(String uuid) {
+		RemoteServerService<TwakeConnection> remoteServer = (RemoteServerService<TwakeConnection>) getService(ServerType.TWAKE);
+		return TwakeServerDto.from(remoteServer.delete(uuid));
 	}
 
 	@Override
