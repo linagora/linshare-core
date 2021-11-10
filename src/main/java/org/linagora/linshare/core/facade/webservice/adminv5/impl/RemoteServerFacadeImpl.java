@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,6 +87,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	public List<AbstractServerDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		return Stream.concat(findAllLdapRemoteServers(), findAllTwakeRemoteServers())
+			.sorted(Comparator.comparing(AbstractServerDto::getCreationDate))
 			.collect(Collectors.toUnmodifiableList());
 	}
 
