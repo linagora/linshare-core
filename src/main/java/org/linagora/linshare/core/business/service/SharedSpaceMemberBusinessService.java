@@ -137,4 +137,7 @@ public interface SharedSpaceMemberBusinessService {
 	List<WorkgroupMemberAutoCompleteResultDto> autocompleteOnAssetAuthor(String nodeUuid, String pattern);
 
 	List<SharedSpaceMember> findLastFiveUpdatedNestedWorkgroups(String parentUuid, String accountUuid);
+
+	PageContainer<SharedSpaceNodeNested> findSharedSpacesByMembersNumber(Integer greaterThan,
+			Integer lessThan, Set<String> roles, Sort sort, PageContainer<SharedSpaceNodeNested> container);
 }

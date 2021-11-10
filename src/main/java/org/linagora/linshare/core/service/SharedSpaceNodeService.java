@@ -104,11 +104,13 @@ public interface SharedSpaceNodeService {
 	 * @param sharedSpaceRoles
 	 * @param sortField
 	 * @param name
+	 * @param greaterThan
+	 * @param lessThan	
 	 * @param container
 	 * @return
 	 */
 	PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account, List<String> domains,
-			SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, PageContainer<SharedSpaceNodeNested> container);
+			SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, Integer greaterThan, Integer lessThan, PageContainer<SharedSpaceNodeNested> container);
 
 	/**
 	 * user API only

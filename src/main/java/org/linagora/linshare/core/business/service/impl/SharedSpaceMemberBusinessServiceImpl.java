@@ -520,4 +520,49 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		query.limit(5);
 		return mongoTemplate.find(query, SharedSpaceMember.class);
 	}
+
+	@Override
+	public PageContainer<SharedSpaceNodeNested> findSharedSpacesByMembersNumber(Integer greaterThan,
+			Integer lessThan, Set<String> roles, Sort sort, PageContainer<SharedSpaceNodeNested> container) {
+		List<AggregationOperation> commonOperations = Lists.newArrayList();
+		if (!CollectionUtils.isEmpty(roles)) {
+			commonOperations.add(Aggregation.match(Criteria.where("role.name").in(roles)));
+		}
+		commonOperations.add(Aggregation.group("node").count().as("total"));
+		if (Objects.nonNull(greaterThan)) {
+			commonOperations.add(Aggregation.match(Criteria.where("total").gt(greaterThan)));
+		}
+		if (Objects.nonNull(lessThan)) {
+			commonOperations.add(Aggregation.match(Criteria.where("total").lt(lessThan)));
+		}
+		ProjectionOperation projections = Aggregation.project(
+				Fields.from(
+						Fields.field("uuid", "node.uuid"),
+						Fields.field("name", "node.name"),
+						Fields.field("parentUuid", "node.parentUuid"),
+						Fields.field("creationDate", "node.creationDate"),
+						Fields.field("modificationDate", "node.modificationDate"),
+						Fields.field("nodeType", "node.nodeType")
+						)
+				);
+		commonOperations.add(projections);
+		// first query to get the count of matched elements
+		List<AggregationOperation> aggregationOperations = Lists.newArrayList(commonOperations);
+		aggregationOperations.add(Aggregation.count().as("count"));
+		Aggregation aggregation2 = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
+		List<AggregateNodeCountResult> results = mongoTemplate.aggregate(aggregation2, SharedSpaceMember.class, AggregateNodeCountResult.class).getMappedResults();
+		Long count = 0L;
+		if (results.size() > 0 && Objects.nonNull(results.get(0) != null)) {
+			count = results.get(0).getCount();
+		}
+		// second query to get matched elements
+		aggregationOperations = Lists.newArrayList(commonOperations);
+		aggregationOperations.add(Aggregation.sort(sort));
+		aggregationOperations.add(Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())));
+		aggregationOperations.add(Aggregation.limit(Long.valueOf(container.getPageSize())));
+		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
+		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class).getMappedResults();
+		container.validateTotalPagesCount(count);
+		return container.loadData(sharedSpaces);
+	}
 }

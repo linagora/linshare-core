@@ -141,7 +141,7 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid, List<String> domainUuids,
-			SortOrder sortOrder, SharedSpaceField sortField, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, String name, Integer pageNumber, Integer pageSize) {
+			SortOrder sortOrder, SharedSpaceField sortField, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, String name, Integer greaterThan, Integer lessThan, Integer pageNumber, Integer pageSize) {
 		Account authUser = checkAuthentication(Role.ADMIN);
 		User actor = getActor(authUser, actorUuid);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(pageNumber, pageSize);
@@ -149,7 +149,8 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 		if (!Strings.isNullOrEmpty(accountUuid)) {
 			account = accountService.findAccountByLsUuid(accountUuid);
 		}
-		return nodeService.findAll(authUser, actor, account, domainUuids, sortOrder, nodeTypes, sharedSpaceRoles, sortField, name, container);
+		return nodeService.findAll(authUser, actor, account, domainUuids, sortOrder, nodeTypes, sharedSpaceRoles,
+				sortField, name, greaterThan, lessThan, container);
 	}
 
 	@Override

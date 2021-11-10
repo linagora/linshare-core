@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -48,6 +49,7 @@ import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessSer
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -289,7 +291,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account,
-			List<String> domains, SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, PageContainer<SharedSpaceNodeNested> container) {
+			List<String> domains, SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, Integer greaterThan, Integer lessThan, PageContainer<SharedSpaceNodeNested> container) {
 		preChecks(authUser, actor);
 		if (!(authUser.hasSuperAdminRole() || authUser.hasAdminRole())) {
 			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
@@ -308,8 +310,25 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		List<String> allowedDomainUuids = domainPermissionBusinessService
 				.checkDomainAdministrationForListingSharedSpaces(actor, domains);
 		Set<String> roleNames = checkRoles(authUser, actor, sharedSpaceRoles);
-		sharedSpaces = memberBusinessService.findAllSharedSpaces(account, allowedDomainUuids, nodeTypes, roleNames,
-				name, container, sort);
+		if (Objects.isNull(greaterThan) && Objects.isNull(lessThan)) {
+			if (roleNames.isEmpty()) {
+				roleNames.addAll(ssRoleService.findAllSharedSpaceRoleNames(authUser, actor));
+			}
+			sharedSpaces = memberBusinessService.findAllSharedSpaces(account, allowedDomainUuids, nodeTypes, roleNames,
+					name, container, sort);
+		} else {
+			if ((Objects.nonNull(greaterThan) && greaterThan < 1) || (Objects.nonNull(lessThan) && lessThan < 1)) {
+				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
+						"The greaterThan or lessThan should be greater than 1, please check the entered values.");
+			}
+			if (!roleNames.isEmpty()
+					&& !CollectionUtils.isEqualCollection(roleNames, Sets.newHashSet(Role.ADMIN.toString()))) {
+				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
+						"You are not authorized to filter by role else the ADMIN role");
+			}
+			sharedSpaces = memberBusinessService.findSharedSpacesByMembersNumber(greaterThan, lessThan, roleNames, sort,
+					container);
+		}
 		return sharedSpaces;
 	}
 
@@ -319,9 +338,6 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			if (ssRoleService.exist(authUser, actor, roleName)) {
 				roleNames.add(roleName);
 			}
-		}
-		if (roleNames.isEmpty()) {
-			roleNames.addAll(ssRoleService.findAllSharedSpaceRoleNames(authUser, actor));
 		}
 		return roleNames;
 	}
