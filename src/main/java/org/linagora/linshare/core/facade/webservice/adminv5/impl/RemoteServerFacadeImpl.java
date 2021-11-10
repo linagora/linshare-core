@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -84,14 +85,24 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	@Override
 	public List<AbstractServerDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
-		List<AbstractServerDto> ldapRemoteServers =
-			getService(ServerType.LDAP)
-				.findAll()
-				.stream()
-				.map(LdapConnection.class::cast)
-				.map(LDAPServerDto::from)
-				.collect(Collectors.toUnmodifiableList());
-		return ldapRemoteServers;
+		return Stream.concat(findAllLdapRemoteServers(), findAllTwakeRemoteServers())
+			.collect(Collectors.toUnmodifiableList());
+	}
+
+	private Stream<AbstractServerDto> findAllLdapRemoteServers() {
+		return getService(ServerType.LDAP)
+			.findAll()
+			.stream()
+			.map(LdapConnection.class::cast)
+			.map(LDAPServerDto::from);
+	}
+
+	private Stream<AbstractServerDto> findAllTwakeRemoteServers() {
+		return getService(ServerType.TWAKE)
+			.findAll()
+			.stream()
+			.map(TwakeConnection.class::cast)
+			.map(TwakeServerDto::from);
 	}
 
 	@Override
