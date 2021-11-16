@@ -39,10 +39,10 @@ import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.constants.UserProviderType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
+import org.linagora.linshare.core.domain.entities.TwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -52,16 +52,19 @@ import org.linagora.linshare.core.facade.webservice.adminv5.UserProviderFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.TwakeUserProviderDto;
 import org.linagora.linshare.core.repository.LdapUserProviderRepository;
 import org.linagora.linshare.core.repository.OIDCUserProviderRepository;
+import org.linagora.linshare.core.repository.TwakeUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
+import org.linagora.linshare.core.service.impl.TwakeConnectionServiceImpl;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements UserProviderFacade {
 
@@ -71,46 +74,47 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 
 	private LdapConnectionServiceImpl ldapConnectionService;
 
+	private TwakeConnectionServiceImpl twakeConnectionService;
+
 	private UserProviderRepository userProviderRepository;
 
 	private LdapUserProviderRepository ldapUserProviderRepository;
 
 	private OIDCUserProviderRepository oidcUserProviderRepository;
 
+	private TwakeUserProviderRepository twakeUserProviderRepository;
+
 	public UserProviderFacadeImpl(
 			AccountService accountService,
 			DomainService domainService,
 			UserProviderService userProviderService,
 			LdapConnectionServiceImpl ldapConnectionService,
+			TwakeConnectionServiceImpl twakeConnectionService,
 			UserProviderRepository userProviderRepository,
 			LdapUserProviderRepository ldapUserProviderRepository,
-			OIDCUserProviderRepository oidcUserProviderRepository
+			OIDCUserProviderRepository oidcUserProviderRepository,
+			TwakeUserProviderRepository twakeUserProviderRepository
 			) {
 		super(accountService);
 		this.domainService = domainService;
 		this.userProviderService = userProviderService;
 		this.ldapConnectionService = ldapConnectionService;
+		this.twakeConnectionService = twakeConnectionService;
 		this.userProviderRepository = userProviderRepository;
 		this.ldapUserProviderRepository = ldapUserProviderRepository;
 		this.oidcUserProviderRepository = oidcUserProviderRepository;
+		this.twakeUserProviderRepository = twakeUserProviderRepository;
 	}
 
 	@Override
 	public Set<AbstractUserProviderDto> findAll(String domainUuid) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
-		Set<AbstractUserProviderDto> res = Sets.newHashSet();
 		UserProvider up = domain.getUserProvider();
 		if (up != null) {
-			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				res.add(new LDAPUserProviderDto(domain, (LdapUserProvider) up));
-			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
-				res.add(new OIDCUserProviderDto((OIDCUserProvider) up));
-			} else {
-				throw new BusinessException(BusinessErrorCode.USER_PROVIDER_UNSUPPORTED_TYPE, "UserProvider not supported yet");
-			}
+			return ImmutableSet.of(toDto(domain, up));
 		}
-		return res;
+		return ImmutableSet.of();
 	}
 
 	@Override
@@ -126,10 +130,13 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 	}
 
 	private AbstractUserProviderDto toDto(AbstractDomain domain, UserProvider up) {
-		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-			return new LDAPUserProviderDto(domain, (LdapUserProvider) up);
-		} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
-			return new OIDCUserProviderDto((OIDCUserProvider) up);
+		switch (up.getType()) {
+			case LDAP_PROVIDER:
+				return new LDAPUserProviderDto(domain, (LdapUserProvider) up);
+			case OIDC_PROVIDER:
+				return new OIDCUserProviderDto((OIDCUserProvider) up);
+			case TWAKE_PROVIDER:
+				return new TwakeUserProviderDto((TwakeUserProvider) up);
 		}
 		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_UNSUPPORTED_TYPE, "UserProvider not supported yet");
 	}
@@ -152,9 +159,10 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 				return createLdapUserProvider((LDAPUserProviderDto) dto, domain);
 			case OIDC_PROVIDER:
 				return createOidcUserProvider((OIDCUserProviderDto) dto, domain);
-			default:
-				throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
+			case TWAKE_PROVIDER:
+				return createTwakeUserProvider((TwakeUserProviderDto) dto, domain);
 		}
+		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 	}
 
 	private LDAPUserProviderDto createLdapUserProvider(LDAPUserProviderDto dto, AbstractDomain domain) {
@@ -204,6 +212,18 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		return new OIDCUserProviderDto(created);
 	}
 
+	private TwakeUserProviderDto createTwakeUserProvider(TwakeUserProviderDto dto, AbstractDomain domain) {
+		Validate.notNull(dto.getTwakeServer(), "Twake server is mandatory for user provider creation");
+		String twakeConnectionUuid = dto.getTwakeServer().getUuid();
+		Validate.notEmpty(twakeConnectionUuid, "Twake connection uuid is mandatory for user provider creation");
+		Validate.notEmpty(dto.getTwakeCompanyId(), "Twake companyId is mandatory for user provider creation");
+
+		TwakeUserProvider userProvider =  (TwakeUserProvider) userProviderRepository.create(
+			new TwakeUserProvider(domain, twakeConnectionService.find(twakeConnectionUuid), dto.getTwakeCompanyId()));
+		domain.setUserProvider(userProvider);
+		return new TwakeUserProviderDto(userProvider);
+	}
+
 	@Override
 	public AbstractUserProviderDto update(String domainUuid, String uuid, AbstractUserProviderDto dto) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
@@ -225,9 +245,10 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 				return updateLdapUserProvider((LDAPUserProviderDto) dto, domain, userProvider);
 			case OIDC_PROVIDER:
 				return updateOidcUserProvider((OIDCUserProviderDto) dto, userProvider);
-			default:
-				throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
+			case TWAKE_PROVIDER:
+				return updateTwakeUserProvider((TwakeUserProviderDto) dto, userProvider);
 		}
+		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 	}
 
 	private OIDCUserProviderDto updateOidcUserProvider(OIDCUserProviderDto userProviderDto, UserProvider userProvider) {
@@ -272,6 +293,15 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		provider.setLdapConnection(ldapConnectionService.find(ldapConnectionUuid));
 		provider.setPattern(userProviderService.findDomainPattern(userFilterUuid));
 		return new LDAPUserProviderDto(domain, (LdapUserProvider) userProviderRepository.update(provider));
+	}
+
+	private TwakeUserProviderDto updateTwakeUserProvider(TwakeUserProviderDto userProviderDto, UserProvider userProvider) {
+		Validate.notNull(userProviderDto.getTwakeServer(), "Twake server is mandatory for user provider update");
+		Validate.notEmpty(userProviderDto.getTwakeServer().getUuid(), "Twake connection uuid is mandatory for user provider update");
+		Validate.notEmpty(userProviderDto.getTwakeCompanyId(), "Twake companyId is mandatory for user provider update");
+		TwakeUserProvider provider = (TwakeUserProvider) userProvider;
+		provider.setTwakeConnection(provider.getTwakeConnection());
+		return new TwakeUserProviderDto((TwakeUserProvider) userProviderRepository.update(provider));
 	}
 
 	@Override
