@@ -659,6 +659,8 @@ CREATE TABLE user_provider (
   use_role_claim  bool,
   move_between_domain_claim  bool,
   use_access_claim bool,
+  twake_connection_id int8,
+  twake_company_id VARCHAR(255),
   PRIMARY KEY (id));
 CREATE TABLE group_provider (
   id                  int8 NOT NULL,
@@ -1036,6 +1038,7 @@ ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs163989 FOREIGN KEY (user_
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs253989 FOREIGN KEY (group_provider_id) REFERENCES group_provider (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs303989 FOREIGN KEY (drive_provider_id) REFERENCES drive_provider (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
+ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1641 FOREIGN KEY (twake_connection_id) REFERENCES remote_server (id);
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);

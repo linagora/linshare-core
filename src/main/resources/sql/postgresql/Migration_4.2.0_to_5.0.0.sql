@@ -92,6 +92,10 @@ ALTER TABLE user_provider ADD COLUMN use_access_claim bool;
 ALTER TABLE user_provider ALTER COLUMN ldap_connection_id DROP NOT NULL;
 ALTER TABLE user_provider ALTER COLUMN ldap_pattern_id DROP NOT NULL;
 
+ALTER TABLE user_provider ADD COLUMN twake_connection_id int8;
+ALTER TABLE user_provider ADD COLUMN twake_company_id VARCHAR(255);
+ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1641 FOREIGN KEY (twake_connection_id) REFERENCES remote_server (id);
+
 CREATE INDEX account_mail
   ON account (mail);
 CREATE INDEX account_first_name
