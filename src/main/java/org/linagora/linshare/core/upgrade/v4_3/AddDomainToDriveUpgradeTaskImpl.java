@@ -80,7 +80,7 @@ public class AddDomainToDriveUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_4_3_ADD_DOMAIN_TO_DRIVE;
+		return UpgradeTaskType.UPGRADE_5_0_ADD_DOMAIN_TO_DRIVE;
 	}
 
 	@Override

@@ -282,12 +282,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Add domain uuid to workgroup
 	 */
-	UPGRADE_4_3_ADD_DOMAIN_TO_WORK_GROUP,
+	UPGRADE_5_0_ADD_DOMAIN_TO_WORK_GROUP,
 
 	/**
 	 * Add domain uuid to drive
 	 */
-	UPGRADE_4_3_ADD_DOMAIN_TO_DRIVE;
+	UPGRADE_5_0_ADD_DOMAIN_TO_DRIVE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

@@ -48,7 +48,7 @@ public enum UpgradeTaskGroup {
 	UPGRADE_4_0,
 	UPGRADE_4_1,
 	UPGRADE_4_2,
-	UPGRADE_4_3;
+	UPGRADE_5_0;
 
 	public static UpgradeTaskGroup fromString(String s) {
 		try {

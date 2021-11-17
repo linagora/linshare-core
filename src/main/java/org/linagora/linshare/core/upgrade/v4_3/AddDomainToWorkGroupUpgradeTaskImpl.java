@@ -78,7 +78,7 @@ public class AddDomainToWorkGroupUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_4_3_ADD_DOMAIN_TO_WORK_GROUP;
+		return UpgradeTaskType.UPGRADE_5_0_ADD_DOMAIN_TO_WORK_GROUP;
 	}
 
 	@Override

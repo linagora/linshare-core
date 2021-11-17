@@ -151,7 +151,7 @@ INSERT INTO ldap_attribute
 SELECT 26, 'sn', 'member_lastname', false, true, true, false, 6 WHERE NOT EXISTS (SELECT id FROM ldap_attribute WHERE id = 26);
 
 
--- UPGRADE_4_3_ADD_DOMAIN_TO_WORK_GROUP
+-- UPGRADE_5_0_ADD_DOMAIN_TO_WORK_GROUP
  INSERT INTO upgrade_task
   (id,
   uuid,
@@ -165,15 +165,15 @@ SELECT 26, 'sn', 'member_lastname', false, true, true, false, 6 WHERE NOT EXISTS
 VALUES
   (45,
   'UNDEFINED',
-  'UPGRADE_4_3_ADD_DOMAIN_TO_WORK_GROUP',
-  'UPGRADE_4_3',
+  'UPGRADE_5_0_ADD_DOMAIN_TO_WORK_GROUP',
+  'UPGRADE_5_0',
   45,
   'NEW',
   'REQUIRED',
   now(),
   now());
  
-  -- UPGRADE_4_3_ADD_DOMAIN_TO_DRIVE
+  -- UPGRADE_5_0_ADD_DOMAIN_TO_DRIVE
  INSERT INTO upgrade_task
   (id,
   uuid,
@@ -187,8 +187,8 @@ VALUES
 VALUES
   (46,
   'UNDEFINED',
-  'UPGRADE_4_3_ADD_DOMAIN_TO_DRIVE',
-  'UPGRADE_4_3',
+  'UPGRADE_5_0_ADD_DOMAIN_TO_DRIVE',
+  'UPGRADE_5_0',
   46,
   'NEW',
   'REQUIRED',
