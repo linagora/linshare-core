@@ -316,4 +316,7 @@ linshare.mode.production=true
 # oidc.issuerUri=http://auth.linshare.local
 # oidc.client.id=linshare
 # oidc.client.secret=linshare
-# oidc.access.claim.value=true
+# In ui-admin you can enable the option "UseAccessClaim", so LinShare looking for a claim
+# named 'linshare_access' and its value must match the value of the property above.
+# The value could be any string:
+# oidc.access.claim.value="linshare"
