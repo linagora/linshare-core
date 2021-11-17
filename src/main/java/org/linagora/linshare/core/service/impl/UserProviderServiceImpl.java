@@ -59,6 +59,7 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
+import org.linagora.linshare.core.domain.entities.TwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.UserProvider;
@@ -101,6 +102,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 
 	private final AbstractDomainRepository abstractDomainRepository;
 
+	private final TwakeUserProviderService twakeUserProviderService;
+
 	public UserProviderServiceImpl(
 			DomainPatternRepository domainPatternRepository,
 			LDAPUserQueryService ldapQueryService,
@@ -109,7 +112,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			AuditAdminMongoRepository mongoRepository,
 			UserRepository<User> userRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			AbstractDomainRepository abstractDomainRepository) {
+			AbstractDomainRepository abstractDomainRepository,
+			TwakeUserProviderService twakeUserProviderService) {
 		super(sanitizerInputHtmlBusinessService);
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
@@ -118,6 +122,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		this.userRepository = userRepository;
 		this.mongoRepository = mongoRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
+		this.twakeUserProviderService = twakeUserProviderService;
 	}
 
 	@Override
@@ -330,10 +335,10 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				return user;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-				if(!authentication.isAuthenticated()) {
+				if (!authentication.isAuthenticated()) {
 					// it means we are trying to find/create this profile during authentication process.
 					// This code is ugly, it is a quick workaround.
-					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())){
+					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())) {
 						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
 						OIDCUserProvider oidcUp = (OIDCUserProvider) up;
 						String domainDiscriminator = jwtAuthentication.get("domain_discriminator");
@@ -351,13 +356,13 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							internal.setExternalMailLocale(domain.getExternalMailLocale());
 							if (oidcUp.getUseRoleClaim()) {
 								internal.setRole(Role.toDefaultRole(
-										domain.getDefaultRole(),
-										jwtAuthentication.get("linshare_role")));
+									domain.getDefaultRole(),
+									jwtAuthentication.get("linshare_role")));
 							}
 							if (oidcUp.getUseEmailLocaleClaim()) {
 								internal.setExternalMailLocale(Language.toDefaultLanguage(
-										domain.getExternalMailLocale(),
-										jwtAuthentication.get("linshare_locale")));
+									domain.getExternalMailLocale(),
+									jwtAuthentication.get("linshare_locale")));
 							} else {
 							}
 							return internal;
@@ -367,6 +372,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					// probably trying to discover a user.
 					logger.debug("UserProviderType.OIDC provider does not supported discovering new user.");
 				}
+			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+				return twakeUserProviderService.findUser(domain, (TwakeUserProvider) up, mail);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -399,6 +406,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						lastName, null, null, null, null, null, container);
 				List<User> users = container.getPageResponse().getContent();
 				return users;
+			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+				return twakeUserProviderService.searchUser(domain, (TwakeUserProvider) up, mail, firstName, lastName);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -444,6 +453,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						null, null, null, null, null, null, container);
 				List<User> users = container.getPageResponse().getContent();
 				return users;
+			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, pattern);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -490,6 +501,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						container);
 				List<User> users = container.getPageResponse().getContent();
 				return users;
+			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, firstName, lastName);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -520,6 +533,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				User user = userRepository.findByMailAndDomain(domain.getUuid(), mail);
 				if (user != null)
 					return true;
+			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+				return twakeUserProviderService.isUserExist(domain, (TwakeUserProvider) up, mail);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -549,6 +564,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				return user;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				logger.debug("UserProviderType.OIDC does not provide an authentication through this method.");
+			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+				return auth(up, login, userPasswd);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -601,6 +618,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					}
 				}
 				logger.info("Using UserProviderType.OIDC provider outside authentication is not supported.");
+			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+				return twakeUserProviderService.searchForAuth(domain, (TwakeUserProvider) up, login);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
