@@ -105,6 +105,7 @@
 		<constructor-arg ref="ldapUserProviderRepository" />
 		<constructor-arg ref="auditAdminMongoRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="twakeUserProviderService" />
 	</bean>
 
 	<bean id="mimePolicyService"
@@ -165,5 +166,9 @@
 		class="org.linagora.linshare.core.service.impl.DriveProviderServiceImpl">
 		<constructor-arg ref="driveProviderRepository" />
 		<constructor-arg ref="ldapDriveProviderRepository" />
+	</bean>
+
+	<bean name="twakeUserProviderService"
+		  class="org.linagora.linshare.core.service.impl.TwakeUserProviderServiceImpl">
 	</bean>
 </beans>
