@@ -180,7 +180,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public Boolean isUserExist(AbstractDomain domain, TwakeUserProvider userProvider, String mail) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+		return findUser(domain, userProvider, mail) != null;
 	}
 
 	@Override
