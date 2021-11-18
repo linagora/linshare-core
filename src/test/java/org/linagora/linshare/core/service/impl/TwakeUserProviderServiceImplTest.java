@@ -306,4 +306,67 @@ public class TwakeUserProviderServiceImplTest {
 		User user = testee.findUser(domain, userProvider, "wrong@bad.org");
 		assertThat(user).isNull();
 	}
+
+	@Test
+	public void autoCompleteUserShouldReturnTheUsersListWhenEmptyPattern() throws Exception {
+		MockWebServer server = new MockWebServer();
+		String url = "/twakeconsole.dev";
+		HttpUrl httpUrl = server.url(url);
+		TwakeUserProviderServiceImpl testee = new MyTwakeUserProviderServiceImpl(httpUrl);
+
+		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream("twake/twakeConsole-users-response.json"));
+		server.enqueue(new MockResponse().setBody(responseBody));
+
+		AbstractDomain domain = mock(AbstractDomain.class);
+		TwakeConnection twakeConnection = new TwakeConnection();
+		twakeConnection.setServerType(ServerType.TWAKE);
+		twakeConnection.setProviderUrl(url);
+		twakeConnection.setClientId("clientId");
+		twakeConnection.setClientSecret("clientSecret");
+		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
+		List<User> users = testee.autoCompleteUser(domain, userProvider, "");
+		assertThat(users).hasSize(4);
+	}
+
+	@Test
+	public void autoCompleteUserShouldReturnEmptyListWhenNoneMatch() throws Exception {
+		MockWebServer server = new MockWebServer();
+		String url = "/twakeconsole.dev";
+		HttpUrl httpUrl = server.url(url);
+		TwakeUserProviderServiceImpl testee = new MyTwakeUserProviderServiceImpl(httpUrl);
+
+		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream("twake/twakeConsole-users-response.json"));
+		server.enqueue(new MockResponse().setBody(responseBody));
+
+		AbstractDomain domain = mock(AbstractDomain.class);
+		TwakeConnection twakeConnection = new TwakeConnection();
+		twakeConnection.setServerType(ServerType.TWAKE);
+		twakeConnection.setProviderUrl(url);
+		twakeConnection.setClientId("clientId");
+		twakeConnection.setClientSecret("clientSecret");
+		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
+		List<User> users = testee.autoCompleteUser(domain, userProvider, "wrong");
+		assertThat(users).isEmpty();
+	}
+
+	@Test
+	public void autoCompleteUserShouldReturnTheUsersListWhenSomeMatch() throws Exception {
+		MockWebServer server = new MockWebServer();
+		String url = "/twakeconsole.dev";
+		HttpUrl httpUrl = server.url(url);
+		TwakeUserProviderServiceImpl testee = new MyTwakeUserProviderServiceImpl(httpUrl);
+
+		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream("twake/twakeConsole-users-response.json"));
+		server.enqueue(new MockResponse().setBody(responseBody));
+
+		AbstractDomain domain = mock(AbstractDomain.class);
+		TwakeConnection twakeConnection = new TwakeConnection();
+		twakeConnection.setServerType(ServerType.TWAKE);
+		twakeConnection.setProviderUrl(url);
+		twakeConnection.setClientId("clientId");
+		twakeConnection.setClientSecret("clientSecret");
+		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
+		List<User> users = testee.autoCompleteUser(domain, userProvider, "rede");
+		assertThat(users).hasSize(1);
+	}
 }
