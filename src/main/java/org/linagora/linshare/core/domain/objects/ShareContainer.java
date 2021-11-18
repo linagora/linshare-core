@@ -44,8 +44,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -53,7 +53,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.notifications.dto.MailContact;
-import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
@@ -124,8 +123,6 @@ public class ShareContainer {
 			.newArrayList();
 
 	protected List<AuditLogEntryUser> logs = Lists.newArrayList();
-
-	protected List<EventNotification> events = Lists.newArrayList();
 
 	public ShareContainer(String subject, String message, Boolean secured, Boolean creationAcknowledgement) {
 		super();
@@ -454,18 +451,6 @@ public class ShareContainer {
 
 	public void addLogs(List<AuditLogEntryUser> logs) {
 		this.logs.addAll(logs);
-	}
-
-	public List<EventNotification> getEvents() {
-		return events;
-	}
-
-	public void addEvent(EventNotification event) {
-		this.events.add(event);
-	}
-
-	public void addEvents(List<EventNotification> events) {
-		this.events.addAll(events);
 	}
 
 	public Boolean getForceAnonymousSharing() {

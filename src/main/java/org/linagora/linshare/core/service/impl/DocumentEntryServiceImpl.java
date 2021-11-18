@@ -77,7 +77,6 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.VirusScannerService;
-import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
@@ -338,7 +337,6 @@ public class DocumentEntryServiceImpl
 				// send email, file has been replaced ....
 				// When a shared file is updated, we need to log and notify recipients.
 				List<AuditLogEntryUser> logs = Lists.newArrayList();
-				List<EventNotification> events = Lists.newArrayList();
 				List<MailContainerWithRecipient> mails = Lists.newArrayList();
 				for (AnonymousShareEntry anonymousShareEntry : documentEntry
 						.getAnonymousShareEntries()) {
@@ -360,9 +358,8 @@ public class DocumentEntryServiceImpl
 					String recipientUuid = shareEntry.getRecipient().getLsUuid();
 					shareLog.addRelatedAccounts(recipientUuid);
 					logs.add(shareLog);
-					events.add(new EventNotification(shareLog, recipientUuid));
 				}
-				logEntryService.insert(logs, events);
+				logEntryService.insert(logs);
 				notifierService.sendNotification(mails);
 			}
 		} finally {
@@ -482,10 +479,9 @@ public class DocumentEntryServiceImpl
 	@Override
 	public void markAsCopied(Account actor, Account owner, DocumentEntry entry, CopyMto copiedTo) throws BusinessException {
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.DOWNLOAD);
-		EventNotification event = new EventNotification(log, owner.getLsUuid());
 		log.setCause(LogActionCause.COPY);
 		log.setCopiedTo(copiedTo);
-		logEntryService.insert(log, event);
+		logEntryService.insert(log);
 	}
 
 	@Override
@@ -499,8 +495,7 @@ public class DocumentEntryServiceImpl
 		if (!actor.equals(owner)) {
 			// If it is not the current owner, it could be useful to warn the owner.
 			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.DOWNLOAD);
-			EventNotification event = new EventNotification(log, owner.getLsUuid());
-			logEntryService.insert(log, event);
+			logEntryService.insert(log);
 		}
 		return documentEntryBusinessService.getByteSource(entry);
 	}

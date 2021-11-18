@@ -45,14 +45,12 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
-import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
-import org.linagora.linshare.mongo.repository.EventNotificationMongoRepository;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +67,6 @@ public class LogEntryServiceImpl implements LogEntryService {
 
 	private final AuditUserMongoRepository auditUserMongoRepository;
 
-	private final EventNotificationMongoRepository eventNotificationMongoRepository;
-
 	private final AuditAdminMongoRepository auditAdminMongoRepository;
 
 	private final BasicStatisticMongoRepository basicStatisticMongoRepository;
@@ -78,7 +74,6 @@ public class LogEntryServiceImpl implements LogEntryService {
 	public LogEntryServiceImpl(final LogEntryRepository logEntryRepository,
 			final AuditUserMongoRepository auditUserMongoRepository,
 			final AuditAdminMongoRepository auditAdminMongoRepository,
-			final EventNotificationMongoRepository eventNotificationMongoRepository,
 			final BasicStatisticMongoRepository basicStatisticMongoRepository,
 			final DomainBusinessService domainBusinessService) {
 		super();
@@ -86,7 +81,6 @@ public class LogEntryServiceImpl implements LogEntryService {
 		this.domainBusinessService = domainBusinessService;
 		this.auditUserMongoRepository = auditUserMongoRepository;
 		this.auditAdminMongoRepository = auditAdminMongoRepository;
-		this.eventNotificationMongoRepository = eventNotificationMongoRepository;
 		this.basicStatisticMongoRepository = basicStatisticMongoRepository;
 	}
 
@@ -155,44 +149,10 @@ public class LogEntryServiceImpl implements LogEntryService {
 	}
 
 	@Override
-	public AuditLogEntryUser insert(AuditLogEntryUser entry, EventNotification event) {
-		AuditLogEntryUser log = insert(entry);
-		eventNotificationMongoRepository.insert(event);
-		return log;
-	}
-
-	@Override
-	public AuditLogEntryUser insert(int level, AuditLogEntryUser entry, EventNotification event) {
-		AuditLogEntryUser log = insert(level, entry);
-		eventNotificationMongoRepository.insert(event);
-		return log;
-	}
-	
-	@Override
 	public AuditLogEntryAdmin insert(AuditLogEntryAdmin entity) {
 		return insert(INFO, entity);
 	}
 
-	@Override
-	public List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities, List<EventNotification> events) {
-		List<AuditLogEntryUser> log = insert(entities);
-		eventNotificationMongoRepository.insert(events);
-		return log;
-	}
-
-	@Override
-	public List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities,
-			List<EventNotification> events) {
-		List<AuditLogEntryUser> log = insert(level, entities);
-		eventNotificationMongoRepository.insert(events);
-		return log;
-	}
-
-	@Override
-	public EventNotification insertEvent(EventNotification event) {
-		return eventNotificationMongoRepository.insert(event);
-	}
-	
 	@Override
 	public AuditLogEntryAdmin insert(int level, AuditLogEntryAdmin entity) {
 		if (entity == null) {

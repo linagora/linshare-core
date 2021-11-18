@@ -72,7 +72,6 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
-import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
@@ -189,13 +188,11 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			// But we need to warn the sender
 			String senderUuid = share.getEntryOwner().getLsUuid();
 			log.addRelatedAccounts(senderUuid);
-			EventNotification event = new EventNotification(log, senderUuid);
-			logEntryService.insert(log, event);
+			logEntryService.insert(log);
 		} else {
 			String recipientUuid = share.getRecipient().getLsUuid();
 			log.addRelatedAccounts(recipientUuid);
-			EventNotification event = new EventNotification(log, recipientUuid);
-			logEntryService.insert(log, event);
+			logEntryService.insert(log);
 			if (LogActionCause.EXPIRATION.equals(cause)) {
 				// The system is deleting the current share, we need to warn the recipient.
 				EmailContext context = new ShareWarnRecipientAboutExpiredShareEmailContext(share);
@@ -271,8 +268,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				AuditLogEntryType.SHARE_ENTRY);
 		String senderUuid = share.getEntryOwner().getLsUuid();
 		log.addRelatedAccounts(senderUuid);
-		EventNotification event = new EventNotification(log, senderUuid);
-		logEntryService.insert(log, event);
+		logEntryService.insert(log);
 		return documentEntryBusinessService.getByteSource(share
 				.getDocumentEntry());
 	}
@@ -306,7 +302,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				String recipientUuid = recipient.getLsUuid();
 				log.addRelatedAccounts(recipientUuid);
 				sc.addLog(log);
-				sc.addEvent(new EventNotification(log, recipientUuid));
 			}
 			entries.addAll(shares);
 			ShareNewShareEmailContext context = new ShareNewShareEmailContext(owner, recipient, shares, sc);
@@ -316,9 +311,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		// if there is no shares, ie anonymous shares only, there is no logs neither events.
 		if (!sc.getLogs().isEmpty()) {
 			// logs all logs and events in share container, create them and reset lists.
-			logEntryService.insert(sc.getLogs(), sc.getEvents());
+			logEntryService.insert(sc.getLogs());
 			sc.getLogs().clear();
-			sc.getEvents().clear();
 		}
 		return entries;
 	}

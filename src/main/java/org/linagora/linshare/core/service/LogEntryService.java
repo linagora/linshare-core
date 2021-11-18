@@ -40,7 +40,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
-import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -59,24 +58,14 @@ public interface LogEntryService {
 
 	AuditLogEntryUser insert(AuditLogEntryUser entry);
 
-	AuditLogEntryUser insert(AuditLogEntryUser entry, EventNotification event);
-
 	AuditLogEntryUser insert(int level, AuditLogEntryUser entry);
 
-	AuditLogEntryUser insert(int level, AuditLogEntryUser entry, EventNotification event);
-	
 	AuditLogEntryAdmin insert(AuditLogEntryAdmin entry);
 
 	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities);
 
-	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities, List<EventNotification> events);
-
 	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities);
 
-	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities, List<EventNotification> events);
-
-	EventNotification insertEvent(EventNotification event);
-	
 	AuditLogEntryAdmin insert(int level, AuditLogEntryAdmin entity);
 
 	BasicStatistic generateBasicStatistic(AuditLogEntry entity);
