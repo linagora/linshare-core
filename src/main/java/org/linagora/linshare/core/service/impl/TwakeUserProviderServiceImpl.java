@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Internal;
@@ -75,29 +76,48 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public User findUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
+			validateResponse(response, userProvider);
+
+			return filterValidUser(response)
+				.filter(user -> user.getEmail().equals(mail))
+				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
+				.findFirst()
+				.orElse(null);
+		} catch (IOException e) {
+			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
+			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole", e);
+		}
 	}
 
 	@Override
 	public List<User> searchUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException {
 		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			if (!response.isSuccessful()) {
-				LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-				throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole");
-			}
+			validateResponse(response, userProvider);
 
-			return objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class)
-				.getList()
-				.stream()
-				.filter(TwakeUser::getVerified)
-				.filter(user -> !user.getBlocked())
-				.filter(user -> !isGuest(user))
+			return filterValidUser(response)
 				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
 				.collect(Collectors.toUnmodifiableList());
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
 			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole", e);
 		}
+	}
+
+	private void validateResponse(Response response, TwakeUserProvider userProvider) {
+		if (!response.isSuccessful()) {
+			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
+			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole");
+		}
+	}
+
+	private Stream<TwakeUser> filterValidUser(Response response) throws IOException {
+		return objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class)
+			.getList()
+			.stream()
+			.filter(TwakeUser::getVerified)
+			.filter(user -> !user.getBlocked())
+			.filter(user -> !isGuest(user));
 	}
 
 	private boolean isGuest(TwakeUser user) {
