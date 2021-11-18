@@ -35,17 +35,42 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.TwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.impl.twake.client.TwakeUser;
+import org.linagora.linshare.core.service.impl.twake.client.TwakeUsersResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.Credentials;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
+	public static final String API_COMPANIES_ENDPOINT = "/api/companies/";
+	public static final String USERS_ENDPOINT = "users/";
+	public static final String GUEST = "guest";
+	private static final Logger LOGGER = LoggerFactory.getLogger(TwakeUserProviderServiceImpl.class);
+
+	private final OkHttpClient client;
+	private final ObjectMapper objectMapper;
+
 	public TwakeUserProviderServiceImpl() {
+		client = new OkHttpClient();
+		objectMapper = new ObjectMapper();
 	}
 
 	@Override
@@ -55,7 +80,32 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public List<User> searchUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
+			if (!response.isSuccessful()) {
+				LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
+				throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole");
+			}
+
+			return objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class)
+				.getList()
+				.stream()
+				.filter(TwakeUser::getVerified)
+				.filter(user -> !user.getBlocked())
+				.filter(user -> !isGuest(user))
+				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
+				.collect(Collectors.toUnmodifiableList());
+		} catch (IOException e) {
+			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
+			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole", e);
+		}
+	}
+
+	private boolean isGuest(TwakeUser user) {
+		return user.getRoles()
+			.stream()
+			.filter(role -> role.getRoleCode().equals(GUEST))
+			.findFirst()
+			.isPresent();
 	}
 
 	@Override
@@ -81,5 +131,21 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 	@Override
 	public User searchForAuth(AbstractDomain domain, TwakeUserProvider userProvider, String login) throws BusinessException {
 		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+	}
+
+	private Request request(TwakeUserProvider userProvider, Optional<String> extraPath) {
+		String basic = Credentials.basic(userProvider.getTwakeConnection().getClientId(), userProvider.getTwakeConnection().getClientSecret());
+		return new Request.Builder()
+			.url(httpUrlFrom(userProvider, extraPath))
+			.header("Authorization", basic)
+			.header("Accept", "application/json")
+			.build();
+	}
+
+	protected HttpUrl httpUrlFrom(TwakeUserProvider userProvider, Optional<String> extraPath) {
+		return HttpUrl.parse(userProvider.getTwakeConnection().getProviderUrl()
+			+ API_COMPANIES_ENDPOINT
+			+ userProvider.getTwakeCompanyId()
+			+ extraPath.orElse(""));
 	}
 }
