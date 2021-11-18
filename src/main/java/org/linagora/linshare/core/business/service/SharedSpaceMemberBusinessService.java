@@ -140,4 +140,7 @@ public interface SharedSpaceMemberBusinessService {
 
 	PageContainer<SharedSpaceNodeNested> findSharedSpacesByMembersNumber(Integer greaterThan,
 			Integer lessThan, Set<String> roles, Sort sort, PageContainer<SharedSpaceNodeNested> container);
+
+	PageContainer<SharedSpaceNodeNested> findOrphanSharedSpaces(Sort sort,
+			PageContainer<SharedSpaceNodeNested> container);
 }

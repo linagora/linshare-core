@@ -314,22 +314,24 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			if (roleNames.isEmpty()) {
 				roleNames.addAll(ssRoleService.findAllSharedSpaceRoleNames(authUser, actor));
 			}
-			sharedSpaces = memberBusinessService.findAllSharedSpaces(account, allowedDomainUuids, nodeTypes, roleNames,
+			return memberBusinessService.findAllSharedSpaces(account, allowedDomainUuids, nodeTypes, roleNames,
 					name, container, sort);
 		} else {
 			if ((Objects.nonNull(greaterThan) && greaterThan < 1) || (Objects.nonNull(lessThan) && lessThan < 1)) {
 				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 						"The greaterThan or lessThan should be greater than 1, please check the entered values.");
 			}
+			if (Objects.nonNull(lessThan) && lessThan == 1) {
+				return memberBusinessService.findOrphanSharedSpaces(sort, container);
+			}
 			if (!roleNames.isEmpty()
 					&& !CollectionUtils.isEqualCollection(roleNames, Sets.newHashSet(Role.ADMIN.toString()))) {
 				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
 						"You are not authorized to filter by role else the ADMIN role");
 			}
-			sharedSpaces = memberBusinessService.findSharedSpacesByMembersNumber(greaterThan, lessThan, roleNames, sort,
+			return memberBusinessService.findSharedSpacesByMembersNumber(greaterThan, lessThan, roleNames, sort,
 					container);
 		}
-		return sharedSpaces;
 	}
 
 	private Set<String> checkRoles(Account authUser, Account actor, Set<String> sharedSpaceRoles) {

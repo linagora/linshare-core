@@ -487,4 +487,37 @@ public class SharedSpaceNodeServiceImplTest {
 		service.delete(root, root, node3);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void testFindOrphanSharedSpaces() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(0, 10);
+		node1 = service.create(john, john, new SharedSpaceNode("John's first node", null, NodeType.WORK_GROUP));
+		memberService.create(john, john, node1, adminRole, new SharedSpaceAccount(jane));
+		memberService.create(john, john, node1, adminRole, new SharedSpaceAccount(foo));
+		Assertions.assertEquals(3, memberBusinessService.findBySharedSpaceNodeUuid(node1.getUuid()).size());
+		node2 = service.create(foo, foo, new SharedSpaceNode("Foo's first node", null, NodeType.WORK_GROUP));
+		memberService.create(foo, foo, node2, adminRole, new SharedSpaceAccount(jane));
+		Assertions.assertEquals(2, memberBusinessService.findBySharedSpaceNodeUuid(node2.getUuid()).size());
+		node3 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
+		Assertions.assertEquals(1, memberBusinessService.findBySharedSpaceNodeUuid(node3.getUuid()).size());
+		memberService.delete(root, root, memberBusinessService.findBySharedSpaceNodeUuid(node3.getUuid()).iterator().next().getUuid());
+		Assertions.assertEquals(0, memberBusinessService.findBySharedSpaceNodeUuid(node3.getUuid()).size());
+		// Find SharedSpaces with members number greater than
+		Integer lessThan = 1;
+		PageContainer<SharedSpaceNodeNested> orphanShanredSpaces = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, lessThan, container);
+		List<String> expectedNodeUuids = Lists.newArrayList(node3.getUuid());
+		List<String> returnedNodeUuids = Lists.newArrayList();
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : orphanShanredSpaces.getPageResponse().getContent()) {
+			returnedNodeUuids.add(sharedSpaceNodeNested.getUuid());
+		}
+		logger.debug("This is the list of the final returned node uuids: {}", returnedNodeUuids);
+		Assertions.assertTrue(CollectionUtils.isEqualCollection(expectedNodeUuids, returnedNodeUuids));
+		logger.debug("This is the list of the final returned node uuids: {}", returnedNodeUuids);
+		Assertions.assertTrue(CollectionUtils.isEqualCollection(expectedNodeUuids, returnedNodeUuids));
+		service.delete(root, root, node1);
+		service.delete(root, root, node2);
+		service.delete(root, root, node3);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
 }

@@ -60,6 +60,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
+import org.linagora.linshare.mongo.projections.dto.AggregateNestedNodeUuidResult;
 import org.linagora.linshare.mongo.projections.dto.AggregateNodeCountResult;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
@@ -564,5 +565,74 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class).getMappedResults();
 		container.validateTotalPagesCount(count);
 		return container.loadData(sharedSpaces);
+	}
+
+	@Override
+	public PageContainer<SharedSpaceNodeNested> findOrphanSharedSpaces(Sort sort, PageContainer<SharedSpaceNodeNested> container) {
+		Set<String> sharedSpacesUuids = getNestedNodeUuids();
+		List<AggregationOperation> nodeOperations = getNodeAggregations(sharedSpacesUuids);
+		Aggregation nodeAggregation = Aggregation.newAggregation(SharedSpaceNode.class, nodeOperations);
+		List<SharedSpaceNodeNested> results = mongoTemplate.aggregate(nodeAggregation, SharedSpaceNode.class, SharedSpaceNodeNested.class).getMappedResults();
+		Long count = countOrphanNodes(nodeOperations);
+		// second query to get matched elements
+		nodeOperations = Lists.newArrayList(nodeOperations);
+		nodeOperations.add(Aggregation.sort(sort));
+		nodeOperations.add(Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())));
+		nodeOperations.add(Aggregation.limit(Long.valueOf(container.getPageSize())));
+		container.validateTotalPagesCount(count);
+		return container.loadData(results);
+	}
+
+	/**
+	 * This method will count the orphan sharedSpaceNodes
+	 * @return {@link Long}
+	 */
+	private Long countOrphanNodes(List<AggregationOperation> nodeOperations) {
+		List<AggregationOperation> aggregationOperations = Lists.newArrayList(nodeOperations);
+		aggregationOperations.add(Aggregation.count().as("count"));
+		Aggregation countAggregation = Aggregation.newAggregation(SharedSpaceNode.class, aggregationOperations);
+		List<AggregateNodeCountResult> countResults = mongoTemplate.aggregate(countAggregation, SharedSpaceNode.class, AggregateNodeCountResult.class).getMappedResults();
+		Long count = 0L;
+		if (countResults.size() > 0 && Objects.nonNull(countResults.get(0) != null)) {
+			count = countResults.get(0).getCount();
+		}
+		return count;
+	}
+
+	
+	/**
+	 * This method will return all SharedSpaceNodeNested uuids
+	 * @return {@link List} list of string.
+	 */
+	private Set<String> getNestedNodeUuids() {
+		Aggregation memberAggregation = Aggregation.newAggregation(
+				Aggregation.match(Criteria.where("node.parentUuid").exists(false)),
+				Aggregation.group("node"),
+				Aggregation.project("node.uuid")
+			);
+		List<AggregateNestedNodeUuidResult> sharedSpaces = mongoTemplate.aggregate(memberAggregation, SharedSpaceMember.class, AggregateNestedNodeUuidResult.class).getMappedResults();
+		Set<String> sharedSpacesUuids = sharedSpaces.stream().map(node -> node.getUuid()).collect(Collectors.toSet());
+		return sharedSpacesUuids;
+	}
+
+	/**
+	 * This method will return aggregation operation of root sharedSpaceNodes which does not exist in SharedSpaceNodeNestedUuids
+	 * @return {@link List} list of AggregationOperation.
+	 */
+	private List<AggregationOperation> getNodeAggregations(Set<String> sharedSpacesUuids) {
+		List<AggregationOperation> nodeOperations = Lists.newArrayList();
+		nodeOperations.add(Aggregation.match(Criteria.where("parentUuid").exists(false)));
+		nodeOperations.add(Aggregation.match(Criteria.where("uuid").nin(sharedSpacesUuids)));
+		ProjectionOperation projections = Aggregation.project(
+				Fields.from(
+						Fields.field("uuid"),
+						Fields.field("name"),
+						Fields.field("nodeType"),
+						Fields.field("creationDate"),
+						Fields.field("modificationDate")
+						)
+				);
+		nodeOperations.add(projections);
+		return nodeOperations;
 	}
 }
