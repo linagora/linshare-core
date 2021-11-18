@@ -52,6 +52,7 @@ import org.linagora.linshare.core.service.impl.twake.client.TwakeUsersResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
@@ -72,6 +73,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 	public TwakeUserProviderServiceImpl() {
 		client = new OkHttpClient();
 		objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 	@Override

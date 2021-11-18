@@ -70,6 +70,27 @@ public class TwakeUserProviderServiceImplTest {
 	}
 
 	@Test
+	public void twakeUserProviderShouldNotFailWhenUnknownEntriesInJson() throws Exception {
+		MockWebServer server = new MockWebServer();
+		String url = "/twakeconsole.dev";
+		HttpUrl httpUrl = server.url(url);
+		TwakeUserProviderServiceImpl testee = new MyTwakeUserProviderServiceImpl(httpUrl);
+
+		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream("twake/twakeConsole-users-response-unknown-entries.json"));
+		server.enqueue(new MockResponse().setBody(responseBody));
+
+		AbstractDomain domain = mock(AbstractDomain.class);
+		TwakeConnection twakeConnection = new TwakeConnection();
+		twakeConnection.setServerType(ServerType.TWAKE);
+		twakeConnection.setProviderUrl(url);
+		twakeConnection.setClientId("clientId");
+		twakeConnection.setClientSecret("clientSecret");
+		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
+		List<User> users = testee.searchUser(domain, userProvider, "mail", "firstName", "lastName");
+		assertThat(users).hasSize(1);
+	}
+
+	@Test
 	public void searchUserShouldReturnTheUsersList() throws Exception {
 		MockWebServer server = new MockWebServer();
 		String url = "/twakeconsole.dev";

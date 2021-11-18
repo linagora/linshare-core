@@ -1,0 +1,24 @@
+{
+  "total": 1,
+  "list": [
+    {
+      "_id": "60d45c8bf388e100155dd8a1",
+      "email": "antoine@linshare.org",
+      "name": "antoine",
+      "surname": "toine",
+      "isVerified": true,
+      "isBlocked": false,
+      "roles": [
+        {
+          "targetCode": "5e25cad4-e850-41b2-9721-8cb85658e046",
+          "roleCode": "member",
+          "status": "active",
+          "unknown": "in embedded"
+        }
+      ],
+      "createdAt": "2021-06-24T10:20:59.289Z",
+      "updatedAt": "2021-06-24T10:20:59.289Z",
+      "otherUnknown": "on root path"
+    }
+  ]
+}
