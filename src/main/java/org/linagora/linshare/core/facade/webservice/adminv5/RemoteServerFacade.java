@@ -50,5 +50,5 @@ public interface RemoteServerFacade {
 
 	AbstractServerDto delete(String uuid, AbstractServerDto serverDto);
 
-	List<DomainDto> findAllDomainsByLdapServer(String uuid);
+	List<DomainDto> findAllDomainsByRemoteServer(String uuid);
 }

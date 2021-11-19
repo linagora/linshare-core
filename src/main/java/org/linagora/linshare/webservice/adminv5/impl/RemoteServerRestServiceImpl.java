@@ -184,6 +184,6 @@ public class RemoteServerRestServiceImpl implements RemoteServerRestService {
 	public List<DomainDto> findAllDomainsByLdapServer(
 			@Parameter(description = "LDAP server's uuid", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
-		return ldapServerFacade.findAllDomainsByLdapServer(uuid);
+		return ldapServerFacade.findAllDomainsByRemoteServer(uuid);
 	}
 }

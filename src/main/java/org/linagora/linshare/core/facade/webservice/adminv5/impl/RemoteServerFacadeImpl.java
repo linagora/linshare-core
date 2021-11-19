@@ -224,7 +224,7 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	}
 
 	@Override
-	public List<DomainDto> findAllDomainsByLdapServer(String uuid) {
+	public List<DomainDto> findAllDomainsByRemoteServer(String uuid) {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "Ldap server's uuid must be set");
 		RemoteServerService remoteServer = getService(ServerType.LDAP);
