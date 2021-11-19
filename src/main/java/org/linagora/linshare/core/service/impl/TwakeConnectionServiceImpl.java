@@ -42,8 +42,6 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.TwakeConnection;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.hibernate.TwakeConnectionRepositoryImpl;
 
@@ -65,6 +63,6 @@ public class TwakeConnectionServiceImpl extends RemoteServerServiceImpl<TwakeCon
 	@Override
 	public List<AbstractDomain> findAllDomainsByRemoteServer(TwakeConnection twakeConnection) {
 		Validate.notNull(twakeConnection, "Twake connection must be set.");
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+		return abstractDomainRepository.findAllDomainsByTwakeConnection(twakeConnection);
 	}
 }

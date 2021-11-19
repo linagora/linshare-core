@@ -43,7 +43,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.ServerType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.TwakeConnection;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -59,8 +58,6 @@ import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.impl.CommonRemoteServerServiceImpl;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements RemoteServerFacade {
 
@@ -226,10 +223,35 @@ public class RemoteServerFacadeImpl extends AdminGenericFacadeImpl implements Re
 	@Override
 	public List<DomainDto> findAllDomainsByRemoteServer(String uuid) {
 		checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(uuid, "Ldap server's uuid must be set");
-		RemoteServerService remoteServer = getService(ServerType.LDAP);
-		LdapConnection ldapConnection = (LdapConnection) remoteServer.find(uuid);
-		List<AbstractDomain> domains = remoteServer.findAllDomainsByRemoteServer(ldapConnection);
-		return ImmutableList.copyOf(Lists.transform(domains, DomainDto.toDto()));
+		Validate.notEmpty(uuid, "Server's uuid must be set");
+		Optional<ServerType> serverType = commonRemoteServerService.findServerTypeByUuid(uuid);
+		if (!serverType.isPresent()) {
+			throw new BusinessException(
+				BusinessErrorCode.REMOTE_SERVER_NOT_FOUND,
+				"Can not found remote server connection with uuid: " + uuid + ".");
+		}
+		switch (serverType.get()) {
+			case LDAP:
+				return findAllDomainsByLdapServer(uuid);
+			case TWAKE:
+				return findAllDomainsByTwakeServer(uuid);
+		}
+		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+	}
+
+	private List<DomainDto> findAllDomainsByLdapServer(String uuid) {
+		RemoteServerService<LdapConnection> remoteServer = (RemoteServerService<LdapConnection>) getService(ServerType.LDAP);
+		return remoteServer.findAllDomainsByRemoteServer(remoteServer.find(uuid))
+			.stream()
+			.map(DomainDto::getLight)
+			.collect(Collectors.toUnmodifiableList());
+	}
+
+	private List<DomainDto> findAllDomainsByTwakeServer(String uuid) {
+		RemoteServerService<TwakeConnection> remoteServer = (RemoteServerService<TwakeConnection>) getService(ServerType.TWAKE);
+		return remoteServer.findAllDomainsByRemoteServer(remoteServer.find(uuid))
+			.stream()
+			.map(DomainDto::getLight)
+			.collect(Collectors.toUnmodifiableList());
 	}
 }
