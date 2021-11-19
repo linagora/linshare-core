@@ -48,49 +48,49 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractDomainRepository extends AbstractRepository<AbstractDomain> {
 	
-	public AbstractDomain findById(String identifier);
+	AbstractDomain findById(String identifier);
 
 	/**
 	 * return all TopDomain, SubDomain, GuestDomain and root domain identifiers
 	 * @return List<String>
 	 */
-	public List<String> findAllDomainIdentifiers();
+	List<String> findAllDomainIdentifiers();
 
 	/**
 	 * return all TopDomain and SubDomain objects
 	 * @return List<AbstractDomain>
 	 */
-	public List<AbstractDomain> findAllDomain();
+	List<AbstractDomain> findAllDomain();
 	
 	/**
 	 * return all TopDomain and SubDomain objects, excluding Guest and Root domains
 	 * @return List<AbstractDomain>
 	 */
-	public List<AbstractDomain> findAllTopAndSubDomain();
+	List<AbstractDomain> findAllTopAndSubDomain();
 
 	/**
 	 * return all SubDomain and GuestDomain identifiers, excluding Top and Root domains
 	 * @return List<String>
 	 */
-	public List<String> findAllGuestAndSubDomainIdentifiers();
+	List<String> findAllGuestAndSubDomainIdentifiers();
 
 	/**
 	 * return all TopDomain objects
 	 * @return List<AbstractDomain>
 	 */
-	public List<AbstractDomain> findAllTopDomain();
+	List<AbstractDomain> findAllTopDomain();
 	
 	/**
 	 * return all SubDomain objects
 	 * @return List<AbstractDomain>
 	 */
-	public List<AbstractDomain> findAllSubDomain();
+	List<AbstractDomain> findAllSubDomain();
 
 	/**
 	 * return the unique root domain
 	 * @return AbstractDomain
 	 */
-	public AbstractDomain getUniqueRootDomain() throws BusinessException;
+	AbstractDomain getUniqueRootDomain() throws BusinessException;
 
 	/**
 	 * return all domains using cfg as their current mail configuration
@@ -119,18 +119,18 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	 * return all Domains with group provider
 	 * @return List<String>
 	 */
-	public List<String> findAllDomainIdentifiersWithGroupProviders();
+	List<String> findAllDomainIdentifiersWithGroupProviders();
 
 	List<String> getSubDomainsByDomainIdentifiers(String domain);
 
 	List<String> findAllDomainIdentifiersWithDriveProviders();
 
-	public List<AbstractDomain> findAllDomainsByLdapConnection(LdapConnection ldapConnection);
+	List<AbstractDomain> findAllDomainsByLdapConnection(LdapConnection ldapConnection);
 
-	public List<AbstractDomain> findAllDomainsByUserFilter(UserLdapPattern domainUserFilter);
+	List<AbstractDomain> findAllDomainsByUserFilter(UserLdapPattern domainUserFilter);
 
-	public List<AbstractDomain> findAllDomainsByGroupFilter(GroupLdapPattern domainGroupFilter);
+	List<AbstractDomain> findAllDomainsByGroupFilter(GroupLdapPattern domainGroupFilter);
 
-	public List<AbstractDomain> findAllDomainsByDriveFilter(LdapDriveFilter domainDriveFilter);
+	List<AbstractDomain> findAllDomainsByDriveFilter(LdapDriveFilter domainDriveFilter);
 
 }
