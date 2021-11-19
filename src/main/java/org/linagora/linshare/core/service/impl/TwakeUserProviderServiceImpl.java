@@ -38,6 +38,8 @@ package org.linagora.linshare.core.service.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -82,7 +85,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 			validateResponse(response, userProvider);
 
 			return filterValidUser(response)
-				.filter(user -> user.getEmail().equals(mail))
+				.filter(filterBy(mail, TwakeUser::getEmail))
 				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
 				.findFirst()
 				.orElse(null);
@@ -92,12 +95,25 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 		}
 	}
 
+	private Predicate<TwakeUser> filterBy(String pattern, Function<TwakeUser, String> name) {
+		return user -> {
+			if (Strings.isNullOrEmpty(pattern)) {
+				return true;
+			}
+			String value = name.apply(user);
+			return !Strings.isNullOrEmpty(value) && value.contains(pattern);
+		};
+	}
+
 	@Override
 	public List<User> searchUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException {
 		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
 			return filterValidUser(response)
+				.filter(filterBy(mail, TwakeUser::getEmail))
+				.filter(filterBy(firstName, TwakeUser::getName))
+				.filter(filterBy(lastName, TwakeUser::getSurname))
 				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
 				.collect(Collectors.toUnmodifiableList());
 		} catch (IOException e) {

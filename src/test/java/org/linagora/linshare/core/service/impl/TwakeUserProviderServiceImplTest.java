@@ -86,7 +86,7 @@ public class TwakeUserProviderServiceImplTest {
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
-		List<User> users = testee.searchUser(domain, userProvider, "mail", "firstName", "lastName");
+		List<User> users = testee.searchUser(domain, userProvider, "", "", "");
 		assertThat(users).hasSize(1);
 	}
 
@@ -107,7 +107,7 @@ public class TwakeUserProviderServiceImplTest {
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
-		List<User> users = testee.searchUser(domain, userProvider, "mail", "firstName", "lastName");
+		List<User> users = testee.searchUser(domain, userProvider, "", "", "");
 		assertThat(users).hasSize(4);
 	}
 
@@ -128,7 +128,7 @@ public class TwakeUserProviderServiceImplTest {
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
-		List<User> users = testee.searchUser(domain, userProvider, "mail", "firstName", "lastName");
+		List<User> users = testee.searchUser(domain, userProvider, "", "", "");
 		assertThat(users).isEmpty();
 	}
 
@@ -149,7 +149,7 @@ public class TwakeUserProviderServiceImplTest {
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
-		List<User> users = testee.searchUser(domain, userProvider, "mail", "firstName", "lastName");
+		List<User> users = testee.searchUser(domain, userProvider, "", "", "");
 		assertThat(users).isEmpty();
 	}
 
@@ -170,7 +170,7 @@ public class TwakeUserProviderServiceImplTest {
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
-		List<User> users = testee.searchUser(domain, userProvider, "mail", "firstName", "lastName");
+		List<User> users = testee.searchUser(domain, userProvider, "", "", "");
 		assertThat(users).isEmpty();
 	}
 
@@ -191,13 +191,76 @@ public class TwakeUserProviderServiceImplTest {
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
-		List<User> users = testee.searchUser(domain, userProvider, "mail", "firstName", "lastName");
+		List<User> users = testee.searchUser(domain, userProvider, "", "", "");
 		assertThat(users).hasSize(1);
 
 		User user = users.get(0);
 		assertThat(user.getFirstName()).isEqualTo("antoine");
 		assertThat(user.getLastName()).isEqualTo("toine");
 		assertThat(user.getMail()).isEqualTo("antoine@linshare.org");
+	}
+
+	@Test
+	public void searchUserShouldFilterByMail() throws Exception {
+		MockWebServer server = new MockWebServer();
+		String url = "/twakeconsole.dev";
+		HttpUrl httpUrl = server.url(url);
+		TwakeUserProviderServiceImpl testee = new MyTwakeUserProviderServiceImpl(httpUrl);
+
+		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream("twake/twakeConsole-users-response.json"));
+		server.enqueue(new MockResponse().setBody(responseBody));
+
+		AbstractDomain domain = mock(AbstractDomain.class);
+		TwakeConnection twakeConnection = new TwakeConnection();
+		twakeConnection.setServerType(ServerType.TWAKE);
+		twakeConnection.setProviderUrl(url);
+		twakeConnection.setClientId("clientId");
+		twakeConnection.setClientSecret("clientSecret");
+		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
+		List<User> users = testee.searchUser(domain, userProvider, "ric@lins", "", "");
+		assertThat(users).hasSize(1);
+	}
+
+	@Test
+	public void searchUserShouldFilterByFirstName() throws Exception {
+		MockWebServer server = new MockWebServer();
+		String url = "/twakeconsole.dev";
+		HttpUrl httpUrl = server.url(url);
+		TwakeUserProviderServiceImpl testee = new MyTwakeUserProviderServiceImpl(httpUrl);
+
+		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream("twake/twakeConsole-users-response.json"));
+		server.enqueue(new MockResponse().setBody(responseBody));
+
+		AbstractDomain domain = mock(AbstractDomain.class);
+		TwakeConnection twakeConnection = new TwakeConnection();
+		twakeConnection.setServerType(ServerType.TWAKE);
+		twakeConnection.setProviderUrl(url);
+		twakeConnection.setClientId("clientId");
+		twakeConnection.setClientSecret("clientSecret");
+		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
+		List<User> users = testee.searchUser(domain, userProvider, "", "anto", "");
+		assertThat(users).hasSize(1);
+	}
+
+	@Test
+	public void searchUserShouldFilterByLastName() throws Exception {
+		MockWebServer server = new MockWebServer();
+		String url = "/twakeconsole.dev";
+		HttpUrl httpUrl = server.url(url);
+		TwakeUserProviderServiceImpl testee = new MyTwakeUserProviderServiceImpl(httpUrl);
+
+		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream("twake/twakeConsole-users-response.json"));
+		server.enqueue(new MockResponse().setBody(responseBody));
+
+		AbstractDomain domain = mock(AbstractDomain.class);
+		TwakeConnection twakeConnection = new TwakeConnection();
+		twakeConnection.setServerType(ServerType.TWAKE);
+		twakeConnection.setProviderUrl(url);
+		twakeConnection.setClientId("clientId");
+		twakeConnection.setClientSecret("clientSecret");
+		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
+		List<User> users = testee.searchUser(domain, userProvider, "", "", "toin");
+		assertThat(users).hasSize(1);
 	}
 
 	@Test
