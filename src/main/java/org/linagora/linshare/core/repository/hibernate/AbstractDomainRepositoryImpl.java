@@ -282,7 +282,7 @@ public class AbstractDomainRepositoryImpl extends
 	}
 
 	@Override
-	public List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection) {
+	public List<AbstractDomain> findAllDomainsByLdapConnection(LdapConnection ldapConnection) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass(), "abstractDomain");
 		det.createAlias("abstractDomain.userProvider", "userProvider");
 		det.add(Restrictions.eq("userProvider.ldapConnection", ldapConnection));

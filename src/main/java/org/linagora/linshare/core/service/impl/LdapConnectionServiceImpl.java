@@ -64,7 +64,7 @@ public class LdapConnectionServiceImpl extends RemoteServerServiceImpl<LdapConne
 	@Override
 	public List<AbstractDomain> findAllDomainsByRemoteServer(LdapConnection ldapConnection) {
 		Validate.notNull(ldapConnection, "Ldap connection must be set.");
-		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByRemoteServer(ldapConnection);
+		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByLdapConnection(ldapConnection);
 		return domains;
 	}
 }
