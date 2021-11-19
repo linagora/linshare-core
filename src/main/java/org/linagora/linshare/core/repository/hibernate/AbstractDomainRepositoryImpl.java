@@ -54,6 +54,7 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.TwakeConnection;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -286,6 +287,14 @@ public class AbstractDomainRepositoryImpl extends
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass(), "abstractDomain");
 		det.createAlias("abstractDomain.userProvider", "userProvider");
 		det.add(Restrictions.eq("userProvider.ldapConnection", ldapConnection));
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<AbstractDomain> findAllDomainsByTwakeConnection(TwakeConnection twakeConnection) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass(), "abstractDomain");
+		det.createAlias("abstractDomain.userProvider", "userProvider");
+		det.add(Restrictions.eq("userProvider.twakeConnection", twakeConnection));
 		return findByCriteria(det);
 	}
 

@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.TwakeConnection;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -126,6 +127,8 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	List<String> findAllDomainIdentifiersWithDriveProviders();
 
 	List<AbstractDomain> findAllDomainsByLdapConnection(LdapConnection ldapConnection);
+
+	List<AbstractDomain> findAllDomainsByTwakeConnection(TwakeConnection twakeConnection);
 
 	List<AbstractDomain> findAllDomainsByUserFilter(UserLdapPattern domainUserFilter);
 
