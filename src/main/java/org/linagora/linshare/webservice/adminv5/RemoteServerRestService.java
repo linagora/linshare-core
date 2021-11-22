@@ -51,5 +51,5 @@ public interface RemoteServerRestService {
 
 	AbstractServerDto delete(AbstractServerDto serverDto, String uuid) throws BusinessException;
 
-	List<DomainDto> findAllDomainsByLdapServer(String uuid) throws BusinessException;
+	List<DomainDto> findAllDomainsByRemoteServer(String uuid) throws BusinessException;
 }

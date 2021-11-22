@@ -33,19 +33,7 @@
  */
 package org.linagora.linshare.webservice.adminv5.impl;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.RemoteServerFacade;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.TwakeServerDto;
-import org.linagora.linshare.webservice.adminv5.RemoteServerRestService;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -56,7 +44,21 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
+
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.RemoteServerFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractServerDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPServerDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.TwakeServerDto;
+import org.linagora.linshare.webservice.adminv5.RemoteServerRestService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/remote_servers")
 @Produces({ MediaType.APPLICATION_JSON })
@@ -181,7 +183,7 @@ public class RemoteServerRestServiceImpl implements RemoteServerRestService {
 			responseCode = "200"
 		)
 	})
-	public List<DomainDto> findAllDomainsByLdapServer(
+	public List<DomainDto> findAllDomainsByRemoteServer(
 			@Parameter(description = "LDAP server's uuid", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return ldapServerFacade.findAllDomainsByRemoteServer(uuid);
