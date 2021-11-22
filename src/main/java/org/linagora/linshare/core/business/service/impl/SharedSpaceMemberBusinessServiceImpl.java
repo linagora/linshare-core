@@ -628,6 +628,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 						Fields.field("uuid"),
 						Fields.field("name"),
 						Fields.field("nodeType"),
+						Fields.field("domainUuid"),
 						Fields.field("creationDate"),
 						Fields.field("modificationDate")
 						)
