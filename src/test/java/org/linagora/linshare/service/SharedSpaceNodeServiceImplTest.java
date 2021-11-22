@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.from;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
@@ -506,15 +508,18 @@ public class SharedSpaceNodeServiceImplTest {
 		// Find SharedSpaces with members number greater than
 		Integer lessThan = 1;
 		PageContainer<SharedSpaceNodeNested> orphanShanredSpaces = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, lessThan, container);
-		List<String> expectedNodeUuids = Lists.newArrayList(node3.getUuid());
-		List<String> returnedNodeUuids = Lists.newArrayList();
-		for (SharedSpaceNodeNested sharedSpaceNodeNested : orphanShanredSpaces.getPageResponse().getContent()) {
-			returnedNodeUuids.add(sharedSpaceNodeNested.getUuid());
-		}
-		logger.debug("This is the list of the final returned node uuids: {}", returnedNodeUuids);
-		Assertions.assertTrue(CollectionUtils.isEqualCollection(expectedNodeUuids, returnedNodeUuids));
-		logger.debug("This is the list of the final returned node uuids: {}", returnedNodeUuids);
-		Assertions.assertTrue(CollectionUtils.isEqualCollection(expectedNodeUuids, returnedNodeUuids));
+		// Find saved node3 in order to get the last modification date after member deletion
+		node3 = service.find(root, root, node3.getUuid());
+		SharedSpaceNodeNested returnedNode = orphanShanredSpaces.getPageResponse().getContent().iterator().next();
+		assertThat(returnedNode)
+		.returns(node3.getUuid(), from(SharedSpaceNodeNested::getUuid))
+		.returns(node3.getName(), from(SharedSpaceNodeNested::getName))
+		.returns(node3.getParentUuid(), from(SharedSpaceNodeNested::getParentUuid))
+		.returns(node3.getNodeType(), from(SharedSpaceNodeNested::getNodeType))
+		.returns(node3.getDomainUuid(), from(SharedSpaceNodeNested::getDomainUuid))
+		.returns(node3.getCreationDate(), from(SharedSpaceNodeNested::getCreationDate))
+		.returns(node3.getModificationDate(), from(SharedSpaceNodeNested::getModificationDate)
+				);
 		service.delete(root, root, node1);
 		service.delete(root, root, node2);
 		service.delete(root, root, node3);
