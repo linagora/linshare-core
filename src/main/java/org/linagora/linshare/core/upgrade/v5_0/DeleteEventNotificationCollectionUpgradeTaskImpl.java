@@ -31,114 +31,74 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.upgrade.v4_3;
+package org.linagora.linshare.core.upgrade.v5_0;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.bson.Document;
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
-import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.batches.utils.FakeContext;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.repository.ThreadRepository;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 
-public class AddDomainToWorkGroupUpgradeTaskImpl extends GenericUpgradeTaskImpl {
+import com.mongodb.client.MongoCollection;
+
+public class DeleteEventNotificationCollectionUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
 
-	private final SharedSpaceNodeMongoRepository nodeMongoRepository;
-
-	private final ThreadRepository threadRepository;
-
-	public AddDomainToWorkGroupUpgradeTaskImpl(
+	public DeleteEventNotificationCollectionUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
-			MongoTemplate mongoTemplate,
-			SharedSpaceNodeMongoRepository nodeMongoRepository,
-			ThreadRepository threadRepository) {
+			MongoTemplate mongoTemplate) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.mongoTemplate = mongoTemplate;
-		this.nodeMongoRepository = nodeMongoRepository;
-		this.threadRepository = threadRepository;
 	}
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_5_0_ADD_DOMAIN_TO_WORK_GROUP;
+		return UpgradeTaskType.UPGRADE_5_0_DELETE_EVENT_NOTIFICATION_COLLECTION;
+
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		Query query = Query.query(Criteria.where
-				("nodeType").is(NodeType.WORK_GROUP).and
-				("domainUuid").exists(false).and
-				("parentUuid").exists(false));
-		List<String> nodes = mongoTemplate.findDistinct(query, "uuid", SharedSpaceNode.class, String.class);
-		return nodes;
+		return Arrays.asList("fakeUuid");
 	}
 
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		SharedSpaceNode sharedSpace = nodeMongoRepository.findByUuid(identifier);
-		BatchResultContext<SharedSpaceNode> res = new BatchResultContext<>(sharedSpace);
-		res.setProcessed(false);
-		if (sharedSpace == null) {
-			return res;
-		}
-		WorkGroup workGroup = threadRepository.findByLsUuid(sharedSpace.getUuid());
-		sharedSpace.setDomainUuid(workGroup.getDomainId());
-		nodeMongoRepository.save(sharedSpace);
-		updateSharedSpaceNested(sharedSpace);
+		MongoCollection<Document> eventCollection = mongoTemplate.getCollection("event_notifications");
+		eventCollection.drop();
+		BatchResultContext<FakeContext> res = new BatchResultContext<>(new FakeContext(identifier));
 		res.setProcessed(true);
 		return res;
-	}
-
-	private void updateSharedSpaceNested(SharedSpaceNode sharedSpace) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where
-				("node.uuid").is(sharedSpace.getUuid()).and
-				("node.domainUuid").exists(false));
-		Update update = new Update();
-		update.set("node.domainUuid", sharedSpace.getDomainUuid());
-		mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
 	}
 
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<SharedSpaceNode> res = (BatchResultContext<SharedSpaceNode>) context;
-		SharedSpaceNode resource = res.getResource();
-		logInfo(batchRunContext, total, position, resource + " has been updated.");
+		BatchResultContext<FakeContext> res = (BatchResultContext<FakeContext>) context;
 		if (res.getProcessed()) {
-			logInfo(batchRunContext, total, position, "Workgroup has been updated: " + resource.toString());
-		} else {
-			logInfo(batchRunContext, total, position, "Workgroup has been skipped : " + resource.toString());
+			logInfo(batchRunContext, total, position, "Event notification collection is deleted successfully.");
 		}
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position,
 			BatchRunContext batchRunContext) {
-		@SuppressWarnings("unchecked")
-		BatchResultContext<SharedSpaceNode> res = (BatchResultContext<SharedSpaceNode>) exception.getContext();
-		SharedSpaceNode resource = res.getResource();
 		logError(total, position, exception.getMessage(), batchRunContext);
-		logger.error("Error occured while processing Workgroup update : {} . BatchBusinessException", resource,
-				exception);
+		logger.error("Error occured while deleting event notification collection", exception);
 	}
+
 }

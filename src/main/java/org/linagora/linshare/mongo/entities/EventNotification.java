@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2021 LINAGORA
+ * Copyright (C) 2016-2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,51 +33,70 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.mongo.entities;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.LogEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.mongo.entities.BasicStatistic;
-import org.linagora.linshare.mongo.entities.EventNotification;
+import javax.persistence.GeneratedValue;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
-import org.slf4j.spi.LocationAwareLogger;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-public interface LogEntryService {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.collect.Lists;
 
-	final public int INFO = LocationAwareLogger.INFO_INT;
+@XmlRootElement(name = "EventNotification")
+@Document(collection = "event_notifications")
+@JsonIgnoreProperties({ "relatedAccounts" })
+public class EventNotification {
 
-	final public int WARN = LocationAwareLogger.WARN_INT;
+	@JsonIgnore
+	@Id @GeneratedValue
+	protected String id;
 
-	final public int ERROR = LocationAwareLogger.ERROR_INT;
+	protected AuditLogEntry event;
 
-	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria);
+	protected List<String> relatedAccounts;
 
-	AuditLogEntryUser insert(AuditLogEntryUser entry);
+	public EventNotification(AuditLogEntry log, List<String> uuids) {
+		super();
+		this.event = log;
+		this.relatedAccounts = uuids;
+	}
 
-	AuditLogEntryUser insert(AuditLogEntryUser entry, EventNotification event);
+	public EventNotification(AuditLogEntry log, String... uuids) {
+		super();
+		this.event = log;
+		this.relatedAccounts = Lists.newArrayList(uuids);
+	}
 
-	AuditLogEntryUser insert(int level, AuditLogEntryUser entry);
+	@XmlTransient
+	public String getId() {
+		return id;
+	}
 
-	AuditLogEntryUser insert(int level, AuditLogEntryUser entry, EventNotification event);
-	
-	AuditLogEntryAdmin insert(AuditLogEntryAdmin entry);
+	public void setId(String id) {
+		this.id = id;
+	}
 
-	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities);
+	public AuditLogEntry getEvent() {
+		return event;
+	}
 
-	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities, List<EventNotification> events);
+	public void setEvent(AuditLogEntry event) {
+		this.event = event;
+	}
 
-	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities);
+	public List<String> getRelatedAccounts() {
+		return relatedAccounts;
+	}
 
-	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities, List<EventNotification> events);
+	public void setRelatedAccounts(List<String> relatedAccounts) {
+		this.relatedAccounts = relatedAccounts;
+	}
 
-	EventNotification insertEvent(EventNotification event);
-	
-	AuditLogEntryAdmin insert(int level, AuditLogEntryAdmin entity);
-
-	BasicStatistic generateBasicStatistic(AuditLogEntry entity);
 }

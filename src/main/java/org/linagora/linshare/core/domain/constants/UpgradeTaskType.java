@@ -287,7 +287,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Add domain uuid to drive
 	 */
-	UPGRADE_5_0_ADD_DOMAIN_TO_DRIVE;
+	UPGRADE_5_0_ADD_DOMAIN_TO_DRIVE,
+
+	/**
+	 * Delete event notification collection
+	 */
+	UPGRADE_5_0_DELETE_EVENT_NOTIFICATION_COLLECTION;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.upgrade.v4_3;
+package org.linagora.linshare.core.upgrade.v5_0;
 
 import java.util.List;
 

@@ -225,6 +225,28 @@ UPDATE functionality_unit SET integer_max_value = 900
 		integer_max_value = -1;
 UPDATE functionality_unit SET unlimited_value = TRUE, integer_max_value = 0 WHERE integer_max_value = -1;
 
+
+-- UPGRADE_5_0_DELETE_EVENT_NOTIFICATION_COLLECTION
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date)
+VALUES
+  (47,
+  'UNDEFINED',
+  'UPGRADE_5_0_DELETE_EVENT_NOTIFICATION_COLLECTION',
+  'UPGRADE_5_0',
+  47,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now());
 ---- End of your queries
 
 -- Upgrade LinShare version

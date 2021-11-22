@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2021 LINAGORA
+ * Copyright (C) 2016-2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,51 +33,11 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.mongo.repository;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.LogEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.mongo.entities.BasicStatistic;
 import org.linagora.linshare.mongo.entities.EventNotification;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
-import org.slf4j.spi.LocationAwareLogger;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface LogEntryService {
+public interface EventNotificationMongoRepository extends MongoRepository<EventNotification, String> {
 
-	final public int INFO = LocationAwareLogger.INFO_INT;
-
-	final public int WARN = LocationAwareLogger.WARN_INT;
-
-	final public int ERROR = LocationAwareLogger.ERROR_INT;
-
-	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria);
-
-	AuditLogEntryUser insert(AuditLogEntryUser entry);
-
-	AuditLogEntryUser insert(AuditLogEntryUser entry, EventNotification event);
-
-	AuditLogEntryUser insert(int level, AuditLogEntryUser entry);
-
-	AuditLogEntryUser insert(int level, AuditLogEntryUser entry, EventNotification event);
-	
-	AuditLogEntryAdmin insert(AuditLogEntryAdmin entry);
-
-	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities);
-
-	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities, List<EventNotification> events);
-
-	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities);
-
-	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities, List<EventNotification> events);
-
-	EventNotification insertEvent(EventNotification event);
-	
-	AuditLogEntryAdmin insert(int level, AuditLogEntryAdmin entity);
-
-	BasicStatistic generateBasicStatistic(AuditLogEntry entity);
 }
