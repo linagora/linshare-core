@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 /**
  * The recipient favourite.
  * @author ngapaillard
@@ -44,9 +46,10 @@ public class RecipientFavourite extends AbstractFavourite<User>{
 
 	/** the recipient concerned by the favorite */
 	private String recipient;
-	
 
 	private Long persistenceId;
+
+	protected Date expirationDate;
 	
 	/** constructor for hibernate **/
 	protected RecipientFavourite(){};
@@ -56,7 +59,7 @@ public class RecipientFavourite extends AbstractFavourite<User>{
 	 * @param owner
 	 * @param recipient
 	 */
-	public RecipientFavourite(User owner,String recipient){
+	public RecipientFavourite(User owner, String recipient){
 		super();
 		super.setOwner(owner);
 		super.setWeight(Long.valueOf(1));
@@ -87,7 +90,15 @@ public class RecipientFavourite extends AbstractFavourite<User>{
 	public void setPersistenceId(Long persistenceId) {
 		this.persistenceId = persistenceId;
 	}
-	
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
 	@Override
 	public boolean equals(Object o){
 		if(null != o && o instanceof RecipientFavourite) {

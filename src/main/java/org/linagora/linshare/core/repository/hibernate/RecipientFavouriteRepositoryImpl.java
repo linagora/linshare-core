@@ -123,6 +123,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 
 	@Override
 	public void incAndCreate(User u, String mail) throws BusinessException {
+		// FIXME FMA
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
 		det.add(Restrictions.eq("recipient", mail));
@@ -136,6 +137,9 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		update(recipient);
 	}
 
+	/**
+	 * Only used by tests :'(
+	 */
 	@Override
 	public void inc(List<String> element,User u)  throws LinShareNotSuchElementException,BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
@@ -155,6 +159,9 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 
 	}
 
+	/**
+	 * Only used by tests :'(
+	 */
 	@Override
 	public void incAndCreate(User u, List<String> elements)   throws LinShareNotSuchElementException,BusinessException{
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);

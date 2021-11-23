@@ -245,6 +245,7 @@ CREATE TABLE recipient_favourite (
   id              int8 NOT NULL,
   recipient_mail varchar(255) NOT NULL,
   weight         int8 NOT NULL,
+  expiration_date       timestamp(6),
   user_id        int8 NOT NULL,
   CONSTRAINT linshare_recipient_favourite_pkey
     PRIMARY KEY (id));

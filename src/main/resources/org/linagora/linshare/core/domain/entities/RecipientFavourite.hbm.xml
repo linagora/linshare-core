@@ -11,5 +11,6 @@
     </many-to-one>
     <property access="field" column="recipient_mail" name="recipient" type="string"/>
     <property access="field" column="weight" name="weight" type="long"/>
+    <property column="expiration_date" name="expirationDate" type="timestamp"/>
   </class>
 </hibernate-mapping>

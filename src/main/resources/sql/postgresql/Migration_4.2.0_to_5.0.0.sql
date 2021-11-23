@@ -260,6 +260,8 @@ UPDATE policy SET system = true, policy = 0 WHERE id IN (SELECT policy_activatio
 -- Update configuration policy to allowed
 UPDATE policy SET policy = 1, system = false, status = true, default_status = true WHERE id IN (SELECT policy_configuration_id FROM functionality WHERE identifier = 'INTERNAL_ENABLE_PERSONAL_SPACE');
 
+ALTER TABLE recipient_favourite ADD COLUMN expiration_date       timestamp(6);
+
 ---- End of your queries
 
 -- Upgrade LinShare version
