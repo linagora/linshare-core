@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -62,22 +63,23 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 * Increment the weight of an element.
 	 * @param element the element concerned by the increase of weight.
 	 */
-	public void incAndCreate(U owner, T element);
+	public void incAndCreate(U owner, T element, Date expirationDate);
 	
 	/**
 	 * Increment the weight of an element.
 	 * @param elements the elements concerned by the increase of weight.
 	 */
-	public void inc(List<T> elements,U owner) throws LinShareNotSuchElementException,BusinessException;
+	public void inc(List<T> elements, U owner, Date expirationDate) throws LinShareNotSuchElementException,BusinessException;
 	
 	/**
 	 * Increment the weight of several elements, if they don't exist, there are created before.
 	 * @param owner
 	 * @param elements
+	 * @param expirationDate TODO
 	 * @throws LinShareNotSuchElementException
 	 * @throws BusinessException
 	 */
-	public void incAndCreate(U owner, List<T> elements) throws LinShareNotSuchElementException,BusinessException;
+	public void incAndCreate(U owner, List<T> elements, Date expirationDate) throws LinShareNotSuchElementException,BusinessException;
 	
 	/**
 	 * reorder elements by weight in desc order.

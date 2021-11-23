@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -122,16 +123,16 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 	}
 
 	@Override
-	public void incAndCreate(User u, String mail) throws BusinessException {
-		// FIXME FMA
+	public void incAndCreate(User u, String mail, Date expirationDate) throws BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
 		det.add(Restrictions.eq("recipient", mail));
 		RecipientFavourite recipient = DataAccessUtils
 				.singleResult(findByCriteria(det));
 		if (recipient == null) {
-			recipient = create(new RecipientFavourite(u, mail));
+			recipient = create(new RecipientFavourite(u, mail, expirationDate));
 		} else {
+			recipient.setExpirationDate(expirationDate);
 			recipient.inc();
 		}
 		update(recipient);
@@ -141,7 +142,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 	 * Only used by tests :'(
 	 */
 	@Override
-	public void inc(List<String> element,User u)  throws LinShareNotSuchElementException,BusinessException {
+	public void inc(List<String> element, User u, Date expirationDate)  throws LinShareNotSuchElementException,BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
 		det.add(Restrictions.in("recipient", element));
@@ -154,6 +155,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		}
 		for(RecipientFavourite recipientFavourite: listElement){
 			recipientFavourite.inc();
+			recipientFavourite.setExpirationDate(expirationDate);
 			update(recipientFavourite);
 		}
 
@@ -163,7 +165,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 	 * Only used by tests :'(
 	 */
 	@Override
-	public void incAndCreate(User u, List<String> elements)   throws LinShareNotSuchElementException,BusinessException{
+	public void incAndCreate(User u, List<String> elements, Date expirationDate)   throws LinShareNotSuchElementException,BusinessException{
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
 		det.add(Restrictions.in("recipient", elements));
@@ -173,7 +175,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		/**
 		 * Create favourite when the favourite doesn't exist in the database for the current owner.
 		 */
-		createFavourite(elements, recipients, u);
+		createFavourite(elements, recipients, u, expirationDate);
 
 		/**
 		 * Increment and update others.
@@ -181,6 +183,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		
 		
 		for(RecipientFavourite recipientFavourite: recipients){
+			recipientFavourite.setExpirationDate(expirationDate);
 			recipientFavourite.inc();
 			update(recipientFavourite);
 		}
@@ -196,7 +199,8 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		return listElements;
 	}
 
-	private void createFavourite(List<String> elements,List<RecipientFavourite> recipients,User u) throws BusinessException{
+	private void createFavourite(List<String> elements,List<RecipientFavourite> recipients,
+			User u, Date expirationDate) throws BusinessException{
 		for(String recipient:elements){
 			boolean contain=false;
 			for(RecipientFavourite recipientFavour: recipients){
@@ -206,7 +210,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 				}
 			}
 			if(!contain){
-				super.create(new RecipientFavourite(u,recipient));
+				super.create(new RecipientFavourite(u, recipient, expirationDate));
 			}
 		}
 	}

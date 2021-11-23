@@ -149,7 +149,7 @@ public class RecipientFavouriteRepositoryImplTest {
 		recipients.add(user2);
 		recipients.add(user3);
 
-		favouriteRepository.incAndCreate(owner, recipients);
+		favouriteRepository.incAndCreate(owner, recipients, null);
 		
 		Assertions.assertTrue(favouriteRepository.existFavourite(owner, user2));
 		Assertions.assertTrue(favouriteRepository.existFavourite(owner, user3));
@@ -173,10 +173,10 @@ public class RecipientFavouriteRepositoryImplTest {
 			
 		List<String> elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeight(owner);
 		
-		favouriteRepository.incAndCreate(owner, recipients);
+		favouriteRepository.incAndCreate(owner, recipients, null);
 	
 		elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeight(owner);
-		favouriteRepository.incAndCreate(owner, user3);
+		favouriteRepository.incAndCreate(owner, user3, null);
 
 		elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeight(owner);
 		Assertions.assertTrue(elementsOrderByWeightDesc.get(1).equals(user3));
@@ -201,9 +201,9 @@ public class RecipientFavouriteRepositoryImplTest {
 		recipients.add(user2);
 		recipients.add(user3);
 
-		favouriteRepository.incAndCreate(owner, recipients);
+		favouriteRepository.incAndCreate(owner, recipients, null);
 		
-		favouriteRepository.incAndCreate(owner, user3);
+		favouriteRepository.incAndCreate(owner, user3, null);
 		
 		List<String> recipientsOrderedByWeightDesc = favouriteRepository.reorderElementsByWeightDesc(recipients, owner);
 		Assertions.assertTrue(recipientsOrderedByWeightDesc.get(0).equals(user3));
@@ -229,9 +229,9 @@ public class RecipientFavouriteRepositoryImplTest {
 		recipients.add(user2);
 		recipients.add(user3);
 
-		favouriteRepository.incAndCreate(owner, recipients);
+		favouriteRepository.incAndCreate(owner, recipients, null);
 		
-		favouriteRepository.incAndCreate(owner, user3);
+		favouriteRepository.incAndCreate(owner, user3, null);
 		Assertions.assertFalse(favouriteRepository.findMatchElementsOrderByWeight( getUser3().getMail(), owner).isEmpty());
 		Assertions.assertTrue(favouriteRepository.findMatchElementsOrderByWeight( "failMail@mail.com", owner).isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -248,7 +248,7 @@ public class RecipientFavouriteRepositoryImplTest {
 		List<String> recipients = new ArrayList<String>();
 		recipients.add(user3);
 
-		favouriteRepository.incAndCreate(owner, recipients);
+		favouriteRepository.incAndCreate(owner, recipients, null);
 		
 		Assertions.assertFalse(favouriteRepository.findMatchElementsOrderByWeight(getUser3().getMail(), owner).isEmpty());
 		favouriteRepository.deleteFavoritesOfUser(owner);

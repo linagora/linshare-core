@@ -59,7 +59,7 @@ public class RecipientFavourite extends AbstractFavourite<User>{
 	 * @param owner
 	 * @param recipient
 	 */
-	public RecipientFavourite(User owner, String recipient){
+	public RecipientFavourite(User owner, String recipient, Date expirationDate){
 		super();
 		super.setOwner(owner);
 		super.setWeight(Long.valueOf(1));

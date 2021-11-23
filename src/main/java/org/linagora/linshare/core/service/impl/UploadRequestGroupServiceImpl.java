@@ -174,6 +174,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			container.addLog(groupLog);
 		}
 		req.setUploadRequestGroup(uploadRequestGroup);
+		TimeUnitValueFunctionality functionality = functionalityService.getCollectedEmailsExpirationTimeFunctionality(owner.getDomain());
+		Date contactExpirationDate = functionality.getContactExpirationDate();
 		if (collectiveMode) {
 			// we need to add contacts to the container to be able to notify this list to every recipient in a collective upload request
 			container.setRecipients(contacts);
@@ -182,7 +184,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				Validate.notNull(contact, "contact must be set");
 				Validate.notEmpty(contact.getMail(), "mail of the contact must be set");
 				container = uploadRequestUrlService.create(container.getUploadRequests().iterator().next(), contact, container);
-				recipientFavouriteRepository.incAndCreate(owner, contact.getMail());
+				recipientFavouriteRepository.incAndCreate(owner, contact.getMail(), contactExpirationDate);
 			}
 		} else {
 			for (Contact contact : contacts) {
@@ -191,7 +193,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				UploadRequest clone = req.clone();
 				container = uploadRequestService.create(actor, owner, clone, container);
 				container = uploadRequestUrlService.create(clone, contact, container);
-				recipientFavouriteRepository.incAndCreate(owner, contact.getMail());
+				recipientFavouriteRepository.incAndCreate(owner, contact.getMail(), contactExpirationDate);
 			}
 		}
 		uploadRequestGroup.setUploadRequests(container.getUploadRequests());
@@ -545,6 +547,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				uploadRequestGroup);
 		UploadRequestContainer container = new UploadRequestContainer();
+		TimeUnitValueFunctionality functionality = functionalityService.getCollectedEmailsExpirationTimeFunctionality(actor.getDomain());
+		Date contactExpirationDate = functionality.getContactExpirationDate();
 		for (ContactDto recipient : recipientEmail) {
 			Validate.notEmpty(recipient.getMail(), "Mail must be set");
 			Contact contact = new Contact(recipient.getMail());
@@ -562,7 +566,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				uploadRequestGroup.getUploadRequests().add(uploadRequest);
 			}
 			container = uploadRequestUrlService.create(uploadRequest, contact, container);
-			recipientFavouriteRepository.incAndCreate(actor, contact.getMail());
+			recipientFavouriteRepository.incAndCreate(actor, contact.getMail(), contactExpirationDate);
 		}
 		notifierService.sendNotification(container.getMailContainers());
 		logEntryService.insert(container.getLogs());

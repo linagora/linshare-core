@@ -35,6 +35,10 @@
  */
 package org.linagora.linshare.core.domain.objects;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import org.linagora.linshare.core.domain.entities.TimeUnitClass;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 
@@ -78,5 +82,16 @@ public class TimeUnitValueFunctionality extends UnitValueFunctionality {
 	public int toCalendarMaxValue() {
 		TimeUnitClass timeUnit = (TimeUnitClass)getMaxUnit();
 		return timeUnit.toCalendarValue();
+	}
+
+	public Date getContactExpirationDate() {
+		if (!this.getActivationPolicy().getStatus()) {
+			logger.debug(this.getIdentifier() + " is not enabled");
+			return null;
+		}
+		Calendar calendar = new GregorianCalendar();
+		calendar.add(this.toCalendarValue(), this.getValue());
+		Date defaultDate = calendar.getTime();
+		return defaultDate;
 	}
 }

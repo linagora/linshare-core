@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -288,6 +289,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		checkCreatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 		Set<ShareEntry> entries = Sets.newHashSet();
+		TimeUnitValueFunctionality functionality = functionalityService.getCollectedEmailsExpirationTimeFunctionality(owner.getDomain());
+		Date contactExpirationDate = functionality.getContactExpirationDate();
 		for (User recipient : sc.getShareRecipients()) {
 			Set<ShareEntry> shares = Sets.newHashSet();
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
@@ -296,7 +299,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				updateGuestExpiryDate(recipient,  (User) recipient.getOwner());
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
-						recipient.getMail());
+						recipient.getMail(), contactExpirationDate);
 				ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.CREATE, createShare,
 						AuditLogEntryType.SHARE_ENTRY);
 				String recipientUuid = recipient.getLsUuid();

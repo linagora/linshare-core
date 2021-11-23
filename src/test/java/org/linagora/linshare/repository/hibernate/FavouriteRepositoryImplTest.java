@@ -128,7 +128,7 @@ public class FavouriteRepositoryImplTest {
 		array.add("jean.lechat@linagora.com");
 		array.add("pierre.lechat@linagora.com");
 		try {
-			favouriteRepository.incAndCreate(userRepo.findByMail("robert.lechat@linagora.com"), array);
+			favouriteRepository.incAndCreate(userRepo.findByMail("robert.lechat@linagora.com"), array, null);
 		} catch (LinShareNotSuchElementException e) {
 			Assertions.fail();
 		} catch (BusinessException e) {
@@ -141,19 +141,20 @@ public class FavouriteRepositoryImplTest {
 			Assertions.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(1)));
 			
 			//Check if it's incremented correctly.
-			favouriteRepository.incAndCreate(userRepo.findByMail("robert.lechat@linagora.com"), array);
+			favouriteRepository.incAndCreate(userRepo.findByMail("robert.lechat@linagora.com"), array, null);
 			Assertions.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(2)));
 			Assertions.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(2)));
 			
 			//Check if it's incremented.
-			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"));
+			//FIXME FMA
+			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"), null);
 			Assertions.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
 			Assertions.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
 			
 			//Check the order after retrieving by getElementsOrderByWeightDesc and getElementsOrderByWeight.
 			array.remove(1);
 			
-			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"));
+			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"), null);
 			
 			
 			Assertions.assertTrue(favouriteRepository.getElementsOrderByWeightDesc(userRepo.findByMail("robert.lechat@linagora.com")).get(0).equals("jean.lechat@linagora.com"));

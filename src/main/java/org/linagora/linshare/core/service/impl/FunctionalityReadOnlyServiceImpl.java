@@ -436,7 +436,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public TimeUnitValueFunctionality getCollectedEmailsExpirationTimeFunctionality(AbstractDomain domain) {
-		return (TimeUnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.COLLECTED_EMAILS_EXPIRATION);
+		Functionality _getFunctionality = _getFunctionality(domain, FunctionalityNames.COLLECTED_EMAILS_EXPIRATION);
+		return new TimeUnitValueFunctionality((UnitValueFunctionality) _getFunctionality);
 	}
 
 	@Override
@@ -652,9 +653,10 @@ public class FunctionalityReadOnlyServiceImpl implements
 	private void debuggerInteger(IntegerValueFunctionality func, Integer currentInteger, Integer defaultInteger) {
 		if (func.getDelegationPolicy() == null) {
 			logger.debug(func.getIdentifier() + " does not have a delegation policy");
-		}
-		if (!func.getDelegationPolicy().getStatus()) {
-			logger.debug(func.getIdentifier() + " does not allow delegation policy ");
+		} else {
+			if (!func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " does not allow delegation policy ");
+			}
 		}
 		if (currentInteger == null) {
 			logger.debug("The given integer value is null, default integer value will be used " + defaultInteger);
@@ -664,9 +666,10 @@ public class FunctionalityReadOnlyServiceImpl implements
 	private void debuggerTime(TimeUnitValueFunctionality func, Date currentDate, Date defaultDate) {
 		if (func.getDelegationPolicy() == null) {
 			logger.debug(func.getIdentifier() + " does not have a delegation policy");
-		}
-		if (!func.getDelegationPolicy().getStatus()) {
-			logger.debug(func.getIdentifier() + " does not allow delegation policy ");
+		} else {
+			if (!func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " does not allow delegation policy ");
+			}
 		}
 		if (currentDate == null) {
 			logger.debug("The given date value is null, default date value will be used " + defaultDate);
@@ -676,9 +679,10 @@ public class FunctionalityReadOnlyServiceImpl implements
 	private void debuggerSize(SizeUnitValueFunctionality func, Long currentSize, Long defaultValue) {
 		if (func.getDelegationPolicy() == null) {
 			logger.debug(func.getIdentifier() + " does not have a delegation policy");
-		}
-		if (!func.getDelegationPolicy().getStatus()) {
-			logger.debug(func.getIdentifier() + " does not allow delegation policy ");
+		} else {
+			if (!func.getDelegationPolicy().getStatus()) {
+				logger.debug(func.getIdentifier() + " does not allow delegation policy ");
+			}
 		}
 		if (currentSize == null) {
 			logger.debug("The given size value is null, default size value will be used " + defaultValue);

@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -150,6 +151,8 @@ public class AnonymousShareEntryServiceImpl extends
 			passwordProtected = anonymousUrlFunc.getValue();
 		}
 		sc.setSecured(passwordProtected);
+		TimeUnitValueFunctionality functionality = functionalityService.getCollectedEmailsExpirationTimeFunctionality(owner.getDomain());
+		Date contactExpirationDate = functionality.getContactExpirationDate();
 		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
 					.create(actor, owner, recipient, sc.getDocuments(), sc.getExpiryCalendar(),
@@ -160,7 +163,7 @@ public class AnonymousShareEntryServiceImpl extends
 			sc.addMailContainer(mail);
 			sc.addLogs(anonymousUrl.getLogs());
 			recipientFavouriteRepository.incAndCreate(owner,
-					recipient.getMail());
+					recipient.getMail(), contactExpirationDate);
 			entries.addAll(anonymousUrl.getAnonymousShareEntries());
 		}
 		// logs all entries in share container and reset it.
