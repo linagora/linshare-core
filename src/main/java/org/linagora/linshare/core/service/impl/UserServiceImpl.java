@@ -60,6 +60,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -752,10 +753,9 @@ public class UserServiceImpl implements UserService {
 						.getGuests(user.getDomain());
 				user.setCanCreateGuest(guestfunc.getActivationPolicy()
 						.getStatus());
-				Functionality userCanUploadFunc = functionalityReadOnlyService
-						.getUserCanUploadFunctionality(user.getDomain());
-				user.setCanUpload(userCanUploadFunc.getActivationPolicy()
-						.getStatus());
+				BooleanValueFunctionality userCanUploadFunc = functionalityReadOnlyService
+						.getEnableInternalPersonalSpaceFunctionality(user.getDomain());
+				user.setCanUpload(userCanUploadFunc.getValue());
 				if (user.getExternalMailLocale() == null) {
 					user.setExternalMailLocale(Language.ENGLISH);
 				}

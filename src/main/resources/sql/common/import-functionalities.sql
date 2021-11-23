@@ -173,14 +173,14 @@ INSERT INTO functionality_boolean(functionality_id, boolean_value)
 	VALUES (13, true);
 
 
--- Functionality : INTERNAL_CAN_UPLOAD formerly known as USER_CAN_UPLOAD
+-- Functionality : INTERNAL_ENABLE_PERSONAL_SPACE formerly known as USER_CAN_UPLOAD
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (29, true, true, 1, false);
+	VALUES (29, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (30, false, false, 2, true);
+	VALUES (30, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date)
-	VALUES (15, true, 'INTERNAL_CAN_UPLOAD', 29, 30, 1, now(), now());
-INSERT INTO functionality_boolean(functionality_id, boolean_value)	
+	VALUES (15, false, 'INTERNAL_ENABLE_PERSONAL_SPACE', 29, 30, 1, now(), now());
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
 VALUES (15, true);
 
 -- Functionality : COMPLETION

@@ -251,6 +251,15 @@ VALUES
   'REQUIRED',
   now(),
   now());
+
+
+-- Update INTERNAL_CAN_UPLOAD functionality's identifier to INTERNAL_CAN_UPLOAD
+UPDATE functionality SET identifier = 'INTERNAL_ENABLE_PERSONAL_SPACE', system = false WHERE id in (SELECT id FROM functionality WHERE identifier = 'INTERNAL_CAN_UPLOAD');
+-- Update activation policy to mandatory and system
+UPDATE policy SET system = true, policy = 0 WHERE id IN (SELECT policy_activation_id FROM functionality WHERE identifier = 'INTERNAL_ENABLE_PERSONAL_SPACE');
+-- Update configuration policy to allowed
+UPDATE policy SET policy = 1, system = false, status = true, default_status = true WHERE id IN (SELECT policy_configuration_id FROM functionality WHERE identifier = 'INTERNAL_ENABLE_PERSONAL_SPACE');
+
 ---- End of your queries
 
 -- Upgrade LinShare version

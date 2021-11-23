@@ -64,7 +64,7 @@ public class FunctionalityBusinessServiceImpl extends
 		// A guest user can not create a guest, so guest functionalities are
 		// useless.
 		exclude.add(FunctionalityNames.GUESTS.toString());
-		exclude.add(FunctionalityNames.INTERNAL_CAN_UPLOAD.toString());
+		exclude.add(FunctionalityNames.INTERNAL_ENABLE_PERSONAL_SPACE.toString());
 		exclude.add(FunctionalityNames.GUESTS__EXPIRATION.toString());
 		exclude.add(FunctionalityNames.GUESTS__EXPIRATION.toString());
 		exclude.add(FunctionalityNames.GUESTS__RESTRICTED.toString());

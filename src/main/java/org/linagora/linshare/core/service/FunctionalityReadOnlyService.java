@@ -84,7 +84,7 @@ public interface FunctionalityReadOnlyService {
 	StringValueFunctionality getWorkGroupFileEdition(AbstractDomain domain);
 	SizeUnitValueFunctionality getWorkGoupDownloadArchive(AbstractDomain domain);
 	
-	Functionality getUserCanUploadFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getEnableInternalPersonalSpaceFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlForExternalsFunctionality(AbstractDomain domain);
 	StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);

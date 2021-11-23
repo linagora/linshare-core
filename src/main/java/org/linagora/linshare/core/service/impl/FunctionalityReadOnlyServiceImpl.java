@@ -241,8 +241,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getUserCanUploadFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.INTERNAL_CAN_UPLOAD);
+	public BooleanValueFunctionality getEnableInternalPersonalSpaceFunctionality(AbstractDomain domain) {
+		return (BooleanValueFunctionality) _getFunctionality(domain, FunctionalityNames.INTERNAL_ENABLE_PERSONAL_SPACE);
 	}
 
 	@Override
