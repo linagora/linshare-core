@@ -88,6 +88,7 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		excludesForUsers.add(FunctionalityNames.DOMAIN__MAIL.toString());
 		excludesForUsers.add(FunctionalityNames.ANTIVIRUS.toString());
 		excludesForUsers.add(FunctionalityNames.TIME_STAMPING.toString());
+		excludesForUsers.add(FunctionalityNames.COLLECTED_EMAILS_EXPIRATION.toString());
 	}
 
 	@Override

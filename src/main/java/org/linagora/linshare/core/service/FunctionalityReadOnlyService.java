@@ -148,4 +148,6 @@ public interface FunctionalityReadOnlyService {
 	Date roundToUpperHour(Date dateToRound);
 
 	Calendar getCalendarWithoutTime(Date date);
+
+	TimeUnitValueFunctionality getCollectedEmailsExpirationTimeFunctionality(AbstractDomain domain);
 }

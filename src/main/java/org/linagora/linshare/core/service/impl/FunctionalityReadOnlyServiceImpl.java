@@ -435,6 +435,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public TimeUnitValueFunctionality getCollectedEmailsExpirationTimeFunctionality(AbstractDomain domain) {
+		return (TimeUnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.COLLECTED_EMAILS_EXPIRATION);
+	}
+
+	@Override
 	public Integer getIntegerValue(IntegerValueFunctionality func, Integer currentInteger,
 			BusinessErrorCode errorCode) {
 		if (!func.getActivationPolicy().getStatus()) {
