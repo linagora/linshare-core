@@ -218,11 +218,12 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				logger.error("GUEST__EXPIRATION max_value can not be updated to unlimited");
 				throw new BusinessException(BusinessErrorCode.UNAUTHORISED_FUNCTIONALITY_UPDATE_ATTEMPT,"GUESTS__EXPIRATION max_value can not be updated to unlimited");
 			} 
-			this.maxValue = parameterDto.getMaxInteger();
-			String unitMax = null;
-			if (version >= 4) {
-				unitMax = parameterDto.getMaxString().trim().toUpperCase();
+			if (version < 4) {
+				// max value and max unit value are not provided before version 4.
+				return;
 			}
+			this.maxValue = parameterDto.getMaxInteger();
+			String unitMax = parameterDto.getMaxString().trim().toUpperCase();
 			if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
 				FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
 				if (version >= 4) {
