@@ -17,3 +17,8 @@
 src/test/resources/linshare-test.extra.properties
 # PyDev specific (Python IDE for Eclipse)
 *.pydevproject
+# snyk
+.dccache
+snyk-error.log
+snyk-result.json
+snyk_report.html
