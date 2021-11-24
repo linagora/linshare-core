@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
+import org.linagora.linshare.core.domain.entities.TwakeGuestUserProvider;
 import org.linagora.linshare.core.domain.entities.TwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserProvider;
@@ -52,9 +53,11 @@ import org.linagora.linshare.core.facade.webservice.adminv5.UserProviderFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.TwakeGuestUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.TwakeUserProviderDto;
 import org.linagora.linshare.core.repository.LdapUserProviderRepository;
 import org.linagora.linshare.core.repository.OIDCUserProviderRepository;
+import org.linagora.linshare.core.repository.TwakeGuestUserProviderRepository;
 import org.linagora.linshare.core.repository.TwakeUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.AccountService;
@@ -84,6 +87,8 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 
 	private TwakeUserProviderRepository twakeUserProviderRepository;
 
+	private TwakeGuestUserProviderRepository twakeGuestUserProviderRepository;
+
 	public UserProviderFacadeImpl(
 			AccountService accountService,
 			DomainService domainService,
@@ -93,7 +98,8 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 			UserProviderRepository userProviderRepository,
 			LdapUserProviderRepository ldapUserProviderRepository,
 			OIDCUserProviderRepository oidcUserProviderRepository,
-			TwakeUserProviderRepository twakeUserProviderRepository
+			TwakeUserProviderRepository twakeUserProviderRepository,
+			TwakeGuestUserProviderRepository twakeGuestUserProviderRepository
 			) {
 		super(accountService);
 		this.domainService = domainService;
@@ -104,6 +110,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		this.ldapUserProviderRepository = ldapUserProviderRepository;
 		this.oidcUserProviderRepository = oidcUserProviderRepository;
 		this.twakeUserProviderRepository = twakeUserProviderRepository;
+		this.twakeGuestUserProviderRepository = twakeGuestUserProviderRepository;
 	}
 
 	@Override
@@ -137,6 +144,8 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 				return new OIDCUserProviderDto((OIDCUserProvider) up);
 			case TWAKE_PROVIDER:
 				return new TwakeUserProviderDto((TwakeUserProvider) up);
+			case TWAKE_GUEST_PROVIDER:
+				return new TwakeGuestUserProviderDto((TwakeGuestUserProvider) up);
 		}
 		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_UNSUPPORTED_TYPE, "UserProvider not supported yet");
 	}
@@ -148,19 +157,30 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		Validate.notNull(dto.getType(), "user provider must be set.");
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		// TODO: we need to put all the following lines of code in a new UserProviderService(s)
-		if (domain.isRootDomain() || domain.isGuestDomain()) {
-			throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not create an UserProvider for this kind of domain.");
-		}
 		if (domain.getUserProvider() != null) {
 			throw new BusinessException(BusinessErrorCode.USER_PROVIDER_ALREADY_EXIST, "UserProvider already exists. Can't create more than one");
 		}
 		switch (dto.getType()) {
 			case LDAP_PROVIDER:
+				if (domain.isRootDomain() || domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not create an UserProvider for this kind of domain.");
+				}
 				return createLdapUserProvider((LDAPUserProviderDto) dto, domain);
 			case OIDC_PROVIDER:
+				if (domain.isRootDomain() || domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not create an UserProvider for this kind of domain.");
+				}
 				return createOidcUserProvider((OIDCUserProviderDto) dto, domain);
 			case TWAKE_PROVIDER:
+				if (domain.isRootDomain() || domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not create an UserProvider for this kind of domain.");
+				}
 				return createTwakeUserProvider((TwakeUserProviderDto) dto, domain);
+			case TWAKE_GUEST_PROVIDER:
+				if (!domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not create an UserProvider for this kind of domain.");
+				}
+				return createTwakeGuestUserProvider((TwakeGuestUserProviderDto) dto, domain);
 		}
 		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 	}
@@ -224,6 +244,18 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		return new TwakeUserProviderDto(userProvider);
 	}
 
+	private TwakeGuestUserProviderDto createTwakeGuestUserProvider(TwakeGuestUserProviderDto dto, AbstractDomain domain) {
+		Validate.notNull(dto.getTwakeServer(), "Twake server is mandatory for user provider creation");
+		String twakeConnectionUuid = dto.getTwakeServer().getUuid();
+		Validate.notEmpty(twakeConnectionUuid, "Twake connection uuid is mandatory for user provider creation");
+		Validate.notEmpty(dto.getTwakeCompanyId(), "Twake companyId is mandatory for user provider creation");
+
+		TwakeGuestUserProvider userProvider =  (TwakeGuestUserProvider) userProviderRepository.create(
+			new TwakeGuestUserProvider(domain, twakeConnectionService.find(twakeConnectionUuid), dto.getTwakeCompanyId()));
+		domain.setUserProvider(userProvider);
+		return new TwakeGuestUserProviderDto(userProvider);
+	}
+
 	@Override
 	public AbstractUserProviderDto update(String domainUuid, String uuid, AbstractUserProviderDto dto) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
@@ -231,9 +263,6 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		Validate.notNull(dto.getType(), "user provider must be set.");
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		// TODO: we need to put all the following lines of code in a new UserProviderService(s)
-		if (domain.isRootDomain() || domain.isGuestDomain()) {
-			throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not create an UserProvider for this kind of domain.");
-		}
 		if (Strings.isNullOrEmpty(uuid)) {
 			Validate.notNull(dto, "user provider must be set.");
 			uuid = dto.getUuid();
@@ -242,11 +271,25 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		UserProvider userProvider = findByService(uuid);
 		switch (dto.getType()) {
 			case LDAP_PROVIDER:
+				if (domain.isRootDomain() || domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not update an UserProvider for this kind of domain.");
+				}
 				return updateLdapUserProvider((LDAPUserProviderDto) dto, domain, userProvider);
 			case OIDC_PROVIDER:
+				if (domain.isRootDomain() || domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not update an UserProvider for this kind of domain.");
+				}
 				return updateOidcUserProvider((OIDCUserProviderDto) dto, userProvider);
 			case TWAKE_PROVIDER:
+				if (domain.isRootDomain() || domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not update an UserProvider for this kind of domain.");
+				}
 				return updateTwakeUserProvider((TwakeUserProviderDto) dto, userProvider);
+			case TWAKE_GUEST_PROVIDER:
+				if (!domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not update an UserProvider for this kind of domain.");
+				}
+				return updateTwakeGuestUserProvider((TwakeGuestUserProviderDto) dto, userProvider);
 		}
 		throw new BusinessException(BusinessErrorCode.USER_PROVIDER_NOT_FOUND, "UserProvider not found");
 	}
@@ -304,20 +347,40 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		return new TwakeUserProviderDto((TwakeUserProvider) userProviderRepository.update(provider));
 	}
 
+	private TwakeGuestUserProviderDto updateTwakeGuestUserProvider(TwakeGuestUserProviderDto userProviderDto, UserProvider userProvider) {
+		Validate.notNull(userProviderDto.getTwakeServer(), "Twake server is mandatory for user provider update");
+		Validate.notEmpty(userProviderDto.getTwakeServer().getUuid(), "Twake connection uuid is mandatory for user provider update");
+		Validate.notEmpty(userProviderDto.getTwakeCompanyId(), "Twake companyId is mandatory for user provider update");
+		TwakeGuestUserProvider provider = (TwakeGuestUserProvider) userProvider;
+		provider.setTwakeConnection(provider.getTwakeConnection());
+		return new TwakeGuestUserProviderDto((TwakeGuestUserProvider) userProviderRepository.update(provider));
+	}
+
 	@Override
 	public AbstractUserProviderDto delete(String domainUuid, String uuid, AbstractUserProviderDto dto) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		// TODO: we need to put all the following lines of code in a new UserProviderService(s)
-		if (domain.isRootDomain() || domain.isGuestDomain()) {
-			throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not create an UserProvider for this kind of domain.");
-		}
 		if (Strings.isNullOrEmpty(uuid)) {
 			Validate.notNull(dto, "user provider must be set.");
 			uuid = dto.getUuid();
 			Validate.notEmpty(uuid, "Missing user provider uuid in the payload.");
 		}
 		UserProvider userProvider = findByService(uuid);
+		switch (userProvider.getType()) {
+			case LDAP_PROVIDER:
+			case OIDC_PROVIDER:
+			case TWAKE_PROVIDER:
+				if (domain.isRootDomain() || domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not delete an UserProvider for this kind of domain.");
+				}
+				break;
+			case TWAKE_GUEST_PROVIDER:
+				if (!domain.isGuestDomain()) {
+					throw new BusinessException(BusinessErrorCode.USER_PROVIDER_FORBIDDEN, "You can not delete an UserProvider for this kind of domain.");
+				}
+				break;
+		}
 		// no update ? I think implicit opened transaction do the job
 		domain.setUserProvider(null);
 		userProviderRepository.delete(userProvider);

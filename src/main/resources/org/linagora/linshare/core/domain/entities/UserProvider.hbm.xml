@@ -34,5 +34,10 @@
 			</many-to-one>
 			<property name="twakeCompanyId" column="twake_company_id" type="string" length="255" not-null="false" />
 		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.TwakeGuestUserProvider" discriminator-value="TWAKE_GUEST_PROVIDER">
+			<many-to-one name="twakeConnection" column="twake_connection_id" class="org.linagora.linshare.core.domain.entities.TwakeConnection" lazy="proxy" >
+			</many-to-one>
+			<property name="twakeCompanyId" column="twake_company_id" type="string" length="255" not-null="false" />
+		</subclass>
 	</class>
 </hibernate-mapping>

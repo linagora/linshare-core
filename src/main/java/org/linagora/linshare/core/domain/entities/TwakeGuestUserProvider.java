@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2021 LINAGORA
+ * Copyright (C) 2021 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,25 +33,58 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
+package org.linagora.linshare.core.domain.entities;
 
-package org.linagora.linshare.core.domain.constants;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 
-import org.apache.commons.lang3.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import com.google.common.base.MoreObjects;
 
-public enum UserProviderType {
+public class TwakeGuestUserProvider extends UserProvider {
 
-	LDAP_PROVIDER, OIDC_PROVIDER, TWAKE_PROVIDER, TWAKE_GUEST_PROVIDER;
+	private TwakeConnection twakeConnection;
 
-	public static UserProviderType fromString(String s) {
-		try {
-			return UserProviderType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(
-					TechnicalErrorCode.DATA_INCOHERENCE,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
+	private String twakeCompanyId;
+
+	public TwakeGuestUserProvider() {
+		super();
 	}
 
+	public TwakeGuestUserProvider(AbstractDomain domain, TwakeConnection twakeConnection, String twakeCompanyId) {
+		super(domain);
+		this.twakeConnection = twakeConnection;
+		this.twakeCompanyId = twakeCompanyId;
+	}
+
+	public TwakeConnection getTwakeConnection() {
+		return twakeConnection;
+	}
+
+	public void setTwakeConnection(TwakeConnection twakeConnection) {
+		this.twakeConnection = twakeConnection;
+	}
+
+	public String getTwakeCompanyId() {
+		return twakeCompanyId;
+	}
+
+	public void setTwakeCompanyId(String twakeCompanyId) {
+		this.twakeCompanyId = twakeCompanyId;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+			.add("domain", domain)
+			.add("twakeConnection", twakeConnection)
+			.add("twakeCompanyId", twakeCompanyId)
+			.toString();
+	}
+
+
+	@Deprecated
+	@Override
+	public LDAPUserProviderDto toLDAPUserProviderDto() {
+		// it is not used anymore, only kept for admin/v4 support.
+		return null;
+	}
 }

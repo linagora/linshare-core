@@ -55,14 +55,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 	discriminatorMapping = {
 		@DiscriminatorMapping(value = "LDAP_PROVIDER", schema = LDAPUserProviderDto.class),
 		@DiscriminatorMapping(value = "OIDC_PROVIDER", schema = OIDCUserProviderDto.class),
-		@DiscriminatorMapping(value = "TWAKE_PROVIDER", schema = TwakeUserProviderDto.class)
+		@DiscriminatorMapping(value = "TWAKE_PROVIDER", schema = TwakeUserProviderDto.class),
+		@DiscriminatorMapping(value = "TWAKE_GUEST_PROVIDER", schema = TwakeGuestUserProviderDto.class)
 	}
 )
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
 @JsonSubTypes({
 	@Type(value = LDAPUserProviderDto.class, name="LDAP_PROVIDER"),
 	@Type(value = OIDCUserProviderDto.class, name="OIDC_PROVIDER"),
-	@Type(value = TwakeUserProviderDto.class, name="TWAKE_PROVIDER")
+	@Type(value = TwakeUserProviderDto.class, name="TWAKE_PROVIDER"),
+	@Type(value = TwakeGuestUserProviderDto.class, name="TWAKE_GUEST_PROVIDER")
 })
 public abstract class AbstractUserProviderDto {
 

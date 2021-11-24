@@ -51,6 +51,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.UserProviderFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.TwakeGuestUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.TwakeUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -83,7 +84,7 @@ public class UserProviderRestServiceImpl extends WebserviceBase implements
 			responseCode = "200",
 			content = @Content(array = @ArraySchema(
 				schema = @Schema(
-					oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class},
+					oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class, TwakeGuestUserProviderDto.class},
 					type = "object"
 				))
 			)
@@ -111,7 +112,7 @@ public class UserProviderRestServiceImpl extends WebserviceBase implements
 			responseCode = "200",
 			content = @Content(
 				schema = @Schema(
-					oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class},
+					oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class, TwakeGuestUserProviderDto.class},
 					type = "object"
 				)
 			)
@@ -142,7 +143,7 @@ public class UserProviderRestServiceImpl extends WebserviceBase implements
 			responseCode = "200",
 			content = @Content(
 				schema = @Schema(
-					oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class},
+					oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class, TwakeGuestUserProviderDto.class},
 					type = "object"
 				)
 			)
@@ -163,7 +164,7 @@ public class UserProviderRestServiceImpl extends WebserviceBase implements
 			@RequestBody(description = "UserProvider dto to create", required = true,
 				content = @Content(
 					schema = @Schema(
-						oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class},
+						oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class, TwakeGuestUserProviderDto.class},
 						type = "object"
 					)
 				)
@@ -179,7 +180,7 @@ public class UserProviderRestServiceImpl extends WebserviceBase implements
 			responseCode = "200",
 			content = @Content(
 				schema = @Schema(
-					oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class},
+					oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class, TwakeGuestUserProviderDto.class},
 					type = "object"
 				)
 			)
@@ -202,7 +203,7 @@ public class UserProviderRestServiceImpl extends WebserviceBase implements
 			@RequestBody(description = "UserProvider dto with properties to update", required = true,
 				content = @Content(
 					schema = @Schema(
-						oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class},
+						oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class, TwakeGuestUserProviderDto.class},
 						type = "object"
 					)
 				)
@@ -218,7 +219,7 @@ public class UserProviderRestServiceImpl extends WebserviceBase implements
 				responseCode = "200",
 				content = @Content(
 					schema = @Schema(
-						oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class},
+						oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class, TwakeGuestUserProviderDto.class},
 						type = "object"
 					)
 				)
@@ -241,7 +242,7 @@ public class UserProviderRestServiceImpl extends WebserviceBase implements
 			@RequestBody(description = "UserProvider uuid to delete, if null, object.uuid is used", required = true,
 				content = @Content(
 					schema = @Schema(
-						oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class},
+						oneOf = {LDAPUserProviderDto.class, OIDCUserProviderDto.class, TwakeUserProviderDto.class, TwakeGuestUserProviderDto.class},
 						type = "object"
 					)
 				)

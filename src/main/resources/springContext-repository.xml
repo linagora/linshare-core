@@ -314,4 +314,8 @@
 	<bean name="twakeUserProviderRepository" class="org.linagora.linshare.core.repository.hibernate.TwakeUserProviderRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="twakeGuestUserProviderRepository" class="org.linagora.linshare.core.repository.hibernate.TwakeGuestUserProviderRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>
