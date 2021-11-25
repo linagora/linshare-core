@@ -57,19 +57,19 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 * @param element the element to check for the owner.
 	 * @return true if a favourite exists with owner AND element in the entity.
 	 */
-	public boolean existFavourite(U owner,T element);
+	boolean existFavourite(U owner,T element);
 	
 	/**
 	 * Increment the weight of an element.
 	 * @param element the element concerned by the increase of weight.
 	 */
-	public void incAndCreate(U owner, T element, Date expirationDate);
+	void incAndCreate(U owner, T element, Date expirationDate);
 	
 	/**
 	 * Increment the weight of an element.
 	 * @param elements the elements concerned by the increase of weight.
 	 */
-	public void inc(List<T> elements, U owner, Date expirationDate) throws LinShareNotSuchElementException,BusinessException;
+	void inc(List<T> elements, U owner, Date expirationDate) throws LinShareNotSuchElementException,BusinessException;
 	
 	/**
 	 * Increment the weight of several elements, if they don't exist, there are created before.
@@ -79,7 +79,7 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 * @throws LinShareNotSuchElementException
 	 * @throws BusinessException
 	 */
-	public void incAndCreate(U owner, List<T> elements, Date expirationDate) throws LinShareNotSuchElementException,BusinessException;
+	void incAndCreate(U owner, List<T> elements, Date expirationDate) throws LinShareNotSuchElementException,BusinessException;
 	
 	/**
 	 * reorder elements by weight in desc order.
@@ -87,32 +87,32 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 * @param owner
 	 * @throws LinShareNotSuchElementException
 	 */
-	public List<String> reorderElementsByWeightDesc(List<T> elements,U owner);
+	List<String> reorderElementsByWeightDesc(List<T> elements,U owner);
 	
 	/**
 	 * Return the weight associated to an element.
 	 * @param element the element we have to retrieve the weight.
 	 * @return the weight of the element.
 	 */
-	public Long getWeight(T element,U owner) throws LinShareNotSuchElementException;
+	Long getWeight(T element,U owner) throws LinShareNotSuchElementException;
 	
 	/**
 	 * Give the element that have the max weight.
 	 * @return the element having the max height.
 	 */
-	public T getElementWithMaxWeight(U owner) throws LinShareNotSuchElementException;
+	T getElementWithMaxWeight(U owner) throws LinShareNotSuchElementException;
 	
 	/**
 	 * Return a list of all elements ordering ascendant by there weight. 
 	 * @return list a list of all elements ordering ascendant by there weight. If there is no elements return an empty list.
 	 */
-	public List<T> getElementsOrderByWeight(U owner);
+	List<T> getElementsOrderByWeight(U owner);
 	
 	/**
 	 * Return a list of all elements ordering descendant by there weight. 
 	 * @return list a list of all elements ordering descendant by there weight.  If there is no elements return an empty list.
 	 */
-	public List<T> getElementsOrderByWeightDesc(U owner);
+	List<T> getElementsOrderByWeightDesc(U owner);
 	
 	
 	/**
@@ -121,15 +121,15 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 * @param owner of the favorite
 	 * @return list a list of all elements ordering descendant by their weight.
 	 */
-	public List<T> findMatchElementsOrderByWeight(T matchStartWith,U owner);
+	List<T> findMatchElementsOrderByWeight(T matchStartWith,U owner);
 	
-	public List<V> findMatchElementsOrderByWeight(T matchStartWith,U owner, int limit);
+	List<V> findMatchElementsOrderByWeight(T matchStartWith,U owner, int limit);
 	
 	/**
 	 * delete all the elements of the owner
 	 * @param owner
 	 */
-	public void deleteFavoritesOfUser(U owner) throws IllegalArgumentException, BusinessException;
+	void deleteFavoritesOfUser(U owner) throws IllegalArgumentException, BusinessException;
 
-	public void deleteOneFavoriteOfUser(U owner, T recipient) throws IllegalArgumentException, BusinessException;
+	void deleteOneFavoriteOfUser(U owner, T recipient) throws IllegalArgumentException, BusinessException;
 }
