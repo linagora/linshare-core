@@ -97,11 +97,16 @@
 		<constructor-arg ref="domainService" />
 		<constructor-arg ref="welcomeMessagesService" />
 	</bean>
-
 	<bean id="wsAdminV5DomainQuotaFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.DomainQuotaFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="quotaService" />
 		<constructor-arg ref="domainQuotaService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
+	<bean id="wsAdminV5ContainerQuotaFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.ContainerQuotaFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="domainQuotaService" />
+		<constructor-arg ref="containerQuotaService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
 </beans>

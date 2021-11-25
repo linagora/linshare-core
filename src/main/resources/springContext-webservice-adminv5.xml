@@ -58,11 +58,14 @@
 		<constructor-arg ref="wsAdminV5WelcomeMessageFacade"/>
 	</bean>
 
-
-
 	<bean id="adminv5DomainQuotaRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainQuotaRestServiceImpl">
 	<constructor-arg ref="wsAdminV5DomainQuotaFacade"/>
 	</bean>
+
+	<bean id="adminv5ContainerQuotaRestService" class="org.linagora.linshare.webservice.adminv5.impl.ContainerQuotaRestServiceImpl">
+		<constructor-arg ref="wsAdminV5ContainerQuotaFacade" />
+	</bean>
+
 	<jaxrs:server id="restAdminV5Container" address="/rest/admin/v5">
 		<jaxrs:serviceBeans>
 			<ref bean="adminv5UserRestService" />
@@ -82,6 +85,7 @@
 			<ref bean="adminv5DriveProviderRestService"/>
 			<ref bean="adminv5WelcomeMessageRestService"/>
 			<ref bean="adminv5DomainQuotaRestService"/>
+			<ref bean="adminv5ContainerQuotaRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
