@@ -262,6 +262,18 @@ UPDATE policy SET policy = 1, system = false, status = true, default_status = tr
 
 ALTER TABLE recipient_favourite ADD COLUMN expiration_date       timestamp(6);
 
+-- Functionality : COLLECTED_EMAILS_EXPIRATION
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (336, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (337, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, param, creation_date, modification_date)
+	VALUES (70, false, 'COLLECTED_EMAILS_EXPIRATION', 336, 337, NULL, 1, false, now(), now());
+INSERT INTO unit(id, unit_type, unit_value)
+	VALUES (22, 0, 0), (23, 0, 0);
+INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
+	VALUES (70, 0, 22, 23, 8, true, false);
+
 ---- End of your queries
 
 -- Upgrade LinShare version
