@@ -172,12 +172,14 @@ linshare.mongo.bigfiles.credentials=
 #   - deleting expired Guest and Internal Users and domains
 #   - warning owner about guest expiration
 # job.users.cron.expression=0 0 0 * * ?
+# linshare.warn.owner.about.guest.expiration.days.before=7
 
 # Batches are launched every days at 6a.m
 # This cron is responsible of :
 #   - sending a notification for undownloaded shared documents.
 #   - warning sender about expiration of shares with undownloaded documents
 # job.shares.undownloaded.notification.cron.expression=0 0 6 * * ?
+# linshare.warn.owner.about.share.expiration.days.before=7
 
 # This key is the number of days between the
 # expiration of a user and his destruction
@@ -275,7 +277,6 @@ linshare.linthumbnail.dropwizard.server=http://0.0.0.0:8090/linthumbnail?mimeTyp
 linshare.documents.thumbnail.pdf.enable=true
 linshare.documents.thumbnail.enable=false
 
-linshare.warn.owner.about.guest.expiration.days.before=7
 # JWT support values
 # Default token validity in second : 300  (5 minutes)
 # jwt.expiration=300

@@ -182,7 +182,7 @@
 		<constructor-arg ref="shareEntryRepository" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
-		<constructor-arg value="${linshare.warn.owner.about.guest.expiration.days.before}" />
+		<constructor-arg value="${linshare.warn.owner.about.share.expiration.days.before}" />
 	</bean>
 
 	<bean name="shareNotifyUpcomingOutdatedSharesBatch"
