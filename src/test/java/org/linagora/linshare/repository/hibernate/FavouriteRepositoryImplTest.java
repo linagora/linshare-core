@@ -36,6 +36,8 @@
 package org.linagora.linshare.repository.hibernate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import javax.transaction.Transactional;
 
@@ -146,15 +148,16 @@ public class FavouriteRepositoryImplTest {
 			Assertions.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(2)));
 			
 			//Check if it's incremented.
-			//FIXME FMA
-			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"), null);
+			Calendar calendar = new GregorianCalendar();
+			calendar.add(Calendar.DAY_OF_WEEK, 2);
+			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"), calendar.getTime());
 			Assertions.assertTrue(favouriteRepository.getWeight("jean.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
 			Assertions.assertTrue(favouriteRepository.getWeight("pierre.lechat@linagora.com", userRepo.findByMail("robert.lechat@linagora.com")).equals(Long.valueOf(3)));
 			
 			//Check the order after retrieving by getElementsOrderByWeightDesc and getElementsOrderByWeight.
 			array.remove(1);
 			
-			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"), null);
+			favouriteRepository.inc(array, userRepo.findByMail("robert.lechat@linagora.com"), calendar.getTime());
 			
 			
 			Assertions.assertTrue(favouriteRepository.getElementsOrderByWeightDesc(userRepo.findByMail("robert.lechat@linagora.com")).get(0).equals("jean.lechat@linagora.com"));

@@ -1,12 +1,13 @@
+---
 stages:
   - prepare
   - build
   - test
 
 variables:
-    DOCKER_IMAGE_CORE_EMBEDDED: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-embedded-for-tests"
-    DOCKER_IMAGE_CORE_TEST: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-test"
-    GIT_DEPTH: "1"
+  DOCKER_IMAGE_CORE_EMBEDDED: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-embedded-for-tests"
+  DOCKER_IMAGE_CORE_TEST: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-test"
+  GIT_DEPTH: "1"
 
 .cache-tpl: &cache-tpl
   key: "$CI_COMMIT_REF_SLUG"
@@ -25,8 +26,8 @@ variables:
   tags:
     - docker
   services:
-      - name: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
-        alias: docker-dind
+    - name: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
+      alias: docker-dind
 
 .snyk: &snyk
   stage: test
@@ -136,8 +137,10 @@ test-api-branch-with-master:
   allow_failure: true
   artifacts:
     when: always
+    paths:
+      - $CI_PROJECT_DIR/report.xml
     reports:
-      junit: /tmp/report.xml
+      junit: $CI_PROJECT_DIR/report.xml
   script:
     - cd /tmp
     - tox
@@ -162,8 +165,10 @@ test-api-branch-maintenance-x:
   allow_failure: true
   artifacts:
     when: always
+    paths:
+      - /tmp/report.xml
     reports:
-      junit: /tmp/report.xml
+      junit: $CI_PROJECT_DIR/report.xml
   script:
     - cd /tmp
     - tox
@@ -187,8 +192,10 @@ test-api-branch-with-same-name:
   allow_failure: true
   artifacts:
     when: always
+    paths:
+      - /tmp/report.xml
     reports:
-      junit: /tmp/report.xml
+      junit: $CI_PROJECT_DIR/report.xml
   script:
     - cd /tmp
     - tox
