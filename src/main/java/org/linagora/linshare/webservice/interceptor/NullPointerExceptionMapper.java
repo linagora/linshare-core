@@ -60,6 +60,7 @@ public class NullPointerExceptionMapper implements ExceptionMapper<NullPointerEx
 
 	@Override
 	public Response toResponse(NullPointerException exception) {
+		logger.debug("Stacktrace: ", exception);
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_BAD_REQUEST_NULL_POINTER_EXCEPTION.getCode(),
 				"Bad data format : " + exception.getMessage()
 				+ ". Exception: " + exception.toString());
