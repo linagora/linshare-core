@@ -91,7 +91,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.orElse(null);
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole", e);
+			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
 		}
 	}
 
@@ -118,14 +118,14 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.collect(Collectors.toUnmodifiableList());
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole", e);
+			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
 		}
 	}
 
 	private void validateResponse(Response response, TwakeUserProvider userProvider) {
 		if (!response.isSuccessful()) {
-			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole");
+			LOGGER.error("Twake didn't answer successfully: " + response.message());
+			throw new BusinessException(BusinessErrorCode.TWAKE_REQUEST_ERROR, "Twake didn't answer successfully: " + response.message());
 		}
 	}
 
@@ -157,7 +157,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.collect(Collectors.toUnmodifiableList());
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole", e);
+			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
 		}
 
 	}
@@ -174,7 +174,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.collect(Collectors.toUnmodifiableList());
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole", e);
+			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
 		}
 	}
 
@@ -200,7 +200,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.orElse(null);
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole", e);
+			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
 		}
 	}
 
