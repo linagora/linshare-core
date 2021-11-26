@@ -190,7 +190,18 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public User searchForAuth(AbstractDomain domain, TwakeUserProvider userProvider, String login) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
+			validateResponse(response, userProvider);
+
+			return filterValidUser(response)
+				.filter(user -> user.getEmail().equals(login))
+				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
+				.findFirst()
+				.orElse(null);
+		} catch (IOException e) {
+			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
+			throw new BusinessException(BusinessErrorCode.UNKNOWN, "Something went wrong will calling TwakeConsole", e);
+		}
 	}
 
 	private Request request(TwakeUserProvider userProvider, Optional<String> extraPath) {

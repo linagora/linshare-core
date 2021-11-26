@@ -514,4 +514,46 @@ public class TwakeUserProviderServiceImplTest {
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
 		assertThat(testee.isUserExist(domain, userProvider, "wrong@bad.org")).isFalse();
 	}
+
+	@Test
+	public void searchForAuthShouldReturnNullWhenUsersDoesntExist() throws Exception {
+		MockWebServer server = new MockWebServer();
+		String url = "/twakeconsole.dev";
+		HttpUrl httpUrl = server.url(url);
+		TwakeUserProviderServiceImpl testee = new MyTwakeUserProviderServiceImpl(httpUrl);
+
+		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream("twake/twakeConsole-users-response.json"));
+		server.enqueue(new MockResponse().setBody(responseBody));
+
+		AbstractDomain domain = mock(AbstractDomain.class);
+		TwakeConnection twakeConnection = new TwakeConnection();
+		twakeConnection.setServerType(ServerType.TWAKE);
+		twakeConnection.setProviderUrl(url);
+		twakeConnection.setClientId("clientId");
+		twakeConnection.setClientSecret("clientSecret");
+		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
+		User user = testee.searchForAuth(domain, userProvider, "ric@lins");
+		assertThat(user).isNull();
+	}
+
+	@Test
+	public void searchForAuthShouldReturnUserWhenExists() throws Exception {
+		MockWebServer server = new MockWebServer();
+		String url = "/twakeconsole.dev";
+		HttpUrl httpUrl = server.url(url);
+		TwakeUserProviderServiceImpl testee = new MyTwakeUserProviderServiceImpl(httpUrl);
+
+		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream("twake/twakeConsole-users-response.json"));
+		server.enqueue(new MockResponse().setBody(responseBody));
+
+		AbstractDomain domain = mock(AbstractDomain.class);
+		TwakeConnection twakeConnection = new TwakeConnection();
+		twakeConnection.setServerType(ServerType.TWAKE);
+		twakeConnection.setProviderUrl(url);
+		twakeConnection.setClientId("clientId");
+		twakeConnection.setClientSecret("clientSecret");
+		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
+		User user = testee.searchForAuth(domain, userProvider, "frederic@linshare.org");
+		assertThat(user).isNotNull();
+	}
 }
