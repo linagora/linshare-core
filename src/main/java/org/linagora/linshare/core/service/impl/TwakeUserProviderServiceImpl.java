@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -155,11 +156,10 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.filter(filterBy(pattern, TwakeUser::getEmail))
 				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
 				.collect(Collectors.toUnmodifiableList());
-		} catch (IOException e) {
-			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
+		} catch (Exception e) {
+			LOGGER.error("An exception occurred with autocomplete on: " + userProvider, e);
+			return ImmutableList.of();
 		}
-
 	}
 
 	@Override
@@ -172,9 +172,9 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.filter(filterBy(lastName, TwakeUser::getSurname))
 				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
 				.collect(Collectors.toUnmodifiableList());
-		} catch (IOException e) {
-			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
+		} catch (Exception e) {
+			LOGGER.error("An exception occurred with autocomplete on: " + userProvider, e);
+			return ImmutableList.of();
 		}
 	}
 
