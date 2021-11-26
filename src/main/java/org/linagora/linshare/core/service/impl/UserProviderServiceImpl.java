@@ -565,7 +565,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				logger.debug("UserProviderType.OIDC does not provide an authentication through this method.");
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
-				return auth(up, login, userPasswd);
+				logger.debug("UserProviderType.Twake does not provide an authentication through this method.");
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
