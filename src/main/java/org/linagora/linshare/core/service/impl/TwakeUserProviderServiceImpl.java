@@ -67,7 +67,7 @@ import okhttp3.Response;
 public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	public static final String API_COMPANIES_ENDPOINT = "/api/companies/";
-	public static final String USERS_ENDPOINT = "users/";
+	public static final String USERS_ENDPOINT = "/users";
 	public static final String GUEST = "guest";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TwakeUserProviderServiceImpl.class);
 
