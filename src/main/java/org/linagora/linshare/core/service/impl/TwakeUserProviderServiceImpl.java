@@ -80,9 +80,13 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
+	protected OkHttpClient client() {
+		return client;
+	}
+
 	@Override
 	public User findUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail) throws BusinessException {
-		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
+		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
 			return filterValidUser(response)
@@ -92,7 +96,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.orElse(null);
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
+			return null;
 		}
 	}
 
@@ -108,7 +112,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public List<User> searchUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException {
-		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
+		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
 			return filterValidUser(response)
@@ -119,7 +123,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.collect(Collectors.toUnmodifiableList());
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
+			return ImmutableList.of();
 		}
 	}
 
@@ -149,7 +153,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public List<User> autoCompleteUser(AbstractDomain domain, TwakeUserProvider userProvider, String pattern) throws BusinessException {
-		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
+		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
 			return filterValidUser(response)
@@ -164,7 +168,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public List<User> autoCompleteUser(AbstractDomain domain, TwakeUserProvider userProvider, String firstName, String lastName) throws BusinessException {
-		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
+		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
 			return filterValidUser(response)
@@ -190,7 +194,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public User searchForAuth(AbstractDomain domain, TwakeUserProvider userProvider, String login) throws BusinessException {
-		try (Response response = client.newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
+		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
 			return filterValidUser(response)
@@ -200,7 +204,7 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 				.orElse(null);
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			throw new BusinessException(BusinessErrorCode.TWAKE_CONNECTION_ERROR, "Something went wrong will calling TwakeConsole", e);
+			return null;
 		}
 	}
 
