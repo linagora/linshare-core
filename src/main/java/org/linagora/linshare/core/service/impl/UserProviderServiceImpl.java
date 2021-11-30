@@ -626,7 +626,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		}
 		return null;
 	}
-
+	
 	private void throwError(LdapConnection ldap, Exception e)
 			throws BusinessException {
 		logger.error(
