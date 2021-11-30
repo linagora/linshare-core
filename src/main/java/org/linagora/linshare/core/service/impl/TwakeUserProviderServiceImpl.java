@@ -86,6 +86,9 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public User findUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail) throws BusinessException {
+		if (!isValid(domain)) {
+			return null;
+		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
@@ -100,6 +103,10 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 		}
 	}
 
+	private boolean isValid(AbstractDomain domain) {
+		return !domain.isGuestDomain();
+	}
+
 	private Predicate<TwakeUser> filterBy(String pattern, Function<TwakeUser, String> name) {
 		return user -> {
 			if (Strings.isNullOrEmpty(pattern)) {
@@ -112,6 +119,9 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public List<User> searchUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException {
+		if (!isValid(domain)) {
+			return ImmutableList.of();
+		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
@@ -153,6 +163,9 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public List<User> autoCompleteUser(AbstractDomain domain, TwakeUserProvider userProvider, String pattern) throws BusinessException {
+		if (!isValid(domain)) {
+			return ImmutableList.of();
+		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
@@ -168,6 +181,9 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public List<User> autoCompleteUser(AbstractDomain domain, TwakeUserProvider userProvider, String firstName, String lastName) throws BusinessException {
+		if (!isValid(domain)) {
+			return ImmutableList.of();
+		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
@@ -194,6 +210,9 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 
 	@Override
 	public User searchForAuth(AbstractDomain domain, TwakeUserProvider userProvider, String login) throws BusinessException {
+		if (!isValid(domain)) {
+			return null;
+		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			validateResponse(response, userProvider);
 
