@@ -36,116 +36,22 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.TwakeUserProvider;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.impl.twake.client.TwakeUser;
 import org.linagora.linshare.core.service.impl.twake.client.TwakeUsersResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import okhttp3.Credentials;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
-
-	public static final String API_COMPANIES_ENDPOINT = "/api/companies/";
-	public static final String USERS_ENDPOINT = "/users";
-	public static final String GUEST = "guest";
-	private static final Logger LOGGER = LoggerFactory.getLogger(TwakeUserProviderServiceImpl.class);
-
-	private final OkHttpClient client;
-	private final ObjectMapper objectMapper;
-
-	public TwakeUserProviderServiceImpl() {
-		client = new OkHttpClient();
-		objectMapper = new ObjectMapper();
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	}
-
-	protected OkHttpClient client() {
-		return client;
-	}
+public class TwakeUserProviderServiceImpl extends AbstractTwakeUserProviderServiceImpl {
 
 	@Override
-	public User findUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail) throws BusinessException {
-		if (!isValid(domain)) {
-			return null;
-		}
-		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
-
-			return filterValidUser(response)
-				.filter(filterBy(mail, TwakeUser::getEmail))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
-				.findFirst()
-				.orElse(null);
-		} catch (IOException e) {
-			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			return null;
-		}
-	}
-
-	private boolean isValid(AbstractDomain domain) {
+	protected boolean isValid(AbstractDomain domain) {
 		return !domain.isGuestDomain();
 	}
 
-	private Predicate<TwakeUser> filterBy(String pattern, Function<TwakeUser, String> name) {
-		return user -> {
-			if (Strings.isNullOrEmpty(pattern)) {
-				return true;
-			}
-			String value = name.apply(user);
-			return !Strings.isNullOrEmpty(value) && value.contains(pattern);
-		};
-	}
-
 	@Override
-	public List<User> searchUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException {
-		if (!isValid(domain)) {
-			return ImmutableList.of();
-		}
-		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
-
-			return filterValidUser(response)
-				.filter(filterBy(mail, TwakeUser::getEmail))
-				.filter(filterBy(firstName, TwakeUser::getName))
-				.filter(filterBy(lastName, TwakeUser::getSurname))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
-				.collect(Collectors.toUnmodifiableList());
-		} catch (IOException e) {
-			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			return ImmutableList.of();
-		}
-	}
-
-	private void validateResponse(Response response, TwakeUserProvider userProvider) {
-		if (!response.isSuccessful()) {
-			LOGGER.error("Twake didn't answer successfully: " + response.message());
-			throw new BusinessException(BusinessErrorCode.TWAKE_REQUEST_ERROR, "Twake didn't answer successfully: " + response.message());
-		}
-	}
-
-	private Stream<TwakeUser> filterValidUser(Response response) throws IOException {
-		return objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class)
+	protected Stream<TwakeUser> filterValidUser(TwakeUsersResponse twakeUsersResponse) throws IOException {
+		return twakeUsersResponse
 			.getList()
 			.stream()
 			.filter(TwakeUser::getVerified)
@@ -159,87 +65,5 @@ public class TwakeUserProviderServiceImpl implements TwakeUserProviderService {
 			.filter(role -> role.getRoleCode().equals(GUEST))
 			.findFirst()
 			.isPresent();
-	}
-
-	@Override
-	public List<User> autoCompleteUser(AbstractDomain domain, TwakeUserProvider userProvider, String pattern) throws BusinessException {
-		if (!isValid(domain)) {
-			return ImmutableList.of();
-		}
-		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
-
-			return filterValidUser(response)
-				.filter(filterBy(pattern, TwakeUser::getEmail))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
-				.collect(Collectors.toUnmodifiableList());
-		} catch (Exception e) {
-			LOGGER.error("An exception occurred with autocomplete on: " + userProvider, e);
-			return ImmutableList.of();
-		}
-	}
-
-	@Override
-	public List<User> autoCompleteUser(AbstractDomain domain, TwakeUserProvider userProvider, String firstName, String lastName) throws BusinessException {
-		if (!isValid(domain)) {
-			return ImmutableList.of();
-		}
-		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
-
-			return filterValidUser(response)
-				.filter(filterBy(firstName, TwakeUser::getName))
-				.filter(filterBy(lastName, TwakeUser::getSurname))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
-				.collect(Collectors.toUnmodifiableList());
-		} catch (Exception e) {
-			LOGGER.error("An exception occurred with autocomplete on: " + userProvider, e);
-			return ImmutableList.of();
-		}
-	}
-
-	@Override
-	public Boolean isUserExist(AbstractDomain domain, TwakeUserProvider userProvider, String mail) throws BusinessException {
-		return findUser(domain, userProvider, mail) != null;
-	}
-
-	@Override
-	public User auth(TwakeUserProvider userProvider, String login, String userPasswd) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
-	}
-
-	@Override
-	public User searchForAuth(AbstractDomain domain, TwakeUserProvider userProvider, String login) throws BusinessException {
-		if (!isValid(domain)) {
-			return null;
-		}
-		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
-
-			return filterValidUser(response)
-				.filter(user -> user.getEmail().equals(login))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
-				.findFirst()
-				.orElse(null);
-		} catch (IOException e) {
-			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
-			return null;
-		}
-	}
-
-	private Request request(TwakeUserProvider userProvider, Optional<String> extraPath) {
-		String basic = Credentials.basic(userProvider.getTwakeConnection().getClientId(), userProvider.getTwakeConnection().getClientSecret());
-		return new Request.Builder()
-			.url(httpUrlFrom(userProvider, extraPath))
-			.header("Authorization", basic)
-			.header("Accept", "application/json")
-			.build();
-	}
-
-	protected HttpUrl httpUrlFrom(TwakeUserProvider userProvider, Optional<String> extraPath) {
-		return HttpUrl.parse(userProvider.getTwakeConnection().getProviderUrl()
-			+ API_COMPANIES_ENDPOINT
-			+ userProvider.getTwakeCompanyId()
-			+ extraPath.orElse(""));
 	}
 }
