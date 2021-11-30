@@ -102,7 +102,9 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 
 	private final AbstractDomainRepository abstractDomainRepository;
 
-	private final TwakeUserProviderService twakeUserProviderService;
+	private final TwakeUserProviderServiceImpl twakeUserProviderService;
+
+	private final TwakeGuestUserProviderServiceImpl twakeGuestUserProviderService;
 
 	public UserProviderServiceImpl(
 			DomainPatternRepository domainPatternRepository,
@@ -113,7 +115,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			UserRepository<User> userRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			AbstractDomainRepository abstractDomainRepository,
-			TwakeUserProviderService twakeUserProviderService) {
+			TwakeUserProviderServiceImpl twakeUserProviderService,
+			TwakeGuestUserProviderServiceImpl twakeGuestUserProviderService) {
 		super(sanitizerInputHtmlBusinessService);
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
@@ -123,6 +126,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		this.mongoRepository = mongoRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.twakeUserProviderService = twakeUserProviderService;
+		this.twakeGuestUserProviderService = twakeGuestUserProviderService;
 	}
 
 	@Override
@@ -374,6 +378,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				}
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.findUser(domain, (TwakeUserProvider) up, mail);
+			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+				return twakeGuestUserProviderService.findUser(domain, (TwakeUserProvider) up, mail);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -408,6 +414,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				return users;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.searchUser(domain, (TwakeUserProvider) up, mail, firstName, lastName);
+			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+				return twakeGuestUserProviderService.searchUser(domain, (TwakeUserProvider) up, mail, firstName, lastName);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -455,6 +463,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				return users;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, pattern);
+			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, pattern);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -503,6 +513,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				return users;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, firstName, lastName);
+			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, firstName, lastName);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -535,6 +547,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					return true;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.isUserExist(domain, (TwakeUserProvider) up, mail);
+			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+				return twakeGuestUserProviderService.isUserExist(domain, (TwakeUserProvider) up, mail);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -566,6 +580,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				logger.debug("UserProviderType.OIDC does not provide an authentication through this method.");
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				logger.debug("UserProviderType.Twake does not provide an authentication through this method.");
+			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+				logger.debug("UserProviderType.TwakeGuest does not provide an authentication through this method.");
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -620,6 +636,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				logger.info("Using UserProviderType.OIDC provider outside authentication is not supported.");
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.searchForAuth(domain, (TwakeUserProvider) up, login);
+			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+				return twakeGuestUserProviderService.searchForAuth(domain, (TwakeUserProvider) up, login);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}

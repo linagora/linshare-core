@@ -106,6 +106,7 @@
 		<constructor-arg ref="auditAdminMongoRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="twakeUserProviderService" />
+		<constructor-arg ref="twakeGuestUserProviderService" />
 	</bean>
 
 	<bean id="mimePolicyService"
@@ -170,5 +171,9 @@
 
 	<bean name="twakeUserProviderService"
 		  class="org.linagora.linshare.core.service.impl.TwakeUserProviderServiceImpl">
+	</bean>
+
+	<bean name="twakeGuestUserProviderService"
+		  class="org.linagora.linshare.core.service.impl.TwakeGuestUserProviderServiceImpl">
 	</bean>
 </beans>
