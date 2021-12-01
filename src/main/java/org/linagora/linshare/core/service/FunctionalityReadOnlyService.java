@@ -120,8 +120,6 @@ public interface FunctionalityReadOnlyService {
 
 	Functionality getJwtLongTimeFunctionality(AbstractDomain domain);
 
-	Functionality getJwtLongTimeFunctionalityForUser(AbstractDomain domain);
-
 	Functionality getJwtLongTimeFunctionality(String domainuuid);
 
 	//Drive Functionnality

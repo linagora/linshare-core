@@ -186,7 +186,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(true);
 
 		Functionality userFunctionality = mock(Functionality.class);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 		Policy userPolicy = mock(Policy.class);
 		when(userFunctionality.getActivationPolicy())
@@ -224,7 +224,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(true);
 
 		Functionality userFunctionality = mock(Functionality.class);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 		Policy userPolicy = mock(Policy.class);
 		when(userFunctionality.getActivationPolicy())
@@ -260,7 +260,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(true);
 
 		Functionality userFunctionality = mock(Functionality.class);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 		Policy userPolicy = mock(Policy.class);
 		when(userFunctionality.getActivationPolicy())
@@ -365,7 +365,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.hasSuperAdminRole())
 				.thenReturn(false);
 		Functionality userFunctionality = mock(Functionality.class);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
 		Policy userActivationPolicy = mock(Policy.class);
@@ -409,7 +409,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.hasSuperAdminRole())
 				.thenReturn(false);
 		Functionality userFunctionality = mock(Functionality.class);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
 		Policy userActivationPolicy = mock(Policy.class);
@@ -455,7 +455,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.hasSuperAdminRole())
 				.thenReturn(false);
 		Functionality userFunctionality = mock(Functionality.class);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
 		Policy userActivationPolicy = mock(Policy.class);
@@ -623,7 +623,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(true);
 		when(userFunctionality.getActivationPolicy())
 				.thenReturn(userActivationPolicy);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
 		when(account.isInternal())
@@ -674,7 +674,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(true);
 		when(userFunctionality.getActivationPolicy())
 				.thenReturn(userActivationPolicy);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
 		when(account.isGuest())
@@ -837,7 +837,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(true);
 		when(userFunctionality.getActivationPolicy())
 				.thenReturn(userActivationPolicy);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
 		when(account.isInternal())
@@ -888,7 +888,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(true);
 		when(userFunctionality.getActivationPolicy())
 				.thenReturn(userActivationPolicy);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
 		when(account.isGuest())
@@ -1051,7 +1051,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(true);
 		when(userFunctionality.getActivationPolicy())
 				.thenReturn(userActivationPolicy);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
 		when(account.isInternal())
@@ -1102,7 +1102,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(true);
 		when(userFunctionality.getActivationPolicy())
 				.thenReturn(userActivationPolicy);
-		when(functionalityReadOnlyService.getJwtLongTimeFunctionalityForUser(domain))
+		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
 		when(account.isGuest())
