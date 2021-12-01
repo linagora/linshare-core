@@ -62,7 +62,7 @@ public class TwakeUserProviderServiceImpl extends AbstractTwakeUserProviderServi
 	private boolean isGuest(TwakeUser user) {
 		return user.getRoles()
 			.stream()
-			.filter(role -> role.getRoleCode().equals(GUEST))
+			.filter(role -> role.getRoleCode().equals(GUEST_ROLE))
 			.findFirst()
 			.isPresent();
 	}
