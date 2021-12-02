@@ -274,6 +274,17 @@ INSERT INTO unit(id, unit_type, unit_value)
 INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
 	VALUES (70, 0, 22, 23, 8, true, false);
 
+UPDATE functionality SET identifier='SHARED_SPACE' WHERE identifier = 'DRIVE';
+UPDATE functionality SET parent_identifier='SHARED_SPACE' WHERE parent_identifier = 'WORK_GROUP';
+UPDATE functionality SET parent_identifier='SHARED_SPACE' WHERE parent_identifier = 'DRIVE';
+ALTER TABLE policy ADD COLUMN delete_it BOOL DEFAULT 'FALSE';
+UPDATE policy SET delete_it = true WHERE id IN (SELECT policy_activation_id FROM functionality WHERE identifier = 'WORK_GROUP');
+UPDATE policy SET delete_it = true WHERE id IN (SELECT policy_configuration_id FROM functionality WHERE identifier = 'WORK_GROUP');
+DELETE FROM functionality WHERE identifier = 'WORK_GROUP';
+DELETE FROM policy WHERE delete_it = true;
+ALTER TABLE policy DROP COLUMN delete_it;
+
+
 ---- End of your queries
 
 -- Upgrade LinShare version

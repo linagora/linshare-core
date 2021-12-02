@@ -77,11 +77,9 @@ public class SharedSpaceNodeResourceAccessControlImpl
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
 
-		boolean isDriveFuncEnabled = functionalityService.getDriveFunctionality(actor.getDomain()).getActivationPolicy()
+		boolean isSharedSpaceFuncEnabled = functionalityService.getSharedSpaceFunctionality(actor.getDomain()).getActivationPolicy()
 				.getStatus();
-		boolean isWorkgroupFuncEnabled = functionalityService.getWorkGroupFunctionality(actor.getDomain())
-				.getActivationPolicy().getStatus();
-		if (!isDriveFuncEnabled && !isWorkgroupFuncEnabled) {
+		if (!isSharedSpaceFuncEnabled) {
 			return false;
 		}
 		if (opt.length > 0 && opt[0] != null) {
@@ -97,10 +95,8 @@ public class SharedSpaceNodeResourceAccessControlImpl
 		if (opt.length > 1 && opt[1] != null) {
 			@SuppressWarnings("unchecked")
 			Set<NodeType> types = (Set<NodeType>) opt[1];
-			if (!isDriveFuncEnabled) {
+			if (!isSharedSpaceFuncEnabled) {
 				types.remove(NodeType.DRIVE);
-			}
-			if (!isWorkgroupFuncEnabled) {
 				types.remove(NodeType.WORK_GROUP);
 			}
 		}

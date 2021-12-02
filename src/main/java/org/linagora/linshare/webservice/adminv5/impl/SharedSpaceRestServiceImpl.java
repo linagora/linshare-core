@@ -178,7 +178,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
 			@Parameter(description = "The admin can choose the field to sort with the sharedSpace's list to retrieve, if not set the modification date order will be choosen by default.", required = false)
 				@QueryParam("sortField") @DefaultValue("modificationDate") String sortField,
-			@Parameter(description = "Filter the returned sharedSpaces by their types(WORK_GROUP/DRIVE).", required = false)
+			@Parameter(description = "Filter the returned sharedSpaces by their types(WORK_GROUP/SHARED_SPACE).", required = false)
 				@QueryParam("nodeType") Set<String> nodeTypes,
 			@Parameter(description = "Filter the returned sharedSpaces by member roles.", required = false)
 				@QueryParam("role") Set<String> sharedSpaceRoles,

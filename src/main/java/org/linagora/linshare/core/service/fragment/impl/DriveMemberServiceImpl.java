@@ -106,9 +106,9 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 	 * @param actor      {@link Account} the actor of the action
 	 * @param node       {@link SharedSpaceNode} Drive
 	 * @param role       {@link SharedSpaceRole} The role of the Drive member,
-	 *                   should be DRIVE
+	 *                   should be SHARED_SPACE
 	 * @param nestedRole {@link SharedSpaceRole} The role of the member in the
-	 *                   workgroups inside the DRIVE, should be WORKGROUP
+	 *                   workgroups inside the SHARED_SPACE, should be WORKGROUP
 	 * @param account {@link SharedSpaceAccount} the account of the added member
 	 * @return {@link SharedSpaceMemberDrive}
 	 * @throws BusinessException

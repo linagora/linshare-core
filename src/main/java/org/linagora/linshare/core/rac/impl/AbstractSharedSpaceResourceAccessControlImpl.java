@@ -35,7 +35,6 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
-import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
@@ -107,28 +106,13 @@ public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends
 	}
 	
 	protected boolean isFunctionalityEnabled(Account actor, SharedSpaceNode node) {
-		Functionality driveFunctionality = functionalityService.getDriveFunctionality(actor.getDomain());
-		Functionality wgFunctionality = functionalityService.getWorkGroupFunctionality(actor.getDomain());
-		if (node.getNodeType().equals(NodeType.DRIVE)
-				|| (node.getNodeType().equals(NodeType.WORK_GROUP) && node.getParentUuid() != null)) {
-			// node is a drive or nested workgroup
-			if (driveFunctionality.getActivationPolicy().getStatus()) {
-				return true;
-			} else {
-				logger.error("{} is disabled on your domain, you are not authorized to do any operation.",
-						driveFunctionality.getIdentifier());
-				return false;
-			}
-		} else if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
-			if (wgFunctionality.getActivationPolicy().getStatus()) {
-				return true;
-			} else {
-				logger.error("{} is disabled on your domain, you are not authorized to do any operation.",
-						wgFunctionality.getIdentifier());
-				return false;
-			}
+		Functionality sharedSpaceFunctionality = functionalityService.getSharedSpaceFunctionality(actor.getDomain());
+		if (!sharedSpaceFunctionality.getActivationPolicy().getStatus()) {
+			logger.error("{} is disabled on your domain, you are not authorized to do any operation.",
+					sharedSpaceFunctionality.getIdentifier());
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	protected boolean defaultSharedSpacePermissionCheck(Account authUser, Account actor, String sharedSpaceNodeUuid,

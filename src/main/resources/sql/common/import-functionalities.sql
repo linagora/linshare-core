@@ -222,15 +222,6 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_string(functionality_id, string_value)
 	VALUES (22, '2,7');
 
--- Functionality : WORK_GROUP
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (45, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (46, false, false, 1, true);
--- if a functionality is system, you will not be able see/modify its parameters
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date)
-	VALUES (23, true, 'WORK_GROUP', 45, 46, 1, now(), now());
-
 -- Functionality : WORK_GROUP__CREATION_RIGHT
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (57, true, true, 1, false);
@@ -238,7 +229,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (58, false, false, 1, false);
 -- INSERT INTO policy(id, status, default_status, policy, system) VALUES (117, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
-	VALUES (28, false, 'WORK_GROUP__CREATION_RIGHT', 57, 58, 1, 'WORK_GROUP', true, now(), now());
+	VALUES (28, false, 'WORK_GROUP__CREATION_RIGHT', 57, 58, 1, 'SHARED_SPACE', true, now(), now());
 -- INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (28, true);
 
 	-- Functionality : WORK_GROUP__FILE_VERSIONING
@@ -249,7 +240,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system) 
 	VALUES (299, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
-	VALUES (63, false, 'WORK_GROUP__FILE_VERSIONING', 297, 298, 299, 1, 'WORK_GROUP', true, now(), now());
+	VALUES (63, false, 'WORK_GROUP__FILE_VERSIONING', 297, 298, 299, 1, 'SHARED_SPACE', true, now(), now());
 INSERT INTO functionality_boolean(functionality_id, boolean_value)
 	VALUES (63, true);
 
@@ -261,7 +252,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system) 
 	VALUES (305, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
-	VALUES (65, true, 'WORK_GROUP__FILE_EDITION', 303, 304, 305, 1, 'WORK_GROUP', false, now(), now());
+	VALUES (65, true, 'WORK_GROUP__FILE_EDITION', 303, 304, 305, 1, 'SHARED_SPACE', false, now(), now());
 INSERT INTO functionality_string(functionality_id, string_value) 
 	VALUES (65, 'http://editor.linshare.local');
 
@@ -271,7 +262,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (307, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
-	VALUES (66, false, 'WORK_GROUP__DOWNLOAD_ARCHIVE', 306, 307, 1, 'WORK_GROUP', true, now(), now());
+	VALUES (66, false, 'WORK_GROUP__DOWNLOAD_ARCHIVE', 306, 307, 1, 'SHARED_SPACE', true, now(), now());
 INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (12, 1, 1),(16, 1, 1);
 INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used) 
@@ -606,7 +597,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (318, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param, creation_date, modification_date)
-	VALUES (67, false, 'DRIVE', 317, 318, 1, false, now(), now());
+	VALUES (67, false, 'SHARED_SPACE', 317, 318, 1, false, now(), now());
 
 -- Functionality : DRIVE__CREATION_RIGHT
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -614,7 +605,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (296, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
-	VALUES (62, false, 'DRIVE__CREATION_RIGHT', 295, 296, 1, 'DRIVE', true, now(), now());
+	VALUES (62, false, 'DRIVE__CREATION_RIGHT', 295, 296, 1, 'SHARED_SPACE', true, now(), now());
 
 -- Functionality : SECOND_FACTOR_AUTHENTICATION
 INSERT INTO policy(id, status, default_status, policy, system)

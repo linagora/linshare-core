@@ -94,7 +94,6 @@ public interface FunctionalityReadOnlyService {
 	IntegerValueFunctionality getUndownloadedSharedDocumentsAlertDuration(AbstractDomain domain);
 
 	IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
-	Functionality getWorkGroupFunctionality(AbstractDomain domain);
 	Functionality getContactsListFunctionality(AbstractDomain domain);
 	Functionality getContactsListCreationFunctionality(AbstractDomain domain);
 
@@ -128,7 +127,7 @@ public interface FunctionalityReadOnlyService {
 	//Drive Functionnality
 	Functionality getDriveCreationRight(AbstractDomain domain);
 
-	Functionality getDriveFunctionality(AbstractDomain domain);
+	Functionality getSharedSpaceFunctionality(AbstractDomain domain);
 
 	BooleanValueFunctionality getSecondFactorAuthenticationFunctionality(AbstractDomain domain);
 

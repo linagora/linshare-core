@@ -256,11 +256,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getWorkGroupFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.WORK_GROUP);
-	}
-
-	@Override
 	public BooleanValueFunctionality getWorkGroupFileVersioning(AbstractDomain domain) {
 		return (BooleanValueFunctionality) _getFunctionality(domain, FunctionalityNames.WORK_GROUP__FILE_VERSIONING);
 	}
@@ -419,8 +414,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getDriveFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.DRIVE);
+	public Functionality getSharedSpaceFunctionality(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.SHARED_SPACE);
 	}
 
 	@Override
