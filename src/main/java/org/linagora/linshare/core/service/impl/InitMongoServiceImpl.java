@@ -78,7 +78,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 	 *  This methods allows to insert the default shared space roles in Database
 	 * @param roleUuid String static uuid affected to the role
 	 * @param roleName String static name affected to the role
-	 * @param type {@link NodeType} define the kind of shared space role (SHARED_SPACE, Work_GROUP)
+	 * @param type {@link NodeType} define the kind of shared space role (DRIVE, Work_GROUP)
 	 * @param domain {@link GenericLightEntity} contains LinShare domain minimal informations
 	 * @param author {@link SharedSpaceAuthor} The user that create the role
 	 * @return role
