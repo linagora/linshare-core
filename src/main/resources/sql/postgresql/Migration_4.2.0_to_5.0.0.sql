@@ -288,7 +288,7 @@ ALTER TABLE policy DROP COLUMN delete_it;
 ALTER TABLE policy ADD COLUMN delete_it BOOL DEFAULT 'FALSE';
 UPDATE policy SET delete_it = true WHERE id IN (SELECT policy_activation_id FROM functionality WHERE identifier = 'JWT_PERMANENT_TOKEN__USER_MANAGEMENT');
 UPDATE policy SET delete_it = true WHERE id IN (SELECT policy_configuration_id FROM functionality WHERE identifier = 'JWT_PERMANENT_TOKEN__USER_MANAGEMENT');
-UPDATE policy SET delete_it = true WHERE id IN (SELECT policy_delegation_id, FROM functionality WHERE identifier = 'JWT_PERMANENT_TOKEN__USER_MANAGEMENT');
+UPDATE policy SET delete_it = true WHERE id IN (SELECT policy_delegation_id FROM functionality WHERE identifier = 'JWT_PERMANENT_TOKEN__USER_MANAGEMENT');
 DELETE FROM functionality WHERE identifier = 'JWT_PERMANENT_TOKEN__USER_MANAGEMENT';
 DELETE FROM policy WHERE delete_it = true;
 ALTER TABLE policy DROP COLUMN delete_it;
