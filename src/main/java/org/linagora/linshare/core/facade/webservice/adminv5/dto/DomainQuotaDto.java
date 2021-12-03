@@ -36,37 +36,48 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.google.common.base.MoreObjects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+@JsonDeserialize(builder = DomainQuotaDto.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "DomainQuota", description = "A domain quota instance for a domain.")
 public class DomainQuotaDto {
 
 	public static DomainQuotaDto from(DomainQuota dq) {
+		return from(dq, Optional.empty(), Optional.empty());
+	}
+
+	public static DomainQuotaDto from(DomainQuota dq, Optional<Long> usedSpace, Optional<Long> currentValueForSubdomains) {
 		return builder()
 			.uuid(dq.getUuid())
 			.domain(new DomainLightDto(dq.getDomain()))
-			.parentDomain(new DomainLightDto(dq.getParentDomain()))
+			.parentDomain(dq)
 			.quota(dq.getQuota())
 			.quotaOverride(dq.getQuotaOverride())
 			.defaultQuota(dq.getDefaultQuota())
 			.defaultQuotaOverride(dq.getDefaultQuotaOverride())
-			.usedSpace(dq.getCurrentValue())
+			.usedSpace(usedSpace.orElse(dq.getCurrentValue()))
 			.yesterdayUsedSpace(dq.getLastValue())
 			.maintenance(dq.getMaintenance())
 			.batchModificationDate(dq.getBatchModificationDate())
-			.currentValueForSubdomains(dq.getCurrentValueForSubdomains())
+			.currentValueForSubdomains(currentValueForSubdomains.orElse(dq.getCurrentValueForSubdomains()))
 			.domainShared(dq.getDomainShared())
 			.domainSharedOverride(dq.getDomainSharedOverride())
 			.defaultDomainShared(dq.getDefaultDomainShared())
 			.defaultDomainSharedOverride(dq.getDefaultDomainSharedOverride())
+			.creationDate(dq.getCreationDate())
+			.modificationDate(dq.getModificationDate())
 			.build();
 	}
 
@@ -105,8 +116,10 @@ public class DomainQuotaDto {
 			return this;
 		}
 
-		public Builder parentDomain(DomainLightDto parentDomain) {
-			this.parentDomain = parentDomain;
+		public Builder parentDomain(DomainQuota domainQuota) {
+			if (Objects.nonNull(domainQuota.getParentDomain())) {
+				this.parentDomain = new DomainLightDto(domainQuota.getParentDomain());
+			}
 			return this;
 		}
 
@@ -147,6 +160,16 @@ public class DomainQuotaDto {
 
 		public Builder batchModificationDate(Date batchModificationDate) {
 			this.batchModificationDate = batchModificationDate;
+			return this;
+		}
+
+		public Builder modificationDate(Date modificationDate) {
+			this.modificationDate = modificationDate;
+			return this;
+		}
+
+		public Builder creationDate(Date creationDate) {
+			this.creationDate = creationDate;
 			return this;
 		}
 
@@ -207,22 +230,22 @@ public class DomainQuotaDto {
 			+ "If true, the defaultQuota value is unlinked from quota field.")
 	private final Boolean defaultQuotaOverride;
 
-	@Schema(description = "The used space (Read only)")
+	@Schema(description = "The used space", accessMode = Schema.AccessMode.READ_ONLY)
 	private final Long usedSpace;
 
-	@Schema(description = "The value of yesterday's used space (Read only)")
+	@Schema(description = "The value of yesterday's used space", accessMode = Schema.AccessMode.READ_ONLY)
 	private final Long yesterdayUsedSpace;
 
 	@Schema(description = "If set to true, uploads are disable due to server maintenance.")
 	private final Boolean maintenance;
 
-	@Schema(description = "Quota creation date (Read only)")
+	@Schema(description = "Quota creation date", accessMode = Schema.AccessMode.READ_ONLY)
 	private final Date creationDate;
 
-	@Schema(description = "Quota last modification date (Read only)")
+	@Schema(description = "Quota last modification date", accessMode = Schema.AccessMode.READ_ONLY)
 	private final Date modificationDate;
 
-	@Schema(description = "Quota last modification date by a batch (Read only)")
+	@Schema(description = "Quota last modification date by a batch", accessMode = Schema.AccessMode.READ_ONLY)
 	private final Date batchModificationDate;
 
 	@Schema(description = "The current quota value of subdomains")
@@ -353,7 +376,6 @@ public class DomainQuotaDto {
 		quota.setDefaultDomainSharedOverride(getDefaultDomainSharedOverride());
 		return quota;
 	}
-
 
 	@Override
 	public String toString() {

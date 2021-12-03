@@ -61,6 +61,7 @@
 
 
 	<bean id="adminv5DomainQuotaRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainQuotaRestServiceImpl">
+	<constructor-arg ref="wsAdminV5DomainQuotaFacade"/>
 	</bean>
 	<jaxrs:server id="restAdminV5Container" address="/rest/admin/v5">
 		<jaxrs:serviceBeans>

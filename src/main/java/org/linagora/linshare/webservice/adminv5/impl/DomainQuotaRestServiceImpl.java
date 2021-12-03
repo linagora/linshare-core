@@ -47,18 +47,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.DomainQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainQuotaDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv5.DomainQuotaRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Produces({MediaType.APPLICATION_JSON })
@@ -66,11 +66,12 @@ import io.swagger.v3.oas.annotations.Operation;
 @Path("/domains/{domainUuid}/domain_quotas")
 public class DomainQuotaRestServiceImpl extends WebserviceBase implements DomainQuotaRestService {
 
-//	private DomainQuotaFacade facade;
-//
-//	public DomainQuotaRestServiceImpl(DomainQuotaFacade facade) {
-//		this.facade = facade;
-//	}
+	private DomainQuotaFacade facade;
+
+	public DomainQuotaRestServiceImpl(DomainQuotaFacade facade) {
+		super();
+		this.facade = facade;
+	}
 
 	@Path("/")
 	@GET
@@ -82,9 +83,11 @@ public class DomainQuotaRestServiceImpl extends WebserviceBase implements Domain
 	})
 	@Override
 	public List<DomainQuotaDto> findAll(
+			@Parameter(description = "Domain's uuid.", required = true)
+				@PathParam("domainUuid") String domainUuid,
 			@Parameter(description = "Filter domain quotas by its parent uuid.", required = false) 
 				@QueryParam("parent") String parentUuid) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet.");
+		return facade.findAll(domainUuid, parentUuid);
 	}
 
 	@Path("/{uuid}")
@@ -97,14 +100,14 @@ public class DomainQuotaRestServiceImpl extends WebserviceBase implements Domain
 	})
 	@Override
 	public DomainQuotaDto find(
+			@Parameter(description = "Domain's uuid.", required = true)
+				@PathParam("domainUuid") String domainUuid,
 			@Parameter(description = "Domain quota Uuid", required = true)
 				@PathParam("uuid")
-					String uuid,
-			@Parameter(description = "Compute real time quota value. Carefull it could be time consuming.", required = false)
+					String uuid, @Parameter(description = "Compute real time quota value. Carefull it could be time consuming.", required = false)
 				@QueryParam("realtime") @DefaultValue("false")
-					boolean realTime
-					) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet.");
+					boolean realTime) throws BusinessException {
+		return facade.find(uuid, realTime);
 	}
 
 	@Path("/{uuid : .*}")
@@ -117,10 +120,11 @@ public class DomainQuotaRestServiceImpl extends WebserviceBase implements Domain
 	})
 	@Override
 	public DomainQuotaDto update(
-			@Parameter(description = "Domain quota to update. Only quota, override and maintenance field can be updated. If null they will be ignored.", required = true) DomainQuotaDto dto,
-			@Parameter(description = "Domain quota Uuid, if null dto.uuid is used.", required = false)
+			@Parameter(description = "Domain's uuid.", required = true)
+				@PathParam("domainUuid") String domainUuid,
+			@Parameter(description = "Domain quota to update. Only quota, override and maintenance field can be updated. If null they will be ignored.", required = true) DomainQuotaDto dto, @Parameter(description = "Domain quota Uuid, if null dto.uuid is used.", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet.");
+		return facade.update(domainUuid, dto, uuid);
 	}
 
 }

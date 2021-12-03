@@ -33,16 +33,16 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.adminv5;
+package org.linagora.linshare.core.facade.webservice.adminv5;
 
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainQuotaDto;
 
-public interface DomainQuotaRestService {
+public interface DomainQuotaFacade {
 
-	DomainQuotaDto find(String domainUuid, String uuid, boolean realTime) throws BusinessException;
+	DomainQuotaDto find(String uuid, boolean realTime) throws BusinessException;
 
 	List<DomainQuotaDto> findAll(String domainUuid, String parentUuid) throws BusinessException;
 
