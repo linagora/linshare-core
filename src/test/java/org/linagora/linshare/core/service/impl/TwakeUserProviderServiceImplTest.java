@@ -46,6 +46,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.linagora.linshare.core.domain.constants.ServerType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AbstractTwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.TwakeConnection;
 import org.linagora.linshare.core.domain.entities.TwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
@@ -65,7 +66,7 @@ public class TwakeUserProviderServiceImplTest extends AbstractTwakeUserProviderS
 		}
 
 		@Override
-		protected HttpUrl httpUrlFrom(TwakeUserProvider userProvider, Optional<String> extraPath) {
+		protected HttpUrl httpUrlFrom(AbstractTwakeUserProvider userProvider, Optional<String> extraPath) {
 			return httpUrl;
 		}
 	}

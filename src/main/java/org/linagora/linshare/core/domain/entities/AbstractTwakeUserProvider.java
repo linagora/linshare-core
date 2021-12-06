@@ -33,29 +33,58 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.domain.entities;
 
-import java.util.List;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.AbstractTwakeUserProvider;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
+import com.google.common.base.MoreObjects;
 
-public interface TwakeUserProviderService {
+public class AbstractTwakeUserProvider extends UserProvider {
 
-	User findUser(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String mail) throws BusinessException;
+	private TwakeConnection twakeConnection;
 
-	List<User> searchUser(
-		AbstractDomain domain, AbstractTwakeUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException;
+	private String twakeCompanyId;
 
-	List<User> autoCompleteUser(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String pattern) throws BusinessException;
+	public AbstractTwakeUserProvider() {
+		super();
+	}
 
-	List<User> autoCompleteUser(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String firstName, String lastName) throws BusinessException;
+	public AbstractTwakeUserProvider(AbstractDomain domain, TwakeConnection twakeConnection, String twakeCompanyId) {
+		super(domain);
+		this.twakeConnection = twakeConnection;
+		this.twakeCompanyId = twakeCompanyId;
+	}
 
-	Boolean isUserExist(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String mail) throws BusinessException;
+	public TwakeConnection getTwakeConnection() {
+		return twakeConnection;
+	}
 
-	User auth(AbstractTwakeUserProvider userProvider, String login, String userPasswd) throws BusinessException;
+	public void setTwakeConnection(TwakeConnection twakeConnection) {
+		this.twakeConnection = twakeConnection;
+	}
 
-	User searchForAuth(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String login) throws BusinessException;
+	public String getTwakeCompanyId() {
+		return twakeCompanyId;
+	}
+
+	public void setTwakeCompanyId(String twakeCompanyId) {
+		this.twakeCompanyId = twakeCompanyId;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+			.add("domain", domain)
+			.add("twakeConnection", twakeConnection)
+			.add("twakeCompanyId", twakeCompanyId)
+			.toString();
+	}
+
+
+	@Deprecated
+	@Override
+	public LDAPUserProviderDto toLDAPUserProviderDto() {
+		// it is not used anymore, only kept for admin/v4 support.
+		return null;
+	}
 }

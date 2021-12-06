@@ -35,56 +35,13 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
-
-import com.google.common.base.MoreObjects;
-
-public class TwakeGuestUserProvider extends UserProvider {
-
-	private TwakeConnection twakeConnection;
-
-	private String twakeCompanyId;
+public class TwakeGuestUserProvider extends AbstractTwakeUserProvider {
 
 	public TwakeGuestUserProvider() {
 		super();
 	}
 
 	public TwakeGuestUserProvider(AbstractDomain domain, TwakeConnection twakeConnection, String twakeCompanyId) {
-		super(domain);
-		this.twakeConnection = twakeConnection;
-		this.twakeCompanyId = twakeCompanyId;
-	}
-
-	public TwakeConnection getTwakeConnection() {
-		return twakeConnection;
-	}
-
-	public void setTwakeConnection(TwakeConnection twakeConnection) {
-		this.twakeConnection = twakeConnection;
-	}
-
-	public String getTwakeCompanyId() {
-		return twakeCompanyId;
-	}
-
-	public void setTwakeCompanyId(String twakeCompanyId) {
-		this.twakeCompanyId = twakeCompanyId;
-	}
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-			.add("domain", domain)
-			.add("twakeConnection", twakeConnection)
-			.add("twakeCompanyId", twakeCompanyId)
-			.toString();
-	}
-
-
-	@Deprecated
-	@Override
-	public LDAPUserProviderDto toLDAPUserProviderDto() {
-		// it is not used anymore, only kept for admin/v4 support.
-		return null;
+		super(domain, twakeConnection, twakeCompanyId);
 	}
 }

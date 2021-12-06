@@ -59,6 +59,7 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
+import org.linagora.linshare.core.domain.entities.TwakeGuestUserProvider;
 import org.linagora.linshare.core.domain.entities.TwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
@@ -379,7 +380,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.findUser(domain, (TwakeUserProvider) up, mail);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.findUser(domain, (TwakeUserProvider) up, mail);
+				return twakeGuestUserProviderService.findUser(domain, (TwakeGuestUserProvider) up, mail);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -415,7 +416,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.searchUser(domain, (TwakeUserProvider) up, mail, firstName, lastName);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.searchUser(domain, (TwakeUserProvider) up, mail, firstName, lastName);
+				return twakeGuestUserProviderService.searchUser(domain, (TwakeGuestUserProvider) up, mail, firstName, lastName);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -464,7 +465,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, pattern);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, pattern);
+				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeGuestUserProvider) up, pattern);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -514,7 +515,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, firstName, lastName);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, firstName, lastName);
+				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeGuestUserProvider) up, firstName, lastName);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -548,7 +549,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.isUserExist(domain, (TwakeUserProvider) up, mail);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.isUserExist(domain, (TwakeUserProvider) up, mail);
+				return twakeGuestUserProviderService.isUserExist(domain, (TwakeGuestUserProvider) up, mail);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -637,7 +638,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.searchForAuth(domain, (TwakeUserProvider) up, login);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.searchForAuth(domain, (TwakeUserProvider) up, login);
+				return twakeGuestUserProviderService.searchForAuth(domain, (TwakeGuestUserProvider) up, login);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}

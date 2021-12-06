@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AbstractTwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.TwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -85,7 +85,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 	}
 
 	@Override
-	public User findUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail) throws BusinessException {
+	public User findUser(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String mail) throws BusinessException {
 		if (!isValid(domain)) {
 			return null;
 		}
@@ -117,7 +117,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 	}
 
 	@Override
-	public List<User> searchUser(AbstractDomain domain, TwakeUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException {
+	public List<User> searchUser(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException {
 		if (!isValid(domain)) {
 			return ImmutableList.of();
 		}
@@ -137,7 +137,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 		}
 	}
 
-	private void validateResponse(Response response, TwakeUserProvider userProvider) {
+	private void validateResponse(Response response, AbstractTwakeUserProvider userProvider) {
 		if (!response.isSuccessful()) {
 			LOGGER.error("Twake didn't answer successfully: " + response.message());
 			throw new BusinessException(BusinessErrorCode.TWAKE_REQUEST_ERROR, "Twake didn't answer successfully: " + response.message());
@@ -147,7 +147,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 	protected abstract Stream<TwakeUser> filterValidUser(TwakeUsersResponse twakeUsersResponse) throws IOException ;
 
 	@Override
-	public List<User> autoCompleteUser(AbstractDomain domain, TwakeUserProvider userProvider, String pattern) throws BusinessException {
+	public List<User> autoCompleteUser(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String pattern) throws BusinessException {
 		if (!isValid(domain)) {
 			return ImmutableList.of();
 		}
@@ -166,7 +166,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 	}
 
 	@Override
-	public List<User> autoCompleteUser(AbstractDomain domain, TwakeUserProvider userProvider, String firstName, String lastName) throws BusinessException {
+	public List<User> autoCompleteUser(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String firstName, String lastName) throws BusinessException {
 		if (!isValid(domain)) {
 			return ImmutableList.of();
 		}
@@ -186,17 +186,17 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 	}
 
 	@Override
-	public Boolean isUserExist(AbstractDomain domain, TwakeUserProvider userProvider, String mail) throws BusinessException {
+	public Boolean isUserExist(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String mail) throws BusinessException {
 		return findUser(domain, userProvider, mail) != null;
 	}
 
 	@Override
-	public User auth(TwakeUserProvider userProvider, String login, String userPasswd) throws BusinessException {
+	public User auth(AbstractTwakeUserProvider userProvider, String login, String userPasswd) throws BusinessException {
 		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
 	}
 
 	@Override
-	public User searchForAuth(AbstractDomain domain, TwakeUserProvider userProvider, String login) throws BusinessException {
+	public User searchForAuth(AbstractDomain domain, AbstractTwakeUserProvider userProvider, String login) throws BusinessException {
 		if (!isValid(domain)) {
 			return null;
 		}
@@ -215,7 +215,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 		}
 	}
 
-	private Request request(TwakeUserProvider userProvider, Optional<String> extraPath) {
+	private Request request(AbstractTwakeUserProvider userProvider, Optional<String> extraPath) {
 		String basic = Credentials.basic(userProvider.getTwakeConnection().getClientId(), userProvider.getTwakeConnection().getClientSecret());
 		return new Request.Builder()
 			.url(httpUrlFrom(userProvider, extraPath))
@@ -224,7 +224,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			.build();
 	}
 
-	protected HttpUrl httpUrlFrom(TwakeUserProvider userProvider, Optional<String> extraPath) {
+	protected HttpUrl httpUrlFrom(AbstractTwakeUserProvider userProvider, Optional<String> extraPath) {
 		return HttpUrl.parse(userProvider.getTwakeConnection().getProviderUrl()
 			+ API_COMPANIES_ENDPOINT
 			+ userProvider.getTwakeCompanyId()
