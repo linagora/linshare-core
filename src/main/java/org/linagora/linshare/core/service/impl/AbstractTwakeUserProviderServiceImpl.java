@@ -140,6 +140,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 	private void validateResponse(Response response, AbstractTwakeUserProvider userProvider) {
 		if (!response.isSuccessful()) {
 			LOGGER.error("Twake didn't answer successfully: " + response.message());
+			LOGGER.error("" + response);
 			throw new BusinessException(BusinessErrorCode.TWAKE_REQUEST_ERROR, "Twake didn't answer successfully: " + response.message());
 		}
 	}
