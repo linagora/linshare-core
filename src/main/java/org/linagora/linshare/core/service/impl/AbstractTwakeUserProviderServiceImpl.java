@@ -95,13 +95,22 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			TwakeUsersResponse twakeUsersResponse = objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class);
 			return filterValidUser(twakeUsersResponse)
 				.filter(filterBy(mail, TwakeUser::getEmail))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
+				.map(toInternalUser(domain))
 				.findFirst()
 				.orElse(null);
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
 			return null;
 		}
+	}
+
+	private Function<TwakeUser, Internal> toInternalUser(AbstractDomain domain) {
+		return user -> {
+			Internal internal = new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId());
+			internal.setDomain(domain);
+			internal.setRole(domain.getDefaultRole());
+			return internal;
+		};
 	}
 
 	protected abstract boolean isValid(AbstractDomain domain);
@@ -129,7 +138,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 				.filter(filterBy(mail, TwakeUser::getEmail))
 				.filter(filterBy(firstName, TwakeUser::getName))
 				.filter(filterBy(lastName, TwakeUser::getSurname))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
+				.map(toInternalUser(domain))
 				.collect(Collectors.toUnmodifiableList());
 		} catch (IOException e) {
 			LOGGER.error("Fails to connect to Twake Console with user provider %s", userProvider);
@@ -158,7 +167,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			TwakeUsersResponse twakeUsersResponse = objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class);
 			return filterValidUser(twakeUsersResponse)
 				.filter(filterBy(pattern, TwakeUser::getEmail))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
+				.map(toInternalUser(domain))
 				.collect(Collectors.toUnmodifiableList());
 		} catch (Exception e) {
 			LOGGER.error("An exception occurred with autocomplete on: " + userProvider, e);
@@ -178,7 +187,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			return filterValidUser(twakeUsersResponse)
 				.filter(filterBy(firstName, TwakeUser::getName))
 				.filter(filterBy(lastName, TwakeUser::getSurname))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
+				.map(toInternalUser(domain))
 				.collect(Collectors.toUnmodifiableList());
 		} catch (Exception e) {
 			LOGGER.error("An exception occurred with autocomplete on: " + userProvider, e);
@@ -207,7 +216,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			TwakeUsersResponse twakeUsersResponse = objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class);
 			return filterValidUser(twakeUsersResponse)
 				.filter(user -> user.getEmail().equals(login))
-				.map(user -> new Internal(user.getName(), user.getSurname(), user.getEmail(), user.getId()))
+				.map(toInternalUser(domain))
 				.findFirst()
 				.orElse(null);
 		} catch (IOException e) {
