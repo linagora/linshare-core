@@ -774,7 +774,7 @@ public class UserServiceImpl implements UserService {
 				msg = "Attempt to create or update an user entity failed : User object is null.";
 			}
 
-			logger.debug(msg);
+			logger.error(msg);
 			logger.debug("End saveOrUpdateUser");
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
 					msg);
