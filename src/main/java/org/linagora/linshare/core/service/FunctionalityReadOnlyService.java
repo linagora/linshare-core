@@ -118,9 +118,9 @@ public interface FunctionalityReadOnlyService {
 	 */
 	String getCustomNotificationURLInRootDomain() throws BusinessException;
 
-	Functionality getJwtLongTimeFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getJwtLongTimeFunctionality(AbstractDomain domain);
 
-	Functionality getJwtLongTimeFunctionality(String domainuuid);
+	BooleanValueFunctionality getJwtLongTimeFunctionality(String domainuuid);
 
 	//Drive Functionnality
 	Functionality getDriveCreationRight(AbstractDomain domain);

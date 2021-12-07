@@ -285,6 +285,18 @@ DELETE FROM policy WHERE delete_it = true;
 ALTER TABLE policy DROP COLUMN delete_it;
 
 -- functionality : remove JWT_PERMANENT_TOKEN__USER_MANAGEMENT
+CREATE OR REPLACE FUNCTION ls_insert_jwt_functionality_boolean() RETURNS void AS $$
+BEGIN
+	DECLARE r record;
+    BEGIN
+        FOR r IN (SELECT id FROM functionality WHERE identifier = 'JWT_PERMANENT_TOKEN') LOOP
+            INSERT INTO functionality_boolean(functionality_id, boolean_value)
+                VALUES (r.id, true);
+        END LOOP;
+    END;
+END
+$$ LANGUAGE plpgsql;
+
 ALTER TABLE policy ADD COLUMN delete_it BOOL DEFAULT 'FALSE';
 UPDATE policy SET delete_it = true WHERE id IN (SELECT policy_activation_id FROM functionality WHERE identifier = 'JWT_PERMANENT_TOKEN__USER_MANAGEMENT');
 UPDATE policy SET delete_it = true WHERE id IN (SELECT policy_configuration_id FROM functionality WHERE identifier = 'JWT_PERMANENT_TOKEN__USER_MANAGEMENT');
@@ -292,6 +304,10 @@ UPDATE policy SET delete_it = true WHERE id IN (SELECT policy_delegation_id FROM
 DELETE FROM functionality WHERE identifier = 'JWT_PERMANENT_TOKEN__USER_MANAGEMENT';
 DELETE FROM policy WHERE delete_it = true;
 ALTER TABLE policy DROP COLUMN delete_it;
+
+SELECT ls_insert_jwt_functionality_boolean();
+UPDATE functionality SET system = false
+    WHERE identifier = 'JWT_PERMANENT_TOKEN';
 
 ---- End of your queries
 

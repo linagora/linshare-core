@@ -365,12 +365,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getJwtLongTimeFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.JWT_PERMANENT_TOKEN);
+	public BooleanValueFunctionality getJwtLongTimeFunctionality(AbstractDomain domain) {
+		return (BooleanValueFunctionality) _getFunctionality(domain, FunctionalityNames.JWT_PERMANENT_TOKEN);
 	}
 
 	@Override
-	public Functionality getJwtLongTimeFunctionality(String domainUuid) {
+	public BooleanValueFunctionality getJwtLongTimeFunctionality(String domainUuid) {
 		AbstractDomain domain = domainBusinessService.find(domainUuid);
 		return getJwtLongTimeFunctionality(domain);
 	}

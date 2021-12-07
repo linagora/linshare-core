@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -80,7 +80,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(authUser.getDomain())
 				.thenReturn(domain);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
@@ -106,7 +106,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(authUser.hasAdminRole())
 				.thenReturn(true);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
@@ -141,7 +141,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(authUser.hasSuperAdminRole())
 				.thenReturn(true);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
@@ -176,7 +176,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(authUser.isInternal())
 				.thenReturn(true);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 		Policy activationPolicy = mock(Policy.class);
@@ -185,7 +185,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(activationPolicy.getStatus())
 				.thenReturn(true);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 		Policy userPolicy = mock(Policy.class);
@@ -214,7 +214,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(authUser.isGuest())
 				.thenReturn(true);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 		Policy activationPolicy = mock(Policy.class);
@@ -223,7 +223,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(activationPolicy.getStatus())
 				.thenReturn(true);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 		Policy userPolicy = mock(Policy.class);
@@ -250,7 +250,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(authUser.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 		Policy activationPolicy = mock(Policy.class);
@@ -259,7 +259,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(activationPolicy.getStatus())
 				.thenReturn(true);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 		Policy userPolicy = mock(Policy.class);
@@ -302,7 +302,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 		Policy activationPolicy = mock(Policy.class);
@@ -326,7 +326,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 		Policy activationPolicy = mock(Policy.class);
@@ -353,7 +353,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 		Policy activationPolicy = mock(Policy.class);
@@ -364,7 +364,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 
 		when(account.hasSuperAdminRole())
 				.thenReturn(false);
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
@@ -397,7 +397,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 		Policy activationPolicy = mock(Policy.class);
@@ -408,7 +408,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 
 		when(account.hasSuperAdminRole())
 				.thenReturn(false);
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
@@ -443,7 +443,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 		Policy activationPolicy = mock(Policy.class);
@@ -454,7 +454,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 
 		when(account.hasSuperAdminRole())
 				.thenReturn(false);
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(userFunctionality);
 
@@ -501,7 +501,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -526,7 +526,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -554,7 +554,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -601,7 +601,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -617,7 +617,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.hasAdminRole())
 				.thenReturn(false);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		Policy userActivationPolicy = mock(Policy.class);
 		when(userActivationPolicy.getStatus())
 				.thenReturn(true);
@@ -652,7 +652,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -668,7 +668,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.hasAdminRole())
 				.thenReturn(false);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		Policy userActivationPolicy = mock(Policy.class);
 		when(userActivationPolicy.getStatus())
 				.thenReturn(true);
@@ -715,7 +715,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -740,7 +740,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -768,7 +768,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -815,7 +815,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -831,7 +831,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.hasAdminRole())
 				.thenReturn(false);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		Policy userActivationPolicy = mock(Policy.class);
 		when(userActivationPolicy.getStatus())
 				.thenReturn(true);
@@ -866,7 +866,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -882,7 +882,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.hasAdminRole())
 				.thenReturn(false);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		Policy userActivationPolicy = mock(Policy.class);
 		when(userActivationPolicy.getStatus())
 				.thenReturn(true);
@@ -929,7 +929,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -954,7 +954,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -982,7 +982,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -1029,7 +1029,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -1045,7 +1045,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.hasAdminRole())
 				.thenReturn(false);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		Policy userActivationPolicy = mock(Policy.class);
 		when(userActivationPolicy.getStatus())
 				.thenReturn(true);
@@ -1080,7 +1080,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.getDomain())
 				.thenReturn(domain);
 
-		Functionality functionality = mock(Functionality.class);
+		BooleanValueFunctionality functionality = mock(BooleanValueFunctionality.class);
 		when(functionalityReadOnlyService.getJwtLongTimeFunctionality(domain))
 				.thenReturn(functionality);
 
@@ -1096,7 +1096,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(account.hasAdminRole())
 				.thenReturn(false);
 
-		Functionality userFunctionality = mock(Functionality.class);
+		BooleanValueFunctionality userFunctionality = mock(BooleanValueFunctionality.class);
 		Policy userActivationPolicy = mock(Policy.class);
 		when(userActivationPolicy.getStatus())
 				.thenReturn(true);

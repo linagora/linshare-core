@@ -579,7 +579,9 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (291, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date)
-	VALUES (60, true, 'JWT_PERMANENT_TOKEN', 290, 291, 1, now(), now());
+	VALUES (60, false, 'JWT_PERMANENT_TOKEN', 290, 291, 1, now(), now());
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+    VALUES (60, true);
 
 -- Functionality : DRIVE
 INSERT INTO policy(id, status, default_status, policy, system)
