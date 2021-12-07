@@ -90,7 +90,9 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			return null;
 		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
+			if (!validateResponse(response, userProvider)) {
+				return null;
+			}
 
 			TwakeUsersResponse twakeUsersResponse = objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class);
 			return filterValidUser(twakeUsersResponse)
@@ -131,7 +133,9 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			return ImmutableList.of();
 		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
+			if (!validateResponse(response, userProvider)) {
+				return ImmutableList.of();
+			}
 
 			TwakeUsersResponse twakeUsersResponse = objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class);
 			return filterValidUser(twakeUsersResponse)
@@ -146,12 +150,13 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 		}
 	}
 
-	private void validateResponse(Response response, AbstractTwakeUserProvider userProvider) {
+	private boolean validateResponse(Response response, AbstractTwakeUserProvider userProvider) {
 		if (!response.isSuccessful()) {
 			LOGGER.error("Twake didn't answer successfully: " + response.message());
 			LOGGER.error("" + response);
-			throw new BusinessException(BusinessErrorCode.TWAKE_REQUEST_ERROR, "Twake didn't answer successfully: " + response.message());
+			return false;
 		}
+		return true;
 	}
 
 	protected abstract Stream<TwakeUser> filterValidUser(TwakeUsersResponse twakeUsersResponse) throws IOException ;
@@ -162,8 +167,9 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			return ImmutableList.of();
 		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
-
+			if (!validateResponse(response, userProvider)) {
+				return ImmutableList.of();
+			}
 			TwakeUsersResponse twakeUsersResponse = objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class);
 			return filterValidUser(twakeUsersResponse)
 				.filter(filterBy(pattern, TwakeUser::getEmail))
@@ -181,7 +187,9 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			return ImmutableList.of();
 		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
+			if (!validateResponse(response, userProvider)) {
+				return ImmutableList.of();
+			}
 
 			TwakeUsersResponse twakeUsersResponse = objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class);
 			return filterValidUser(twakeUsersResponse)
@@ -211,7 +219,9 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 			return null;
 		}
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
-			validateResponse(response, userProvider);
+			if (!validateResponse(response, userProvider)) {
+				return null;
+			}
 
 			TwakeUsersResponse twakeUsersResponse = objectMapper.readValue(response.body().bytes(), TwakeUsersResponse.class);
 			return filterValidUser(twakeUsersResponse)
