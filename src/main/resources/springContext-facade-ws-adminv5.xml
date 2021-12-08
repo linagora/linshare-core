@@ -108,5 +108,6 @@
 		<constructor-arg ref="domainQuotaService" />
 		<constructor-arg ref="containerQuotaService" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="quotaService" />
 	</bean>
 </beans>

@@ -43,10 +43,10 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.ContainerQuotaDt
 
 public interface ContainerQuotaRestService {
 
-	List<ContainerQuotaDto> findAll(String domainUuid, String quotaUuid, ContainerQuotaType type) throws BusinessException;
+	List<ContainerQuotaDto> findAll(String domainUuid, String domainQuotaUuid, ContainerQuotaType type) throws BusinessException;
 
-	ContainerQuotaDto find(String domainUuid, String quotaUuid, String uuid, boolean realTime) throws BusinessException;
+	ContainerQuotaDto find(String domainUuid, String domainQuotaUuid, String uuid, boolean realTime) throws BusinessException;
 
-	ContainerQuotaDto update(String domainUuid, String quotaUuid, String uuid, ContainerQuotaDto dto) throws BusinessException;
+	ContainerQuotaDto update(String domainUuid, String domainQuotaUuid, String uuid, ContainerQuotaDto dto) throws BusinessException;
 
 }

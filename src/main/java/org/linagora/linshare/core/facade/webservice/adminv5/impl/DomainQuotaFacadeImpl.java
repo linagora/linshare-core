@@ -154,7 +154,7 @@ public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements Dom
 		}
 		Validate.notEmpty(uuid, "Domain quota uuid must be set.");
 		checkDomainBelonging(authUser, domainUuid, uuid);
-		DomainQuota domainQuota = dto.toObject();
+		DomainQuota domainQuota = dto.toObject(Optional.of(uuid));
 		domainQuota = service.update(authUser, domainQuota);
 		return DomainQuotaDto.from(domainQuota);
 	}

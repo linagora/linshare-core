@@ -64,7 +64,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Produces({MediaType.APPLICATION_JSON })
 @Consumes({MediaType.APPLICATION_JSON })
-@Path("/domains/{domainUuid}/quotas/{quotaUuid}/containers")
+@Path("/domains/{domainUuid}/domain_quotas/{domainQuotaUuid}/containers")
 public class ContainerQuotaRestServiceImpl extends WebserviceBase implements ContainerQuotaRestService {
 
 	private ContainerQuotaFacade facade;
@@ -83,13 +83,13 @@ public class ContainerQuotaRestServiceImpl extends WebserviceBase implements Con
 	})
 	@Override
 	public List<ContainerQuotaDto> findAll(
-			@Parameter(description = "domain's uuid.", required = true)
+			@Parameter(description = "Domain's uuid.", required = true)
 				@PathParam("domainUuid") String domainUuid,
-			@Parameter(description = "domain's uuid.", required = true)
-				@PathParam("quotaUuid") String quotaUuid,
+			@Parameter(description = "Quota's uuid.", required = true)
+				@PathParam("domainQuotaUuid") String domainQuotaUuid,
 			@Parameter(description = "Compute real time quota value. Carefull it could be time consuming.", required = false)
 				@QueryParam("containerType") ContainerQuotaType type) throws BusinessException {
-		return facade.findAll(domainUuid, quotaUuid, type);
+		return facade.findAll(domainUuid, domainQuotaUuid, type);
 	}
 
 	@Path("/{uuid}")
@@ -102,17 +102,17 @@ public class ContainerQuotaRestServiceImpl extends WebserviceBase implements Con
 	})
 	@Override
 	public ContainerQuotaDto find(
-			@Parameter(description = "domain's uuid.", required = true)
+			@Parameter(description = "Domain's uuid.", required = true)
 				@PathParam("domainUuid") String domainUuid,
-			@Parameter(description = "domain's uuid.", required = true)
-				@PathParam("quotaUuid") String quotaUuid,
+			@Parameter(description = "Quota's uuid.", required = true)
+				@PathParam("domainQuotaUuid") String domainQuotaUuid,
 			@Parameter(description = "Container quota Uuid", required = true)
 				@PathParam("uuid") String uuid,
 			@Parameter(description = "Compute real time quota value. Carefull it could be time consuming.", required = false)
 				@QueryParam("realtime") @DefaultValue("false")
 					boolean realTime
 				) throws BusinessException {
-		return facade.find(domainUuid, quotaUuid, uuid, realTime);
+		return facade.find(domainUuid, domainQuotaUuid, uuid, realTime);
 	}
 
 	@Path("/{uuid : .* }")
@@ -125,14 +125,14 @@ public class ContainerQuotaRestServiceImpl extends WebserviceBase implements Con
 	})
 	@Override
 	public ContainerQuotaDto update(
-			@Parameter(description = "domain's uuid.", required = true)
+			@Parameter(description = "Domain's uuid.", required = true)
 				@PathParam("domainUuid") String domainUuid,
-			@Parameter(description = "domain's uuid.", required = true)
-				@PathParam("quotaUuid") String quotaUuid,
+			@Parameter(description = "Quota's uuid.", required = true)
+				@PathParam("domainQuotaUuid") String domainQuotaUuid,
 			@Parameter(description = "Container quota Uuid, if null dto.uuid is used.", required = false)
 				@PathParam("uuid") String  uuid,
 			@Parameter(description = "Container quota to update. Only quota, maxFileSize, override and maintenance fields can be updated. If null they will be ignored.", required = true) ContainerQuotaDto dto) throws BusinessException {
-		return facade.update(domainUuid, quotaUuid, dto, uuid);
+		return facade.update(domainUuid, domainQuotaUuid, dto, uuid);
 	}
 
 }

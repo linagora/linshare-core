@@ -34,301 +34,396 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
-import com.google.common.base.Function;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.google.common.base.MoreObjects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+@JsonDeserialize(builder = ContainerQuotaDto.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "ContainerQuota", description = "A container quota instance for accounts like users in a domain.")
 public class ContainerQuotaDto {
 
+	public static ContainerQuotaDto from(ContainerQuota cq) {
+		return from(cq, Optional.empty());
+	}
+
+	public static ContainerQuotaDto from(ContainerQuota cq, Optional<Long> usedSpace) {
+		return builder()
+			.uuid(cq.getUuid())
+			.domain(new DomainLightDto(cq.getDomain()))
+			.parentDomain(cq)
+			.quota(cq.getQuota())
+			.quotaOverride(cq.getQuotaOverride())
+			.defaultQuota(cq.getDefaultQuota())
+			.defaultQuotaOverride(cq.getDefaultQuotaOverride())
+			.usedSpace(usedSpace.orElse(cq.getCurrentValue()))
+			.yesterdayUsedSpace(cq.getLastValue())
+			.creationDate(cq.getCreationDate())
+			.modificationDate(cq.getModificationDate())
+			.maintenance(cq.getMaintenance())
+			.batchModificationDate(cq.getBatchModificationDate())
+			.type(cq.getContainerQuotaType())
+			.defaultMaxFileSize(cq.getDefaultMaxFileSize())
+			.defaultMaxFileSizeOverride(cq.getDefaultMaxFileSizeOverride())
+			.defaultAccountQuota(cq.getDefaultAccountQuota())
+			.defaultAccountQuotaOverride(cq.getDefaultAccountQuotaOverride())
+			.maxFileSize(cq.getMaxFileSize())
+			.maxFileSizeOverride(cq.getMaxFileSizeOverride())
+			.accountQuota(cq.getAccountQuota())
+			.accountQuotaOverride(cq.getAccountQuotaOverride())
+			.build();
+	}
+
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	@JsonPOJOBuilder(withPrefix = "")
+	public static class Builder {
+		private String uuid;
+		private DomainLightDto domain;
+		private DomainLightDto parentDomain;
+		private Long quota;
+		private Boolean quotaOverride;
+		private Long defaultQuota;
+		private Boolean defaultQuotaOverride;
+		private Long usedSpace;
+		private Long yersterdayUsedSpace;
+		private Boolean maintenance;
+		private Date creationDate;
+		private Date modificationDate;
+		private Date batchModificationDate;
+		private ContainerQuotaType type;
+		private Long defaultMaxFileSize;
+		private Boolean defaultMaxFileSizeOverride;
+		private Long defaultAccountQuota;
+		private Boolean defaultAccountQuotaOverride;
+		private Long maxFileSize;
+		private Boolean maxFileSizeOverride;
+		private Long accountQuota;
+		private Boolean accountQuotaOverride;
+
+		public Builder uuid(String uuid) {
+			this.uuid= uuid;
+			return this;
+		}
+
+		public Builder domain(DomainLightDto domain) {
+			this.domain = domain;
+			return this;
+		}
+
+		public Builder parentDomain(ContainerQuota cq) {
+			if (Objects.nonNull(cq.getParentDomain())) {
+				this.parentDomain = new DomainLightDto(cq.getParentDomain());
+			}
+			return this;
+		}
+
+		public Builder type(ContainerQuotaType type) {
+			this.type = type;
+			return this;
+		}
+
+		public Builder quota(Long quota) {
+			this.quota = quota;
+			return this;
+		}
+
+		public Builder quotaOverride(Boolean quotaOverride) {
+			this.quotaOverride = quotaOverride;
+			return this;
+		}
+
+		public Builder defaultQuota(Long defaultQuota) {
+			this.defaultQuota = defaultQuota;
+			return this;
+		}
+
+		public Builder defaultQuotaOverride(Boolean defaultQuotaOverride) {
+			this.defaultQuotaOverride = defaultQuotaOverride;
+			return this;
+		}
+
+		public Builder usedSpace(Long usedSpace) {
+			this.usedSpace = usedSpace;
+			return this;
+		}
+
+		public Builder yesterdayUsedSpace(Long yersterdayUsedSpace) {
+			this.yersterdayUsedSpace = yersterdayUsedSpace;
+			return this;
+		}
+
+		public Builder maintenance(Boolean maintenance) {
+			this.maintenance = maintenance;
+			return this;
+		}
+
+		public Builder creationDate(Date creationDate) {
+			this.creationDate = creationDate;
+			return this;
+		}
+
+		public Builder modificationDate(Date modificationDate) {
+			this.modificationDate = modificationDate;
+			return this;
+		}
+
+		public Builder batchModificationDate(Date batchModificationDate) {
+			this.batchModificationDate = batchModificationDate;
+			return this;
+		}
+
+		public Builder defaultMaxFileSize(Long defaultMaxFileSize) {
+			this.defaultMaxFileSize = defaultMaxFileSize;
+			return this;
+		}
+
+		public Builder defaultMaxFileSizeOverride(Boolean defaultMaxFileSizeOverride) {
+			this.defaultMaxFileSizeOverride = defaultMaxFileSizeOverride;
+			return this;
+		}
+
+		public Builder defaultAccountQuota(Long defaultAccountQuota) {
+			this.defaultAccountQuota = defaultAccountQuota;
+			return this;
+		}
+
+		public Builder defaultAccountQuotaOverride(Boolean defaultAccountQuotaOverride) {
+			this.defaultAccountQuotaOverride = defaultAccountQuotaOverride;
+			return this;
+		}
+
+		public Builder maxFileSize(Long maxFileSize) {
+			this.maxFileSize = maxFileSize;
+			return this;
+		}
+
+		public Builder maxFileSizeOverride(Boolean maxFileSizeOverride) {
+			this.maxFileSizeOverride = maxFileSizeOverride;
+			return this;
+		}
+
+		public Builder accountQuota(Long accountQuota) {
+			this.accountQuota = accountQuota;
+			return this;
+		}
+
+		public Builder accountQuotaOverride(Boolean accountQuotaOverride) {
+			this.accountQuotaOverride = accountQuotaOverride;
+			return this;
+		}
+
+		public ContainerQuotaDto build() {
+			return new ContainerQuotaDto(uuid, domain, parentDomain, quota, quotaOverride, defaultQuota,
+					defaultQuotaOverride, usedSpace, yersterdayUsedSpace, maintenance, creationDate, modificationDate,
+					batchModificationDate, type, defaultMaxFileSize, defaultMaxFileSizeOverride, defaultAccountQuota,
+					defaultAccountQuotaOverride, maxFileSize, maxFileSizeOverride, accountQuota,
+					accountQuotaOverride);
+		}
+	}
+
 	@Schema(description = "Resource's uuid")
-	protected String uuid;
+	private final String uuid;
 
 	@Schema(description = "The domain which this quota belongs to.")
-	protected DomainLightDto domain;
+	private final DomainLightDto domain;
 
 	@Schema(description = "The parent domain which this quota belongs to.")
-	protected DomainLightDto parentDomain;
+	private final DomainLightDto parentDomain;
 
 	@Schema(description = "The value of the current container quota limit")
-	protected Long quota;
+	private final Long quota;
 
 	@Schema(description = "If true, allow to override quota field for the current object (domain, container or account)"
 			+ "Otherwise the quota value can/will be updated by cascade by the defaultQuota field of your parent."
 			+ "Useless for root domain quota")
-	protected Boolean quotaOverride;
+	private final Boolean quotaOverride;
 
 	@Schema(description = "The default quota value allowed for each child quota.")
-	protected Long defaultQuota;
+	private final Long defaultQuota;
 
 	@Schema(description = "By default, defaultQuota equal quota, every modification of the quota field will be applied to defaultQuota too."
 			+ "If true, the defaultQuota value is unlinked from quota field.")
-	protected Boolean defaultQuotaOverride;
-
-	// @Schema(description = "")
-	// protected Long quotaWarning;
+	private final Boolean defaultQuotaOverride;
 
 	@Schema(description = "The used space (Read only)")
-	protected Long usedSpace;
+	private final Long usedSpace;
 
 	@Schema(description = "The value of yesterday's used space (Read only)")
-	protected Long yersterdayUsedSpace;
+	private final Long yesterdayUsedSpace;
 
 	@Schema(description = "If set to true, uploads are disable due to server maintenance.")
-	protected Boolean maintenance;
+	private final Boolean maintenance;
 
 	@Schema(description = "Quota creation date (Read only)")
-	protected Date creationDate;
+	private final Date creationDate;
 
 	@Schema(description = "Quota last modification date (Read only)")
-	protected Date modificationDate;
+	private final Date modificationDate;
 
 	@Schema(description = "Quota last modification date by a batch (Read only)")
-	protected Date batchModificationDate;
+	private final Date batchModificationDate;
 
 	@Schema(description = "Type (ContainerQuotaType)")
-	protected ContainerQuotaType type;
+	private final ContainerQuotaType type;
 
 	@Schema(description = "The default maximum file size allowed.")
-	protected Long defaultMaxFileSize;
+	private final Long defaultMaxFileSize;
 
 	@Schema(description = "If true, it is unlinked from its parent.")
-	protected Boolean defaultMaxFileSizeOverride;
+	private final Boolean defaultMaxFileSizeOverride;
 
 	@Schema(description = "The default quota value for defaultAccountQuota inside sub containers.")
-	protected Long defaultAccountQuota;
+	private final Long defaultAccountQuota;
 
 	@Schema(description = "If true, it is unlinked from its parent.")
-	protected Boolean defaultAccountQuotaOverride;
+	private final Boolean defaultAccountQuotaOverride;
 
 	@Schema(description = "The maximum file size accepted, default value sub containers")
-	protected Long maxFileSize;
+	private final Long maxFileSize;
 
 	@Schema(description = "If true, it is unlinked from its parent.")
-	protected Boolean maxFileSizeOverride;
+	private final Boolean maxFileSizeOverride;
 
 	@Schema(description = "The default quota value for an account created inside the current container.")
-	protected Long accountQuota;
+	private final Long accountQuota;
 
 	@Schema(description = "If true, it is unlinked from its parent.")
-	protected Boolean accountQuotaOverride;
+	private final Boolean accountQuotaOverride;
 
-	public ContainerQuotaDto() {
-	}
-
-	public ContainerQuotaDto(ContainerQuota cq) {
-		this.uuid = cq.getUuid();
-		this.domain = new DomainLightDto(cq.getDomain());
-		this.domain.setType(cq.getDomain().getDomainType());
-		if (cq.getParentDomain() != null) {
-			this.parentDomain = new DomainLightDto(cq.getParentDomain());
-		}
-		this.quota = cq.getQuota();
-		this.quotaOverride = cq.getQuotaOverride();
-		this.defaultQuota = cq.getDefaultQuota();
-		this.defaultQuotaOverride = cq.getDefaultQuotaOverride();
-//		this.quotaWarning = quota.getQuotaWarning();
-		this.usedSpace = cq.getCurrentValue();
-		this.yersterdayUsedSpace = cq.getLastValue();
-		this.maintenance = cq.getMaintenance();
-		this.creationDate = cq.getCreationDate();
-		this.modificationDate = cq.getModificationDate();
-		this.batchModificationDate = cq.getBatchModificationDate();
-		this.type = cq.getContainerQuotaType();
-		this.defaultMaxFileSize = cq.getDefaultMaxFileSize();
-		this.defaultMaxFileSizeOverride = cq.getDefaultMaxFileSizeOverride();
-		this.defaultAccountQuota = cq.getDefaultAccountQuota();
-		this.defaultAccountQuotaOverride = cq.getDefaultAccountQuotaOverride();
-		this.maxFileSize = cq.getMaxFileSize();
-		this.maxFileSizeOverride = cq.getMaxFileSizeOverride();
-		this.accountQuota = cq.getAccountQuota();
-		this.accountQuotaOverride = cq.getAccountQuotaOverride();
+	private ContainerQuotaDto(String uuid, DomainLightDto domain, DomainLightDto parentDomain, Long quota,
+			Boolean quotaOverride, Long defaultQuota, Boolean defaultQuotaOverride, Long usedSpace,
+			Long yersterdayUsedSpace, Boolean maintenance, Date creationDate, Date modificationDate,
+			Date batchModificationDate, ContainerQuotaType type, Long defaultMaxFileSize,
+			Boolean defaultMaxFileSizeOverride, Long defaultAccountQuota, Boolean defaultAccountQuotaOverride,
+			Long maxFileSize, Boolean maxFileSizeOverride, Long accountQuota, Boolean accountQuotaOverride) {
+		super();
+		this.uuid = uuid;
+		this.domain = domain;
+		this.parentDomain = parentDomain;
+		this.quota = quota;
+		this.quotaOverride = quotaOverride;
+		this.defaultQuota = defaultQuota;
+		this.defaultQuotaOverride = defaultQuotaOverride;
+		this.usedSpace = usedSpace;
+		this.yesterdayUsedSpace = yersterdayUsedSpace;
+		this.maintenance = maintenance;
+		this.creationDate = creationDate;
+		this.modificationDate = modificationDate;
+		this.batchModificationDate = batchModificationDate;
+		this.type = type;
+		this.defaultMaxFileSize = defaultMaxFileSize;
+		this.defaultMaxFileSizeOverride = defaultMaxFileSizeOverride;
+		this.defaultAccountQuota = defaultAccountQuota;
+		this.defaultAccountQuotaOverride = defaultAccountQuotaOverride;
+		this.maxFileSize = maxFileSize;
+		this.maxFileSizeOverride = maxFileSizeOverride;
+		this.accountQuota = accountQuota;
+		this.accountQuotaOverride = accountQuotaOverride;
 	}
 
 	public String getUuid() {
 		return uuid;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
 	public DomainLightDto getDomain() {
 		return domain;
-	}
-
-	public void setDomain(DomainLightDto domain) {
-		this.domain = domain;
 	}
 
 	public DomainLightDto getParentDomain() {
 		return parentDomain;
 	}
 
-	public void setParentDomain(DomainLightDto parentDomain) {
-		this.parentDomain = parentDomain;
-	}
-
 	public Long getQuota() {
 		return quota;
-	}
-
-	public void setQuota(Long quota) {
-		this.quota = quota;
 	}
 
 	public Boolean getQuotaOverride() {
 		return quotaOverride;
 	}
 
-	public void setQuotaOverride(Boolean quotaOverride) {
-		this.quotaOverride = quotaOverride;
-	}
-
 	public Long getDefaultQuota() {
 		return defaultQuota;
-	}
-
-	public void setDefaultQuota(Long defaultQuota) {
-		this.defaultQuota = defaultQuota;
 	}
 
 	public Boolean getDefaultQuotaOverride() {
 		return defaultQuotaOverride;
 	}
 
-	public void setDefaultQuotaOverride(Boolean defaultQuotaOverride) {
-		this.defaultQuotaOverride = defaultQuotaOverride;
-	}
-
 	public Long getUsedSpace() {
 		return usedSpace;
 	}
 
-	public void setUsedSpace(Long usedSpace) {
-		this.usedSpace = usedSpace;
-	}
-
-	public Long getYersterdayUsedSpace() {
-		return yersterdayUsedSpace;
-	}
-
-	public void setYersterdayUsedSpace(Long yersterdayUsedSpace) {
-		this.yersterdayUsedSpace = yersterdayUsedSpace;
+	public Long getYesterdayUsedSpace() {
+		return yesterdayUsedSpace;
 	}
 
 	public Boolean getMaintenance() {
 		return maintenance;
 	}
 
-	public void setMaintenance(Boolean maintenance) {
-		this.maintenance = maintenance;
-	}
-
 	public Date getCreationDate() {
 		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
 	}
 
 	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
-
 	public Date getBatchModificationDate() {
 		return batchModificationDate;
-	}
-
-	public void setBatchModificationDate(Date batchModificationDate) {
-		this.batchModificationDate = batchModificationDate;
 	}
 
 	public ContainerQuotaType getType() {
 		return type;
 	}
 
-	public void setType(ContainerQuotaType type) {
-		this.type = type;
-	}
-
 	public Long getDefaultMaxFileSize() {
 		return defaultMaxFileSize;
-	}
-
-	public void setDefaultMaxFileSize(Long defaultMaxFileSize) {
-		this.defaultMaxFileSize = defaultMaxFileSize;
 	}
 
 	public Boolean getDefaultMaxFileSizeOverride() {
 		return defaultMaxFileSizeOverride;
 	}
 
-	public void setDefaultMaxFileSizeOverride(Boolean defaultMaxFileSizeOverride) {
-		this.defaultMaxFileSizeOverride = defaultMaxFileSizeOverride;
-	}
-
 	public Long getDefaultAccountQuota() {
 		return defaultAccountQuota;
-	}
-
-	public void setDefaultAccountQuota(Long defaultAccountQuota) {
-		this.defaultAccountQuota = defaultAccountQuota;
 	}
 
 	public Boolean getDefaultAccountQuotaOverride() {
 		return defaultAccountQuotaOverride;
 	}
 
-	public void setDefaultAccountQuotaOverride(Boolean defaultAccountQuotaOverride) {
-		this.defaultAccountQuotaOverride = defaultAccountQuotaOverride;
-	}
-
 	public Long getMaxFileSize() {
 		return maxFileSize;
-	}
-
-	public void setMaxFileSize(Long maxFileSize) {
-		this.maxFileSize = maxFileSize;
 	}
 
 	public Boolean getMaxFileSizeOverride() {
 		return maxFileSizeOverride;
 	}
 
-	public void setMaxFileSizeOverride(Boolean maxFileSizeOverride) {
-		this.maxFileSizeOverride = maxFileSizeOverride;
-	}
-
 	public Long getAccountQuota() {
 		return accountQuota;
-	}
-
-	public void setAccountQuota(Long accountQuota) {
-		this.accountQuota = accountQuota;
 	}
 
 	public Boolean getAccountQuotaOverride() {
 		return accountQuotaOverride;
 	}
 
-	public void setAccountQuotaOverride(Boolean accountQuotaOverride) {
-		this.accountQuotaOverride = accountQuotaOverride;
-	}
-
-	public ContainerQuota toObject() {
+	public ContainerQuota toObject(Optional<String> uuid) {
 		ContainerQuota quota = new ContainerQuota();
-		quota.setUuid(getUuid());
+		quota.setUuid(uuid.orElse(getUuid()));
 		quota.setContainerQuotaType(getType());
 		quota.setQuota(getQuota());
 		quota.setQuotaOverride(getQuotaOverride());
@@ -348,29 +443,27 @@ public class ContainerQuotaDto {
 		return quota;
 	}
 
-	/*
-	 * Transformers
-	 */
-	public static Function<ContainerQuota, ContainerQuotaDto> toDto() {
-		return new Function<ContainerQuota, ContainerQuotaDto>() {
-			@Override
-			public ContainerQuotaDto apply(ContainerQuota arg0) {
-				return new ContainerQuotaDto(arg0);
-			}
-		};
-	}
-
 	@Override
 	public String toString() {
-		return "ContainerQuotaDto [uuid=" + uuid + ", domain=" + domain + ", parentDomain=" + parentDomain + ", quota="
-				+ quota + ", quotaOverride=" + quotaOverride + ", defaultQuota=" + defaultQuota
-				+ ", defaultQuotaOverride=" + defaultQuotaOverride + ", usedSpace=" + usedSpace
-				+ ", yersterdayUsedSpace=" + yersterdayUsedSpace + ", maintenance=" + maintenance + ", creationDate="
-				+ creationDate + ", modificationDate=" + modificationDate + ", batchModificationDate="
-				+ batchModificationDate + ", type=" + type + ", defaultMaxFileSize=" + defaultMaxFileSize
-				+ ", defaultMaxFileSizeOverride=" + defaultMaxFileSizeOverride + ", defaultAccountQuota="
-				+ defaultAccountQuota + ", defaultAccountQuotaOverride=" + defaultAccountQuotaOverride
-				+ ", maxFileSize=" + maxFileSize + ", maxFileSizeOverride=" + maxFileSizeOverride + ", accountQuota="
-				+ accountQuota + ", accountQuotaOverride=" + accountQuotaOverride + "]";
+		return MoreObjects.toStringHelper(this)
+				.add("uuid", uuid)
+				.add("domain", domain)
+				.add("quota", quota)
+				.add("quotaOverride", quotaOverride)
+				.add("defaultQuota", defaultQuota)
+				.add("defaultQuotaOverride",defaultQuotaOverride)
+				.add("usedSpace", usedSpace)
+				.add("maintenance", maintenance)
+				.add("creationDate", creationDate)
+				.add("modificationDate", modificationDate)
+				.add("defaultMaxFileSize", defaultMaxFileSize)
+				.add("defaultMaxFileSizeOverride", defaultMaxFileSizeOverride)
+				.add("defaultAccountQuota", defaultAccountQuota)
+				.add("defaultAccountQuotaOverride", defaultAccountQuotaOverride)
+				.add("maxFileSize", maxFileSize)
+				.add("maxFileSizeOverride", maxFileSizeOverride)
+				.add("accountQuota", accountQuota)
+				.add("accountQuotaOverride", accountQuotaOverride)
+				.toString();
 	}
 }

@@ -36,6 +36,8 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -53,9 +55,9 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ContainerQuotaService;
 import org.linagora.linshare.core.service.DomainQuotaService;
+import org.linagora.linshare.core.service.QuotaService;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.base.Strings;
 
 public class ContainerQuotaFacadeImpl extends AdminGenericFacadeImpl implements ContainerQuotaFacade {
 
@@ -65,52 +67,77 @@ public class ContainerQuotaFacadeImpl extends AdminGenericFacadeImpl implements 
 
 	private final DomainQuotaService domainQuotaService;
 
+	private final QuotaService quotaService;
+
 	public ContainerQuotaFacadeImpl(
 			final AccountService accountService,
 			final ContainerQuotaService containerQuotaService,
 			final AbstractDomainService abstractDomainService,
-			final DomainQuotaService domainQuotaService) {
+			final DomainQuotaService domainQuotaService,
+			final QuotaService quotaService) {
 		super(accountService);
 		this.service = containerQuotaService;
 		this.abstractDomainService = abstractDomainService;
 		this.domainQuotaService = domainQuotaService;
+		this.quotaService = quotaService;
 	}
 
+
 	@Override
-	public List<ContainerQuotaDto> findAll(String domainUuid, String quotaUuid, ContainerQuotaType type)
+	public List<ContainerQuotaDto> findAll(String domainUuid, String domainQuotaUuid, ContainerQuotaType type)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainUuid, "domainUuid must be set.");
-		Validate.notEmpty(quotaUuid, "quotaUuid must be set.");
+		Validate.notEmpty(domainQuotaUuid, "domainQuotaUuid must be set.");
+		AbstractDomain domain = checkDomainBelonging(authUser, domainUuid, domainQuotaUuid);
+		return service.findAll(authUser, domain)
+				.stream()
+				.map(ContainerQuotaDto::from)
+				.collect(Collectors.toUnmodifiableList());
+	}
+
+	@Override
+	public ContainerQuotaDto find(String domainUuid, String domainQuotaUuid, String uuid, boolean realTime)
+			throws BusinessException {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "domainUuid must be set.");
+		Validate.notEmpty(domainQuotaUuid, "domainQuotaUuid must be set.");
+		Validate.notEmpty(uuid, "uuid must be set.");
+		checkDomainBelonging(authUser, domainUuid, domainQuotaUuid);
+		ContainerQuota domainContainerQuota = service.find(authUser, uuid);
+		ContainerQuotaDto dto = ContainerQuotaDto.from(domainContainerQuota);
+		if (realTime) {
+			Optional<Long> usedSpace = Optional.of(quotaService.getRealTimeUsedSpace(authUser, authUser, domainContainerQuota));
+			dto = ContainerQuotaDto.from(domainContainerQuota, usedSpace);
+		}
+		return dto;
+	}
+
+	private AbstractDomain checkDomainBelonging(User authUser, String domainUuid, String domainQuotaUuid) {
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
-		Quota quota = domainQuotaService.find(authUser, quotaUuid);
-		if (!isDomainBelonging(domain, quota)) {
+		Quota domainContainerQuota = domainQuotaService.find(authUser, domainQuotaUuid);
+		if (!domain.getUuid().equals(domainContainerQuota.getDomain().getUuid())) {
 			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND,
 					"The requested quota does not belong to the entered domain, please check the entered information.");
-		} else {
-			List<ContainerQuota> containers = null;
-			if (domainUuid != null) {
-				containers = service.findAll(authUser, domain);
-			} else {
-				containers = service.findAll(authUser);
-			}
-			return ImmutableList.copyOf(Lists.transform(containers, ContainerQuotaDto.toDto()));
 		}
+		return domain;
 	}
 
 	@Override
-	public ContainerQuotaDto find(String domainUuid, String quotaUuid, String uuid, boolean realTime)
-			throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet.");
-	}
-
-	private Boolean isDomainBelonging(AbstractDomain domain, Quota quota) {
-		return domain.getUuid().equals(quota.getDomain().getUuid()) ? true : false;
-	}
-
-	@Override
-	public ContainerQuotaDto update(String domainUuid, String quotaUuid, ContainerQuotaDto dto, String uuid)
-			throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet.");
+	public ContainerQuotaDto update(String domainUuid, String domainQuotaUuid, ContainerQuotaDto dto, String uuid) throws BusinessException {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "domainUuid must be set.");
+		Validate.notEmpty(domainQuotaUuid, "domainQuotaUuid must be set.");
+		Validate.notNull(dto, "ContainerQuotaDto must be set.");
+		Validate.notNull(dto.getQuota(), "Quota must be set.");
+		checkDomainBelonging(authUser, domainUuid, domainQuotaUuid);
+		if (Strings.isNullOrEmpty(uuid)) {
+			Validate.notNull(dto, "Container quota to delete must be set.");
+			uuid = dto.getUuid();
+			Validate.notEmpty(uuid, "Container quota uuid in the payload.");
+		}
+		Validate.notEmpty(uuid, "Quota uuid must be set.");
+		ContainerQuota cq = service.update(authUser, dto.toObject(Optional.of(uuid)));
+		return ContainerQuotaDto.from(cq);
 	}
 }

@@ -362,9 +362,9 @@ public class DomainQuotaDto {
 		return defaultDomainSharedOverride;
 	}
 
-	public DomainQuota toObject() {
+	public DomainQuota toObject(Optional<String> uuid) {
 		DomainQuota quota = new DomainQuota();
-		quota.setUuid(getUuid());
+		quota.setUuid(uuid.orElse(getUuid()));
 		quota.setQuota(getQuota());
 		quota.setQuotaOverride(getQuotaOverride());
 		quota.setDefaultQuota(getDefaultQuota());
