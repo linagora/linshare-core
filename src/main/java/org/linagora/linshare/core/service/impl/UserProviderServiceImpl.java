@@ -332,7 +332,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						user.setExternalMailLocale(user.getDomain().getExternalMailLocale());
 					}
 				} catch (NamingException | IOException | CommunicationException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
 				}
 				return user;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
@@ -397,7 +397,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							userProvider.getLdapConnection(), userProvider.getBaseDn(),
 							userProvider.getPattern(), mail, firstName, lastName);
 				} catch (NamingException  | IOException | CommunicationException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
 				}
 				return users;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
@@ -504,7 +504,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							userProvider.getLdapConnection(), userProvider.getBaseDn(),
 							userProvider.getPattern(), mail);
 				} catch (NamingException | IOException | CommunicationException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
 				}
 				return result;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
@@ -535,7 +535,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							userProvider.getPattern(),
 							login, userPasswd);
 				} catch (NamingException | IOException | CommunicationException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
 				}
 				return user;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
@@ -563,7 +563,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							userProvider.getBaseDn(),
 							userProvider.getPattern(), login);
 				} catch (NamingException | IOException | CommunicationException e) {
-					throwError(userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
 				}
 				if (user != null) {
 					user.setDomain(domain);
