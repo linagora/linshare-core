@@ -79,6 +79,7 @@ import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ldap.CommunicationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -330,11 +331,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						user.setRole(domain.getDefaultRole());
 						user.setExternalMailLocale(user.getDomain().getExternalMailLocale());
 					}
-				} catch (NamingException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (IOException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (org.springframework.ldap.CommunicationException e) {
+				} catch (NamingException | IOException | CommunicationException e) {
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return user;
@@ -399,11 +396,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					users = ldapQueryService.searchUser(
 							userProvider.getLdapConnection(), userProvider.getBaseDn(),
 							userProvider.getPattern(), mail, firstName, lastName);
-				} catch (NamingException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (IOException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (org.springframework.ldap.CommunicationException e) {
+				} catch (NamingException  | IOException | CommunicationException e) {
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return users;
@@ -435,19 +428,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					users = ldapQueryService.completeUser(
 							userProvider.getLdapConnection(), userProvider.getBaseDn(),
 							userProvider.getPattern(), pattern);
-				} catch (NamingException e) {
-					logger.error(
-							"Error while searching for a user with ldap connection {}",
-							userProvider.getLdapConnection().getUuid());
-					logger.error(e.getMessage());
-					logger.debug(e.toString());
-				} catch (IOException e) {
-					logger.error(
-							"Error while searching for a user with ldap connection {}",
-							userProvider.getLdapConnection().getUuid());
-					logger.error(e.getMessage());
-					logger.debug(e.toString());
-				} catch (org.springframework.ldap.CommunicationException e) {
+				} catch (NamingException  | IOException | CommunicationException e) {
 					logger.error(
 							"Error while searching for a user with ldap connection {}",
 							userProvider.getLdapConnection().getUuid());
@@ -484,19 +465,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					users = ldapQueryService.completeUser(
 							userProvider.getLdapConnection(), userProvider.getBaseDn(),
 							userProvider.getPattern(), firstName, lastName);
-				} catch (NamingException e) {
-					logger.error(
-							"Error while searching for a user with ldap connection {}",
-							userProvider.getLdapConnection().getUuid());
-					logger.error(e.getMessage());
-					logger.debug(e.toString());
-				} catch (IOException e) {
-					logger.error(
-							"Error while searching for a user with ldap connection {}",
-							userProvider.getLdapConnection().getUuid());
-					logger.error(e.getMessage());
-					logger.debug(e.toString());
-				} catch (org.springframework.ldap.CommunicationException e) {
+				} catch (NamingException | IOException | CommunicationException e) {
 					logger.error(
 							"Error while searching for a user with ldap connection {}",
 							userProvider.getLdapConnection().getUuid());
@@ -534,11 +503,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					result = ldapQueryService.isUserExist(
 							userProvider.getLdapConnection(), userProvider.getBaseDn(),
 							userProvider.getPattern(), mail);
-				} catch (NamingException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (IOException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (org.springframework.ldap.CommunicationException e) {
+				} catch (NamingException | IOException | CommunicationException e) {
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return result;
@@ -569,11 +534,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							userProvider.getBaseDn(),
 							userProvider.getPattern(),
 							login, userPasswd);
-				} catch (NamingException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (IOException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (org.springframework.ldap.CommunicationException e) {
+				} catch (NamingException | IOException | CommunicationException e) {
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				return user;
@@ -601,11 +562,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					user = ldapQueryService.searchForAuth(userProvider.getLdapConnection(),
 							userProvider.getBaseDn(),
 							userProvider.getPattern(), login);
-				} catch (NamingException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (IOException e) {
-					throwError(userProvider.getLdapConnection(), e);
-				} catch (org.springframework.ldap.CommunicationException e) {
+				} catch (NamingException | IOException | CommunicationException e) {
 					throwError(userProvider.getLdapConnection(), e);
 				}
 				if (user != null) {
