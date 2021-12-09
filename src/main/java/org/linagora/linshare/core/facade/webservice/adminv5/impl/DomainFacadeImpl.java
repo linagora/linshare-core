@@ -51,9 +51,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.DomainFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.DomainService;
+import org.linagora.linshare.core.service.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -64,13 +66,21 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 
 	private final DomainPolicyService domainPolicyService;
 
+	private final UserService userService;
+
+	private final AbstractDomainService abstractDomainService;
+
 	public DomainFacadeImpl(
 			AccountService accountService,
 			DomainService domainService,
-			DomainPolicyService domainPolicyService) {
+			DomainPolicyService domainPolicyService,
+			UserService userService,
+			AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.domainService = domainService;
 		this.domainPolicyService = domainPolicyService;
+		this.userService = userService;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -167,10 +177,12 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 		if (uuid.equals(LinShareConstants.rootDomainIdentifier)) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You can't remove root domain.");
 		}
+		if (!domainService.getSubDomainsByDomain(authUser, uuid).isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You can't remove a parent domain.");
+		}
 		AbstractDomain domain = domainService.find(authUser, uuid);
-		// TODO: delete domain or mark it to purge
-		// TODO: delete all users into this domain
-		// TODO: Do we handle nested doamins or or forbid deletion if nested domains exist ? 
+		abstractDomainService.markToPurge(authUser, uuid);
+		userService.deleteAllUsersFromDomain(authUser, uuid);
 		return DomainDto.getFull(domain);
 	}
 

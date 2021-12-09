@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -153,18 +152,26 @@ public class DomainDto {
 		dto.setModificationDate(domain.getModificationDate());
 		dto.setDefaultEmailLanguage(domain.getExternalMailLocale());
 		dto.setDefaultUserRole(domain.getDefaultRole());
-		dto.setWelcomeMessage(new GenericDto(
+		if (domain.getCurrentWelcomeMessage() != null) {
+			dto.setWelcomeMessage(new GenericDto(
 				domain.getCurrentWelcomeMessage().getUuid(),
 				domain.getCurrentWelcomeMessage().getName()));
-		dto.setDomainPolicy(new GenericDto(
+		}
+		if (domain.getPolicy() != null) {
+			dto.setDomainPolicy(new GenericDto(
 				domain.getPolicy().getUuid(),
 				domain.getPolicy().getLabel()));
-		dto.setMimePolicy(new GenericDto(
+		}
+		if (domain.getMimePolicy() != null) {
+			dto.setMimePolicy(new GenericDto(
 				domain.getMimePolicy().getUuid(),
 				domain.getMimePolicy().getName()));
-		dto.setMailConfiguration(new GenericDto(
+		}
+		if (domain.getCurrentMailConfiguration() != null) {
+			dto.setMailConfiguration(new GenericDto(
 				domain.getCurrentMailConfiguration().getUuid(),
 				domain.getCurrentMailConfiguration().getName()));
+		}
 		return dto;
 	}
 
