@@ -113,11 +113,16 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		// Quick workaround: Not very nice code. :(
+		logger.debug("Starting authentication process with OidcOpaqueAuthenticationProvider");
+		if (issuerUri.endsWith("/")) {
+			logger.warn("'issuerUri' ends with '/' character, might leads to connection issue !");
+		}
 		OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
 		final String token = jwtAuthentication.getToken();
 		BearerTokenAuthenticationToken authToken = new BearerTokenAuthenticationToken(token);
 
 		ClientRegistration clientRegistration = getClientRegistration();
+		logger.debug("clientRegistration used " + clientRegistration);
 		AuthenticationProvider opaqueTokenAuthenticationProvider = getOpaqueTokenAuthenticationProvider(clientRegistration, clientId, clientSecret);
 
 		BearerTokenAuthentication authenticate = (BearerTokenAuthentication) opaqueTokenAuthenticationProvider
