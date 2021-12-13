@@ -45,32 +45,32 @@ UPDATE mail_content SET subject='[(#{subject(${subject.value})})]',body='<!DOCTY
          <!--/* Secondary content for  bottom email section */-->
          <section id="secondary-content">
             <span data-th-if="(${expiryDate.modified})">
-               <th:block data-th-replace="layout :: infoEditedDateArea(#{expiryDate},${expiryDate.oldValue},${expiryDate.value})"/>
+               <th:block data-th-replace="layout :: infoDateItemsToUpdate(#{expiryDate}, #{expiryDateParamAdded}, #{expiryDateParamDeleted}, ${expiryDate.oldValue}, ${expiryDate.value})"/>
             </span>
             <span data-th-if="(${activationDate.modified})">
-               <th:block data-th-replace="layout :: infoEditedDateArea(#{activationDate},${activationDate.oldValue},${activationDate.value})"/>
+               <th:block data-th-replace="layout :: infoDateItemsToUpdate(#{activationDate}, #{activationDateParamAdded}, #{activationDateParamDeleted}, ${activationDate.oldValue}, ${activationDate.value})"/>
             </span>
             <span data-th-if="(${closureRight.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{closureRight},${closureRight.oldValue},${closureRight.value})"/>
+               <th:block data-th-replace="layout :: infoItemsToUpdate(#{closureRight}, #{closureRightParamAdded}, #{closureRightParamDeleted}, ${closureRight.oldValue}, ${closureRight.value})"/>
             </span>
             <span data-th-if="(${deletionRight.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{deletionRight},${deletionRight.oldValue},${deletionRight.value})"/>
+               <th:block data-th-replace="layout :: infoItemsToUpdate(#{deletionRight}, #{deletionRightParamAdded}, #{deletionRightParamDeleted}, ${deletionRight.oldValue}, ${deletionRight.value})"/>
             </span>
             <span data-th-if="(${maxFileSize.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileSize},${maxFileSize.oldValue},${maxFileSize.value})"/>
+               <th:block data-th-replace="layout :: infoItemsToUpdate(#{maxFileSize}, #{maxFileSizeParamAdded}, #{maxFileSizeParamDeleted}, ${maxFileSize.oldValue}, ${maxFileSize.value})"/>
             </span>
             <span data-th-if="(${maxFileNum.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileNum},${maxFileNum.oldValue},${maxFileNum.value})"/>
+               <th:block data-th-replace="layout :: infoItemsToUpdate(#{maxFileNum}, #{maxFileNumParamAdded}, #{maxFileNumParamDeleted}, ${maxFileNum.oldValue}, ${maxFileNum.value})"/>
             </span>
             <span data-th-if="(${totalMaxDepotSize.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{depotSize},${totalMaxDepotSize.oldValue},${totalMaxDepotSize.value})"/>
+               <th:block data-th-replace="layout :: infoItemsToUpdate(#{depotSize}, #{totalMaxDepotSizeParamAdded}, #{totalMaxDepotSizeParamDeleted}, ${totalMaxDepotSize.oldValue}, ${totalMaxDepotSize.value})"/>
             </span>
          </section>
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
 </html>',messages_french='activationDate = Date d''activation
-closureRight = Droits de dépôt
+closureRight = Droits de clôture
 deletionRight = Droits de suppression
 depotSize = Taille du dépôt
 expiryDate = Date de clôture
@@ -83,7 +83,21 @@ name = {0} {1}
 nameOfDepot: Nom du dépôt
 secondaryMsg = Les modifications sont listées ci-dessous.
 subject = Modification des paramètres du dépôt : {0}
-buttonMsg = Accès',messages_english='activationDate = Activation date
+buttonMsg = Accès,
+maxFileSizeParamAdded = Paramètre de la taille de fichier autorisée ajouté
+maxFileSizeParamDeleted = Paramètre de la taille de fichier autorisée annulé, ancienne valeur
+maxFileNumParamAdded = Paramètre de nombre maximal des fichiers ajouté
+maxFileNumParamDeleted = Paramètre de nombre maximal des fichiers annulé, ancienne valeur
+totalMaxDepotSizeParamAdded = Paramètre de la taille maximale des fichiers déposés ajouté
+totalMaxDepotSizeParamDeleted = Paramètre de la taille maximale des fichiers annulé, ancienne valeur
+deletionRightParamAdded = Paramètre de droit de suppression ajouté
+deletionRightParamDeleted = Paramètre de droit de suppression annulé, ancienne valeur
+closureRightParamAdded = Paramètre de droits de clôture ajouté
+closureRightParamDeleted = Paramètre de droits de clôture annulé, ancienne valeur
+activationDateParamAdded = Paramètre de date d''activation ajouté
+activationDateParamDeleted = Paramètre de date d''activation annulé, ancienne valeur
+expiryDateParamAdded = Paramètre d''expiration ajouté
+expiryDateParamDeleted = Paramètre d''expiration annulé, ancienne valeur',messages_english='activationDate = Activation date
 closureRight = Closure rights
 deletionRight = Deletion rights
 depotSize = Repository size
@@ -97,7 +111,21 @@ name = {0} {1}
 nameOfDepot: Name of the Upload Request
 secondaryMsg = Updated settings are listed below.
 subject = Updated Settings for Upload Request : {0}
-buttonMsg = Access',messages_russian='activationDate = Дата активации
+buttonMsg = Access
+maxFileSizeParamAdded = Max File size parameter added
+maxFileSizeParamDeleted = Max File size parameter canceled, last value
+maxFileNumParamAdded = Max File number parameter added
+maxFileNumParamDeleted = Max File number parameter deleted, last value
+totalMaxDepotSizeParamAdded = Max total deposite size parameter added
+totalMaxDepotSizeParamDeleted = Max total deposite size parameter, last value
+deletionRightParamAdded = Deletion rights parameter added
+deletionRightParamDeleted = Deletion rights parameter canceled
+closureRightParamAdded = Closure right parameter added
+closureRightParamDeleted = Closure right parameter added, last value
+activationDateParamAdded = Activation date parameter added
+activationDateParamDeleted = Activation date parameter added, last value
+expiryDateParamAdded = Expiration parameter added
+expiryDateParamDeleted = Expiration parameter canceled, last value',messages_russian='activationDate = Дата активации
 closureRight = Права закрытия
 deletionRight = Права удаления
 depotSize = Размер репозитория
@@ -111,4 +139,18 @@ name = {0} {1}
 nameOfDepot: Название загрузки
 secondaryMsg = Список обновленных настроек доступен ниже.
 subject = Обновленные настройки для запроса загрузки {0}
-buttonMsg = Access' WHERE id=23;
+buttonMsg = Access
+maxFileSizeParamAdded = Max File size parameter added
+maxFileSizeParamDeleted = Max File size parameter canceled, last value
+maxFileNumParamAdded = Max File number parameter added
+maxFileNumParamDeleted = Max File number parameter deleted, last value
+totalMaxDepotSizeParamAdded = Max total deposite size parameter added
+totalMaxDepotSizeParamDeleted = Max total deposite size parameter, last value
+deletionRightParamAdded = Deletion rights parameter added
+deletionRightParamDeleted = Deletion rights parameter canceled
+closureRightParamAdded = Closure right parameter added
+closureRightParamDeleted = Closure right parameter added, last value
+activationDateParamAdded = Activation date parameter added
+activationDateParamDeleted = Activation date parameter added, last value
+expiryDateParamAdded = Expiration parameter added
+expiryDateParamDeleted = Expiration parameter canceled, last value' WHERE id=23;

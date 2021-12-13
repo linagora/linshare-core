@@ -198,44 +198,95 @@ welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 </body>
 </html>
 <!--/* Common lower info title style */-->
-<div style="margin-bottom:17px;" data-th-fragment="infoEditedItem(titleInfo,oldValue,newValue)">
+<div style="margin-bottom:17px;" data-th-fragment="infoItemsToUpdate(editedInfoMsg, addedInfoMsg, deletedInfoMsg, oldValue, newValue)">
+    <span>
+        <th:block th:if="${oldValue != null} AND ${newValue} != null">
+               <th:block data-th-replace="layout :: infoEditedItem(${editedInfoMsg}, ${oldValue}, ${newValue})"/>
+        </th:block>
+        <th:block th:if="${oldValue == null} AND ${newValue} != null">
+               <th:block data-th-replace="layout :: infoAddedItem(${addedInfoMsg}, ${newValue})"/>
+        </th:block>
+        <th:block th:if="${oldValue != null} AND ${newValue} == null">
+               <th:block data-th-replace="layout :: infoDeletedItem(${deletedInfoMsg}, ${oldValue})"/>
+        </th:block>
+    </span>
+</div>
+
+<div style="margin-bottom:17px;" data-th-fragment="infoEditedItem(titleInfo, oldValue, newValue)">
     <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
    <br/>
     <span>
-        <th:block th:if="${oldValue == null}">
-            null
-        </th:block>
-        <th:block th:unless="${oldValue == null}">
+        <th:block th:if="${oldValue != null}">
             <th:block th:replace="${oldValue}" />
+            =>
         </th:block>
-        =>
-        <th:block th:if="${newValue == null}">
-            null
-        </th:block>
-        <th:block th:unless="${newValue == null}">
+        <th:block th:if="${newValue != null}">
             <th:block th:replace="${newValue}" />
         </th:block>
     </span>
 </div>
 
-<!--/* Edited  date  display settings  style */-->
-<div style="margin-bottom:17px;" data-th-fragment="infoEditedDateArea(titleInfo,oldValue,newValue)">
-    <span style="font-weight:bold;" data-th-text="${titleInfo}"></span>
-    <br />
-    <th:block th:if="${oldValue == null}">
-        null
-    </th:block>
-    <th:block th:unless="${oldValue == null}">
-        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue,df)}" />
-    </th:block>
-    =>
-    <th:block th:if="${newValue == null}">
-        null
-    </th:block>
-    <th:block th:unless="${newValue == null}">
-        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(newValue,df)}" />
-    </th:block>
+<div style="margin-bottom:17px;" data-th-fragment="infoAddedItem(titleInfo, newValue)">
+    <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
+   <br/>
+    <span>
+        <th:block th:replace="${newValue}" />
+    </span>
 </div>
+
+<div style="margin-bottom:17px;" data-th-fragment="infoDeletedItem(titleInfo, oldValue)">
+    <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
+   <br/>
+    <span>
+        <th:block th:replace="${oldValue}" />
+    </span>
+</div>
+
+<!--/* Edited  date  display settings  style */-->
+<div style="margin-bottom:17px;" data-th-fragment="infoDateItemsToUpdate(editedInfoMsg, addedInfoMsg, deletedInfoMsg, oldValue, newValue)">
+    <span>
+        <th:block th:if="${oldValue != null} AND ${newValue} != null">
+               <th:block data-th-replace="layout :: infoEditedDateItem(${editedInfoMsg}, ${oldValue}, ${newValue})"/>
+        </th:block>
+        <th:block th:if="${oldValue == null} AND ${newValue} != null">
+               <th:block data-th-replace="layout :: infoAddedDateItem(${addedInfoMsg}, ${newValue})"/>
+        </th:block>
+        <th:block th:if="${oldValue != null} AND ${newValue} == null">
+               <th:block data-th-replace="layout :: infoDeletedDateItem(${deletedInfoMsg}, ${oldValue})"/>
+        </th:block>
+    </span>
+</div>
+
+<div style="margin-bottom:17px;" data-th-fragment="infoEditedDateItem(titleInfo, oldValue, newValue)">
+    <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
+   <br/>
+    <span>
+        <th:block th:if="${oldValue != null}">
+            <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue, df)}" />
+            =>
+        </th:block>
+        <th:block th:if="${newValue != null}">
+           <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(newValue, df)}" />
+        </th:block>
+    </span>
+</div>
+
+<div style="margin-bottom:17px;" data-th-fragment="infoAddedDateItem(titleInfo, newValue)">
+    <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
+   <br/>
+    <span>
+        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(newValue, df)}"/>
+    </span>
+</div>
+
+<div style="margin-bottom:17px;" data-th-fragment="infoDeletedDateItem(titleInfo, oldValue)">
+    <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
+   <br/>
+    <span>
+        <th:block th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue, df)}"/>
+    </span>
+</div>
+
 <!--/* Common header template */-->
 <head  data-th-fragment="header">
   <title data-th-text="${mailSubject}">Mail subject</title>
