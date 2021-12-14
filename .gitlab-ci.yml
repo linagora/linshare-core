@@ -8,6 +8,7 @@ variables:
   DOCKER_IMAGE_CORE_EMBEDDED: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-embedded-for-tests"
   DOCKER_IMAGE_CORE_TEST: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-test"
   GIT_DEPTH: "1"
+  FF_NETWORK_PER_BUILD: "true"
 
 .cache-tpl: &cache-tpl
   key: "$CI_COMMIT_REF_SLUG"
