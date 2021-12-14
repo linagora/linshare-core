@@ -114,6 +114,8 @@ public class TwakeUser {
 		public TwakeUser build() {
 			Validate.notBlank(_id, "id must be set.");
 			Validate.notBlank(email, "email must be set.");
+			Validate.notBlank(name, "name must be set.");
+			Validate.notBlank(surname, "surname must be set.");
 			return new TwakeUser(_id, email, name, surname, isVerified, isBlocked, roles, createdAt, updatedAt);
 		}
 	}

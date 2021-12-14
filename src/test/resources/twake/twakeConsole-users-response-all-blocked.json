@@ -4,7 +4,8 @@
     {
       "_id": "60bd7ea27b859d0012be616c",
       "email": "frederic@linshare.org",
-      "surname": "",
+      "name": "frederic",
+      "surname": "fred",
       "isVerified": true,
       "isBlocked": true,
       "roles": [
@@ -20,7 +21,8 @@
     {
       "_id": "60d45c8bf388e100155dd8a0",
       "email": "marwan@linshare.org",
-      "surname": "",
+      "name": "marwan",
+      "surname": "marwan",
       "isVerified": true,
       "isBlocked": true,
       "roles": [
@@ -54,7 +56,7 @@
       "_id": "60ee56a6c1db3f00136caa2f",
       "email": "someone@linshare.org",
       "name": "someone",
-      "surname": "",
+      "surname": "someone",
       "isVerified": true,
       "isBlocked": true,
       "roles": [
