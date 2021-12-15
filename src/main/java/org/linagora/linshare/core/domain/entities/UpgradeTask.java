@@ -74,6 +74,8 @@ public class UpgradeTask {
 
 	protected Set<AsyncTask> upgradeAsyncTask;
 
+	protected boolean hidden;
+
 	public UpgradeTask() {
 		super();
 	}
@@ -190,13 +192,21 @@ public class UpgradeTask {
 		this.priority = priority;
 	}
 
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
+	}
+
 	@Override
 	public String toString() {
 		return "UpgradeTask [id=" + id + ", uuid=" + uuid + ", identifier=" + identifier + ", taskGroup=" + taskGroup
 				+ ", parentUuid=" + parentUuid + ", parentIdentifier=" + parentIdentifier + ", taskOrder=" + taskOrder
 				+ ", status=" + status + ", priority=" + priority + ", creationDate=" + creationDate
 				+ ", modificationDate=" + modificationDate + ", extras=" + extras + ", asyncTaskUuid=" + asyncTaskUuid
-				+ ", upgradeAsyncTask=" + upgradeAsyncTask + "]";
+				+ ", upgradeAsyncTask=" + upgradeAsyncTask + ", hidden=" + hidden + "]";
 	}
 
 }

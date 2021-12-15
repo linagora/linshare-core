@@ -152,8 +152,10 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 		)
 	})
 	@Override
-	public List<UpgradeTaskDto> findAll() throws BusinessException {
-		return facade.findAll();
+	public List<UpgradeTaskDto> findAll(
+		@Parameter(description = "If false, only new upgrade tasks will be returned.", required = false)
+			@QueryParam("hidden") @DefaultValue("false") boolean hidden) throws BusinessException {
+		return facade.findAll(hidden);
 	}
 
 	@Path("/{identifier}")

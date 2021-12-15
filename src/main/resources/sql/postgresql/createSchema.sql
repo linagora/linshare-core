@@ -857,6 +857,7 @@ CREATE TABLE upgrade_task (
   extras            text,
   async_task_uuid   varchar(255),
   priority          varchar(255) NOT NULL,
+  hidden            bool DEFAULT 'false' NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE thumbnail (
   id              int8 NOT NULL,

@@ -46,7 +46,7 @@ public interface UpgradeTaskService {
 
 	UpgradeTask find(Account actor, UpgradeTaskType identifier);
 
-	List<UpgradeTask> findAll(Account actor);
+	List<UpgradeTask> findAll(Account actor, boolean hidden);
 
 	UpgradeTask update(Account actor, UpgradeTask upgradeTask) throws BusinessException;
 }

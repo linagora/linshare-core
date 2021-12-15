@@ -69,9 +69,9 @@ public class UpgradeTaskFacadeImpl extends AdminGenericFacadeImpl implements Upg
 	}
 
 	@Override
-	public List<UpgradeTaskDto> findAll() throws BusinessException {
+	public List<UpgradeTaskDto> findAll(boolean hidden) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
-		List<UpgradeTask> all = service.findAll(authUser);
+		List<UpgradeTask> all = service.findAll(authUser, hidden);
 		Function<UpgradeTask, UpgradeTaskDto> convert = null;
 		if (authUser.hasSuperAdminRole()) {
 			convert = new Function<UpgradeTask, UpgradeTaskDto>() {

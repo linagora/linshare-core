@@ -47,7 +47,7 @@ public interface UpgradeTaskRestService {
 
 	UpgradeTaskDto find(UpgradeTaskType identifier) throws BusinessException;
 
-	List<UpgradeTaskDto> findAll() throws BusinessException;
+	List<UpgradeTaskDto> findAll(boolean hidden) throws BusinessException;
 
 	UpgradeTaskDto trigger(UpgradeTaskDto upgradeTaskDto, UpgradeTaskType identifier, Boolean force) throws BusinessException;
 

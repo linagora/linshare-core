@@ -45,7 +45,7 @@ public interface UpgradeTaskBusinessService {
 
 	UpgradeTask find(UpgradeTaskType identifier);
 
-	List<UpgradeTask> findAll();
+	List<UpgradeTask> findAll(boolean hidden);
 
 	UpgradeTask update(UpgradeTask upgradeTask) throws BusinessException;
 

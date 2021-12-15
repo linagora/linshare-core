@@ -19,6 +19,7 @@
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="extras" column="extras" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="asyncTaskUuid" column="async_task_uuid" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="hidden" column="hidden" type="boolean" not-null="true" lazy="false" />
 		<set name="upgradeAsyncTask" lazy="true" inverse="true">
 			<key column="upgrade_task_id" not-null="false"/>
 			<one-to-many class="AsyncTask"/>

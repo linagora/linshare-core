@@ -956,6 +956,11 @@ activationDateParamDeleted = Activation date parameter added, last value
 expiryDateParamAdded = Expiration parameter added
 expiryDateParamDeleted = Expiration parameter canceled, last value' WHERE id=23;
 
+
+-- Update upgrade task table in order to hide old upgrade tasks
+ALTER TABLE upgrade_task ADD COLUMN hidden bool DEFAULT 'false' NOT NULL;
+UPDATE upgrade_task SET hidden = true WHERE task_group like 'UPGRADE_2%';
+
 ---- End of your queries
 
 -- Upgrade LinShare version

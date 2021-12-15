@@ -58,8 +58,8 @@ public class UpgradeTaskBusinessServiceImpl implements UpgradeTaskBusinessServic
 	}
 
 	@Override
-	public List<UpgradeTask> findAll() {
-		return repository.findAll();
+	public List<UpgradeTask> findAll(boolean hidden) {
+		return repository.findAllHidden(hidden);
 	}
 
 	@Override

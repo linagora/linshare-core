@@ -72,4 +72,12 @@ public class UpgradeTaskRepositoryImpl extends AbstractRepositoryImpl<UpgradeTas
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
 				"identifier", identifier)));
 	}
+
+	@Override
+	public List<UpgradeTask> findAllHidden(boolean hidden) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("hidden", hidden));
+		det.addOrder(Order.asc("taskOrder"));
+		return findByCriteria(det);
+	}
 }

@@ -67,9 +67,9 @@ public class UpgradeTaskServiceImpl extends GenericAdminServiceImpl implements U
 	}
 
 	@Override
-	public List<UpgradeTask> findAll(Account actor) {
+	public List<UpgradeTask> findAll(Account actor, boolean hidden) {
 		preChecks(actor);
-		return businessService.findAll();
+		return businessService.findAll(hidden);
 	}
 
 	@Override
