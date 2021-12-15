@@ -11,7 +11,8 @@
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (31,
  'UNDEFINED',
@@ -24,4 +25,5 @@ VALUES
  'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);

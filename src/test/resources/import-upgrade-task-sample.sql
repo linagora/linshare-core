@@ -13,7 +13,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (1,
   'UNDEFINED',
@@ -26,7 +27,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_0_DOMAIN_POLICIES_UUID
 INSERT INTO upgrade_task
@@ -41,7 +43,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (2,
   'UNDEFINED',
@@ -54,7 +57,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_0_DOMAIN_QUOTA_TOPDOMAINS
 INSERT INTO upgrade_task
@@ -69,7 +73,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (4,
   'UNDEFINED',
@@ -82,7 +87,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_0_DOMAIN_QUOTA_SUBDOMAINS
 INSERT INTO upgrade_task
@@ -97,7 +103,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (5,
   'UNDEFINED',
@@ -110,7 +117,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_0_ACCOUNT_QUOTA
 INSERT INTO upgrade_task
@@ -125,7 +133,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (6,
   'UNDEFINED',
@@ -138,7 +147,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_0_CLEANUP_EXPIRED_GUEST
 INSERT INTO upgrade_task
@@ -153,7 +163,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (7,
   'UNDEFINED',
@@ -166,7 +177,8 @@ VALUES
   'REQUIRED',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_0_CLEANUP_EXPIRED_ACCOUNT
 INSERT INTO upgrade_task
@@ -181,7 +193,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (8,
   'UNDEFINED',
@@ -194,7 +207,8 @@ VALUES
   'REQUIRED',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_0_PURGE_ACCOUNT
 INSERT INTO upgrade_task
@@ -209,7 +223,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (9,
   'UNDEFINED',
@@ -222,7 +237,8 @@ VALUES
   'REQUIRED',
   now(),
   now(),
-  null);
+  null,
+  true);
 
   -- TASK: UPGRADE_2_0_SHA256SUM
 INSERT INTO upgrade_task
@@ -237,7 +253,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (10,
   'UNDEFINED',
@@ -250,7 +267,8 @@ VALUES
   'REQUIRED',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_0_UPGRADE_STORAGE
 INSERT INTO upgrade_task
@@ -265,7 +283,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (11,
    'UNDEFINED',
@@ -278,7 +297,8 @@ VALUES
   'REQUIRED',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_0_THREAD_TO_WORKGROUP
 INSERT INTO upgrade_task
@@ -293,7 +313,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (12,
    'UNDEFINED',
@@ -306,4 +327,5 @@ VALUES
   'REQUIRED',
   now(),
   now(),
-  null);
+  null,
+  true);

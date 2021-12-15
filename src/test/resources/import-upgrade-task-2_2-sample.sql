@@ -11,7 +11,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (19,
   'UNDEFINED',
@@ -24,7 +25,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
   -- TASK: UPGRADE_2_2_MIGRATE_UPLOAD_PROPOSITION_FILTER_TO_MONGO_DATABASE
 INSERT INTO upgrade_task
@@ -39,7 +41,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (20,
   'UNDEFINED',
@@ -52,7 +55,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_2_MIGRATE_UPLOAD_PROPOSITION_TO_MONGO_DATABASE
 INSERT INTO upgrade_task
@@ -67,7 +71,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (21,
  'UNDEFINED',
@@ -80,7 +85,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_2_MIGRATE_THREAD_TO_MONGO_DATABASE
 INSERT INTO upgrade_task
@@ -95,7 +101,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (22,
   'UNDEFINED',
@@ -108,7 +115,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_2_GENERATE_BASIC_STATISTICS_FROM_AUDIT_LOG_ENTRIES
 INSERT INTO upgrade_task
@@ -123,7 +131,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (23,
  'UNDEFINED',
@@ -136,7 +145,8 @@ VALUES
  'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_2_MIGRATE_WORKGROUP_AUDIT_TO_SHARED_SPACE_AUDIT
 INSERT INTO upgrade_task
@@ -151,7 +161,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (24,
  'UNDEFINED',
@@ -164,7 +175,8 @@ VALUES
  'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
   -- TASK: UPGRADE_2_2_MIGRATE_WORKGROUP_MEMBER_AUDIT_TO_SHARED_SPACE_MEMBER_AUDIT
 INSERT INTO upgrade_task
@@ -179,7 +191,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (25,
  'UNDEFINED',
@@ -192,4 +205,5 @@ VALUES
  'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);

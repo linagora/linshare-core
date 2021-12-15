@@ -11,7 +11,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (26,
  'UNDEFINED',
@@ -24,7 +25,8 @@ VALUES
  'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 INSERT INTO upgrade_task
   (id,
@@ -38,7 +40,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (27,
  'UNDEFINED',
@@ -51,7 +54,8 @@ VALUES
  'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_3_UPGRADE_DOCUMENT_STRUCTURE_FOR_VERSIONING
    INSERT INTO upgrade_task
@@ -66,7 +70,8 @@ VALUES
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (28,
  'UNDEFINED',
@@ -79,7 +84,8 @@ VALUES
  'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
 -- TASK: UPGRADE_2_3_UPDATE_SHARED_SPACE_NODE_STRUCTURE_FOR_VERSIONING
    INSERT INTO upgrade_task
@@ -94,7 +100,8 @@ VALUES
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (29,
  'UNDEFINED',
@@ -107,7 +114,8 @@ VALUES
  'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
  
     -- TASK: UPGRADE_2_3_ADD_QUOTA_UUID_TO_ALL_SHARED_SPACES
 INSERT INTO upgrade_task
@@ -122,7 +130,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (30,
  'UNDEFINED',
@@ -135,4 +144,5 @@ VALUES
  'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);

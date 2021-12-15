@@ -11,7 +11,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (13,
   'UNDEFINED',
@@ -24,7 +25,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
     -- TASK: UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS
 INSERT INTO upgrade_task
@@ -39,7 +41,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (14,
   'UNDEFINED',
@@ -52,7 +55,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
  
  -- TASK: UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES
 INSERT INTO upgrade_task
@@ -67,7 +71,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (15,
   'UNDEFINED',
@@ -80,7 +85,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
     -- TASK: UPGRADE_2_1_COMPUTE_CURRENT_VALUE_FOR_DOMAINS
 INSERT INTO upgrade_task
@@ -95,7 +101,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (16,
   'UNDEFINED',
@@ -108,7 +115,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
      -- TASK: UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA
 INSERT INTO upgrade_task
@@ -123,7 +131,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (17,
   'UNDEFINED',
@@ -136,7 +145,8 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null);
+  null,
+  true);
 
     -- TASK: UPGRADE_2_1_ADD_ALL_NEW_MIME_TYPE
 INSERT INTO upgrade_task
@@ -151,7 +161,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
   (18,
   'UNDEFINED',
@@ -164,4 +175,5 @@ VALUES
   'MANDATORY',
   now(),
   now(),
-  null); 
+  null,
+  true); 

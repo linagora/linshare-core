@@ -11,7 +11,8 @@ INSERT INTO upgrade_task
   priority,
   creation_date,
   modification_date,
-  extras)
+  extras,
+  hidden)
 VALUES
  (36,
  'UNDEFINED',
@@ -24,4 +25,5 @@ VALUES
  'REQUIRED',
   now(),
   now(),
-  null);
+  null,
+  false);
