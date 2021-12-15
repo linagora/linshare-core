@@ -36,7 +36,6 @@
 
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
@@ -58,7 +57,6 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
@@ -68,6 +66,7 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.DomainService;
+import org.linagora.linshare.core.service.DriveProviderService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.MimeTypeService;
@@ -96,6 +95,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 	private final MimeTypeService mimeTypeService;
 	private final UserProviderService userProviderService;
 	private final GroupProviderService groupProviderService;
+	private final DriveProviderService driveProviderService;
 
 	public DomainServiceImpl(
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
@@ -116,7 +116,8 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			MailContentBusinessService mailContentBusinessService,
 			MimeTypeService mimeTypeService,
 			UserProviderService userProviderService,
-			GroupProviderService groupProviderService) {
+			GroupProviderService groupProviderService,
+			DriveProviderService driveProviderService) {
 		super(sanitizerInputHtmlBusinessService, domainQuotaBusinessService, containerQuotaBusinessService);
 		this.abstractDomainService = abstractDomainService;
 		this.businessService = businessService;
@@ -134,6 +135,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 		this.mimeTypeService = mimeTypeService;
 		this.userProviderService = userProviderService;
 		this.groupProviderService = groupProviderService;
+		this.driveProviderService = driveProviderService;
 	}
 	@Override
 	public AbstractDomain find(Account actor, String uuid) throws BusinessException {
@@ -281,80 +283,149 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 
 	@Override
 	public AbstractDomain markToPurge(Account actor, String domainUuid) {
-		AbstractDomain domain = find(actor, domainUuid);
-		if (domain == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND, "Domain identifier no found.");
+		preChecks(actor);
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "Only root is authorized to delete domains.");
 		}
+		AbstractDomain domain = find(actor, domainUuid);
 		List<AbstractDomain> abstractDomains = businessService.getSubDomainsByDomain(domain.getUuid());
-
-		if (abstractDomains.isEmpty()) {
-			try {
-				logger.info("starting purging domain");
-				if (domain.getFunctionalities() != null) {
-					Iterator<Functionality> it = domain.getFunctionalities().iterator();
-					while (it.hasNext()) {
-						functionalityService.delete(actor, domain.getUuid(), it.next().getIdentifier());
-						it.remove();
-					}
-				}
-				if (domain.getDomainAccessRules() != null) {
-					domain.getDomainAccessRules().forEach(dar -> domainAccessPolicyBusinessService.delete(dar));
-				}
-				if (domain.getMailLayouts() != null) {
-					domain.getMailLayouts().forEach(ml -> mailLayoutBusinessService.delete(ml));
-				}
-				if (domain.getMailFooters() != null) {
-					domain.getMailFooters().forEach(mf -> {
-						mailFooterBusinessService.findByMailFooter(mf)
-							.forEach(mfl -> mailConfigBusinessService.deleteFooterLang(mfl));
-						mailFooterBusinessService.delete(mf);
-					});
-				}
-				if (domain.getMailContents() != null) {
-					domain.getMailContents().forEach(mc -> {
-						mailConfigBusinessService.findMailsContentLangByMailContent(mc)
-							.forEach(mcl -> mailConfigBusinessService.deleteContentLang(mcl));
-						mailContentBusinessService.delete(mc);
-					});
-				}
-				if (domain.getMailConfigs() != null) {
-					domain.getMailConfigs().forEach(mc -> {
-						mc.getMailContentLangs().forEach(mcl -> mailConfigBusinessService.deleteContentLang(mcl));
-						mailConfigBusinessService.delete(mc);
-					});
-				}
-				if (domain.getMimePolicies() != null) {
-					domain.getMimePolicies().forEach(mp -> {
-						mp.getMimeTypes().forEach(mt -> mimeTypeService.delete(actor, mt));
-						mimePolicyBusinessService.delete(mp);
-					});
-				}
-				if (domain.getUserProvider() != null) {
-					userProviderService.delete(domain.getUserProvider());
-					domain.setUserProvider(null);
-				}
-				if (domain.getGroupProvider() != null) {
-					groupProviderService.delete(domain.getGroupProvider());
-					domain.setGroupProvider(null);
-				}
-				if (domain.getWelcomeMessages() != null) {
-					domain.getWelcomeMessages().forEach(wm -> welcomeMessagesBusinessService.delete(wm));
-				}
-				if(domain.getPolicy()!=null)
-					domain.setPolicy(null);
-				DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.DELETE, AuditLogEntryType.DOMAIN,
-					domain);
-				domain.setCurrentMailConfiguration(null);
-				domain.setCurrentWelcomeMessages(null);
-				domain.setMimePolicy(null);
-				abstractDomainRepository.markToPurge(domain);
-				auditMongoRepository.insert(log);
-				logger.info("domain purged successfully");
-			} catch (BusinessException businessException) {
-				logger.error("Error occured while deleting domain relatios", businessException);
-			}
-		} else
+		if (!abstractDomains.isEmpty()) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_OPERATION, " Domain contains subDomains");
-		return domain;
+		}
+
+		try {
+			logger.info("starting purging domain");
+
+			deleteFunctionalities(actor, domain);
+			deleteDomainAccessRules(domain);
+			deleteMailLayouts(domain);
+			deleteMailFooters(domain);
+			deleteMailContents(domain);
+			deleteMailConfigs(domain);
+			deleteMimePolicies(actor, domain);
+			deleteUserProvider(domain);
+			deleteGroupProvider(domain);
+			deleteDriveProvider(domain);
+			deleteWelcomeMessages(domain);
+
+			DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.DELETE, AuditLogEntryType.DOMAIN, domain);
+			unsetProperties(domain);
+
+			abstractDomainRepository.markToPurge(domain);
+			auditMongoRepository.insert(log);
+
+			logger.info("domain purged successfully");
+			return domain;
+		} catch (BusinessException businessException) {
+			logger.error("Error occurred while deleting domain dependencies", businessException);
+			throw businessException;
+		}
+	}
+
+	private void unsetProperties(AbstractDomain domain) {
+		if (domain.getPolicy() != null)
+			domain.setPolicy(null);
+		domain.setCurrentMailConfiguration(null);
+		domain.setCurrentWelcomeMessages(null);
+		domain.setMimePolicy(null);
+	}
+
+	private void deleteWelcomeMessages(AbstractDomain domain) {
+		if (domain.getWelcomeMessages() != null) {
+			domain.getWelcomeMessages()
+				.forEach(welcomeMessagesBusinessService::delete);
+			domain.setWelcomeMessages(null);
+		}
+	}
+
+	private void deleteDriveProvider(AbstractDomain domain) {
+		if (domain.getDriveProvider() != null) {
+			driveProviderService.delete(domain.getDriveProvider());
+			domain.setDriveProvider(null);
+		}
+	}
+
+	private void deleteGroupProvider(AbstractDomain domain) {
+		if (domain.getGroupProvider() != null) {
+			groupProviderService.delete(domain.getGroupProvider());
+			domain.setGroupProvider(null);
+		}
+	}
+
+	private void deleteUserProvider(AbstractDomain domain) {
+		if (domain.getUserProvider() != null) {
+			userProviderService.delete(domain.getUserProvider());
+			domain.setUserProvider(null);
+		}
+	}
+
+	private void deleteMimePolicies(Account actor, AbstractDomain domain) {
+		if (domain.getMimePolicies() != null) {
+			domain.getMimePolicies()
+				.forEach(mimePolicy -> {
+					mimePolicy.getMimeTypes()
+						.forEach(mimeType -> mimeTypeService.delete(actor, mimeType));
+					mimePolicyBusinessService.delete(mimePolicy);
+				});
+			domain.setMimePolicies(null);
+		}
+	}
+
+	private void deleteMailConfigs(AbstractDomain domain) {
+		if (domain.getMailConfigs() != null) {
+			domain.getMailConfigs()
+				.forEach(mailConfig -> {
+					mailConfig.getMailContentLangs()
+						.forEach(mailConfigBusinessService::deleteContentLang);
+					mailConfigBusinessService.delete(mailConfig);
+				});
+			domain.setMailConfigs(null);
+		}
+	}
+
+	private void deleteMailContents(AbstractDomain domain) {
+		if (domain.getMailContents() != null) {
+			domain.getMailContents()
+				.forEach(mailContent -> {
+					mailConfigBusinessService.findMailsContentLangByMailContent(mailContent)
+						.forEach(mailConfigBusinessService::deleteContentLang);
+					mailContentBusinessService.delete(mailContent);
+				});
+			domain.setMailContents(null);
+		}
+	}
+
+	private void deleteMailFooters(AbstractDomain domain) {
+		if (domain.getMailFooters() != null) {
+			domain.getMailFooters()
+				.forEach(mailFooter -> {
+					mailFooterBusinessService.findByMailFooter(mailFooter)
+						.forEach(mailConfigBusinessService::deleteFooterLang);
+					mailFooterBusinessService.delete(mailFooter);
+				});
+			domain.setMailFooters(null);
+		}
+	}
+
+	private void deleteMailLayouts(AbstractDomain domain) {
+		if (domain.getMailLayouts() != null) {
+			domain.getMailLayouts()
+				.forEach(mailLayoutBusinessService::delete);
+			domain.setMailLayouts(null);
+		}
+	}
+
+	private void deleteDomainAccessRules(AbstractDomain domain) {
+		if (domain.getDomainAccessRules() != null) {
+			domain.getDomainAccessRules()
+				.forEach(domainAccessPolicyBusinessService::delete);
+		}
+	}
+
+	private void deleteFunctionalities(Account actor, AbstractDomain domain) {
+		if (domain.getFunctionalities() != null) {
+			domain.getFunctionalities()
+				.forEach(functionality -> functionalityService.delete(actor, domain.getUuid(), functionality.getIdentifier()));
+		}
 	}
 }
