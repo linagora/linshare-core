@@ -36,13 +36,18 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
+import org.linagora.linshare.core.business.service.MailContentBusinessService;
+import org.linagora.linshare.core.business.service.MailFooterBusinessService;
+import org.linagora.linshare.core.business.service.MailLayoutBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
@@ -53,6 +58,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
@@ -62,6 +68,10 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.DomainService;
+import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.GroupProviderService;
+import org.linagora.linshare.core.service.MimeTypeService;
+import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.mongo.entities.logs.DomainAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
@@ -78,6 +88,14 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 	protected final WelcomeMessagesBusinessService welcomeMessagesBusinessService;
 	protected final MailConfigBusinessService mailConfigBusinessService;
 	protected final MimePolicyBusinessService mimePolicyBusinessService;
+	private final FunctionalityService functionalityService;
+	private final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
+	private final MailLayoutBusinessService mailLayoutBusinessService;
+	private final MailFooterBusinessService mailFooterBusinessService;
+	private final MailContentBusinessService mailContentBusinessService;
+	private final MimeTypeService mimeTypeService;
+	private final UserProviderService userProviderService;
+	private final GroupProviderService groupProviderService;
 
 	public DomainServiceImpl(
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
@@ -89,7 +107,16 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			DomainQuotaBusinessService domainQuotaBusinessService,
 			ContainerQuotaBusinessService containerQuotaBusinessService,
 			WelcomeMessagesBusinessService welcomeMessagesBusinessService,
-			MailConfigBusinessService mailConfigBusinessService, MimePolicyBusinessService mimePolicyBusinessService) {
+			MailConfigBusinessService mailConfigBusinessService,
+			MimePolicyBusinessService mimePolicyBusinessService,
+			FunctionalityService functionalityService,
+			DomainAccessPolicyBusinessService domainAccessPolicyBusinessService,
+			MailLayoutBusinessService mailLayoutBusinessService,
+			MailFooterBusinessService mailFooterBusinessService,
+			MailContentBusinessService mailContentBusinessService,
+			MimeTypeService mimeTypeService,
+			UserProviderService userProviderService,
+			GroupProviderService groupProviderService) {
 		super(sanitizerInputHtmlBusinessService, domainQuotaBusinessService, containerQuotaBusinessService);
 		this.abstractDomainService = abstractDomainService;
 		this.businessService = businessService;
@@ -99,6 +126,14 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 		this.welcomeMessagesBusinessService = welcomeMessagesBusinessService;
 		this.mailConfigBusinessService = mailConfigBusinessService;
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
+		this.functionalityService = functionalityService;
+		this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
+		this.mailLayoutBusinessService = mailLayoutBusinessService;
+		this.mailFooterBusinessService = mailFooterBusinessService;
+		this.mailContentBusinessService = mailContentBusinessService;
+		this.mimeTypeService = mimeTypeService;
+		this.userProviderService = userProviderService;
+		this.groupProviderService = groupProviderService;
 	}
 	@Override
 	public AbstractDomain find(Account actor, String uuid) throws BusinessException {
@@ -242,5 +277,84 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			}
 			return domain.getDescription();
 		}
+	}
+
+	@Override
+	public AbstractDomain markToPurge(Account actor, String domainUuid) {
+		AbstractDomain domain = find(actor, domainUuid);
+		if (domain == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND, "Domain identifier no found.");
+		}
+		List<AbstractDomain> abstractDomains = businessService.getSubDomainsByDomain(domain.getUuid());
+
+		if (abstractDomains.isEmpty()) {
+			try {
+				logger.info("starting purging domain");
+				if (domain.getFunctionalities() != null) {
+					Iterator<Functionality> it = domain.getFunctionalities().iterator();
+					while (it.hasNext()) {
+						functionalityService.delete(actor, domain.getUuid(), it.next().getIdentifier());
+						it.remove();
+					}
+				}
+				if (domain.getDomainAccessRules() != null) {
+					domain.getDomainAccessRules().forEach(dar -> domainAccessPolicyBusinessService.delete(dar));
+				}
+				if (domain.getMailLayouts() != null) {
+					domain.getMailLayouts().forEach(ml -> mailLayoutBusinessService.delete(ml));
+				}
+				if (domain.getMailFooters() != null) {
+					domain.getMailFooters().forEach(mf -> {
+						mailFooterBusinessService.findByMailFooter(mf)
+							.forEach(mfl -> mailConfigBusinessService.deleteFooterLang(mfl));
+						mailFooterBusinessService.delete(mf);
+					});
+				}
+				if (domain.getMailContents() != null) {
+					domain.getMailContents().forEach(mc -> {
+						mailConfigBusinessService.findMailsContentLangByMailContent(mc)
+							.forEach(mcl -> mailConfigBusinessService.deleteContentLang(mcl));
+						mailContentBusinessService.delete(mc);
+					});
+				}
+				if (domain.getMailConfigs() != null) {
+					domain.getMailConfigs().forEach(mc -> {
+						mc.getMailContentLangs().forEach(mcl -> mailConfigBusinessService.deleteContentLang(mcl));
+						mailConfigBusinessService.delete(mc);
+					});
+				}
+				if (domain.getMimePolicies() != null) {
+					domain.getMimePolicies().forEach(mp -> {
+						mp.getMimeTypes().forEach(mt -> mimeTypeService.delete(actor, mt));
+						mimePolicyBusinessService.delete(mp);
+					});
+				}
+				if (domain.getUserProvider() != null) {
+					userProviderService.delete(domain.getUserProvider());
+					domain.setUserProvider(null);
+				}
+				if (domain.getGroupProvider() != null) {
+					groupProviderService.delete(domain.getGroupProvider());
+					domain.setGroupProvider(null);
+				}
+				if (domain.getWelcomeMessages() != null) {
+					domain.getWelcomeMessages().forEach(wm -> welcomeMessagesBusinessService.delete(wm));
+				}
+				if(domain.getPolicy()!=null)
+					domain.setPolicy(null);
+				DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.DELETE, AuditLogEntryType.DOMAIN,
+					domain);
+				domain.setCurrentMailConfiguration(null);
+				domain.setCurrentWelcomeMessages(null);
+				domain.setMimePolicy(null);
+				abstractDomainRepository.markToPurge(domain);
+				auditMongoRepository.insert(log);
+				logger.info("domain purged successfully");
+			} catch (BusinessException businessException) {
+				logger.error("Error occured while deleting domain relatios", businessException);
+			}
+		} else
+			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_OPERATION, " Domain contains subDomains");
+		return domain;
 	}
 }

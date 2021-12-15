@@ -143,6 +143,14 @@
 		<constructor-arg ref="welcomeMessagesBusinessService" />
 		<constructor-arg ref="mailConfigBusinessService" />
 		<constructor-arg ref="mimePolicyBusinessService" />
+		<constructor-arg ref="functionalityService" />
+		<constructor-arg ref="domainAccessPolicyBusinessService" />
+		<constructor-arg ref="mailLayoutBusinessService" />
+		<constructor-arg ref="mailFooterBusinessService" />
+		<constructor-arg ref="mailContentBusinessService" />
+		<constructor-arg ref="mimeTypeService" />
+		<constructor-arg ref="userProviderService" />
+		<constructor-arg ref="groupProviderService" />
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">

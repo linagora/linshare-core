@@ -53,4 +53,6 @@ public interface DomainService {
 	AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent) throws BusinessException;
 
 	AbstractDomain update(Account actor, String domainUuid, AbstractDomain dto) throws BusinessException;
+
+	AbstractDomain markToPurge(Account actor, String domainUuid);
 }

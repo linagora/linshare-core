@@ -51,7 +51,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.DomainFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.DomainService;
@@ -68,19 +67,15 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 
 	private final UserService userService;
 
-	private final AbstractDomainService abstractDomainService;
-
 	public DomainFacadeImpl(
 			AccountService accountService,
 			DomainService domainService,
 			DomainPolicyService domainPolicyService,
-			UserService userService,
-			AbstractDomainService abstractDomainService) {
+			UserService userService) {
 		super(accountService);
 		this.domainService = domainService;
 		this.domainPolicyService = domainPolicyService;
 		this.userService = userService;
-		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -181,7 +176,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 			throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You can't remove a parent domain.");
 		}
 		AbstractDomain domain = domainService.find(authUser, uuid);
-		abstractDomainService.markToPurge(authUser, uuid);
+		domainService.markToPurge(authUser, uuid);
 		userService.deleteAllUsersFromDomain(authUser, uuid);
 		return DomainDto.getFull(domain);
 	}
