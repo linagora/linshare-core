@@ -77,6 +77,7 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
+import org.linagora.linshare.core.service.DriveProviderService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GroupProviderService;
@@ -116,6 +117,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 	private final MimeTypeService mimeTypeService;
 	private final MailLayoutBusinessService mailLayoutBusinessService;
 	private final GroupProviderService groupProviderService;
+	private final DriveProviderService driveProviderService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -139,6 +141,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 			final MimeTypeService mimeTypeService,
 			final MailLayoutBusinessService mailLayoutBusinessService,
 			final GroupProviderService groupProviderService, 
+			final DriveProviderService driveProviderService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(sanitizerInputHtmlBusinessService, domainQuotaBusinessService, containerQuotaBusinessService);
 		this.abstractDomainRepository = abstractDomainRepository;
@@ -160,6 +163,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 		this.mimeTypeService = mimeTypeService;
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
 		this.groupProviderService = groupProviderService;
+		this.driveProviderService = driveProviderService;
 	}
 
 	@Override
@@ -860,6 +864,10 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 				if (domain.getGroupProvider() != null) {
 					groupProviderService.delete(domain.getGroupProvider());
 					domain.setGroupProvider(null);
+				}
+				if (domain.getDriveProvider() != null) {
+					driveProviderService.delete(domain.getDriveProvider());
+					domain.setDriveProvider(null);
 				}
 				if (domain.getWelcomeMessages() != null) {
 					domain.getWelcomeMessages().forEach(wm -> welcomeMessagesBusinessService.delete(wm));
