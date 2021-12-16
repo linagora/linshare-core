@@ -64,7 +64,7 @@ public class RecipientFavourite extends AbstractFavourite<User>{
 		super.setOwner(owner);
 		super.setWeight(Long.valueOf(1));
 		this.recipient=recipient;
-		
+		this.expirationDate = expirationDate;
 	}
 
 	/**

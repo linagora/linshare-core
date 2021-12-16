@@ -226,4 +226,10 @@
 		<constructor-arg ref="groupLdapPatternService"/>
 		<constructor-arg ref="ldapDriveSyncService" />
 	</bean>
+
+	<bean name="deleteOutdatedFavouriteRecipientBatch"
+		class="org.linagora.linshare.core.batches.impl.DeleteOutdatedFavouriteRecipientBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

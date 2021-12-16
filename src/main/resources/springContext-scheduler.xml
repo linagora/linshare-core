@@ -17,6 +17,7 @@
 						<ref bean="purgeUserBatch" />
 						<ref bean="purgeDomainBatch" />
 						<ref bean="warnOwnerAboutGuestExpirationBatch"/>
+						<ref bean="deleteOutdatedFavouriteRecipientBatch" />
 					</list>
 				</entry>
 				<entry key="batchRunner" value-ref="batchRunner" />
