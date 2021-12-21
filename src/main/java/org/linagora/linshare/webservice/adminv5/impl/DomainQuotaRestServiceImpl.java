@@ -84,10 +84,8 @@ public class DomainQuotaRestServiceImpl extends WebserviceBase implements Domain
 	@Override
 	public List<DomainQuotaDto> findAll(
 			@Parameter(description = "Domain's uuid.", required = true)
-				@PathParam("domainUuid") String domainUuid,
-			@Parameter(description = "Filter domain quotas by its parent uuid.", required = false) 
-				@QueryParam("parent") String parentUuid) throws BusinessException {
-		return facade.findAll(domainUuid, parentUuid);
+				@PathParam("domainUuid") String domainUuid) throws BusinessException {
+		return facade.findAll(domainUuid);
 	}
 
 	@Path("/{uuid}")

@@ -191,4 +191,9 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 		return find(abstractDomainRepository.getUniqueRootDomain());
 	}
 
+	@Override
+	public List<DomainQuota> findAllByDomain(AbstractDomain domain) {
+		return repository.findAllByDomain(domain);
+	}
+
 }

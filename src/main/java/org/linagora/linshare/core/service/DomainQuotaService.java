@@ -51,4 +51,6 @@ public interface DomainQuotaService {
 
 	DomainQuota update(Account actor, DomainQuota dq);
 
+	List<DomainQuota> findAllByDomain(Account actor, AbstractDomain domain);
+
 }

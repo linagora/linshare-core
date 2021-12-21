@@ -44,7 +44,7 @@ public interface DomainQuotaRestService {
 
 	DomainQuotaDto find(String domainUuid, String uuid, boolean realTime) throws BusinessException;
 
-	List<DomainQuotaDto> findAll(String domainUuid, String parentUuid) throws BusinessException;
+	List<DomainQuotaDto> findAll(String domainUuid) throws BusinessException;
 
 	DomainQuotaDto update(String domainUuid, DomainQuotaDto dto, String uuid) throws BusinessException;
 

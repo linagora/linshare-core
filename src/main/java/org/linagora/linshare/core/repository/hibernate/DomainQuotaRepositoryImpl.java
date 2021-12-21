@@ -191,4 +191,11 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 		logger.debug(" {} domainShared of AccountQuota have been updated.", updatedCounter);
 		return updatedCounter;
 	}
+
+	@Override
+	public List<DomainQuota> findAllByDomain(AbstractDomain domain) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("domain", domain));
+		return findByCriteria(criteria);
+	}
 }

@@ -61,4 +61,6 @@ public interface DomainQuotaBusinessService {
 
 	DomainQuota sumOfCurrentValue(DomainQuota entity);
 
+	List<DomainQuota> findAllByDomain(AbstractDomain domain);
+
 }

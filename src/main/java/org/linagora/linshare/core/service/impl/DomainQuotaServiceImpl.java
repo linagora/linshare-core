@@ -71,6 +71,11 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> i
 	}
 
 	@Override
+	public List<DomainQuota> findAllByDomain(Account actor, AbstractDomain domain) {
+		return business.findAllByDomain(domain);
+	}
+
+	@Override
 	public DomainQuota find(Account actor, String uuid) {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(uuid, "Domain quota uuid must be set.");

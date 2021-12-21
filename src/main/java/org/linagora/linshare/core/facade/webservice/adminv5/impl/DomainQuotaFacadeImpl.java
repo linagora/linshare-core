@@ -36,7 +36,6 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -57,7 +56,6 @@ import org.linagora.linshare.core.service.DomainQuotaService;
 import org.linagora.linshare.core.service.QuotaService;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements DomainQuotaFacade {
 
@@ -106,33 +104,14 @@ public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements Dom
 	}
 
 	@Override
-	public List<DomainQuotaDto> findAll(String domainUuid, String parentUuid) throws BusinessException {
+	public List<DomainQuotaDto> findAll(String domainUuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
-		List<DomainQuota> domainQuotas = Lists.newArrayList();
-		if (Objects.nonNull(parentUuid)) {
-			AbstractDomain parentDomain = abstractDomainService.findById(parentUuid);
-			if (domain.isRootDomain()) {
-				throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN,
-						"The entered domain is a root domain, so find domain quota by parent domain is not allowed.");
-			}
-			if (!parentDomain.getUuid().equals(domain.getParentDomain().getUuid())) {
-				throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
-						"The entered parent domain uuid does not match with the parent of the domain, please check the entered information.");
-			}
-			domainQuotas = service.findAll(authUser, parentDomain);
-			return domainQuotas
-					.stream()
-					.map(DomainQuotaDto::from)
-					.collect(Collectors.toUnmodifiableList());
-
-		} else {
-			domainQuotas = service.findAll(authUser);
-			return domainQuotas
-					.stream()
-					.map(DomainQuotaDto::from)
-					.collect(Collectors.toUnmodifiableList());
-		}
+		List<DomainQuota> domainQuotas = service.findAllByDomain(authUser, domain);
+		return domainQuotas
+				.stream()
+				.map(DomainQuotaDto::from)
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 	private AbstractDomain checkDomainBelonging(User authUser, String domainUuid, String domainQuotaUuid) {
