@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.google.common.base.MoreObjects;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -82,6 +83,9 @@ public abstract class AbstractDriveFilterDto {
 	@Schema(description = "Drive filter's modification date", required = false)
 	protected Date modificationDate;
 
+	@Schema(description = "Shows if the drive filter is model or not.", required = false)
+	protected boolean template;
+
 	protected AbstractDriveFilterDto() {
 		super();
 	}
@@ -93,6 +97,7 @@ public abstract class AbstractDriveFilterDto {
 		this.type = driveLdapPattern.getType();
 		this.creationDate = driveLdapPattern.getCreationDate();
 		this.modificationDate = driveLdapPattern.getModificationDate();
+		this.template = driveLdapPattern.getSystem();
 	}
 
 	public String getUuid() {
@@ -115,6 +120,10 @@ public abstract class AbstractDriveFilterDto {
 		return description;
 	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public void setType(DriveFilterType type) {
 		this.type = type;
 	}
@@ -133,5 +142,26 @@ public abstract class AbstractDriveFilterDto {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public boolean isTemplate() {
+		return template;
+	}
+
+	public void setTemplate(boolean template) {
+		this.template = template;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("uuid", uuid)
+				.add("name", name)
+				.add("description", description)
+				.add("type", type)
+				.add("creationDate", creationDate)
+				.add("modificationDate", modificationDate)
+				.add("template", template)
+				.toString();
 	}
 }

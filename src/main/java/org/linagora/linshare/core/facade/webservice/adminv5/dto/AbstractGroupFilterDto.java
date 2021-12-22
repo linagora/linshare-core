@@ -38,6 +38,8 @@ import java.util.Date;
 import org.linagora.linshare.core.domain.constants.GroupFilterType;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 
+import com.google.common.base.MoreObjects;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public abstract class AbstractGroupFilterDto {
@@ -60,6 +62,9 @@ public abstract class AbstractGroupFilterDto {
 	@Schema(description = "Group filter's modification date", required = false)
 	protected Date modificationDate;
 
+	@Schema(description = "Shows if the group filter is model or not.", required = false)
+	protected boolean template;
+
 	protected AbstractGroupFilterDto() {
 		super();
 	}
@@ -71,6 +76,7 @@ public abstract class AbstractGroupFilterDto {
 		this.type = groupLdapPattern.getType();
 		this.creationDate = groupLdapPattern.getCreationDate();
 		this.modificationDate = groupLdapPattern.getModificationDate();
+		this.template = groupLdapPattern.getSystem();
 	}
 
 	public String getUuid() {
@@ -119,5 +125,26 @@ public abstract class AbstractGroupFilterDto {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public boolean isTemplate() {
+		return template;
+	}
+
+	public void setTemplate(boolean template) {
+		this.template = template;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("uuid", uuid)
+				.add("name", name)
+				.add("description", description)
+				.add("type", type)
+				.add("creationDate", creationDate)
+				.add("modificationDate", modificationDate)
+				.add("template", template)
+				.toString();
 	}
 }
