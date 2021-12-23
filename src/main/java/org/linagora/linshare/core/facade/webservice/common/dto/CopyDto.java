@@ -37,12 +37,17 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import org.linagora.linshare.core.domain.constants.TargetKind;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class CopyDto {
 
-	protected TargetKind kind;
-
+	@Schema(description = "The resource's uuid")
 	protected String uuid;
 
+	@Schema(description = "The source kind of where the document is copied from (SharedSpace, personalSpace ..)")
+	protected TargetKind kind;
+
+	@Schema(description = "contextUuid | if TargetKind = UPLOAD_REQUEST it's upload request uuid , if TargetKind = SHARED_SPACE it's shared space uuid ")
 	protected String contextUuid;
 
 	public CopyDto() {
