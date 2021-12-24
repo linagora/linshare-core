@@ -40,7 +40,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -59,10 +58,14 @@ public class DomainQuotaDto {
 	}
 
 	public static DomainQuotaDto from(DomainQuota dq, Optional<Long> usedSpace, Optional<Long> currentValueForSubdomains) {
+		DomainLightDto parentDomainLight = null;
+		if (Objects.nonNull(dq.getParentDomain())) {
+			parentDomainLight = new DomainLightDto(dq.getParentDomain());
+		}
 		return builder()
 			.uuid(dq.getUuid())
 			.domain(new DomainLightDto(dq.getDomain()))
-			.parentDomain(dq)
+			.parentDomain(parentDomainLight)
 			.quota(dq.getQuota())
 			.quotaOverride(dq.getQuotaOverride())
 			.defaultQuota(dq.getDefaultQuota())
@@ -116,10 +119,8 @@ public class DomainQuotaDto {
 			return this;
 		}
 
-		public Builder parentDomain(DomainQuota domainQuota) {
-			if (Objects.nonNull(domainQuota.getParentDomain())) {
-				this.parentDomain = new DomainLightDto(domainQuota.getParentDomain());
-			}
+		public Builder parentDomain(DomainLightDto domain) {
+			this.parentDomain = domain;
 			return this;
 		}
 
