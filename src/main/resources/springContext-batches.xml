@@ -231,5 +231,6 @@
 		class="org.linagora.linshare.core.batches.impl.DeleteOutdatedFavouriteRecipientBatchImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="hibernateTemplate" />
+		<constructor-arg ref="timeService" />
 	</bean>
 </beans>

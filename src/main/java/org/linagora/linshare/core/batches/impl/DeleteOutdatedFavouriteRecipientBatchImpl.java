@@ -36,7 +36,6 @@
 
 package org.linagora.linshare.core.batches.impl;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -51,29 +50,36 @@ import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.service.TimeService;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.HibernateTemplate;
+
+import com.google.common.collect.Lists;
 
 public class DeleteOutdatedFavouriteRecipientBatchImpl extends GenericBatchImpl {
 
 	private final HibernateTemplate hibernateTemplate;
 
+	private final TimeService timeService;
+
 	public DeleteOutdatedFavouriteRecipientBatchImpl(
 			AccountRepository<Account> accountRepository,
-			HibernateTemplate hibernateTemplate) {
+			HibernateTemplate hibernateTemplate,
+			TimeService timeService) {
 		super(accountRepository);
 		this.hibernateTemplate = hibernateTemplate;
+		this.timeService = timeService;
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		return Arrays.asList("fakeUuid");
+		return Lists.newArrayList("fakeUuid");
 	}
 
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Date currentDate = new Date();
+		Date currentDate = timeService.dateNow();
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws HibernateException {
 				final Query<?> query = session
@@ -83,7 +89,7 @@ public class DeleteOutdatedFavouriteRecipientBatchImpl extends GenericBatchImpl 
 			}
 		};
 		Long execute = hibernateTemplate.execute(action);
-		logger.debug("{} Favourite recipient with expirationDate before {}", execute, currentDate);
+		logger.debug("{} Favourite recipients with expirationDate before {}", execute, currentDate);
 		BatchResultContext<FakeContext> res = new BatchResultContext<>(new FakeContext(identifier));
 		res.setProcessed(true);
 		return res;
@@ -94,7 +100,7 @@ public class DeleteOutdatedFavouriteRecipientBatchImpl extends GenericBatchImpl 
 		@SuppressWarnings("unchecked")
 		BatchResultContext<FakeContext> res = (BatchResultContext<FakeContext>) context;
 		if (res.getProcessed()) {
-			logInfo(batchRunContext, total, position, "Expired favourite recipient deleted successfully");
+			logInfo(batchRunContext, total, position, "Expired favourite recipients deleted successfully");
 		}
 	}
 
@@ -102,7 +108,7 @@ public class DeleteOutdatedFavouriteRecipientBatchImpl extends GenericBatchImpl 
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position,
 			BatchRunContext batchRunContext) {
 		logError(total, position, exception.getMessage(), batchRunContext);
-		logger.error("Error occured while deleting expired favourite recipient",
+		logger.error("Error occured while deleting expired favourite recipients",
 				exception);
 	}
 }
