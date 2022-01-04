@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -57,6 +58,9 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.DomainAccessRuleDt
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
+
+import com.google.common.collect.Lists;
+
 
 public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		DomainPolicyFacade {
@@ -116,6 +120,9 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dapDto, "DomainAccessPolicyDto can not be null.");
 		DomainAccessPolicy dap = new DomainAccessPolicy();
 		List<DomainAccessRule> rules = dap.getRules();
+		if(Objects.isNull(rules)) {
+			rules = Lists.newArrayList();
+		}
 		for (DomainAccessRuleDto ruleDto : dapDto.getRules()) {
 			Validate.notNull(ruleDto.getType(), "Rule type dto must be set.");
 
@@ -148,6 +155,7 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 			}
 			rules.add(rule);
 		}
+		dap.setRules(rules);
 		return dap;
 	}
 
