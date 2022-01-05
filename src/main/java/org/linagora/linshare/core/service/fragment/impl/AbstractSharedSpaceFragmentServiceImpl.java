@@ -181,7 +181,6 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 	}
 
 	private static AuditLogEntryType fromNodeType(String nodeType) {
-		nodeType = nodeType.replace("_", "");
 		return AuditLogEntryType.fromString(nodeType);
 	}
 }

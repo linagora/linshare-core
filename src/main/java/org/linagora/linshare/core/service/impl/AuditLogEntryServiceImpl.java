@@ -140,8 +140,8 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_FOLDER);
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_MEMBER);
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION);
-		supportedTypes.add(AuditLogEntryType.DRIVE);
-		supportedTypes.add(AuditLogEntryType.DRIVE_MEMBER);
+		supportedTypes.add(AuditLogEntryType.WORK_SPACE);
+		supportedTypes.add(AuditLogEntryType.WORK_SPACE_MEMBER);
 		Date end = getEndDate(endDate);
 		Date begin = getBeginDate(beginDate, end);
 		if (Objects.nonNull(resourceUuid)) {

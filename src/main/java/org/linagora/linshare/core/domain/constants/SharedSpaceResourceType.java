@@ -39,8 +39,8 @@ public enum SharedSpaceResourceType {
 
 	FOLDER,
 	FILE,
-	WORKGROUP,
-	DRIVE,
+	WORK_GROUP,
+	WORK_SPACE,
 	MEMBER;
 
 	public static SharedSpaceResourceType fromString(String s) {
@@ -52,7 +52,6 @@ public enum SharedSpaceResourceType {
 	}
 
 	public static SharedSpaceResourceType fromNodeType(String nodeType) {
-		nodeType = nodeType.replace("_", "");
 		return fromString(nodeType);
 	}
 }

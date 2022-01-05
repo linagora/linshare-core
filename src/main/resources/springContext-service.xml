@@ -451,7 +451,7 @@
 		<constructor-arg ref="driveMemberBusinessService" />
 		<constructor-arg>
 			<map>
-				<entry key="DRIVE" value-ref="sharedSpaceNodeDriveService" />
+				<entry key="WORK_SPACE" value-ref="sharedSpaceNodeDriveService" />
 				<entry key="WORK_GROUP" value-ref="sharedSpaceWorkGroupService" />
 			</map>
 		</constructor-arg>
@@ -520,7 +520,7 @@
 		<constructor-arg>
 			<map>
 				<entry key="WORK_GROUP" value-ref="workgroupMemberService" />
-				<entry key="DRIVE" value-ref="sharedSpaceMemberDriveService" />
+				<entry key="WORK_SPACE" value-ref="sharedSpaceMemberDriveService" />
 			</map>
 		</constructor-arg>
 	</bean>
@@ -534,7 +534,7 @@
 		<constructor-arg>
 			<map>
 				<entry key="WORK_GROUP" value-ref="workgroupMemberService" />
-				<entry key="DRIVE" value-ref="sharedSpaceMemberDriveService" />
+				<entry key="WORK_SPACE" value-ref="sharedSpaceMemberDriveService" />
 			</map>
 		</constructor-arg>
 	</bean>
@@ -571,7 +571,7 @@
 		<constructor-arg>
 			<map>
 				<entry key="WORK_GROUP" value-ref="sharedSpaceLdapGroupService" />
-				<entry key="DRIVE" value-ref="sharedSpaceLdapDriveService" />
+				<entry key="WORK_SPACE" value-ref="sharedSpaceLdapDriveService" />
 			</map>
 		</constructor-arg>
 		<constructor-arg ref="ldapGroupQueryService"/>
@@ -585,7 +585,7 @@
 		<constructor-arg>
 			<map>
 				<entry key="WORK_GROUP" value-ref="sharedSpaceLdapGroupService" />
-				<entry key="DRIVE" value-ref="sharedSpaceLdapDriveService" />
+				<entry key="WORK_SPACE" value-ref="sharedSpaceLdapDriveService" />
 			</map>
 		</constructor-arg>
 		<constructor-arg ref="ldapGroupQueryService"/>

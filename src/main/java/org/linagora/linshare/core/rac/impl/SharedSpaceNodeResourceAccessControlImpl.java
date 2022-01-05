@@ -64,7 +64,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	@Override
 	protected SharedSpaceResourceType getSharedSpaceResourceType() {
-		return SharedSpaceResourceType.WORKGROUP;
+		return SharedSpaceResourceType.WORK_GROUP;
 	}
 	
 	@Override

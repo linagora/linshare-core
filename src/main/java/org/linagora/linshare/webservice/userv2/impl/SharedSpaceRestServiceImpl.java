@@ -53,6 +53,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
@@ -136,6 +137,14 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	public SharedSpaceNode create(
 			@Parameter(description = "shared space node to create", required = true) SharedSpaceNode node)
 			throws BusinessException {
+		/**
+		 * Workaround to support DRIVE in linshare 5.0
+		 */
+		if (node != null) {
+			if (NodeType.DRIVE.equals(node.getNodeType())) {
+				node.setNodeType(NodeType.WORK_SPACE);
+			}
+		}
 		return nodeFacade.create(null, node);
 	}
 	
@@ -237,6 +246,14 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	public SharedSpaceMember addMember(
 			@Parameter(description = "The shared space member to add")SharedSpaceMember member)
 					throws BusinessException {
+		/**
+		 * Workaround to support DRIVE in linshare 5.0
+		 */
+		if (member != null) {
+			if (NodeType.DRIVE.equals(member.getType())) {
+				member.setType(NodeType.WORK_SPACE);
+			}
+		}
 		return memberFacade.create(null, member);
 	}
 

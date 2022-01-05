@@ -125,7 +125,7 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 		memberService.deleteAllMembers(authUser, actor, foundedNodeToDel, LogActionCause.DRIVE_DELETION, nodes);
 		businessService.delete(foundedNodeToDel);
 		SharedSpaceNodeAuditLogEntry driveLog = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
-				AuditLogEntryType.DRIVE, foundedNodeToDel);
+				AuditLogEntryType.WORK_SPACE, foundedNodeToDel);
 		logs.add(driveLog);
 		logEntryService.insert(logs);
 		return foundedNodeToDel;

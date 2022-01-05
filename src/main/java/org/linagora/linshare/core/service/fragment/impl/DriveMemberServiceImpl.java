@@ -108,7 +108,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 	 * @param role       {@link SharedSpaceRole} The role of the Drive member,
 	 *                   should be WORK_SPACE
 	 * @param nestedRole {@link SharedSpaceRole} The role of the member in the
-	 *                   workgroups inside the WORK_SPACE, should be WORKGROUP
+	 *                   workgroups inside the WORK_SPACE, should be WORK_GROUP
 	 * @param account {@link SharedSpaceAccount} the account of the added member
 	 * @return {@link SharedSpaceMemberDrive}
 	 * @throws BusinessException
@@ -139,7 +139,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 					newMember.getLsUuid());
 			notify(new DriveWarnNewMemberEmailContext(toAdd, actor, newMember, nestedMembers));
 		}
-		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.DRIVE_MEMBER);
+		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORK_SPACE_MEMBER);
 		return toAdd;
 	}
 
@@ -176,14 +176,14 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			notify(new DriveWarnUpdatedMemberEmailContext((SharedSpaceMemberDrive) foundMemberToUpdate, member, actor,
 					nestedMembers));
 		}
-		saveUpdateLog(authUser, actor, LogAction.UPDATE, foundMemberToUpdate, updated, AuditLogEntryType.DRIVE_MEMBER);
+		saveUpdateLog(authUser, actor, LogAction.UPDATE, foundMemberToUpdate, updated, AuditLogEntryType.WORK_SPACE_MEMBER);
 		return updated;
 	}
 
 	@Override
 	protected SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember foundMemberToDelete) {
 		businessService.delete(foundMemberToDelete);
-		saveLogForCreateAndDelete(authUser, actor, LogAction.DELETE, foundMemberToDelete, AuditLogEntryType.DRIVE_MEMBER);
+		saveLogForCreateAndDelete(authUser, actor, LogAction.DELETE, foundMemberToDelete, AuditLogEntryType.WORK_SPACE_MEMBER);
 		// Delete the member on all workgroups inside the drive
 		List<SharedSpaceNodeNested> nestedWorkgroups = businessService.findAllByParentAndAccount(
 				foundMemberToDelete.getAccount().getUuid(), foundMemberToDelete.getNode().getUuid());
@@ -219,7 +219,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
 			SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
-					AuditLogEntryType.DRIVE_MEMBER, member);
+					AuditLogEntryType.WORK_SPACE_MEMBER, member);
 			if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
 				EmailContext context = null;
 				if (LogActionCause.DRIVE_DELETION.equals(cause)) {

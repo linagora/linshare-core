@@ -170,13 +170,13 @@ public class InitMongoServiceImpl implements InitMongoService {
 		GenericLightEntity drive_reader = createInitLightRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER");
 
 		createInitPermission("31cb4d80-c939-40f1-a79e-4d77392e0e0b", "Create a drive ", SharedSpaceActionType.CREATE,
-				SharedSpaceResourceType.DRIVE, drive_admin);
+				SharedSpaceResourceType.WORK_SPACE, drive_admin);
 		createInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", "read a drive", SharedSpaceActionType.READ,
-				SharedSpaceResourceType.DRIVE, drive_admin, drive_writer, drive_reader);
+				SharedSpaceResourceType.WORK_SPACE, drive_admin, drive_writer, drive_reader);
 		createInitPermission("5557fc26-ea2d-4e3b-81af-37a614d8014c", "Update  a drive", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.DRIVE, drive_admin);
+				SharedSpaceResourceType.WORK_SPACE, drive_admin);
 		createInitPermission("70ecfe55-f388-4e37-91bc-958386e0a865", "Delete  a drive", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.DRIVE, drive_admin);
+				SharedSpaceResourceType.WORK_SPACE, drive_admin);
 
 		createInitPermission("0457baaf-fd9e-4737-90d9-5a802caf9ff5", "Create a folder", SharedSpaceActionType.CREATE,
 				SharedSpaceResourceType.FOLDER, admin, writer, contributor);
@@ -209,13 +209,13 @@ public class InitMongoServiceImpl implements InitMongoService {
 		createInitPermission("4b29d1f9-dec7-484c-a170-a051e7d9b848", "Delete a member", SharedSpaceActionType.DELETE,
 				SharedSpaceResourceType.MEMBER, admin, drive_admin);
 		createInitPermission("08a77038-95d0-46be-93de-a602e0315d6e", "Create a workgroup", SharedSpaceActionType.CREATE,
-				SharedSpaceResourceType.WORKGROUP, admin, drive_admin, drive_writer);
+				SharedSpaceResourceType.WORK_GROUP, admin, drive_admin, drive_writer);
 		createInitPermission("ce73fa89-04aa-41f2-a94f-cf09b46f810b", "Read a workgroup", SharedSpaceActionType.READ,
-				SharedSpaceResourceType.WORKGROUP, admin, writer, contributor, reader);
+				SharedSpaceResourceType.WORK_GROUP, admin, writer, contributor, reader);
 		createInitPermission("881dfa55-90c5-460a-9ac2-a38181fd2349", "Update a workgroup", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.WORKGROUP, admin);
+				SharedSpaceResourceType.WORK_GROUP, admin);
 		createInitPermission("efd0d533-cb5b-4bf6-a717-81f28ae0a1fe", "Delete a workgroup", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.WORKGROUP, admin);
+				SharedSpaceResourceType.WORK_GROUP, admin);
 		logger.info("END -- Initialization with default shared space roles and permissions.");
 	}
 
