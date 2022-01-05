@@ -153,7 +153,7 @@ public class SharedSpaceMemberDriveServiceTest {
 	public void testAddMembertoDrive() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// Create a drive as John
-		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
+		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.WORK_SPACE));
 		Assertions.assertNotNull(drive, "Drive not created");
 		SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) ssMemberService.findMemberByAccountUuid(john, john,
 				john.getLsUuid(), drive.getUuid());
@@ -185,7 +185,7 @@ public class SharedSpaceMemberDriveServiceTest {
 	public void testUpdateMemberOnTheDrive() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// Create a drive as John
-		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
+		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.WORK_SPACE));
 		Assertions.assertNotNull(drive, "Drive not created");
 		ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(), drive.getUuid());
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(adminDriveRole, adminWorkgroupRole);
@@ -216,7 +216,7 @@ public class SharedSpaceMemberDriveServiceTest {
 	public void testPropagateUpdateNestedRolesOnDriveMembers() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// Create a drive as John
-		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
+		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.WORK_SPACE));
 		Assertions.assertNotNull(drive, "Drive not created");
 		ssMemberService.findMemberByAccountUuid(john, john, john.getLsUuid(), drive.getUuid());
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(adminDriveRole, adminWorkgroupRole);
@@ -264,7 +264,7 @@ public class SharedSpaceMemberDriveServiceTest {
 	public void testDeleteMemberOnTheDrive() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// Create a drive as John
-		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.DRIVE));
+		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest", NodeType.WORK_SPACE));
 		Assertions.assertNotNull(drive, "Drive not created");
 		SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) ssMemberService.findMemberByAccountUuid(john, john,
 				john.getLsUuid(), drive.getUuid());

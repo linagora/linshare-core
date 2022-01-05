@@ -86,7 +86,7 @@ public class AddDomainToDriveUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
 		Query query = Query.query(Criteria.where
-				("nodeType").is(NodeType.DRIVE).and
+				("nodeType").is(NodeType.WORK_SPACE).and
 				("domainUuid").exists(false));
 		List<String> nodes = mongoTemplate.findDistinct(query, "uuid", SharedSpaceNode.class, String.class);
 		return nodes;

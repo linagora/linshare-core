@@ -106,9 +106,9 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 	 * @param actor      {@link Account} the actor of the action
 	 * @param node       {@link SharedSpaceNode} Drive
 	 * @param role       {@link SharedSpaceRole} The role of the Drive member,
-	 *                   should be DRIVE
+	 *                   should be WORK_SPACE
 	 * @param nestedRole {@link SharedSpaceRole} The role of the member in the
-	 *                   workgroups inside the DRIVE, should be WORKGROUP
+	 *                   workgroups inside the WORK_SPACE, should be WORKGROUP
 	 * @param account {@link SharedSpaceAccount} the account of the added member
 	 * @return {@link SharedSpaceMemberDrive}
 	 * @throws BusinessException
@@ -205,7 +205,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			LogActionCause cause, List<SharedSpaceNodeNested> nodes) {
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required shared space node");
-		Validate.isTrue(NodeType.DRIVE.equals(node.getNodeType()), "Node type need to be a Drive");
+		Validate.isTrue(NodeType.WORK_SPACE.equals(node.getNodeType()), "Node type need to be a Drive");
 		List<SharedSpaceMember> foundMembersToDelete = businessService.findBySharedSpaceNodeUuid(node.getUuid());
 		if (foundMembersToDelete == null || foundMembersToDelete.isEmpty()) {
 			// There is no members on this Drive

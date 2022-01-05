@@ -133,7 +133,7 @@ public class SharedSpaceMemberBusinessServiceImplTest {
 		SharedSpaceNode workgroupOnTop = new SharedSpaceNode("workgroup_top_level", null, NodeType.WORK_GROUP);
 		workgroupOnTop.setDomainUuid(jane.getDomainId());
 		nodeRpository.insert(workgroupOnTop);
-		SharedSpaceNode drive = new SharedSpaceNode("drive", null, NodeType.DRIVE);
+		SharedSpaceNode drive = new SharedSpaceNode("drive", null, NodeType.WORK_SPACE);
 		drive.setDomainUuid(jane.getDomainId());
 		nodeRpository.insert(drive);
 		SharedSpaceNode nestedWorkgroup = new SharedSpaceNode("nested_workgroup", drive.getUuid(), NodeType.WORK_GROUP);

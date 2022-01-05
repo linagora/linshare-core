@@ -48,19 +48,19 @@ public class SharedSpaceMemberDrive extends SharedSpaceMember {
 
 	public SharedSpaceMemberDrive() {
 		super();
-		this.type = NodeType.DRIVE;
+		this.type = NodeType.WORK_SPACE;
 	}
 
 	public SharedSpaceMemberDrive(SharedSpaceNodeNested node, LightSharedSpaceRole role, SharedSpaceAccount account,
 			LightSharedSpaceRole nestedRole) {
 		super(node, role, account);
 		this.nestedRole = nestedRole;
-		this.type = NodeType.DRIVE;
+		this.type = NodeType.WORK_SPACE;
 	}
 
 	public SharedSpaceMemberDrive(SharedSpaceMember member) {
 		super(member.getNode(), member.getRole(), member.getAccount());
-		this.type = NodeType.DRIVE;
+		this.type = NodeType.WORK_SPACE;
 	}
 
 	public LightSharedSpaceRole getNestedRole() {

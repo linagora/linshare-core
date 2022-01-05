@@ -98,7 +98,7 @@ public class LDAPDriveSyncServiceImpl extends LDAPGroupSyncServiceImpl implement
 			SharedSpaceLDAPGroup group, LdapDriveMemberObject memberObject, Date syncDate,
 			LdapGroupsBatchResultContext resultContext, Boolean searchInOtherDomains) {
 		User user = findOrCreateUser(memberObject.getEmail(), domainUuid, searchInOtherDomains, memberObject);
-		SharedSpaceRole role = getRoleFrom(actor, memberObject.getRole(), NodeType.DRIVE);
+		SharedSpaceRole role = getRoleFrom(actor, memberObject.getRole(), NodeType.WORK_SPACE);
 		SharedSpaceRole nestedRole = getRoleFrom(actor, memberObject.getNestedRole(), NodeType.WORK_GROUP);
 		SharedSpaceLDAPDriveMember member = (SharedSpaceLDAPDriveMember) super.findMemberToUpdate(group.getUuid(), memberObject.getExternalId(), syncDate);
 		if (member != null) {
@@ -136,7 +136,7 @@ public class LDAPDriveSyncServiceImpl extends LDAPGroupSyncServiceImpl implement
 	private void applyDriveTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject,
 			Set<LdapDriveMemberObject> memberObjects, Date syncDate, LdapGroupsBatchResultContext resultContext) {
 		SharedSpaceLDAPGroup created = createOrUpdateLDAPGroup(actor, domain, ldapGroupObject, syncDate, resultContext,
-				NodeType.DRIVE);
+				NodeType.WORK_SPACE);
 		// Create each member
 		for (LdapDriveMemberObject memberObject : memberObjects) {
 			createOrUpdateLDAPDriveMember(actor, domain.getUuid(), created, memberObject, syncDate, resultContext,

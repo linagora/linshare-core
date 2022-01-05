@@ -94,7 +94,7 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 	@Override
 	public SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.DRIVE_FORBIDDEN, node);
-		if (!(NodeType.DRIVE.equals(node.getNodeType()))) {
+		if (!(NodeType.WORK_SPACE.equals(node.getNodeType()))) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not create this kind of sharedSpace with this method.");
 		}

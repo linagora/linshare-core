@@ -37,7 +37,11 @@ package org.linagora.linshare.core.domain.constants;
 
 public enum NodeType {
 
+	/**
+	 * DRIVE was kept for compat issues.
+	 */
 	DRIVE,
+	WORK_SPACE,
 	WORK_GROUP;
 
 	public NodeType fromString(String s) {

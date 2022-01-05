@@ -159,7 +159,7 @@ public class SharedSpaceNodeNested {
 	@XmlTransient
 	@JsonIgnore
 	public boolean isDrive() {
-		return this.nodeType.equals(NodeType.DRIVE);
+		return this.nodeType.equals(NodeType.WORK_SPACE);
 	}
 
 	@XmlTransient

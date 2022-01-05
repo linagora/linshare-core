@@ -141,7 +141,7 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		Account actor = getActor(authUser, actorUuid);
 		if (!Strings.isNullOrEmpty(parent)) {
 			SharedSpaceNode node = nodeService.find(authUser, actor, parent);
-			if (!NodeType.DRIVE.equals(node.getNodeType())) {
+			if (!NodeType.WORK_SPACE.equals(node.getNodeType())) {
 				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 						"The requested shared space is not supported");
 			}

@@ -78,7 +78,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 	 *  This methods allows to insert the default shared space roles in Database
 	 * @param roleUuid String static uuid affected to the role
 	 * @param roleName String static name affected to the role
-	 * @param type {@link NodeType} define the kind of shared space role (DRIVE, Work_GROUP)
+	 * @param type {@link NodeType} define the kind of shared space role (WORK_SPACE, Work_GROUP)
 	 * @param domain {@link GenericLightEntity} contains LinShare domain minimal informations
 	 * @param author {@link SharedSpaceAuthor} The user that create the role
 	 * @return role
@@ -161,9 +161,9 @@ public class InitMongoServiceImpl implements InitMongoService {
 		GenericLightEntity writer = createInitLightRole("8839654d-cb33-4633-bf3f-f9e805f97f84", "WRITER");
 		GenericLightEntity reader = createInitLightRole("4ccbed61-71da-42a0-a513-92211953ac95", "READER");
 
-		createInitRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN", rootDomain, NodeType.DRIVE, rootAccount);
-		createInitRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_WRITER", rootDomain, NodeType.DRIVE, rootAccount);
-		createInitRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER", rootDomain, NodeType.DRIVE, rootAccount);
+		createInitRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		createInitRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_WRITER", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		createInitRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER", rootDomain, NodeType.WORK_SPACE, rootAccount);
 
 		GenericLightEntity drive_admin = createInitLightRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN");
 		GenericLightEntity drive_writer = createInitLightRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_WRITER");

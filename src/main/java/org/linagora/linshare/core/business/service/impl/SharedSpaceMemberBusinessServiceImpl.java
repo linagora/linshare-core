@@ -161,7 +161,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 			logger.trace("Parent SharedSpaceNode: {}", updateMulti.toString());
 			// Updating nested SSnode in SSmember collection
 			updateMulti = mongoTemplate.updateMulti(
-					new Query().addCriteria(new Criteria("node.uuid").is(parentUuid).and("type").is(NodeType.DRIVE)),
+					new Query().addCriteria(new Criteria("node.uuid").is(parentUuid).and("type").is(NodeType.WORK_SPACE)),
 					new Update().set("node.modificationDate", modificationDate),
 					SharedSpaceMember.class);
 			logger.trace("Parent SharedSpaceMembers: {}", updateMulti.toString());
@@ -301,7 +301,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		MatchOperation match = null;
 		if (types == null) {
 			types = Sets.newHashSet();
-			types.add(NodeType.DRIVE);
+			types.add(NodeType.WORK_SPACE);
 			types.add(NodeType.WORK_GROUP);
 		}
 		if (withRole) {

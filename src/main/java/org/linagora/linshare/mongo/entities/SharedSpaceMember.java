@@ -65,7 +65,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = SharedSpaceMember.class, property = "type")
 @JsonSubTypes({ 
-	@Type(value = SharedSpaceMemberDrive.class, name = "DRIVE"),
+	@Type(value = SharedSpaceMemberDrive.class, name = "WORK_SPACE"),
 	@Type(value = SharedSpaceMemberWorkgroup.class, name = "WORK_GROUP")
 	})
 @XmlSeeAlso({ SharedSpaceMemberDrive.class,

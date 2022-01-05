@@ -385,7 +385,7 @@ public class SharedSpaceMemberServiceImplTest {
 	public void testDeleteAllByNotMember() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test delete a drive by a user which is not a member of it
-		SharedSpaceNode drive = nodeBusinessService.create(new SharedSpaceNode("drive", NodeType.DRIVE));
+		SharedSpaceNode drive = nodeBusinessService.create(new SharedSpaceNode("drive", NodeType.WORK_SPACE));
 		drive.setDomainUuid(john.getDomainId());
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(readerDriveRole, adminRole);
 		service.create(john, john, drive, context, accountJhon);

@@ -96,7 +96,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			@SuppressWarnings("unchecked")
 			Set<NodeType> types = (Set<NodeType>) opt[1];
 			if (!isSharedSpaceFuncEnabled) {
-				types.remove(NodeType.DRIVE);
+				types.remove(NodeType.WORK_SPACE);
 				types.remove(NodeType.WORK_GROUP);
 			}
 		}
@@ -122,7 +122,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 		Functionality creation = null;
 		if (NodeType.WORK_GROUP.equals(entry.getNodeType()) && (Objects.isNull(entry.getParentUuid()))) {
 			creation = functionalityService.getWorkGroupCreationRight(actor.getDomain());
-		} else if (NodeType.DRIVE.equals(entry.getNodeType())
+		} else if (NodeType.WORK_SPACE.equals(entry.getNodeType())
 				|| (NodeType.WORK_GROUP.equals(entry.getNodeType()))) {
 			creation = functionalityService.getDriveCreationRight(actor.getDomain());
 		} else {
@@ -137,7 +137,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			return false;
 		}
 		// Check the user can create workgroups inside this drive
-		if (parent != null && NodeType.DRIVE.equals(parent.getNodeType())) {
+		if (parent != null && NodeType.WORK_SPACE.equals(parent.getNodeType())) {
 			boolean canCreateWorkGroupsInside = defaultSharedSpacePermissionCheck(authUser, actor, parent,
 					TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE, SharedSpaceActionType.CREATE);
 			if (!canCreateWorkGroupsInside) {

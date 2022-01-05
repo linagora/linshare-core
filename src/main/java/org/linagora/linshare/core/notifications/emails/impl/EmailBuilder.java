@@ -819,7 +819,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected SharedSpaceMemberDrive getNewFakeSharedSpaceMemberDrive(String name) {
 		User user = new Guest("Peter", "Wilson", "peter.wilson@linshare.org");
-		SharedSpaceNode node = new SharedSpaceNode(name, null, NodeType.DRIVE);
+		SharedSpaceNode node = new SharedSpaceNode(name, null, NodeType.WORK_SPACE);
 		SharedSpaceMemberDrive member = new SharedSpaceMemberDrive(new SharedSpaceNodeNested(node),
 				new LightSharedSpaceRole(UUID.randomUUID().toString(), "DRIVE_ADMIN", node.getNodeType()),
 				new SharedSpaceAccount(user),

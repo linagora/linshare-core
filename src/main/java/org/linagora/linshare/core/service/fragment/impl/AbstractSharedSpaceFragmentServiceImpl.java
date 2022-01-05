@@ -159,7 +159,7 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 	public List<SharedSpaceNodeNested> findAllWorkgroupsInNode(Account authUser, Account actor, SharedSpaceNode parent) {
 		preChecks(authUser, actor);
 		Validate.notNull(parent, "The parent must be set.");
-		if (!NodeType.DRIVE.equals(parent.getNodeType())) {
+		if (!NodeType.WORK_SPACE.equals(parent.getNodeType())) {
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 					String.format("You can not list workgroups in this node with uuid {}", parent.getUuid()));
 		}

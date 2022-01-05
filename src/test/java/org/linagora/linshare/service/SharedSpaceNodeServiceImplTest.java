@@ -301,11 +301,11 @@ public class SharedSpaceNodeServiceImplTest {
 		PageContainer<SharedSpaceNodeNested> foundNodes = service.findAll(root, root, null, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
 		Long foundNodesSize = foundNodes.getPageResponse().getTotalElements();
 		node1 = service.create(john, john, new SharedSpaceNode("John's first node", null, NodeType.WORK_GROUP));
-		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.DRIVE));
+		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.WORK_SPACE));
 		node3 = service.create(foo, foo, new SharedSpaceNode("Foo's first node", null, NodeType.WORK_GROUP));
-		node4 = service.create(foo, foo, new SharedSpaceNode("Foo's second node", null, NodeType.DRIVE));
+		node4 = service.create(foo, foo, new SharedSpaceNode("Foo's second node", null, NodeType.WORK_SPACE));
 		node5 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
-		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.DRIVE));
+		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.WORK_SPACE));
 		String domain = null;
 		PageContainer<SharedSpaceNodeNested> allNodes = service.findAll(root, root, null, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
 		Assertions.assertEquals(foundNodesSize + 6, allNodes.getPageResponse().getTotalElements());
@@ -320,7 +320,7 @@ public class SharedSpaceNodeServiceImplTest {
 		Assertions.assertEquals(nodes.size(), fooNodes.getPageResponse().getTotalElements());
 		fooNodes.getPageResponse().getContent().forEach(node -> Assertions.assertTrue(nodes.contains(node)));
 		// Find Foo's Drives (Filter by nodeType)
-		PageContainer<SharedSpaceNodeNested> fooDrives = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.DRIVE), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
+		PageContainer<SharedSpaceNodeNested> fooDrives = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.WORK_SPACE), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
 		Assertions.assertEquals(1, fooDrives.getPageResponse().getTotalElements());
 		fooDrives.getPageResponse().getContent().forEach(node -> Assertions.assertTrue(node.isDrive()));
 		// Find Foo's WorkGroups (Filter by nodeType)
@@ -328,15 +328,15 @@ public class SharedSpaceNodeServiceImplTest {
 		Assertions.assertEquals(1, fooWGs.getPageResponse().getTotalElements());
 		fooWGs.getPageResponse().getContent().forEach(node -> Assertions.assertTrue(node.isWorkGroup()));
 		// Filter by Role
-		node7 = service.create(foo, foo, new SharedSpaceNode("My drive", null, NodeType.DRIVE));
+		node7 = service.create(foo, foo, new SharedSpaceNode("My drive", null, NodeType.WORK_SPACE));
 		SharedSpaceMember member = memberBusinessService.findByAccountAndNode(foo.getLsUuid(), node7.getUuid());
 		Assertions.assertTrue(member.isDriveAdmin());
 		member.setRole(new LightSharedSpaceRole(roleBusinessService.findByName(Role.DRIVE_READER.toString())));
 		memberRepository.save(member);
 		Assertions.assertTrue(member.isDriveReader());
-		fooDrives = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.DRIVE), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
+		fooDrives = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.WORK_SPACE), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
 		Assertions.assertEquals(2, fooDrives.getPageResponse().getTotalElements());
-		PageContainer<SharedSpaceNodeNested> fooDriveReaderRole = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.DRIVE), Sets.newHashSet(Role.DRIVE_READER.toString()), SharedSpaceField.creationDate, null, null, null, container);
+		PageContainer<SharedSpaceNodeNested> fooDriveReaderRole = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.WORK_SPACE), Sets.newHashSet(Role.DRIVE_READER.toString()), SharedSpaceField.creationDate, null, null, null, container);
 		Assertions.assertEquals(1, fooDriveReaderRole.getPageResponse().getTotalElements());
 		// Filter by Name
 		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByName = service.findAll(root, root, null, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, "SECOND NODE", null, null, container);
@@ -356,12 +356,12 @@ public class SharedSpaceNodeServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(0, 10);
 		node1 = service.create(john, john, new SharedSpaceNode("John's first node", null, NodeType.WORK_GROUP));
-		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.DRIVE));
+		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.WORK_SPACE));
 		node3 = service.create(foo, foo, new SharedSpaceNode("Foo's first node", null, NodeType.WORK_GROUP));
-		node4 = service.create(foo, foo, new SharedSpaceNode("Foo's second node", null, NodeType.DRIVE));
+		node4 = service.create(foo, foo, new SharedSpaceNode("Foo's second node", null, NodeType.WORK_SPACE));
 		node5 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
-		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.DRIVE));
-		node7 = service.create(amy, amy, new SharedSpaceNode("Amy's first node", null, NodeType.DRIVE));
+		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.WORK_SPACE));
+		node7 = service.create(amy, amy, new SharedSpaceNode("Amy's first node", null, NodeType.WORK_SPACE));
 		// Filter SharedSpaces by domain by an ADMIN -> It will return just sharedSpaces of his domain
 		john.setRole(org.linagora.linshare.core.domain.constants.Role.ADMIN);
 		userRepo.update((User) john);
@@ -406,11 +406,11 @@ public class SharedSpaceNodeServiceImplTest {
 		PageContainer<SharedSpaceNodeNested> foundNodes = service.findAll(root, root, null, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
 		Long foundNodesSize = foundNodes.getPageResponse().getTotalElements();
 		node1 = service.create(john, john, new SharedSpaceNode("John's first node", null, NodeType.WORK_GROUP));
-		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.DRIVE));
+		node2 = service.create(john, john, new SharedSpaceNode("John's second node", null, NodeType.WORK_SPACE));
 		node3 = service.create(foo, foo, new SharedSpaceNode("Foo's first node", null, NodeType.WORK_GROUP));
-		node4 = service.create(foo, foo, new SharedSpaceNode("Foo's second node", null, NodeType.DRIVE));
+		node4 = service.create(foo, foo, new SharedSpaceNode("Foo's second node", null, NodeType.WORK_SPACE));
 		node5 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
-		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.DRIVE));
+		node6 = service.create(jane, jane, new SharedSpaceNode("Jane fourth node", null, NodeType.WORK_SPACE));
 		PageContainer<SharedSpaceNodeNested> allNodes = service.findAll(root, root, null, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
 		Assertions.assertEquals(foundNodesSize + 6, allNodes.getPageResponse().getTotalElements());
 		Long allNodesSize = allNodes.getPageResponse().getTotalElements();

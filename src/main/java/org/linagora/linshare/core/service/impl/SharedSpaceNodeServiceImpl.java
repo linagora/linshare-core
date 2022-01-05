@@ -243,7 +243,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, boolean withRole, String parent) {
 		preChecks(authUser, actor);
 		Set<NodeType> types = Sets.newHashSet();
-		types.add(NodeType.DRIVE);
+		types.add(NodeType.WORK_SPACE);
 		types.add(NodeType.WORK_GROUP);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null, null, types);
 		return memberService.findAllSharedSpacesByAccountAndParentForUsers(authUser, actor, actor.getLsUuid(), withRole, parent, types);
@@ -253,7 +253,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor) {
 		preChecks(authUser, actor);
 		Set<NodeType> types = Sets.newHashSet();
-		types.add(NodeType.DRIVE);
+		types.add(NodeType.WORK_SPACE);
 		types.add(NodeType.WORK_GROUP);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null, null, types);
 		return memberService.findAllSharedSpacesByAccountAndParentForUsers(authUser, actor, actor.getLsUuid(), false, null, types);
@@ -282,7 +282,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	}
 
 	private BusinessErrorCode getBusinessErrorCode(NodeType nodeType) {
-		if (NodeType.DRIVE.equals(nodeType)) {
+		if (NodeType.WORK_SPACE.equals(nodeType)) {
 			return BusinessErrorCode.DRIVE_FORBIDDEN;
 		} else {
 			return BusinessErrorCode.WORK_GROUP_FORBIDDEN;

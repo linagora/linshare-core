@@ -219,7 +219,7 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext, NodeType.DRIVE);
+				resultContext, NodeType.WORK_SPACE);
 		Assertions.assertNotNull(drive, "The drive has not been found");
 		Assertions.assertEquals("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org",
 				drive.getExternalId(), "The externalId do not match");
@@ -240,7 +240,7 @@ public class LDAPDriveSyncServiceImplTest {
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
 				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext, NodeType.DRIVE);
+				resultContext, NodeType.WORK_SPACE);
 		Assertions.assertNotNull(drive, "The drive has not been found");
 		Assertions.assertEquals("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org",
 				drive.getExternalId(), "The externalId do not match");
@@ -270,7 +270,7 @@ public class LDAPDriveSyncServiceImplTest {
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
 				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext, NodeType.DRIVE);
+				resultContext, NodeType.WORK_SPACE);
 		Assertions.assertNotNull(drive, "The drive has not been found");
 		Assertions.assertEquals("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org",
 				drive.getExternalId(), "The externalId do not match");
@@ -301,7 +301,7 @@ public class LDAPDriveSyncServiceImplTest {
 				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
 		// Create a drive
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext, NodeType.DRIVE);
+				resultContext, NodeType.WORK_SPACE);
 		// Create a member
 		driveSyncService.createOrUpdateLDAPDriveMember(systemAccount, domain.getUuid(), drive,
 				ldapDriveMemberObject, syncDate, resultContext, domain.getDriveProvider().getSearchInOtherDomains());
@@ -333,13 +333,13 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext, NodeType.DRIVE);
+				resultContext, NodeType.WORK_SPACE);
 		Assertions.assertNotNull(drive, "The drive has not been found");
 		Assertions.assertEquals("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org",
 				drive.getExternalId(), "The externalId do not match");
 		Assertions.assertEquals(syncDate, drive.getSyncDate(), "The given syncDate is not the same as the found one");
 		int nbLDAPGroup = nodeService.findAll(systemAccount, systemAccount).size();
-		drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, calendar.getTime(), resultContext, NodeType.DRIVE);
+		drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, calendar.getTime(), resultContext, NodeType.WORK_SPACE);
 		Assertions.assertTrue(drive.getSyncDate().after(syncDate), "The new syncDate is not after the previous syncDate");
 		Assertions.assertEquals(nbLDAPGroup,
 				nodeService.findAll(systemAccount, systemAccount).size(), "A SharedSpaceLDAPGroup has been added and not updated");
@@ -359,7 +359,7 @@ public class LDAPDriveSyncServiceImplTest {
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
 				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
-				resultContext, NodeType.DRIVE);
+				resultContext, NodeType.WORK_SPACE);
 		Assertions.assertNotNull(drive, "The drive has not been found");
 		Assertions.assertEquals("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org",
 				drive.getExternalId(), "The externalId do not match");

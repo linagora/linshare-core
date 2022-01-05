@@ -160,7 +160,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@Test
 	public void createDrive() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.DRIVE);
+		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.WORK_SPACE);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "Drive not created");
 		assertThat(expectedNode.getAuthor().getFirstName()).isEqualTo(authUser.getFirstName());
@@ -173,7 +173,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	public void createDriveSpecialCharInName() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpaceNode node = new SharedSpaceNode("EP_TEST_v233<script>alert(document.cookie)</script>",
-				NodeType.DRIVE);
+				NodeType.WORK_SPACE);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "Drive not created");
 		Assertions.assertEquals(expectedNode.getName(), "EP_TEST_v233");
@@ -184,7 +184,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@Test
 	public void updateDriveSpecialCharInName() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My drive", NodeType.DRIVE);
+		SharedSpaceNode node = new SharedSpaceNode("My drive", NodeType.WORK_SPACE);
 		SharedSpaceNode nodeToUpdate = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(nodeToUpdate, "Drive not created");
 		Assertions.assertEquals(nodeToUpdate.getName(), "My drive");
@@ -198,7 +198,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@Test
 	public void createDriveAndFind() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.DRIVE);
+		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.WORK_SPACE);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "Drive not created");
 		Assertions.assertNotNull(service.find(authUser, authUser, expectedNode.getUuid()));
@@ -210,7 +210,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	public void createDriveAndWorkgroupAndFindAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		int before = service.findAllByAccount(authUser, authUser).size();
-		SharedSpaceNode drive = new SharedSpaceNode("My Drive", NodeType.DRIVE);
+		SharedSpaceNode drive = new SharedSpaceNode("My Drive", NodeType.WORK_SPACE);
 		SharedSpaceNode expectedDrive = service.create(authUser, authUser, drive);
 		Assertions.assertNotNull(expectedDrive, "Drive not created");
 		SharedSpaceNode workgroup = new SharedSpaceNode("My groups", NodeType.WORK_GROUP);
@@ -225,7 +225,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@Test
 	public void createDriveAndDelete() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.DRIVE);
+		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.WORK_SPACE);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "Drive not created");
 		int before = service.findAllByAccount(authUser, authUser).size();
@@ -238,7 +238,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@Test
 	public void allowNestedWgCreationFunctionilityDisabled() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode drive = new SharedSpaceNode("My Drive", NodeType.DRIVE);
+		SharedSpaceNode drive = new SharedSpaceNode("My Drive", NodeType.WORK_SPACE);
 		SharedSpaceNode expectedDrive = service.create(authUser, authUser, drive);
 		Assertions.assertNotNull(expectedDrive, "Drive not created");
 		Functionality workGroupCreationRightFunctionality = functionalityService.getWorkGroupCreationRight(authUser.getDomain());
@@ -260,8 +260,8 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	public void deleteDriveByNotMember() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test a drive member not allowed to delete a drive where he is not a membership 
-		SharedSpaceNode johnDrive = service.create(authUser, authUser, new SharedSpaceNode("john drive", NodeType.DRIVE));
-		service.create(jane, jane, new SharedSpaceNode("jane Drive", NodeType.DRIVE));
+		SharedSpaceNode johnDrive = service.create(authUser, authUser, new SharedSpaceNode("john drive", NodeType.WORK_SPACE));
+		service.create(jane, jane, new SharedSpaceNode("jane Drive", NodeType.WORK_SPACE));
 		BusinessException e = assertThrows(BusinessException.class, () -> {
 			service.delete(jane, jane, johnDrive);
 		});
@@ -273,7 +273,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	public void deleteDriveByInvitedMemberDriveAdmin() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test an invited member with Drive Admin role can delete his Drive 
-		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.WORK_SPACE));
 		service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
 		service.create(authUser, authUser, new SharedSpaceNode("nested-wg1", drive.getUuid(), NodeType.WORK_GROUP));
 		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 2);
@@ -294,7 +294,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	public void deleteDriveByInvitedMemberDriveReader() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test an invited member with Drive Reader role NOT ALLOWED to delete his Drive 
-		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.WORK_SPACE));
 		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
 		service.create(authUser, authUser, new SharedSpaceNode("nested-wg1", drive.getUuid(), NodeType.WORK_GROUP));
 		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 2);
@@ -321,7 +321,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	public void deleteNestedByInvitedMemberAdmin() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test an invited member in nested workgroup with admin role delete his wg 
-		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.WORK_SPACE));
 		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
 		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 1);
 		// Add a member to the nested wg
@@ -342,7 +342,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	public void deleteNestedWorkgroup() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test delete a nested wg by a member that is a membership of it but not in the drive
-		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.WORK_SPACE));
 		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
 		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 1);
 		// Add a member to the nested wg
@@ -367,7 +367,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	public void deleteNestedWorkgroupByDriveMember() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test delete a nested wg by a drive member
-		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.WORK_SPACE));
 		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
 		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, drive.getUuid()).size(), 1);
 		// Add a member to the nested wg
@@ -392,7 +392,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	public void deleteDriveAndNestedWorkgroupByDriveMember() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// test delete a drive and its wg by a drive member
-		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.WORK_SPACE));
 		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
 		// Add a local member to the nested wg
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(admin);
@@ -417,7 +417,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		// test delete a drive and its wg
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// Create Drive and nested workgroups
-		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.DRIVE));
+		SharedSpaceNode drive = service.create(authUser, authUser, new SharedSpaceNode("My Drive", NodeType.WORK_SPACE));
 		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("first-nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
 		SharedSpaceNode nested2 = service.create(authUser, authUser, new SharedSpaceNode("second-nested-wg", drive.getUuid(), NodeType.WORK_GROUP));
 		Assertions.assertNotNull(nested1);
