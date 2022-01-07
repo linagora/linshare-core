@@ -37,6 +37,7 @@ package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -102,7 +103,8 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("withRole") @DefaultValue("false") boolean withRole,
 			@Parameter(description = "The parent uuid.", required = false)
 				@QueryParam("parent") String parent) throws BusinessException {
-		return nodeFacade.findAllMyNodes(null, withRole, parent);
+		List<SharedSpaceNodeNested> all = nodeFacade.findAllMyNodes(null, withRole, parent);
+		return all.stream().map(ssr -> applySupportOfDriveForOutput(ssr)) .collect(Collectors.toUnmodifiableList());
 	}
 
 	@Path("/{uuid}")
@@ -122,7 +124,8 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "IF true, the last updater of this resource will be returned as long as metadata. See lastAuditEntry property.", required = false)
 				@QueryParam("lastUpdater") @DefaultValue("false") boolean lastUpdater)
 			throws BusinessException {
-		return nodeFacade.find(null, uuid, withRole, lastUpdater);
+		SharedSpaceNode node = nodeFacade.find(null, uuid, withRole, lastUpdater);
+		return applySupportOfDriveForOutput(node);
 	}
 
 	@Path("/")
@@ -137,17 +140,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	public SharedSpaceNode create(
 			@Parameter(description = "shared space node to create", required = true) SharedSpaceNode node)
 			throws BusinessException {
-		/**
-		 * Workaround to support DRIVE in linshare 5.0
-		 */
-		if (node != null) {
-			if (NodeType.DRIVE.equals(node.getNodeType())) {
-				node.setNodeType(NodeType.WORK_SPACE);
-			}
-		}
-		return nodeFacade.create(null, node);
+		applySupportOfDriveForInput(node);
+		node = nodeFacade.create(null, node);
+		return applySupportOfDriveForOutput(node);
 	}
-	
+
 	@Path("/{uuid : .*}")
 	@DELETE
 	@Operation(summary = "Delete a shared space node.", responses = {
@@ -162,7 +159,9 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "shared space node's uuid.", required = false)
 				@PathParam(value = "uuid") String uuid) 
 			throws BusinessException {
-		return nodeFacade.delete(null, node, uuid);
+		applySupportOfDriveForInput(node);
+		node = nodeFacade.delete(null, node, uuid);
+		return applySupportOfDriveForOutput(node);
 	}
 	
 	@Path("/{uuid : .*}")
@@ -179,7 +178,9 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "Ths shared space node uuid to update.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return nodeFacade.update(null, node, uuid);
+		applySupportOfDriveForInput(node);
+		node = nodeFacade.update(null, node, uuid);
+		return applySupportOfDriveForOutput(node);
 	}
 	
 	@Path("/{uuid}")
@@ -192,10 +193,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	})
 	@Override
 	public SharedSpaceNode update(
-			@Parameter(description = "The Patch that contains the feilds that'll be updated in the node")PatchDto patchNode,
+			@Parameter(description = "The Patch that contains the feilds that'll be updated in the node") PatchDto patchNode,
 			@Parameter(description = "The uuid of the node that'll be updated.")
 				@PathParam("uuid")String uuid) throws BusinessException {
-		return nodeFacade.updatePartial(null, patchNode, uuid);
+		SharedSpaceNode node = nodeFacade.updatePartial(null, patchNode, uuid);
+		return applySupportOfDriveForOutput(node);
 	}
 
 	@Path("/{uuid}/members")
@@ -213,7 +215,8 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "It allows to filter the list of SSM by an account uuid")
 				@QueryParam("accountUuid")String accountUuid)
 			throws BusinessException {
-		return nodeFacade.members(null, uuid, accountUuid);
+		List<SharedSpaceMember> all = nodeFacade.members(null, uuid, accountUuid);
+		return all.stream().map(member -> applySupportOfDriveForOutput(member)) .collect(Collectors.toUnmodifiableList());
 	}
 
 	@Path("/{uuid}/members/{memberUuid}")
@@ -231,7 +234,8 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "The uuid of a member within a node")
 				@PathParam("memberUuid")String memberUuid)
 			throws BusinessException {
-		return memberFacade.findByNodeAndMemberUuid(null, uuid, memberUuid);
+		SharedSpaceMember member = memberFacade.findByNodeAndMemberUuid(null, uuid, memberUuid);
+		return applySupportOfDriveForOutput(member);
 	}
 
 	@Path("/{uuid}/members")
@@ -246,15 +250,9 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	public SharedSpaceMember addMember(
 			@Parameter(description = "The shared space member to add")SharedSpaceMember member)
 					throws BusinessException {
-		/**
-		 * Workaround to support DRIVE in linshare 5.0
-		 */
-		if (member != null) {
-			if (NodeType.DRIVE.equals(member.getType())) {
-				member.setType(NodeType.WORK_SPACE);
-			}
-		}
-		return memberFacade.create(null, member);
+		applySupportOfDriveForInput(member);
+		member = memberFacade.create(null, member);
+		return applySupportOfDriveForOutput(member);
 	}
 
 	@Path("{uuid}/members/{memberUuid : .*}")
@@ -267,11 +265,13 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	})
 	@Override
 	public SharedSpaceMember deleteMember(
-			@Parameter(description = "The shared space member to delete.")SharedSpaceMember member,
+			@Parameter(description = "The shared space member to delete.") SharedSpaceMember member,
 			@Parameter(description = "The shared space member uuid")
 				@PathParam(value="memberUuid")String memberUuid)
 			throws BusinessException {
-		return memberFacade.delete(null, member, memberUuid);
+		applySupportOfDriveForInput(member);
+		member = memberFacade.delete(null, member, memberUuid);
+		return applySupportOfDriveForOutput(member);
 	}
 
 	@Path("{uuid}/members/{memberUuid : .*}")
@@ -292,7 +292,9 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "Propagate parameter is true by default, the role will be updated in the current node and propagated on nested workgroups which are not updated manually, else if it is false the role will be updated just in current node")
 				@QueryParam("propagate") @DefaultValue("true") Boolean propagate)
 			throws BusinessException {
-		return memberFacade.update(null, member, memberUuid, force, propagate);
+		applySupportOfDriveForInput(member);
+		member = memberFacade.update(null, member, memberUuid, force, propagate);
+		return applySupportOfDriveForOutput(member);
 	}
 
 	@Path("/{uuid}/audit")
@@ -316,5 +318,51 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "Choose the specific node which you like to list the audits ", required = false)
 				@QueryParam("resourceUuid") String resourceUuid) {
 		return nodeFacade.findAllSharedSpaceAudits(sharedSpaceUuid, actions, types, beginDate, endDate, resourceUuid);
+	}
+
+	/**
+	 * Workarounds to support DRIVE in linshare 5.0
+	 */
+	private void applySupportOfDriveForInput(SharedSpaceMember member) {
+		if (member != null) {
+			if (NodeType.DRIVE.equals(member.getType())) {
+				member.setType(NodeType.WORK_SPACE);
+			}
+		}
+	}
+
+	private SharedSpaceMember applySupportOfDriveForOutput(SharedSpaceMember member) {
+		if (member != null) {
+			if (NodeType.WORK_SPACE.equals(member.getType())) {
+				member.setType(NodeType.DRIVE);
+			}
+		}
+		return member;
+	}
+
+	private void applySupportOfDriveForInput(SharedSpaceNode node) {
+		if (node != null) {
+			if (NodeType.DRIVE.equals(node.getNodeType())) {
+				node.setNodeType(NodeType.WORK_SPACE);
+			}
+		}
+	}
+
+	private SharedSpaceNodeNested applySupportOfDriveForOutput(SharedSpaceNodeNested node) {
+		if (node != null) {
+			if (NodeType.WORK_SPACE.equals(node.getNodeType())) {
+				node.setNodeType(NodeType.DRIVE);
+			}
+		}
+		return node;
+	}
+
+	private SharedSpaceNode applySupportOfDriveForOutput(SharedSpaceNode node) {
+		if (node != null) {
+			if (NodeType.WORK_SPACE.equals(node.getNodeType())) {
+				node.setNodeType(NodeType.DRIVE);
+			}
+		}
+		return node;
 	}
 }

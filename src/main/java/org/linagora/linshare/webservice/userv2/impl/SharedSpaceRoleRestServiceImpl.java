@@ -36,6 +36,7 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -86,7 +87,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@Parameter(description = "shared space role uuid.", required = true) 
 				@PathParam(value = "uuid") String uuid)
 						throws BusinessException {
-		return sharedSpaceRoleFacade.find(null, uuid);
+		return supportDrive(sharedSpaceRoleFacade.find(null, uuid));
 	}
 
 	@Path("/role/{name}")
@@ -102,7 +103,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@Parameter(description = "shared space role name.", required = true)
 				@PathParam(value = "name") String name)
 						throws BusinessException {
-		return sharedSpaceRoleFacade.findByName(null, name);
+		return supportDrive(sharedSpaceRoleFacade.findByName(null, name));
 	}
 
 	@Path("/")
@@ -117,7 +118,18 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	public List<SharedSpaceRole> findAll(
 			@Parameter(description = "Filter the roles by node type.", required = false)
 				@QueryParam("nodeType") @DefaultValue("WORK_GROUP") NodeType nodeType) throws BusinessException {
-		return sharedSpaceRoleFacade.findAll(null, nodeType);
+		if (NodeType.DRIVE.equals(nodeType)) {
+			nodeType = NodeType.WORK_SPACE;
+		}
+		List<SharedSpaceRole> all = sharedSpaceRoleFacade.findAll(null, nodeType);
+		return all.stream().map(ssr -> supportDrive(ssr)) .collect(Collectors.toUnmodifiableList());
+	}
+
+	private SharedSpaceRole supportDrive(SharedSpaceRole ssr) {
+		if (NodeType.WORK_SPACE.equals(ssr.getType())) {
+			ssr.setType(NodeType.DRIVE);
+		}
+		return ssr;
 	}
 
 	@Path("/{uuid}/permissions")
