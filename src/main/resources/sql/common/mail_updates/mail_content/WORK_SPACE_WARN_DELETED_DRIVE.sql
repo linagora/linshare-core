@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE html>
+UPDATE mail_content SET subject='[( #{subject(${workSpaceName})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
 <body>
@@ -12,7 +12,7 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
                 <!--/* End of Greetings  */-->
                 <!--/* Main email  message content*/-->
                   <p>
-                     <span data-th-utext="#{mainMsg(${driveName}, ${actor.firstName},${actor.lastName})}">
+                     <span data-th-utext="#{mainMsg(${workSpaceName}, ${actor.firstName},${actor.lastName})}">
                      </span>
                   </p>
                 </p> <!--/* End of Main email  message content*/-->
@@ -33,14 +33,14 @@ UPDATE mail_content SET subject='[( #{subject(${driveName})})]',body='<!DOCTYPE 
     </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='subject = Le Drive {0} a été supprimé.
-mainMsg = Le Drive {0} a été supprimé par <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+</html>',messages_french='subject = Le Workspace {0} a été supprimé.
+mainMsg = Le Workspace {0} a été supprimé par <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 nestedWorkGroupsList=Vous avez automatiquement été supprimé des groupes de travail suivants :
-displayNestedNodeName:{0}',messages_english='subject = The Drive {0} has been deleted.
-mainMsg = The Drive {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+displayNestedNodeName:{0}',messages_english='subject = The Workspace {0} has been deleted.
+mainMsg = The Workspace {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 nestedWorkGroupsList=You have been automatically removed from the following workgroups:
 workGroupNameTitle = Workgroup Name
-displayNestedNodeName:{0}',messages_russian='subject = The Drive {0} has been deleted.
-mainMsg = The Drive {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+displayNestedNodeName:{0}',messages_russian='subject = The Workspace {0} has been deleted.
+mainMsg = The Workspace {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 nestedWorkGroupsList=You have been automatically removed from the following workgroups:
 displayNestedNodeName:{0}' WHERE id=40;

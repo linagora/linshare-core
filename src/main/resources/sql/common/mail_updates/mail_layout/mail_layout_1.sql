@@ -15,6 +15,9 @@ workGroupRightContributorTitle = Contributeur
 driveRoleAdminTitle = Drive: Administrateur
 driveRoleWriteTitle = Drive: Auteur
 driveRoleReadTitle = Drive: Lecteur
+workSpaceRoleAdminTitle = WorkSpace: Administrateur
+workSpaceRoleWriteTitle = WorkSpace: Auteur
+workSpaceRoleReadTitle = WorkSpace: Lecteur
 welcomeMessage = Bonjour {0},',messages_english='common.availableUntil = Expiry date
 common.byYou= | By you
 common.download= Download
@@ -31,6 +34,9 @@ workGroupRightReadTitle = Reader
 driveRoleAdminTitle = Drive: Administrator
 driveRoleWriteTitle = Drive: Writer
 driveRoleReadTitle = Drive: Reader
+WorkSpaceRoleAdminTitle = WorkSpace: Administrator
+WorkSpaceRoleWriteTitle = WorkSpace: Writer
+WorkSpaceRoleReadTitle = WorkSpace: Reader
 welcomeMessage = Hello {0},',messages_russian='common.availableUntil = Срок действия
 common.byYou= | Вами
 common.download= Загрузить
@@ -47,6 +53,9 @@ workGroupRightReadTitle = Читатель
 driveRoleAdminTitle = Drive: Administrator
 driveRoleWriteTitle = Drive: Writer
 driveRoleReadTitle = Drive: Reader
+WorkSpaceRoleAdminTitle = WorkSpace: Administrator
+WorkSpaceRoleWriteTitle = WorkSpace: Writer
+WorkSpaceRoleReadTitle = WorkSpace: Reader
 welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>

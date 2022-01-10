@@ -26,13 +26,13 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='subject = Les accès au drive {0} et à ses workgroups vous ont été retirés.
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a retiré du drive <b>{2}</b>
-simpleMsg = Les accès au drive <b>{0}</b> vous ont été retirés.
-workGroupNameTitle = Nom du Drive',messages_english='subject = Your access to the drive {0}  and its workgroups was withdrawn
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the drive  <b>{2}</b>
-simpleMsg =  Your access to the drive <b>{0}</b> was withdrawn.     
-workGroupNameTitle = Drive Name',messages_russian='subject = Your access to the drive {0}  and its workgroups was withdrawn
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the drive  <b>{2}</b>
-simpleMsg =  Your access to the drive <b>{0}</b> was withdrawn.
-workGroupNameTitle = Drive Name' WHERE id=36;
+</html>',messages_french='subject = Les accès au workspace {0} et à ses workgroups vous ont été retirés.
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a retiré du workspace <b>{2}</b>
+simpleMsg = Les accès au workspace <b>{0}</b> vous ont été retirés.
+workGroupNameTitle = Nom du workspace',messages_english='subject = Your access to the workspace {0}  and its workgroups was withdrawn
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the workspace  <b>{2}</b>
+simpleMsg =  Your access to the workspace <b>{0}</b> was withdrawn.
+workGroupNameTitle = Workspace Name',messages_russian='subject = Your access to the workspace {0}  and its workgroups was withdrawn
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the workspace  <b>{2}</b>
+simpleMsg =  Your access to the workspace <b>{0}</b> was withdrawn.
+workGroupNameTitle = Workspace Name' WHERE id=36;
