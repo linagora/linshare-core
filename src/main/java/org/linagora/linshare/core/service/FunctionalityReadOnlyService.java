@@ -122,8 +122,8 @@ public interface FunctionalityReadOnlyService {
 
 	BooleanValueFunctionality getJwtLongTimeFunctionality(String domainuuid);
 
-	//Drive Functionnality
-	Functionality getDriveCreationRight(AbstractDomain domain);
+	//WorkSpace Functionnality
+	Functionality getWorkSpaceCreationRight(AbstractDomain domain);
 
 	Functionality getSharedSpaceFunctionality(AbstractDomain domain);
 

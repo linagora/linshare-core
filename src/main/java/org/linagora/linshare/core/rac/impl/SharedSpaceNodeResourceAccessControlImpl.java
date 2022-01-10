@@ -124,7 +124,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			creation = functionalityService.getWorkGroupCreationRight(actor.getDomain());
 		} else if (NodeType.WORK_SPACE.equals(entry.getNodeType())
 				|| (NodeType.WORK_GROUP.equals(entry.getNodeType()))) {
-			creation = functionalityService.getDriveCreationRight(actor.getDomain());
+			creation = functionalityService.getWorkSpaceCreationRight(actor.getDomain());
 		} else {
 			String message = "Unsupported NodeType exception.";
 			logger.error(message);

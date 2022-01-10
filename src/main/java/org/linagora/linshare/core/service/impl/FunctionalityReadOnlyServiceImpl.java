@@ -414,8 +414,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getDriveCreationRight(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.DRIVE__CREATION_RIGHT);
+	public Functionality getWorkSpaceCreationRight(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.WORK_SPACE__CREATION_RIGHT);
 	}
 
 

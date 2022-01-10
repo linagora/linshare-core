@@ -961,6 +961,10 @@ expiryDateParamDeleted = Expiration parameter canceled, last value' WHERE id=23;
 ALTER TABLE upgrade_task ADD COLUMN hidden bool DEFAULT 'false' NOT NULL;
 UPDATE upgrade_task SET hidden = true WHERE task_group like 'UPGRADE_2%';
 
+
+-- Update DRIVE functionality to WORK_SPACE
+UPDATE functionality SET identifier = 'WORK_SPACE__CREATION_RIGHT' WHERE id in (SELECT id FROM functionality WHERE identifier = 'DRIVE__CREATION_RIGHT');
+
 ---- End of your queries
 
 -- Upgrade LinShare version
