@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
@@ -130,7 +131,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@Autowired
 	private SharedSpaceRoleService ssRoleService;
 	
-	private Account authUser, jane;
+	private User authUser, jane;
 
 	private SharedSpaceRole adminDriveRole, readerDriveRole, reader, admin;
 
@@ -162,6 +163,8 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		SharedSpaceNode node = new SharedSpaceNode("My Drive", NodeType.DRIVE);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assertions.assertNotNull(expectedNode, "Drive not created");
+		assertThat(expectedNode.getAuthor().getFirstName()).isEqualTo(authUser.getFirstName());
+		assertThat(expectedNode.getAuthor().getLastName()).isEqualTo(authUser.getLastName());
 		service.delete(authUser, authUser, expectedNode);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
