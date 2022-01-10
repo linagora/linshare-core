@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -62,7 +63,11 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 	public FunctionalityDto find(String identifier, Integer version) throws BusinessException {
 		User authUser = checkAuthentication();
 		Functionality functionality = functionalityService.find(authUser, identifier);
-		return functionality.toUserDto(version);
+		FunctionalityDto dto = functionality.toUserDto(version);
+		if(dto.getIdentifier().equals(FunctionalityNames.WORK_SPACE__CREATION_RIGHT.toString())) {
+			dto.setIdentifier(FunctionalityNames.DRIVE__CREATION_RIGHT.toString());
+		}
+		return dto;
 	}
 
 	@Override
@@ -70,7 +75,11 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 		User authUser = checkAuthentication();
 		List<FunctionalityDto> res = Lists.newArrayList();
 		for (Functionality functionality : functionalityService.findAll(authUser)) {
-			res.add(functionality.toUserDto(version));
+			FunctionalityDto dto = functionality.toUserDto(version);
+			if(dto.getIdentifier().equals(FunctionalityNames.WORK_SPACE__CREATION_RIGHT.toString())) {
+				dto.setIdentifier(FunctionalityNames.DRIVE__CREATION_RIGHT.toString());
+			}
+			res.add(dto);
 		}
 		return res;
 	}
