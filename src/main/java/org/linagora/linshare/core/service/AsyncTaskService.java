@@ -45,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AsyncTaskService {
 
-	AsyncTask find(Account actor, Account owner, String uuid);
+	AsyncTask find(Account actor, Account owner, String uuid, boolean retry);
 
 	void delete(Account actor, Account owner, String uuid)
 			throws BusinessException;

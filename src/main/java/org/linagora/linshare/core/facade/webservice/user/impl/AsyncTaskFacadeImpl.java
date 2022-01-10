@@ -104,7 +104,7 @@ public class AsyncTaskFacadeImpl extends UserGenericFacadeImp implements
 	public AsyncTaskDto find(String uuid) {
 		User authUser = checkAuthentication();
 		Validate.notEmpty(uuid, "Missing uuid");
-		AsyncTask task = service.find(authUser, authUser, uuid);
+		AsyncTask task = service.find(authUser, authUser, uuid, false);
 		return new AsyncTaskDto(task);
 	}
 

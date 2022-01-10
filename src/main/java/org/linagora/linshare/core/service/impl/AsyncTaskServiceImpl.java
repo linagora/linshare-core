@@ -64,11 +64,20 @@ public class AsyncTaskServiceImpl extends
 	}
 
 	@Override
-	public AsyncTask find(Account actor, Account owner, String uuid) {
+	public AsyncTask find(Account actor, Account owner, String uuid, boolean retry) {
 		preChecks(actor, owner);
 		AsyncTask task = businessService.find(uuid);
+		if (task == null && retry) {
+			try {
+				logger.warn("Async task not found : " + uuid);
+				Thread.sleep(500);
+				task = businessService.find(uuid);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		if (task == null) {
-			logger.error("Async task found : " + uuid);
+			logger.error("Async task not found : " + uuid);
 			throw new BusinessException(
 					BusinessErrorCode.ASYNC_TASK_NOT_FOUND,
 					"Async task not found : " + uuid);
@@ -81,7 +90,7 @@ public class AsyncTaskServiceImpl extends
 	public void delete(Account actor, Account owner, String uuid)
 			throws BusinessException {
 		preChecks(actor, owner);
-		AsyncTask task = find(actor, owner, uuid);
+		AsyncTask task = find(actor, owner, uuid, false);
 		checkDeletePermission(actor, owner, AsyncTask.class, BusinessErrorCode.ASYNC_TASK_FORBIDDEN, task);
 		businessService.delete(task);
 	}
@@ -89,7 +98,7 @@ public class AsyncTaskServiceImpl extends
 	@Override
 	public AsyncTask processing(Account actor, Account owner,
 			String asyncTaskUuid) {
-		AsyncTask task = find(actor, owner, asyncTaskUuid);
+		AsyncTask task = find(actor, owner, asyncTaskUuid, true);
 		checkUpdatePermission(actor, owner, AsyncTask.class, BusinessErrorCode.ASYNC_TASK_FORBIDDEN, task);
 		task.setStatus(AsyncTaskStatus.PROCESSING);
 		task.setStartProcessingDate(new Date());
@@ -100,7 +109,7 @@ public class AsyncTaskServiceImpl extends
 	@Override
 	public AsyncTask success(Account actor, Account owner,
 			String asyncTaskUuid, String resourceUuid) {
-		AsyncTask task = find(actor, owner, asyncTaskUuid);
+		AsyncTask task = find(actor, owner, asyncTaskUuid, false);
 		checkUpdatePermission(actor, owner, AsyncTask.class, BusinessErrorCode.ASYNC_TASK_FORBIDDEN, task);
 		task.setStatus(AsyncTaskStatus.SUCCESS);
 		task.setResourceUuid(resourceUuid);
@@ -111,7 +120,7 @@ public class AsyncTaskServiceImpl extends
 
 	@Override
 	public AsyncTask fail(Account actor, Account owner, String asyncTaskUuid, String errorMsg) {
-		AsyncTask task = find(actor, owner, asyncTaskUuid);
+		AsyncTask task = find(actor, owner, asyncTaskUuid, false);
 		checkUpdatePermission(actor, owner, AsyncTask.class, BusinessErrorCode.ASYNC_TASK_FORBIDDEN, task);
 		task.setStatus(AsyncTaskStatus.FAILED);
 		task.setErrorCode(-1);
@@ -124,7 +133,7 @@ public class AsyncTaskServiceImpl extends
 	@Override
 	public AsyncTask fail(Account actor, Account owner, String asyncTaskUuid,
 			Integer errorCode, String errorName, String errorMsg) {
-		AsyncTask task = find(actor, owner, asyncTaskUuid);
+		AsyncTask task = find(actor, owner, asyncTaskUuid, false);
 		checkUpdatePermission(actor, owner, AsyncTask.class, BusinessErrorCode.ASYNC_TASK_FORBIDDEN, task);
 		task.setStatus(AsyncTaskStatus.FAILED);
 		task.setErrorCode(errorCode);

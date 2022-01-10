@@ -63,7 +63,7 @@ public class AsyncTaskFacadeImpl extends DelegationGenericFacadeImpl implements 
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		User actor = getActor(actorUuid);
 		Validate.notEmpty(uuid, "Missing uuid");
-		AsyncTask task = service.find(authUser, actor, uuid);
+		AsyncTask task = service.find(authUser, actor, uuid, false);
 		return new AsyncTaskDto(task);
 	}
 
