@@ -1,6 +1,9 @@
 {
 	"resourcePackages": [
-		"org.linagora.linshare.webservice.userv4"
+		"org.linagora.linshare.webservice.userv2",
+		"org.linagora.linshare.webservice.userv2.impl",
+		"org.linagora.linshare.webservice.userv4",
+		"org.linagora.linshare.webservice.userv4.impl"
 	],
 	"prettyPrint": true,
 	"cacheTTL": 0,

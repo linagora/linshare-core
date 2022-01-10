@@ -86,6 +86,7 @@
 			<ref bean="adminv5WelcomeMessageRestService"/>
 			<ref bean="adminv5DomainQuotaRestService"/>
 			<ref bean="adminv5ContainerQuotaRestService"/>
+			<ref bean="adminSystemConfigurationRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

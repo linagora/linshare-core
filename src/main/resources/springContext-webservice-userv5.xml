@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://cxf.apache.org/transports/http/configuration
+	http://cxf.apache.org/schemas/configuration/http-conf.xsd
+	http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/jaxrs
+	http://cxf.apache.org/schemas/jaxrs.xsd">
+	<description>User v5 api exposed on /webservice/rest/user/v5 endpoint.</description>
+
+	<!-- cxf -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<!-- REST  -->
+	<bean id="userv5AuthenticationRestService" class="org.linagora.linshare.webservice.userv5.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="wsUserFacade" />
+		<constructor-arg ref="wsGuestFacade" />
+		<constructor-arg ref="wsSecondFactorAuthenticationFacade" />
+	</bean>
+	<bean id="userv5FunctionalityRestService" class="org.linagora.linshare.webservice.userv5.impl.FuntionalityRestServiceImpl">
+		<constructor-arg ref="wsFunctionalityFacade" />
+	</bean>
+	<bean id="userv5SharedSpaceRestService"
+		class="org.linagora.linshare.webservice.userv5.impl.SharedSpaceRestServiceImpl">
+		<constructor-arg ref="sharedSpaceNodeFacade" />
+		<constructor-arg ref="sharedSpaceMemberFacade" />
+	</bean>
+	<bean id="userv5SharedSpaceRoleRestService"
+		class="org.linagora.linshare.webservice.userv5.impl.SharedSpaceRoleRestServiceImpl">
+		<constructor-arg ref="sharedSpaceRoleFacade" />
+	</bean>
+	<jaxrs:server id="userv5RestContainer" address="/rest/user/v5">
+		<jaxrs:serviceBeans>
+			<ref bean="userv2EnumRestService" />
+			<ref bean="userv5AuthenticationRestService" />
+			<ref bean="userv2DocumentRestService" />
+			<ref bean="userv2MailingListRestService" />
+			<ref bean="userv2GuestRestService" />
+			<ref bean="userv2ShareRestService" />
+			<ref bean="userv2RestService" />
+			<ref bean="userv2ReceivedShareRestService" />
+			<ref bean="userv2LogRestService" />
+			<ref bean="userv5FunctionalityRestService" />
+			<ref bean="userv2FlowDocumentUploaderRestService" />
+			<ref bean="userv2ShareEntryGroupRestService" />
+			<ref bean="userv2ContactListRestService" />
+			<ref bean="userv2MimeTypeRestService" />
+			<ref bean="userv2AutoCompleteRestService" />
+			<ref bean="userv2UploadRequestRestService" />
+			<ref bean="userv2AuditLogEntryUserRestService" />
+			<ref bean="userv2StatisticRestService" />
+			<ref bean="userv2AccountQuotaRestService" />
+			<ref bean="userv2WelcomeMessagesRestService" />
+			<ref bean="userv2UploadRequestGroupRestService" />
+			<ref bean="userv2UploadRequestEntryRestService" />
+			<ref bean="userv2SafeDetailRestService" />
+			<ref bean="userv2JwtPermanentTokenRestService" />
+			<ref bean="userv5SharedSpaceRestService" />
+			<ref bean="userv5SharedSpaceRoleRestService" />
+			<ref bean="userv2SharedSpaceMemberRestService" />
+			<ref bean="userv2SharedSpaceNodeRestService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+			<entry key="xml" value="application/xml" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<!--  ExceptionMappers. -->
+			<ref bean="businessExceptionMapper" />
+			<ref bean="genericExceptionMapper" />
+			<ref bean="webApplicationExceptionMapper" />
+			<ref bean="illegalArgumentExceptionMapper" />
+			<ref bean="jaxrsNoCacheFilter" />
+			<ref bean="jsonParseExceptionMapper" />
+			<ref bean="unrecognizedPropertyExceptionMapper" />
+			<ref bean="dataIntegrityViolationExceptionMapper" />
+			<ref bean="mismatchedInputExceptionMapper" />
+			<ref bean="nullPointerExceptionMapper" />
+			<!-- Json provider for serialisation -->
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:features>
+			<bean class="org.apache.cxf.jaxrs.openapi.OpenApiFeature">
+				<property name="useContextBasedConfig" value="true"/>
+				<property name="scan" value="false"/>
+				<property name="scanKnownConfigLocations" value="false"/>
+				<property name="configLocation" value="openapi-configuration-userv5.json"/>
+				<property name="supportSwaggerUi" value="true"/>
+			</bean>
+<!-- 			<cxf:logging /> -->
+		</jaxrs:features>
+		<jaxrs:inInterceptors>
+			<!-- For debug only : print input message -->
+<!-- 			<ref bean="logInbound" /> -->
+			<ref bean="contentTypeInterceptor" />
+			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
+			<ref bean="timingInInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<!-- For debug only : print output  message -->
+<!--             	<ref bean="logOutbound" /> -->
+			<!-- This interceptor is designed compute request execution time.-->
+			<ref bean="timingOutInterceptor" />
+		</jaxrs:outInterceptors>
+		<jaxrs:inFaultInterceptors>
+		</jaxrs:inFaultInterceptors>
+		<jaxrs:outFaultInterceptors>
+		</jaxrs:outFaultInterceptors>
+	</jaxrs:server>
+</beans>

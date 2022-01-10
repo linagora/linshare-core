@@ -2,19 +2,20 @@
 	"resourcePackages": [
 		"org.linagora.linshare.webservice.userv2",
 		"org.linagora.linshare.webservice.userv2.impl",
-		"org.linagora.linshare.webservice.userv2.impl.only"
+		"org.linagora.linshare.webservice.userv5",
+		"org.linagora.linshare.webservice.userv5.impl"
 	],
 	"prettyPrint": true,
 	"cacheTTL": 0,
 	"openAPI": {
 		"info": {
 			"version": "${project.version}",
-			"title": "User v2 API",
-			"description": "User v2 API"
+			"title": "User v5 API",
+			"description": "User v5 API"
 		},
 		"servers": [
 			{
-				"url": "/linshare/webservice/rest/user/v2/",
+				"url": "/linshare/webservice/rest/user/v5/",
 				"description": "The USER API server"
 			}
 		]
