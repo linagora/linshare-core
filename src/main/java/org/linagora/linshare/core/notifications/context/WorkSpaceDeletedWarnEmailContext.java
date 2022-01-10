@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
-public class DriveDeletedWarnEmailContext extends EmailContext {
+public class WorkSpaceDeletedWarnEmailContext extends EmailContext {
 
 	private Account actor;
 
@@ -51,8 +51,8 @@ public class DriveDeletedWarnEmailContext extends EmailContext {
 
 	private List<SharedSpaceNodeNested> nestedNodes;
 
-	public DriveDeletedWarnEmailContext(Account actor, AbstractDomain domain,
-			SharedSpaceMember sharedSpaceMember, List<SharedSpaceNodeNested> nestedNodes) {
+	public WorkSpaceDeletedWarnEmailContext(Account actor, AbstractDomain domain,
+	                                        SharedSpaceMember sharedSpaceMember, List<SharedSpaceNodeNested> nestedNodes) {
 		super(domain, false);
 		this.actor = actor;
 		this.sharedSpaceMember = sharedSpaceMember;
@@ -61,12 +61,12 @@ public class DriveDeletedWarnEmailContext extends EmailContext {
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.DRIVE_WARN_DELETED_DRIVE;
+		return MailContentType.WORK_SPACE_WARN_DELETED;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.DRIVE_WARN_DELETED_DRIVE;
+		return MailActivationType.WORK_SPACE_WARN_DELETED;
 	}
 
 	public List<SharedSpaceNodeNested> getNestedNodes() {

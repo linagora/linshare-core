@@ -41,22 +41,22 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
-public class DriveWarnDeletedMemberEmailContext extends WorkGroupWarnDeletedMemberEmailContext {
+public class WorkSpaceWarnDeletedMemberEmailContext extends WorkGroupWarnDeletedMemberEmailContext {
 
-	public DriveWarnDeletedMemberEmailContext(SharedSpaceMember workgroupMember,
-			Account owner,
-			User userMember) {
+	public WorkSpaceWarnDeletedMemberEmailContext(SharedSpaceMember workgroupMember,
+	                                              Account owner,
+	                                              User userMember) {
 		super(workgroupMember, owner, userMember);
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.DRIVE_WARN_DELETED_MEMBER;
+		return MailContentType.WORK_SPACE_WARN_DELETED_MEMBER;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.DRIVE_WARN_DELETED_MEMBER;
+		return MailActivationType.WORK_SPACE_WARN_DELETED_MEMBER;
 	}
 
 }

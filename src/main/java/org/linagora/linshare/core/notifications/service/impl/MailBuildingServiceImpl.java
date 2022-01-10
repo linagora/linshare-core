@@ -55,10 +55,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.config.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
-import org.linagora.linshare.core.notifications.emails.impl.DriveDeletedtWarnEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.DriveWarnDeletedMemberEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.DriveWarnNewMemberEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.DriveWarnUpdatedMemberEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.WorkSpaceDeletedtWarnEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.WorkSpaceWarnDeletedMemberEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.WorkSpaceWarnNewMemberEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.WorkSpaceWarnUpdatedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.FileWarnOwnerBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountNewCreationEmailBuilder;
@@ -134,7 +134,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			boolean templatingSubjectPrefix,
 			String urlFragmentQueryParamFileUuid,
 			String urlTemplateForWorkgroup,
-			String urlTemplateForDrive,
+			String urlTemplateForWorkSpace,
 			String urlTemplateForUploadRequestEntries,
 			String urlTemplateForUploadRequestUploadedFile,
 			String urlTemplateForJwtToken
@@ -197,16 +197,16 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED, new JwtPermanentCreatedEmailBuilder());
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED, new JwtPermanentDeletedEmailBuilder());
 
-		emailBuilders.put(MailContentType.DRIVE_WARN_NEW_MEMBER, new DriveWarnNewMemberEmailBuilder());
-		emailBuilders.put(MailContentType.DRIVE_WARN_UPDATED_MEMBER, new DriveWarnUpdatedMemberEmailBuilder());
-		emailBuilders.put(MailContentType.DRIVE_WARN_DELETED_MEMBER, new DriveWarnDeletedMemberEmailBuilder());
-		emailBuilders.put(MailContentType.DRIVE_WARN_DELETED_DRIVE, new DriveDeletedtWarnEmailBuilder());
+		emailBuilders.put(MailContentType.WORK_SPACE_WARN_NEW_MEMBER, new WorkSpaceWarnNewMemberEmailBuilder());
+		emailBuilders.put(MailContentType.WORK_SPACE_WARN_UPDATED_MEMBER, new WorkSpaceWarnUpdatedMemberEmailBuilder());
+		emailBuilders.put(MailContentType.WORK_SPACE_WARN_DELETED_MEMBER, new WorkSpaceWarnDeletedMemberEmailBuilder());
+		emailBuilders.put(MailContentType.WORK_SPACE_WARN_DELETED, new WorkSpaceDeletedtWarnEmailBuilder());
 
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0, new GuestAccountResetPasswordFor4_0_EmailBuilder(urlTemplateForGuestReset));
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
 				mailActivationBusinessService, fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments,
-				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForDrive, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile, urlTemplateForJwtToken);
+				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForWorkSpace, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile, urlTemplateForJwtToken);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -225,7 +225,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		String urlTemplateForAnonymousUrl,
 		String paramFilesUuid,
 		String urlTemplateForWorkgroup,
-		String urlTemplateForDrive,
+		String urlTemplateForWorkSpace,
 		String urlTemplateForUploadRequestEntries,
 		String urlTemplateForUploadRequestUploadedFile,
 		String urlTemplateForJwtToken
@@ -243,7 +243,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setUrlTemplateForAnonymousUrl(urlTemplateForAnonymousUrl);
 			emailBuilder.setUrlFragmentQueryParamFileUuid(paramFilesUuid);
 			emailBuilder.setUrlTemplateForWorkgroup(urlTemplateForWorkgroup);
-			emailBuilder.setUrlTemplateForDrive(urlTemplateForDrive);
+			emailBuilder.setUrlTemplateForWorkSpace(urlTemplateForWorkSpace);
 			emailBuilder.setUrlTemplateForUploadRequestEntries(urlTemplateForUploadRequestEntries);
 			emailBuilder.setUrlTemplateForUploadRequestUploadedFile(urlTemplateForUploadRequestUploadedFile);
 			emailBuilder.setUrlTemplateForJwtToken(urlTemplateForJwtToken);

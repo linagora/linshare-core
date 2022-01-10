@@ -327,9 +327,9 @@ workGroupRightWirteTitle = Écriture
 workGroupRightContributeTitle = Contribution
 workGroupRightReadTitle = Lecture
 workGroupRightContributorTitle = Contributeur
-driveRoleAdminTitle = Drive: Administrateur
-driveRoleWriteTitle = Drive: Auteur
-driveRoleReadTitle = Drive: Lecteur
+workSpaceRoleAdminTitle = WorkSpace: Administrateur
+workSpaceRoleWriteTitle = WorkSpace: Auteur
+workSpaceRoleReadTitle = WorkSpace: Lecteur
 welcomeMessage = Bonjour {0},',messages_english='common.availableUntil = Expiry date
 common.byYou= | By you
 common.download= Download
@@ -343,9 +343,9 @@ workGroupRightAdminTitle = Administrator
 workGroupRightWirteTitle = Writer
 workGroupRightContributeTitle = Contributor
 workGroupRightReadTitle = Reader
-driveRoleAdminTitle = Drive: Administrator
-driveRoleWriteTitle = Drive: Writer
-driveRoleReadTitle = Drive: Reader
+workSpaceRoleAdminTitle = WorkSpace: Administrator
+workSpaceRoleWriteTitle = WorkSpace: Writer
+workSpaceRoleReadTitle = WorkSpace: Reader
 welcomeMessage = Hello {0},',messages_russian='common.availableUntil = Срок действия
 common.byYou= | Вами
 common.download= Загрузить
@@ -359,9 +359,9 @@ workGroupRightAdminTitle = Администратор
 workGroupRightWirteTitle = Автор
 workGroupRightContributeTitle = Редактор
 workGroupRightReadTitle = Читатель
-driveRoleAdminTitle = Drive: Administrator
-driveRoleWriteTitle = Drive: Writer
-driveRoleReadTitle = Drive: Reader
+workSpaceRoleAdminTitle = WorkSpace: Administrator
+workSpaceRoleWriteTitle = WorkSpace: Writer
+workSpaceRoleReadTitle = WorkSpace: Reader
 welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
@@ -964,6 +964,12 @@ UPDATE upgrade_task SET hidden = true WHERE task_group like 'UPGRADE_2%';
 
 -- Update DRIVE functionality to WORK_SPACE
 UPDATE functionality SET identifier = 'WORK_SPACE__CREATION_RIGHT' WHERE id in (SELECT id FROM functionality WHERE identifier = 'DRIVE__CREATION_RIGHT');
+
+-- Drive renamed to WorkSpace in mail notifications
+UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_NEW_MEMBER' WHERE identifier = 'DRIVE_WARN_NEW_MEMBER';
+UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_UPDATED_MEMBER' WHERE identifier = 'DRIVE_WARN_UPDATED_MEMBER';
+UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_DELETED_MEMBER' WHERE identifier = 'DRIVE_WARN_DELETED_MEMBER';
+UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_DELETED' WHERE identifier = 'DRIVE_WARN_DELETED_DRIVE';
 
 ---- End of your queries
 

@@ -44,24 +44,24 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 
-public class DriveWarnUpdatedMemberEmailContext extends WorkGroupWarnUpdatedMemberEmailContext {
+public class WorkSpaceWarnUpdatedMemberEmailContext extends WorkGroupWarnUpdatedMemberEmailContext {
 
 	protected List<SharedSpaceMember> nestedMembers;
 
-	public DriveWarnUpdatedMemberEmailContext(SharedSpaceMemberDrive member, User userMember, Account actor,
-			List<SharedSpaceMember> nestedMembers) {
+	public WorkSpaceWarnUpdatedMemberEmailContext(SharedSpaceMemberDrive member, User userMember, Account actor,
+	                                              List<SharedSpaceMember> nestedMembers) {
 		super(member, userMember, actor);
 		this.nestedMembers = nestedMembers;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.DRIVE_WARN_UPDATED_MEMBER;
+		return MailContentType.WORK_SPACE_WARN_UPDATED_MEMBER;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.DRIVE_WARN_UPDATED_MEMBER;
+		return MailActivationType.WORK_SPACE_WARN_UPDATED_MEMBER;
 	}
 
 	public List<SharedSpaceMember> getNestedMembers() {

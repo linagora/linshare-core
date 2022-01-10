@@ -44,7 +44,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.DriveDeletedWarnEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkSpaceDeletedWarnEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
@@ -53,21 +53,21 @@ import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class DriveDeletedtWarnEmailBuilder extends EmailBuilder {
+public class WorkSpaceDeletedtWarnEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.DRIVE_WARN_DELETED_DRIVE;
+		return MailContentType.WORK_SPACE_WARN_DELETED;
 	}
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		DriveDeletedWarnEmailContext emailCtx = (DriveDeletedWarnEmailContext) context;
+		WorkSpaceDeletedWarnEmailContext emailCtx = (WorkSpaceDeletedWarnEmailContext) context;
 		Context ctx = new Context(emailCtx.getLocale());
 		MailContact actor = new MailContact(emailCtx.getActor());
 		AbstractDomain abstractDomain = emailCtx.getFromDomain();
 		String linshareURL = getLinShareUrl(abstractDomain);
-		ctx.setVariable("driveName", emailCtx.getSharedSpaceMember().getNode().getName());
+		ctx.setVariable("workSpaceName", emailCtx.getSharedSpaceMember().getNode().getName());
 		ctx.setVariable("actor", actor);
 		ctx.setVariable("member", emailCtx.getSharedSpaceMember());
 		ctx.setVariable("nestedNodes", emailCtx.getNestedNodes());
@@ -82,17 +82,17 @@ public class DriveDeletedtWarnEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		SharedSpaceMemberDrive driveMember = getNewFakeSharedSpaceMemberDrive("Drive_test");
+		SharedSpaceMemberDrive workSpaceMember = getNewFakeSharedSpaceMemberDrive("WorkSpace_test");
 		List<SharedSpaceNodeNested> nestedNodes = Lists.newArrayList();
 		nestedNodes.add(new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_1",
-				driveMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
+				workSpaceMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
 		nestedNodes.add(new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_2",
-				driveMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
+				workSpaceMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
 		nestedNodes.add(new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_3",
-				driveMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
-		ctx.setVariable("member", driveMember);
+				workSpaceMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));
+		ctx.setVariable("member", workSpaceMember);
 		ctx.setVariable("actor", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		ctx.setVariable("driveName", driveMember.getNode().getName());
+		ctx.setVariable("workSpaceName", workSpaceMember.getNode().getName());
 		ctx.setVariable("nestedNodes", nestedNodes);
 		res.add(ctx);
 		return res;

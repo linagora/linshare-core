@@ -47,7 +47,7 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.DriveWarnUpdatedMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkSpaceWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
@@ -60,16 +60,16 @@ import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class DriveWarnUpdatedMemberEmailBuilder extends EmailBuilder {
+public class WorkSpaceWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.DRIVE_WARN_UPDATED_MEMBER;
+		return MailContentType.WORK_SPACE_WARN_UPDATED_MEMBER;
 	}
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		DriveWarnUpdatedMemberEmailContext emailCtx = (DriveWarnUpdatedMemberEmailContext) context;
+		WorkSpaceWarnUpdatedMemberEmailContext emailCtx = (WorkSpaceWarnUpdatedMemberEmailContext) context;
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("nestedMembers", emailCtx.getNestedMembers());
 		ctx.setVariable("nbrWorkgroupsUpdated", emailCtx.getNestedMembers().size());
@@ -83,15 +83,15 @@ public class DriveWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 		} else {
 			owner = new MailContact((User) emailCtx.getOwner());
 		}
-		SharedSpaceMember driveMember = emailCtx.getWorkGroupMember();
+		SharedSpaceMember workSpaceMember = emailCtx.getWorkGroupMember();
 		User member = emailCtx.getUserMember();
 		String linshareURL = getLinShareUrl(member);
 		ctx.setVariable("owner", owner);
 		ctx.setVariable("member", new MailContact(member));
 		ctx.setVariable("owner", owner);
-		ctx.setVariable("driveMember", driveMember);
-		ctx.setVariable("driveName", driveMember.getNode().getName());
-		ctx.setVariable("driveLink", getDriveLink(linshareURL, driveMember.getNode().getUuid()));
+		ctx.setVariable("workSpaceMember", workSpaceMember);
+		ctx.setVariable("workSpaceName", workSpaceMember.getNode().getName());
+		ctx.setVariable("workSpaceLink", getWorkSpaceLink(linshareURL, workSpaceMember.getNode().getUuid()));
 		ctx.setVariable(linshareURL, linshareURL);
 		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
@@ -103,25 +103,25 @@ public class DriveWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		SharedSpaceMemberDrive driveMember = getNewFakeSharedSpaceMemberDrive("drive_name_1");
+		SharedSpaceMemberDrive workSpaceMember = getNewFakeSharedSpaceMemberDrive("work_space_name_1");
 		List<SharedSpaceMember> nestedMembers = Lists.newArrayList();
 		nestedMembers.add(new SharedSpaceMember(
-				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_1", driveMember.getNode().getUuid(),
+				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_1", workSpaceMember.getNode().getUuid(),
 						NodeType.WORK_GROUP, new Date(), new Date()),
 				new LightSharedSpaceRole(UUID.randomUUID().toString(), "ADMIN", NodeType.WORK_GROUP), new SharedSpaceAccount(
 						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
 		nestedMembers.add(new SharedSpaceMember(
-				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_2", driveMember.getNode().getUuid(),
+				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_2", workSpaceMember.getNode().getUuid(),
 						NodeType.WORK_GROUP, new Date(), new Date()),
 				new LightSharedSpaceRole(UUID.randomUUID().toString(), "CONTRIBUTOR", NodeType.WORK_GROUP), new SharedSpaceAccount(
 						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
 		nestedMembers.add(new SharedSpaceMember(
-				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_3", driveMember.getNode().getUuid(),
+				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_3", workSpaceMember.getNode().getUuid(),
 						NodeType.WORK_GROUP, new Date(), new Date()),
 				new LightSharedSpaceRole(UUID.randomUUID().toString(), "READER", NodeType.WORK_GROUP), new SharedSpaceAccount(
 						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
 		nestedMembers.add(new SharedSpaceMember(
-				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_4", driveMember.getNode().getUuid(),
+				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_4", workSpaceMember.getNode().getUuid(),
 						NodeType.WORK_GROUP, new Date(), new Date()),
 				new LightSharedSpaceRole(UUID.randomUUID().toString(), "READER", NodeType.WORK_GROUP), new SharedSpaceAccount(
 						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
@@ -129,9 +129,9 @@ public class DriveWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 		ctx.setVariable("nbrWorkgroupsUpdated", nestedMembers.size());
 		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		ctx.setVariable("driveMember", driveMember);
-		ctx.setVariable("driveName", driveMember.getNode().getName());
-		ctx.setVariable("driveLink", getDriveLink(fakeLinshareURL, "fake_uuid"));
+		ctx.setVariable("workSpaceMember", workSpaceMember);
+		ctx.setVariable("workSpaceName", workSpaceMember.getNode().getName());
+		ctx.setVariable("workSpaceLink", getWorkSpaceLink(fakeLinshareURL, "fake_uuid"));
 		ctx.setVariable("linshareURL", fakeLinshareURL);
 		res.add(ctx);
 		return res;

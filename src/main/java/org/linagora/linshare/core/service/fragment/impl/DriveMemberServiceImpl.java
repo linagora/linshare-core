@@ -52,10 +52,10 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.OnDeleteSharedSpaceContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.DriveDeletedWarnEmailContext;
-import org.linagora.linshare.core.notifications.context.DriveWarnDeletedMemberEmailContext;
-import org.linagora.linshare.core.notifications.context.DriveWarnNewMemberEmailContext;
-import org.linagora.linshare.core.notifications.context.DriveWarnUpdatedMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkSpaceDeletedWarnEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkSpaceWarnDeletedMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkSpaceWarnNewMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkSpaceWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -137,7 +137,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		if (!actor.getLsUuid().equals(account.getUuid())) {
 			List<SharedSpaceMember> nestedMembers = businessService.findLastFiveUpdatedNestedWorkgroups(node.getUuid(),
 					newMember.getLsUuid());
-			notify(new DriveWarnNewMemberEmailContext(toAdd, actor, newMember, nestedMembers));
+			notify(new WorkSpaceWarnNewMemberEmailContext(toAdd, actor, newMember, nestedMembers));
 		}
 		saveLogForCreateAndDelete(authUser, actor, LogAction.CREATE, toAdd, AuditLogEntryType.WORK_SPACE_MEMBER);
 		return toAdd;
@@ -173,7 +173,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		}
 		User member = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
 		if (!actor.getLsUuid().equals(member.getLsUuid())) {
-			notify(new DriveWarnUpdatedMemberEmailContext((SharedSpaceMemberDrive) foundMemberToUpdate, member, actor,
+			notify(new WorkSpaceWarnUpdatedMemberEmailContext((SharedSpaceMemberDrive) foundMemberToUpdate, member, actor,
 					nestedMembers));
 		}
 		saveUpdateLog(authUser, actor, LogAction.UPDATE, foundMemberToUpdate, updated, AuditLogEntryType.WORK_SPACE_MEMBER);
@@ -195,7 +195,7 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 		}
 		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
 		if (!actor.getLsUuid().equals(user.getLsUuid())) {
-			notify(new DriveWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user));
+			notify(new WorkSpaceWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user));
 		}
 		return foundMemberToDelete;
 	}
@@ -223,9 +223,9 @@ public class DriveMemberServiceImpl extends AbstractSharedSpaceMemberFragmentSer
 			if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
 				EmailContext context = null;
 				if (LogActionCause.DRIVE_DELETION.equals(cause)) {
-					context = new DriveDeletedWarnEmailContext(actor, user.getDomain(), member, nodes);
+					context = new WorkSpaceDeletedWarnEmailContext(actor, user.getDomain(), member, nodes);
 				} else {
-					context = new DriveWarnDeletedMemberEmailContext(member, actor, user);
+					context = new WorkSpaceWarnDeletedMemberEmailContext(member, actor, user);
 				}
 				container.addMailContainersAddEmail(mailBuildingService.build(context));
 			}

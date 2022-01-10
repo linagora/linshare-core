@@ -329,7 +329,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
  	VALUES(34, false, 'ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED', 287, 288, 289, 1, true);
 
-	-- MailActivation : DRIVE_WARN_NEW_MEMBER
+	-- MailActivation : WORK_SPACE_WARN_NEW_MEMBER
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (308, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -337,9 +337,9 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (310, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(35, false, 'DRIVE_WARN_NEW_MEMBER', 308, 309, 310, 1, true);
+	VALUES(35, false, 'WORK_SPACE_WARN_NEW_MEMBER', 308, 309, 310, 1, true);
 
-	-- MailActivation : DRIVE_WARN_UPDATED_MEMBER
+	-- MailActivation : WORK_SPACE_WARN_UPDATED_MEMBER
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (311, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -347,9 +347,9 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (313, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(36, false, 'DRIVE_WARN_UPDATED_MEMBER', 311, 312, 313, 1, true);
+	VALUES(36, false, 'WORK_SPACE_WARN_UPDATED_MEMBER', 311, 312, 313, 1, true);
 
-	-- MailActivation : DRIVE_WARN_DELETED_MEMBER
+	-- MailActivation : WORK_SPACE_WARN_DELETED_MEMBER
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (314, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -357,7 +357,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (316, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(37, false, 'DRIVE_WARN_DELETED_MEMBER', 314, 315, 316, 1, true);
+	VALUES(37, false, 'WORK_SPACE_WARN_DELETED_MEMBER', 314, 315, 316, 1, true);
 	
 -- MailActivation : GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -381,7 +381,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
 	VALUES(40, false, 'WORKGROUP_WARN_DELETED_WORKGROUP', 330, 331, 332, 1, true);
 
-	-- MailActivation : DRIVE_WARN_DELETED_DRIVE
+	-- MailActivation : WORK_SPACE_WARN_DELETED
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (333, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -390,7 +390,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (335, false, false, 2, true);
 -- --mail activation
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(41, false, 'DRIVE_WARN_DELETED_DRIVE', 333, 334, 335, 1, true);
+	VALUES(41, false, 'WORK_SPACE_WARN_DELETED', 333, 334, 335, 1, true);
 
 -- MAilActivation: SHARE_ANONYMOUS_RESET_PASSWORD
 -- --policies 

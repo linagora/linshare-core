@@ -144,7 +144,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected String urlTemplateForWorkgroup;
 
-	protected String urlTemplateForDrive;
+	protected String urlTemplateForWorkSpace;
 
 	protected String urlTemplateForUploadRequestEntries;
 
@@ -260,12 +260,12 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		this.urlTemplateForWorkgroup = urlTemplateForWrokgroup;
 	}
 
-	public String getUrlTemplateForDrive() {
-		return urlTemplateForDrive;
+	public String getUrlTemplateForWorkSpace() {
+		return urlTemplateForWorkSpace;
 	}
 
-	public void setUrlTemplateForDrive(String urlTemplateForDrive) {
-		this.urlTemplateForDrive = urlTemplateForDrive;
+	public void setUrlTemplateForWorkSpace(String urlTemplateForWorkSpace) {
+		this.urlTemplateForWorkSpace = urlTemplateForWorkSpace;
 	}
 
 	public String getUrlTemplateForUploadRequestEntries() {
@@ -738,11 +738,11 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return sb.toString();
 	}
 
-	protected String getDriveLink(String linshareURL, String driveUuid) {
+	protected String getWorkSpaceLink(String linshareURL, String workSpaceUuid) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(linshareURL);
 		Formatter formatter = new Formatter(sb);
-		formatter.format(urlTemplateForDrive, driveUuid);
+		formatter.format(urlTemplateForWorkSpace, workSpaceUuid);
 		formatter.close();
 		return sb.toString();
 	}

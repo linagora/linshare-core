@@ -33,52 +33,44 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.notifications.emails.impl;
+package org.linagora.linshare.core.notifications.context;
 
 import java.util.List;
-import java.util.Map;
 
-import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.DriveWarnDeletedMemberEmailContext;
-import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
-import org.thymeleaf.context.Context;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.beust.jcommander.internal.Lists;
 
-public class DriveWarnDeletedMemberEmailBuilder extends WorkGroupWarnDeletedMemberEmailBuilder {
+public class WorkSpaceWarnNewMemberEmailContext extends WorkGroupWarnNewMemberEmailContext {
 
-	@Override
-	public MailContentType getSupportedType() {
-		return MailContentType.DRIVE_WARN_DELETED_MEMBER;
+	protected List<SharedSpaceMember> childMembers = Lists.newArrayList();
+
+	public WorkSpaceWarnNewMemberEmailContext(SharedSpaceMemberDrive workSpaceMember, Account owner, User newMember,
+	                                          List<SharedSpaceMember> childMembers) {
+		super(workSpaceMember, owner, newMember);
+		this.childMembers = childMembers;
 	}
 
 	@Override
-	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		DriveWarnDeletedMemberEmailContext emailCtx = (DriveWarnDeletedMemberEmailContext) context;
-		return buildMailContainer(emailCtx);
+	public MailContentType getType() {
+		return MailContentType.WORK_SPACE_WARN_NEW_MEMBER;
 	}
 
 	@Override
-	protected List<Context> getContextForFakeBuild(Language language) {
-		List<Context> res = Lists.newArrayList();
-		Context ctx = newFakeContext(language);
-		SharedSpaceMemberDrive driveMember = getNewFakeSharedSpaceMemberDrive("drive_name_1");
-		Map<String, Object> variables = Maps.newHashMap();
-		variables.put("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		variables.put("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		variables.put("threadMember", driveMember);
-		variables.put("workGroupName", driveMember.getNode().getName());
-		variables.put("workGroupLink", getWorkGroupLink(fakeLinshareURL, "fake_uuid"));
-		variables.put("linshareURL", fakeLinshareURL);
-		ctx.setVariables(variables);
-		res.add(ctx);
-		return res;
+	public MailActivationType getActivation() {
+		return MailActivationType.WORK_SPACE_WARN_NEW_MEMBER;
 	}
 
+	public List<SharedSpaceMember> getChildMembers() {
+		return childMembers;
+	}
+
+	public void setChildMembers(List<SharedSpaceMember> childMembers) {
+		this.childMembers = childMembers;
+	}
 }
