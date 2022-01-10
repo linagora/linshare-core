@@ -54,7 +54,6 @@ public class TwakeGuestUserProviderServiceImpl extends AbstractTwakeUserProvider
 		return twakeUsersResponse
 			.getList()
 			.stream()
-			.filter(TwakeUser::getVerified)
 			.filter(user -> !user.getBlocked())
 			.filter(user -> isGuest(user));
 	}

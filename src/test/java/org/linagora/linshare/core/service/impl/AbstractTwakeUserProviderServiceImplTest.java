@@ -104,29 +104,6 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 	protected abstract String usersResponseFileName();
 
 	@Test
-	public void searchUserShouldReturnEmptyListWhenNoneVerified() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
-		TwakeUserProviderService testee = implementation(httpUrl);
-
-		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(nonVerifiedUsersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
-
-		AbstractDomain domain = mockDomain();
-		TwakeConnection twakeConnection = new TwakeConnection();
-		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
-		twakeConnection.setClientId("clientId");
-		twakeConnection.setClientSecret("clientSecret");
-		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
-		List<User> users = testee.searchUser(domain, userProvider, "", "", "");
-		assertThat(users).isEmpty();
-	}
-
-	protected abstract String nonVerifiedUsersResponseFileName();
-
-	@Test
 	public void searchUserShouldReturnEmptyListWhenAllBlocked() throws Exception {
 		MockWebServer server = new MockWebServer();
 		String url = "/twakeconsole.dev";

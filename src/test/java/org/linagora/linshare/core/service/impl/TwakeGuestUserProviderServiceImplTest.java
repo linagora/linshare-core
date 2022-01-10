@@ -95,11 +95,6 @@ public class TwakeGuestUserProviderServiceImplTest extends AbstractTwakeUserProv
 	}
 
 	@Override
-	protected String nonVerifiedUsersResponseFileName() {
-		return "twake/twakeConsole-guest-users-response-non-verified.json";
-	}
-
-	@Override
 	protected String allBlockedUsersResponseFileName() {
 		return "twake/twakeConsole-guest-users-response-all-blocked.json";
 	}
