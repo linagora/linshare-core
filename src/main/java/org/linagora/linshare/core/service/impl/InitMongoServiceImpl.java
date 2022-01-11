@@ -53,6 +53,7 @@ import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 
 public class InitMongoServiceImpl implements InitMongoService {
@@ -84,27 +85,34 @@ public class InitMongoServiceImpl implements InitMongoService {
 	 * @return role
 	 *
 	 */
-	private SharedSpaceRole createInitRole(String roleUuid, String roleName, GenericLightEntity domain, NodeType type,
-			SharedSpaceAuthor author) {
+	@VisibleForTesting
+	SharedSpaceRole upsertInitRole(String roleUuid, String roleName, GenericLightEntity domain, NodeType type, SharedSpaceAuthor author) {
 		SharedSpaceRole role = roleMongoRepository.findByUuid(roleUuid);
 		if (role == null) {
-			role = new SharedSpaceRole();
-			role.setUuid(roleUuid);
-			role.setName(roleName);
-			role.setEnabled(true);
-			role.setDomain(domain);
-			role.setAuthor(author);
+			return createInitRole(roleUuid, roleName, domain, type, author);
+		}
+		if (role.getType() == null) {
 			role.setType(type);
 			role.setModificationDate(new Date());
-			role.setCreationDate(new Date());
-			roleMongoRepository.insert(role);
-		} else if (role.getType() == null ){
-			role.setType(type);
 			roleMongoRepository.save(role);
 		}
 		return role;
 	}
-	
+
+	private SharedSpaceRole createInitRole(String roleUuid, String roleName, GenericLightEntity domain, NodeType type, SharedSpaceAuthor author) {
+		SharedSpaceRole role = new SharedSpaceRole();
+		role.setUuid(roleUuid);
+		role.setName(roleName);
+		role.setEnabled(true);
+		role.setDomain(domain);
+		role.setAuthor(author);
+		role.setType(type);
+		role.setModificationDate(new Date());
+		role.setCreationDate(new Date());
+		roleMongoRepository.insert(role);
+		return role;
+	}
+
 	/**
 	 * Create light object that contains minimal information of shared space role
 	 * @param roleUuid
@@ -150,20 +158,19 @@ public class InitMongoServiceImpl implements InitMongoService {
 				LinShareConstants.rootDomainIdentifier);
 		SharedSpaceAuthor rootAccount = new SharedSpaceAuthor(root.getLsUuid(), root.getFullName());
 
-		createInitRole("234be74d-2966-41c1-9dee-e47c8c63c14e", "ADMIN", rootDomain, NodeType.WORK_GROUP, rootAccount);
-		createInitRole("b206c2ba-37de-491e-8e9c-88ed3be70682", "CONTRIBUTOR", rootDomain, NodeType.WORK_GROUP,
-				rootAccount);
-		createInitRole("8839654d-cb33-4633-bf3f-f9e805f97f84", "WRITER", rootDomain, NodeType.WORK_GROUP, rootAccount);
-		createInitRole("4ccbed61-71da-42a0-a513-92211953ac95", "READER", rootDomain, NodeType.WORK_GROUP, rootAccount);
+		upsertInitRole("234be74d-2966-41c1-9dee-e47c8c63c14e", "ADMIN", rootDomain, NodeType.WORK_GROUP, rootAccount);
+		upsertInitRole("b206c2ba-37de-491e-8e9c-88ed3be70682", "CONTRIBUTOR", rootDomain, NodeType.WORK_GROUP, rootAccount);
+		upsertInitRole("8839654d-cb33-4633-bf3f-f9e805f97f84", "WRITER", rootDomain, NodeType.WORK_GROUP, rootAccount);
+		upsertInitRole("4ccbed61-71da-42a0-a513-92211953ac95", "READER", rootDomain, NodeType.WORK_GROUP, rootAccount);
 
 		GenericLightEntity admin = createInitLightRole("234be74d-2966-41c1-9dee-e47c8c63c14e", "ADMIN");
 		GenericLightEntity contributor = createInitLightRole("b206c2ba-37de-491e-8e9c-88ed3be70682", "CONTRIBUTOR");
 		GenericLightEntity writer = createInitLightRole("8839654d-cb33-4633-bf3f-f9e805f97f84", "WRITER");
 		GenericLightEntity reader = createInitLightRole("4ccbed61-71da-42a0-a513-92211953ac95", "READER");
 
-		createInitRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN", rootDomain, NodeType.WORK_SPACE, rootAccount);
-		createInitRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_WRITER", rootDomain, NodeType.WORK_SPACE, rootAccount);
-		createInitRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		upsertInitRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		upsertInitRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_WRITER", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		upsertInitRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER", rootDomain, NodeType.WORK_SPACE, rootAccount);
 
 		GenericLightEntity drive_admin = createInitLightRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN");
 		GenericLightEntity drive_writer = createInitLightRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_WRITER");
