@@ -58,7 +58,16 @@ import com.google.common.collect.Lists;
 
 public class InitMongoServiceImpl implements InitMongoService {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(InitMongoServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(InitMongoServiceImpl.class);
+
+	private static final String WORK_GROUP_ADMIN_UUID = "234be74d-2966-41c1-9dee-e47c8c63c14e";
+	private static final String WORK_GROUP_CONTRIBUTOR_UUID = "b206c2ba-37de-491e-8e9c-88ed3be70682";
+	private static final String WORK_GROUP_WRITER_UUID = "8839654d-cb33-4633-bf3f-f9e805f97f84";
+	private static final String WORK_GROUP_READER_UUID = "4ccbed61-71da-42a0-a513-92211953ac95";
+
+	private static final String WORK_SPACE_ADMIN_UUID = "9e73e962-c233-4b4a-be1c-e8d9547acbdf";
+	private static final String WORK_SPACE_WRITER_UUID = "963025ca-8220-4915-b4fc-dba7b0b56100";
+	private static final String WORK_SPACE_READER_UUID = "556404b5-09b0-413e-a025-79ee40e043e4";
 
 	private final UserService userService;
 
@@ -158,23 +167,23 @@ public class InitMongoServiceImpl implements InitMongoService {
 				LinShareConstants.rootDomainIdentifier);
 		SharedSpaceAuthor rootAccount = new SharedSpaceAuthor(root.getLsUuid(), root.getFullName());
 
-		upsertInitRole("234be74d-2966-41c1-9dee-e47c8c63c14e", "ADMIN", rootDomain, NodeType.WORK_GROUP, rootAccount);
-		upsertInitRole("b206c2ba-37de-491e-8e9c-88ed3be70682", "CONTRIBUTOR", rootDomain, NodeType.WORK_GROUP, rootAccount);
-		upsertInitRole("8839654d-cb33-4633-bf3f-f9e805f97f84", "WRITER", rootDomain, NodeType.WORK_GROUP, rootAccount);
-		upsertInitRole("4ccbed61-71da-42a0-a513-92211953ac95", "READER", rootDomain, NodeType.WORK_GROUP, rootAccount);
+		upsertInitRole(WORK_GROUP_ADMIN_UUID, "ADMIN", rootDomain, NodeType.WORK_GROUP, rootAccount);
+		upsertInitRole(WORK_GROUP_CONTRIBUTOR_UUID, "CONTRIBUTOR", rootDomain, NodeType.WORK_GROUP, rootAccount);
+		upsertInitRole(WORK_GROUP_WRITER_UUID, "WRITER", rootDomain, NodeType.WORK_GROUP, rootAccount);
+		upsertInitRole(WORK_GROUP_READER_UUID, "READER", rootDomain, NodeType.WORK_GROUP, rootAccount);
 
-		GenericLightEntity admin = createInitLightRole("234be74d-2966-41c1-9dee-e47c8c63c14e", "ADMIN");
-		GenericLightEntity contributor = createInitLightRole("b206c2ba-37de-491e-8e9c-88ed3be70682", "CONTRIBUTOR");
-		GenericLightEntity writer = createInitLightRole("8839654d-cb33-4633-bf3f-f9e805f97f84", "WRITER");
-		GenericLightEntity reader = createInitLightRole("4ccbed61-71da-42a0-a513-92211953ac95", "READER");
+		GenericLightEntity admin = createInitLightRole(WORK_GROUP_ADMIN_UUID, "ADMIN");
+		GenericLightEntity contributor = createInitLightRole(WORK_GROUP_CONTRIBUTOR_UUID, "CONTRIBUTOR");
+		GenericLightEntity writer = createInitLightRole(WORK_GROUP_WRITER_UUID, "WRITER");
+		GenericLightEntity reader = createInitLightRole(WORK_GROUP_READER_UUID, "READER");
 
-		upsertInitRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN", rootDomain, NodeType.WORK_SPACE, rootAccount);
-		upsertInitRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_WRITER", rootDomain, NodeType.WORK_SPACE, rootAccount);
-		upsertInitRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		upsertInitRole(WORK_SPACE_ADMIN_UUID, "DRIVE_ADMIN", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		upsertInitRole(WORK_SPACE_WRITER_UUID, "DRIVE_WRITER", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		upsertInitRole(WORK_SPACE_READER_UUID, "DRIVE_READER", rootDomain, NodeType.WORK_SPACE, rootAccount);
 
-		GenericLightEntity drive_admin = createInitLightRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN");
-		GenericLightEntity drive_writer = createInitLightRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_WRITER");
-		GenericLightEntity drive_reader = createInitLightRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER");
+		GenericLightEntity drive_admin = createInitLightRole(WORK_SPACE_ADMIN_UUID, "DRIVE_ADMIN");
+		GenericLightEntity drive_writer = createInitLightRole(WORK_SPACE_WRITER_UUID, "DRIVE_WRITER");
+		GenericLightEntity drive_reader = createInitLightRole(WORK_SPACE_READER_UUID, "DRIVE_READER");
 
 		createInitPermission("31cb4d80-c939-40f1-a79e-4d77392e0e0b", SharedSpaceActionType.CREATE, SharedSpaceResourceType.WORK_SPACE, drive_admin);
 		createInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", SharedSpaceActionType.READ, SharedSpaceResourceType.WORK_SPACE, drive_admin, drive_writer, drive_reader);
