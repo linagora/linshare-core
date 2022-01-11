@@ -9,7 +9,7 @@
 	<b:bean id="springSecurityFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
 			<!-- allow spring security filter to apply rules on URL parameters -->
 			<!-- 		<b:property name="stripQueryStringFromUrls" value="false" /> -->
-	
+
 		<b:constructor-arg>
 			<b:list>
 
@@ -34,6 +34,9 @@
 			<sec:filter-chain pattern="/webservice/rest/user/v4/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/user/v4/authentication/logout" filters="logoutFilterUserV4" />
 
+			<sec:filter-chain pattern="/webservice/rest/user/v5/authentication/" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/user/v5/authentication/logout" filters="logoutFilterUserV5" />
+
 			<sec:filter-chain pattern="/webservice/rest/admin/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/admin/authentication/logout" filters="logoutFilterAdmin" />
 
@@ -50,7 +53,7 @@
 			<sec:filter-chain pattern="/webservice/rest/healthcheck" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor, logoutFilterAdmin, logoutFilterAdminV4, logoutFilterAdminV5, logoutFilterUser, logoutFilterUserV2, logoutFilterUserV4" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor, logoutFilterAdmin, logoutFilterAdminV4, logoutFilterAdminV5, logoutFilterUser, logoutFilterUserV2, logoutFilterUserV4, logoutFilterUserV5" />
 
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />

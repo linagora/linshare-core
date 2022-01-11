@@ -93,6 +93,18 @@
 		</b:constructor-arg>
 	</b:bean>
 
+	<b:bean id="logoutFilterUserV5" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/user/v5/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/user/v5/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
 
 
 	<!-- Database authentication provider -->
