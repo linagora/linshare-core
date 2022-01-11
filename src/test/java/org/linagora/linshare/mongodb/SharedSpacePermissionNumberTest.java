@@ -87,7 +87,8 @@ public class SharedSpacePermissionNumberTest {
 
 	@Test
 	public void testNumberOfPermissions() {
-		Long resourceNumber = (long) SharedSpaceResourceType.values().length;
+		Long resourceNumber = (long) SharedSpaceResourceType.values().length - 1;
+		// we remove drive from the resource count because we only kept it for compatibility.
 		Long actionNumber = (long) SharedSpaceActionType.values().length;
 		Long actualPermissionNumber = resourceNumber * actionNumber - 7;
 		/*

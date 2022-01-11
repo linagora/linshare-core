@@ -48,6 +48,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
@@ -132,6 +133,13 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 		return ssr;
 	}
 
+	private SharedSpacePermission supportDrive(SharedSpacePermission perm) {
+		if (NodeType.WORK_SPACE.equals(perm.getResource())) {
+			perm.setResource(SharedSpaceResourceType.DRIVE);
+		}
+		return perm;
+	}
+
 	@Path("/{uuid}/permissions")
 	@GET
 	@Operation(summary = "Find a shared space role .", responses = {
@@ -144,7 +152,10 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	public List<SharedSpacePermission> findAllPermissions(
 			@Parameter(description = "shared space role uuid.", required = true)
 				@PathParam(value = "uuid") String roleUuid) throws BusinessException {
-		return sharedSpaceRoleFacade.findAll(null, roleUuid);
+		return sharedSpaceRoleFacade.findAll(null, roleUuid)
+				.stream()
+				.map(ssr -> supportDrive(ssr))
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 }
