@@ -74,7 +74,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 		this.roleMongoRepository = roleMongoRepository;
 		this.permissionMongoRepository = permissionMongoRepository;
 	}
-	
+
 	/**
 	 *  This methods allows to insert the default shared space roles in Database
 	 * @param roleUuid String static uuid affected to the role
@@ -134,7 +134,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 	 *  of the shared space role (it can be single or a list)
 	 * @return
 	 */
-	private SharedSpacePermission createInitPermission(String permissionUuid, String permissionName ,SharedSpaceActionType actionType,
+	private SharedSpacePermission createInitPermission(String permissionUuid, SharedSpaceActionType actionType,
 			SharedSpaceResourceType resourceType, GenericLightEntity... roles) {
 		SharedSpacePermission permission = permissionMongoRepository.findByUuid(permissionUuid);
 		if (permission == null) {
@@ -176,53 +176,30 @@ public class InitMongoServiceImpl implements InitMongoService {
 		GenericLightEntity drive_writer = createInitLightRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_WRITER");
 		GenericLightEntity drive_reader = createInitLightRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER");
 
-		createInitPermission("31cb4d80-c939-40f1-a79e-4d77392e0e0b", "Create a drive ", SharedSpaceActionType.CREATE,
-				SharedSpaceResourceType.WORK_SPACE, drive_admin);
-		createInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", "read a drive", SharedSpaceActionType.READ,
-				SharedSpaceResourceType.WORK_SPACE, drive_admin, drive_writer, drive_reader);
-		createInitPermission("5557fc26-ea2d-4e3b-81af-37a614d8014c", "Update  a drive", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.WORK_SPACE, drive_admin);
-		createInitPermission("70ecfe55-f388-4e37-91bc-958386e0a865", "Delete  a drive", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.WORK_SPACE, drive_admin);
+		createInitPermission("31cb4d80-c939-40f1-a79e-4d77392e0e0b", SharedSpaceActionType.CREATE, SharedSpaceResourceType.WORK_SPACE, drive_admin);
+		createInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", SharedSpaceActionType.READ, SharedSpaceResourceType.WORK_SPACE, drive_admin, drive_writer, drive_reader);
+		createInitPermission("5557fc26-ea2d-4e3b-81af-37a614d8014c",  SharedSpaceActionType.UPDATE, SharedSpaceResourceType.WORK_SPACE, drive_admin);
+		createInitPermission("70ecfe55-f388-4e37-91bc-958386e0a865", SharedSpaceActionType.DELETE, SharedSpaceResourceType.WORK_SPACE, drive_admin);
 
-		createInitPermission("0457baaf-fd9e-4737-90d9-5a802caf9ff5", "Create a folder", SharedSpaceActionType.CREATE,
-				SharedSpaceResourceType.FOLDER, admin, writer, contributor);
-		createInitPermission("18a76d34-e19f-45d4-864c-4bb8cadda711", "Read a folder", SharedSpaceActionType.READ,
-				SharedSpaceResourceType.FOLDER, admin, writer, contributor, reader);
-		createInitPermission("9dedd90c-709b-4c72-a70f-17f8c65f4f2f", "Update a folder", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.FOLDER, admin, writer, contributor);
-		createInitPermission("dd80afd5-9415-424d-b211-63669934efda", "Download a folder", SharedSpaceActionType.DOWNLOAD,
-				SharedSpaceResourceType.FOLDER, admin, writer, contributor, reader);
-		createInitPermission("fbe86462-174a-4d14-b6f1-ca4c6e127142", "Delete a folder", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.FOLDER, admin, writer, drive_admin);
-		createInitPermission("3f92f534-44a1-4a78-9be0-368898d61473", "Create a file", SharedSpaceActionType.CREATE,
-				SharedSpaceResourceType.FILE, admin, writer, contributor);
-		createInitPermission("05e3372f-a78f-490c-9b48-d64dffd231b5", "Read a file", SharedSpaceActionType.READ,
-				SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
-		createInitPermission("816b30ae-13ed-46a4-9284-fcaa65fc9e84", "Update a file", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.FILE, admin, writer, contributor);
-		createInitPermission("ea49ea0e-c14e-4f10-95bf-5dae8d01ab91", "Delete a file", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.FILE, admin, writer, drive_admin);
-		createInitPermission("fd95b249-d142-47b4-9d17-3bb039e58f1a", "Download a file", SharedSpaceActionType.DOWNLOAD,
-				SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
-		createInitPermission("268d7402-91da-4cb9-9a0c-396d0e21c04f", "Download thumbnail a file", SharedSpaceActionType.DOWNLOAD_THUMBNAIL,
-				SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
-		createInitPermission("f597e8f2-1c3b-4285-a909-62f47528de1e", "Create a member", SharedSpaceActionType.CREATE,
-				SharedSpaceResourceType.MEMBER, admin, drive_admin);
-		createInitPermission("6b3e52d5-5fa5-4a72-bf62-fc15896b1cfc", "Read a member", SharedSpaceActionType.READ,
-				SharedSpaceResourceType.MEMBER, admin, writer, contributor, reader, drive_admin, drive_writer, drive_reader);
-		createInitPermission("0f1d6446-d37d-4bc6-a2ed-c391b6866527", "Update a member", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.MEMBER, admin, drive_admin);
-		createInitPermission("4b29d1f9-dec7-484c-a170-a051e7d9b848", "Delete a member", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.MEMBER, admin, drive_admin);
-		createInitPermission("08a77038-95d0-46be-93de-a602e0315d6e", "Create a workgroup", SharedSpaceActionType.CREATE,
-				SharedSpaceResourceType.WORK_GROUP, admin, drive_admin, drive_writer);
-		createInitPermission("ce73fa89-04aa-41f2-a94f-cf09b46f810b", "Read a workgroup", SharedSpaceActionType.READ,
-				SharedSpaceResourceType.WORK_GROUP, admin, writer, contributor, reader);
-		createInitPermission("881dfa55-90c5-460a-9ac2-a38181fd2349", "Update a workgroup", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.WORK_GROUP, admin);
-		createInitPermission("efd0d533-cb5b-4bf6-a717-81f28ae0a1fe", "Delete a workgroup", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.WORK_GROUP, admin);
+		createInitPermission("0457baaf-fd9e-4737-90d9-5a802caf9ff5", SharedSpaceActionType.CREATE, SharedSpaceResourceType.FOLDER, admin, writer, contributor);
+		createInitPermission("18a76d34-e19f-45d4-864c-4bb8cadda711", SharedSpaceActionType.READ, SharedSpaceResourceType.FOLDER, admin, writer, contributor, reader);
+		createInitPermission("9dedd90c-709b-4c72-a70f-17f8c65f4f2f", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.FOLDER, admin, writer, contributor);
+		createInitPermission("dd80afd5-9415-424d-b211-63669934efda", SharedSpaceActionType.DOWNLOAD, SharedSpaceResourceType.FOLDER, admin, writer, contributor, reader);
+		createInitPermission("fbe86462-174a-4d14-b6f1-ca4c6e127142", SharedSpaceActionType.DELETE, SharedSpaceResourceType.FOLDER, admin, writer, drive_admin);
+		createInitPermission("3f92f534-44a1-4a78-9be0-368898d61473", SharedSpaceActionType.CREATE, SharedSpaceResourceType.FILE, admin, writer, contributor);
+		createInitPermission("05e3372f-a78f-490c-9b48-d64dffd231b5", SharedSpaceActionType.READ, SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
+		createInitPermission("816b30ae-13ed-46a4-9284-fcaa65fc9e84", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.FILE, admin, writer, contributor);
+		createInitPermission("ea49ea0e-c14e-4f10-95bf-5dae8d01ab91", SharedSpaceActionType.DELETE, SharedSpaceResourceType.FILE, admin, writer, drive_admin);
+		createInitPermission("fd95b249-d142-47b4-9d17-3bb039e58f1a", SharedSpaceActionType.DOWNLOAD, SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
+		createInitPermission("268d7402-91da-4cb9-9a0c-396d0e21c04f", SharedSpaceActionType.DOWNLOAD_THUMBNAIL, SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
+		createInitPermission("f597e8f2-1c3b-4285-a909-62f47528de1e", SharedSpaceActionType.CREATE, SharedSpaceResourceType.MEMBER, admin, drive_admin);
+		createInitPermission("6b3e52d5-5fa5-4a72-bf62-fc15896b1cfc", SharedSpaceActionType.READ, SharedSpaceResourceType.MEMBER, admin, writer, contributor, reader, drive_admin, drive_writer, drive_reader);
+		createInitPermission("0f1d6446-d37d-4bc6-a2ed-c391b6866527", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.MEMBER, admin, drive_admin);
+		createInitPermission("4b29d1f9-dec7-484c-a170-a051e7d9b848", SharedSpaceActionType.DELETE, SharedSpaceResourceType.MEMBER, admin, drive_admin);
+		createInitPermission("08a77038-95d0-46be-93de-a602e0315d6e", SharedSpaceActionType.CREATE, SharedSpaceResourceType.WORK_GROUP, admin, drive_admin, drive_writer);
+		createInitPermission("ce73fa89-04aa-41f2-a94f-cf09b46f810b", SharedSpaceActionType.READ, SharedSpaceResourceType.WORK_GROUP, admin, writer, contributor, reader);
+		createInitPermission("881dfa55-90c5-460a-9ac2-a38181fd2349", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.WORK_GROUP, admin);
+		createInitPermission("efd0d533-cb5b-4bf6-a717-81f28ae0a1fe", SharedSpaceActionType.DELETE, SharedSpaceResourceType.WORK_GROUP, admin);
 		LOGGER.info("END -- Initialization with default shared space roles and permissions.");
 	}
 
