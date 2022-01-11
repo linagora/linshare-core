@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2018-2021 LINAGORA
+ * Copyright (C) 2018-2022 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -57,7 +57,7 @@ import com.google.common.collect.Lists;
 
 public class InitMongoServiceImpl implements InitMongoService {
 
-	private final static Logger logger = LoggerFactory.getLogger(InitMongoServiceImpl.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(InitMongoServiceImpl.class);
 
 	protected final UserService userService;
 
@@ -144,7 +144,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 
 	@Override
 	public void init() {
-		logger.info("BEGIN -- Initialization with default shared space roles and permissions.");
+		LOGGER.info("BEGIN -- Initialization with default shared space roles and permissions.");
 		User root = userService.findByLsUuid(LinShareConstants.defaultRootMailAddress);
 		GenericLightEntity rootDomain = new GenericLightEntity(LinShareConstants.rootDomainIdentifier,
 				LinShareConstants.rootDomainIdentifier);
@@ -216,7 +216,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 				SharedSpaceResourceType.WORK_GROUP, admin);
 		createInitPermission("efd0d533-cb5b-4bf6-a717-81f28ae0a1fe", "Delete a workgroup", SharedSpaceActionType.DELETE,
 				SharedSpaceResourceType.WORK_GROUP, admin);
-		logger.info("END -- Initialization with default shared space roles and permissions.");
+		LOGGER.info("END -- Initialization with default shared space roles and permissions.");
 	}
 
 }
