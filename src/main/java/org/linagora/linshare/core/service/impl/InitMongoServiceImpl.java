@@ -59,11 +59,11 @@ public class InitMongoServiceImpl implements InitMongoService {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(InitMongoServiceImpl.class);
 
-	protected final UserService userService;
+	private final UserService userService;
 
-	protected final SharedSpaceRoleMongoRepository roleMongoRepository;
+	private final SharedSpaceRoleMongoRepository roleMongoRepository;
 
-	protected final SharedSpacePermissionMongoRepository permissionMongoRepository;
+	private final SharedSpacePermissionMongoRepository permissionMongoRepository;
 
 	public InitMongoServiceImpl(UserService userService,
 			SharedSpaceRoleMongoRepository roleMongoRepository,
