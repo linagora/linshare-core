@@ -42,6 +42,7 @@ public enum SharedSpaceResourceType {
 	WORK_GROUP,
 	WORK_SPACE,
 	DRIVE, // COMPAT, issue #1269
+	WORKGROUP,  // COMPAT, issue #1269
 	MEMBER;
 
 	public static SharedSpaceResourceType fromString(String s) {

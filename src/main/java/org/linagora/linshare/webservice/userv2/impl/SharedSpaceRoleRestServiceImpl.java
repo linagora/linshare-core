@@ -134,8 +134,11 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	}
 
 	private SharedSpacePermission supportDrive(SharedSpacePermission perm) {
-		if (NodeType.WORK_SPACE.equals(perm.getResource())) {
+		if (SharedSpaceResourceType.WORK_SPACE.equals(perm.getResource())) {
 			perm.setResource(SharedSpaceResourceType.DRIVE);
+		}
+		if (SharedSpaceResourceType.WORK_GROUP.equals(perm.getResource())) {
+			perm.setResource(SharedSpaceResourceType.WORKGROUP);
 		}
 		return perm;
 	}
