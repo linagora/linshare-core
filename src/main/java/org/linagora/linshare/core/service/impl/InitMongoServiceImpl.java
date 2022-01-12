@@ -57,6 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class InitMongoServiceImpl implements InitMongoService {
@@ -71,6 +72,8 @@ public class InitMongoServiceImpl implements InitMongoService {
 	private static final String WORK_SPACE_ADMIN_UUID = "9e73e962-c233-4b4a-be1c-e8d9547acbdf";
 	private static final String WORK_SPACE_WRITER_UUID = "963025ca-8220-4915-b4fc-dba7b0b56100";
 	private static final String WORK_SPACE_READER_UUID = "556404b5-09b0-413e-a025-79ee40e043e4";
+
+	private static final List<String> DRIVE_RENAMING_OLD_VALUES = ImmutableList.of("DRIVE_ADMIN", "DRIVE_WRITER", "DRIVE_READER");
 
 	private final UserService userService;
 
@@ -102,6 +105,12 @@ public class InitMongoServiceImpl implements InitMongoService {
 		SharedSpaceRole role = roleMongoRepository.findByUuid(roleUuid);
 		if (role == null) {
 			return createInitRole(roleUuid, roleName, domain, type, author);
+		}
+		// Migrate old role name from DRIVE_* to WORK_SPACE_*
+		if (DRIVE_RENAMING_OLD_VALUES.contains(role.getName())) {
+			role.setName(roleName);
+			role.setModificationDate(new Date());
+			roleMongoRepository.save(role);
 		}
 		if (role.getType() == null) {
 			role.setType(type);

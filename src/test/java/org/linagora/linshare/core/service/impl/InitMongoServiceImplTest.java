@@ -190,6 +190,33 @@ public class InitMongoServiceImplTest {
 	}
 
 	@Test
+	public void upsertInitRoleShouldMigrateWhenOldDriveName() {
+		// Given
+		User root = userService.findByLsUuid(LinShareConstants.defaultRootMailAddress);
+		GenericLightEntity rootDomain = new GenericLightEntity(
+			LinShareConstants.rootDomainIdentifier, LinShareConstants.rootDomainIdentifier);
+		SharedSpaceAuthor rootAccount = new SharedSpaceAuthor(root.getLsUuid(), root.getFullName());
+
+		String roleUuid = "0821d4dc-74fe-4420-aea5-fcd1f08d7910";
+		SharedSpaceRole role = new SharedSpaceRole();
+		role.setUuid(roleUuid);
+		role.setName("DRIVE_ADMIN");
+		role.setEnabled(true);
+		role.setDomain(rootDomain);
+		role.setAuthor(rootAccount);
+		role.setModificationDate(new Date());
+		role.setCreationDate(new Date());
+		roleMongoRepository.insert(role);
+
+		// When
+		String newRoleName = "WORK_SPACE_ADMIN";
+		SharedSpaceRole returnedRole = testee.upsertInitRole(roleUuid, newRoleName, rootDomain, NodeType.WORK_GROUP, rootAccount);
+
+		// Then
+		assertThat(returnedRole.getName()).isEqualTo(newRoleName);
+	}
+
+	@Test
 	public void upsertInitPermissionShouldCreatePermissionWhenDoesntExists() {
 		// Given
 		String permissionUuid = "3cd75eec-cacc-42e6-ad59-23d521a1d8d1";
