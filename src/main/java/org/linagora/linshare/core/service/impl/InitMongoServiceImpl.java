@@ -184,9 +184,9 @@ public class InitMongoServiceImpl implements InitMongoService {
 		GenericLightEntity writer = createInitLightRole(WORK_GROUP_WRITER_UUID);
 		GenericLightEntity reader = createInitLightRole(WORK_GROUP_READER_UUID);
 
-		upsertInitRole(WORK_SPACE_ADMIN_UUID, "DRIVE_ADMIN", rootDomain, NodeType.WORK_SPACE, rootAccount);
-		upsertInitRole(WORK_SPACE_WRITER_UUID, "DRIVE_WRITER", rootDomain, NodeType.WORK_SPACE, rootAccount);
-		upsertInitRole(WORK_SPACE_READER_UUID, "DRIVE_READER", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		upsertInitRole(WORK_SPACE_ADMIN_UUID, "WORK_SPACE_ADMIN", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		upsertInitRole(WORK_SPACE_WRITER_UUID, "WORK_SPACE_WRITER", rootDomain, NodeType.WORK_SPACE, rootAccount);
+		upsertInitRole(WORK_SPACE_READER_UUID, "WORK_SPACE_READER", rootDomain, NodeType.WORK_SPACE, rootAccount);
 
 		GenericLightEntity workSpaceAdmin = createInitLightRole(WORK_SPACE_ADMIN_UUID);
 		GenericLightEntity workSpaceWriter = createInitLightRole(WORK_SPACE_WRITER_UUID);
