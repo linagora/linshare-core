@@ -62,7 +62,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-@Path("/drive_filters")
+@Path("/workspace_filters")
 @Produces({MediaType.APPLICATION_JSON })
 @Consumes({MediaType.APPLICATION_JSON })
 public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestService {
@@ -76,7 +76,7 @@ public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestSe
 
 	@Path("/")
 	@GET
-	@Operation(summary = "It will return all domain drive filters.", responses = {
+	@Operation(summary = "It will return all domain workSpace filters.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(array = @ArraySchema(
@@ -97,14 +97,14 @@ public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestSe
 	})
 	@Override
 	public List<AbstractDriveFilterDto> findAll(
-			@Parameter(description = "It is an optional parameter, if true default domain drive filters' models will be returned, else the admins' created ones will be returned.", required = false)
+			@Parameter(description = "It is an optional parameter, if true default domain workSpace filters' models will be returned, else the admins' created ones will be returned.", required = false)
 				@QueryParam("model") boolean model) throws BusinessException {
 		return domainDriveFilterFacade.findAll(model);
 	}
 
 	@Path("/{uuid}")
 	@GET
-	@Operation(summary = "Find a chosen domain drive filter.", responses = {
+	@Operation(summary = "Find a chosen domain workSpace filter.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(
@@ -125,14 +125,14 @@ public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestSe
 	})
 	@Override
 	public AbstractDriveFilterDto find(
-			@Parameter(description = "The admin can find a domain drive filter by the entered uuid.", required = true)
+			@Parameter(description = "The admin can find a domain workSpace filter by the entered uuid.", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return domainDriveFilterFacade.find(uuid);
 	}
 
 	@Path("/")
 	@POST
-	@Operation(summary = "It allows root adminstrator to create a new domain drive filter.", responses = {
+	@Operation(summary = "It allows root adminstrator to create a new domain workSpace filter.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(
@@ -153,7 +153,7 @@ public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestSe
 	})
 	@Override
 	public AbstractDriveFilterDto create(
-			@RequestBody(description = "The domain drive filter to create", required = true,
+			@RequestBody(description = "The domain workSpace filter to create", required = true,
 			content = @Content(
 				schema = @Schema(
 					oneOf = {LDAPDriveFilterDto.class},
@@ -167,7 +167,7 @@ public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestSe
 
 	@Path("/{uuid: .*}")
 	@PUT
-	@Operation(summary = "It allows adminstrator to update a domain drive filter.", responses = {
+	@Operation(summary = "It allows adminstrator to update a domain workSpace filter.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(
@@ -188,9 +188,9 @@ public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestSe
 	})
 	@Override
 	public AbstractDriveFilterDto update(
-			@Parameter(description = "Domain drive filter's uuid to update, if null object is used", required = false)
+			@Parameter(description = "Domain workSpace filter's uuid to update, if null object is used", required = false)
 				@PathParam("uuid") String uuid,
-			@RequestBody(description = "The domain drive filter to update", required = true,
+			@RequestBody(description = "The domain workSpace filter to update", required = true,
 				content = @Content(
 					schema = @Schema(
 						oneOf = {LDAPDriveFilterDto.class},
@@ -204,7 +204,7 @@ public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestSe
 
 	@Path("/{uuid: .*}")
 	@DELETE
-	@Operation(summary = "It allows adminstrator to delete a domain drive filter.", responses = {
+	@Operation(summary = "It allows adminstrator to delete a domain workSpace filter.", responses = {
 			@ApiResponse(
 				responseCode = "200",
 				content = @Content(
@@ -225,9 +225,9 @@ public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestSe
 		})
 	@Override
 	public AbstractDriveFilterDto delete(
-			@Parameter(description = "Domain drive filter's uuid to delete, if null object is used", required = false)
+			@Parameter(description = "Domain workSpace filter's uuid to delete, if null object is used", required = false)
 				@PathParam("uuid") String uuid,
-			@RequestBody(description = "The domain drive filter to delete", required = true,
+			@RequestBody(description = "The domain workSpace filter to delete", required = true,
 				content = @Content(
 					schema = @Schema(
 						oneOf = {LDAPDriveFilterDto.class},
@@ -242,14 +242,14 @@ public class DomainDriveFilterRestServiceImpl implements DomainDriveFilterRestSe
 	@Override
 	@Path("/{uuid}/domains")
 	@GET
-	@Operation(summary = "Find all domains using a chosen drive filter.", responses = {
+	@Operation(summary = "Find all domains using a chosen workSpace filter.", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainDto.class))),
 			responseCode = "200"
 		)
 	})
 	public List<DomainDto> findAllDomainsByDriveFilter(
-			@Parameter(description = "Domain drive filter's uuid", required = true)
+			@Parameter(description = "Domain workSpace filter's uuid", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return domainDriveFilterFacade.findAllDomainsByDriveFilter(uuid);
 	}
