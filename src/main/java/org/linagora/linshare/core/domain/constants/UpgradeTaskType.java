@@ -292,7 +292,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Delete event notification collection
 	 */
-	UPGRADE_5_0_DELETE_EVENT_NOTIFICATION_COLLECTION;
+	UPGRADE_5_0_DELETE_EVENT_NOTIFICATION_COLLECTION,
+
+	/**
+	 * Rename DRIVE audit traces to workspace
+	 */
+	UPGRADE_5_0_AUDIT_RENAME_DRIVE_TO_WORK_SPACE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

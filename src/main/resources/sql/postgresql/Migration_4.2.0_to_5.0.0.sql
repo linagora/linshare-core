@@ -977,6 +977,29 @@ UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_DELETED' WHERE identifi
 -- Rename driveProvider to workSpaceProvider
 ALTER TABLE drive_provider RENAME TO work_space_provider;
 
+
+-- UPGRADE_5_0_AUDIT_RENAME_DRIVE_TO_WORK_SPACE
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date)
+VALUES
+  (48,
+  'UNDEFINED',
+  'UPGRADE_5_0_AUDIT_RENAME_DRIVE_TO_WORK_SPACE',
+  'UPGRADE_5_0',
+  48,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now());
+
 ---- End of your queries
 
 -- Upgrade LinShare version
