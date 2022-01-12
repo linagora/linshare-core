@@ -189,31 +189,31 @@ public class InitMongoServiceImpl implements InitMongoService {
 		upsertInitRole(WORK_SPACE_WRITER_UUID, "DRIVE_WRITER", rootDomain, NodeType.WORK_SPACE, rootAccount);
 		upsertInitRole(WORK_SPACE_READER_UUID, "DRIVE_READER", rootDomain, NodeType.WORK_SPACE, rootAccount);
 
-		GenericLightEntity drive_admin = createInitLightRole(WORK_SPACE_ADMIN_UUID, "DRIVE_ADMIN");
-		GenericLightEntity drive_writer = createInitLightRole(WORK_SPACE_WRITER_UUID, "DRIVE_WRITER");
-		GenericLightEntity drive_reader = createInitLightRole(WORK_SPACE_READER_UUID, "DRIVE_READER");
+		GenericLightEntity workSpaceAdmin = createInitLightRole(WORK_SPACE_ADMIN_UUID, "DRIVE_ADMIN");
+		GenericLightEntity workSpaceWriter = createInitLightRole(WORK_SPACE_WRITER_UUID, "DRIVE_WRITER");
+		GenericLightEntity workSpaceReader = createInitLightRole(WORK_SPACE_READER_UUID, "DRIVE_READER");
 
-		upsertInitPermission("31cb4d80-c939-40f1-a79e-4d77392e0e0b", SharedSpaceActionType.CREATE, SharedSpaceResourceType.WORK_SPACE, drive_admin);
-		upsertInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", SharedSpaceActionType.READ, SharedSpaceResourceType.WORK_SPACE, drive_admin, drive_writer, drive_reader);
-		upsertInitPermission("5557fc26-ea2d-4e3b-81af-37a614d8014c",  SharedSpaceActionType.UPDATE, SharedSpaceResourceType.WORK_SPACE, drive_admin);
-		upsertInitPermission("70ecfe55-f388-4e37-91bc-958386e0a865", SharedSpaceActionType.DELETE, SharedSpaceResourceType.WORK_SPACE, drive_admin);
+		upsertInitPermission("31cb4d80-c939-40f1-a79e-4d77392e0e0b", SharedSpaceActionType.CREATE, SharedSpaceResourceType.WORK_SPACE, workSpaceAdmin);
+		upsertInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", SharedSpaceActionType.READ, SharedSpaceResourceType.WORK_SPACE, workSpaceAdmin, workSpaceWriter, workSpaceReader);
+		upsertInitPermission("5557fc26-ea2d-4e3b-81af-37a614d8014c", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.WORK_SPACE, workSpaceAdmin);
+		upsertInitPermission("70ecfe55-f388-4e37-91bc-958386e0a865", SharedSpaceActionType.DELETE, SharedSpaceResourceType.WORK_SPACE, workSpaceAdmin);
 
 		upsertInitPermission("0457baaf-fd9e-4737-90d9-5a802caf9ff5", SharedSpaceActionType.CREATE, SharedSpaceResourceType.FOLDER, admin, writer, contributor);
 		upsertInitPermission("18a76d34-e19f-45d4-864c-4bb8cadda711", SharedSpaceActionType.READ, SharedSpaceResourceType.FOLDER, admin, writer, contributor, reader);
 		upsertInitPermission("9dedd90c-709b-4c72-a70f-17f8c65f4f2f", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.FOLDER, admin, writer, contributor);
 		upsertInitPermission("dd80afd5-9415-424d-b211-63669934efda", SharedSpaceActionType.DOWNLOAD, SharedSpaceResourceType.FOLDER, admin, writer, contributor, reader);
-		upsertInitPermission("fbe86462-174a-4d14-b6f1-ca4c6e127142", SharedSpaceActionType.DELETE, SharedSpaceResourceType.FOLDER, admin, writer, drive_admin);
+		upsertInitPermission("fbe86462-174a-4d14-b6f1-ca4c6e127142", SharedSpaceActionType.DELETE, SharedSpaceResourceType.FOLDER, admin, writer, workSpaceAdmin);
 		upsertInitPermission("3f92f534-44a1-4a78-9be0-368898d61473", SharedSpaceActionType.CREATE, SharedSpaceResourceType.FILE, admin, writer, contributor);
 		upsertInitPermission("05e3372f-a78f-490c-9b48-d64dffd231b5", SharedSpaceActionType.READ, SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
 		upsertInitPermission("816b30ae-13ed-46a4-9284-fcaa65fc9e84", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.FILE, admin, writer, contributor);
-		upsertInitPermission("ea49ea0e-c14e-4f10-95bf-5dae8d01ab91", SharedSpaceActionType.DELETE, SharedSpaceResourceType.FILE, admin, writer, drive_admin);
+		upsertInitPermission("ea49ea0e-c14e-4f10-95bf-5dae8d01ab91", SharedSpaceActionType.DELETE, SharedSpaceResourceType.FILE, admin, writer, workSpaceAdmin);
 		upsertInitPermission("fd95b249-d142-47b4-9d17-3bb039e58f1a", SharedSpaceActionType.DOWNLOAD, SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
 		upsertInitPermission("268d7402-91da-4cb9-9a0c-396d0e21c04f", SharedSpaceActionType.DOWNLOAD_THUMBNAIL, SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
-		upsertInitPermission("f597e8f2-1c3b-4285-a909-62f47528de1e", SharedSpaceActionType.CREATE, SharedSpaceResourceType.MEMBER, admin, drive_admin);
-		upsertInitPermission("6b3e52d5-5fa5-4a72-bf62-fc15896b1cfc", SharedSpaceActionType.READ, SharedSpaceResourceType.MEMBER, admin, writer, contributor, reader, drive_admin, drive_writer, drive_reader);
-		upsertInitPermission("0f1d6446-d37d-4bc6-a2ed-c391b6866527", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.MEMBER, admin, drive_admin);
-		upsertInitPermission("4b29d1f9-dec7-484c-a170-a051e7d9b848", SharedSpaceActionType.DELETE, SharedSpaceResourceType.MEMBER, admin, drive_admin);
-		upsertInitPermission("08a77038-95d0-46be-93de-a602e0315d6e", SharedSpaceActionType.CREATE, SharedSpaceResourceType.WORK_GROUP, admin, drive_admin, drive_writer);
+		upsertInitPermission("f597e8f2-1c3b-4285-a909-62f47528de1e", SharedSpaceActionType.CREATE, SharedSpaceResourceType.MEMBER, admin, workSpaceAdmin);
+		upsertInitPermission("6b3e52d5-5fa5-4a72-bf62-fc15896b1cfc", SharedSpaceActionType.READ, SharedSpaceResourceType.MEMBER, admin, writer, contributor, reader, workSpaceAdmin, workSpaceWriter, workSpaceReader);
+		upsertInitPermission("0f1d6446-d37d-4bc6-a2ed-c391b6866527", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.MEMBER, admin, workSpaceAdmin);
+		upsertInitPermission("4b29d1f9-dec7-484c-a170-a051e7d9b848", SharedSpaceActionType.DELETE, SharedSpaceResourceType.MEMBER, admin, workSpaceAdmin);
+		upsertInitPermission("08a77038-95d0-46be-93de-a602e0315d6e", SharedSpaceActionType.CREATE, SharedSpaceResourceType.WORK_GROUP, admin, workSpaceAdmin, workSpaceWriter);
 		upsertInitPermission("ce73fa89-04aa-41f2-a94f-cf09b46f810b", SharedSpaceActionType.READ, SharedSpaceResourceType.WORK_GROUP, admin, writer, contributor, reader);
 		upsertInitPermission("881dfa55-90c5-460a-9ac2-a38181fd2349", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.WORK_GROUP, admin);
 		upsertInitPermission("efd0d533-cb5b-4bf6-a717-81f28ae0a1fe", SharedSpaceActionType.DELETE, SharedSpaceResourceType.WORK_GROUP, admin);
