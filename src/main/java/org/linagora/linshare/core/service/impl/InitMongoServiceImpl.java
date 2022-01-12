@@ -125,10 +125,9 @@ public class InitMongoServiceImpl implements InitMongoService {
 	/**
 	 * Create light object that contains minimal information of shared space role
 	 * @param roleUuid
-	 * @param roleName
 	 * @return {@link GenericLightEntity} light role
 	 */
-	private GenericLightEntity createInitLightRole(String roleUuid, String roleName) {
+	private GenericLightEntity createInitLightRole(String roleUuid) {
 		SharedSpaceRole role = roleMongoRepository.findByUuid(roleUuid);
 		GenericLightEntity roleLight = new GenericLightEntity(role.getUuid(), role.getName());
 		return roleLight;
@@ -180,18 +179,18 @@ public class InitMongoServiceImpl implements InitMongoService {
 		upsertInitRole(WORK_GROUP_WRITER_UUID, "WRITER", rootDomain, NodeType.WORK_GROUP, rootAccount);
 		upsertInitRole(WORK_GROUP_READER_UUID, "READER", rootDomain, NodeType.WORK_GROUP, rootAccount);
 
-		GenericLightEntity admin = createInitLightRole(WORK_GROUP_ADMIN_UUID, "ADMIN");
-		GenericLightEntity contributor = createInitLightRole(WORK_GROUP_CONTRIBUTOR_UUID, "CONTRIBUTOR");
-		GenericLightEntity writer = createInitLightRole(WORK_GROUP_WRITER_UUID, "WRITER");
-		GenericLightEntity reader = createInitLightRole(WORK_GROUP_READER_UUID, "READER");
+		GenericLightEntity admin = createInitLightRole(WORK_GROUP_ADMIN_UUID);
+		GenericLightEntity contributor = createInitLightRole(WORK_GROUP_CONTRIBUTOR_UUID);
+		GenericLightEntity writer = createInitLightRole(WORK_GROUP_WRITER_UUID);
+		GenericLightEntity reader = createInitLightRole(WORK_GROUP_READER_UUID);
 
 		upsertInitRole(WORK_SPACE_ADMIN_UUID, "DRIVE_ADMIN", rootDomain, NodeType.WORK_SPACE, rootAccount);
 		upsertInitRole(WORK_SPACE_WRITER_UUID, "DRIVE_WRITER", rootDomain, NodeType.WORK_SPACE, rootAccount);
 		upsertInitRole(WORK_SPACE_READER_UUID, "DRIVE_READER", rootDomain, NodeType.WORK_SPACE, rootAccount);
 
-		GenericLightEntity workSpaceAdmin = createInitLightRole(WORK_SPACE_ADMIN_UUID, "DRIVE_ADMIN");
-		GenericLightEntity workSpaceWriter = createInitLightRole(WORK_SPACE_WRITER_UUID, "DRIVE_WRITER");
-		GenericLightEntity workSpaceReader = createInitLightRole(WORK_SPACE_READER_UUID, "DRIVE_READER");
+		GenericLightEntity workSpaceAdmin = createInitLightRole(WORK_SPACE_ADMIN_UUID);
+		GenericLightEntity workSpaceWriter = createInitLightRole(WORK_SPACE_WRITER_UUID);
+		GenericLightEntity workSpaceReader = createInitLightRole(WORK_SPACE_READER_UUID);
 
 		upsertInitPermission("31cb4d80-c939-40f1-a79e-4d77392e0e0b", SharedSpaceActionType.CREATE, SharedSpaceResourceType.WORK_SPACE, workSpaceAdmin);
 		upsertInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", SharedSpaceActionType.READ, SharedSpaceResourceType.WORK_SPACE, workSpaceAdmin, workSpaceWriter, workSpaceReader);
