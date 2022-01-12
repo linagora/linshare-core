@@ -33,19 +33,19 @@
  */
 package org.linagora.linshare.core.service;
 
-import org.linagora.linshare.core.domain.entities.DriveProvider;
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.entities.WorkSpaceProvider;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DriveProviderService {
 
-	LdapDriveProvider find(String uuid) throws BusinessException;
+	LdapWorkSpaceProvider find(String uuid) throws BusinessException;
 
-	LdapDriveProvider create(LdapDriveProvider ldapDriveProvider) throws BusinessException;
+	LdapWorkSpaceProvider create(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException;
 
 	boolean exists(String uuid);
 
-	LdapDriveProvider update(LdapDriveProvider ldapDriveProvider) throws BusinessException;
+	LdapWorkSpaceProvider update(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException;
 
-	void delete(DriveProvider driveProvider) throws BusinessException;
+	void delete(WorkSpaceProvider driveProvider) throws BusinessException;
 }

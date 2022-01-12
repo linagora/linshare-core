@@ -35,7 +35,7 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -63,7 +63,7 @@ public class LDAPDriveProviderDto {
 		super();
 	}
 
-	public LDAPDriveProviderDto(LdapDriveProvider driveProvider) {
+	public LDAPDriveProviderDto(LdapWorkSpaceProvider driveProvider) {
 		this.uuid = driveProvider.getUuid();
 		this.connection = new LightCommonDto(driveProvider.getLdapConnection().getLabel(),
 				driveProvider.getLdapConnection().getUuid());

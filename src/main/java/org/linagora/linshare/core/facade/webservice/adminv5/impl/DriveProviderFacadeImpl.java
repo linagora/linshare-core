@@ -38,13 +38,13 @@ package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.domain.constants.DriveProviderType;
+import org.linagora.linshare.core.domain.constants.WorkSpaceProviderType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DriveProvider;
+import org.linagora.linshare.core.domain.entities.WorkSpaceProvider;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -89,10 +89,10 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		Set<AbstractDriveProviderDto> res = Sets.newHashSet();
-		DriveProvider driveProvider = domain.getDriveProvider();
+		WorkSpaceProvider driveProvider = domain.getDriveProvider();
 		if (driveProvider != null) {
-			if (DriveProviderType.LDAP_PROVIDER.equals(driveProvider.getType())) {
-				res.add(new LDAPDriveProviderDto((LdapDriveProvider) driveProvider));
+			if (WorkSpaceProviderType.LDAP_PROVIDER.equals(driveProvider.getType())) {
+				res.add(new LDAPDriveProviderDto((LdapWorkSpaceProvider) driveProvider));
 			} else {
 				throw new BusinessException(BusinessErrorCode.DRIVE_PROVIDER_UNSUPPORTED_TYPE,
 						"DriveProvider not supported yet");
@@ -105,16 +105,16 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 	public AbstractDriveProviderDto find(String domainUuid, String uuid) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
-		DriveProvider driveProvider = driveProviderService.find(uuid);
+		WorkSpaceProvider driveProvider = driveProviderService.find(uuid);
 		if (isDomainBelonging(domain, driveProvider)) {
-			return new LDAPDriveProviderDto((LdapDriveProvider) driveProvider);
+			return new LDAPDriveProviderDto((LdapWorkSpaceProvider) driveProvider);
 		} else {
 			throw new BusinessException(BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND,
 					"The requested drive provider does not belong to the entered domain, please check the entered information.");
 		}
 	}
 
-	private Boolean isDomainBelonging(AbstractDomain domain, DriveProvider driveProvider) {
+	private Boolean isDomainBelonging(AbstractDomain domain, WorkSpaceProvider driveProvider) {
 		return domain.getDriveProvider().getUuid().equals(driveProvider.getUuid()) ? true : false;
 	}
 
@@ -130,7 +130,7 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 		if (domain.getDriveProvider() != null) {
 			throw new BusinessException(BusinessErrorCode.DRIVE_PROVIDER_ALREADY_EXIST, "DriveProvider already exists. Can't create more than one");
 		}
-		if (dto.getType().equals(DriveProviderType.LDAP_PROVIDER)) {
+		if (dto.getType().equals(WorkSpaceProviderType.LDAP_PROVIDER)) {
 			return createLdapDriveProvider(authUser, (LDAPDriveProviderDto) dto, domain);
 		} else {
 			throw new BusinessException(BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND, "DriveProvider not found");
@@ -150,8 +150,8 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 		Validate.notEmpty(baseDn, "baseDn is mandatory for drive provider creation");
 		LdapDriveFilter driveLdapPattern = driveLdapFilterService.find(driveFilterUuid);
 		LdapConnection connection = ldapConnectionService.find(ldapConnectionUuid);
-		LdapDriveProvider driveProvider = (LdapDriveProvider) driveProviderService
-				.create(new LdapDriveProvider(
+		LdapWorkSpaceProvider driveProvider = (LdapWorkSpaceProvider) driveProviderService
+				.create(new LdapWorkSpaceProvider(
 						domain,
 						driveLdapPattern,
 						baseDn,
@@ -172,9 +172,9 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 			uuid = dto.getUuid();
 			Validate.notEmpty(uuid, "Missing drive provider uuid in the payload.");
 		}
-		DriveProvider driveProvider = driveProviderService.find(uuid);
+		WorkSpaceProvider driveProvider = driveProviderService.find(uuid);
 		if (isDomainBelonging(domain, driveProvider)) {
-			if (dto.getType().equals(DriveProviderType.LDAP_PROVIDER)) {
+			if (dto.getType().equals(WorkSpaceProviderType.LDAP_PROVIDER)) {
 				return updateLdapDriveProvider((LDAPDriveProviderDto) dto, domain, driveProvider);
 			} else {
 				throw new BusinessException(BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND, "DriveProvider not found");
@@ -186,7 +186,7 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 	}
 
 	private LDAPDriveProviderDto updateLdapDriveProvider(LDAPDriveProviderDto driveProviderDto, AbstractDomain domain,
-			DriveProvider driveProvider) {
+			WorkSpaceProvider driveProvider) {
 		// drive filter
 		Validate.notNull(driveProviderDto.getDriveFilter(), "driveFilter payload is mandatory for drive provider update");
 		String driveFilterUuid = driveProviderDto.getDriveFilter().getUuid();
@@ -198,13 +198,13 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 		// baseDn
 		String baseDn = driveProviderDto.getBaseDn();
 		Validate.notEmpty(baseDn, "baseDn is mandatory for drive provider update");
-		LdapDriveProvider provider = (LdapDriveProvider) driveProvider;
+		LdapWorkSpaceProvider provider = (LdapWorkSpaceProvider) driveProvider;
 		provider.setBaseDn(baseDn);
 		LdapDriveFilter driveLdapFilter = driveLdapFilterService.find(driveFilterUuid);
 		LdapConnection connection = ldapConnectionService.find(ldapConnectionUuid);
 		provider.setLdapConnection(connection);
 		provider.setDriveFilter(driveLdapFilter);
-		return new LDAPDriveProviderDto((LdapDriveProvider) driveProviderService.update(provider));
+		return new LDAPDriveProviderDto((LdapWorkSpaceProvider) driveProviderService.update(provider));
 	}
 
 	@Override
@@ -219,11 +219,11 @@ public class DriveProviderFacadeImpl extends AdminGenericFacadeImpl implements D
 			uuid = dto.getUuid();
 			Validate.notEmpty(uuid, "Missing drive provider uuid in the payload.");
 		}
-		DriveProvider driveProvider = driveProviderService.find(uuid);
+		WorkSpaceProvider driveProvider = driveProviderService.find(uuid);
 		if (isDomainBelonging(domain, driveProvider)) {
 			driveProviderService.delete(driveProvider);
 			domain.setDriveProvider(null);
-			return new LDAPDriveProviderDto((LdapDriveProvider) driveProvider);
+			return new LDAPDriveProviderDto((LdapWorkSpaceProvider) driveProvider);
 		} else {
 			throw new BusinessException(BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND,
 					"The requested drive provider does not belong to the entered domain, please check the entered information.");

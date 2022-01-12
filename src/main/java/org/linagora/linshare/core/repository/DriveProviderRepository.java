@@ -34,9 +34,9 @@
 package org.linagora.linshare.core.repository;
 
 import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
-import org.linagora.linshare.core.domain.entities.DriveProvider;
+import org.linagora.linshare.core.domain.entities.WorkSpaceProvider;
 
-public interface DriveProviderRepository extends AbstractRepository<DriveProvider> {
+public interface DriveProviderRepository extends AbstractRepository<WorkSpaceProvider> {
 
 	boolean isUsed(LdapDriveFilter pattern);
 

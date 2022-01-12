@@ -38,20 +38,20 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.LdapDriveProviderRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
-public class LdapDriveProviderRepositoryImpl extends AbstractRepositoryImpl<LdapDriveProvider> implements LdapDriveProviderRepository {
+public class LdapDriveProviderRepositoryImpl extends AbstractRepositoryImpl<LdapWorkSpaceProvider> implements LdapDriveProviderRepository {
 
 	public LdapDriveProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 
 	@Override
-	public LdapDriveProvider create(LdapDriveProvider entity) throws BusinessException {
+	public LdapWorkSpaceProvider create(LdapWorkSpaceProvider entity) throws BusinessException {
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
 		entity.setUuid(UUID.randomUUID().toString());
@@ -59,13 +59,13 @@ public class LdapDriveProviderRepositoryImpl extends AbstractRepositoryImpl<Ldap
 	}
 
 	@Override
-	public LdapDriveProvider findByUuid(String uuid) {
+	public LdapWorkSpaceProvider findByUuid(String uuid) {
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("uuid", uuid)));
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(LdapDriveProvider entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(LdapDriveProvider.class)
+	protected DetachedCriteria getNaturalKeyCriteria(LdapWorkSpaceProvider entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(LdapWorkSpaceProvider.class)
 				.add(Restrictions.eq("id", entity.getId()));
 		return det;
 	}

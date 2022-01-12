@@ -36,7 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 
-public class LdapDriveProvider extends DriveProvider {
+public class LdapWorkSpaceProvider extends WorkSpaceProvider {
 
 	protected LdapDriveFilter driveFilter;
 
@@ -46,11 +46,11 @@ public class LdapDriveProvider extends DriveProvider {
 
 	protected Boolean searchInOtherDomains;
 
-	public LdapDriveProvider() {
+	public LdapWorkSpaceProvider() {
 		super();
 	}
 
-	public LdapDriveProvider(LdapDriveFilter driveFilter, String baseDn, LdapConnection ldapConnection,
+	public LdapWorkSpaceProvider(LdapDriveFilter driveFilter, String baseDn, LdapConnection ldapConnection,
 			Boolean searchInOtherDomains) {
 		super();
 		this.driveFilter = driveFilter;
@@ -59,7 +59,7 @@ public class LdapDriveProvider extends DriveProvider {
 		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
 	}
 
-	public LdapDriveProvider(AbstractDomain domain, LdapDriveFilter driveFilter, String baseDn, LdapConnection ldapConnection,
+	public LdapWorkSpaceProvider(AbstractDomain domain, LdapDriveFilter driveFilter, String baseDn, LdapConnection ldapConnection,
 			Boolean searchInOtherDomains) {
 		super(domain);
 		this.driveFilter = driveFilter;

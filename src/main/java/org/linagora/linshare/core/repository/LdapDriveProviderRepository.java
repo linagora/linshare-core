@@ -33,9 +33,9 @@
  */
 package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 
-public interface LdapDriveProviderRepository extends AbstractRepository<LdapDriveProvider>{
+public interface LdapDriveProviderRepository extends AbstractRepository<LdapWorkSpaceProvider>{
 
-	LdapDriveProvider findByUuid(String uuid);
+	LdapWorkSpaceProvider findByUuid(String uuid);
 }

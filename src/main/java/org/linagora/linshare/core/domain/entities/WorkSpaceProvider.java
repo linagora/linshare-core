@@ -31,23 +31,54 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.domain.entities;
 
-import org.apache.commons.lang3.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.domain.constants.WorkSpaceProviderType;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
 
-public enum DriveProviderType {
+import com.google.common.base.MoreObjects;
 
-	LDAP_PROVIDER;
+public abstract class WorkSpaceProvider extends Provider {
 
-	public static DriveProviderType fromString(String s) {
-		try {
-			return DriveProviderType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(
-					TechnicalErrorCode.DATA_INCOHERENCE,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
+	protected AbstractDomain domain;
+
+	protected WorkSpaceProviderType type;
+
+	public WorkSpaceProvider() {
+		super();
+	}
+
+	public WorkSpaceProvider(AbstractDomain domain) {
+		this.domain = domain;
+	}
+
+	public WorkSpaceProviderType getType() {
+		return type;
+	}
+
+	public void setType(WorkSpaceProviderType type) {
+		this.type = type;
+	}
+
+	public AbstractDomain getDomain() {
+		return domain;
+	}
+
+	public void setDomain(AbstractDomain domain) {
+		this.domain = domain;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("Type", type)
+				.add("uuid", uuid)
+				.toString();
+	}
+
+	public abstract LDAPDriveProviderDto toLDAPDriveProviderDto();
+
+	public Boolean getSearchInOtherDomains() {
+		return false;
 	}
 }

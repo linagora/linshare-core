@@ -2,19 +2,19 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-	<class name="org.linagora.linshare.core.domain.entities.DriveProvider" table="drive_provider" lazy="false">
+	<class name="org.linagora.linshare.core.domain.entities.WorkSpaceProvider" table="work_space_provider" lazy="false">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
 		</id>
 		<discriminator column="provider_type" type="string"/>
-		<property name="type" column="provider_type" unique="true" type="driveProviderType" not-null="true" lazy="false" insert="false" update="false"/>
+		<property name="type" column="provider_type" unique="true" type="workSpaceProviderType" not-null="true" lazy="false" insert="false" update="false"/>
 		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<one-to-one name="domain" property-ref="driveProvider"/>
 
-		<subclass name="org.linagora.linshare.core.domain.entities.LdapDriveProvider" discriminator-value="LDAP_PROVIDER" lazy="true">
+		<subclass name="org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider" discriminator-value="LDAP_PROVIDER" lazy="true">
 			<property name="baseDn" column="base_dn" type="string" length="255" not-null="false" lazy="true" />
 			<many-to-one name="ldapConnection" column="ldap_connection_id" class="org.linagora.linshare.core.domain.entities.LdapConnection" not-null="true" lazy="proxy" >
 			</many-to-one>

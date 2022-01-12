@@ -37,13 +37,13 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
-import org.linagora.linshare.core.domain.entities.DriveProvider;
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.entities.WorkSpaceProvider;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.repository.DriveProviderRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
-public class DriveProviderRepositoryImpl extends AbstractRepositoryImpl<DriveProvider>
+public class DriveProviderRepositoryImpl extends AbstractRepositoryImpl<WorkSpaceProvider>
 		implements DriveProviderRepository {
 
 	public DriveProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
@@ -51,15 +51,15 @@ public class DriveProviderRepositoryImpl extends AbstractRepositoryImpl<DrivePro
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(DriveProvider entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(DriveProvider.class)
+	protected DetachedCriteria getNaturalKeyCriteria(WorkSpaceProvider entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(WorkSpaceProvider.class)
 				.add(Restrictions.eq("id", entity.getId()));
 		return det;
 	}
 
 	@Override
 	public boolean isUsed(LdapDriveFilter pattern) {
-		DetachedCriteria det = DetachedCriteria.forClass(LdapDriveProvider.class);
+		DetachedCriteria det = DetachedCriteria.forClass(LdapWorkSpaceProvider.class);
 		det.add(Restrictions.eq("driveFilter", pattern));
 		det.setProjection(Projections.rowCount());
 		long longResult = DataAccessUtils.longResult(findByCriteria(det));

@@ -35,8 +35,8 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import java.util.Date;
 
-import org.linagora.linshare.core.domain.constants.DriveProviderType;
-import org.linagora.linshare.core.domain.entities.DriveProvider;
+import org.linagora.linshare.core.domain.constants.WorkSpaceProviderType;
+import org.linagora.linshare.core.domain.entities.WorkSpaceProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -75,15 +75,15 @@ public abstract class AbstractDriveProviderDto {
 	protected DomainLightDto domain;
 
 	@Schema(required = true, description = "Default value is the only allowed and mandatory value.")
-	public abstract DriveProviderType getType();
+	public abstract WorkSpaceProviderType getType();
 
-	protected DriveProviderType type;
+	protected WorkSpaceProviderType type;
 
 	protected AbstractDriveProviderDto() {
 		super();
 	}
 
-	public AbstractDriveProviderDto(DriveProvider driveProvider) {
+	public AbstractDriveProviderDto(WorkSpaceProvider driveProvider) {
 		super();
 		this.uuid = driveProvider.getUuid();
 		this.creationDate = driveProvider.getCreationDate();

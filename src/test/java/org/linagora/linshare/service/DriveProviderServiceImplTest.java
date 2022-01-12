@@ -48,7 +48,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
@@ -118,7 +118,7 @@ public class DriveProviderServiceImplTest {
 	@Test
 	public void testCreateDriveProvider() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		LdapDriveProvider driveProvider = new LdapDriveProvider(drivePattern, "dc=nodomain,dc=com", ldapconnexion,
+		LdapWorkSpaceProvider driveProvider = new LdapWorkSpaceProvider(drivePattern, "dc=nodomain,dc=com", ldapconnexion,
 				false);
 		driveProvider = driveProviderService.create(driveProvider);
 		Assertions.assertNotNull(driveProvider);
@@ -129,7 +129,7 @@ public class DriveProviderServiceImplTest {
 	public void testCreateDeleteDriveProvider() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			LdapDriveProvider driveProvider = new LdapDriveProvider(drivePattern, "dc=nodomain,dc=com", ldapconnexion,
+			LdapWorkSpaceProvider driveProvider = new LdapWorkSpaceProvider(drivePattern, "dc=nodomain,dc=com", ldapconnexion,
 					false);
 			driveProvider = driveProviderService.create(driveProvider);
 			Assertions.assertNotNull(driveProvider);

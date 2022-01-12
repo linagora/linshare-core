@@ -79,7 +79,7 @@
 		<many-to-one name="groupProvider" column="group_provider_id" class="org.linagora.linshare.core.domain.entities.GroupProvider"
 			unique="true" not-null="false" lazy="proxy">
 		</many-to-one>
-		<many-to-one name="driveProvider" column="drive_provider_id" class="org.linagora.linshare.core.domain.entities.DriveProvider"
+		<many-to-one name="driveProvider" column="drive_provider_id" class="org.linagora.linshare.core.domain.entities.WorkSpaceProvider"
 			unique="true" not-null="false" lazy="proxy">
 		</many-to-one>
 		<set name="contactProvider" lazy="true" inverse="false">

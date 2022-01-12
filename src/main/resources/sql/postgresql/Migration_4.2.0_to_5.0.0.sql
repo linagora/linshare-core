@@ -115,7 +115,7 @@ INSERT INTO ldap_pattern(
     group_prefix)
     SELECT 6,
     'c59078f1-2366-4360-baa0-6c089202e9a6',
-    'DRIVE_LDAP_PATTERN',
+    'WORK_SPACE_LDAP_PATTERN',
     'Default Ldap Drive filter',
     true,
     'Description of default LDAP Drive filter',
@@ -127,7 +127,7 @@ INSERT INTO ldap_pattern(
     'drive-' WHERE NOT EXISTS (SELECT id FROM ldap_pattern WHERE id = 6);
 
 -- Update ldap drive filter
-UPDATE ldap_pattern SET pattern_type = 'DRIVE_LDAP_PATTERN', description = 'Description of default LDAP Drive filter', label = 'Default Ldap Drive filter' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
+UPDATE ldap_pattern SET pattern_type = 'WORK_SPACE_LDAP_PATTERN', description = 'Description of default LDAP workSpace filter', label = 'Default Ldap workSpace filter' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
 
 -- ldap attributes
 INSERT INTO ldap_attribute
@@ -970,6 +970,10 @@ UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_NEW_MEMBER' WHERE ident
 UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_UPDATED_MEMBER' WHERE identifier = 'DRIVE_WARN_UPDATED_MEMBER';
 UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_DELETED_MEMBER' WHERE identifier = 'DRIVE_WARN_DELETED_MEMBER';
 UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_DELETED' WHERE identifier = 'DRIVE_WARN_DELETED_DRIVE';
+
+
+-- Rename driveProvider to workSpaceProvider
+ALTER TABLE drive_provider RENAME TO work_space_provider;
 
 ---- End of your queries
 

@@ -34,8 +34,8 @@
 package org.linagora.linshare.core.service.impl;
 
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
-import org.linagora.linshare.core.domain.entities.DriveProvider;
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.entities.WorkSpaceProvider;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DriveProviderRepository;
@@ -58,8 +58,8 @@ public class DriveProviderServiceImpl extends GenericAdminServiceImpl implements
 	}
 
 	@Override
-	public LdapDriveProvider find(String uuid) throws BusinessException {
-		LdapDriveProvider provider = ldapDriveProviderRepository.findByUuid(uuid);
+	public LdapWorkSpaceProvider find(String uuid) throws BusinessException {
+		LdapWorkSpaceProvider provider = ldapDriveProviderRepository.findByUuid(uuid);
 		if (provider == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND,
@@ -69,23 +69,23 @@ public class DriveProviderServiceImpl extends GenericAdminServiceImpl implements
 	}
 
 	@Override
-	public LdapDriveProvider create(LdapDriveProvider ldapDriveProvider) throws BusinessException {
+	public LdapWorkSpaceProvider create(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException {
 		return ldapDriveProviderRepository.create(ldapDriveProvider);
 	}
 
 	@Override
 	public boolean exists(String uuid) {
-		LdapDriveProvider provider = ldapDriveProviderRepository.findByUuid(uuid);
+		LdapWorkSpaceProvider provider = ldapDriveProviderRepository.findByUuid(uuid);
 		return provider != null;
 	}
 
 	@Override
-	public LdapDriveProvider update(LdapDriveProvider ldapDriveProvider) throws BusinessException {
+	public LdapWorkSpaceProvider update(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException {
 		return ldapDriveProviderRepository.update(ldapDriveProvider);
 	}
 
 	@Override
-	public void delete(DriveProvider driveProvider) throws BusinessException {
+	public void delete(WorkSpaceProvider driveProvider) throws BusinessException {
 		driveProviderRepository.delete(driveProvider);
 	}
 

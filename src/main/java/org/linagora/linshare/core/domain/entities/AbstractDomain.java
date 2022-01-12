@@ -108,7 +108,7 @@ public abstract class AbstractDomain {
 
 	protected GroupProvider groupProvider;
 
-	protected DriveProvider driveProvider;
+	protected WorkSpaceProvider driveProvider;
 
 	protected WelcomeMessages currentWelcomeMessage;
 
@@ -500,11 +500,11 @@ public abstract class AbstractDomain {
 		this.groupProvider = groupProvider;
 	}
 
-	public DriveProvider getDriveProvider() {
+	public WorkSpaceProvider getDriveProvider() {
 		return driveProvider;
 	}
 
-	public void setDriveProvider(DriveProvider driveProvider) {
+	public void setDriveProvider(WorkSpaceProvider driveProvider) {
 		this.driveProvider = driveProvider;
 	}
 

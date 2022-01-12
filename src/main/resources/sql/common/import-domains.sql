@@ -230,7 +230,7 @@ INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
 VALUES(17, 'sn', 'member_lastname', false, true, true, false, 4);
 
--- Drive ldap pattern
+-- WORK_SPACE ldap pattern
 INSERT INTO ldap_pattern(
     id,
     uuid,
@@ -253,7 +253,7 @@ INSERT INTO ldap_pattern(
     VALUES(
     6,
     'c59078f1-2366-4360-baa0-6c089202e9a6',
-    'DRIVE_LDAP_PATTERN',
+    'WORK_SPACE_LDAP_PATTERN',
     'Default Ldap Drive filter',
     true,
     'default-drive-filter',

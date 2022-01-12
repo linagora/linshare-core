@@ -41,7 +41,7 @@ import javax.naming.NamingException;
 import org.linagora.linshare.core.domain.constants.LdapBatchMetaDataType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DriveProvider;
+import org.linagora.linshare.core.domain.entities.WorkSpaceProvider;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -93,7 +93,7 @@ public class SynchronizeLDAPGroupsInDrivesBatchImpl extends GenericBatchImpl {
 		AbstractDomain domain = domainRepository.findById(identifier);
 		logger.info("Synchronizing the LDAP groups for the domain: {}", domain.toString());
 		LdapGroupsBatchResultContext context = new LdapGroupsBatchResultContext(domain);
-		DriveProvider driveProvider = domain.getDriveProvider();
+		WorkSpaceProvider driveProvider = domain.getDriveProvider();
 		if (null != driveProvider) {
 			LDAPDriveProviderDto dto = driveProvider.toLDAPDriveProviderDto();
 			LdapConnection ldapConnection = connectionService.find(dto.getConnection().getUuid());

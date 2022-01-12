@@ -33,8 +33,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
-import org.linagora.linshare.core.domain.constants.DriveProviderType;
-import org.linagora.linshare.core.domain.entities.LdapDriveProvider;
+import org.linagora.linshare.core.domain.constants.WorkSpaceProviderType;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
@@ -143,7 +143,7 @@ public class LDAPDriveProviderDto extends AbstractDriveProviderDto {
 		super();
 	}
 
-	public LDAPDriveProviderDto(LdapDriveProvider driveProvider) {
+	public LDAPDriveProviderDto(LdapWorkSpaceProvider driveProvider) {
 		super(driveProvider);
 		this.ldapServer = new LdapServerDto(driveProvider.getLdapConnection().getUuid(),
 				driveProvider.getLdapConnection().getClass().getName());
@@ -155,8 +155,8 @@ public class LDAPDriveProviderDto extends AbstractDriveProviderDto {
 
 	@Schema(defaultValue = "LDAP_PROVIDER")
 	@Override
-	public DriveProviderType getType() {
-		return DriveProviderType.LDAP_PROVIDER;
+	public WorkSpaceProviderType getType() {
+		return WorkSpaceProviderType.LDAP_PROVIDER;
 	}
 
 	public LdapServerDto getLdapServer() {
@@ -194,10 +194,10 @@ public class LDAPDriveProviderDto extends AbstractDriveProviderDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<LdapDriveProvider, LDAPDriveProviderDto> toDto() {
-		return new Function<LdapDriveProvider, LDAPDriveProviderDto>() {
+	public static Function<LdapWorkSpaceProvider, LDAPDriveProviderDto> toDto() {
+		return new Function<LdapWorkSpaceProvider, LDAPDriveProviderDto>() {
 			@Override
-			public LDAPDriveProviderDto apply(LdapDriveProvider driveProvider) {
+			public LDAPDriveProviderDto apply(LdapWorkSpaceProvider driveProvider) {
 				return new LDAPDriveProviderDto(driveProvider);
 			}
 		};
