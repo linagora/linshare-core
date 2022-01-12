@@ -62,7 +62,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-@Path("/domains/{domainUuid}/drive_providers")
+@Path("/domains/{domainUuid}/workspace_providers")
 @Produces({ MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON })
 public class DriveProviderRestServiceImpl extends WebserviceBase implements
@@ -76,7 +76,7 @@ public class DriveProviderRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@Operation(summary = "It will return all drive providers of the current domain.", responses = {
+	@Operation(summary = "It will return all workSpace providers of the current domain.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(array = @ArraySchema(
@@ -104,7 +104,7 @@ public class DriveProviderRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@GET
-	@Operation(summary = "It will return the detail of a drive provider of the current domain.", responses = {
+	@Operation(summary = "It will return the detail of a workSpace provider of the current domain.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(
@@ -135,7 +135,7 @@ public class DriveProviderRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@Operation(summary = "It allows root administrator to create a new drive provider.", responses = {
+	@Operation(summary = "It allows root administrator to create a new workSpace provider.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(
@@ -172,7 +172,7 @@ public class DriveProviderRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid: .*}")
 	@PUT
-	@Operation(summary = "It allows administrator to update a drive Provider.", responses = {
+	@Operation(summary = "It allows administrator to update a workSpace Provider.", responses = {
 		@ApiResponse(
 			responseCode = "200",
 			content = @Content(
@@ -195,9 +195,9 @@ public class DriveProviderRestServiceImpl extends WebserviceBase implements
 	public AbstractDriveProviderDto update(
 			@Parameter(description = "domain's uuid.", required = true)
 				@PathParam("domainUuid") String domainUuid,
-			@Parameter(description = "driveProvider's uuid to update, if null, object.uuid is used", required = false)
+			@Parameter(description = "workSpaceProvider's uuid to update, if null, object.uuid is used", required = false)
 				@PathParam("uuid") String uuid,
-			@RequestBody(description = "driveProvider dto with properties to update", required = false,
+			@RequestBody(description = "workSpaceProvider dto with properties to update", required = false,
 				content = @Content(
 					schema = @Schema(
 						oneOf = {LDAPDriveProviderDto.class},
@@ -211,7 +211,7 @@ public class DriveProviderRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid: .*}")
 	@DELETE
-	@Operation(summary = "It allows administrator to delete a driveProvider.", responses = {
+	@Operation(summary = "It allows administrator to delete a workSpaceProvider.", responses = {
 			@ApiResponse(
 				responseCode = "200",
 				content = @Content(
@@ -234,9 +234,9 @@ public class DriveProviderRestServiceImpl extends WebserviceBase implements
 	public AbstractDriveProviderDto delete(
 			@Parameter(description = "domain's uuid.", required = true)
 				@PathParam("domainUuid") String domainUuid,
-			@Parameter(description = "driveProvider uuid to delete, if null, object.uuid is used", required = false)
+			@Parameter(description = "workSpaceProvider uuid to delete, if null, object.uuid is used", required = false)
 				@PathParam("uuid") String uuid,
-			@RequestBody(description = "driveProvider uuid to delete, if null, object.uuid is used", required = false,
+			@RequestBody(description = "workSpaceProvider uuid to delete, if null, object.uuid is used", required = false,
 				content = @Content(
 					schema = @Schema(
 						oneOf = {LDAPDriveProviderDto.class},
