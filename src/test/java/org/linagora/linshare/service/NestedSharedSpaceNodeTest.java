@@ -133,9 +133,9 @@ public class NestedSharedSpaceNodeTest {
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		foo = userRepository.findByMail(LinShareTestConstants.FOO_ACCOUNT);
 		adminWorkgroupRole = ssRoleService.getAdmin(root, root);
-		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
-		writerDriveRole = ssRoleService.findByName(root, root, "DRIVE_WRITER");
-		readerDriveRole = ssRoleService.findByName(root, root, "DRIVE_READER");
+		adminDriveRole = ssRoleService.getWorkSpaceAdmin(root, root);
+		writerDriveRole = ssRoleService.findByName(root, root, "WORK_SPACE_WRITER");
+		readerDriveRole = ssRoleService.findByName(root, root, "WORK_SPACE_READER");
 		contributor = ssRoleService.findByName(root, root, "CONTRIBUTOR");
 		reader = ssRoleService.findByName(root, root, "READER");
 		logger.debug(LinShareTestConstants.END_SETUP);

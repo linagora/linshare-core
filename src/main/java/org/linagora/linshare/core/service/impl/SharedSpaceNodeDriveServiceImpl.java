@@ -104,7 +104,7 @@ public class SharedSpaceNodeDriveServiceImpl extends AbstractSharedSpaceFragment
 		SharedSpaceNode created = super.create(authUser, actor, node);
 		// TODO: workaround to avoid to rely on account type
 		if (!(actor instanceof SystemAccount)) {
-			SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
+			SharedSpaceRole driveRole = ssRoleService.getWorkSpaceAdmin(authUser, actor);
 			SharedSpaceRole workGroupRole = ssRoleService.getAdmin(authUser, actor);
 			SharedSpaceMemberContext context = new SharedSpaceMemberContext(driveRole, workGroupRole);
 			memberService.create(authUser, actor, created, context, new SharedSpaceAccount((User) actor));

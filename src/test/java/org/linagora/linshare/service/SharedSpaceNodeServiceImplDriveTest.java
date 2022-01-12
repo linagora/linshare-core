@@ -155,8 +155,8 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		authUser = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
-		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
-		readerDriveRole = ssRoleService.findByName(root, root,"DRIVE_READER");
+		adminDriveRole = ssRoleService.getWorkSpaceAdmin(root, root);
+		readerDriveRole = ssRoleService.findByName(root, root,"WORK_SPACE_READER");
 		reader = ssRoleService.findByName(root, root, "READER");
 		admin = ssRoleService.findByName(root, root, "ADMIN");
 		logger.debug(LinShareTestConstants.END_SETUP);

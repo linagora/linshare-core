@@ -53,7 +53,7 @@ public interface SharedSpaceRoleService {
 
 	SharedSpaceRole getAdmin(Account authUser, Account actor) throws BusinessException;
 
-	SharedSpaceRole getDriveAdmin(Account authUser, Account actor) throws BusinessException;
+	SharedSpaceRole getWorkSpaceAdmin(Account authUser, Account actor) throws BusinessException;
 
 	/**
 	 * This method will retrieve a list of roles filtered by {@link NodeType}

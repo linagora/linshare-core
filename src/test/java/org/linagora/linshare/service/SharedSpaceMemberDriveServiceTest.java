@@ -136,8 +136,8 @@ public class SharedSpaceMemberDriveServiceTest {
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		adminWorkgroupRole = ssRoleService.getAdmin(root, root);
-		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
-		writerDriveRole = ssRoleService.findByName(root, root, "DRIVE_WRITER");
+		adminDriveRole = ssRoleService.getWorkSpaceAdmin(root, root);
+		writerDriveRole = ssRoleService.findByName(root, root, "WORK_SPACE_WRITER");
 		reader = ssRoleService.findByName(root, root, "READER");
 		writer = ssRoleService.findByName(root, root, "WRITER");
 		logger.debug(LinShareTestConstants.END_SETUP);

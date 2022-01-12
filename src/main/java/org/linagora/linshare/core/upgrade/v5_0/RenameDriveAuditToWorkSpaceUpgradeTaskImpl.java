@@ -107,7 +107,7 @@ public class RenameDriveAuditToWorkSpaceUpgradeTaskImpl extends GenericUpgradeTa
 		Query query = new Query();
 		query.addCriteria(new Criteria().andOperator(
 				Criteria.where("type").is(AuditLogEntryType.DRIVE_MEMBER),
-				Criteria.where("resource.role.name").is(Role.DRIVE_ADMIN)));
+				Criteria.where("resource.role.name").is(Role.WORK_SPACE_ADMIN)));
 		Update update = new Update();
 		update.set("resource.role.name", "WORK_SPACE_ADMIN");
 		update.set("resource.role.type", NodeType.WORK_SPACE);
@@ -116,7 +116,7 @@ public class RenameDriveAuditToWorkSpaceUpgradeTaskImpl extends GenericUpgradeTa
 		Query query2 = new Query();
 		query2.addCriteria(new Criteria().andOperator(
 				Criteria.where("type").is(AuditLogEntryType.DRIVE_MEMBER),
-				Criteria.where("resource.role.name").is(Role.DRIVE_READER)));
+				Criteria.where("resource.role.name").is(Role.WORK_SPACE_READER)));
 		Update update2 = new Update();
 		update2.set("resource.role.name", "WORK_SPACE_READER");
 		update.set("resource.role.type", NodeType.WORK_SPACE);
@@ -125,7 +125,7 @@ public class RenameDriveAuditToWorkSpaceUpgradeTaskImpl extends GenericUpgradeTa
 		Query query3 = new Query();
 		query3.addCriteria(new Criteria().andOperator(
 				Criteria.where("type").is(AuditLogEntryType.DRIVE_MEMBER),
-				Criteria.where("resource.role.name").is(Role.DRIVE_WRITER)));
+				Criteria.where("resource.role.name").is(Role.WORK_SPACE_WRITER)));
 		Update update3 = new Update();
 		update3.set("resource.role.name", "WORK_SPACE_WRITER");
 		update.set("resource.role.type", NodeType.WORK_SPACE);

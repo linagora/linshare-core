@@ -351,12 +351,12 @@ public class SharedSpaceNodeServiceImplTest {
 		node7 = service.create(foo, foo, new SharedSpaceNode("My drive", null, NodeType.WORK_SPACE));
 		SharedSpaceMember member = memberBusinessService.findByAccountAndNode(foo.getLsUuid(), node7.getUuid());
 		Assertions.assertTrue(member.isDriveAdmin());
-		member.setRole(new LightSharedSpaceRole(roleBusinessService.findByName(Role.DRIVE_READER.toString())));
+		member.setRole(new LightSharedSpaceRole(roleBusinessService.findByName(Role.WORK_SPACE_READER.toString())));
 		memberRepository.save(member);
 		Assertions.assertTrue(member.isDriveReader());
 		fooDrives = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.WORK_SPACE), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
 		Assertions.assertEquals(2, fooDrives.getPageResponse().getTotalElements());
-		PageContainer<SharedSpaceNodeNested> fooDriveReaderRole = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.WORK_SPACE), Sets.newHashSet(Role.DRIVE_READER.toString()), SharedSpaceField.creationDate, null, null, null, container);
+		PageContainer<SharedSpaceNodeNested> fooDriveReaderRole = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.WORK_SPACE), Sets.newHashSet(Role.WORK_SPACE_READER.toString()), SharedSpaceField.creationDate, null, null, null, container);
 		Assertions.assertEquals(1, fooDriveReaderRole.getPageResponse().getTotalElements());
 		// Filter by Name
 		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByName = service.findAll(root, root, null, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, "SECOND NODE", null, null, container);

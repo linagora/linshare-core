@@ -238,7 +238,7 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
-				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
+				"uid=user1,ou=People,dc=linshare,dc=org", Role.WORK_SPACE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.WORK_SPACE);
 		Assertions.assertNotNull(drive, "The drive has not been found");
@@ -268,7 +268,7 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
-				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
+				"uid=user1,ou=People,dc=linshare,dc=org", Role.WORK_SPACE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.WORK_SPACE);
 		Assertions.assertNotNull(drive, "The drive has not been found");
@@ -298,7 +298,7 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
-				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
+				"uid=user1,ou=People,dc=linshare,dc=org", Role.WORK_SPACE_WRITER, Role.CONTRIBUTOR);
 		// Create a drive
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.WORK_SPACE);
@@ -357,7 +357,7 @@ public class LDAPDriveSyncServiceImplTest {
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
 		LdapDriveMemberObject ldapDriveMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
-				"uid=user1,ou=People,dc=linshare,dc=org", Role.DRIVE_WRITER, Role.CONTRIBUTOR);
+				"uid=user1,ou=People,dc=linshare,dc=org", Role.WORK_SPACE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup drive = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.WORK_SPACE);
 		Assertions.assertNotNull(drive, "The drive has not been found");

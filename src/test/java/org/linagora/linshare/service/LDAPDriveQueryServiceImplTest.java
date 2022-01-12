@@ -145,7 +145,7 @@ public class LDAPDriveQueryServiceImplTest {
 				Assertions.assertEquals("Doe", member.getLastName());
 				Assertions.assertEquals("user1@linshare.org", member.getEmail());
 				Assertions.assertEquals(Role.READER, member.getNestedRole());
-				Assertions.assertEquals(Role.DRIVE_READER, member.getRole());
+				Assertions.assertEquals(Role.WORK_SPACE_READER, member.getRole());
 			}
 			Assertions.assertEquals(1, listMembers.size());
 		}
@@ -170,7 +170,7 @@ public class LDAPDriveQueryServiceImplTest {
 					Assertions.assertEquals("Smith", member.getLastName());
 					Assertions.assertEquals("user2@linshare.org", member.getEmail());
 					Assertions.assertEquals(Role.CONTRIBUTOR, member.getNestedRole());
-					Assertions.assertEquals(Role.DRIVE_READER, member.getRole());
+					Assertions.assertEquals(Role.WORK_SPACE_READER, member.getRole());
 				}
 			}
 			Assertions.assertEquals(2, listMembers.size());
@@ -196,7 +196,7 @@ public class LDAPDriveQueryServiceImplTest {
 					Assertions.assertEquals("Smith", member.getLastName());
 					Assertions.assertEquals("user2@linshare.org", member.getEmail());
 					Assertions.assertEquals(Role.READER, member.getNestedRole());
-					Assertions.assertEquals(Role.DRIVE_WRITER, member.getRole());
+					Assertions.assertEquals(Role.WORK_SPACE_WRITER, member.getRole());
 				}
 			}
 			Assertions.assertEquals(2, listMembers.size());
@@ -222,7 +222,7 @@ public class LDAPDriveQueryServiceImplTest {
 					Assertions.assertEquals("Smith", member.getLastName());
 					Assertions.assertEquals("user2@linshare.org", member.getEmail());
 					Assertions.assertEquals(Role.WRITER, member.getNestedRole());
-					Assertions.assertEquals(Role.DRIVE_WRITER, member.getRole());
+					Assertions.assertEquals(Role.WORK_SPACE_WRITER, member.getRole());
 				}
 			}
 			Assertions.assertEquals(2, listMembers.size());

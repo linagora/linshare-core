@@ -295,19 +295,19 @@ public class SharedSpaceMember {
 	@XmlTransient
 	@JsonIgnore
 	public boolean isDriveAdmin() {
-		return this.getRole().getName().equals(Role.DRIVE_ADMIN.toString());
+		return this.getRole().getName().equals(Role.WORK_SPACE_ADMIN.toString());
 	}
 
 	@XmlTransient
 	@JsonIgnore
 	public boolean isDriveWriter() {
-		return this.getRole().getName().equals(Role.DRIVE_WRITER.toString());
+		return this.getRole().getName().equals(Role.WORK_SPACE_WRITER.toString());
 	}
 
 	@XmlTransient
 	@JsonIgnore
 	public boolean isDriveReader() {
-		return this.getRole().getName().equals(Role.DRIVE_READER.toString());
+		return this.getRole().getName().equals(Role.WORK_SPACE_READER.toString());
 	}
 
 }

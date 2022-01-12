@@ -172,7 +172,7 @@ public class SharedSpaceMemberServiceImplTest {
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		adminRole = roleBusinessService.findByName("ADMIN");
 		readerRole = roleBusinessService.findByName("READER");
-		readerDriveRole = roleBusinessService.findByName("DRIVE_READER");
+		readerDriveRole = roleBusinessService.findByName("WORK_SPACE_READER");
 		lightReaderRoleToPersist = new LightSharedSpaceRole(readerRole);
 		Validate.notNull(adminRole, "adminRole must be set");
 		workGroup = threadService.create(john, john, "WG-nodeTest");
