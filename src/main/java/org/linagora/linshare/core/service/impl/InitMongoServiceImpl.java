@@ -36,7 +36,10 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
@@ -148,10 +151,24 @@ public class InitMongoServiceImpl implements InitMongoService {
 		if (permission == null) {
 			return createInitPermission(permissionUuid, actionType, resourceType, roles);
 		}
-		permission.setRoles(Lists.newArrayList(roles));
-		permission.setModificationDate(new Date());
-		permission = permissionMongoRepository.save(permission);
+		if (rolesHasChanged(permission.getRoles(), roles)) {
+			permission.setRoles(Lists.newArrayList(roles));
+			permission.setModificationDate(new Date());
+			permission = permissionMongoRepository.save(permission);
+		}
 		return permission;
+	}
+
+	private boolean rolesHasChanged(List<GenericLightEntity> currentRoles, GenericLightEntity[] newRoles) {
+		List<String> currentRoleUuids = currentRoles
+			.stream()
+			.map(GenericLightEntity::getUuid)
+			.collect(Collectors.toUnmodifiableList());
+		List<String> newRoleUuids = Lists.newArrayList(newRoles)
+			.stream()
+			.map(GenericLightEntity::getUuid)
+			.collect(Collectors.toUnmodifiableList());
+		return !CollectionUtils.isEqualCollection(currentRoleUuids, newRoleUuids);
 	}
 
 	private SharedSpacePermission createInitPermission(String permissionUuid, SharedSpaceActionType actionType, SharedSpaceResourceType resourceType, GenericLightEntity... roles) {

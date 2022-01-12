@@ -247,7 +247,7 @@ public class InitMongoServiceImplTest {
 	}
 
 	@Test
-	public void upsertInitPermissionShouldUpdateRolesWhenExists() {
+	public void upsertInitPermissionShouldUpdateRolesWhenModified() {
 		// Given
 		String permissionUuid = "3cd75eec-cacc-42e6-ad59-23d521a1d8d1";
 		SharedSpaceActionType actionType = SharedSpaceActionType.CREATE;
@@ -260,7 +260,8 @@ public class InitMongoServiceImplTest {
 		permission.setResource(resourceType);
 		permission.setCreationDate(new Date());
 		permission.setRoles(Lists.newArrayList(entity));
-		permission.setModificationDate(new Date());
+		Date modificationDate = new Date();
+		permission.setModificationDate(modificationDate);
 		permissionMongoRepository.insert(permission);
 
 		// When
@@ -276,6 +277,33 @@ public class InitMongoServiceImplTest {
 		softAssertions.assertThat(returnedPermission.getRoles())
 			.extracting("uuid")
 			.containsOnly(entity.getUuid(), other.getUuid());
+		softAssertions.assertThat(returnedPermission.getModificationDate()).isNotEqualTo(modificationDate);
 		softAssertions.assertAll();
+	}
+
+	@Test
+	public void upsertInitPermissionShouldNotUpdateRolesWhenSame() {
+		// Given
+		String permissionUuid = "3cd75eec-cacc-42e6-ad59-23d521a1d8d1";
+		SharedSpaceActionType actionType = SharedSpaceActionType.CREATE;
+		SharedSpaceResourceType resourceType = SharedSpaceResourceType.MEMBER;
+		GenericLightEntity entity = new GenericLightEntity("30b6a3be-e171-4829-8b54-a28c846ed411", "RoleName");
+
+		SharedSpacePermission permission = new SharedSpacePermission();
+		permission.setUuid(permissionUuid);
+		permission.setAction(actionType);
+		permission.setResource(resourceType);
+		permission.setCreationDate(new Date());
+		permission.setRoles(Lists.newArrayList(entity));
+		Date modificationDate = new Date();
+		permission.setModificationDate(modificationDate);
+		permissionMongoRepository.insert(permission);
+
+		// When
+		SharedSpacePermission returnedPermission = testee.upsertInitPermission(permissionUuid, actionType, resourceType, entity);
+
+		// Then
+		assertThat(returnedPermission).isNotNull();
+		assertThat(returnedPermission.getModificationDate()).isEqualTo(modificationDate);
 	}
 }
