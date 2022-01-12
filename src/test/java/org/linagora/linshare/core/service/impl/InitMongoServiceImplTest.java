@@ -47,14 +47,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.SharedSpaceAuthor;
+import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
@@ -79,12 +85,17 @@ public class InitMongoServiceImplTest {
 	private SharedSpaceRoleMongoRepository roleMongoRepository;
 	@Autowired
 	private UserServiceImpl userService;
+	@Autowired
+	private SharedSpacePermissionMongoRepository permissionMongoRepository;
 
 	@AfterEach
 	public void tearDown() {
 		roleMongoRepository.findAll()
 			.stream()
 			.forEach(role -> roleMongoRepository.delete(role));
+		permissionMongoRepository.findAll()
+			.stream()
+			.forEach(permission -> permissionMongoRepository.delete(permission));
 	}
 
 	@Test
@@ -104,8 +115,8 @@ public class InitMongoServiceImplTest {
 		// Then
 		SharedSpaceRole role = roleMongoRepository.findByUuid(roleUuid);
 
+		assertThat(role).isNotNull();
 		SoftAssertions softAssertions = new SoftAssertions();
-		softAssertions.assertThat(role).isNotNull();
 		softAssertions.assertThat(role.getUuid()).isEqualTo(roleUuid);
 		softAssertions.assertThat(role.getName()).isEqualTo(roleName);
 		softAssertions.assertThat(role.getDomain().getUuid()).isEqualTo(rootDomain.getUuid());
@@ -176,5 +187,95 @@ public class InitMongoServiceImplTest {
 
 		// Then
 		assertThat(returnedRole.getType()).isEqualTo(workGroup);
+	}
+
+	@Test
+	public void upsertInitPermissionShouldCreatePermissionWhenDoesntExists() {
+		// Given
+		String permissionUuid = "3cd75eec-cacc-42e6-ad59-23d521a1d8d1";
+		SharedSpaceActionType actionType = SharedSpaceActionType.CREATE;
+		SharedSpaceResourceType resourceType = SharedSpaceResourceType.MEMBER;
+		GenericLightEntity entity = new GenericLightEntity("30b6a3be-e171-4829-8b54-a28c846ed411", "RoleName");
+
+		// When
+		testee.upsertInitPermission(permissionUuid, actionType, resourceType, entity);
+
+		// Then
+		SharedSpacePermission permission = permissionMongoRepository.findByUuid(permissionUuid);
+
+		assertThat(permission).isNotNull();
+		SoftAssertions softAssertions = new SoftAssertions();
+		softAssertions.assertThat(permission.getUuid()).isEqualTo(permissionUuid);
+		softAssertions.assertThat(permission.getAction()).isEqualTo(actionType);
+		softAssertions.assertThat(permission.getResource()).isEqualTo(resourceType);
+		softAssertions.assertThat(permission.getRoles())
+			.extracting("uuid")
+			.containsOnly(entity.getUuid());
+		softAssertions.assertAll();
+	}
+
+	@Test
+	public void upsertInitPermissionShouldReturnPermissionWhenExists() {
+		// Given
+		String permissionUuid = "3cd75eec-cacc-42e6-ad59-23d521a1d8d1";
+		SharedSpaceActionType actionType = SharedSpaceActionType.CREATE;
+		SharedSpaceResourceType resourceType = SharedSpaceResourceType.MEMBER;
+		GenericLightEntity entity = new GenericLightEntity("30b6a3be-e171-4829-8b54-a28c846ed411", "RoleName");
+
+		SharedSpacePermission permission = new SharedSpacePermission();
+		permission.setUuid(permissionUuid);
+		permission.setAction(actionType);
+		permission.setResource(resourceType);
+		permission.setCreationDate(new Date());
+		permission.setRoles(Lists.newArrayList(entity));
+		permission.setModificationDate(new Date());
+		permissionMongoRepository.insert(permission);
+
+		// When
+		SharedSpacePermission returnedPermission = testee.upsertInitPermission(permissionUuid, actionType, resourceType, entity);
+
+		// Then
+		assertThat(returnedPermission).isNotNull();
+		SoftAssertions softAssertions = new SoftAssertions();
+		softAssertions.assertThat(returnedPermission.getUuid()).isEqualTo(permissionUuid);
+		softAssertions.assertThat(returnedPermission.getAction()).isEqualTo(actionType);
+		softAssertions.assertThat(returnedPermission.getResource()).isEqualTo(resourceType);
+		softAssertions.assertThat(returnedPermission.getRoles())
+			.extracting("uuid")
+			.containsOnly(entity.getUuid());
+		softAssertions.assertAll();
+	}
+
+	@Test
+	public void upsertInitPermissionShouldUpdateRolesWhenExists() {
+		// Given
+		String permissionUuid = "3cd75eec-cacc-42e6-ad59-23d521a1d8d1";
+		SharedSpaceActionType actionType = SharedSpaceActionType.CREATE;
+		SharedSpaceResourceType resourceType = SharedSpaceResourceType.MEMBER;
+		GenericLightEntity entity = new GenericLightEntity("30b6a3be-e171-4829-8b54-a28c846ed411", "RoleName");
+
+		SharedSpacePermission permission = new SharedSpacePermission();
+		permission.setUuid(permissionUuid);
+		permission.setAction(actionType);
+		permission.setResource(resourceType);
+		permission.setCreationDate(new Date());
+		permission.setRoles(Lists.newArrayList(entity));
+		permission.setModificationDate(new Date());
+		permissionMongoRepository.insert(permission);
+
+		// When
+		GenericLightEntity other = new GenericLightEntity("558234e6-421a-4d2e-b18e-30402794ccea", "OtherRoleName");
+		SharedSpacePermission returnedPermission = testee.upsertInitPermission(permissionUuid, actionType, resourceType, entity, other);
+
+		// Then
+		assertThat(returnedPermission).isNotNull();
+		SoftAssertions softAssertions = new SoftAssertions();
+		softAssertions.assertThat(returnedPermission.getUuid()).isEqualTo(permissionUuid);
+		softAssertions.assertThat(returnedPermission.getAction()).isEqualTo(actionType);
+		softAssertions.assertThat(returnedPermission.getResource()).isEqualTo(resourceType);
+		softAssertions.assertThat(returnedPermission.getRoles())
+			.extracting("uuid")
+			.containsOnly(entity.getUuid(), other.getUuid());
+		softAssertions.assertAll();
 	}
 }
