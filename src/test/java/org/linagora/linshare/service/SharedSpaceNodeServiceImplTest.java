@@ -55,13 +55,17 @@ import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessServic
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
+import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.ldap.Role;
@@ -123,6 +127,12 @@ public class SharedSpaceNodeServiceImplTest {
 	@Qualifier("sharedSpaceMemberService")
 	private SharedSpaceMemberService memberService;
 
+	@Autowired
+	private RootUserRepository rootUserRepository;
+
+	@Autowired
+	private FunctionalityService functionalityService;
+
 	private Account john;
 
 	private Account foo;
@@ -170,6 +180,16 @@ public class SharedSpaceNodeServiceImplTest {
 		adminRole = roleBusinessService.findByName("ADMIN");
 		readerRole = roleBusinessService.findByName("READER");
 		logger.debug(LinShareTestConstants.END_SETUP);
+		activateWorkGroupCreation();
+	}
+
+	private void activateWorkGroupCreation() {
+		Account actor = rootUserRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
+		Functionality functionality = functionalityService.find(actor, LinShareTestConstants.ROOT_DOMAIN, "WORK_GROUP__CREATION_RIGHT");
+		Policy activationPolicy = functionality.getActivationPolicy();
+		activationPolicy.setStatus(true);
+		functionality.setActivationPolicy(activationPolicy);
+		functionalityService.update(actor, LinShareTestConstants.ROOT_DOMAIN, functionality);
 	}
 
 	@AfterEach

@@ -56,8 +56,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.fields.DocumentKind;
@@ -65,8 +67,10 @@ import org.linagora.linshare.core.domain.entities.fields.SharedSpaceNodeField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -136,10 +140,16 @@ public class WorkGroupNodeServiceImplTest {
 	private UserRepository<User> userRepository;
 
 	@Autowired
-	private FunctionalityReadOnlyService functionalityService;
+	private FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	@Autowired
 	private QuotaService quotaService;
+
+	@Autowired
+	private RootUserRepository rootUserRepository;
+
+	@Autowired
+	private FunctionalityService functionalityService;
 
 	private User john;
 
@@ -154,6 +164,7 @@ public class WorkGroupNodeServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		activateWorkGroupCreation();
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		ssnode = sharedSpaceNodeService.create(john, john,
 				new SharedSpaceNode("Workgroup_test", NodeType.WORK_GROUP));
@@ -164,6 +175,15 @@ public class WorkGroupNodeServiceImplTest {
 		wgn.setNodeType(WorkGroupNodeType.FOLDER);
 		folder = workGroupNodeService.create(john, john, workGroup, wgn, false, false);
 		logger.debug(LinShareTestConstants.END_SETUP);
+	}
+
+	private void activateWorkGroupCreation() {
+		Account actor = rootUserRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
+		Functionality functionality = functionalityService.find(actor, LinShareTestConstants.ROOT_DOMAIN, "WORK_GROUP__CREATION_RIGHT");
+		Policy activationPolicy = functionality.getActivationPolicy();
+		activationPolicy.setStatus(true);
+		functionality.setActivationPolicy(activationPolicy);
+		functionalityService.update(actor, LinShareTestConstants.ROOT_DOMAIN, functionality);
 	}
 
 	@AfterEach
@@ -217,7 +237,7 @@ public class WorkGroupNodeServiceImplTest {
 		WorkGroupDocument document1 = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile1,
 				tempFile1.getName(), folder.getUuid(), false);
 		// activate versioning functionality
-		Functionality versioningFunctionality = functionalityService.getWorkGroupFileVersioning(john.getDomain());
+		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(john.getDomain());
 		versioningFunctionality.getActivationPolicy().setStatus(true);
 		ssnode.setVersioningParameters(new VersioningParameters(true));
 		// upload a document with same name on same folder

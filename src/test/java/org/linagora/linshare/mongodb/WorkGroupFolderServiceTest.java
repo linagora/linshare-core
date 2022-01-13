@@ -47,11 +47,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
@@ -103,6 +107,12 @@ public class WorkGroupFolderServiceTest {
 	@Autowired
 	private SharedSpaceNodeService sharedSpaceNodeService;
 
+	@Autowired
+	private RootUserRepository rootUserRepository;
+
+	@Autowired
+	private FunctionalityService functionalityService;
+
 	private User jane;
 
 	private boolean dryRun = false;
@@ -111,6 +121,16 @@ public class WorkGroupFolderServiceTest {
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
+		activateWorkGroupCreation();
+	}
+
+	private void activateWorkGroupCreation() {
+		Account actor = rootUserRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
+		Functionality functionality = functionalityService.find(actor, LinShareTestConstants.ROOT_DOMAIN, "WORK_GROUP__CREATION_RIGHT");
+		Policy activationPolicy = functionality.getActivationPolicy();
+		activationPolicy.setStatus(true);
+		functionality.setActivationPolicy(activationPolicy);
+		functionalityService.update(actor, LinShareTestConstants.ROOT_DOMAIN, functionality);
 	}
 
 	@AfterEach

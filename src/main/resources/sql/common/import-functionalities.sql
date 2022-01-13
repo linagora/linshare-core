@@ -224,7 +224,7 @@ INSERT INTO functionality_string(functionality_id, string_value)
 
 -- Functionality : WORK_GROUP__CREATION_RIGHT
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (57, true, true, 1, false);
+	VALUES (57, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (58, false, false, 1, false);
 -- INSERT INTO policy(id, status, default_status, policy, system) VALUES (117, true, true, 1, false);

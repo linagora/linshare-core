@@ -55,12 +55,15 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
@@ -120,7 +123,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	private SharedSpaceMemberService memberService;
 
 	@Autowired
-	private FunctionalityReadOnlyService functionalityService;
+	private FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	@Autowired
 	private WorkGroupNodeService workGroupNodeService;
@@ -130,7 +133,13 @@ public class SharedSpaceNodeServiceImplDriveTest {
 
 	@Autowired
 	private SharedSpaceRoleService ssRoleService;
-	
+
+	@Autowired
+	private RootUserRepository rootUserRepository;
+
+	@Autowired
+	private FunctionalityService functionalityService;
+
 	private User authUser, jane;
 
 	private SharedSpaceRole adminDriveRole, readerDriveRole, reader, admin;
@@ -142,6 +151,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		activateWorkGroupCreation();
 		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		authUser = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
@@ -150,6 +160,15 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		reader = ssRoleService.findByName(root, root, "READER");
 		admin = ssRoleService.findByName(root, root, "ADMIN");
 		logger.debug(LinShareTestConstants.END_SETUP);
+	}
+
+	private void activateWorkGroupCreation() {
+		Account actor = rootUserRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
+		Functionality functionality = functionalityService.find(actor, LinShareTestConstants.ROOT_DOMAIN, "WORK_GROUP__CREATION_RIGHT");
+		Policy activationPolicy = functionality.getActivationPolicy();
+		activationPolicy.setStatus(true);
+		functionality.setActivationPolicy(activationPolicy);
+		functionalityService.update(actor, LinShareTestConstants.ROOT_DOMAIN, functionality);
 	}
 
 	@AfterEach
@@ -241,7 +260,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 		SharedSpaceNode drive = new SharedSpaceNode("My Drive", NodeType.WORK_SPACE);
 		SharedSpaceNode expectedDrive = service.create(authUser, authUser, drive);
 		Assertions.assertNotNull(expectedDrive, "Drive not created");
-		Functionality workGroupCreationRightFunctionality = functionalityService.getWorkGroupCreationRight(authUser.getDomain());
+		Functionality workGroupCreationRightFunctionality = functionalityReadOnlyService.getWorkGroupCreationRight(authUser.getDomain());
 		workGroupCreationRightFunctionality.getActivationPolicy().setStatus(false);
 		SharedSpaceNode nestedWorkgroup = new SharedSpaceNode("My groups", expectedDrive.getUuid(), NodeType.WORK_GROUP);
 		service.create(authUser, authUser, nestedWorkgroup);
