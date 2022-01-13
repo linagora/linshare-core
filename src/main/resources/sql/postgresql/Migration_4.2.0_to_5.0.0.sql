@@ -1001,6 +1001,27 @@ VALUES
   now(),
   now());
 
+-- UPGRADE_5_0_RENAME_DRIVE_TO_WORK_SPACE
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date)
+VALUES
+  (49,
+  'UNDEFINED',
+  'UPGRADE_5_0_RENAME_DRIVE_TO_WORK_SPACE',
+  'UPGRADE_5_0',
+  49,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now());
 ---- End of your queries
 
 -- Upgrade LinShare version
