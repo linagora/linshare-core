@@ -113,7 +113,7 @@ CREATE TABLE domain_abstract (
   mailconfig_id       int8,
   user_provider_id    int8,
   group_provider_id   int8,
-  drive_provider_id   int8,
+  work_space_provider_id   int8,
   welcome_messages_id int8,
   purge_step          varchar(255) DEFAULT 'IN_USE' NOT NULL,
   CONSTRAINT linshare_domain_abstract_pkey
@@ -674,7 +674,7 @@ CREATE TABLE group_provider (
   ldap_pattern_id    int8 NOT NULL,
   search_in_other_domains bool DEFAULT 'true',
   PRIMARY KEY (id));
-CREATE TABLE drive_provider (
+CREATE TABLE work_space_provider (
   id                  int8 NOT NULL,
   uuid               varchar(255) NOT NULL UNIQUE,
   provider_type      varchar(255) NOT NULL,
@@ -1038,7 +1038,7 @@ ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr166740 FOREIGN KEY (ldap
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr806790 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs163989 FOREIGN KEY (user_provider_id) REFERENCES user_provider (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs253989 FOREIGN KEY (group_provider_id) REFERENCES group_provider (id);
-ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs303989 FOREIGN KEY (drive_provider_id) REFERENCES drive_provider (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs303989 FOREIGN KEY (work_space_provider_id) REFERENCES work_space_provider (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1641 FOREIGN KEY (twake_connection_id) REFERENCES remote_server (id);
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
@@ -1074,8 +1074,8 @@ ALTER TABLE async_task ADD CONSTRAINT FKasync_task970702 FOREIGN KEY (upgrade_ta
 ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi815203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
-ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi820203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
-ALTER TABLE drive_provider ADD CONSTRAINT FKdrive_provi1670 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
+ALTER TABLE work_space_provider ADD CONSTRAINT FKdrive_provi820203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
+ALTER TABLE work_space_provider ADD CONSTRAINT FKdrive_provi1670 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
 ALTER TABLE mail_attachment ADD CONSTRAINT FKmail_attachment35169 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 ALTER TABLE password_history ADD CONSTRAINT FKpass_hist220240 FOREIGN KEY (account_id) REFERENCES account (id);
 

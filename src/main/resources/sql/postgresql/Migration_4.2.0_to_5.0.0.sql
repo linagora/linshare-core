@@ -976,6 +976,7 @@ UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_DELETED' WHERE identifi
 
 -- Rename driveProvider to workSpaceProvider
 ALTER TABLE drive_provider RENAME TO work_space_provider;
+ALTER TABLE domain_abstract RENAME COLUMN drive_provider_id TO work_space_provider_id;
 
 
 -- UPGRADE_5_0_AUDIT_RENAME_DRIVE_TO_WORK_SPACE

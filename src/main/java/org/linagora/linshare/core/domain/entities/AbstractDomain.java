@@ -108,7 +108,7 @@ public abstract class AbstractDomain {
 
 	protected GroupProvider groupProvider;
 
-	protected WorkSpaceProvider driveProvider;
+	protected WorkSpaceProvider workSpaceProvider;
 
 	protected WelcomeMessages currentWelcomeMessage;
 
@@ -501,11 +501,11 @@ public abstract class AbstractDomain {
 	}
 
 	public WorkSpaceProvider getDriveProvider() {
-		return driveProvider;
+		return workSpaceProvider;
 	}
 
 	public void setDriveProvider(WorkSpaceProvider driveProvider) {
-		this.driveProvider = driveProvider;
+		this.workSpaceProvider = driveProvider;
 	}
 
 	public boolean isAncestry(String domainUuid) {
