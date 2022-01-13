@@ -134,6 +134,6 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 
 	List<AbstractDomain> findAllDomainsByGroupFilter(GroupLdapPattern domainGroupFilter);
 
-	List<AbstractDomain> findAllDomainsByDriveFilter(LdapDriveFilter domainDriveFilter);
+	List<AbstractDomain> findAllDomainsByWorkSpaceFilter(LdapDriveFilter domainDriveFilter);
 
 }

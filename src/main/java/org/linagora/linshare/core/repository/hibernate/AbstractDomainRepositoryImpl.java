@@ -315,10 +315,10 @@ public class AbstractDomainRepositoryImpl extends
 	}
 
 	@Override
-	public List<AbstractDomain> findAllDomainsByDriveFilter(LdapDriveFilter domainGroupFilter) {
+	public List<AbstractDomain> findAllDomainsByWorkSpaceFilter(LdapDriveFilter domainGroupFilter) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass(), "abstractDomain");
-		det.createAlias("abstractDomain.driveProvider", "driveProvider");
-		det.add(Restrictions.eq("driveProvider.driveFilter", domainGroupFilter));
+		det.createAlias("abstractDomain.workSpaceProvider", "workSpaceProvider");
+		det.add(Restrictions.eq("workSpaceProvider.driveFilter", domainGroupFilter));
 		return findByCriteria(det);
 	}
 }

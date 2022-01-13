@@ -197,7 +197,7 @@ public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implemen
 	public List<AbstractDomain> findAllDomainsByDriveFilter(Account authUser, LdapDriveFilter domainDriveFilter) {
 		preChecks(authUser);
 		Validate.notNull(domainDriveFilter, "domainDriveFilter must be set.");
-		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByDriveFilter(domainDriveFilter);
+		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByWorkSpaceFilter(domainDriveFilter);
 		return domains;
 	}
 }
