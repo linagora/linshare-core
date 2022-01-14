@@ -64,8 +64,10 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 		User authUser = checkAuthentication();
 		Functionality functionality = functionalityService.find(authUser, identifier);
 		FunctionalityDto dto = functionality.toUserDto(version);
-		if(dto.getIdentifier().equals(FunctionalityNames.WORK_SPACE__CREATION_RIGHT.toString())) {
-			dto.setIdentifier(FunctionalityNames.DRIVE__CREATION_RIGHT.toString());
+		if (version < 5) {
+			if(dto.getIdentifier().equals(FunctionalityNames.WORK_SPACE__CREATION_RIGHT.toString())) {
+				dto.setIdentifier(FunctionalityNames.DRIVE__CREATION_RIGHT.toString());
+			}
 		}
 		return dto;
 	}
@@ -76,8 +78,10 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 		List<FunctionalityDto> res = Lists.newArrayList();
 		for (Functionality functionality : functionalityService.findAll(authUser)) {
 			FunctionalityDto dto = functionality.toUserDto(version);
-			if(dto.getIdentifier().equals(FunctionalityNames.WORK_SPACE__CREATION_RIGHT.toString())) {
-				dto.setIdentifier(FunctionalityNames.DRIVE__CREATION_RIGHT.toString());
+			if (version < 5) {
+				if(dto.getIdentifier().equals(FunctionalityNames.WORK_SPACE__CREATION_RIGHT.toString())) {
+					dto.setIdentifier(FunctionalityNames.DRIVE__CREATION_RIGHT.toString());
+				}
 			}
 			res.add(dto);
 		}

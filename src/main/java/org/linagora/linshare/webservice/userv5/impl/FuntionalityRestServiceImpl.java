@@ -70,11 +70,11 @@ public class FuntionalityRestServiceImpl extends FunctionalityRestServiceImpl im
 	})
 	@Override
 	public List<FunctionalityDto> findAll() throws BusinessException {
-		return functionalityFacade.findAll(4);
+		return functionalityFacade.findAll(5);
 	}
 
 	@Override
 	public FunctionalityDto find(String funcId) throws BusinessException {
-		return functionalityFacade.find(funcId, 4);
+		return functionalityFacade.find(funcId, 5);
 	}
 }
