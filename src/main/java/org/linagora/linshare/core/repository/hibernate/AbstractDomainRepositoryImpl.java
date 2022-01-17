@@ -273,12 +273,12 @@ public class AbstractDomainRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> findAllDomainIdentifiersWithDriveProviders() {
+	public List<String> findAllDomainIdentifiersWithWorkSpaceProviders() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
 				.setProjection(Projections.property("uuid"))
 				.addOrder(Order.asc("authShowOrder"));
 		crit.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
-		crit.add(Restrictions.isNotNull("driveProvider"));
+		crit.add(Restrictions.isNotNull("workSpaceProvider"));
 		return listByCriteria(crit);
 	}
 

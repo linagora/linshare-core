@@ -124,7 +124,7 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 
 	List<String> getSubDomainsByDomainIdentifiers(String domain);
 
-	List<String> findAllDomainIdentifiersWithDriveProviders();
+	List<String> findAllDomainIdentifiersWithWorkSpaceProviders();
 
 	List<AbstractDomain> findAllDomainsByLdapConnection(LdapConnection ldapConnection);
 

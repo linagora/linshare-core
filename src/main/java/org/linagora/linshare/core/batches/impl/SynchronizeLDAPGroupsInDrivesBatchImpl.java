@@ -83,7 +83,7 @@ public class SynchronizeLDAPGroupsInDrivesBatchImpl extends GenericBatchImpl {
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("{} job starting ...", getClass().toString());
-		return domainRepository.findAllDomainIdentifiersWithDriveProviders();
+		return domainRepository.findAllDomainIdentifiersWithWorkSpaceProviders();
 	}
 
 	@Override
