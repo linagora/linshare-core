@@ -47,6 +47,7 @@ import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -54,11 +55,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-public class RenameDriveToWorkSpaceUpgradeTaskImpl extends GenericUpgradeTaskImpl {
+public class RenameDriveMembersToWorkSpaceMembersUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
 
-	public RenameDriveToWorkSpaceUpgradeTaskImpl(
+	public RenameDriveMembersToWorkSpaceMembersUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			MongoTemplate mongoTemplate) {
@@ -68,7 +69,7 @@ public class RenameDriveToWorkSpaceUpgradeTaskImpl extends GenericUpgradeTaskImp
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_5_0_RENAME_DRIVE_TO_WORK_SPACE;
+		return UpgradeTaskType.UPGRADE_5_0_RENAME_DRIVE_MEMBERS_TO_WORK_SPACE_MEMBERS;
 
 	}
 
@@ -80,10 +81,13 @@ public class RenameDriveToWorkSpaceUpgradeTaskImpl extends GenericUpgradeTaskImp
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Query query = Query.query(Criteria.where("nodeType").is(NodeType.DRIVE));
+		Query query = Query.query(Criteria.where("type").is(NodeType.DRIVE));
 		Update update = new Update();
-		update.set("nodeType", NodeType.WORK_SPACE);
-		mongoTemplate.updateMulti(query, update, SharedSpaceNode.class);
+		update.set("type", NodeType.WORK_SPACE);
+		update.set("node.nodeType", NodeType.WORK_SPACE);
+		update.set("role.type", NodeType.WORK_SPACE);
+		update.set("role.name", NodeType.WORK_SPACE);
+		mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
 		BatchResultContext<FakeContext> res = new BatchResultContext<>(new FakeContext(identifier));
 		res.setProcessed(true);
 		return res;
@@ -94,7 +98,7 @@ public class RenameDriveToWorkSpaceUpgradeTaskImpl extends GenericUpgradeTaskImp
 		@SuppressWarnings("unchecked")
 		BatchResultContext<FakeContext> res = (BatchResultContext<FakeContext>) context;
 		if (res.getProcessed()) {
-			logInfo(batchRunContext, total, position, "DRIVE was renamed succefully to workSpace.");
+			logInfo(batchRunContext, total, position, "Drive members was renamed succefully to workSpaceMembers.");
 		}
 	}
 
@@ -102,7 +106,7 @@ public class RenameDriveToWorkSpaceUpgradeTaskImpl extends GenericUpgradeTaskImp
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position,
 			BatchRunContext batchRunContext) {
 		logError(total, position, exception.getMessage(), batchRunContext);
-		logger.error("Error occured while renaming DRIVE to workSpace", exception);
+		logger.error("Error occured while renaming Drive members to workSpaceMembers", exception);
 	}
 
 }

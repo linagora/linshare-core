@@ -997,7 +997,7 @@ VALUES
   'UPGRADE_5_0',
   48,
   'NEW',
-  'REQUIRED',
+  'MANDATORY',
   now(),
   now());
 
@@ -1019,9 +1019,32 @@ VALUES
   'UPGRADE_5_0',
   49,
   'NEW',
-  'REQUIRED',
+  'MANDATORY',
   now(),
   now());
+
+  -- UPGRADE_5_0_RENAME_DRIVE_MEMBERS_TO_WORK_SPACE_MEMBERS
+ INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date)
+VALUES
+  (50,
+  'UNDEFINED',
+  'UPGRADE_5_0_RENAME_DRIVE_MEMBERS_TO_WORK_SPACE_MEMBERS',
+  'UPGRADE_5_0',
+  50,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now());
+
 ---- End of your queries
 
 -- Upgrade LinShare version

@@ -147,6 +147,11 @@
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v5_0.RenameDriveMembersToWorkSpaceMembersUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
