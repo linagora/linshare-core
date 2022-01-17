@@ -116,20 +116,22 @@ INSERT INTO ldap_pattern(
     SELECT 6,
     'c59078f1-2366-4360-baa0-6c089202e9a6',
     'WORK_SPACE_LDAP_PATTERN',
-    'Default Ldap Drive filter',
+    'Default Ldap workSpace filter',
     true,
-    'Description of default LDAP Drive filter',
+    'Description of default LDAP workSpace filter',
     100,
     NOW(),
     NOW(),
-    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-*))");',
-    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-" + pattern + "))");',
-    'drive-' WHERE NOT EXISTS (SELECT id FROM ldap_pattern WHERE id = 6);
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workspace-*))");',
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workspace-" + pattern + "))");',
+    'workspace-' WHERE NOT EXISTS (SELECT id FROM ldap_pattern WHERE id = 6);
 
 -- Update ldap drive filter
 UPDATE ldap_pattern SET pattern_type = 'WORK_SPACE_LDAP_PATTERN', description = 'Description of default LDAP workSpace filter', label = 'Default Ldap workSpace filter' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
 
 UPDATE ldap_pattern SET pattern_type = 'WORK_SPACE_LDAP_PATTERN' WHERE pattern_type= 'DRIVE_LDAP_PATTERN';
+
+UPDATE ldap_pattern SET group_prefix = 'workspace-', search_all_groups_query = 'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workspace-*))");', search_group_query = 'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workspace-" + pattern + "))");' WHERE pattern_type= 'WORK_SPACE_LDAP_PATTERN';
 
 -- ldap attributes
 INSERT INTO ldap_attribute

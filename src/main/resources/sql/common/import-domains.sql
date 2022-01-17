@@ -254,9 +254,9 @@ INSERT INTO ldap_pattern(
     6,
     'c59078f1-2366-4360-baa0-6c089202e9a6',
     'WORK_SPACE_LDAP_PATTERN',
-    'Default Ldap Drive filter',
+    'Default Ldap workSpace filter',
     true,
-    'default-drive-filter',
+    'default-workSpace-filter',
     NULL,
     NULL,
     100,
@@ -267,9 +267,9 @@ INSERT INTO ldap_pattern(
     NULL,
     NOW(),
     NOW(),
-    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-*))");',
-    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=drive-" + pattern + "))");',
-    'drive-');
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workspace-*))");',
+    'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workspace-" + pattern + "))");',
+    'workspace-');
 
 -- ldap attributes
 INSERT INTO ldap_attribute
