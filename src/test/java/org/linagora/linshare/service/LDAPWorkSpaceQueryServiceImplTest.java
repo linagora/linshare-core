@@ -67,12 +67,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml"
 })
-public class LDAPDriveQueryServiceImplTest {
+public class LDAPWorkSpaceQueryServiceImplTest {
 
-	protected Logger logger = LoggerFactory.getLogger(LDAPDriveQueryServiceImplTest.class);
+	protected Logger logger = LoggerFactory.getLogger(LDAPWorkSpaceQueryServiceImplTest.class);
 
 	@Autowired
-	private LDAPDriveQueryService ldapDriveQueryService;
+	private LDAPDriveQueryService ldapWorkSpaceQueryService;
 
 	private LdapConnection ldapConnection;
 
@@ -96,10 +96,10 @@ public class LDAPDriveQueryServiceImplTest {
 
 		groupPattern = new GroupLdapPattern();
 		groupPattern.setAttributes(attributes);
-		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-*))\");");
-		groupPattern.setSearchGroupQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=drive-\" + pattern + \"))\");");
+		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workspace-*))\");");
+		groupPattern.setSearchGroupQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workspace-\" + pattern + \"))\");");
 		groupPattern.setSearchPageSize(100);
-		groupPattern.setGroupPrefix("drive-");
+		groupPattern.setGroupPrefix("workspace-");
 
 		ldapConnection = new LdapConnection("testldap", "ldap://localhost:33389", "anonymous");
 		baseDn = "ou=Groups,dc=linshare,dc=org";
@@ -115,15 +115,15 @@ public class LDAPDriveQueryServiceImplTest {
 	@Test
 	public void testSearchAllGroups() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Set<LdapGroupObject> listGroups = ldapWorkSpaceQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES: {}", ldapGroup.toString());
+			logger.info("WORKSPACES: {}", ldapGroup.toString());
 			if (!ldapGroup.getMembers().isEmpty()) {
 				logger.info(ldapGroup.getMembers().toString());
 			}
-			Assertions.assertEquals("drive-1", ldapGroup.getName());
-			Assertions.assertEquals("drive-drive-1", ldapGroup.getNameWithPrefix());
-			Assertions.assertEquals("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Assertions.assertEquals("workspace-1", ldapGroup.getName());
+			Assertions.assertEquals("workspace-workspace-1", ldapGroup.getNameWithPrefix());
+			Assertions.assertEquals("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
 		}
 		Assertions.assertEquals(1, listGroups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -133,11 +133,11 @@ public class LDAPDriveQueryServiceImplTest {
 	public void testMembersWithNoRoles() throws BusinessException, NamingException, IOException {
 		String baseDn = "ou=Groups,dc=linshare,dc=org";
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Set<LdapGroupObject> listGroups = ldapWorkSpaceQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES: {}", ldapGroup.toString());
-			Assertions.assertEquals("cn=drive-drive-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Set<LdapDriveMemberObject> listMembers = ldapDriveQueryService.listDriveMembers(ldapConnection, baseDn,
+			logger.info("WORKSPACES: {}", ldapGroup.toString());
+			Assertions.assertEquals("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Set<LdapDriveMemberObject> listMembers = ldapWorkSpaceQueryService.listDriveMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
 			for (LdapDriveMemberObject member : listMembers) {
 				logger.info(member.toString());
@@ -157,11 +157,11 @@ public class LDAPDriveQueryServiceImplTest {
 	public void testMemberWithJustWGRole() throws BusinessException, NamingException, IOException {
 		String baseDn = "ou=Groups2,dc=linshare,dc=org";
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Set<LdapGroupObject> listGroups = ldapWorkSpaceQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES: {}", ldapGroup.toString());
-			Assertions.assertEquals("cn=drive-drive-2,ou=Groups2,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Set<LdapDriveMemberObject> listMembers = ldapDriveQueryService.listDriveMembers(ldapConnection, baseDn,
+			logger.info("WORKSPACES: {}", ldapGroup.toString());
+			Assertions.assertEquals("cn=workspace-workspace-2,ou=Groups2,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Set<LdapDriveMemberObject> listMembers = ldapWorkSpaceQueryService.listDriveMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
 			for (LdapDriveMemberObject member : listMembers) {
 				logger.info(member.toString());
@@ -180,14 +180,14 @@ public class LDAPDriveQueryServiceImplTest {
 	}
 
 	@Test
-	public void testMemberWithJustDriveRole() throws BusinessException, NamingException, IOException {
+	public void testMemberWithJustWorkSpaceRole() throws BusinessException, NamingException, IOException {
 		String baseDn = "ou=Groups3,dc=linshare,dc=org";
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Set<LdapGroupObject> listGroups = ldapWorkSpaceQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES: {}", ldapGroup.toString());
-			Assertions.assertEquals("cn=drive-drive-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Set<LdapDriveMemberObject> listMembers = ldapDriveQueryService.listDriveMembers(ldapConnection, baseDn,
+			logger.info("WORKSPACES: {}", ldapGroup.toString());
+			Assertions.assertEquals("cn=workspace-workspace-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Set<LdapDriveMemberObject> listMembers = ldapWorkSpaceQueryService.listDriveMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
 			for (LdapDriveMemberObject member : listMembers) {
 				logger.info(member.toString());
@@ -206,14 +206,14 @@ public class LDAPDriveQueryServiceImplTest {
 	}
 
 	@Test
-	public void testMemberWithWgRoleAndDriveRole() throws BusinessException, NamingException, IOException {
+	public void testMemberWithWgRoleAndWorkSpaceRole() throws BusinessException, NamingException, IOException {
 		String baseDn = "ou=Groups4,dc=linshare,dc=org";
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Set<LdapGroupObject> listGroups = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Set<LdapGroupObject> listGroups = ldapWorkSpaceQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info("DRIVES: {}", ldapGroup.toString());
-			Assertions.assertEquals("cn=drive-drive-4,ou=Groups4,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Set<LdapDriveMemberObject> listMembers = ldapDriveQueryService.listDriveMembers(ldapConnection, baseDn,
+			logger.info("WORKSPACES: {}", ldapGroup.toString());
+			Assertions.assertEquals("cn=workspace-workspace-4,ou=Groups4,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Set<LdapDriveMemberObject> listMembers = ldapWorkSpaceQueryService.listDriveMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
 			for (LdapDriveMemberObject member : listMembers) {
 				logger.info(member.toString());

@@ -73,15 +73,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
-public class DriveProviderServiceImplTest {
+public class WorkSpaceProviderServiceImplTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private DriveProviderService driveProviderService;
+	private DriveProviderService workSpaceProviderService;
 
 	@Autowired
-	private LdapDriveFilterService driveLdapPatternService;
+	private LdapDriveFilterService workSpaceLdapPatternService;
 
 	@Autowired
 	private LdapConnectionServiceImpl ldapConnectionService;
@@ -89,7 +89,7 @@ public class DriveProviderServiceImplTest {
 	@Autowired
 	private AccountService accountService;
 
-	private LdapDriveFilter drivePattern;
+	private LdapDriveFilter workSpaceFilter;
 
 	private LdapConnection ldapconnexion;
 
@@ -101,11 +101,11 @@ public class DriveProviderServiceImplTest {
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 		attributeList.put("first", attribute);
-		drivePattern = new LdapDriveFilter("lable", "description", "searchAllGroupsQuery",
-				"searchGroupQuery", "drivePrefix", false);
+		workSpaceFilter = new LdapDriveFilter("lable", "description", "searchAllGroupsQuery",
+				"searchGroupQuery", "workSpacePrefix", false);
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
-		drivePattern = driveLdapPatternService.create(actor, drivePattern);
-		Assertions.assertNotNull(drivePattern);
+		workSpaceFilter = workSpaceLdapPatternService.create(actor, workSpaceFilter);
+		Assertions.assertNotNull(workSpaceFilter);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -116,25 +116,25 @@ public class DriveProviderServiceImplTest {
 	}
 
 	@Test
-	public void testCreateDriveProvider() {
+	public void testCreateWorkSpaceProvider() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		LdapWorkSpaceProvider driveProvider = new LdapWorkSpaceProvider(drivePattern, "dc=nodomain,dc=com", ldapconnexion,
+		LdapWorkSpaceProvider workSpaceProvider = new LdapWorkSpaceProvider(workSpaceFilter, "dc=nodomain,dc=com", ldapconnexion,
 				false);
-		driveProvider = driveProviderService.create(driveProvider);
-		Assertions.assertNotNull(driveProvider);
+		workSpaceProvider = workSpaceProviderService.create(workSpaceProvider);
+		Assertions.assertNotNull(workSpaceProvider);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void testCreateDeleteDriveProvider() {
+	public void testCreateDeleteWorkSpaceProvider() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			LdapWorkSpaceProvider driveProvider = new LdapWorkSpaceProvider(drivePattern, "dc=nodomain,dc=com", ldapconnexion,
+			LdapWorkSpaceProvider workSpaceProvider = new LdapWorkSpaceProvider(workSpaceFilter, "dc=nodomain,dc=com", ldapconnexion,
 					false);
-			driveProvider = driveProviderService.create(driveProvider);
-			Assertions.assertNotNull(driveProvider);
-			driveProviderService.delete(driveProvider);
-			driveProviderService.find(driveProvider.getUuid());
+			workSpaceProvider = workSpaceProviderService.create(workSpaceProvider);
+			Assertions.assertNotNull(workSpaceProvider);
+			workSpaceProviderService.delete(workSpaceProvider);
+			workSpaceProviderService.find(workSpaceProvider.getUuid());
 		});
 		Assertions.assertEquals(BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);

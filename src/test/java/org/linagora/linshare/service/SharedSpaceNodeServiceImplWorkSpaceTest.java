@@ -98,9 +98,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-test.xml" })
-public class SharedSpaceNodeServiceImplDriveTest {
+public class SharedSpaceNodeServiceImplWorkSpaceTest {
 
-	private static Logger logger = LoggerFactory.getLogger(SharedSpaceNodeServiceImplDriveTest.class);
+	private static Logger logger = LoggerFactory.getLogger(SharedSpaceNodeServiceImplWorkSpaceTest.class);
 
 	@Autowired
 	@Qualifier("sharedSpaceNodeService")
@@ -144,7 +144,7 @@ public class SharedSpaceNodeServiceImplDriveTest {
 
 	private SharedSpaceRole adminDriveRole, readerDriveRole, reader, admin;
 
-	public SharedSpaceNodeServiceImplDriveTest() {
+	public SharedSpaceNodeServiceImplWorkSpaceTest() {
 		super();
 	}
 

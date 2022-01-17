@@ -204,42 +204,42 @@ objectClass: groupOfNames
 member: uid=user1,ou=People,dc=linshare,dc=org
 member: uid=user3,ou=People,dc=linshare,dc=org
 
-dn: cn=drive-drive-1,ou=Groups,dc=linshare,dc=org
-cn: drive-drive-1
+dn: cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org
+cn: workspace-workspace-1
 objectClass: groupOfNames
 member: uid=user1,ou=People,dc=linshare,dc=org
 
-dn: cn=drive-drive-2,ou=Groups2,dc=linshare,dc=org
-cn: drive-drive-2
+dn: cn=workspace-workspace-2,ou=Groups2,dc=linshare,dc=org
+cn: workspace-workspace-2
 objectClass: groupOfNames
 member: uid=user1,ou=People,dc=linshare,dc=org
 
-dn: cn=contributors,cn=drive-drive-2,ou=Groups2,dc=linshare,dc=org
+dn: cn=contributors,cn=workspace-workspace-2,ou=Groups2,dc=linshare,dc=org
 cn: contributors
 objectClass: groupOfNames
 member: uid=user2,ou=People,dc=linshare,dc=org
 
-dn: cn=drive-drive-3,ou=Groups3,dc=linshare,dc=org
-cn: drive-drive-3
+dn: cn=workspace-workspace-3,ou=Groups3,dc=linshare,dc=org
+cn: workspace-workspace-3
 objectClass: groupOfNames
 member: uid=user1,ou=People,dc=linshare,dc=org
 
-dn: cn=drive_writers,cn=drive-drive-3,ou=Groups3,dc=linshare,dc=org
-cn: drive_writers
+dn: cn=workspace_writers,cn=workspace-workspace-3,ou=Groups3,dc=linshare,dc=org
+cn: workspace_writers
 objectClass: groupOfNames
 member: uid=user2,ou=People,dc=linshare,dc=org
 
-dn: cn=drive-drive-4,ou=Groups4,dc=linshare,dc=org
-cn: drive-drive-4
+dn: cn=workspace-workspace-4,ou=Groups4,dc=linshare,dc=org
+cn: workspace-workspace-4
 objectClass: groupOfNames
 member: uid=user1,ou=People,dc=linshare,dc=org
 
-dn: cn=drive_writers,cn=drive-drive-4,ou=Groups4,dc=linshare,dc=org
-cn: drive_writers
+dn: cn=workspace_writers,cn=workspace-workspace-4,ou=Groups4,dc=linshare,dc=org
+cn: workspace_writers
 objectClass: groupOfNames
 member: uid=user2,ou=People,dc=linshare,dc=org
 
-dn: cn=writers,cn=drive-drive-4,ou=Groups4,dc=linshare,dc=org
+dn: cn=writers,cn=workspace-workspace-4,ou=Groups4,dc=linshare,dc=org
 cn: writers
 objectClass: groupOfNames
 member: uid=user2,ou=People,dc=linshare,dc=org
