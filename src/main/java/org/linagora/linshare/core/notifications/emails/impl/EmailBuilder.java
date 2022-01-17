@@ -501,6 +501,9 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		if (emailCtx.getLanguage().equals(Language.FRENCH)) {
 			addAttachment(container, "logo.linshare@linshare.org",
 					"/org/linagora/linshare/core/service/email-logo-fr.png");
+		} else if (emailCtx.getLanguage().equals(Language.RUSSIAN)) {
+			addAttachment(container, "logo.linshare@linshare.org",
+					"/org/linagora/linshare/core/service/email-logo-ru.png");
 		} else {
 			addAttachment(container, "logo.linshare@linshare.org",
 					"/org/linagora/linshare/core/service/email-logo-en.png");
