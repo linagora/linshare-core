@@ -40,26 +40,26 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DriveProviderRepository;
 import org.linagora.linshare.core.repository.LdapDriveProviderRepository;
-import org.linagora.linshare.core.service.DriveProviderService;
+import org.linagora.linshare.core.service.WorkSpaceProviderService;
 
-public class DriveProviderServiceImpl extends GenericAdminServiceImpl implements DriveProviderService {
+public class WorkSpaceProviderServiceImpl extends GenericAdminServiceImpl implements WorkSpaceProviderService {
 
-	private DriveProviderRepository driveProviderRepository;
+	private DriveProviderRepository workSpaceProviderRepository;
 
-	private LdapDriveProviderRepository ldapDriveProviderRepository;
+	private LdapDriveProviderRepository ldapWorkSpaceProviderRepository;
 
-	protected DriveProviderServiceImpl(
-			LdapDriveProviderRepository ldapDriveProviderRepository,
-			DriveProviderRepository driveProviderRepository,
+	protected WorkSpaceProviderServiceImpl(
+			LdapDriveProviderRepository ldapWorkSpaceProviderRepository,
+			DriveProviderRepository workSpaceProviderRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(sanitizerInputHtmlBusinessService);
-		this.ldapDriveProviderRepository = ldapDriveProviderRepository;
-		this.driveProviderRepository = driveProviderRepository;
+		this.ldapWorkSpaceProviderRepository = ldapWorkSpaceProviderRepository;
+		this.workSpaceProviderRepository = workSpaceProviderRepository;
 	}
 
 	@Override
 	public LdapWorkSpaceProvider find(String uuid) throws BusinessException {
-		LdapWorkSpaceProvider provider = ldapDriveProviderRepository.findByUuid(uuid);
+		LdapWorkSpaceProvider provider = ldapWorkSpaceProviderRepository.findByUuid(uuid);
 		if (provider == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND,
@@ -70,23 +70,23 @@ public class DriveProviderServiceImpl extends GenericAdminServiceImpl implements
 
 	@Override
 	public LdapWorkSpaceProvider create(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException {
-		return ldapDriveProviderRepository.create(ldapDriveProvider);
+		return ldapWorkSpaceProviderRepository.create(ldapDriveProvider);
 	}
 
 	@Override
 	public boolean exists(String uuid) {
-		LdapWorkSpaceProvider provider = ldapDriveProviderRepository.findByUuid(uuid);
+		LdapWorkSpaceProvider provider = ldapWorkSpaceProviderRepository.findByUuid(uuid);
 		return provider != null;
 	}
 
 	@Override
 	public LdapWorkSpaceProvider update(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException {
-		return ldapDriveProviderRepository.update(ldapDriveProvider);
+		return ldapWorkSpaceProviderRepository.update(ldapDriveProvider);
 	}
 
 	@Override
 	public void delete(WorkSpaceProvider driveProvider) throws BusinessException {
-		driveProviderRepository.delete(driveProvider);
+		workSpaceProviderRepository.delete(driveProvider);
 	}
 
 }

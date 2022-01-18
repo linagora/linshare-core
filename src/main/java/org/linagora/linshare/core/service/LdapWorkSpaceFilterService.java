@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface LdapDriveFilterService {
+public interface LdapWorkSpaceFilterService {
 
 	LdapDriveFilter find(String uuid) throws BusinessException;
 

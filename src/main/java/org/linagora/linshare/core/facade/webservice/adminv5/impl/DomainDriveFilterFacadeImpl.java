@@ -48,7 +48,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.AbstractDriveFil
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.LDAPDriveFilterDto;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.LdapDriveFilterService;
+import org.linagora.linshare.core.service.LdapWorkSpaceFilterService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -56,18 +56,18 @@ import com.google.common.collect.Lists;
 
 public class DomainDriveFilterFacadeImpl extends AdminGenericFacadeImpl implements DomainDriveFilterFacade {
 
-	private final Map<DriveFilterType, LdapDriveFilterService> driveLdapFilterServices;
+	private final Map<DriveFilterType, LdapWorkSpaceFilterService> driveLdapFilterServices;
 
 	public DomainDriveFilterFacadeImpl(
 			AccountService accountService,
-			Map<DriveFilterType, LdapDriveFilterService> driveLdapFilterServices) {
+			Map<DriveFilterType, LdapWorkSpaceFilterService> driveLdapFilterServices) {
 		super(accountService);
 		this.driveLdapFilterServices = driveLdapFilterServices;
 	}
 
-	private LdapDriveFilterService getService(DriveFilterType type) {
+	private LdapWorkSpaceFilterService getService(DriveFilterType type) {
 		Validate.notNull(type, " DriveFilterType must be set");
-		LdapDriveFilterService driveLdapFilterService = driveLdapFilterServices.get(type);
+		LdapWorkSpaceFilterService driveLdapFilterService = driveLdapFilterServices.get(type);
 		Validate.notNull(driveLdapFilterService, "Can not find a service that handle your DriveFilterType: " + type);
 		return driveLdapFilterService;
 	}
@@ -75,7 +75,7 @@ public class DomainDriveFilterFacadeImpl extends AdminGenericFacadeImpl implemen
 	@Override
 	public List<AbstractDriveFilterDto> findAll(boolean model) {
 		checkAuthentication(Role.SUPERADMIN);
-		LdapDriveFilterService driveLdapFilterService = getService(DriveFilterType.LDAP);
+		LdapWorkSpaceFilterService driveLdapFilterService = getService(DriveFilterType.LDAP);
 		List<LdapDriveFilter > domainGroupfilters = Lists.newArrayList();
 		if (model) {
 			domainGroupfilters = driveLdapFilterService.findAllSystemDriveLdapPatterns();
@@ -89,7 +89,7 @@ public class DomainDriveFilterFacadeImpl extends AdminGenericFacadeImpl implemen
 	public AbstractDriveFilterDto find(String uuid) {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "DriveFilter uuid must be set.");
-		LdapDriveFilterService driveLdapFilterService = getService(DriveFilterType.LDAP);
+		LdapWorkSpaceFilterService driveLdapFilterService = getService(DriveFilterType.LDAP);
 		LdapDriveFilter domainGroupfilter = driveLdapFilterService.find(uuid);
 		return new LDAPDriveFilterDto(domainGroupfilter);
 	}
@@ -99,7 +99,7 @@ public class DomainDriveFilterFacadeImpl extends AdminGenericFacadeImpl implemen
 		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "DriveFilter to create must be set");
 		LDAPDriveFilterDto driveFilterDto = (LDAPDriveFilterDto) dto;
-		LdapDriveFilterService driveLdapFilterService = driveLdapFilterServices.get(DriveFilterType.LDAP);
+		LdapWorkSpaceFilterService driveLdapFilterService = driveLdapFilterServices.get(DriveFilterType.LDAP);
 		LdapDriveFilter domainGroupFilter = driveLdapFilterService.create(authUser,
 				driveFilterDto.toLdapDriveFilterObject());
 		return new LDAPDriveFilterDto(domainGroupFilter);
@@ -114,7 +114,7 @@ public class DomainDriveFilterFacadeImpl extends AdminGenericFacadeImpl implemen
 		}
 		Validate.notEmpty(dto.getUuid(), "Ldap user filter's uuid must be set");
 		LDAPDriveFilterDto driveFilterDto = (LDAPDriveFilterDto) dto;
-		LdapDriveFilterService driveLdapFilterService = driveLdapFilterServices.get(DriveFilterType.LDAP);
+		LdapWorkSpaceFilterService driveLdapFilterService = driveLdapFilterServices.get(DriveFilterType.LDAP);
 		LdapDriveFilter domainGroupFilter = driveLdapFilterService.find(dto.getUuid());
 		domainGroupFilter = driveLdapFilterService.update(authUser, driveFilterDto.toLdapDriveFilterObject());
 		return new LDAPDriveFilterDto(domainGroupFilter);
@@ -129,7 +129,7 @@ public class DomainDriveFilterFacadeImpl extends AdminGenericFacadeImpl implemen
 			uuid = dto.getUuid();
 		}
 		Validate.notEmpty(uuid, "Ldap drive filter's uuid must be set");
-		LdapDriveFilterService driveLdapFilterService = driveLdapFilterServices.get(DriveFilterType.LDAP);
+		LdapWorkSpaceFilterService driveLdapFilterService = driveLdapFilterServices.get(DriveFilterType.LDAP);
 		LdapDriveFilter domainDriveFilterToDelete = driveLdapFilterService.find(uuid);
 		return new LDAPDriveFilterDto(driveLdapFilterService.delete(authUser, domainDriveFilterToDelete));
 	}
@@ -138,7 +138,7 @@ public class DomainDriveFilterFacadeImpl extends AdminGenericFacadeImpl implemen
 	public List<DomainDto> findAllDomainsByDriveFilter(String uuid) {
 		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "DriveFilter uuid must be set.");
-		LdapDriveFilterService driveLdapFilterService = driveLdapFilterServices.get(DriveFilterType.LDAP);
+		LdapWorkSpaceFilterService driveLdapFilterService = driveLdapFilterServices.get(DriveFilterType.LDAP);
 		LdapDriveFilter domainGroupFilter = driveLdapFilterService.find(uuid);
 		List<AbstractDomain> domains = driveLdapFilterService.findAllDomainsByDriveFilter(authUser, domainGroupFilter);
 		return ImmutableList.copyOf(Lists.transform(domains, DomainDto.toDto()));

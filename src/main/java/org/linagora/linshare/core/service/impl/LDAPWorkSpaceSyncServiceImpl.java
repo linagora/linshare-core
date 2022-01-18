@@ -51,8 +51,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.service.LDAPDriveQueryService;
-import org.linagora.linshare.core.service.LDAPDriveSyncService;
+import org.linagora.linshare.core.service.LDAPWorkSpaceQueryService;
+import org.linagora.linshare.core.service.LDAPWorkSpaceSyncService;
 import org.linagora.linshare.core.service.LDAPGroupQueryService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
@@ -70,19 +70,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-public class LDAPDriveSyncServiceImpl extends LDAPGroupSyncServiceImpl implements LDAPDriveSyncService {
+public class LDAPWorkSpaceSyncServiceImpl extends LDAPGroupSyncServiceImpl implements LDAPWorkSpaceSyncService {
 
-	private static final Logger logger = LoggerFactory.getLogger(LDAPDriveSyncServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(LDAPWorkSpaceSyncServiceImpl.class);
 
-	private LDAPDriveQueryService ldapDriveQueryService;
+	private LDAPWorkSpaceQueryService ldapDriveQueryService;
 
-	protected LDAPDriveSyncServiceImpl(
+	protected LDAPWorkSpaceSyncServiceImpl(
 			Map<NodeType, SharedSpaceFragmentService> serviceBuilders,
 			LDAPGroupQueryService ldapGroupQueryService,
 			UserService userService, SharedSpaceRoleService ssRoleService,
 			SharedSpaceMemberService memberService,
 			MongoTemplate mongoTemplate,
-			LDAPDriveQueryService ldapDriveQueryService) {
+			LDAPWorkSpaceQueryService ldapDriveQueryService) {
 		super(serviceBuilders, ldapGroupQueryService, userService, ssRoleService, memberService, mongoTemplate);
 		this.ldapDriveQueryService = ldapDriveQueryService;
 	}

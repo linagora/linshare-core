@@ -17,7 +17,7 @@
 	</bean>
 
 	<bean name="ldapDriveQueryService"
-		class="org.linagora.linshare.core.service.impl.LDAPDriveQueryServiceImpl">
+		class="org.linagora.linshare.core.service.impl.LDAPWorkSpaceQueryServiceImpl">
 	</bean>
 
 </beans>

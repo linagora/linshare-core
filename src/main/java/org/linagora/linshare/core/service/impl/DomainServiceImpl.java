@@ -66,7 +66,7 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.DomainService;
-import org.linagora.linshare.core.service.DriveProviderService;
+import org.linagora.linshare.core.service.WorkSpaceProviderService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.MimeTypeService;
@@ -95,7 +95,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 	private final MimeTypeService mimeTypeService;
 	private final UserProviderService userProviderService;
 	private final GroupProviderService groupProviderService;
-	private final DriveProviderService driveProviderService;
+	private final WorkSpaceProviderService driveProviderService;
 
 	public DomainServiceImpl(
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
@@ -117,7 +117,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			MimeTypeService mimeTypeService,
 			UserProviderService userProviderService,
 			GroupProviderService groupProviderService,
-			DriveProviderService driveProviderService) {
+			WorkSpaceProviderService driveProviderService) {
 		super(sanitizerInputHtmlBusinessService, domainQuotaBusinessService, containerQuotaBusinessService);
 		this.abstractDomainService = abstractDomainService;
 		this.businessService = businessService;

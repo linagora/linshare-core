@@ -50,7 +50,7 @@ import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.LDAPDriveQueryService;
+import org.linagora.linshare.core.service.LDAPWorkSpaceQueryService;
 import org.linagora.linshare.ldap.LdapDriveMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.Role;
@@ -72,7 +72,7 @@ public class LDAPWorkSpaceQueryServiceImplTest {
 	protected Logger logger = LoggerFactory.getLogger(LDAPWorkSpaceQueryServiceImplTest.class);
 
 	@Autowired
-	private LDAPDriveQueryService ldapWorkSpaceQueryService;
+	private LDAPWorkSpaceQueryService ldapWorkSpaceQueryService;
 
 	private LdapConnection ldapConnection;
 

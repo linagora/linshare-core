@@ -581,7 +581,7 @@
 		<constructor-arg ref="mongoTemplate"/>
 	</bean>
 
-	<bean id="ldapDriveSyncService" class="org.linagora.linshare.core.service.impl.LDAPDriveSyncServiceImpl">
+	<bean id="ldapDriveSyncService" class="org.linagora.linshare.core.service.impl.LDAPWorkSpaceSyncServiceImpl">
 		<constructor-arg>
 			<map>
 				<entry key="WORK_GROUP" value-ref="sharedSpaceLdapGroupService" />

@@ -73,10 +73,10 @@ import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.core.service.DriveProviderService;
+import org.linagora.linshare.core.service.WorkSpaceProviderService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 import org.linagora.linshare.core.service.GroupProviderService;
-import org.linagora.linshare.core.service.LdapDriveFilterService;
+import org.linagora.linshare.core.service.LdapWorkSpaceFilterService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
@@ -103,11 +103,11 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final GroupProviderService groupProviderService;
 
-	private final DriveProviderService driveProviderService;
+	private final WorkSpaceProviderService workSpaceProviderService;
 
 	private final GroupLdapPatternService groupLdapPatternService;
 
-	private final LdapDriveFilterService driveLdapPatternService;
+	private final LdapWorkSpaceFilterService workSpaceLdapFilterService;
 
 	private final UserService userService;
 
@@ -121,8 +121,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			final GroupProviderService groupProviderService,
 			final GroupLdapPatternService groupLdapPatternService,
 			UserService userService,
-			DriveProviderService driveProviderService,
-			LdapDriveFilterService driveLdapPatternService) {
+			WorkSpaceProviderService workSpaceProviderService,
+			LdapWorkSpaceFilterService driveLdapPatternService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
@@ -133,8 +133,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		this.groupProviderService = groupProviderService;
 		this.groupLdapPatternService = groupLdapPatternService;
 		this.userService = userService;
-		this.driveProviderService = driveProviderService;
-		this.driveLdapPatternService = driveLdapPatternService;
+		this.workSpaceProviderService = workSpaceProviderService;
+		this.workSpaceLdapFilterService = driveLdapPatternService;
 	}
 
 	@Override
@@ -331,8 +331,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 					"ldap connection Uuid is mandatory for drive provider creation");
 			Validate.notEmpty(baseDn, "baseDn is mandatory for drive provider creation");
 			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionLight.getUuid());
-			LdapDriveFilter pattern = driveLdapPatternService.find(drivePatternLight.getUuid());
-			ldapDriveProvider = driveProviderService
+			LdapDriveFilter pattern = workSpaceLdapFilterService.find(drivePatternLight.getUuid());
+			ldapDriveProvider = workSpaceProviderService
 					.create(new LdapWorkSpaceProvider(pattern, baseDn, ldapConnection, searchInOtherDomains));
 		}
 		return ldapDriveProvider;
@@ -399,16 +399,16 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			Validate.notEmpty(ldapConnectionLight.getUuid(), "ldap connection Uuid is mandatory for drive provider creation");
 			Validate.notEmpty(baseDn, "baseDn is mandatory for drive provider creation");
 			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionLight.getUuid());
-			LdapDriveFilter pattern = driveLdapPatternService.find(drivePatternLight.getUuid());
-			if (driveProviderService.exists(driveProviderDto.getUuid())) {
-				LdapWorkSpaceProvider driveProvider = driveProviderService.find(driveProviderDto.getUuid());
+			LdapDriveFilter pattern = workSpaceLdapFilterService.find(drivePatternLight.getUuid());
+			if (workSpaceProviderService.exists(driveProviderDto.getUuid())) {
+				LdapWorkSpaceProvider driveProvider = workSpaceProviderService.find(driveProviderDto.getUuid());
 				driveProvider.setBaseDn(driveProviderDto.getBaseDn());
 				driveProvider.setLdapConnection(ldapConnection);
 				driveProvider.setDriveFilter(pattern);
 				driveProvider.setSearchInOtherDomains(searchInOtherDomains);
-				ldapDriveProvider = driveProviderService.update(driveProvider);
+				ldapDriveProvider = workSpaceProviderService.update(driveProvider);
 			} else {
-				ldapDriveProvider = driveProviderService.create(
+				ldapDriveProvider = workSpaceProviderService.create(
 						new LdapWorkSpaceProvider(pattern, baseDn, ldapConnection, searchInOtherDomains));
 			}
 		}

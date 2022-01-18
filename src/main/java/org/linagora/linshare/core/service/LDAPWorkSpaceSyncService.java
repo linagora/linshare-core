@@ -41,7 +41,7 @@ import org.linagora.linshare.ldap.LdapDriveMemberObject;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPDriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
 
-public interface LDAPDriveSyncService {
+public interface LDAPWorkSpaceSyncService {
 
 	SharedSpaceLDAPDriveMember createOrUpdateLDAPDriveMember(Account actor, String domainUuid,
 			SharedSpaceLDAPGroup group, LdapDriveMemberObject memberObject, Date syncDate,

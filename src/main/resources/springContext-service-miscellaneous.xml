@@ -150,7 +150,7 @@
 	</bean>
 
 	<bean name="LdapDriveFilterService"
-		class="org.linagora.linshare.core.service.impl.LdapDriveFilterServiceImpl">
+		class="org.linagora.linshare.core.service.impl.LdapWorkSpaceFilterServiceImpl">
 		<constructor-arg ref="ldapDriveFilterRepository" />
 		<constructor-arg ref="driveProviderRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
@@ -164,7 +164,7 @@
 	</bean>
 
 	<bean name="driveProviderService"
-		class="org.linagora.linshare.core.service.impl.DriveProviderServiceImpl">
+		class="org.linagora.linshare.core.service.impl.WorkSpaceProviderServiceImpl">
 		<constructor-arg ref="driveProviderRepository" />
 		<constructor-arg ref="ldapDriveProviderRepository" />
 	</bean>

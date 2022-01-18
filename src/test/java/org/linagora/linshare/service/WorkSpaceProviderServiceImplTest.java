@@ -52,8 +52,8 @@ import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.DriveProviderService;
-import org.linagora.linshare.core.service.LdapDriveFilterService;
+import org.linagora.linshare.core.service.WorkSpaceProviderService;
+import org.linagora.linshare.core.service.LdapWorkSpaceFilterService;
 import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,10 +78,10 @@ public class WorkSpaceProviderServiceImplTest {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private DriveProviderService workSpaceProviderService;
+	private WorkSpaceProviderService workSpaceProviderService;
 
 	@Autowired
-	private LdapDriveFilterService workSpaceLdapPatternService;
+	private LdapWorkSpaceFilterService workSpaceLdapPatternService;
 
 	@Autowired
 	private LdapConnectionServiceImpl ldapConnectionService;

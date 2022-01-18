@@ -342,7 +342,7 @@ public class SharedSpaceNodeServiceImplTest {
 		// Find Foo's Drives (Filter by nodeType)
 		PageContainer<SharedSpaceNodeNested> fooDrives = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.WORK_SPACE), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
 		Assertions.assertEquals(1, fooDrives.getPageResponse().getTotalElements());
-		fooDrives.getPageResponse().getContent().forEach(node -> Assertions.assertTrue(node.isDrive()));
+		fooDrives.getPageResponse().getContent().forEach(node -> Assertions.assertTrue(node.isWorkSpace()));
 		// Find Foo's WorkGroups (Filter by nodeType)
 		PageContainer<SharedSpaceNodeNested> fooWGs = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(NodeType.WORK_GROUP), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
 		Assertions.assertEquals(1, fooWGs.getPageResponse().getTotalElements());

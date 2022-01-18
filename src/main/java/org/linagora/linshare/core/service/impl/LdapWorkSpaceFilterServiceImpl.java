@@ -52,14 +52,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DriveProviderRepository;
 import org.linagora.linshare.core.repository.LdapDriveFilterRepository;
-import org.linagora.linshare.core.service.LdapDriveFilterService;
+import org.linagora.linshare.core.service.LdapWorkSpaceFilterService;
 import org.linagora.linshare.mongo.entities.logs.DriveFilterAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.LdapDriveFilterMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
 import com.google.common.base.Strings;
 
-public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implements LdapDriveFilterService {
+public class LdapWorkSpaceFilterServiceImpl extends GenericAdminServiceImpl implements LdapWorkSpaceFilterService {
 
 	protected LdapDriveFilterRepository drivePatternRepository;
 
@@ -69,7 +69,7 @@ public class LdapDriveFilterServiceImpl extends GenericAdminServiceImpl implemen
 
 	private final AuditAdminMongoRepository auditAdminMongoRepository;
 
-	public LdapDriveFilterServiceImpl(LdapDriveFilterRepository drivePatternRepository,
+	public LdapWorkSpaceFilterServiceImpl(LdapDriveFilterRepository drivePatternRepository,
 			DriveProviderRepository driveProviderRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			AbstractDomainRepository abstractDomainRepository,

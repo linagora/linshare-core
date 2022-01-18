@@ -44,7 +44,7 @@ import javax.naming.ldap.LdapContext;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.LDAPDriveQueryService;
+import org.linagora.linshare.core.service.LDAPWorkSpaceQueryService;
 import org.linagora.linshare.ldap.JScriptDriveMemberLdapQuery;
 import org.linagora.linshare.ldap.JScriptGroupLdapQuery;
 import org.linagora.linshare.ldap.LdapDriveMemberObject;
@@ -58,7 +58,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 
-public class LDAPDriveQueryServiceImpl extends LDAPGroupQueryServiceImpl implements LDAPDriveQueryService{
+public class LDAPWorkSpaceQueryServiceImpl extends LDAPGroupQueryServiceImpl implements LDAPWorkSpaceQueryService{
 
 	@Override
 	public Set<LdapDriveMemberObject> listDriveMembers(LdapConnection ldapConnection, String baseDn,

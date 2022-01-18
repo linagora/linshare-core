@@ -33,19 +33,19 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.io.IOException;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.WorkSpaceProvider;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.ldap.LdapDriveMemberObject;
-import org.linagora.linshare.ldap.LdapGroupObject;
 
-public interface LDAPDriveQueryService extends LDAPGroupQueryService {
+public interface WorkSpaceProviderService {
 
-	public Set<LdapDriveMemberObject> listDriveMembers(LdapConnection ldapConnection, String baseDn,
-			GroupLdapPattern groupPattern, LdapGroupObject group) throws BusinessException, NamingException, IOException;
+	LdapWorkSpaceProvider find(String uuid) throws BusinessException;
+
+	LdapWorkSpaceProvider create(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException;
+
+	boolean exists(String uuid);
+
+	LdapWorkSpaceProvider update(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException;
+
+	void delete(WorkSpaceProvider driveProvider) throws BusinessException;
 }

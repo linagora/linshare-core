@@ -60,10 +60,10 @@ import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.DriveProviderService;
-import org.linagora.linshare.core.service.LDAPDriveSyncService;
+import org.linagora.linshare.core.service.WorkSpaceProviderService;
+import org.linagora.linshare.core.service.LDAPWorkSpaceSyncService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
-import org.linagora.linshare.core.service.LdapDriveFilterService;
+import org.linagora.linshare.core.service.LdapWorkSpaceFilterService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl;
 import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
@@ -110,7 +110,7 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 	LDAPGroupSyncService syncService;
 
 	@Autowired
-	LDAPDriveSyncService workSpaceSyncService;
+	LDAPWorkSpaceSyncService workSpaceSyncService;
 
 	@Autowired
 	SharedSpaceNodeService nodeService;
@@ -119,13 +119,13 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 	SharedSpaceMemberService memberService;
 
 	@Autowired
-	private DriveProviderService workSpaceProviderService;
+	private WorkSpaceProviderService workSpaceProviderService;
 
 	@Autowired
 	LdapConnectionServiceImpl ldapConnectionService;
 
 	@Autowired
-	LdapDriveFilterService workSpaceFilterService;
+	LdapWorkSpaceFilterService workSpaceFilterService;
 
 	@Autowired
 	@Qualifier("userRepository")
