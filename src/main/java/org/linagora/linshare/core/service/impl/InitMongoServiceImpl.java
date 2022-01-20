@@ -112,11 +112,13 @@ public class InitMongoServiceImpl implements InitMongoService {
 		}
 		// Migrate old role name from DRIVE_* to WORK_SPACE_*
 		if (DRIVE_RENAMING_OLD_VALUES.containsKey(role.getName())) {
+			LOGGER.warn("Role " + roleUuid + " is being migrated from " + role.getName() + " to " + roleName);
 			role.setName(roleName);
 			role.setModificationDate(new Date());
 			roleMongoRepository.save(role);
 		}
 		if (role.getType() == null) {
+			LOGGER.info("Setting type " + type + " to role " + roleUuid);
 			role.setType(type);
 			role.setModificationDate(new Date());
 			roleMongoRepository.save(role);
@@ -167,7 +169,9 @@ public class InitMongoServiceImpl implements InitMongoService {
 		boolean updated = false;
 		for (GenericLightEntity role : permission.getRoles()) {
 			if (DRIVE_RENAMING_OLD_VALUES.containsKey(role.getName())) {
-				role.setName(DRIVE_RENAMING_OLD_VALUES.get(role.getName()));
+				String newName = DRIVE_RENAMING_OLD_VALUES.get(role.getName());
+				LOGGER.warn("Role " + role.getName() + " is being migrated to " + newName + " for permission " + permissionUuid);
+				role.setName(newName);
 				updated = true;
 			}
 		}
@@ -176,6 +180,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 			permissionMongoRepository.save(permission);
 		}
 		if (rolesHasChanged(permission.getRoles(), roles)) {
+			LOGGER.info("Roles has changed for permission " + permissionUuid);
 			permission.setRoles(Lists.newArrayList(roles));
 			permission.setModificationDate(new Date());
 			permissionMongoRepository.save(permission);
