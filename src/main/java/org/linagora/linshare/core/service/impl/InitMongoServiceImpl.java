@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -57,7 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 public class InitMongoServiceImpl implements InitMongoService {
@@ -73,7 +74,10 @@ public class InitMongoServiceImpl implements InitMongoService {
 	private static final String WORK_SPACE_WRITER_UUID = "963025ca-8220-4915-b4fc-dba7b0b56100";
 	private static final String WORK_SPACE_READER_UUID = "556404b5-09b0-413e-a025-79ee40e043e4";
 
-	private static final List<String> DRIVE_RENAMING_OLD_VALUES = ImmutableList.of("DRIVE_ADMIN", "DRIVE_WRITER", "DRIVE_READER");
+	private static final Map<String, String> DRIVE_RENAMING_OLD_VALUES = ImmutableMap.of(
+		"DRIVE_ADMIN", "WORK_SPACE_ADMIN",
+		"DRIVE_WRITER", "WORK_SPACE_WRITER",
+		"DRIVE_READER", "WORK_SPACE_READER");
 
 	private final UserService userService;
 
@@ -107,7 +111,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 			return createInitRole(roleUuid, roleName, domain, type, author);
 		}
 		// Migrate old role name from DRIVE_* to WORK_SPACE_*
-		if (DRIVE_RENAMING_OLD_VALUES.contains(role.getName())) {
+		if (DRIVE_RENAMING_OLD_VALUES.containsKey(role.getName())) {
 			role.setName(roleName);
 			role.setModificationDate(new Date());
 			roleMongoRepository.save(role);
@@ -160,10 +164,21 @@ public class InitMongoServiceImpl implements InitMongoService {
 		if (permission == null) {
 			return createInitPermission(permissionUuid, actionType, resourceType, roles);
 		}
+		boolean updated = false;
+		for (GenericLightEntity role : permission.getRoles()) {
+			if (DRIVE_RENAMING_OLD_VALUES.containsKey(role.getName())) {
+				role.setName(DRIVE_RENAMING_OLD_VALUES.get(role.getName()));
+				updated = true;
+			}
+		}
+		if (updated) {
+			permission.setModificationDate(new Date());
+			permissionMongoRepository.save(permission);
+		}
 		if (rolesHasChanged(permission.getRoles(), roles)) {
 			permission.setRoles(Lists.newArrayList(roles));
 			permission.setModificationDate(new Date());
-			permission = permissionMongoRepository.save(permission);
+			permissionMongoRepository.save(permission);
 		}
 		return permission;
 	}

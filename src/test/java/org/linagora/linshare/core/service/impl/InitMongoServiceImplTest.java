@@ -333,4 +333,30 @@ public class InitMongoServiceImplTest {
 		assertThat(returnedPermission).isNotNull();
 		assertThat(returnedPermission.getModificationDate()).isEqualTo(modificationDate);
 	}
+
+	@Test
+	public void upsertInitPermissionShouldMigrateWhenOldDriveName() {
+		// Given
+		String permissionUuid = "3cd75eec-cacc-42e6-ad59-23d521a1d8d1";
+		SharedSpaceActionType actionType = SharedSpaceActionType.CREATE;
+		SharedSpaceResourceType resourceType = SharedSpaceResourceType.MEMBER;
+		GenericLightEntity entity = new GenericLightEntity("30b6a3be-e171-4829-8b54-a28c846ed411", "DRIVE_ADMIN");
+
+		SharedSpacePermission permission = new SharedSpacePermission();
+		permission.setUuid(permissionUuid);
+		permission.setAction(actionType);
+		permission.setResource(resourceType);
+		permission.setCreationDate(new Date());
+		permission.setRoles(Lists.newArrayList(entity));
+		permission.setModificationDate(new Date());
+		permissionMongoRepository.insert(permission);
+
+		// When
+		String newRoleName = "WORK_SPACE_ADMIN";
+		SharedSpacePermission returnedPermission = testee.upsertInitPermission(permissionUuid, actionType, resourceType, entity);
+
+		// Then
+		assertThat(returnedPermission.getRoles()).hasSize(1);
+		assertThat(returnedPermission.getRoles().get(0).getName()).isEqualTo("WORK_SPACE_ADMIN");
+	}
 }
