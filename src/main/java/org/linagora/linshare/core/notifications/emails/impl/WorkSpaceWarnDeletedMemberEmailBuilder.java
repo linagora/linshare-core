@@ -68,7 +68,7 @@ public class WorkSpaceWarnDeletedMemberEmailBuilder extends WorkGroupWarnDeleted
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		SharedSpaceMemberDrive workSpaceMember = getNewFakeSharedSpaceMemberDrive("work_space_name_1");
+		SharedSpaceMemberDrive workSpaceMember = getNewFakeSharedSpaceMemberWorkSpace("work_space_name_1");
 		Map<String, Object> variables = Maps.newHashMap();
 		variables.put("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		variables.put("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));

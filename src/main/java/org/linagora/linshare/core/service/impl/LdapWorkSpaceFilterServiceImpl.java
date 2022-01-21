@@ -46,158 +46,158 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DriveProviderRepository;
-import org.linagora.linshare.core.repository.LdapDriveFilterRepository;
+import org.linagora.linshare.core.repository.WorkSpaceProviderRepository;
+import org.linagora.linshare.core.repository.LdapWorkSpaceFilterRepository;
 import org.linagora.linshare.core.service.LdapWorkSpaceFilterService;
-import org.linagora.linshare.mongo.entities.logs.DriveFilterAuditLogEntry;
-import org.linagora.linshare.mongo.entities.mto.LdapDriveFilterMto;
+import org.linagora.linshare.mongo.entities.logs.WorkSpaceFilterAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.LdapWorkSpaceFilterMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
 import com.google.common.base.Strings;
 
 public class LdapWorkSpaceFilterServiceImpl extends GenericAdminServiceImpl implements LdapWorkSpaceFilterService {
 
-	protected LdapDriveFilterRepository drivePatternRepository;
+	protected LdapWorkSpaceFilterRepository workSpacePatternRepository;
 
-	protected DriveProviderRepository driveProviderRepository;
+	protected WorkSpaceProviderRepository workSpaceProviderRepository;
 
 	protected final AbstractDomainRepository abstractDomainRepository;
 
 	private final AuditAdminMongoRepository auditAdminMongoRepository;
 
-	public LdapWorkSpaceFilterServiceImpl(LdapDriveFilterRepository drivePatternRepository,
-			DriveProviderRepository driveProviderRepository,
+	public LdapWorkSpaceFilterServiceImpl(LdapWorkSpaceFilterRepository workSpaceFilterRepository,
+			WorkSpaceProviderRepository workSpaceProviderRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			AbstractDomainRepository abstractDomainRepository,
 			AuditAdminMongoRepository auditAdminMongoRepository) {
 		super(sanitizerInputHtmlBusinessService);
-		this.drivePatternRepository = drivePatternRepository;
-		this.driveProviderRepository = driveProviderRepository;
+		this.workSpacePatternRepository = workSpaceFilterRepository;
+		this.workSpaceProviderRepository = workSpaceProviderRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.auditAdminMongoRepository = auditAdminMongoRepository;
 	}
 
 	@Override
-	public LdapDriveFilter find(String uuid) throws BusinessException {
+	public LdapWorkSpaceFilter find(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Uuid must be set");
-		LdapDriveFilter groupLdapPattern = drivePatternRepository.find(uuid);
+		LdapWorkSpaceFilter groupLdapPattern = workSpacePatternRepository.find(uuid);
 		if (groupLdapPattern == null) {
-			throw new BusinessException(BusinessErrorCode.DRIVE_LDAP_FILTER_NOT_FOUND, "Drive ldap filter identifier not found.");
+			throw new BusinessException(BusinessErrorCode.WORKSPACE_LDAP_FILTER_NOT_FOUND, "WorkSpace ldap filter identifier not found.");
 		}
 		return groupLdapPattern;
 	}
 
 	@Override
-	public List<LdapDriveFilter> findAll() throws BusinessException {
-		return drivePatternRepository.findAll();
+	public List<LdapWorkSpaceFilter> findAll() throws BusinessException {
+		return workSpacePatternRepository.findAll();
 	}
 
 	@Override
-	public LdapDriveFilter create(Account authUser, LdapDriveFilter driveLdapPattern) throws BusinessException {
+	public LdapWorkSpaceFilter create(Account authUser, LdapWorkSpaceFilter workSpaceLdapFilter) throws BusinessException {
 		preChecks(authUser);
-		Validate.notEmpty(driveLdapPattern.getLabel());
-		Validate.notEmpty(driveLdapPattern.getSearchAllGroupsQuery());
-		Validate.notEmpty(driveLdapPattern.getSearchGroupQuery());
-		Collection<LdapAttribute> collection = driveLdapPattern.getAttributes().values();
+		Validate.notEmpty(workSpaceLdapFilter.getLabel());
+		Validate.notEmpty(workSpaceLdapFilter.getSearchAllGroupsQuery());
+		Validate.notEmpty(workSpaceLdapFilter.getSearchGroupQuery());
+		Collection<LdapAttribute> collection = workSpaceLdapFilter.getAttributes().values();
 		for (LdapAttribute e : collection) {
 			if (e.getAttribute() == null) {
 				throw new BusinessException(BusinessErrorCode.LDAP_ATTRIBUTE_CONTAINS_NULL,
 						"Attribute must be not null");
 			}
 		}
-		driveLdapPattern.setLabel(sanitize(driveLdapPattern.getLabel()));
-		driveLdapPattern.setDescription(sanitize(driveLdapPattern.getDescription()));
-		LdapDriveFilter createdDrivePattern = drivePatternRepository.create(driveLdapPattern);
-		LdapDriveFilterMto driveFilterMto = new LdapDriveFilterMto(createdDrivePattern);
-		DriveFilterAuditLogEntry log = new DriveFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
-				LogAction.CREATE, AuditLogEntryType.DRIVE_FILTER, driveFilterMto);
+		workSpaceLdapFilter.setLabel(sanitize(workSpaceLdapFilter.getLabel()));
+		workSpaceLdapFilter.setDescription(sanitize(workSpaceLdapFilter.getDescription()));
+		LdapWorkSpaceFilter createdworkSpacePattern = workSpacePatternRepository.create(workSpaceLdapFilter);
+		LdapWorkSpaceFilterMto workSpaceFilterMto = new LdapWorkSpaceFilterMto(createdworkSpacePattern);
+		WorkSpaceFilterAuditLogEntry log = new WorkSpaceFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
+				LogAction.CREATE, AuditLogEntryType.WORKSPACE_FILTER, workSpaceFilterMto);
 		auditAdminMongoRepository.insert(log);
-		return createdDrivePattern;
+		return createdworkSpacePattern;
 	}
 
 	@Override
-	public LdapDriveFilter update(Account authUser, LdapDriveFilter ldapDriveFilter) throws BusinessException {
+	public LdapWorkSpaceFilter update(Account authUser, LdapWorkSpaceFilter ldapWorkSpaceFilter) throws BusinessException {
 		preChecks(authUser);
-		Validate.notNull(ldapDriveFilter, "Drive Ldap filter must be set");
-		Validate.notEmpty(ldapDriveFilter.getUuid(), "Drive Ldap filter UUID must be set");
-		LdapDriveFilter driveFilter = drivePatternRepository.find(ldapDriveFilter.getUuid());
-		LdapDriveFilterMto driveFilterToUpdateMto = new LdapDriveFilterMto(driveFilter);
-		DriveFilterAuditLogEntry log = new DriveFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
-				LogAction.UPDATE, AuditLogEntryType.DRIVE_FILTER, driveFilterToUpdateMto);
-		if (driveFilter == null) {
-			throw new BusinessException(BusinessErrorCode.DRIVE_LDAP_FILTER_NOT_FOUND, "no such drive filter");
+		Validate.notNull(ldapWorkSpaceFilter, "WorkSpace Ldap filter must be set");
+		Validate.notEmpty(ldapWorkSpaceFilter.getUuid(), "WorkSpace Ldap filter UUID must be set");
+		LdapWorkSpaceFilter workSpaceFilter = workSpacePatternRepository.find(ldapWorkSpaceFilter.getUuid());
+		LdapWorkSpaceFilterMto workSpaceFilterToUpdateMto = new LdapWorkSpaceFilterMto(workSpaceFilter);
+		WorkSpaceFilterAuditLogEntry log = new WorkSpaceFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
+				LogAction.UPDATE, AuditLogEntryType.WORKSPACE_FILTER, workSpaceFilterToUpdateMto);
+		if (workSpaceFilter == null) {
+			throw new BusinessException(BusinessErrorCode.WORKSPACE_LDAP_FILTER_NOT_FOUND, "no such WorkSpace filter");
 		}
-		if (driveFilter.getSystem()) {
-			throw new BusinessException(BusinessErrorCode.DRIVE_LDAP_FILTER_CANNOT_BE_UPDATED,
-					"System drive filters cannot be updated");
+		if (workSpaceFilter.getSystem()) {
+			throw new BusinessException(BusinessErrorCode.WORKSPACE_LDAP_FILTER_CANNOT_BE_UPDATED,
+					"System WorkSpace filters cannot be updated");
 		}
-		Validate.notEmpty(ldapDriveFilter.getLabel(), "Drive Ldap filter's label must be set.");
-		Validate.notNull(ldapDriveFilter.getSearchPageSize(), "Drive Ldap filter's search page size must be set.");
-		Validate.notNull(ldapDriveFilter.getSearchAllGroupsQuery(), "Drive Ldap filter's search all groups query must be set.");
-		Validate.notEmpty(ldapDriveFilter.getSearchGroupQuery(), "Drive Ldap filter's search group query must be set.");
+		Validate.notEmpty(ldapWorkSpaceFilter.getLabel(), "WorkSpace Ldap filter's label must be set.");
+		Validate.notNull(ldapWorkSpaceFilter.getSearchPageSize(), "WorkSpace Ldap filter's search page size must be set.");
+		Validate.notNull(ldapWorkSpaceFilter.getSearchAllGroupsQuery(), "WorkSpace Ldap filter's search all groups query must be set.");
+		Validate.notEmpty(ldapWorkSpaceFilter.getSearchGroupQuery(), "WorkSpace Ldap filter's search group query must be set.");
 
-		driveFilter.setLabel(sanitize(ldapDriveFilter.getLabel()));
-		if (!Strings.isNullOrEmpty(ldapDriveFilter.getDescription())) {
-			driveFilter.setDescription(sanitize(ldapDriveFilter.getDescription()));
+		workSpaceFilter.setLabel(sanitize(ldapWorkSpaceFilter.getLabel()));
+		if (!Strings.isNullOrEmpty(ldapWorkSpaceFilter.getDescription())) {
+			workSpaceFilter.setDescription(sanitize(ldapWorkSpaceFilter.getDescription()));
 		}
-		driveFilter.setSearchPageSize(ldapDriveFilter.getSearchPageSize());
-		driveFilter.setSearchAllGroupsQuery(ldapDriveFilter.getSearchAllGroupsQuery());
-		driveFilter.setSearchGroupQuery(ldapDriveFilter.getSearchGroupQuery());
-		driveFilter.setGroupPrefix(ldapDriveFilter.getGroupPrefix());
+		workSpaceFilter.setSearchPageSize(ldapWorkSpaceFilter.getSearchPageSize());
+		workSpaceFilter.setSearchAllGroupsQuery(ldapWorkSpaceFilter.getSearchAllGroupsQuery());
+		workSpaceFilter.setSearchGroupQuery(ldapWorkSpaceFilter.getSearchGroupQuery());
+		workSpaceFilter.setGroupPrefix(ldapWorkSpaceFilter.getGroupPrefix());
 
-		driveFilter.getAttributes().get(LdapDriveFilter.GROUP_NAME).setAttribute(ldapDriveFilter.getAttributes().get(LdapDriveFilter.GROUP_NAME).getAttribute());
-		driveFilter.getAttributes().get(LdapDriveFilter.GROUP_MEMBER).setAttribute(ldapDriveFilter.getAttributes().get(LdapDriveFilter.GROUP_MEMBER).getAttribute());
-		driveFilter.getAttributes().get(LdapDriveFilter.MEMBER_LAST_NAME).setAttribute(ldapDriveFilter.getAttributes().get(LdapDriveFilter.MEMBER_LAST_NAME).getAttribute());
-		driveFilter.getAttributes().get(LdapDriveFilter.MEMBER_FIRST_NAME).setAttribute(ldapDriveFilter.getAttributes().get(LdapDriveFilter.MEMBER_FIRST_NAME).getAttribute());
-		driveFilter.getAttributes().get(LdapDriveFilter.MEMBER_MAIL).setAttribute(ldapDriveFilter.getAttributes().get(LdapDriveFilter.MEMBER_MAIL).getAttribute());
-		driveFilter = drivePatternRepository.update(driveFilter);
-		LdapDriveFilterMto driveFilterUpdatedMto = new LdapDriveFilterMto(driveFilter);
-		log.setResourceUpdated(driveFilterUpdatedMto);
+		workSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.GROUP_NAME).setAttribute(ldapWorkSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.GROUP_NAME).getAttribute());
+		workSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.GROUP_MEMBER).setAttribute(ldapWorkSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.GROUP_MEMBER).getAttribute());
+		workSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.MEMBER_LAST_NAME).setAttribute(ldapWorkSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.MEMBER_LAST_NAME).getAttribute());
+		workSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.MEMBER_FIRST_NAME).setAttribute(ldapWorkSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.MEMBER_FIRST_NAME).getAttribute());
+		workSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.MEMBER_MAIL).setAttribute(ldapWorkSpaceFilter.getAttributes().get(LdapWorkSpaceFilter.MEMBER_MAIL).getAttribute());
+		workSpaceFilter = workSpacePatternRepository.update(workSpaceFilter);
+		LdapWorkSpaceFilterMto workSpaceFilterUpdatedMto = new LdapWorkSpaceFilterMto(workSpaceFilter);
+		log.setResourceUpdated(workSpaceFilterUpdatedMto);
 		auditAdminMongoRepository.insert(log);
-		return driveFilter;
+		return workSpaceFilter;
 	}
 
 	@Override
-	public LdapDriveFilter delete(Account authUser, LdapDriveFilter driveLdapFilter)
+	public LdapWorkSpaceFilter delete(Account authUser, LdapWorkSpaceFilter workSpaceLdapFilter)
 			throws BusinessException {
-		Validate.notNull(driveLdapFilter, "DriveLdapFilter must be set");
-		LdapDriveFilter driveFilter = find(driveLdapFilter.getUuid());
-		if (driveProviderRepository.isUsed(driveFilter)) {
+		Validate.notNull(workSpaceLdapFilter, "workSpaceLdapFilter must be set");
+		LdapWorkSpaceFilter workSpaceFilter = find(workSpaceLdapFilter.getUuid());
+		if (workSpaceProviderRepository.isUsed(workSpaceFilter)) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_PATTERN_STILL_IN_USE,
-					"Cannot delete this drive filter because is still used by domains");
+					"Cannot delete this workSpace filter because is still used by domains");
 		}
-		if (driveFilter.getSystem()) {
-			throw new BusinessException(BusinessErrorCode.DRIVE_LDAP_FILTER_CANNOT_BE_REMOVED,
-					"System drive filter cannot be removed");
+		if (workSpaceFilter.getSystem()) {
+			throw new BusinessException(BusinessErrorCode.WORKSPACE_LDAP_FILTER_CANNOT_BE_REMOVED,
+					"System WorkSpace filter cannot be removed");
 		}
-		LdapDriveFilterMto driveFilterMto = new LdapDriveFilterMto(driveFilter);
-		DriveFilterAuditLogEntry log = new DriveFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
-				LogAction.DELETE, AuditLogEntryType.DRIVE_FILTER, driveFilterMto);
-		drivePatternRepository.delete(driveFilter);
+		LdapWorkSpaceFilterMto workSpaceFilterMto = new LdapWorkSpaceFilterMto(workSpaceFilter);
+		WorkSpaceFilterAuditLogEntry log = new WorkSpaceFilterAuditLogEntry(authUser, LinShareConstants.rootDomainIdentifier,
+				LogAction.DELETE, AuditLogEntryType.WORKSPACE_FILTER, workSpaceFilterMto);
+		workSpacePatternRepository.delete(workSpaceFilter);
 		auditAdminMongoRepository.insert(log);
-		return driveFilter;
+		return workSpaceFilter;
 	}
 
 	@Override
-	public List<LdapDriveFilter> findAllPublicDrivePatterns() {
-		return drivePatternRepository.findAllPublicGroupLdapPatterns();
+	public List<LdapWorkSpaceFilter> findAllPublicWorkSpaceFilters() {
+		return workSpacePatternRepository.findAllPublicGroupLdapPatterns();
 	}
 
 	@Override
-	public List<LdapDriveFilter> findAllSystemDriveLdapPatterns() {
-		return drivePatternRepository.findAllSystemGroupLdapPatterns();
+	public List<LdapWorkSpaceFilter> findAllSystemWorkSpaceLdapFilters() {
+		return workSpacePatternRepository.findAllSystemGroupLdapPatterns();
 	}
 
 	@Override
-	public List<AbstractDomain> findAllDomainsByDriveFilter(Account authUser, LdapDriveFilter domainDriveFilter) {
+	public List<AbstractDomain> findAllDomainsByWorkSpaceFilter(Account authUser, LdapWorkSpaceFilter domainWorkSpaceFilter) {
 		preChecks(authUser);
-		Validate.notNull(domainDriveFilter, "domainDriveFilter must be set.");
-		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByWorkSpaceFilter(domainDriveFilter);
+		Validate.notNull(domainWorkSpaceFilter, "domainWorkSpaceFilter must be set.");
+		List<AbstractDomain> domains = abstractDomainRepository.findAllDomainsByWorkSpaceFilter(domainWorkSpaceFilter);
 		return domains;
 	}
 }

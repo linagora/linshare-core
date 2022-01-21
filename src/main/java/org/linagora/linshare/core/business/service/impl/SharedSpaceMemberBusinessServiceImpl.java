@@ -151,7 +151,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 				SharedSpaceMember.class);
 		logger.trace("SharedSpaceMembers: {}", updateMulti.toString());
 
-		// Testing if this SSnode have a parent (A drive)
+		// Testing if this SSnode have a parent (A workSpace)
 		String parentUuid = member.getNode().getParentUuid();
 		if (parentUuid != null) {
 			updateMulti = mongoTemplate.updateMulti(

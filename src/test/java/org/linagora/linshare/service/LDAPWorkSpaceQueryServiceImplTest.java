@@ -51,7 +51,7 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPWorkSpaceQueryService;
-import org.linagora.linshare.ldap.LdapDriveMemberObject;
+import org.linagora.linshare.ldap.LdapWorkSpaceMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.Role;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
@@ -137,9 +137,9 @@ public class LDAPWorkSpaceQueryServiceImplTest {
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("WORKSPACES: {}", ldapGroup.toString());
 			Assertions.assertEquals("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Set<LdapDriveMemberObject> listMembers = ldapWorkSpaceQueryService.listDriveMembers(ldapConnection, baseDn,
+			Set<LdapWorkSpaceMemberObject> listMembers = ldapWorkSpaceQueryService.listWorkSpaceMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
-			for (LdapDriveMemberObject member : listMembers) {
+			for (LdapWorkSpaceMemberObject member : listMembers) {
 				logger.info(member.toString());
 				Assertions.assertEquals("John", member.getFirstName());
 				Assertions.assertEquals("Doe", member.getLastName());
@@ -161,9 +161,9 @@ public class LDAPWorkSpaceQueryServiceImplTest {
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("WORKSPACES: {}", ldapGroup.toString());
 			Assertions.assertEquals("cn=workspace-workspace-2,ou=Groups2,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Set<LdapDriveMemberObject> listMembers = ldapWorkSpaceQueryService.listDriveMembers(ldapConnection, baseDn,
+			Set<LdapWorkSpaceMemberObject> listMembers = ldapWorkSpaceQueryService.listWorkSpaceMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
-			for (LdapDriveMemberObject member : listMembers) {
+			for (LdapWorkSpaceMemberObject member : listMembers) {
 				logger.info(member.toString());
 				if (user2_email.equals(member.getEmail())) {
 					Assertions.assertEquals("Jane", member.getFirstName());
@@ -187,9 +187,9 @@ public class LDAPWorkSpaceQueryServiceImplTest {
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("WORKSPACES: {}", ldapGroup.toString());
 			Assertions.assertEquals("cn=workspace-workspace-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Set<LdapDriveMemberObject> listMembers = ldapWorkSpaceQueryService.listDriveMembers(ldapConnection, baseDn,
+			Set<LdapWorkSpaceMemberObject> listMembers = ldapWorkSpaceQueryService.listWorkSpaceMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
-			for (LdapDriveMemberObject member : listMembers) {
+			for (LdapWorkSpaceMemberObject member : listMembers) {
 				logger.info(member.toString());
 				if (user2_email.equals(member.getEmail())) {
 					Assertions.assertEquals("Jane", member.getFirstName());
@@ -213,9 +213,9 @@ public class LDAPWorkSpaceQueryServiceImplTest {
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("WORKSPACES: {}", ldapGroup.toString());
 			Assertions.assertEquals("cn=workspace-workspace-4,ou=Groups4,dc=linshare,dc=org", ldapGroup.getExternalId());
-			Set<LdapDriveMemberObject> listMembers = ldapWorkSpaceQueryService.listDriveMembers(ldapConnection, baseDn,
+			Set<LdapWorkSpaceMemberObject> listMembers = ldapWorkSpaceQueryService.listWorkSpaceMembers(ldapConnection, baseDn,
 					groupPattern, ldapGroup);
-			for (LdapDriveMemberObject member : listMembers) {
+			for (LdapWorkSpaceMemberObject member : listMembers) {
 				logger.info(member.toString());
 				if (user2_email.equals(member.getEmail())) {
 					Assertions.assertEquals("Jane", member.getFirstName());

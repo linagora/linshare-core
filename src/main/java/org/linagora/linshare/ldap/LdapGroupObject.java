@@ -171,7 +171,7 @@ public class LdapGroupObject {
 		return "cn=writers," + externalId;
 	}
 
-	public String getDriveWritersDn() {
+	public String getWorkSpaceWritersDn() {
 		return "cn=workspace_writers," + externalId;
 	}
 }

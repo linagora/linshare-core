@@ -175,18 +175,18 @@ public class WorkGroupNodeResourceAccessControlImpl
 					return hasPermission(foundMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
 							getSharedSpaceResourceType(entry));
 				} else {
-					// ssmember is a member of a Drive or, if not, he is just a member of a nested workgroup
-					SharedSpaceMemberDrive memberDrive = (SharedSpaceMemberDrive) sharedSpaceMemberMongoRepository
+					// ssmember is a member of a workSpace or, if not, he is just a member of a nested workgroup
+					SharedSpaceMemberDrive memberWorkSpace = (SharedSpaceMemberDrive) sharedSpaceMemberMongoRepository
 							.findByAccountAndNode(actor.getLsUuid(), foundMember.getNode().getParentUuid());
-					if (Objects.isNull(memberDrive)) {
-						// ssmember is a member of a nested workgroup only and not member of the drive
+					if (Objects.isNull(memberWorkSpace)) {
+						// ssmember is a member of a nested workgroup only and not member of the workSpace
 						return hasPermission(foundMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
 								getSharedSpaceResourceType(entry));
 					} else {
-						// ssmember is a member of a drive and its nested workgroup
+						// ssmember is a member of a workSpace and its nested workgroup
 						return hasPermission(foundMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
 								getSharedSpaceResourceType(entry))
-								|| hasPermission(memberDrive.getRole().getUuid(), SharedSpaceActionType.DELETE,
+								|| hasPermission(memberWorkSpace.getRole().getUuid(), SharedSpaceActionType.DELETE,
 										getSharedSpaceResourceType(entry));
 					}
 				}

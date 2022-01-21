@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.WorkSpaceProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPWorkSpaceProviderDto;
 
 import com.google.common.base.MoreObjects;
 
@@ -76,7 +76,7 @@ public abstract class WorkSpaceProvider extends Provider {
 				.toString();
 	}
 
-	public abstract LDAPDriveProviderDto toLDAPDriveProviderDto();
+	public abstract LDAPWorkSpaceProviderDto toLDAPWorkSpaceProviderDto();
 
 	public Boolean getSearchInOtherDomains() {
 		return false;

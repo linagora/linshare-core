@@ -153,7 +153,7 @@
 				<entry key="batch">
 					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
 						<ref bean="synchronizeLDAPGroupsInWorkgroupsBatch" />
-						<ref bean="synchronizeLDAPGroupsInDrivesBatch" />
+						<ref bean="synchronizeLDAPGroupsInWorkSpacesBatch" />
 					</list>
 				</entry>
 				<entry key="batchRunner" value-ref="batchRunner" />

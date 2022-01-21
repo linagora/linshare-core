@@ -91,7 +91,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	@Path("/")
 	@GET
-	@Operation(summary = "Get all shared spaces (Drives and workgroups on the top level).", responses = {
+	@Operation(summary = "Get all shared spaces (WorkSpaces and workgroups on the top level).", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = SharedSpaceNodeNested.class))),
 			responseCode = "200"

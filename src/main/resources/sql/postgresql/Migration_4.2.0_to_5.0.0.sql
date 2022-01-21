@@ -99,7 +99,7 @@ CREATE INDEX account_first_name
 CREATE INDEX account_last_name
   ON account (last_name);
 
--- Ldap Drive filter
+-- Ldap WorkSpace filter
 INSERT INTO ldap_pattern(
     id,
     uuid,
@@ -126,7 +126,7 @@ INSERT INTO ldap_pattern(
     'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workspace-" + pattern + "))");',
     'workspace-' WHERE NOT EXISTS (SELECT id FROM ldap_pattern WHERE id = 6);
 
--- Update ldap drive filter
+-- Update ldap WorkSpace filter
 UPDATE ldap_pattern SET pattern_type = 'WORK_SPACE_LDAP_PATTERN', description = 'Description of default LDAP workSpace filter', label = 'Default Ldap workSpace filter' WHERE uuid='c59078f1-2366-4360-baa0-6c089202e9a6';
 
 UPDATE ldap_pattern SET pattern_type = 'WORK_SPACE_LDAP_PATTERN' WHERE pattern_type= 'DRIVE_LDAP_PATTERN';
@@ -969,14 +969,14 @@ UPDATE upgrade_task SET hidden = true WHERE task_group like 'UPGRADE_2%';
 -- Update DRIVE functionality to WORK_SPACE
 UPDATE functionality SET identifier = 'WORK_SPACE__CREATION_RIGHT' WHERE id in (SELECT id FROM functionality WHERE identifier = 'DRIVE__CREATION_RIGHT');
 
--- Drive renamed to WorkSpace in mail notifications
+-- WorkSpace renamed to WorkSpace in mail notifications
 UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_NEW_MEMBER' WHERE identifier = 'DRIVE_WARN_NEW_MEMBER';
 UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_UPDATED_MEMBER' WHERE identifier = 'DRIVE_WARN_UPDATED_MEMBER';
 UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_DELETED_MEMBER' WHERE identifier = 'DRIVE_WARN_DELETED_MEMBER';
 UPDATE mail_activation SET identifier = 'WORK_SPACE_WARN_DELETED' WHERE identifier = 'DRIVE_WARN_DELETED_DRIVE';
 
 
--- Rename driveProvider to workSpaceProvider
+-- Rename WorkSpaceProvider to workSpaceProvider
 ALTER TABLE drive_provider RENAME TO work_space_provider;
 ALTER TABLE domain_abstract RENAME COLUMN drive_provider_id TO work_space_provider_id;
 

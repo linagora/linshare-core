@@ -69,9 +69,9 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 
 	// shared spaces.
 	/**
-	 * Returns traces of the Shared space (Drive/nested workgroup/ workgroup) and the related resource traces (members/folders/documents/revisions) that belongs to this shared space.
+	 * Returns traces of the Shared space (WorkSpace/nested workgroup/ workgroup) and the related resource traces (members/folders/documents/revisions) that belongs to this shared space.
 	 * All operations performed by members on a given resource of the shared space are included.
-	 * @param sharedSpaceUuid String uuid of the shared space. Could be a drive, nested workgroup or workgroup.
+	 * @param sharedSpaceUuid String uuid of the shared space. Could be a WorkSpace, nested workgroup or workgroup.
 	 * @param actions {@link List} of {@link LogAction} list of audit action types. Should not be null neither empty.
 	 * @param types {@link List} of {@link AuditLogEntryType} list of audit entry types. Should not be null neither empty.
 	 * @param beginDate {@link Date} Begin of the date range.
@@ -85,7 +85,7 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	/**
 	 * Returns traces of a given Workgroup node (folder/document/revision) and all traces of related resources (folders/documents/revisions) that belongs to a shared space with uuid sharedSpaceUuid
 	 * All operations performed by shared space members on a given workgroup node and its related resources are included.
-	 * @param String sharedSpaceUuid uuid of the shared space. Could be a drive, nested workgroup or workgroup.
+	 * @param String sharedSpaceUuid uuid of the shared space. Could be a WorkSpace, nested workgroup or workgroup.
 	 * @param String workGroupNodeUuid uuid of workgroup node.
 	 * @param actions {@link List} of {@link LogAction} list of audit action types. Should not be null neither empty.
 	 * @param types {@link List} of {@link AuditLogEntryType} list of audit entry types. Should not be null neither empty.

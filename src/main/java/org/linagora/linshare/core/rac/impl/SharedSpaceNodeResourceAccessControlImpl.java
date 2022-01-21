@@ -136,7 +136,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			logger.error("The current domain does not allow you to create a shared space node.");
 			return false;
 		}
-		// Check the user can create workgroups inside this drive
+		// Check the user can create workgroups inside this workSpace
 		if (parent != null && NodeType.WORK_SPACE.equals(parent.getNodeType())) {
 			boolean canCreateWorkGroupsInside = defaultSharedSpacePermissionCheck(authUser, actor, parent,
 					TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE, SharedSpaceActionType.CREATE);

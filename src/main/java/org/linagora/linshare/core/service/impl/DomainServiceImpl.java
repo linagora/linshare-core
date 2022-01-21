@@ -95,7 +95,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 	private final MimeTypeService mimeTypeService;
 	private final UserProviderService userProviderService;
 	private final GroupProviderService groupProviderService;
-	private final WorkSpaceProviderService driveProviderService;
+	private final WorkSpaceProviderService workSpaceProviderService;
 
 	public DomainServiceImpl(
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
@@ -117,7 +117,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			MimeTypeService mimeTypeService,
 			UserProviderService userProviderService,
 			GroupProviderService groupProviderService,
-			WorkSpaceProviderService driveProviderService) {
+			WorkSpaceProviderService workSpaceProviderService) {
 		super(sanitizerInputHtmlBusinessService, domainQuotaBusinessService, containerQuotaBusinessService);
 		this.abstractDomainService = abstractDomainService;
 		this.businessService = businessService;
@@ -135,7 +135,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 		this.mimeTypeService = mimeTypeService;
 		this.userProviderService = userProviderService;
 		this.groupProviderService = groupProviderService;
-		this.driveProviderService = driveProviderService;
+		this.workSpaceProviderService = workSpaceProviderService;
 	}
 	@Override
 	public AbstractDomain find(Account actor, String uuid) throws BusinessException {
@@ -305,7 +305,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			deleteMimePolicies(actor, domain);
 			deleteUserProvider(domain);
 			deleteGroupProvider(domain);
-			deleteDriveProvider(domain);
+			deleteWorkSpaceProvider(domain);
 			deleteWelcomeMessages(domain);
 
 			DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.DELETE, AuditLogEntryType.DOMAIN, domain);
@@ -338,10 +338,10 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 		}
 	}
 
-	private void deleteDriveProvider(AbstractDomain domain) {
-		if (domain.getDriveProvider() != null) {
-			driveProviderService.delete(domain.getDriveProvider());
-			domain.setDriveProvider(null);
+	private void deleteWorkSpaceProvider(AbstractDomain domain) {
+		if (domain.getWorkSpaceProvider() != null) {
+			workSpaceProviderService.delete(domain.getWorkSpaceProvider());
+			domain.setWorkSpaceProvider(null);
 		}
 	}
 

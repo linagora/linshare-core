@@ -45,11 +45,11 @@
 	<bean id="adminv5GroupProviderRestService" class="org.linagora.linshare.webservice.adminv5.impl.GroupProviderRestServiceImpl">
 		<constructor-arg ref="wsAdminV5GroupProviderFacade" />
 	</bean>
-	<bean id="adminv5DriveProviderRestService" class="org.linagora.linshare.webservice.adminv5.impl.DriveProviderRestServiceImpl">
-		<constructor-arg ref="wsAdminV5DriveProviderFacade" />
+	<bean id="adminv5WorkSpaceProviderRestService" class="org.linagora.linshare.webservice.adminv5.impl.WorkSpaceProviderRestServiceImpl">
+		<constructor-arg ref="wsAdminV5WorkSpaceProviderFacade" />
 	</bean>
-	<bean id="adminv5DomainDriveFilterRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainDriveFilterRestServiceImpl">
-		<constructor-arg ref="wsAdminV5DomainDriveFilterFacade" />
+	<bean id="adminv5DomainWorkSpaceFilterRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainWorkSpaceFilterRestServiceImpl">
+		<constructor-arg ref="wsAdminV5DomainWorkSpaceFilterFacade" />
 	</bean>
 	<bean id="adminv5FunctionalityRestService" class="org.linagora.linshare.webservice.adminv5.impl.FunctionalityRestServiceImpl">
 		<constructor-arg ref="wsAdminV5FunctionalityFacade" />
@@ -79,10 +79,10 @@
 			<ref bean="adminv5DomainUserFilterRestService"/>
 			<ref bean="adminv5DomainGroupFilterRestService"/>
 			<ref bean="adminv5UserProviderRestService"/>
-			<ref bean="adminv5DomainDriveFilterRestService"/>
+			<ref bean="adminv5DomainWorkSpaceFilterRestService"/>
 			<ref bean="adminv5FunctionalityRestService"/>
 			<ref bean="adminv5GroupProviderRestService"/>
-			<ref bean="adminv5DriveProviderRestService"/>
+			<ref bean="adminv5WorkSpaceProviderRestService"/>
 			<ref bean="adminv5WelcomeMessageRestService"/>
 			<ref bean="adminv5DomainQuotaRestService"/>
 			<ref bean="adminv5ContainerQuotaRestService"/>

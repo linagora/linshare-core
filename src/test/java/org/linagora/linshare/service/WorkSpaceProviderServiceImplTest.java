@@ -47,7 +47,7 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -89,7 +89,7 @@ public class WorkSpaceProviderServiceImplTest {
 	@Autowired
 	private AccountService accountService;
 
-	private LdapDriveFilter workSpaceFilter;
+	private LdapWorkSpaceFilter workSpaceFilter;
 
 	private LdapConnection ldapconnexion;
 
@@ -101,7 +101,7 @@ public class WorkSpaceProviderServiceImplTest {
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 		attributeList.put("first", attribute);
-		workSpaceFilter = new LdapDriveFilter("lable", "description", "searchAllGroupsQuery",
+		workSpaceFilter = new LdapWorkSpaceFilter("lable", "description", "searchAllGroupsQuery",
 				"searchGroupQuery", "workSpacePrefix", false);
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		workSpaceFilter = workSpaceLdapPatternService.create(actor, workSpaceFilter);
@@ -136,7 +136,7 @@ public class WorkSpaceProviderServiceImplTest {
 			workSpaceProviderService.delete(workSpaceProvider);
 			workSpaceProviderService.find(workSpaceProvider.getUuid());
 		});
-		Assertions.assertEquals(BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND, exception.getErrorCode());
+		Assertions.assertEquals(BusinessErrorCode.WORKSPACE_PROVIDER_NOT_FOUND, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

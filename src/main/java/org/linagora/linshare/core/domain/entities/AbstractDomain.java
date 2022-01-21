@@ -500,12 +500,12 @@ public abstract class AbstractDomain {
 		this.groupProvider = groupProvider;
 	}
 
-	public WorkSpaceProvider getDriveProvider() {
+	public WorkSpaceProvider getWorkSpaceProvider() {
 		return workSpaceProvider;
 	}
 
-	public void setDriveProvider(WorkSpaceProvider driveProvider) {
-		this.workSpaceProvider = driveProvider;
+	public void setWorkSpaceProvider(WorkSpaceProvider workSpaceProvider) {
+		this.workSpaceProvider = workSpaceProvider;
 	}
 
 	public boolean isAncestry(String domainUuid) {

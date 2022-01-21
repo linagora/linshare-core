@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 
-@XmlRootElement(name = "SharedSpaceMemberDrive")
+@XmlRootElement(name = "SharedSpaceMemberWorkSpace")
 public class SharedSpaceMemberDrive extends SharedSpaceMember {
 
 	protected LightSharedSpaceRole nestedRole;

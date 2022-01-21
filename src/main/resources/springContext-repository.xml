@@ -283,7 +283,7 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="ldapDriveFilterRepository" class="org.linagora.linshare.core.repository.hibernate.LdapDriveFilterRepositoryImpl">
+	<bean name="ldapWorkSpaceFilterRepository" class="org.linagora.linshare.core.repository.hibernate.LdapWorkSpaceFilterRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 	<bean name="groupPatternRepository" class="org.linagora.linshare.core.repository.hibernate.GroupPatternRepositoryImpl">
@@ -296,10 +296,10 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="driveProviderRepository" class="org.linagora.linshare.core.repository.hibernate.DriveProviderRepositoryImpl">
+	<bean name="workSpaceProviderRepository" class="org.linagora.linshare.core.repository.hibernate.WorkSpaceProviderRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-	<bean name="ldapDriveProviderRepository" class="org.linagora.linshare.core.repository.hibernate.LdapDriveProviderRepositoryImpl">
+	<bean name="ldapWorkSpaceProviderRepository" class="org.linagora.linshare.core.repository.hibernate.LdapWorkSpaceProviderRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 

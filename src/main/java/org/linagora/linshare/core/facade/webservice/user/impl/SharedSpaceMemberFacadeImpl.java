@@ -94,17 +94,17 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		SharedSpaceNode foundSharedSpaceNode = nodeService.find(authUser, actor, member.getNode().getUuid());
 		SharedSpaceRole foundSharedSpaceRole = roleService.find(authUser, actor, member.getRole().getUuid());
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(foundSharedSpaceRole);
-		// if current node is a Drive
+		// if current node is a workSpace
 		if (NodeType.WORK_SPACE.equals(foundSharedSpaceNode.getNodeType())) {
-			// if current member is a drive member
+			// if current member is a workSpace member
 			if (NodeType.WORK_SPACE.equals(member.getType())) {
 				GenericLightEntity nestedRole = ((SharedSpaceMemberDrive) member).getNestedRole();
 				if (nestedRole != null) {
 					context.setNestedRole(roleService.find(authUser, actor, nestedRole.getUuid()));
 				}
 			}
-			/* it is not a drive member or nested role is null,
-			 * but we are in a drive. we force default nested role value (default workgroup value)
+			/* it is not a workSpace member or nested role is null,
+			 * but we are in a workSpace. we force default nested role value (default workgroup value)
 			 */
 			if (context.getNestedRole() == null) {
 				context.setNestedRole(roleService.findByName(authUser, actor, "READER"));

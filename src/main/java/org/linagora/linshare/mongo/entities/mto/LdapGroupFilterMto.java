@@ -37,7 +37,7 @@ import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 
 public class LdapGroupFilterMto extends AbstractGroupFilterMto {
 
@@ -70,11 +70,11 @@ public class LdapGroupFilterMto extends AbstractGroupFilterMto {
 		this.groupPrefix = groupFilter.getGroupPrefix();
 		this.searchPageSize = groupFilter.getSearchPageSize();
 		Map<String, LdapAttribute> attributes = groupFilter.getAttributes();
-		this.groupName = attributes.get(LdapDriveFilter.GROUP_NAME).getAttribute();
-		this.groupMember = attributes.get(LdapDriveFilter.GROUP_MEMBER).getAttribute();
-		this.memberFirstName = attributes.get(LdapDriveFilter.MEMBER_FIRST_NAME).getAttribute();
-		this.memberLastName = attributes.get(LdapDriveFilter.MEMBER_LAST_NAME).getAttribute();
-		this.memberMail = attributes.get(LdapDriveFilter.MEMBER_MAIL).getAttribute();
+		this.groupName = attributes.get(LdapWorkSpaceFilter.GROUP_NAME).getAttribute();
+		this.groupMember = attributes.get(LdapWorkSpaceFilter.GROUP_MEMBER).getAttribute();
+		this.memberFirstName = attributes.get(LdapWorkSpaceFilter.MEMBER_FIRST_NAME).getAttribute();
+		this.memberLastName = attributes.get(LdapWorkSpaceFilter.MEMBER_LAST_NAME).getAttribute();
+		this.memberMail = attributes.get(LdapWorkSpaceFilter.MEMBER_MAIL).getAttribute();
 	}
 
 	public String getGroupName() {

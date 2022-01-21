@@ -101,7 +101,7 @@ public class WorkSpaceWarnNewMemberEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		SharedSpaceMemberDrive workSpaceMember = getNewFakeSharedSpaceMemberDrive("workSpace_name-1");
+		SharedSpaceMemberDrive workSpaceMember = getNewFakeSharedSpaceMemberWorkSpace("workSpace_name-1");
 		List<SharedSpaceMember> childMembers = Lists.newArrayList();
 		childMembers.add(new SharedSpaceMember(
 				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_1", workSpaceMember.getNode().getUuid(),

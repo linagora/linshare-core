@@ -86,10 +86,10 @@ public class SharedSpaceWorkGroupServiceImpl extends AbstractSharedSpaceFragment
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService,
-			SharedSpaceMemberBusinessService memberDriveService,
+			SharedSpaceMemberBusinessService memberWorkSpaceService,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(rac, businessService, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
-				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService, sanitizerInputHtmlBusinessService);
+				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberWorkSpaceService, sanitizerInputHtmlBusinessService);
 	}
 
 	@Override
@@ -116,16 +116,16 @@ public class SharedSpaceWorkGroupServiceImpl extends AbstractSharedSpaceFragment
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(workGroupRole);
 		SharedSpaceMember firstMember = memberService.create(authUser, actor, created, context,
 				new SharedSpaceAccount((User) actor));
-		// Adding all drive members to the workgroup
+		// Adding all WorkSpace members to the workgroup
 		if (parent != null && firstMember.isNested()) {
-			List<SharedSpaceMember> driveMembers = memberService.findAll(authUser, actor, parent.getUuid());
-			for (SharedSpaceMember sharedSpaceMember : driveMembers) {
+			List<SharedSpaceMember> workSpaceMembers = memberService.findAll(authUser, actor, parent.getUuid());
+			for (SharedSpaceMember sharedSpaceMember : workSpaceMembers) {
 				if (sharedSpaceMember.getAccount().getUuid().equals(firstMember.getAccount().getUuid())) {
 					continue;
 				}
-				SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) sharedSpaceMember;
-				SharedSpaceRole nestedRole = ssRoleService.find(authUser, actor, driveMember.getNestedRole().getUuid());
-				memberService.create(authUser, actor, created, nestedRole, driveMember.getAccount());
+				SharedSpaceMemberDrive workSpaceMember = (SharedSpaceMemberDrive) sharedSpaceMember;
+				SharedSpaceRole nestedRole = ssRoleService.find(authUser, actor, workSpaceMember.getNestedRole().getUuid());
+				memberService.create(authUser, actor, created, nestedRole, workSpaceMember.getAccount());
 			}
 		}
 		return created;

@@ -149,10 +149,10 @@
 		<constructor-arg ref="auditAdminMongoRepository" />
 	</bean>
 
-	<bean name="LdapDriveFilterService"
+	<bean name="ldapWorkSpaceFilterService"
 		class="org.linagora.linshare.core.service.impl.LdapWorkSpaceFilterServiceImpl">
-		<constructor-arg ref="ldapDriveFilterRepository" />
-		<constructor-arg ref="driveProviderRepository" />
+		<constructor-arg ref="ldapWorkSpaceFilterRepository" />
+		<constructor-arg ref="workSpaceProviderRepository" />
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="auditAdminMongoRepository" />
 	</bean>
@@ -163,10 +163,10 @@
 		<constructor-arg ref="ldapGroupProviderRepository" />
 	</bean>
 
-	<bean name="driveProviderService"
+	<bean name="workSpaceProviderService"
 		class="org.linagora.linshare.core.service.impl.WorkSpaceProviderServiceImpl">
-		<constructor-arg ref="driveProviderRepository" />
-		<constructor-arg ref="ldapDriveProviderRepository" />
+		<constructor-arg ref="workSpaceProviderRepository" />
+		<constructor-arg ref="ldapWorkSpaceProviderRepository" />
 	</bean>
 
 	<bean name="twakeUserProviderService"

@@ -57,7 +57,7 @@ import org.linagora.linshare.core.service.LDAPGroupQueryService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.fragment.SharedSpaceFragmentService;
-import org.linagora.linshare.ldap.LdapDriveMemberObject;
+import org.linagora.linshare.ldap.LdapWorkSpaceMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPDriveMember;
@@ -74,7 +74,7 @@ public class LDAPWorkSpaceSyncServiceImpl extends LDAPGroupSyncServiceImpl imple
 
 	private static final Logger logger = LoggerFactory.getLogger(LDAPWorkSpaceSyncServiceImpl.class);
 
-	private LDAPWorkSpaceQueryService ldapDriveQueryService;
+	private LDAPWorkSpaceQueryService ldapWorkSpaceQueryService;
 
 	protected LDAPWorkSpaceSyncServiceImpl(
 			Map<NodeType, SharedSpaceFragmentService> serviceBuilders,
@@ -82,9 +82,9 @@ public class LDAPWorkSpaceSyncServiceImpl extends LDAPGroupSyncServiceImpl imple
 			UserService userService, SharedSpaceRoleService ssRoleService,
 			SharedSpaceMemberService memberService,
 			MongoTemplate mongoTemplate,
-			LDAPWorkSpaceQueryService ldapDriveQueryService) {
+			LDAPWorkSpaceQueryService ldapWorkSpaceQueryService) {
 		super(serviceBuilders, ldapGroupQueryService, userService, ssRoleService, memberService, mongoTemplate);
-		this.ldapDriveQueryService = ldapDriveQueryService;
+		this.ldapWorkSpaceQueryService = ldapWorkSpaceQueryService;
 	}
 
 	@Override
@@ -94,8 +94,8 @@ public class LDAPWorkSpaceSyncServiceImpl extends LDAPGroupSyncServiceImpl imple
 	}
 
 	@Override
-	public SharedSpaceLDAPDriveMember createOrUpdateLDAPDriveMember(Account actor, String domainUuid,
-			SharedSpaceLDAPGroup group, LdapDriveMemberObject memberObject, Date syncDate,
+	public SharedSpaceLDAPDriveMember createOrUpdateLDAPWorkSpaceMember(Account actor, String domainUuid,
+			SharedSpaceLDAPGroup group, LdapWorkSpaceMemberObject memberObject, Date syncDate,
 			LdapGroupsBatchResultContext resultContext, Boolean searchInOtherDomains) {
 		User user = findOrCreateUser(memberObject.getEmail(), domainUuid, searchInOtherDomains, memberObject);
 		SharedSpaceRole role = getRoleFrom(actor, memberObject.getRole(), NodeType.WORK_SPACE);
@@ -117,14 +117,14 @@ public class LDAPWorkSpaceSyncServiceImpl extends LDAPGroupSyncServiceImpl imple
 			resultContext.add(LdapBatchMetaDataType.UPDATED_MEMBERS);
 			return (SharedSpaceLDAPDriveMember) memberService.update(actor, member);
 		}
-		SharedSpaceLDAPDriveMember newMember = convertLdapDriveMember(group, role, nestedRole, user, memberObject.getExternalId(),
+		SharedSpaceLDAPDriveMember newMember = convertLdapWorkSpaceMember(group, role, nestedRole, user, memberObject.getExternalId(),
 				syncDate);
 		logger.info(String.format("New Ldap group member created : NAME : %s", newMember.getAccount().getName()));
 		resultContext.add(LdapBatchMetaDataType.CREATED_MEMBERS);
 		return (SharedSpaceLDAPDriveMember) memberService.create(actor, newMember);
 	}
 
-	private SharedSpaceLDAPDriveMember convertLdapDriveMember(SharedSpaceLDAPGroup group, SharedSpaceRole role,
+	private SharedSpaceLDAPDriveMember convertLdapWorkSpaceMember(SharedSpaceLDAPGroup group, SharedSpaceRole role,
 			SharedSpaceRole nestedRole, User user, String externalId, Date syncDate) {
 		SharedSpaceNodeNested node = new SharedSpaceNodeNested(group);
 		LightSharedSpaceRole lightRole = new LightSharedSpaceRole(role);
@@ -133,14 +133,14 @@ public class LDAPWorkSpaceSyncServiceImpl extends LDAPGroupSyncServiceImpl imple
 				lightNestedRole);
 	}
 
-	private void applyDriveTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject,
-			Set<LdapDriveMemberObject> memberObjects, Date syncDate, LdapGroupsBatchResultContext resultContext) {
+	private void applyWorkSpaceTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject,
+			Set<LdapWorkSpaceMemberObject> memberObjects, Date syncDate, LdapGroupsBatchResultContext resultContext) {
 		SharedSpaceLDAPGroup created = createOrUpdateLDAPGroup(actor, domain, ldapGroupObject, syncDate, resultContext,
 				NodeType.WORK_SPACE);
 		// Create each member
-		for (LdapDriveMemberObject memberObject : memberObjects) {
-			createOrUpdateLDAPDriveMember(actor, domain.getUuid(), created, memberObject, syncDate, resultContext,
-					domain.getDriveProvider().getSearchInOtherDomains());
+		for (LdapWorkSpaceMemberObject memberObject : memberObjects) {
+			createOrUpdateLDAPWorkSpaceMember(actor, domain.getUuid(), created, memberObject, syncDate, resultContext,
+					domain.getWorkSpaceProvider().getSearchInOtherDomains());
 		}
 		deleteOutDatedMembers(actor, created, syncDate, resultContext);
 	}
@@ -150,21 +150,21 @@ public class LDAPWorkSpaceSyncServiceImpl extends LDAPGroupSyncServiceImpl imple
 			GroupLdapPattern groupPattern, LdapGroupsBatchResultContext resultContext)
 			throws BusinessException, NamingException, IOException {
 		Date syncDate = new Date();
-		Set<LdapGroupObject> groupsObjects = ldapDriveQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Set<LdapGroupObject> groupsObjects = ldapWorkSpaceQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		logger.info(String.format("Starting sync at %tc : %d group(s) found remotely", syncDate, groupsObjects.size()));
 		for (LdapGroupObject ldapGroupObject : groupsObjects) {
-			Set<LdapDriveMemberObject> members = ldapDriveQueryService.listDriveMembers(ldapConnection, baseDn, groupPattern,
+			Set<LdapWorkSpaceMemberObject> members = ldapWorkSpaceQueryService.listWorkSpaceMembers(ldapConnection, baseDn, groupPattern,
 					ldapGroupObject);
-			applyDriveTask(actor, domain, ldapGroupObject, members, syncDate, resultContext);
+			applyWorkSpaceTask(actor, domain, ldapGroupObject, members, syncDate, resultContext);
 		}
-		// Delete all outdated drives by deleting all its outdated members
+		// Delete all outdated workSpaces by deleting all its outdated members
 		Query outdatedGroupsQuery = buildFindOutDatedLdapGroupsQuery(syncDate, domain.getUuid());
 		List<SharedSpaceLDAPGroup> groupsOutDated = mongoTemplate.find(outdatedGroupsQuery, SharedSpaceLDAPGroup.class);
 		logger.info(String.format(
 				"Found %d outdated group(s) in domain %s. All the members of these groups will be removed",
 				groupsOutDated.size(), domain.toString()));
 		for (SharedSpaceLDAPGroup ldapGroup : groupsOutDated) {
-			resultContext.add(LdapBatchMetaDataType.DELETED_DRIVES);
+			resultContext.add(LdapBatchMetaDataType.DELETED_WORKSPACES);
 			deleteOutDatedMembers(actor, ldapGroup, syncDate, resultContext);
 		}
 	}

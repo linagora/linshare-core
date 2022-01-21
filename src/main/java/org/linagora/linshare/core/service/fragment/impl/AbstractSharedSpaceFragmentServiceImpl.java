@@ -85,7 +85,7 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 	
 	protected final WorkGroupNodeService workGroupNodeService;
 
-	protected final SharedSpaceMemberBusinessService memberDriveService;
+	protected final SharedSpaceMemberBusinessService memberWorkSpaceService;
 
 	public AbstractSharedSpaceFragmentServiceImpl(
 			AbstractResourceAccessControl<Account, Account, SharedSpaceNode> rac,
@@ -99,7 +99,7 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService,
-			SharedSpaceMemberBusinessService memberDriveService,
+			SharedSpaceMemberBusinessService memberWorkSpaceService,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
@@ -112,7 +112,7 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.threadRepository = threadRepository;
 		this.workGroupNodeService = workGroupNodeService;
-		this.memberDriveService = memberDriveService;
+		this.memberWorkSpaceService = memberWorkSpaceService;
 	}
 
 	@Override

@@ -71,7 +71,7 @@ public class SharedSpaceNode {
 	@Schema(description = "name of shared space")
 	protected String name;
 
-	@Schema(description = "parent Uuid of shared space only available for Workgroups inside a Drive")
+	@Schema(description = "parent Uuid of shared space only available for Workgroups inside a WorkSpace")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String parentUuid;
 
@@ -279,7 +279,7 @@ public class SharedSpaceNode {
 
 	@XmlTransient
 	@JsonIgnore
-	public boolean isDrive() {
+	public boolean isWorkSpace() {
 		return this.nodeType.equals(NodeType.WORK_SPACE);
 	}
 

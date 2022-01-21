@@ -285,7 +285,7 @@ public enum UpgradeTaskType {
 	UPGRADE_5_0_ADD_DOMAIN_TO_WORK_GROUP,
 
 	/**
-	 * Add domain uuid to drive
+	 * Add domain uuid to workSpace
 	 */
 	UPGRADE_5_0_ADD_DOMAIN_TO_DRIVE,
 
@@ -295,7 +295,7 @@ public enum UpgradeTaskType {
 	UPGRADE_5_0_DELETE_EVENT_NOTIFICATION_COLLECTION,
 
 	/**
-	 * Rename DRIVE audit traces to workspace
+	 * Rename WorkSpace audit traces to workspace
 	 */
 	UPGRADE_5_0_AUDIT_RENAME_DRIVE_TO_WORK_SPACE,
 
@@ -305,7 +305,7 @@ public enum UpgradeTaskType {
 	UPGRADE_5_0_RENAME_DRIVE_TO_WORK_SPACE,
 
 	/**
-	 * Rename saved driveMembers to workspaceMembers
+	 * Rename saved workSpaceMembers to workspaceMembers
 	 */
 	UPGRADE_5_0_RENAME_DRIVE_MEMBERS_TO_WORK_SPACE_MEMBERS;
 

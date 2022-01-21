@@ -80,7 +80,7 @@ public class SharedSpaceMemberResourceAccessControlImpl
 	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
 		String nodeUuid = entry.getNode().getUuid();
 		String parentUuid = null;
-		SharedSpaceMemberDrive driveMember = null;
+		SharedSpaceMemberDrive workSpaceMember = null;
 		if (opt != null && opt.length > 0 && opt[0] != null) {
 			parentUuid = (String) opt[0];
 		}
@@ -92,7 +92,7 @@ public class SharedSpaceMemberResourceAccessControlImpl
 			return hasPermission(authUser, TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_DELETE);
 		}
 		if (authUser.isInternal() || authUser.isGuest()) {
-			// could be either Drive or Workgroup member
+			// could be either workSpace or Workgroup member
 			SharedSpaceMember nodeMember = sharedSpaceMemberMongoRepository.findByAccountAndNode(actor.getLsUuid(),
 					nodeUuid);
 			if (nodeMember == null) {
@@ -102,17 +102,17 @@ public class SharedSpaceMemberResourceAccessControlImpl
 				return hasPermission(nodeMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
 						SharedSpaceResourceType.MEMBER);
 			} else {
-				driveMember = (SharedSpaceMemberDrive) sharedSpaceMemberMongoRepository
+				workSpaceMember = (SharedSpaceMemberDrive) sharedSpaceMemberMongoRepository
 						.findByAccountAndNode(actor.getLsUuid(), parentUuid);
-				if (driveMember == null) {
-					// ssmember is membership of a nested workgroup only and not member of the drive
+				if (workSpaceMember == null) {
+					// ssmember is membership of a nested workgroup only and not member of the workSpace
 					return hasPermission(nodeMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
 							SharedSpaceResourceType.MEMBER);
 				} else {
-					// ssmember is membership of a drive and its nested workgroup
+					// ssmember is membership of a workSpace and its nested workgroup
 					return hasPermission(nodeMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
 							SharedSpaceResourceType.MEMBER)
-							|| hasPermission(driveMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
+							|| hasPermission(workSpaceMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
 									SharedSpaceResourceType.MEMBER);
 				}
 			}

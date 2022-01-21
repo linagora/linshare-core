@@ -99,7 +99,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	})
 	@Override
 	public List<SharedSpaceRole> findAll(
-			@Parameter(description = "Filter the roles by node type, if no nodeType entered, both workGroup and drive roles will be returned.", required = false)
+			@Parameter(description = "Filter the roles by node type, if no nodeType entered, both workGroup and WorkSpace roles will be returned.", required = false)
 				@QueryParam("nodeType") @DefaultValue("WORK_GROUP") NodeType nodeType) throws BusinessException {
 		return ssRoleFacade.findAll(null, nodeType);
 	}

@@ -71,10 +71,10 @@ public class SharedSpaceWorkGroupServiceImpl extends org.linagora.linshare.core.
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService,
-			SharedSpaceMemberBusinessService memberDriveService,
+			SharedSpaceMemberBusinessService memberWorkSpaceService,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(rac, businessService, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
-				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService, sanitizerInputHtmlBusinessService);
+				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberWorkSpaceService, sanitizerInputHtmlBusinessService);
 	}
 
 	@Override

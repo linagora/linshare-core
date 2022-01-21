@@ -33,10 +33,10 @@
 		<constructor-arg ref="welcomeMessagesService" />
 		<constructor-arg ref="quotaService" />
 		<constructor-arg ref="groupProviderService"/>
-		<constructor-arg ref="driveProviderService"/>
+		<constructor-arg ref="workSpaceProviderService"/>
 		<constructor-arg ref="groupLdapPatternService"/>
 		<constructor-arg ref="userService" />
-		<constructor-arg ref="LdapDriveFilterService"/>
+		<constructor-arg ref="ldapWorkSpaceFilterService"/>
 	</bean>
 	<bean id="wsAdminDomainPolicyFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainPolicyFacadeImpl">

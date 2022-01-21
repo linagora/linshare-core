@@ -44,7 +44,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
-import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
+import org.linagora.linshare.core.business.service.WorkSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
@@ -103,7 +103,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	protected final WorkGroupNodeService workGroupNodeService;
 
-	protected final DriveMemberBusinessService driveMemberBusinessService;
+	protected final WorkSpaceMemberBusinessService workSpaceMemberBusinessService;
 
 	private final Map<NodeType, SharedSpaceFragmentService> serviceBuilders;
 
@@ -120,7 +120,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			WorkGroupNodeService workGroupNodeService,
-			DriveMemberBusinessService driveMemberBusinessService,
+			WorkSpaceMemberBusinessService workSpaceMemberBusinessService,
 			Map<NodeType, SharedSpaceFragmentService> serviceBuilders,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			DomainPermissionBusinessService domainPermissionBusinessService) {
@@ -135,7 +135,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.threadRepository = threadRepository;
 		this.workGroupNodeService = workGroupNodeService;
-		this.driveMemberBusinessService = driveMemberBusinessService;
+		this.workSpaceMemberBusinessService = workSpaceMemberBusinessService;
 		this.serviceBuilders = serviceBuilders;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 	}
@@ -283,7 +283,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private BusinessErrorCode getBusinessErrorCode(NodeType nodeType) {
 		if (NodeType.WORK_SPACE.equals(nodeType)) {
-			return BusinessErrorCode.DRIVE_FORBIDDEN;
+			return BusinessErrorCode.WORKSPACE_FORBIDDEN;
 		} else {
 			return BusinessErrorCode.WORK_GROUP_FORBIDDEN;
 		}

@@ -100,7 +100,7 @@ public class SharedSpaceMemberWorkSpaceServiceTest {
 	private SharedSpaceMemberService ssMemberService;
 
 	@Autowired
-	@Qualifier("sharedSpaceMemberDriveService")
+	@Qualifier("sharedSpaceMemberWorkSpaceService")
 	private SharedSpaceMemberFragmentService ssMemberWorkSpaceService;
 
 	@Autowired
@@ -108,7 +108,7 @@ public class SharedSpaceMemberWorkSpaceServiceTest {
 	private SharedSpaceRoleService ssRoleService;
 
 	@Autowired
-	@Qualifier("sharedSpaceNodeDriveService")
+	@Qualifier("sharedSpaceNodeWorkSpaceService")
 	private SharedSpaceFragmentService sharedSpaceFragmentService;
 
 	private Account john;

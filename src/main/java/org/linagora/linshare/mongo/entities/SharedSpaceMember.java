@@ -60,7 +60,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 /**
  * Indication: If the type field is NOT set in the payload at shared space member creation, 
  * a simple shared space member (workgroup member) is created 
- * otherwise a shared space member drive (drive member) is created.
+ * otherwise a shared space member WorkSpace (WorkSpace member) is created.
  *
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = SharedSpaceMember.class, property = "type")
@@ -102,7 +102,7 @@ public class SharedSpaceMember {
 	protected boolean nested = false;
 
 	/*
-	 * if true, the membership is seen as part of a nested SharedSpace (nested workgroup in a Drive)
+	 * if true, the membership is seen as part of a nested SharedSpace (nested workgroup in a WorkSpace)
 	 * if false, the membership is not seen a part of a root SharedSpace (root workgroup), 
 	 */
 	@JsonIgnore
@@ -294,19 +294,19 @@ public class SharedSpaceMember {
 
 	@XmlTransient
 	@JsonIgnore
-	public boolean isDriveAdmin() {
+	public boolean isWorkSpaceAdmin() {
 		return this.getRole().getName().equals(Role.WORK_SPACE_ADMIN.toString());
 	}
 
 	@XmlTransient
 	@JsonIgnore
-	public boolean isDriveWriter() {
+	public boolean isWorkSpaceWriter() {
 		return this.getRole().getName().equals(Role.WORK_SPACE_WRITER.toString());
 	}
 
 	@XmlTransient
 	@JsonIgnore
-	public boolean isDriveReader() {
+	public boolean isWorkSpaceReader() {
 		return this.getRole().getName().equals(Role.WORK_SPACE_READER.toString());
 	}
 

@@ -47,7 +47,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
@@ -315,10 +315,10 @@ public class AbstractDomainRepositoryImpl extends
 	}
 
 	@Override
-	public List<AbstractDomain> findAllDomainsByWorkSpaceFilter(LdapDriveFilter domainGroupFilter) {
+	public List<AbstractDomain> findAllDomainsByWorkSpaceFilter(LdapWorkSpaceFilter domainGroupFilter) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass(), "abstractDomain");
 		det.createAlias("abstractDomain.workSpaceProvider", "workSpaceProvider");
-		det.add(Restrictions.eq("workSpaceProvider.driveFilter", domainGroupFilter));
+		det.add(Restrictions.eq("workSpaceProvider.workSpaceFilter", domainGroupFilter));
 		return findByCriteria(det);
 	}
 }

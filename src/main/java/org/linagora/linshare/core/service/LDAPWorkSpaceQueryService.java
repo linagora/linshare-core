@@ -41,11 +41,11 @@ import javax.naming.NamingException;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.ldap.LdapDriveMemberObject;
+import org.linagora.linshare.ldap.LdapWorkSpaceMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 
 public interface LDAPWorkSpaceQueryService extends LDAPGroupQueryService {
 
-	public Set<LdapDriveMemberObject> listDriveMembers(LdapConnection ldapConnection, String baseDn,
+	public Set<LdapWorkSpaceMemberObject> listWorkSpaceMembers(LdapConnection ldapConnection, String baseDn,
 			GroupLdapPattern groupPattern, LdapGroupObject group) throws BusinessException, NamingException, IOException;
 }

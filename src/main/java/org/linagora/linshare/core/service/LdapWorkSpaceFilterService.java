@@ -39,24 +39,24 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface LdapWorkSpaceFilterService {
 
-	LdapDriveFilter find(String uuid) throws BusinessException;
+	LdapWorkSpaceFilter find(String uuid) throws BusinessException;
 
-	List<LdapDriveFilter> findAll() throws BusinessException;
+	List<LdapWorkSpaceFilter> findAll() throws BusinessException;
 
-	LdapDriveFilter create(Account authUser, LdapDriveFilter driveLdapPattern) throws BusinessException;
+	LdapWorkSpaceFilter create(Account authUser, LdapWorkSpaceFilter workSpaceLdapFilter) throws BusinessException;
 
-	LdapDriveFilter update(Account authUser, LdapDriveFilter driveLdapPattern) throws BusinessException;
+	LdapWorkSpaceFilter update(Account authUser, LdapWorkSpaceFilter workSpaceLdapFilter) throws BusinessException;
 
-	LdapDriveFilter delete(Account authUser, LdapDriveFilter driveLdapPattern) throws BusinessException;
+	LdapWorkSpaceFilter delete(Account authUser, LdapWorkSpaceFilter workSpaceLdapFilter) throws BusinessException;
 
-	List<LdapDriveFilter> findAllPublicDrivePatterns();
+	List<LdapWorkSpaceFilter> findAllPublicWorkSpaceFilters();
 
-	List<LdapDriveFilter> findAllSystemDriveLdapPatterns();
+	List<LdapWorkSpaceFilter> findAllSystemWorkSpaceLdapFilters();
 
-	List<AbstractDomain> findAllDomainsByDriveFilter(Account authUser, LdapDriveFilter domainDriveFilter);
+	List<AbstractDomain> findAllDomainsByWorkSpaceFilter(Account authUser, LdapWorkSpaceFilter domainWorkSpaceFilter);
 }

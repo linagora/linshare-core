@@ -82,7 +82,7 @@ public class WorkSpaceDeletedtWarnEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		SharedSpaceMemberDrive workSpaceMember = getNewFakeSharedSpaceMemberDrive("WorkSpace_test");
+		SharedSpaceMemberDrive workSpaceMember = getNewFakeSharedSpaceMemberWorkSpace("WorkSpace_test");
 		List<SharedSpaceNodeNested> nestedNodes = Lists.newArrayList();
 		nestedNodes.add(new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_1",
 				workSpaceMember.getNode().getUuid(), NodeType.WORK_GROUP, new Date(), new Date()));

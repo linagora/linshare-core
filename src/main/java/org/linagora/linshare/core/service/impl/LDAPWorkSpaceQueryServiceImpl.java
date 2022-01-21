@@ -45,9 +45,9 @@ import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPWorkSpaceQueryService;
-import org.linagora.linshare.ldap.JScriptDriveMemberLdapQuery;
+import org.linagora.linshare.ldap.JScriptWorkSpaceMemberLdapQuery;
 import org.linagora.linshare.ldap.JScriptGroupLdapQuery;
-import org.linagora.linshare.ldap.LdapDriveMemberObject;
+import org.linagora.linshare.ldap.LdapWorkSpaceMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.LinShareDnList;
 import org.linagora.linshare.ldap.Role;
@@ -61,7 +61,7 @@ import com.google.common.collect.Sets;
 public class LDAPWorkSpaceQueryServiceImpl extends LDAPGroupQueryServiceImpl implements LDAPWorkSpaceQueryService{
 
 	@Override
-	public Set<LdapDriveMemberObject> listDriveMembers(LdapConnection ldapConnection, String baseDn,
+	public Set<LdapWorkSpaceMemberObject> listWorkSpaceMembers(LdapConnection ldapConnection, String baseDn,
 			GroupLdapPattern groupPattern, LdapGroupObject group)
 			throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, null).getReadOnlyContext();
@@ -70,28 +70,28 @@ public class LDAPWorkSpaceQueryServiceImpl extends LDAPGroupQueryServiceImpl imp
 		vars.put("logger", logger);
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(groupPattern.getSearchPageSize(), 0);
-		Set<LdapDriveMemberObject> res = Sets.newHashSet();
+		Set<LdapWorkSpaceMemberObject> res = Sets.newHashSet();
 		try {
 			JScriptGroupLdapQuery groupQuery = groupQuery(baseDn, groupPattern, lqlctx, dnList);
-			JScriptDriveMemberLdapQuery memberQuery = memberQuery(baseDn, groupPattern, lqlctx, dnList);
-			// load writer members and drive role is not defined
-			if (groupQuery.isDnExist(group.getWritersDn()) && !groupQuery.isDnExist(group.getDriveWritersDn())) {
+			JScriptWorkSpaceMemberLdapQuery memberQuery = memberQuery(baseDn, groupPattern, lqlctx, dnList);
+			// load writer members and WorkSpace role is not defined
+			if (groupQuery.isDnExist(group.getWritersDn()) && !groupQuery.isDnExist(group.getWorkSpaceWritersDn())) {
 				res.addAll(convert(Role.WORK_SPACE_READER, Role.WRITER, getMembers(group.getWritersDn(), groupQuery, memberQuery)));
 			}
-			// load contributor members and drive role is not defined
-			if (groupQuery.isDnExist(group.getContributorsDn()) && !groupQuery.isDnExist(group.getDriveWritersDn())) {
+			// load contributor members and WorkSpace role is not defined
+			if (groupQuery.isDnExist(group.getContributorsDn()) && !groupQuery.isDnExist(group.getWorkSpaceWritersDn())) {
 				res.addAll(convert(Role.WORK_SPACE_READER, Role.CONTRIBUTOR, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
 			}
-			// load drive_writer role and workGroup role is not defined
-			if ((!(groupQuery.isDnExist(group.getWritersDn())) || (groupQuery.isDnExist(group.getContributorsDn()))) && groupQuery.isDnExist(group.getDriveWritersDn())) {
-				res.addAll(convert(Role.WORK_SPACE_WRITER, Role.READER, getMembers(group.getDriveWritersDn(), groupQuery, memberQuery)));
+			// load WorkSpace_writer role and workGroup role is not defined
+			if ((!(groupQuery.isDnExist(group.getWritersDn())) || (groupQuery.isDnExist(group.getContributorsDn()))) && groupQuery.isDnExist(group.getWorkSpaceWritersDn())) {
+				res.addAll(convert(Role.WORK_SPACE_WRITER, Role.READER, getMembers(group.getWorkSpaceWritersDn(), groupQuery, memberQuery)));
 			}
-			// load writer members and drive role is defined
-			if (groupQuery.isDnExist(group.getWritersDn()) && groupQuery.isDnExist(group.getDriveWritersDn())) {
+			// load writer members and WorkSpace role is defined
+			if (groupQuery.isDnExist(group.getWritersDn()) && groupQuery.isDnExist(group.getWorkSpaceWritersDn())) {
 				res.addAll(convert(Role.WORK_SPACE_WRITER, Role.WRITER, getMembers(group.getWritersDn(), groupQuery, memberQuery)));
 			}
-			// load contributor members and drive role is defined
-			if (groupQuery.isDnExist(group.getContributorsDn()) && groupQuery.isDnExist(group.getDriveWritersDn())) {
+			// load contributor members and WorkSpace role is defined
+			if (groupQuery.isDnExist(group.getContributorsDn()) && groupQuery.isDnExist(group.getWorkSpaceWritersDn())) {
 				res.addAll(convert(Role.WORK_SPACE_WRITER, Role.CONTRIBUTOR, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
 			}
 			// load read only members
@@ -102,10 +102,10 @@ public class LDAPWorkSpaceQueryServiceImpl extends LDAPGroupQueryServiceImpl imp
 		return res;
 	}
 
-	private Set<LdapDriveMemberObject> getMembers(String externalId, JScriptGroupLdapQuery groupQuery,
-			JScriptDriveMemberLdapQuery memberQuery) throws NamingException {
+	private Set<LdapWorkSpaceMemberObject> getMembers(String externalId, JScriptGroupLdapQuery groupQuery,
+			JScriptWorkSpaceMemberLdapQuery memberQuery) throws NamingException {
 		LdapGroupObject lgo = groupQuery.loadDnMembers(externalId);
-		Set<LdapDriveMemberObject> list = memberQuery.searchAllGroupMember(lgo);
+		Set<LdapWorkSpaceMemberObject> list = memberQuery.searchAllGroupMember(lgo);
 		return list;
 	}
 
@@ -115,23 +115,23 @@ public class LDAPWorkSpaceQueryServiceImpl extends LDAPGroupQueryServiceImpl imp
 		return query;
 	}
 
-	private JScriptDriveMemberLdapQuery memberQuery(String baseDn, GroupLdapPattern groupPattern, LqlRequestCtx lqlctx,
+	private JScriptWorkSpaceMemberLdapQuery memberQuery(String baseDn, GroupLdapPattern groupPattern, LqlRequestCtx lqlctx,
 			IDnList dnList) throws NamingException, IOException {
-		JScriptDriveMemberLdapQuery queryMember = new JScriptDriveMemberLdapQuery(lqlctx, baseDn, groupPattern, dnList,
-				LdapDriveMemberObject.class);
+		JScriptWorkSpaceMemberLdapQuery queryMember = new JScriptWorkSpaceMemberLdapQuery(lqlctx, baseDn, groupPattern, dnList,
+				LdapWorkSpaceMemberObject.class);
 		return queryMember;
 	}
 
-	private Set<LdapDriveMemberObject> convert(Role role, Role nestedRole, Set<LdapDriveMemberObject> list) {
-		Function<LdapDriveMemberObject, LdapDriveMemberObject> convert = new Function<LdapDriveMemberObject, LdapDriveMemberObject>() {
+	private Set<LdapWorkSpaceMemberObject> convert(Role role, Role nestedRole, Set<LdapWorkSpaceMemberObject> list) {
+		Function<LdapWorkSpaceMemberObject, LdapWorkSpaceMemberObject> convert = new Function<LdapWorkSpaceMemberObject, LdapWorkSpaceMemberObject>() {
 			@Override
-			public LdapDriveMemberObject apply(LdapDriveMemberObject lgm) {
+			public LdapWorkSpaceMemberObject apply(LdapWorkSpaceMemberObject lgm) {
 				lgm.setRole(role);
 				lgm.setNestedRole(nestedRole);
 				return lgm;
 			}
 		};
-		FluentIterable<LdapDriveMemberObject> transform = FluentIterable.from(list).transform(convert);
+		FluentIterable<LdapWorkSpaceMemberObject> transform = FluentIterable.from(list).transform(convert);
 		return transform.toSet();
 	}
 }

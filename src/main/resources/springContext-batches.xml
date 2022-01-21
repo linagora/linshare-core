@@ -219,12 +219,12 @@
 		<constructor-arg ref="functionalityReadOnlyService"/>
 	</bean>
 
-	<bean name="synchronizeLDAPGroupsInDrivesBatch"
-		class="org.linagora.linshare.core.batches.impl.SynchronizeLDAPGroupsInDrivesBatchImpl">
+	<bean name="synchronizeLDAPGroupsInWorkSpacesBatch"
+		class="org.linagora.linshare.core.batches.impl.SynchronizeLDAPGroupsInWorkSpaceBatchImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="ldapConnectionService" />
 		<constructor-arg ref="groupLdapPatternService"/>
-		<constructor-arg ref="ldapDriveSyncService" />
+		<constructor-arg ref="ldapWorkSpaceSyncService" />
 	</bean>
 
 	<bean name="deleteOutdatedFavouriteRecipientBatch"

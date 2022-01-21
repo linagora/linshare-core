@@ -38,19 +38,19 @@ import org.linagora.linshare.core.domain.entities.WorkSpaceProvider;
 import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.DriveProviderRepository;
-import org.linagora.linshare.core.repository.LdapDriveProviderRepository;
+import org.linagora.linshare.core.repository.WorkSpaceProviderRepository;
+import org.linagora.linshare.core.repository.LdapWorkSpaceProviderRepository;
 import org.linagora.linshare.core.service.WorkSpaceProviderService;
 
 public class WorkSpaceProviderServiceImpl extends GenericAdminServiceImpl implements WorkSpaceProviderService {
 
-	private DriveProviderRepository workSpaceProviderRepository;
+	private WorkSpaceProviderRepository workSpaceProviderRepository;
 
-	private LdapDriveProviderRepository ldapWorkSpaceProviderRepository;
+	private LdapWorkSpaceProviderRepository ldapWorkSpaceProviderRepository;
 
 	protected WorkSpaceProviderServiceImpl(
-			LdapDriveProviderRepository ldapWorkSpaceProviderRepository,
-			DriveProviderRepository workSpaceProviderRepository,
+			LdapWorkSpaceProviderRepository ldapWorkSpaceProviderRepository,
+			WorkSpaceProviderRepository workSpaceProviderRepository,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(sanitizerInputHtmlBusinessService);
 		this.ldapWorkSpaceProviderRepository = ldapWorkSpaceProviderRepository;
@@ -62,15 +62,15 @@ public class WorkSpaceProviderServiceImpl extends GenericAdminServiceImpl implem
 		LdapWorkSpaceProvider provider = ldapWorkSpaceProviderRepository.findByUuid(uuid);
 		if (provider == null) {
 			throw new BusinessException(
-					BusinessErrorCode.DRIVE_PROVIDER_NOT_FOUND,
-					"Drive provider identifier no found.");
+					BusinessErrorCode.WORKSPACE_PROVIDER_NOT_FOUND,
+					"WorkSpace provider identifier no found.");
 		}
 		return provider;
 	}
 
 	@Override
-	public LdapWorkSpaceProvider create(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException {
-		return ldapWorkSpaceProviderRepository.create(ldapDriveProvider);
+	public LdapWorkSpaceProvider create(LdapWorkSpaceProvider ldapWorkSpaceProvider) throws BusinessException {
+		return ldapWorkSpaceProviderRepository.create(ldapWorkSpaceProvider);
 	}
 
 	@Override
@@ -80,13 +80,13 @@ public class WorkSpaceProviderServiceImpl extends GenericAdminServiceImpl implem
 	}
 
 	@Override
-	public LdapWorkSpaceProvider update(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException {
-		return ldapWorkSpaceProviderRepository.update(ldapDriveProvider);
+	public LdapWorkSpaceProvider update(LdapWorkSpaceProvider ldapWorkSpaceProvider) throws BusinessException {
+		return ldapWorkSpaceProviderRepository.update(ldapWorkSpaceProvider);
 	}
 
 	@Override
-	public void delete(WorkSpaceProvider driveProvider) throws BusinessException {
-		workSpaceProviderRepository.delete(driveProvider);
+	public void delete(WorkSpaceProvider workSpaceProvider) throws BusinessException {
+		workSpaceProviderRepository.delete(workSpaceProvider);
 	}
 
 }

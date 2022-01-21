@@ -52,7 +52,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.core.domain.entities.LdapDriveFilter;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 import org.linagora.linshare.core.domain.entities.LdapWorkSpaceProvider;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -67,7 +67,7 @@ import org.linagora.linshare.core.service.LdapWorkSpaceFilterService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl;
 import org.linagora.linshare.core.service.impl.LdapConnectionServiceImpl;
-import org.linagora.linshare.ldap.LdapDriveMemberObject;
+import org.linagora.linshare.ldap.LdapWorkSpaceMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.Role;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPDriveMember;
@@ -138,7 +138,7 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 
 	private LdapConnection ldapConnection;
 
-	private LdapDriveFilter workSpaceFilter;
+	private LdapWorkSpaceFilter workSpaceFilter;
 
 	private Map<String, LdapAttribute> attributes;
 
@@ -151,7 +151,7 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 	private AbstractDomain domain;
 
 	@Autowired
-	@Qualifier("ldapDriveSyncService")
+	@Qualifier("ldapWorkSpaceSyncService")
 	LDAPGroupSyncServiceImpl syncServiceImpl;
 
 	private static final Logger logger = LoggerFactory
@@ -178,7 +178,7 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 				new LdapAttribute(GroupLdapPattern.MEMBER_FIRST_NAME, "givenName"));
 		attributes.put(GroupLdapPattern.MEMBER_LAST_NAME, new LdapAttribute(GroupLdapPattern.MEMBER_LAST_NAME, "sn"));
 
-		workSpaceFilter = new LdapDriveFilter();
+		workSpaceFilter = new LdapWorkSpaceFilter();
 		workSpaceFilter.setLabel("LabelGroup pattern");
 		workSpaceFilter.setDescription("description");
 		workSpaceFilter.setAttributes(attributes);
@@ -195,7 +195,7 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 		LdapWorkSpaceProvider workSpaceProvider = new LdapWorkSpaceProvider(workSpaceFilter, "ou=groups,dc=linshare,dc=org", ldapConnection, false);
 		workSpaceProvider.setType(WorkSpaceProviderType.LDAP_PROVIDER);
 		workSpaceProvider = workSpaceProviderService.create(workSpaceProvider);
-		domain.setDriveProvider(workSpaceProvider);
+		domain.setWorkSpaceProvider(workSpaceProvider);
 		domain = abstractDomainService.updateDomain(datas.getRoot(), domain);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -237,7 +237,7 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 		ldapGroupObject.setExternalId("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org");
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
-		LdapDriveMemberObject ldapWorkSpaceMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
+		LdapWorkSpaceMemberObject ldapWorkSpaceMemberObject = new LdapWorkSpaceMemberObject("John", "Doe", "user1@linshare.org",
 				"uid=user1,ou=People,dc=linshare,dc=org", Role.WORK_SPACE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup workSpace = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.WORK_SPACE);
@@ -245,9 +245,9 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 		Assertions.assertEquals("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org",
 				workSpace.getExternalId(), "The externalId do not match");
 		Assertions.assertEquals(syncDate, workSpace.getSyncDate(), "The given syncDate is not the same as the found one");
-		SharedSpaceLDAPDriveMember member = workSpaceSyncService.createOrUpdateLDAPDriveMember(systemAccount,
+		SharedSpaceLDAPDriveMember member = workSpaceSyncService.createOrUpdateLDAPWorkSpaceMember(systemAccount,
 				domain.getUuid(), workSpace, ldapWorkSpaceMemberObject, syncDate, resultContext,
-				domain.getDriveProvider().getSearchInOtherDomains());
+				domain.getWorkSpaceProvider().getSearchInOtherDomains());
 		Assertions.assertNotNull(member, "The member has not been found");
 		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
 				member.getExternalId(), "The externalId do not match");
@@ -267,7 +267,7 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 		ldapGroupObject.setExternalId("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org");
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
-		LdapDriveMemberObject ldapWorkSpaceMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
+		LdapWorkSpaceMemberObject ldapWorkSpaceMemberObject = new LdapWorkSpaceMemberObject("John", "Doe", "user1@linshare.org",
 				"uid=user1,ou=People,dc=linshare,dc=org", Role.WORK_SPACE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup workSpace = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.WORK_SPACE);
@@ -275,7 +275,7 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 		Assertions.assertEquals("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org",
 				workSpace.getExternalId(), "The externalId do not match");
 		Assertions.assertEquals(syncDate, workSpace.getSyncDate(), "The given syncDate is not the same as the found one");
-		SharedSpaceLDAPDriveMember member = workSpaceSyncService.createOrUpdateLDAPDriveMember(systemAccount, domain.getUuid(), workSpace,
+		SharedSpaceLDAPDriveMember member = workSpaceSyncService.createOrUpdateLDAPWorkSpaceMember(systemAccount, domain.getUuid(), workSpace,
 				ldapWorkSpaceMemberObject, syncDate, resultContext, searchInOtherDomains);
 		Assertions.assertNotNull(member, "The member has not been found");
 		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
@@ -297,20 +297,20 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 		ldapGroupObject.setExternalId("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org");
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
-		LdapDriveMemberObject ldapWorkSpaceMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
+		LdapWorkSpaceMemberObject ldapWorkSpaceMemberObject = new LdapWorkSpaceMemberObject("John", "Doe", "user1@linshare.org",
 				"uid=user1,ou=People,dc=linshare,dc=org", Role.WORK_SPACE_WRITER, Role.CONTRIBUTOR);
 		// Create a workSpace
 		SharedSpaceLDAPGroup workSpace = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.WORK_SPACE);
 		// Create a member
-		workSpaceSyncService.createOrUpdateLDAPDriveMember(systemAccount, domain.getUuid(), workSpace,
-				ldapWorkSpaceMemberObject, syncDate, resultContext, domain.getDriveProvider().getSearchInOtherDomains());
+		workSpaceSyncService.createOrUpdateLDAPWorkSpaceMember(systemAccount, domain.getUuid(), workSpace,
+				ldapWorkSpaceMemberObject, syncDate, resultContext, domain.getWorkSpaceProvider().getSearchInOtherDomains());
 		ldapWorkSpaceMemberObject.setNestedRole(Role.ADMIN);
 		ldapWorkSpaceMemberObject.setFirstName("Bob");
 		syncDate = calendar.getTime();
 		// Update a member
-		SharedSpaceLDAPDriveMember updated = workSpaceSyncService.createOrUpdateLDAPDriveMember(systemAccount, domain.getUuid(), workSpace,
-				ldapWorkSpaceMemberObject, syncDate, resultContext, domain.getDriveProvider().getSearchInOtherDomains());
+		SharedSpaceLDAPDriveMember updated = workSpaceSyncService.createOrUpdateLDAPWorkSpaceMember(systemAccount, domain.getUuid(), workSpace,
+				ldapWorkSpaceMemberObject, syncDate, resultContext, domain.getWorkSpaceProvider().getSearchInOtherDomains());
 		Assertions.assertEquals(1, memberService.findByNode(systemAccount, systemAccount, workSpace.getUuid()).size());
 		Assertions.assertNotNull(updated, "The member has not been found");
 		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
@@ -356,7 +356,7 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 		ldapGroupObject.setExternalId("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org");
 		ldapGroupObject.setMembers(Lists.newArrayList());
 		ldapGroupObject.setPrefix("prefix");
-		LdapDriveMemberObject ldapWorkSpaceMemberObject = new LdapDriveMemberObject("John", "Doe", "user1@linshare.org",
+		LdapWorkSpaceMemberObject ldapWorkSpaceMemberObject = new LdapWorkSpaceMemberObject("John", "Doe", "user1@linshare.org",
 				"uid=user1,ou=People,dc=linshare,dc=org", Role.WORK_SPACE_WRITER, Role.CONTRIBUTOR);
 		SharedSpaceLDAPGroup workSpace = syncService.createOrUpdateLDAPGroup(systemAccount, domain, ldapGroupObject, syncDate,
 				resultContext, NodeType.WORK_SPACE);
@@ -364,9 +364,9 @@ public class LDAPWorkSpaceSyncServiceImplTest {
 		Assertions.assertEquals("cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org",
 				workSpace.getExternalId(), "The externalId do not match");
 		Assertions.assertEquals(syncDate, workSpace.getSyncDate(), "The given syncDate is not the same as the found one");
-		SharedSpaceLDAPDriveMember member = workSpaceSyncService.createOrUpdateLDAPDriveMember(systemAccount,
+		SharedSpaceLDAPDriveMember member = workSpaceSyncService.createOrUpdateLDAPWorkSpaceMember(systemAccount,
 				domain.getUuid(), workSpace, ldapWorkSpaceMemberObject, syncDate, resultContext,
-				domain.getDriveProvider().getSearchInOtherDomains());
+				domain.getWorkSpaceProvider().getSearchInOtherDomains());
 		Assertions.assertNotNull(member, "The member has not been found");
 		Assertions.assertEquals("uid=user1,ou=People,dc=linshare,dc=org",
 				member.getExternalId(), "The externalId do not match");

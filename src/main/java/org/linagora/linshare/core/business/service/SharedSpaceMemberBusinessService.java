@@ -82,7 +82,7 @@ public interface SharedSpaceMemberBusinessService {
 	/**
 	 * This method is used by Admins only
 	 * @param domains The domains list to filter the sharedSpaces by
-	 * @param nodeTypes is the type of sharedSpace to filter with (Drive/WORK_GROUP)
+	 * @param nodeTypes is the type of sharedSpace to filter with (workSpace/WORK_GROUP)
 	 * @param roleNames is the list of sharedSpaceRoles to filter with
 	 * @param name is the sharedSpaces' name to filter by
 	 * @param container contains the pageNumber, pageSize

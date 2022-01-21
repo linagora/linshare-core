@@ -41,7 +41,7 @@
 			<property name="groupPrefix" column="group_prefix" type="string" not-null="false" lazy="false"/>
 			<property name="searchPageSize" column="search_page_size" type="integer" not-null="true" lazy="false"/>
 		</subclass>
-		<subclass name="org.linagora.linshare.core.domain.entities.LdapDriveFilter" discriminator-value="WORK_SPACE_LDAP_PATTERN" lazy="true">
+		<subclass name="org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter" discriminator-value="WORK_SPACE_LDAP_PATTERN" lazy="true">
 			<property name="searchAllGroupsQuery" column="search_all_groups_query" type="text" not-null="false" lazy="false"/>
 			<property name="searchGroupQuery" column="search_group_query" type="text" not-null="false" lazy="false"/>
 			<property name="groupPrefix" column="group_prefix" type="string" not-null="false" lazy="false"/>

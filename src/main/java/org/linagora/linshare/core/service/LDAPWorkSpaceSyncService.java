@@ -37,13 +37,13 @@ import java.util.Date;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
-import org.linagora.linshare.ldap.LdapDriveMemberObject;
+import org.linagora.linshare.ldap.LdapWorkSpaceMemberObject;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPDriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
 
 public interface LDAPWorkSpaceSyncService {
 
-	SharedSpaceLDAPDriveMember createOrUpdateLDAPDriveMember(Account actor, String domainUuid,
-			SharedSpaceLDAPGroup group, LdapDriveMemberObject memberObject, Date syncDate,
+	SharedSpaceLDAPDriveMember createOrUpdateLDAPWorkSpaceMember(Account actor, String domainUuid,
+			SharedSpaceLDAPGroup group, LdapWorkSpaceMemberObject memberObject, Date syncDate,
 			LdapGroupsBatchResultContext resultContext, Boolean searchInOtherDomains);
 }

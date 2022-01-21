@@ -117,7 +117,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 	private final MimeTypeService mimeTypeService;
 	private final MailLayoutBusinessService mailLayoutBusinessService;
 	private final GroupProviderService groupProviderService;
-	private final WorkSpaceProviderService driveProviderService;
+	private final WorkSpaceProviderService workSpaceProviderService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -141,7 +141,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 			final MimeTypeService mimeTypeService,
 			final MailLayoutBusinessService mailLayoutBusinessService,
 			final GroupProviderService groupProviderService, 
-			final WorkSpaceProviderService driveProviderService,
+			final WorkSpaceProviderService workSpaceProviderService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(sanitizerInputHtmlBusinessService, domainQuotaBusinessService, containerQuotaBusinessService);
 		this.abstractDomainRepository = abstractDomainRepository;
@@ -163,7 +163,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 		this.mimeTypeService = mimeTypeService;
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
 		this.groupProviderService = groupProviderService;
-		this.driveProviderService = driveProviderService;
+		this.workSpaceProviderService = workSpaceProviderService;
 	}
 
 	@Override
@@ -865,9 +865,9 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 					groupProviderService.delete(domain.getGroupProvider());
 					domain.setGroupProvider(null);
 				}
-				if (domain.getDriveProvider() != null) {
-					driveProviderService.delete(domain.getDriveProvider());
-					domain.setDriveProvider(null);
+				if (domain.getWorkSpaceProvider() != null) {
+					workSpaceProviderService.delete(domain.getWorkSpaceProvider());
+					domain.setWorkSpaceProvider(null);
 				}
 				if (domain.getWelcomeMessages() != null) {
 					domain.getWelcomeMessages().forEach(wm -> welcomeMessagesBusinessService.delete(wm));

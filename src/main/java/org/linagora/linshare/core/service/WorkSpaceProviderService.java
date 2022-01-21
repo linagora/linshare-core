@@ -41,11 +41,11 @@ public interface WorkSpaceProviderService {
 
 	LdapWorkSpaceProvider find(String uuid) throws BusinessException;
 
-	LdapWorkSpaceProvider create(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException;
+	LdapWorkSpaceProvider create(LdapWorkSpaceProvider ldapWorkSpaceProvider) throws BusinessException;
 
 	boolean exists(String uuid);
 
-	LdapWorkSpaceProvider update(LdapWorkSpaceProvider ldapDriveProvider) throws BusinessException;
+	LdapWorkSpaceProvider update(LdapWorkSpaceProvider ldapWorkSpaceProvider) throws BusinessException;
 
-	void delete(WorkSpaceProvider driveProvider) throws BusinessException;
+	void delete(WorkSpaceProvider workSpaceProvider) throws BusinessException;
 }

@@ -33,12 +33,12 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPDriveProviderDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPWorkSpaceProviderDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 
 public class LdapWorkSpaceProvider extends WorkSpaceProvider {
 
-	protected LdapDriveFilter driveFilter;
+	protected LdapWorkSpaceFilter workSpaceFilter;
 
 	protected String baseDn;
 
@@ -50,30 +50,30 @@ public class LdapWorkSpaceProvider extends WorkSpaceProvider {
 		super();
 	}
 
-	public LdapWorkSpaceProvider(LdapDriveFilter driveFilter, String baseDn, LdapConnection ldapConnection,
+	public LdapWorkSpaceProvider(LdapWorkSpaceFilter workSpaceFilter, String baseDn, LdapConnection ldapConnection,
 			Boolean searchInOtherDomains) {
 		super();
-		this.driveFilter = driveFilter;
+		this.workSpaceFilter = workSpaceFilter;
 		this.baseDn = baseDn;
 		this.ldapConnection = ldapConnection;
 		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
 	}
 
-	public LdapWorkSpaceProvider(AbstractDomain domain, LdapDriveFilter driveFilter, String baseDn, LdapConnection ldapConnection,
+	public LdapWorkSpaceProvider(AbstractDomain domain, LdapWorkSpaceFilter workSpaceFilter, String baseDn, LdapConnection ldapConnection,
 			Boolean searchInOtherDomains) {
 		super(domain);
-		this.driveFilter = driveFilter;
+		this.workSpaceFilter = workSpaceFilter;
 		this.baseDn = baseDn;
 		this.ldapConnection = ldapConnection;
 		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
 	}
 
-	public LdapDriveFilter getDriveFilter() {
-		return driveFilter;
+	public LdapWorkSpaceFilter getWorkSpaceFilter() {
+		return workSpaceFilter;
 	}
 
-	public void setDriveFilter(LdapDriveFilter driveFilter) {
-		this.driveFilter = driveFilter;
+	public void setWorkSpaceFilter(LdapWorkSpaceFilter workSpaceFilter) {
+		this.workSpaceFilter = workSpaceFilter;
 	}
 
 	public String getBaseDn() {
@@ -102,14 +102,14 @@ public class LdapWorkSpaceProvider extends WorkSpaceProvider {
 	}
 
 	@Override
-	public LDAPDriveProviderDto toLDAPDriveProviderDto() {
-		LDAPDriveProviderDto driveProvider = new LDAPDriveProviderDto();
-		driveProvider.setUuid(uuid);
-		driveProvider.setBaseDn(baseDn);
-		driveProvider.setPattern(
-				new LightCommonDto(this.driveFilter.getLabel(), this.driveFilter.getUuid()));
-		driveProvider.setConnection(new LightCommonDto(this.ldapConnection.getLabel(), this.ldapConnection.getUuid()));
-		driveProvider.setSearchInOtherDomains(this.searchInOtherDomains);
-		return driveProvider;
+	public LDAPWorkSpaceProviderDto toLDAPWorkSpaceProviderDto() {
+		LDAPWorkSpaceProviderDto workSpaceProvider = new LDAPWorkSpaceProviderDto();
+		workSpaceProvider.setUuid(uuid);
+		workSpaceProvider.setBaseDn(baseDn);
+		workSpaceProvider.setPattern(
+				new LightCommonDto(this.workSpaceFilter.getLabel(), this.workSpaceFilter.getUuid()));
+		workSpaceProvider.setConnection(new LightCommonDto(this.ldapConnection.getLabel(), this.ldapConnection.getUuid()));
+		workSpaceProvider.setSearchInOtherDomains(this.searchInOtherDomains);
+		return workSpaceProvider;
 	}
 }
