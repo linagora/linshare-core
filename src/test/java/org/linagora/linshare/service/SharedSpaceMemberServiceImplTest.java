@@ -396,7 +396,7 @@ public class SharedSpaceMemberServiceImplTest {
 		service.create(john, john, nested1, adminRole, accountJhon);
 		service.create(john, john, nested2, adminRole, accountJhon);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			service.deleteAllMembers(jane, jane, drive, LogActionCause.DRIVE_DELETION, Arrays.asList(new SharedSpaceNodeNested(nested1), new SharedSpaceNodeNested(nested2)));
+			service.deleteAllMembers(jane, jane, drive, LogActionCause.WORK_SPACE_DELETION, Arrays.asList(new SharedSpaceNodeNested(nested1), new SharedSpaceNodeNested(nested2)));
 		});
 		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, exception.getErrorCode());
 		logger.info(LinShareTestConstants.END_TEST);

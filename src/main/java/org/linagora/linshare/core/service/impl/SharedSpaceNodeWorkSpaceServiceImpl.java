@@ -122,7 +122,7 @@ public class SharedSpaceNodeWorkSpaceServiceImpl extends AbstractSharedSpaceFrag
 				foundedNodeToDel);
 		List<SharedSpaceNodeNested> nodes = findAllWorkgroupsInNode(authUser, actor, foundedNodeToDel);
 		List<AuditLogEntryUser> logs = deleteNestedWorkgroups(authUser, actor, nodes);
-		memberService.deleteAllMembers(authUser, actor, foundedNodeToDel, LogActionCause.WORKSPACE_DELETION, nodes);
+		memberService.deleteAllMembers(authUser, actor, foundedNodeToDel, LogActionCause.WORK_SPACE_DELETION, nodes);
 		businessService.delete(foundedNodeToDel);
 		SharedSpaceNodeAuditLogEntry workSpaceLog = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.WORK_SPACE, foundedNodeToDel);
@@ -137,12 +137,12 @@ public class SharedSpaceNodeWorkSpaceServiceImpl extends AbstractSharedSpaceFrag
 			WorkGroup workGroup = threadService.find(authUser, authUser, nested.getUuid());
 			threadService.deleteThread(authUser, authUser, workGroup);
 			SharedSpaceNode foundNestedWgToDelete = find(authUser, actor, nested.getUuid());
-			memberService.deleteAllMembers(authUser, actor, foundNestedWgToDelete, LogActionCause.WORKSPACE_DELETION,
+			memberService.deleteAllMembers(authUser, actor, foundNestedWgToDelete, LogActionCause.WORK_SPACE_DELETION,
 					null);
 			SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.WORKGROUP, foundNestedWgToDelete);
 			businessService.delete(foundNestedWgToDelete);
-			log.setCause(LogActionCause.WORKSPACE_DELETION);
+			log.setCause(LogActionCause.WORK_SPACE_DELETION);
 			logs.add(log);
 		}
 		return logs;

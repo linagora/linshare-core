@@ -139,7 +139,7 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
 			SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.WORKGROUP_MEMBER, member);
-			if (!LogActionCause.WORKSPACE_DELETION.equals(cause)) {
+			if (!LogActionCause.WORK_SPACE_DELETION.equals(cause)) {
 				if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
 					EmailContext context = null;
 					if (LogActionCause.WORKGROUP_DELETION.equals(cause)) {

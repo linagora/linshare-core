@@ -222,7 +222,7 @@ public class WorkSpaceMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 					AuditLogEntryType.WORK_SPACE_MEMBER, member);
 			if (!actor.getLsUuid().equals(member.getAccount().getUuid())) {
 				EmailContext context = null;
-				if (LogActionCause.DRIVE_DELETION.equals(cause)) {
+				if (LogActionCause.WORK_SPACE_DELETION.equals(cause)) {
 					context = new WorkSpaceDeletedWarnEmailContext(actor, user.getDomain(), member, nodes);
 				} else {
 					context = new WorkSpaceWarnDeletedMemberEmailContext(member, actor, user);

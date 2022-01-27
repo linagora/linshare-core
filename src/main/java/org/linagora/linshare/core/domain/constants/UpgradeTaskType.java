@@ -307,7 +307,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Rename saved workSpaceMembers to workspaceMembers
 	 */
-	UPGRADE_5_0_RENAME_DRIVE_MEMBERS_TO_WORK_SPACE_MEMBERS;
+	UPGRADE_5_0_RENAME_DRIVE_MEMBERS_TO_WORK_SPACE_MEMBERS,
+
+	/**
+	 * Rename DRIVE_DELETION TO WORK_SPACE_DELETION in AuditLogEntry cause.
+	 */
+	UPGRADE_5_0_RENAME_DRIVE_DELETION_TO_WORK_SPACE_DELETION;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
