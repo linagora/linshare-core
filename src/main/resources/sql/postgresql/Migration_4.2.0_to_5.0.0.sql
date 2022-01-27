@@ -1069,6 +1069,28 @@ VALUES
      now(),
      now());
 
+-- UPGRADE_5_0_RENAME_WORKGROUP_DELETION_TO_WORK_GROUP_DELETION
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (52,
+     'UNDEFINED',
+     'UPGRADE_5_0_RENAME_WORKGROUP_DELETION_TO_WORK_GROUP_DELETION',
+     'UPGRADE_5_0',
+     52,
+     'NEW',
+     'MANDATORY',
+     now(),
+     now());
+
 ---- End of your queries
 
 -- Upgrade LinShare version

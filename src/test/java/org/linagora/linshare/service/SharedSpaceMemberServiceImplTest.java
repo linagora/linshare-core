@@ -346,7 +346,7 @@ public class SharedSpaceMemberServiceImplTest {
 		List<SharedSpaceMember> foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
 		Assertions.assertTrue(foundMembers.size() > 0, "No members have been created");
 		SharedSpaceNode node = nodeBusinessService.find(lightNodePersisted.getUuid());
-		service.deleteAllMembers(john, john, node, LogActionCause.WORKGROUP_DELETION, null);
+		service.deleteAllMembers(john, john, node, LogActionCause.WORK_GROUP_DELETION, null);
 		foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
 		Assertions.assertEquals(0, foundMembers.size(), "There are members left in the shared space node");
 	}
@@ -361,7 +361,7 @@ public class SharedSpaceMemberServiceImplTest {
 		service.create(john, john, wg, adminRole, accountJhon);
 		service.create(john, john, wg, readerRole, accountJane);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			service.deleteAllMembers(jane, jane, wg, LogActionCause.WORKGROUP_DELETION, null);
+			service.deleteAllMembers(jane, jane, wg, LogActionCause.WORK_GROUP_DELETION, null);
 		});
 		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, exception.getErrorCode());
 		logger.info(LinShareTestConstants.END_TEST);
@@ -375,7 +375,7 @@ public class SharedSpaceMemberServiceImplTest {
 		wg.setDomainUuid(john.getDomainId());
 		service.create(john, john, wg, adminRole, accountJhon);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			service.deleteAllMembers(jane, jane, wg, LogActionCause.WORKGROUP_DELETION, null);
+			service.deleteAllMembers(jane, jane, wg, LogActionCause.WORK_GROUP_DELETION, null);
 		});
 		Assertions.assertEquals(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, exception.getErrorCode());
 		logger.info(LinShareTestConstants.END_TEST);

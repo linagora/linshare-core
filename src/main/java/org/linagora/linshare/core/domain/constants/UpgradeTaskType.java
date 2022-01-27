@@ -312,7 +312,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Rename DRIVE_DELETION TO WORK_SPACE_DELETION in AuditLogEntry cause.
 	 */
-	UPGRADE_5_0_RENAME_DRIVE_DELETION_TO_WORK_SPACE_DELETION;
+	UPGRADE_5_0_RENAME_DRIVE_DELETION_TO_WORK_SPACE_DELETION,
+
+	/**
+	 * Rename WORKGROUP_DELETION TO WORK_GROUP_DELETION in AuditLogEntry cause.
+	 */
+	UPGRADE_5_0_RENAME_WORKGROUP_DELETION_TO_WORK_GROUP_DELETION;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

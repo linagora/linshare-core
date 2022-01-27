@@ -198,7 +198,7 @@ public class SharedSpaceWorkGroupServiceImpl extends AbstractSharedSpaceFragment
 		//Delete the Thread
 		WorkGroup workGroup = threadService.find(authUser, authUser, foundedNodeTodel.getUuid());
 		threadService.deleteThread(authUser, authUser, workGroup);
-		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel, LogActionCause.WORKGROUP_DELETION, null);
+		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel, LogActionCause.WORK_GROUP_DELETION, null);
 		businessService.delete(foundedNodeTodel);
 		saveLog(authUser, actor, LogAction.DELETE, foundedNodeTodel);
 		return foundedNodeTodel;
