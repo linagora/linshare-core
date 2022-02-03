@@ -179,4 +179,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="logEntryService" />
 	</bean>
+	<bean id="wsUserProfileFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UserProfileFacadeImpl">
+		<constructor-arg ref="accountService" />
+	</bean>
 </beans>

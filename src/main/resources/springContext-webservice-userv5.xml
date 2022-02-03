@@ -36,6 +36,10 @@
 		class="org.linagora.linshare.webservice.userv5.impl.SharedSpaceRoleRestServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleFacade" />
 	</bean>
+	<bean id="userv5UserProfileRestService"
+		  class="org.linagora.linshare.webservice.userv5.impl.UserProfileRestServiceImpl">
+		<constructor-arg ref="wsUserProfileFacade" />
+	</bean>
 	<jaxrs:server id="userv5RestContainer" address="/rest/user/v5">
 		<jaxrs:serviceBeans>
 			<ref bean="userv2EnumRestService" />
@@ -66,6 +70,7 @@
 			<ref bean="userv5SharedSpaceRoleRestService" />
 			<ref bean="userv2SharedSpaceMemberRestService" />
 			<ref bean="userv2SharedSpaceNodeRestService" />
+			<ref bean="userv5UserProfileRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
