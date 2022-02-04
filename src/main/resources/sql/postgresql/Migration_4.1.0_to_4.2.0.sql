@@ -2126,6 +2126,44 @@ WHERE  functionality_id IN (SELECT id
                        FROM   unit
                        WHERE  unit_value = 0
                               AND unit_type = 0);
+
+
+-- Fix quota value for all accounts
+CREATE OR REPLACE FUNCTION ls_fix_current_value_for_all_accounts() RETURNS void AS $$
+BEGIN
+	DECLARE myaccount record;
+	DECLARE de_size BIGINT;
+	DECLARE ure_size BIGINT;
+	DECLARE account_quota BIGINT;
+	DECLARE diff BIGINT;
+	DECLARE new_account_quota BIGINT;
+	BEGIN
+		FOR myaccount IN (SELECT id, ls_uuid, mail, domain_id FROM account WHERE account_type IN (2,3,6)) LOOP
+			RAISE INFO 'account mail : % (account_id=%)', myaccount.mail, myaccount.id;
+			de_size := (SELECT sum(ls_size) FROM account AS a join entry AS e on a.id = e.owner_id join document_entry AS de ON de.entry_id = e.id WHERE a.id = myaccount.id);
+			IF de_size IS NULL THEN
+				de_size := 0;
+			END IF;
+			ure_size := (SELECT sum(ls_size) FROM account AS a join entry AS e on a.id = e.owner_id join upload_request_entry AS ure ON ure.entry_id = e.id WHERE a.id = myaccount.id);
+			IF ure_size IS NULL THEN
+				ure_size := 0;
+			END IF;
+			account_quota := (SELECT current_value FROM quota AS q WHERE account_id = myaccount.id);
+			RAISE INFO 'Sum of de_size and ure_size  : % ', de_size + ure_size;
+			new_account_quota = de_size + ure_size;
+			RAISE INFO 'Difference between current value and sum of de_size and ure_size  : % ', new_account_quota - account_quota;
+			diff = new_account_quota - account_quota;
+			IF diff <> 0 THEN
+			RAISE INFO 'If difference between current_value and sum of document entries size and upload request entries size different than 0, we insert a new entry into operation_history to recalculate account''s quota';
+			INSERT INTO operation_history (id, uuid, operation_value, operation_type, container_type, creation_date, domain_id, account_id) VALUES ((SELECT nextVal('hibernate_sequence')), myaccount.ls_uuid, diff, 1, 'USER', NOW(), myaccount.domain_id, myaccount.id);
+			END IF;
+			RAISE INFO '----';
+		END LOOP;
+	END;
+END
+$$ LANGUAGE plpgsql;
+SELECT ls_fix_current_value_for_all_accounts();
+
 ---- End of your queries
 
 -- LinShare version
