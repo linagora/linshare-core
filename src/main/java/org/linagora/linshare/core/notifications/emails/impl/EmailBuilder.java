@@ -118,8 +118,6 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected TemplateEngine templateEngine;
 
-	protected boolean insertLicenceTerm;
-
 	protected MailActivationBusinessService mailActivationBusinessService;
 
 	protected FunctionalityReadOnlyService functionalityReadOnlyService;
@@ -156,14 +154,12 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		initSupportedTypes();
 	}
 
-	public EmailBuilder(TemplateEngine templateEngine, boolean insertLicenceTerm,
-			MailActivationBusinessService mailActivationBusinessService,
+	public EmailBuilder(TemplateEngine templateEngine, MailActivationBusinessService mailActivationBusinessService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			DomainBusinessService domainBusinessService,
 			FileDataStore fileDataStore) {
 		super();
 		this.templateEngine = templateEngine;
-		this.insertLicenceTerm = insertLicenceTerm;
 		this.mailActivationBusinessService = mailActivationBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.domainBusinessService = domainBusinessService;
@@ -198,10 +194,6 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	public void setTemplateEngine(TemplateEngine templateEngine) {
 		this.templateEngine = templateEngine;
-	}
-
-	public void setInsertLicenceTerm(boolean insertLicenceTerm) {
-		this.insertLicenceTerm = insertLicenceTerm;
 	}
 
 	public void setMailActivationBusinessService(MailActivationBusinessService mailActivationBusinessService) {

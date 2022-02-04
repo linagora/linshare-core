@@ -204,9 +204,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0, new GuestAccountResetPasswordFor4_0_EmailBuilder(urlTemplateForGuestReset));
 
-		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
-				mailActivationBusinessService, fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments,
-				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForWorkSpace, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile, urlTemplateForJwtToken);
+		initMailBuilders(domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService,
+				fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments, urlTemplateForAnonymousUrl,
+				urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForWorkSpace, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile, urlTemplateForJwtToken);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -215,8 +215,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		logger.debug("end");
 	}
 
-	private void initMailBuilders(boolean insertLicenceTerm,
-		DomainBusinessService domainBusinessService,
+	private void initMailBuilders(DomainBusinessService domainBusinessService,
 		FunctionalityReadOnlyService functionalityReadOnlyService,
 		MailActivationBusinessService mailActivationBusinessService,
 		FileDataStore fileDataStore,
@@ -233,7 +232,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		Collection<EmailBuilder> values = emailBuilders.values();
 		for (EmailBuilder emailBuilder : values) {
 			emailBuilder.setTemplateEngine(templateEngine);
-			emailBuilder.setInsertLicenceTerm(insertLicenceTerm);
 			emailBuilder.setMailActivationBusinessService(mailActivationBusinessService);
 			emailBuilder.setFunctionalityReadOnlyService(functionalityReadOnlyService);
 			emailBuilder.setDomainBusinessService(domainBusinessService);

@@ -68,13 +68,12 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 
 	public GenericUploadRequestEmailBuilder(
 			TemplateEngine templateEngine,
-			boolean insertLicenceTerm,
 			MailActivationBusinessService mailActivationBusinessService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			DomainBusinessService domainBusinessService,
 			FileDataStore fileDataStore) {
-		super(templateEngine, insertLicenceTerm, mailActivationBusinessService, functionalityReadOnlyService,
-				domainBusinessService, fileDataStore);
+		super(templateEngine, mailActivationBusinessService, functionalityReadOnlyService, domainBusinessService,
+				fileDataStore);
 	}
 
 	protected List<MailContact> getRecipients(UploadRequest request) {
