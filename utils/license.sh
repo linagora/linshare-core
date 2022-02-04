@@ -22,7 +22,7 @@ find ${path} -name "*.java" | xargs grep -L "Linagora" 2>/dev/null | xargs -i se
  * LinShare is an open source filesharing software, part of the LinPKI software\n\
  * suite, developed by Linagora.\n\
  * \n\
- * Copyright (C) 2021 LINAGORA\n\
+ * Copyright (C) 2022 LINAGORA\n\
  * \n\
  * This program is free software: you can redistribute it and/or modify it under\n\
  * the terms of the GNU Affero General Public License as published by the Free\n\
@@ -32,7 +32,7 @@ find ${path} -name "*.java" | xargs grep -L "Linagora" 2>/dev/null | xargs -i se
  * Public License, subsections (b), (c), and (e), pursuant to which you must\n\
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top\n\
  * of the interface window, the display of the “You are using the Open Source\n\
- * and free version of LinShare™, powered by Linagora © 2009–2021. Contribute to\n\
+ * and free version of LinShare™, powered by Linagora © 2009–2022. Contribute to\n\
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the\n\
  * e-mails sent with the Program, (ii) retain all hypertext links between\n\
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)\n\

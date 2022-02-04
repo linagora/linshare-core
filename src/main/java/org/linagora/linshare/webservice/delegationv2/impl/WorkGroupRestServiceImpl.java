@@ -2,7 +2,7 @@ package org.linagora.linshare.webservice.delegationv2.impl;
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2017-2021 LINAGORA
+ * Copyright (C) 2017-2022 LINAGORA
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -11,7 +11,7 @@ package org.linagora.linshare.webservice.delegationv2.impl;
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display in the interface of the “LinShare™”
  * trademark/logo, the "Libre & Free" mention, the words “You are using the Free
- * and Open Source version of LinShare™, powered by Linagora © 2009–2021.
+ * and Open Source version of LinShare™, powered by Linagora © 2009–2022.
  * Contribute to Linshare R&D by subscribing to an Enterprise offer!”. You must
  * also retain the latter notice in all asynchronous messages such as e-mails
  * sent with the Program, (ii) retain all hypertext links between LinShare and
