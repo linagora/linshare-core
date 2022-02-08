@@ -36,21 +36,33 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AbstractUserProfileDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestProfileDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserProfileDto;
 import org.linagora.linshare.core.facade.webservice.user.UserProfileFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UserService;
 
 public class UserProfileFacadeImpl extends UserGenericFacadeImp implements UserProfileFacade {
 
-	public UserProfileFacadeImpl(AccountService accountService) {
+	private final UserService userService;
+
+	public UserProfileFacadeImpl(AccountService accountService,
+				UserService userService) {
 		super(accountService);
+		this.userService = userService;
 	}
 
 	@Override
 	public AbstractUserProfileDto find() throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+		User authUser = checkAuthentication();
+		if (authUser.isGuest()) {
+			return GuestProfileDto.from(authUser, userService.findByLsUuid(authUser.getOwner().getLsUuid()));
+		}
+		return UserProfileDto.from(authUser);
 	}
 
 	@Override

@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
+import org.linagora.linshare.core.domain.entities.User;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -55,6 +56,20 @@ public class UserProfileDto extends AbstractUserProfileDto {
 
 	public static Builder.CanCreateGuest builder() {
 		return canCreateGuest -> new Builder(canCreateGuest);
+	}
+
+	public static AbstractUserProfileDto from(User user) {
+		return builder()
+			.canCreateGuest(user.getCanCreateGuest())
+			.uuid(user.getLsUuid())
+			.firstName(user.getFirstName())
+			.lastName(user.getLastName())
+			.mail(user.getMail())
+			.creationDate(user.getCreationDate())
+			.modificationDate(user.getModificationDate())
+			.locale(UserLanguage.from(user.getLocale()))
+			.personalSpaceEnabled(user.getCanUpload())
+			.build();
 	}
 
 	@JsonPOJOBuilder(withPrefix = "")

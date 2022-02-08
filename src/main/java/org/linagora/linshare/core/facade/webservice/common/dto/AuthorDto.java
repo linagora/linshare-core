@@ -38,6 +38,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.entities.User;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -53,6 +54,15 @@ public class AuthorDto {
 
 	public static Builder builder() {
 		return new Builder();
+	}
+
+	public static AuthorDto from(User author) {
+		return builder()
+			.uuid(author.getLsUuid())
+			.firstName(author.getFirstName())
+			.lastName(author.getLastName())
+			.mail(author.getMail())
+			.build();
 	}
 
 	@JsonPOJOBuilder(withPrefix = "")

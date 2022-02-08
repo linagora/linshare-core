@@ -39,4 +39,14 @@ public enum UserLanguage {
 	ENGLISH,
 	FRENCH,
 	RUSSIAN;
+
+	public static UserLanguage from(SupportedLanguage supportedLanguage) {
+		switch (supportedLanguage) {
+			case FRENCH: return FRENCH;
+			case RUSSIAN: return RUSSIAN;
+			case ENGLISH:
+			case VIETNAMESE:
+			default: return ENGLISH;
+		}
+	}
 }
