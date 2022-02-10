@@ -124,4 +124,28 @@ public class LinShareTestConstants {
 	 */
 	public static final String AMY_WOLSH_ACCOUNT = "amy.wolsh@linshare.org";
 
+	/**
+	 * Peter WILSON account, on topDomain2
+	 */
+	public static final String PETER_WILSON_ACCOUNT = "peter.wilson@linshare.org";
+
+	/**
+	 * Cornell ABLE account, on topDomain2
+	 */
+	public static final String CORNELL_ABLE_ACCOUNT = "cornell.able@linshare.org";
+
+	/**
+	 * Dawson account, on topDomain2
+	 */
+	public static final String DAWSON_WATERFIELD_ACCOUNT = "dawson.waterfield@linshare.org";
+
+	/**
+	 * Anderson account, on topDomain2
+	 */
+	public static final String ANDERSON_WAXMAN_ACCOUNT = "anderson.waxman@linshare.org";
+
+	/**
+	 * Abbey account, on topDomain2
+	 */
+	public static final String ABBEY_CURRY_ACCOUNT = "abbey.curry@linshare.org";
 }

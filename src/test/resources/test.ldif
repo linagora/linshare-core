@@ -285,3 +285,59 @@ givenName: Cornell
 cn: Cornell ABLE
 userPassword: secret
 mail: cornell.able@linshare.org
+
+dn: uid=abbey.curry,ou=People2,dc=linshare,dc=org
+uid: abbey.curry
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: CURRY
+givenName: Abbey
+cn: Abbey CURRY
+userPassword: secret
+mail: abbey.curry@linshare.org
+
+dn: uid=anderson.waxman,ou=People2,dc=linshare,dc=org
+uid: anderson.waxman
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: WAXMAN
+givenName: Anderson
+cn: Anderson WAXMAN
+userPassword: secret
+mail: anderson.waxman@linshare.org
+
+dn: uid=dawson.waterfield,ou=People2,dc=linshare,dc=org
+uid: dawson.waterfield
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: WATERFIELD
+givenName: Dawson
+cn: Dawson WATERFIELD
+userPassword: secret
+mail: dawson.waterfield@linshare.org
+
+dn: cn=regular-users,ou=Groups,dc=linshare,dc=org
+ou: Groups
+objectClass: organizationalUnit
+objectClass: top
+description: Regular users
+member: uid=amy.wolsh,ou=People2,dc=linshare,dc=org
+member: uid=peter.wilson,ou=People2,dc=linshare,dc=org
+member: uid=cornell.able,ou=People2,dc=linshare,dc=org
+
+dn: cn=vip-users,ou=Groups,dc=linshare,dc=org
+ou: Groups
+objectClass: organizationalUnit
+objectClass: top
+description: Vip users
+member: uid=abbey.curry,ou=People2,dc=linshare,dc=org
+member: uid=anderson.waxman,ou=People2,dc=linshare,dc=org
+member: uid=dawson.waterfield,ou=People2,dc=linshare,dc=org
+
+

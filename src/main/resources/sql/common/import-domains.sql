@@ -337,3 +337,137 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 	VALUES (20, 'user_lastname', 'sn', false, true, true, 5, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 	VALUES (21, 'user_uid', 'uid', false, true, true, 5, false);
+
+-- OpenLdap ldap filter to search users by group memberShip.
+INSERT INTO ldap_pattern(
+    id,
+    uuid,
+    pattern_type,
+    label,
+    description,
+    auth_command,
+    search_user_command,
+    system,
+    auto_complete_command_on_first_and_last_name,
+    auto_complete_command_on_all_attributes,
+    search_page_size,
+    search_size_limit,
+    completion_page_size,
+    completion_size_limit,
+    creation_date,
+    modification_date)
+VALUES (
+    7,
+    'd277f339-bc60-437d-8f66-515cba43df37',
+    'USER_LDAP_PATTERN',
+    'default-openldap-filtered-by-group-membership',
+    'This is default openldap filtered by group membership.',
+    'var group_dn = "cn=regular-users,ou=Groups,dc=linshare,dc=org";
+    // initial query; looking for users
+    var users = ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");
+    logger.trace("users: {}", users);
+    // second query to get all members (dn) of a group
+    var dn_group_members = ldap.attribute(group_dn, "member");
+    logger.trace("dn_group_members: {}", dn_group_members);
+    // this array will contains all members without the baseDn
+    var group_members = new java.util.ArrayList();
+    for (var i = 0; i < dn_group_members.length; i++) {
+        group_members.add(dn_group_members[i].replace("," + domain,""));
+    };
+    logger.trace("group_members: {}", group_members);
+    // this array will contain the result of a left join between users and group_members
+    var output =  new java.util.ArrayList();
+    for (var i = 0; i < users.length; i++) {
+        if (group_members.contains(users[i])) {
+            output.add(users[i]);
+        }
+    }
+    logger.debug("users (filtered): {}", output);
+    // we must "return" the result.
+    output;',
+    'var group_dn = "cn=regular-users,ou=Groups,dc=linshare,dc=org";
+    // initial query; looking for users
+    var users = ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");
+    logger.trace("users: {}", users);
+    // second query to get all members (dn) of a group
+    var dn_group_members = ldap.attribute(group_dn, "member");
+    logger.trace("dn_group_members: {}", dn_group_members);
+    // this array will contains all members without the baseDn
+    var group_members = new java.util.ArrayList();
+    for (var i = 0; i < dn_group_members.length; i++) {
+        group_members.add(dn_group_members[i].replace("," + domain,""));
+    };
+    logger.trace("group_members: {}", group_members);
+    // this array will contain the result of a left join between users and group_members
+    var output =  new java.util.ArrayList();
+    for (var i = 0; i < users.length; i++) {
+        if (group_members.contains(users[i])) {
+            output.add(users[i]);
+        }
+    }
+    logger.debug("users (filtered): {}", output);
+    // we must "return" the result.
+    output;',
+    true,
+    'var group_dn = "cn=regular-users,ou=Groups,dc=linshare,dc=org";
+    // initial query; looking for users
+    var users = ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");
+    logger.trace("users: {}", users);
+    // second query to get all members (dn) of a group
+    var dn_group_members = ldap.attribute(group_dn, "member");
+    logger.trace("dn_group_members: {}", dn_group_members);
+    // this array will contains all members without the baseDn
+    var group_members = new java.util.ArrayList();
+    for (var i = 0; i < dn_group_members.length; i++) {
+        group_members.add(dn_group_members[i].replace("," + domain,""));
+    };
+    logger.trace("group_members: {}", group_members);
+    // this array will contain the result of a left join between users and group_members
+    var output =  new java.util.ArrayList();
+    for (var i = 0; i < users.length; i++) {
+        if (group_members.contains(users[i])) {
+            output.add(users[i]);
+        }
+    }
+    logger.debug("users (filtered): {}", output);
+    // we must "return" the result.
+    output;',
+    'var group_dn = "cn=regular-users,ou=Groups,dc=linshare,dc=org";
+    // initial query; looking for users
+    var users = ldap.search(domain, "(&(objectClass=inetOrgPerson)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");
+    logger.trace("users: {}", users);
+    // second query to get all members (dn) of a group
+    var dn_group_members = ldap.attribute(group_dn, "member");
+    logger.trace("dn_group_members: {}", dn_group_members);
+    // this array will contains all members without the baseDn
+    var group_members = new java.util.ArrayList();
+    for (var i = 0; i < dn_group_members.length; i++) {
+        group_members.add(dn_group_members[i].replace("," + domain,""));
+    };
+    logger.trace("group_members: {}", group_members);
+    // this array will contain the result of a left join between users and group_members
+    var output =  new java.util.ArrayList();
+    for (var i = 0; i < users.length; i++) {
+        if (group_members.contains(users[i])) {
+            output.add(users[i]);
+        }
+    }
+    logger.debug("users (filtered): {}", output);
+    // we must "return" the result.
+    output;',
+    100,
+    100,
+    10,
+    10,
+    now(),
+    now()
+);
+
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (27, 'user_mail', 'mail', false, true, true, 7, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (28, 'user_firstname', 'givenName', false, true, true, 7, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (29, 'user_lastname', 'sn', false, true, true, 7, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (30, 'user_uid', 'uid', false, true, true, 7, false);

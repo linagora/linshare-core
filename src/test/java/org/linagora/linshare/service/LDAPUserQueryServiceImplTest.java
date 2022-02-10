@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +56,7 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.service.LDAPUserQueryService;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
@@ -64,6 +67,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
+
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
@@ -87,6 +93,9 @@ public class LDAPUserQueryServiceImplTest {
 	@Autowired
 	private LDAPUserQueryService ldapQueryService;
 
+	@Autowired
+	private DomainPatternRepository domainPatternRepository;
+
 	private LdapConnection ldapConn;
 
 	private UserLdapPattern domainPattern;
@@ -100,6 +109,10 @@ public class LDAPUserQueryServiceImplTest {
 	private static final String PASSWORD_USER1 = "password1";
 	private static final String PASSWORD_AMY_TOP_DOMAIN2 = "secret";
 	private static final String STR_PATTERN = "linpki";
+	private static final String GROUP_MEMBERSHIP_BASE_DN = "dc=linshare,dc=org";
+	private static final String GROUP_MEMBERSHIP_PATTERN = "org";
+	private static final String GROUP_MEMBERSHIP_PATTERN_UUID = "d277f339-bc60-437d-8f66-515cba43df37";
+
 
 	private void logUser(User user) {
 		logger.debug(user.getAccountRepresentation());
@@ -280,6 +293,105 @@ public class LDAPUserQueryServiceImplTest {
 		User amy = ldapQueryService.getUser(ldapConn, TOP_DOMAIN2_BASE_DN, domainPattern,
 				AMY_TOP_DOMAIN2_MAIL);
 		Assertions.assertNotNull(amy);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSearchUsersByGroupMemberShipFromStringRegularGroup() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// auto complete command using first name, last name or mail attributes
+		String auto_complete_command_on_all_attributes = "ldap.search(domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*)(|(mail=\" + pattern + \")(sn=\" + pattern + \")(givenName=\" + pattern + \")))\");";
+		// auto complete command using first name and last name attributes (association)
+		String auto_complete_command_on_first_and_last_name = "ldap.search(domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*)(|(&(sn=\" + first_name + \")(givenName=\" + last_name + \"))(&(sn=\" + last_name + \")(givenName=\" + first_name + \"))))\");";
+		String search_command = "var group_dn = \"cn=regular-users,ou=Groups,dc=linshare,dc=org\";\n"
+				+ "    // initial query; looking for users\n"
+				+ "    var users = ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\"+mail+\")(givenName=\"+first_name+\")(sn=\"+last_name+\"))\");\n"
+				+ "    logger.trace(\"users: {}\", users);\n"
+				+ "    // second query to get all members (dn) of a group\n"
+				+ "    var dn_group_members = ldap.attribute(group_dn, \"member\");\n"
+				+ "    logger.trace(\"dn_group_members: {}\", dn_group_members);\n"
+				+ "    // this array will contains all members without the baseDn\n"
+				+ "    var group_members = new java.util.ArrayList();\n"
+				+ "    for (var i = 0; i < dn_group_members.length; i++) {\n"
+				+ "        group_members.add(dn_group_members[i].replace(',' + domain,''));\n"
+				+ "    };\n"
+				+ "    logger.trace(\"group_members: {}\", group_members);\n"
+				+ "    // this array will contain the result of a left join between users and group_members\n"
+				+ "    var output =  new java.util.ArrayList();\n"
+				+ "    for (var i = 0; i < users.length; i++) {\n"
+				+ "        if (group_members.contains(users[i])) {\n"
+				+ "            output.add(users[i]);\n"
+				+ "        }\n"
+				+ "    }\n"
+				+ "    logger.debug(\"users (filtered): {}\", output);\n"
+				+ "    // we must \"return\" the result.\n"
+				+ "    output;";
+
+		String auth_command = "ldap.search(domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\" + login + \")(uid=\" + login + \")))\");";
+		initDefault(auto_complete_command_on_all_attributes, auto_complete_command_on_first_and_last_name, search_command, auth_command, 0, 0);
+		List<User> users = ldapQueryService.searchUser(ldapConn, GROUP_MEMBERSHIP_BASE_DN, domainPattern, GROUP_MEMBERSHIP_PATTERN, null, null);
+		assertThat(users).hasSize(3);
+		List<String> emails = Lists.newArrayList(LinShareTestConstants.AMY_WOLSH_ACCOUNT, LinShareTestConstants.PETER_WILSON_ACCOUNT, LinShareTestConstants.CORNELL_ABLE_ACCOUNT);
+		List<String> recoveredEmails = Lists.newArrayList();
+		users.forEach(user -> recoveredEmails.add(user.getMail()));
+		assertThat(emails).containsAll(recoveredEmails);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSearchUsersByGroupMemberShipFromStringVipGroup() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// auto complete command using first name, last name or mail attributes
+		String auto_complete_command_on_all_attributes = "ldap.search(domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*)(|(mail=\" + pattern + \")(sn=\" + pattern + \")(givenName=\" + pattern + \")))\");";
+		// auto complete command using first name and last name attributes (association)
+		String auto_complete_command_on_first_and_last_name = "ldap.search(domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*)(|(&(sn=\" + first_name + \")(givenName=\" + last_name + \"))(&(sn=\" + last_name + \")(givenName=\" + first_name + \"))))\");";
+		String search_command = "var group_dn = \"cn=vip-users,ou=Groups,dc=linshare,dc=org\";\n"
+				+ "    // initial query; looking for users\n"
+				+ "    var users = ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\"+mail+\")(givenName=\"+first_name+\")(sn=\"+last_name+\"))\");\n"
+				+ "    logger.trace(\"users: {}\", users);\n"
+				+ "    // second query to get all members (dn) of a group\n"
+				+ "    var dn_group_members = ldap.attribute(group_dn, \"member\");\n"
+				+ "    logger.trace(\"dn_group_members: {}\", dn_group_members);\n"
+				+ "    // this array will contains all members without the baseDn\n"
+				+ "    var group_members = new java.util.ArrayList();\n"
+				+ "    for (var i = 0; i < dn_group_members.length; i++) {\n"
+				+ "        group_members.add(dn_group_members[i].replace(',' + domain,''));\n"
+				+ "    };\n"
+				+ "    logger.trace(\"group_members: {}\", group_members);\n"
+				+ "    // this array will contain the result of a left join between users and group_members\n"
+				+ "    var output =  new java.util.ArrayList();\n"
+				+ "    for (var i = 0; i < users.length; i++) {\n"
+				+ "        if (group_members.contains(users[i])) {\n"
+				+ "            output.add(users[i]);\n"
+				+ "        }\n"
+				+ "    }\n"
+				+ "    logger.debug(\"users (filtered): {}\", output);\n"
+				+ "    // we must \"return\" the result.\n"
+				+ "    output;";
+
+		String auth_command = "ldap.search(domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\" + login + \")(uid=\" + login + \")))\");";
+		initDefault(auto_complete_command_on_all_attributes, auto_complete_command_on_first_and_last_name, search_command, auth_command, 0, 0);
+		List<User> users = ldapQueryService.searchUser(ldapConn, GROUP_MEMBERSHIP_BASE_DN, domainPattern, GROUP_MEMBERSHIP_PATTERN, null, null);
+		assertThat(users).hasSize(3);
+		List<String> emails = Lists.newArrayList(LinShareTestConstants.DAWSON_WATERFIELD_ACCOUNT, LinShareTestConstants.ABBEY_CURRY_ACCOUNT, LinShareTestConstants.ANDERSON_WAXMAN_ACCOUNT);
+		List<String> recoveredEmails = Lists.newArrayList();
+		users.forEach(user -> recoveredEmails.add(user.getMail()));
+		assertThat(emails).containsAll(recoveredEmails);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSearchUsersByGroupMemberShipFromDB() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UserLdapPattern ldapPattern = domainPatternRepository.findByUuid(GROUP_MEMBERSHIP_PATTERN_UUID);
+		assertThat(ldapPattern).isNotNull();
+		assertThat(ldapPattern.getAttributes()).isNotEmpty();
+		List<User> users = ldapQueryService.searchUser(ldapConn, GROUP_MEMBERSHIP_BASE_DN, ldapPattern, GROUP_MEMBERSHIP_PATTERN, null, null);
+		assertThat(users).hasSize(3);
+		List<String> emails = Lists.newArrayList(LinShareTestConstants.AMY_WOLSH_ACCOUNT, LinShareTestConstants.PETER_WILSON_ACCOUNT, LinShareTestConstants.CORNELL_ABLE_ACCOUNT);
+		List<String> recoveredEmails = Lists.newArrayList();
+		users.forEach(user -> recoveredEmails.add(user.getMail()));
+		assertThat(emails).containsAll(recoveredEmails);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
