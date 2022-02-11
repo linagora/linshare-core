@@ -42,6 +42,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
 
 public class GuestProfileDtoTest {
@@ -177,6 +178,23 @@ public class GuestProfileDtoTest {
 	}
 
 	@Test
+	public void buildShouldThrowWhenAccountTypeIsNull() {
+		assertThatThrownBy(() -> GuestProfileDto.builder()
+			.expirationDate(Date.from(Instant.now()))
+			.restricted(true)
+			.author(null)
+			.uuid("uuid")
+			.firstName("first name")
+			.lastName("last name")
+			.mail("mail")
+			.locale(UserLanguage.FRENCH)
+			.personalSpaceEnabled(true)
+			.build())
+			.isInstanceOf(NullPointerException.class)
+			.hasMessage("'accountType' must be set.");
+	}
+
+	@Test
 	public void buildShouldThrowWhenExpirationDateIsNull() {
 		assertThatThrownBy(() -> GuestProfileDto.builder()
 				.expirationDate(null)
@@ -188,6 +206,7 @@ public class GuestProfileDtoTest {
 				.mail("mail")
 				.locale(UserLanguage.FRENCH)
 				.personalSpaceEnabled(true)
+				.accountType(AccountType.GUEST)
 				.build())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'expirationDate' must be set.");
@@ -205,6 +224,7 @@ public class GuestProfileDtoTest {
 				.mail("mail")
 				.locale(UserLanguage.FRENCH)
 				.personalSpaceEnabled(true)
+				.accountType(AccountType.GUEST)
 				.build())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'restricted' must be set.");
@@ -222,6 +242,7 @@ public class GuestProfileDtoTest {
 				.mail("mail")
 				.locale(UserLanguage.FRENCH)
 				.personalSpaceEnabled(true)
+				.accountType(AccountType.GUEST)
 				.build())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'author' must be set.");
@@ -239,6 +260,7 @@ public class GuestProfileDtoTest {
 		Date creationDate = Date.from(Instant.now());
 		Date modificationDate = Date.from(Instant.now());
 		UserLanguage locale = UserLanguage.FRENCH;
+		AccountType accountType = AccountType.GUEST;
 		GuestProfileDto dto = GuestProfileDto.builder()
 			.expirationDate(expirationDate)
 			.restricted(restricted)
@@ -251,6 +273,7 @@ public class GuestProfileDtoTest {
 			.modificationDate(modificationDate)
 			.locale(locale)
 			.personalSpaceEnabled(canUpload)
+			.accountType(accountType)
 			.build();
 
 		assertThat(dto.getExpirationDate()).isEqualTo(expirationDate);
@@ -264,5 +287,6 @@ public class GuestProfileDtoTest {
 		assertThat(dto.getModificationDate()).isEqualTo(modificationDate);
 		assertThat(dto.getLocale()).isEqualTo(locale);
 		assertThat(dto.isPersonalSpaceEnabled()).isEqualTo(canUpload);
+		assertThat(dto.getAccountType()).isEqualTo(accountType);
 	}
 }

@@ -38,6 +38,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import java.util.Date;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
 
 
@@ -51,6 +52,7 @@ public abstract class AbstractUserProfileDtoBuilder<T extends AbstractUserProfil
 	protected Date modificationDate;
 	protected UserLanguage locale;
 	protected Boolean personalSpaceEnabled;
+	protected AccountType accountType;
 
 	public AbstractUserProfileDtoBuilder<T> uuid(String uuid) {
 		this.uuid = uuid;
@@ -92,6 +94,11 @@ public abstract class AbstractUserProfileDtoBuilder<T extends AbstractUserProfil
 		return this;
 	}
 
+	public AbstractUserProfileDtoBuilder<T> accountType(AccountType accountType) {
+		this.accountType = accountType;
+		return this;
+	}
+
 	public void validation() {
 		Validate.notBlank(uuid, "'uuid' must be set.");
 		Validate.notBlank(firstName, "'firstName' must be set.");
@@ -99,6 +106,7 @@ public abstract class AbstractUserProfileDtoBuilder<T extends AbstractUserProfil
 		Validate.notBlank(mail, "'mail' must be set.");
 		Validate.notNull(locale, "'locale' must be set.");
 		Validate.notNull(personalSpaceEnabled, "'personalSpaceEnabled' must be set.");
+		Validate.notNull(accountType, "'accountType' must be set.");
 	}
 
 	public abstract T build();

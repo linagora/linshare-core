@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -77,7 +78,10 @@ public abstract class AbstractUserProfileDto {
 	@Schema(description = "User personal space is enable", required = true)
 	protected final boolean personalSpaceEnabled;
 
-	protected AbstractUserProfileDto(String uuid, String firstName, String lastName, String mail, Date creationDate, Date modificationDate, UserLanguage locale, boolean personalSpaceEnabled) {
+	@Schema(description = "User's type", required = true)
+	protected final AccountType accountType;
+
+	protected AbstractUserProfileDto(String uuid, String firstName, String lastName, String mail, Date creationDate, Date modificationDate, UserLanguage locale, boolean personalSpaceEnabled, AccountType accountType) {
 		this.uuid = uuid;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -86,6 +90,7 @@ public abstract class AbstractUserProfileDto {
 		this.modificationDate = modificationDate;
 		this.locale = locale;
 		this.personalSpaceEnabled = personalSpaceEnabled;
+		this.accountType = accountType;
 	}
 
 	public String getUuid() {
@@ -120,6 +125,10 @@ public abstract class AbstractUserProfileDto {
 		return personalSpaceEnabled;
 	}
 
+	public AccountType getAccountType() {
+		return accountType;
+	}
+
 	public MoreObjects.ToStringHelper abstractToString() {
 		return MoreObjects.toStringHelper(this)
 			.add("firstName", firstName)
@@ -128,6 +137,7 @@ public abstract class AbstractUserProfileDto {
 			.add("creationDate", creationDate)
 			.add("modificationDate", modificationDate)
 			.add("locale", locale)
-			.add("personalSpaceEnabled", personalSpaceEnabled);
+			.add("personalSpaceEnabled", personalSpaceEnabled)
+			.add("accountType", accountType);
 	}
 }

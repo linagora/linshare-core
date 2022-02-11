@@ -42,6 +42,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
 
 public class UserProfileDtoTest {
@@ -152,6 +153,21 @@ public class UserProfileDtoTest {
 	}
 
 	@Test
+	public void buildShouldThrowWhenAccountTypeIsNull() {
+		assertThatThrownBy(() -> UserProfileDto.builder()
+				.canCreateGuest(null)
+				.uuid("uuid")
+				.firstName("first name")
+				.lastName("last name")
+				.mail("mail")
+				.locale(UserLanguage.FRENCH)
+				.personalSpaceEnabled(true)
+				.build())
+			.isInstanceOf(NullPointerException.class)
+			.hasMessage("'accountType' must be set.");
+	}
+
+	@Test
 	public void buildShouldThrowWhenCanCreateGuestIsNull() {
 		assertThatThrownBy(() -> UserProfileDto.builder()
 				.canCreateGuest(null)
@@ -161,6 +177,7 @@ public class UserProfileDtoTest {
 				.mail("mail")
 				.locale(UserLanguage.FRENCH)
 				.personalSpaceEnabled(true)
+				.accountType(AccountType.INTERNAL)
 				.build())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'canCreateGuest' must be set.");
@@ -177,6 +194,7 @@ public class UserProfileDtoTest {
 		Date creationDate = Date.from(Instant.now());
 		Date modificationDate = Date.from(Instant.now());
 		UserLanguage locale = UserLanguage.FRENCH;
+		AccountType accountType = AccountType.INTERNAL;
 		UserProfileDto dto = UserProfileDto.builder()
 			.canCreateGuest(canCreateGuest)
 			.uuid(uuid)
@@ -187,6 +205,7 @@ public class UserProfileDtoTest {
 			.modificationDate(modificationDate)
 			.locale(locale)
 			.personalSpaceEnabled(canUpload)
+			.accountType(accountType)
 			.build();
 
 		assertThat(dto.getUuid()).isEqualTo(uuid);
@@ -197,6 +216,7 @@ public class UserProfileDtoTest {
 		assertThat(dto.getModificationDate()).isEqualTo(modificationDate);
 		assertThat(dto.getLocale()).isEqualTo(locale);
 		assertThat(dto.isPersonalSpaceEnabled()).isEqualTo(canUpload);
+		assertThat(dto.getAccountType()).isEqualTo(accountType);
 		assertThat(dto.isCanCreateGuest()).isEqualTo(canCreateGuest);
 	}
 }

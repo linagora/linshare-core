@@ -40,6 +40,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
 import org.linagora.linshare.core.domain.entities.User;
 
@@ -69,6 +70,7 @@ public class UserProfileDto extends AbstractUserProfileDto {
 			.modificationDate(user.getModificationDate())
 			.locale(UserLanguage.from(user.getLocale()))
 			.personalSpaceEnabled(user.getCanUpload())
+			.accountType(AccountType.INTERNAL)
 			.build();
 	}
 
@@ -95,15 +97,15 @@ public class UserProfileDto extends AbstractUserProfileDto {
 		@Override
 		public UserProfileDto build() {
 			validation();
-			return new UserProfileDto(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, personalSpaceEnabled, canCreateGuest);
+			return new UserProfileDto(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, personalSpaceEnabled, canCreateGuest, accountType);
 		}
 	}
 
 	@Schema(description = "User has the ability to create guest", required = true)
 	private final boolean canCreateGuest;
 
-	private UserProfileDto(String uuid, String firstName, String lastName, String mail, Date creationDate, Date modificationDate, UserLanguage locale, boolean canUpload, boolean canCreateGuest) {
-		super(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, canUpload);
+	private UserProfileDto(String uuid, String firstName, String lastName, String mail, Date creationDate, Date modificationDate, UserLanguage locale, boolean canUpload, boolean canCreateGuest, AccountType accountType) {
+		super(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, canUpload, accountType);
 		this.canCreateGuest = canCreateGuest;
 	}
 	public boolean isCanCreateGuest() {

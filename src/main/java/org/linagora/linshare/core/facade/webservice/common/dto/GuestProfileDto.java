@@ -40,6 +40,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
 import org.linagora.linshare.core.domain.entities.User;
 
@@ -72,6 +73,7 @@ public class GuestProfileDto extends AbstractUserProfileDto {
 			.modificationDate(user.getModificationDate())
 			.locale(UserLanguage.from(user.getLocale()))
 			.personalSpaceEnabled(user.getCanUpload())
+			.accountType(AccountType.GUEST)
 			.build();
 	}
 
@@ -111,7 +113,7 @@ public class GuestProfileDto extends AbstractUserProfileDto {
 		@Override
 		public GuestProfileDto build() {
 			validation();
-			return new GuestProfileDto(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, personalSpaceEnabled, expirationDate, restricted, author);
+			return new GuestProfileDto(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, personalSpaceEnabled, expirationDate, restricted, author, accountType);
 		}
 	}
 
@@ -124,8 +126,8 @@ public class GuestProfileDto extends AbstractUserProfileDto {
 	@Schema(description = "User's author", required = true)
 	private final AuthorDto author;
 
-	private GuestProfileDto(String uuid, String firstName, String lastName, String mail, Date creationDate, Date modificationDate, UserLanguage locale, Boolean personalSpaceEnabled, Date expirationDate, Boolean restricted, AuthorDto author) {
-		super(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, personalSpaceEnabled);
+	private GuestProfileDto(String uuid, String firstName, String lastName, String mail, Date creationDate, Date modificationDate, UserLanguage locale, Boolean personalSpaceEnabled, Date expirationDate, Boolean restricted, AuthorDto author, AccountType accountType) {
+		super(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, personalSpaceEnabled, accountType);
 		this.expirationDate = expirationDate;
 		this.restricted = restricted;
 		this.author = author;
