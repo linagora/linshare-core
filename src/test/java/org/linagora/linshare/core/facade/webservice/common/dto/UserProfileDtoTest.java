@@ -48,143 +48,142 @@ import org.linagora.linshare.core.domain.constants.UserLanguage;
 public class UserProfileDtoTest {
 
 	@Test
-	public void buildShouldThrowWhenUuidIsNull() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(true)
-				.build())
+	public void validationThrowWhenUuidIsNull() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'uuid' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenFirstNameIsNull() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(true)
-				.uuid("uuid")
-				.build())
+	public void validationThrowWhenFirstNameIsNull() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'firstName' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenFirstNameIsEmpty() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(true)
-				.uuid("uuid")
-				.firstName("")
-				.build())
+	public void validationThrowWhenFirstNameIsEmpty() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("");
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("'firstName' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenLastNameIsNull() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(true)
-				.uuid("uuid")
-				.firstName("first name")
-				.build())
+	public void validationThrowWhenLastNameIsNull() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("first name");
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'lastName' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenLastNameIsEmpty() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(true)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("")
-				.build())
+	public void validationThrowWhenLastNameIsEmpty() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("first name");
+		userProfileDto.setLastName("");
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("'lastName' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenMailIsNull() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(true)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.build())
+	public void validationThrowWhenMailIsNull() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("first name");
+		userProfileDto.setLastName("last name");
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'mail' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenMailIsEmpty() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(true)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("")
-				.build())
+	public void validationThrowWhenMailIsEmpty() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("first name");
+		userProfileDto.setLastName("last name");
+		userProfileDto.setMail("");
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("'mail' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenLocaleIsNull() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(true)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("mail")
-				.build())
+	public void validationThrowWhenLocaleIsNull() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("first name");
+		userProfileDto.setLastName("last name");
+		userProfileDto.setMail("mail");
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'locale' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenPersonalSpaceEnabledIsNull() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(true)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("mail")
-				.locale(UserLanguage.FRENCH)
-				.build())
+	public void validationThrowWhenPersonalSpaceEnabledIsNull() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("first name");
+		userProfileDto.setLastName("last name");
+		userProfileDto.setMail("mail");
+		userProfileDto.setLocale(UserLanguage.FRENCH);
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'personalSpaceEnabled' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenAccountTypeIsNull() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(null)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("mail")
-				.locale(UserLanguage.FRENCH)
-				.personalSpaceEnabled(true)
-				.build())
+	public void validationThrowWhenAccountTypeIsNull() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("first name");
+		userProfileDto.setLastName("last name");
+		userProfileDto.setMail("mail");
+		userProfileDto.setLocale(UserLanguage.FRENCH);
+		userProfileDto.setPersonalSpaceEnabled(true);
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'accountType' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenCanCreateGuestIsNull() {
-		assertThatThrownBy(() -> UserProfileDto.builder()
-				.canCreateGuest(null)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("mail")
-				.locale(UserLanguage.FRENCH)
-				.personalSpaceEnabled(true)
-				.accountType(AccountType.INTERNAL)
-				.build())
+	public void validationThrowWhenCanCreateGuestIsNull() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("first name");
+		userProfileDto.setLastName("last name");
+		userProfileDto.setMail("mail");
+		userProfileDto.setLocale(UserLanguage.FRENCH);
+		userProfileDto.setPersonalSpaceEnabled(true);
+		userProfileDto.setAccountType(AccountType.INTERNAL);
+		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'canCreateGuest' must be set.");
 	}
 
 	@Test
-	public void buildShouldWork() {
+	public void validationWork() {
 		boolean canCreateGuest = true;
 		String uuid = "uuid";
 		String firstName = "first name";
@@ -195,18 +194,17 @@ public class UserProfileDtoTest {
 		Date modificationDate = Date.from(Instant.now());
 		UserLanguage locale = UserLanguage.FRENCH;
 		AccountType accountType = AccountType.INTERNAL;
-		UserProfileDto dto = UserProfileDto.builder()
-			.canCreateGuest(canCreateGuest)
-			.uuid(uuid)
-			.firstName(firstName)
-			.lastName(lastName)
-			.mail(mail)
-			.creationDate(creationDate)
-			.modificationDate(modificationDate)
-			.locale(locale)
-			.personalSpaceEnabled(canUpload)
-			.accountType(accountType)
-			.build();
+		UserProfileDto dto = new UserProfileDto();
+		dto.setCanCreateGuest(canCreateGuest);
+		dto.setUuid(uuid);
+		dto.setFirstName(firstName);
+		dto.setLastName(lastName);
+		dto.setMail(mail);
+		dto.setLocale(locale);
+		dto.setPersonalSpaceEnabled(canUpload);
+		dto.setAccountType(accountType);
+		dto.setCreationDate(creationDate);
+		dto.setModificationDate(modificationDate);
 
 		assertThat(dto.getUuid()).isEqualTo(uuid);
 		assertThat(dto.getFirstName()).isEqualTo(firstName);

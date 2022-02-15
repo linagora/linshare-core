@@ -35,81 +35,54 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
 import org.linagora.linshare.core.domain.entities.User;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@JsonDeserialize(builder = UserProfileDto.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "UserProfile")
 @Schema(name = "UserProfile", description = "User profile")
-public class UserProfileDto extends AbstractUserProfileDto {
-
-	public static Builder.CanCreateGuest builder() {
-		return canCreateGuest -> new Builder(canCreateGuest);
-	}
+public class UserProfileDto extends AbstractUserProfileDto<UserProfileDto> {
 
 	public static AbstractUserProfileDto from(User user) {
-		return builder()
-			.canCreateGuest(user.getCanCreateGuest())
-			.uuid(user.getLsUuid())
-			.firstName(user.getFirstName())
-			.lastName(user.getLastName())
-			.mail(user.getMail())
-			.creationDate(user.getCreationDate())
-			.modificationDate(user.getModificationDate())
-			.locale(UserLanguage.from(user.getLocale()))
-			.personalSpaceEnabled(user.getCanUpload())
-			.accountType(AccountType.INTERNAL)
-			.build();
-	}
-
-	@JsonPOJOBuilder(withPrefix = "")
-	public static class Builder extends AbstractUserProfileDtoBuilder<UserProfileDto> {
-
-		@FunctionalInterface
-		public interface CanCreateGuest {
-			Builder canCreateGuest(Boolean canCreateGuest);
-		}
-
-		private Boolean canCreateGuest;
-
-		private Builder(Boolean canCreateGuest) {
-			this.canCreateGuest = canCreateGuest;
-		}
-
-		@Override
-		public void validation() {
-			super.validation();
-			Validate.notNull(canCreateGuest, "'canCreateGuest' must be set.");
-		}
-
-		@Override
-		public UserProfileDto build() {
-			validation();
-			return new UserProfileDto(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, personalSpaceEnabled, canCreateGuest, accountType);
-		}
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setUuid(user.getLsUuid());
+		userProfileDto.setFirstName(user.getFirstName());
+		userProfileDto.setLastName(user.getLastName());
+		userProfileDto.setMail(user.getMail());
+		userProfileDto.setCreationDate(user.getCreationDate());
+		userProfileDto.setModificationDate(user.getModificationDate());
+		userProfileDto.setLocale(UserLanguage.from(user.getLocale()));
+		userProfileDto.setPersonalSpaceEnabled(user.getCanUpload());
+		userProfileDto.setAccountType(user.getAccountType());
+		userProfileDto.setCanCreateGuest(user.getCanCreateGuest());
+		userProfileDto.validation();
+		return userProfileDto;
 	}
 
 	@Schema(description = "User has the ability to create guest", required = true)
-	private final boolean canCreateGuest;
+	private Boolean canCreateGuest;
 
-	private UserProfileDto(String uuid, String firstName, String lastName, String mail, Date creationDate, Date modificationDate, UserLanguage locale, boolean canUpload, boolean canCreateGuest, AccountType accountType) {
-		super(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, canUpload, accountType);
-		this.canCreateGuest = canCreateGuest;
+	public UserProfileDto() {
 	}
+
 	public boolean isCanCreateGuest() {
 		return canCreateGuest;
+	}
+
+	public void setCanCreateGuest(boolean canCreateGuest) {
+		this.canCreateGuest = canCreateGuest;
+	}
+
+	@Override
+	public void validation() {
+		super.validation();
+		Validate.notNull(canCreateGuest, "'canCreateGuest' must be set.");
 	}
 
 	@Override
@@ -117,6 +90,14 @@ public class UserProfileDto extends AbstractUserProfileDto {
 		return abstractToString()
 			.add("canCreateGuest", canCreateGuest)
 			.toString();
+	}
+
+	@Override
+	public boolean equalsElseLocale(UserProfileDto dto) {
+		if (dto.isCanCreateGuest() != isCanCreateGuest()) {
+			return false;
+		}
+		return commonEqualsElseLocale(dto);
 	}
 }
 

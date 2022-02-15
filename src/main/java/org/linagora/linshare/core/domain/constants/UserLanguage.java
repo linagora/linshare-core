@@ -49,4 +49,13 @@ public enum UserLanguage {
 			default: return ENGLISH;
 		}
 	}
+
+	public SupportedLanguage convert() {
+		switch (this) {
+			case FRENCH: return SupportedLanguage.FRENCH;
+			case RUSSIAN: return SupportedLanguage.RUSSIAN;
+			case ENGLISH:
+			default: return SupportedLanguage.ENGLISH;
+		}
+	}
 }

@@ -55,201 +55,199 @@ public class GuestProfileDtoTest {
 		.build();
 
 	@Test
-	public void buildShouldThrowWhenUuidIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(authorDto)
-				.build())
+	public void validationShouldThrowWhenUuidIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'uuid' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenFirstNameIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(authorDto)
-				.uuid("uuid")
-				.build())
+	public void validationShouldThrowWhenFirstNameIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'firstName' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenFirstNameIsEmpty() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(authorDto)
-				.uuid("uuid")
-				.firstName("")
-				.build())
+	public void validationShouldThrowWhenFirstNameIsEmpty() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("");
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("'firstName' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenLastNameIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(authorDto)
-				.uuid("uuid")
-				.firstName("first name")
-				.build())
+	public void validationShouldThrowWhenLastNameIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'lastName' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenLastNameIsEmpty() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(authorDto)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("")
-				.build())
+	public void validationShouldThrowWhenLastNameIsEmpty() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("");
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("'lastName' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenMailIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(authorDto)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.build())
+	public void validationShouldThrowWhenMailIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("last name");
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'mail' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenMailIsEmpty() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(authorDto)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("")
-				.build())
+	public void validationShouldThrowWhenMailIsEmpty() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("last name");
+		guestProfileDto.setMail("");
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("'mail' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenLocaleIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(authorDto)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("mail")
-				.build())
+	public void validationShouldThrowWhenLocaleIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("last name");
+		guestProfileDto.setMail("mail");
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'locale' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenPersonalSpaceEnabledIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(authorDto)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("mail")
-				.locale(UserLanguage.FRENCH)
-				.build())
+	public void validationShouldThrowWhenPersonalSpaceEnabledIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("last name");
+		guestProfileDto.setMail("mail");
+		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setAccountType(AccountType.GUEST);
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'personalSpaceEnabled' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenAccountTypeIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-			.expirationDate(Date.from(Instant.now()))
-			.restricted(true)
-			.author(null)
-			.uuid("uuid")
-			.firstName("first name")
-			.lastName("last name")
-			.mail("mail")
-			.locale(UserLanguage.FRENCH)
-			.personalSpaceEnabled(true)
-			.build())
+	public void validationShouldThrowWhenAccountTypeIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("last name");
+		guestProfileDto.setMail("mail");
+		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setPersonalSpaceEnabled(true);
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'accountType' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenExpirationDateIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(null)
-				.restricted(true)
-				.author(authorDto)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("mail")
-				.locale(UserLanguage.FRENCH)
-				.personalSpaceEnabled(true)
-				.accountType(AccountType.GUEST)
-				.build())
+	public void validationShouldThrowWhenExpirationDateIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("last name");
+		guestProfileDto.setMail("mail");
+		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setPersonalSpaceEnabled(true);
+		guestProfileDto.setAccountType(AccountType.GUEST);
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'expirationDate' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenRestrictedIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(null)
-				.author(authorDto)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("mail")
-				.locale(UserLanguage.FRENCH)
-				.personalSpaceEnabled(true)
-				.accountType(AccountType.GUEST)
-				.build())
+	public void validationShouldThrowWhenRestrictedIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("last name");
+		guestProfileDto.setMail("mail");
+		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setPersonalSpaceEnabled(true);
+		guestProfileDto.setAccountType(AccountType.GUEST);
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'restricted' must be set.");
 	}
 
 	@Test
-	public void buildShouldThrowWhenAuthorIsNull() {
-		assertThatThrownBy(() -> GuestProfileDto.builder()
-				.expirationDate(Date.from(Instant.now()))
-				.restricted(true)
-				.author(null)
-				.uuid("uuid")
-				.firstName("first name")
-				.lastName("last name")
-				.mail("mail")
-				.locale(UserLanguage.FRENCH)
-				.personalSpaceEnabled(true)
-				.accountType(AccountType.GUEST)
-				.build())
+	public void validationShouldThrowWhenAuthorIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("last name");
+		guestProfileDto.setMail("mail");
+		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setPersonalSpaceEnabled(true);
+		guestProfileDto.setAccountType(AccountType.GUEST);
+		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'author' must be set.");
 	}
 
 	@Test
-	public void buildShouldWork() {
+	public void validationShouldWork() {
 		Date expirationDate = Date.from(Instant.now());
 		boolean restricted = true;
 		String uuid = "uuid";
@@ -261,20 +259,19 @@ public class GuestProfileDtoTest {
 		Date modificationDate = Date.from(Instant.now());
 		UserLanguage locale = UserLanguage.FRENCH;
 		AccountType accountType = AccountType.GUEST;
-		GuestProfileDto dto = GuestProfileDto.builder()
-			.expirationDate(expirationDate)
-			.restricted(restricted)
-			.author(authorDto)
-			.uuid(uuid)
-			.firstName(firstName)
-			.lastName(lastName)
-			.mail(mail)
-			.creationDate(creationDate)
-			.modificationDate(modificationDate)
-			.locale(locale)
-			.personalSpaceEnabled(canUpload)
-			.accountType(accountType)
-			.build();
+		GuestProfileDto dto = new GuestProfileDto();
+		dto.setExpirationDate(expirationDate);
+		dto.setRestricted(restricted);
+		dto.setAuthor(authorDto);
+		dto.setUuid(uuid);
+		dto.setFirstName(firstName);
+		dto.setLastName(lastName);
+		dto.setMail(mail);
+		dto.setLocale(locale);
+		dto.setPersonalSpaceEnabled(canUpload);
+		dto.setAccountType(accountType);
+		dto.setCreationDate(creationDate);
+		dto.setModificationDate(modificationDate);
 
 		assertThat(dto.getExpirationDate()).isEqualTo(expirationDate);
 		assertThat(dto.isRestricted()).isEqualTo(restricted);

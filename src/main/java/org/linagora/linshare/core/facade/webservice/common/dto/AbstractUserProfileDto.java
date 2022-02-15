@@ -37,96 +37,132 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.MoreObjects;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
-@JsonDeserialize(builder = AbstractUserProfileDtoBuilder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(
 	name = "UserProfile",
-	description = "User profile"
+	description = "A UserProfile",
+	discriminatorProperty = "accountType",
+	discriminatorMapping = {
+		@DiscriminatorMapping(value = "INTERNAL", schema = UserProfileDto.class),
+		@DiscriminatorMapping(value = "GUEST", schema = GuestProfileDto.class)
+	}
 )
-public abstract class AbstractUserProfileDto {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "accountType", visible = true)
+@JsonSubTypes({
+	@JsonSubTypes.Type(value = UserProfileDto.class, name="INTERNAL"),
+	@JsonSubTypes.Type(value = GuestProfileDto.class, name="GUEST")
+})
+public abstract class AbstractUserProfileDto<T extends AbstractUserProfileDto> {
 
 	@Schema(description = "User's uuid", required = true)
-	protected final String uuid;
+	protected String uuid;
 
 	@Schema(description = "User's first name", required = true)
-	protected final String firstName;
+	protected String firstName;
 
 	@Schema(description = "User's last name", required = true)
-	protected final String lastName;
+	protected String lastName;
 
 	@Schema(description = "User's mail", required = true)
-	protected final String mail;
+	protected String mail;
 
 	@Schema(description = "User's creation date")
-	protected final Date creationDate;
+	protected Date creationDate;
 
 	@Schema(description = "User's modification date")
-	protected final Date modificationDate;
+	protected Date modificationDate;
 
 	@Schema(description = "User's language", required = true)
-	protected final UserLanguage locale;
+	protected UserLanguage locale;
 
 	@Schema(description = "User personal space is enable", required = true)
-	protected final boolean personalSpaceEnabled;
+	protected Boolean personalSpaceEnabled;
 
 	@Schema(description = "User's type", required = true)
-	protected final AccountType accountType;
-
-	protected AbstractUserProfileDto(String uuid, String firstName, String lastName, String mail, Date creationDate, Date modificationDate, UserLanguage locale, boolean personalSpaceEnabled, AccountType accountType) {
-		this.uuid = uuid;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.mail = mail;
-		this.creationDate = creationDate;
-		this.modificationDate = modificationDate;
-		this.locale = locale;
-		this.personalSpaceEnabled = personalSpaceEnabled;
-		this.accountType = accountType;
-	}
+	protected AccountType accountType;
 
 	public String getUuid() {
 		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getFirstName() {
 		return firstName;
 	}
 
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
 	public String getLastName() {
 		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getMail() {
 		return mail;
 	}
 
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
 	public Date getCreationDate() {
 		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	public Date getModificationDate() {
 		return modificationDate;
 	}
 
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
 	public UserLanguage getLocale() {
 		return locale;
+	}
+
+	public void setLocale(UserLanguage locale) {
+		this.locale = locale;
 	}
 
 	public boolean isPersonalSpaceEnabled() {
 		return personalSpaceEnabled;
 	}
 
+	public void setPersonalSpaceEnabled(boolean personalSpaceEnabled) {
+		this.personalSpaceEnabled = personalSpaceEnabled;
+	}
+
 	public AccountType getAccountType() {
 		return accountType;
+	}
+
+	public void setAccountType(AccountType accountType) {
+		this.accountType = accountType;
 	}
 
 	public MoreObjects.ToStringHelper abstractToString() {
@@ -139,5 +175,36 @@ public abstract class AbstractUserProfileDto {
 			.add("locale", locale)
 			.add("personalSpaceEnabled", personalSpaceEnabled)
 			.add("accountType", accountType);
+	}
+
+	public void validation() {
+		Validate.notBlank(uuid, "'uuid' must be set.");
+		Validate.notBlank(firstName, "'firstName' must be set.");
+		Validate.notBlank(lastName, "'lastName' must be set.");
+		Validate.notBlank(mail, "'mail' must be set.");
+		Validate.notNull(locale, "'locale' must be set.");
+		Validate.notNull(personalSpaceEnabled, "'personalSpaceEnabled' must be set.");
+		Validate.notNull(accountType, "'accountType' must be set.");
+	}
+
+	public abstract boolean equalsElseLocale(T dto);
+
+	public boolean commonEqualsElseLocale(AbstractUserProfileDto dto) {
+		if (!dto.getFirstName().equals(getFirstName())) {
+			return false;
+		}
+		if (!dto.getLastName().equals(getLastName())) {
+			return false;
+		}
+		if (!dto.getMail().equals(getMail())) {
+			return false;
+		}
+		if (dto.isPersonalSpaceEnabled() != isPersonalSpaceEnabled()) {
+			return false;
+		}
+		if (!dto.getAccountType().equals(getAccountType())) {
+			return false;
+		}
+		return true;
 	}
 }

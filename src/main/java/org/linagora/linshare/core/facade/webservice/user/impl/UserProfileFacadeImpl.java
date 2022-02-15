@@ -67,6 +67,16 @@ public class UserProfileFacadeImpl extends UserGenericFacadeImp implements UserP
 
 	@Override
 	public AbstractUserProfileDto update(AbstractUserProfileDto dto) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented");
+		dto.validation();
+		AbstractUserProfileDto storedDto = find();
+		if (!storedDto.getAccountType().equals(dto.getAccountType())) {
+			throw new BusinessException(BusinessErrorCode.USER_PROFILE_INCOMPATIBLE_ACCOUNT_TYPES, "Account type between stored and given user didn't match.");
+		}
+		if (!storedDto.equalsElseLocale(dto)) {
+			throw new BusinessException(BusinessErrorCode.USER_PROFILE_ONLY_LOCALE_CAN_BE_MODIFIED, "Only the locale of the user can be modified.");
+		}
+		User user = userService.findByLsUuid(dto.getUuid());
+		userService.updateUserLocale(user.getDomainId(), dto.getMail(), dto.getLocale().convert());
+		return dto;
 	}
 }

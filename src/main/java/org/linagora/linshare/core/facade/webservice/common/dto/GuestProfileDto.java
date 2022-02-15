@@ -40,109 +40,78 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.UserLanguage;
 import org.linagora.linshare.core.domain.entities.User;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
-@JsonDeserialize(builder = GuestProfileDto.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "GuestProfile")
 @Schema(name = "GuestProfile", description = "Guest profile")
-public class GuestProfileDto extends AbstractUserProfileDto {
-
-	public static Builder.ExpirationDate builder() {
-		return expirationDate -> restricted -> author -> new Builder(expirationDate, restricted, author);
-	}
+public class GuestProfileDto extends AbstractUserProfileDto<GuestProfileDto> {
 
 	public static AbstractUserProfileDto from(User user, User author) {
-		return builder()
-			.expirationDate(user.getCreationDate())
-			.restricted(user.isRestricted())
-			.author(AuthorDto.from(author))
-			.uuid(user.getLsUuid())
-			.firstName(user.getFirstName())
-			.lastName(user.getLastName())
-			.mail(user.getMail())
-			.creationDate(user.getCreationDate())
-			.modificationDate(user.getModificationDate())
-			.locale(UserLanguage.from(user.getLocale()))
-			.personalSpaceEnabled(user.getCanUpload())
-			.accountType(AccountType.GUEST)
-			.build();
-	}
-
-	@JsonPOJOBuilder(withPrefix = "")
-	public static class Builder extends AbstractUserProfileDtoBuilder<GuestProfileDto> {
-		@FunctionalInterface
-		public interface ExpirationDate {
-			Restricted expirationDate(Date expirationDate);
-		}
-		@FunctionalInterface
-		public interface Restricted {
-			Author restricted(Boolean restricted);
-		}
-		@FunctionalInterface
-		public interface Author {
-			Builder author(AuthorDto author);
-		}
-
-		private Date expirationDate;
-		private Boolean restricted;
-		private AuthorDto author;
-
-		private Builder(Date expirationDate, Boolean restricted, AuthorDto author) {
-			this.expirationDate = expirationDate;
-			this.restricted = restricted;
-			this.author = author;
-		}
-
-		@Override
-		public void validation() {
-			super.validation();
-			Validate.notNull(expirationDate, "'expirationDate' must be set.");
-			Validate.notNull(restricted, "'restricted' must be set.");
-			Validate.notNull(author, "'author' must be set.");
-		}
-
-		@Override
-		public GuestProfileDto build() {
-			validation();
-			return new GuestProfileDto(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, personalSpaceEnabled, expirationDate, restricted, author, accountType);
-		}
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setUuid(user.getLsUuid());
+		guestProfileDto.setFirstName(user.getFirstName());
+		guestProfileDto.setLastName(user.getLastName());
+		guestProfileDto.setMail(user.getMail());
+		guestProfileDto.setCreationDate(user.getCreationDate());
+		guestProfileDto.setModificationDate(user.getModificationDate());
+		guestProfileDto.setLocale(UserLanguage.from(user.getLocale()));
+		guestProfileDto.setPersonalSpaceEnabled(user.getCanUpload());
+		guestProfileDto.setAccountType(user.getAccountType());
+		guestProfileDto.setExpirationDate(user.getCreationDate());
+		guestProfileDto.setRestricted(user.isRestricted());
+		guestProfileDto.setAuthor(AuthorDto.from(author));
+		guestProfileDto.validation();
+		return guestProfileDto;
 	}
 
 	@Schema(description = "User's expiration date")
-	private final Date expirationDate;
+	private Date expirationDate;
 
 	@Schema(description = "User is restricted", required = true)
-	private final boolean restricted;
+	private Boolean restricted;
 
 	@Schema(description = "User's author", required = true)
-	private final AuthorDto author;
+	private AuthorDto author;
 
-	private GuestProfileDto(String uuid, String firstName, String lastName, String mail, Date creationDate, Date modificationDate, UserLanguage locale, Boolean personalSpaceEnabled, Date expirationDate, Boolean restricted, AuthorDto author, AccountType accountType) {
-		super(uuid, firstName, lastName, mail, creationDate, modificationDate, locale, personalSpaceEnabled, accountType);
+	public GuestProfileDto() {
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
-		this.restricted = restricted;
-		this.author = author;
 	}
 
 	public boolean isRestricted() {
 		return restricted;
 	}
 
+	public void setRestricted(boolean restricted) {
+		this.restricted = restricted;
+	}
+
 	public AuthorDto getAuthor() {
 		return author;
 	}
 
-	public Date getExpirationDate() {
-		return expirationDate;
+	public void setAuthor(AuthorDto author) {
+		this.author = author;
+	}
+
+	@Override
+	public void validation() {
+		super.validation();
+		Validate.notNull(expirationDate, "'expirationDate' must be set.");
+		Validate.notNull(restricted, "'restricted' must be set.");
+		Validate.notNull(author, "'author' must be set.");
 	}
 
 	@Override
@@ -152,5 +121,16 @@ public class GuestProfileDto extends AbstractUserProfileDto {
 			.add("author", author)
 			.add("expirationDate", expirationDate)
 			.toString();
+	}
+
+	@Override
+	public boolean equalsElseLocale(GuestProfileDto dto) {
+		if (dto.isRestricted() != isRestricted()) {
+			return false;
+		}
+		if (!dto.getAuthor().getUuid().equals(getAuthor().getUuid())) {
+			return false;
+		}
+		return commonEqualsElseLocale(dto);
 	}
 }
