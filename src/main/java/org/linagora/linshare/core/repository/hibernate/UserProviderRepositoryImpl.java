@@ -41,6 +41,7 @@ import java.util.UUID;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.linagora.linshare.core.domain.entities.LdapPattern;
 import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -72,8 +73,12 @@ public class UserProviderRepositoryImpl extends AbstractRepositoryImpl<UserProvi
 
 	@Override
 	public UserProvider findByUuid(String uuid) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+		UserProvider provider = DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
 				"uuid", uuid)));
+		Object unproxiedEntity = ((SessionImplementor) getCurrentSession())
+				.getPersistenceContext()
+				.unproxy(provider);
+		return (UserProvider) unproxiedEntity;
 	}
 
 	@Override
