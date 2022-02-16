@@ -117,7 +117,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 	public Set<AbstractUserProviderDto> findAll(String domainUuid) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
-		UserProvider up = domain.getUserProvider();
+		UserProvider up = userProviderRepository.findByUuid(domain.getUserProvider().getUuid());
 		if (up != null) {
 			return ImmutableSet.of(toDto(domain, up));
 		}
