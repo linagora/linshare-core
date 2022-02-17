@@ -246,7 +246,11 @@ public class UserServiceImpl implements UserService {
 			throws BusinessException {
 		try {
 			// clear all thread memberships
-			UserAuditLogEntry log = new UserAuditLogEntry(actor, actor, LogAction.DELETE, AuditLogEntryType.USER, userToDelete);
+			UserAuditLogEntry log = new UserAuditLogEntry(actor, actor, LogAction.DELETE, AuditLogEntryType.USER,
+					userToDelete);
+			if (Objects.nonNull(userToDelete.getOwner())) {
+				log.addRelatedAccounts(userToDelete.getOwner().getLsUuid());
+			}
 			ssMemberService.deleteAllUserMemberships(actor, actor, userToDelete.getLsUuid());
 			userRepository.delete(userToDelete);
 			deleteAllJwtLongTime(actor, userToDelete);
