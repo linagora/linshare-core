@@ -12,7 +12,7 @@
 		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
-		<one-to-one name="domain" property-ref="userProvider"/>
+		<one-to-one name="domain" property-ref="userProvider" lazy="proxy"/>
 
 		<subclass name="org.linagora.linshare.core.domain.entities.LdapUserProvider" discriminator-value="LDAP_PROVIDER">
 			<property name="baseDn" column="base_dn" type="string" length="255" not-null="false" lazy="true" />

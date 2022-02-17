@@ -400,23 +400,22 @@ public class UserServiceImpl implements UserService {
 		List<User> result = new ArrayList<User>();
 		logger.debug("adding guests to the return list");
 
-		// TODO : FIXME : OPTIMISATION NEEDED : This method should be refactored
-		// to search guests domain by domain
-		List<Guest> list = guestRepository.searchGuestAnyWhere(mail, firstName,
-				lastName);
+		// Maybe we should try to filter by domains except when all domains are allowed.
+		List<Guest> list = guestRepository.searchGuestAnyWhere(mail, firstName, lastName);
 		logger.debug("Guest found : size : " + list.size());
 
-		List<AbstractDomain> allAuthorizedDomain = abstractDomainService
-				.getAllAuthorizedDomains(actor.getDomain().getUuid());
-		List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
-
-		for (AbstractDomain d : allAuthorizedDomain) {
-			allAuthorizedDomainIdentifier.add(d.getUuid());
-		}
-
-		for (Guest guest : list) {
-			if (allAuthorizedDomainIdentifier.contains(guest.getDomainId())) {
-				result.add(guest);
+		// Quick optimization: if list is empty we do not need to retrieve allowed domains and filter the result.
+		if (!list.isEmpty()) {
+			List<AbstractDomain> allAuthorizedDomain = abstractDomainService.getAllAuthorizedDomains(actor.getDomain().getUuid());
+			List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
+			// FIXME: this is very urgent for SAAS.
+			for (AbstractDomain d : allAuthorizedDomain) {
+				allAuthorizedDomainIdentifier.add(d.getUuid());
+			}
+			for (Guest guest : list) {
+				if (allAuthorizedDomainIdentifier.contains(guest.getDomainId())) {
+					result.add(guest);
+				}
 			}
 		}
 
@@ -443,22 +442,22 @@ public class UserServiceImpl implements UserService {
 		List<User> result = new ArrayList<User>();
 		logger.debug("adding guests to the return list");
 
-		// TODO : FIXME : OPTIMISATION NEEDED : This method should be refactored
-		// to search guests domain by domain
+		// Maybe we should try to filter by domains except when all domains are allowed.
 		List<Guest> list = guestRepository.searchGuestAnyWhere(pattern);
 		logger.debug("Guest found : size : " + list.size());
 
-		List<AbstractDomain> allAuthorizedDomain = abstractDomainService
-				.getAllAuthorizedDomains(actor.getDomain().getUuid());
-		List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
-
-		for (AbstractDomain d : allAuthorizedDomain) {
-			allAuthorizedDomainIdentifier.add(d.getUuid());
-		}
-
-		for (Guest guest : list) {
-			if (allAuthorizedDomainIdentifier.contains(guest.getDomainId())) {
-				result.add(guest);
+		// Quick optimization: if list is empty we do not need to retrieve allowed domains and filter the result.
+		if (!list.isEmpty()) {
+			List<AbstractDomain> allAuthorizedDomain = abstractDomainService.getAllAuthorizedDomains(actor.getDomain().getUuid());
+			List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
+			// FIXME: this is very urgent for SAAS.
+			for (AbstractDomain d : allAuthorizedDomain) {
+				allAuthorizedDomainIdentifier.add(d.getUuid());
+			}
+			for (Guest guest : list) {
+				if (allAuthorizedDomainIdentifier.contains(guest.getDomainId())) {
+					result.add(guest);
+				}
 			}
 		}
 
@@ -475,20 +474,20 @@ public class UserServiceImpl implements UserService {
 		List<Guest> list = guestRepository.searchGuestAnyWhere(firstName, lastName);
 		logger.debug("Guest found : size : " + list.size());
 
-		List<AbstractDomain> allAuthorizedDomain = abstractDomainService
-				.getAllAuthorizedDomains(actor.getDomain().getUuid());
-		List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
-
-		for (AbstractDomain d : allAuthorizedDomain) {
-			allAuthorizedDomainIdentifier.add(d.getUuid());
-		}
-
-		for (Guest guest : list) {
-			if (allAuthorizedDomainIdentifier.contains(guest.getDomainId())) {
-				result.add(guest);
+		// Quick optimization: if list is empty we do not need to retrieve allowed domains and filter the result.
+		if (!list.isEmpty()) {
+			List<AbstractDomain> allAuthorizedDomain = abstractDomainService.getAllAuthorizedDomains(actor.getDomain().getUuid());
+			List<String> allAuthorizedDomainIdentifier = new ArrayList<String>();
+			// FIXME: this is very urgent for SAAS.
+			for (AbstractDomain d : allAuthorizedDomain) {
+				allAuthorizedDomainIdentifier.add(d.getUuid());
+			}
+			for (Guest guest : list) {
+				if (allAuthorizedDomainIdentifier.contains(guest.getDomainId())) {
+					result.add(guest);
+				}
 			}
 		}
-
 		logger.debug("result guest list : size : " + result.size());
 		return result;
 	}

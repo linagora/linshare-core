@@ -505,8 +505,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 			AbstractDomain domain, String pattern) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 
-		List<AbstractDomain> allAuthorizedDomain = domainPolicyService
-				.getAllAuthorizedDomain(domain);
+		List<AbstractDomain> allAuthorizedDomain = domainPolicyService.getAllAuthorizedDomain(domain);
 		for (AbstractDomain d : allAuthorizedDomain) {
 
 			// if the current domain is linked to a UserProvider, we perform a
@@ -630,8 +629,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 			String mail, String firstName, String lastName)
 			throws BusinessException {
 		List<User> users = new ArrayList<User>();
-		List<AbstractDomain> allAuthorizedDomain = domainPolicyService
-				.getAllAuthorizedDomain(domain);
+		List<AbstractDomain> allAuthorizedDomain = domainPolicyService.getAllAuthorizedDomain(domain);
 		for (AbstractDomain d : allAuthorizedDomain) {
 			if (d.getUserProvider() != null) {
 				List<User> ldapUserList = new ArrayList<User>();
