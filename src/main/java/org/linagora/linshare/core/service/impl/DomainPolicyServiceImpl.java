@@ -339,6 +339,21 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 				break;
 			}
 		}
+		// FIXME very quick and ugly workaround for performances (SAAS context).
+		if (rules.size() == 3) {
+			DomainAccessRule firstRule = rules.get(0);
+			DomainAccessRule secondRule = rules.get(1);
+			DomainAccessRule lastRule = rules.get(2);
+			if (firstRule.getDomainAccessRuleType().equals(DomainAccessRuleType.ALLOW)
+					&& secondRule.getDomainAccessRuleType().equals(DomainAccessRuleType.ALLOW)
+					&& lastRule.getDomainAccessRuleType().equals(DomainAccessRuleType.DENY_ALL)
+					) {
+				return Lists.newArrayList(
+						((AllowDomain)firstRule).getDomain(),
+						((AllowDomain)secondRule).getDomain()
+						);
+			}
+		}
 		List<AbstractDomain> result = Lists.newArrayList();
 		for (AbstractDomain d : getAllAuthorizedDomain(domain, rules)) {
 			if (!result.contains(d)) {
