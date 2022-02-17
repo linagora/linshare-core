@@ -325,6 +325,8 @@
 		<constructor-arg ref="mongoTemplate" />
 		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="timeService" />
+		<constructor-arg ref="workGroupNodeBusinessService"/>
 	</bean>
 
 	<bean id="workGroupNodeService" class="org.linagora.linshare.core.service.impl.WorkGroupNodeServiceImpl">
@@ -355,6 +357,8 @@
 		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService"/>
+		<constructor-arg ref="timeService" />
+		<constructor-arg ref="workGroupNodeBusinessService"/>
 	</bean>
 
 	<bean id="workGroupDocumentRevisionService" class="org.linagora.linshare.core.service.impl.WorkGroupDocumentRevisionServiceImpl">
@@ -373,6 +377,8 @@
 		<constructor-arg ref="quotaService"/>
 		<constructor-arg ref="documentEntryRevisionBusinessService"/>
 		<constructor-arg ref="sharedSpaceNodeMongoRepository"/>
+		<constructor-arg ref="timeService" />
+		<constructor-arg ref="workGroupNodeBusinessService"/>
 	</bean>
 
 	<bean id="upgradeTaskService" class="org.linagora.linshare.core.service.impl.UpgradeTaskServiceImpl">

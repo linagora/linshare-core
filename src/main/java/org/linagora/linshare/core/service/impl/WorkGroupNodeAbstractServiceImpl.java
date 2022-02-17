@@ -44,6 +44,7 @@ import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -53,6 +54,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.WorkGroupNodeAbstractService;
 import org.linagora.linshare.core.utils.UniqueName;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
@@ -87,6 +89,10 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 
 	protected final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
+	protected final TimeService timeService;
+
+	protected final WorkGroupNodeBusinessService workGroupNodeBusinessService;
+
 	public WorkGroupNodeAbstractServiceImpl(
 			WorkGroupNodeMongoRepository repository,
 			MongoTemplate mongoTemplate,
@@ -94,7 +100,9 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 			ThreadMemberRepository threadMemberRepository,
 			LogEntryService logEntryService,
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
-			MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
+			MimeTypeMagicNumberDao mimeTypeMagicNumberDao,
+			TimeService timeService,
+			WorkGroupNodeBusinessService workGroupNodeBusinessService) {
 		super();
 		this.repository = repository;
 		this.mongoTemplate = mongoTemplate;
@@ -103,6 +111,8 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 		this.threadMemberRepository = threadMemberRepository;
 		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
 		this.mimeTypeIdentifier = mimeTypeMagicNumberDao;
+		this.timeService = timeService;
+		this.workGroupNodeBusinessService = workGroupNodeBusinessService;
 	}
 
 	protected abstract BusinessErrorCode getBusinessExceptionAlreadyExists();
@@ -219,5 +229,4 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 			return document.getName();
 		}
 	}
-
 }

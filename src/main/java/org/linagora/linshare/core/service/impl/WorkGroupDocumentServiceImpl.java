@@ -42,6 +42,7 @@ import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -64,6 +65,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.QuotaService;
+import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
@@ -113,8 +115,10 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			MongoTemplate mongoTemplate,
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService,
-			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
-		super(workGroupNodeMongoRepository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService, mimeTypeIdentifier);
+			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
+			TimeService timeService,
+			WorkGroupNodeBusinessService workGroupNodeBusinessService) {
+		super(workGroupNodeMongoRepository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService, mimeTypeIdentifier, timeService, workGroupNodeBusinessService);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
@@ -152,6 +156,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		WorkGroupDocument document = new WorkGroupDocument(actor, fileName, size, mimeType, workGroup, nodeParent);
 		document.setPathFromParent(nodeParent);
 		document = repository.insert(document);
+		workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(document, document.getModificationDate());
 		return document;
 	}
 
@@ -214,6 +219,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException {
 		repository.delete(workGroupNode);
+		workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(workGroupNode, timeService.dateNow());
 		return workGroupNode;
 	}
 

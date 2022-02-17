@@ -58,5 +58,4 @@ public interface WorkGroupNodeAbstractService {
 	String computeFileName(WorkGroupDocument document, WorkGroupDocumentRevision revision, boolean isDocument);
 
 	void addMembersToLog(String workGroupUuid, AuditLogEntryUser log);
-
 }

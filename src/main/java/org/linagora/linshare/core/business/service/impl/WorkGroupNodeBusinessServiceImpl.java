@@ -43,8 +43,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -63,6 +65,8 @@ import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.light.AuditDownloadLightEntity;
@@ -80,6 +84,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -392,4 +397,35 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		zos.closeEntry();
 	}
 
+	@Override
+	public void updateRelatedWorkGroupNodeResources(WorkGroupNode node, Date modificationDate) {
+		// Updating Parents of workGroupNode
+		if (Objects.nonNull(node.getPath())) {
+			List<String> parents = Stream.of(node.getPath().split(",")).collect(Collectors.toList());
+			Query query = new Query();
+			query.addCriteria(Criteria.where("uuid").in(parents));
+			Update update = new Update();
+			update.set("modificationDate", modificationDate);
+			mongoTemplate.updateMulti(query, update, WorkGroupNode.class);
+		}
+		// Updating ShareSpaceNode collection
+		Query query = new Query();
+		query.addCriteria(Criteria.where("uuid").is(node.getWorkGroup()));
+		SharedSpaceNode workgroup = mongoTemplate.findOne(query, SharedSpaceNode.class);
+		List<String> nodeUuids = Lists.newArrayList(workgroup.getUuid());
+		if (Objects.nonNull(workgroup.getParentUuid())) {
+			nodeUuids.add(workgroup.getParentUuid());
+		}
+		Query query2 = new Query();
+		query2.addCriteria(Criteria.where("uuid").in(nodeUuids));
+		Update update = new Update();
+		update.set("modificationDate", modificationDate);
+		mongoTemplate.updateMulti(query2, update, SharedSpaceNode.class);
+		// Updating nested workGroup Nodes in sharedSpaceMember collection
+		Query query3 = new Query();
+		query3.addCriteria(Criteria.where("node.uuid").in(nodeUuids));
+		Update update2 = new Update();
+		update2.set("node.modificationDate", modificationDate);
+		mongoTemplate.updateMulti(query3, update2, SharedSpaceMember.class);
+	}
 }
