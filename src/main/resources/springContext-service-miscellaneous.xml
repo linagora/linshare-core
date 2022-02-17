@@ -48,6 +48,7 @@
 		class="org.linagora.linshare.core.service.impl.DomainPolicyServiceImpl">
 		<constructor-arg ref="domainPolicyBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
 
 	<bean id="welcomeMessagesService"

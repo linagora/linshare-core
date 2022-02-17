@@ -51,9 +51,12 @@ import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.beust.jcommander.internal.Lists;
 
 public class DomainPolicyServiceImpl implements DomainPolicyService {
 
@@ -61,13 +64,16 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 			.getLogger(DomainPolicyServiceImpl.class);
 	private final DomainPolicyBusinessService domainPolicyBusinessService;
 	private final DomainBusinessService domainBusinessService;
+	private final AbstractDomainRepository domainRepository;
 
 	public DomainPolicyServiceImpl(
 			final DomainPolicyBusinessService domainPolicyBusinessService,
-			final DomainBusinessService domainBusinessService) {
+			final DomainBusinessService domainBusinessService,
+			AbstractDomainRepository domainRepository) {
 		super();
 		this.domainPolicyBusinessService = domainPolicyBusinessService;
 		this.domainBusinessService = domainBusinessService;
+		this.domainRepository = domainRepository;
 	}
 
 	@Override
@@ -320,10 +326,20 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	@Override
 	public List<AbstractDomain> getAllAuthorizedDomain(AbstractDomain domain) {
 		logger.debug("Begin getAllAuthorizedDomain : " + domain);
-		List<AbstractDomain> result = new ArrayList<AbstractDomain>();
-		List<DomainAccessRule> rules = domain.getPolicy()
-				.getDomainAccessPolicy().getRules();
-
+		List<DomainAccessRule> rules = domain.getPolicy().getDomainAccessPolicy().getRules();
+		// FIXME very quick workaround for performances.
+		if (rules.size() == 1) {
+			DomainAccessRuleType rule = rules.get(0).getDomainAccessRuleType();
+			switch (rule) {
+			case ALLOW_ALL:
+				return domainRepository.findAll();
+			case DENY_ALL:
+				return Lists.newArrayList();
+			default:
+				break;
+			}
+		}
+		List<AbstractDomain> result = Lists.newArrayList();
 		for (AbstractDomain d : getAllAuthorizedDomain(domain, rules)) {
 			if (!result.contains(d)) {
 				result.add(d);
