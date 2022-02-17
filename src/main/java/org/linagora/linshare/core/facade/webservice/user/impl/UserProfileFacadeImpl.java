@@ -36,11 +36,15 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AbstractUserProfileDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestProfileDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserProfileDto;
 import org.linagora.linshare.core.facade.webservice.user.UserProfileFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -78,5 +82,17 @@ public class UserProfileFacadeImpl extends UserGenericFacadeImp implements UserP
 		User user = userService.findByLsUuid(dto.getUuid());
 		userService.updateUserLocale(user.getDomainId(), dto.getMail(), dto.getLocale().convert());
 		return dto;
+	}
+
+	@Override
+	public List<RestrictedContactDto> restrictedContacts() throws BusinessException {
+		User authUser = checkAuthentication();
+		if (!authUser.isGuest()) {
+			throw new BusinessException(BusinessErrorCode.USER_PROFILE_INCOMPATIBLE_ACCOUNT_TYPES, "Only Guest have restricted contacts.");
+		}
+		return userService.findAllRestrictedContacts(authUser)
+			.stream()
+			.map(RestrictedContactDto::from)
+			.collect(Collectors.toUnmodifiableList());
 	}
 }

@@ -1074,4 +1074,13 @@ public class UserServiceImpl implements UserService {
 		accountToUnlock.setAuthenticationFailureLastDate(null);
 		return userRepository.update(accountToUnlock);
 	}
+
+	@Override
+	public List<AllowedContact> findAllRestrictedContacts(User user) {
+		Validate.notNull(user);
+		String mail = null;
+		String firstName = null;
+		String lastName = null;
+		return allowedContactRepository.findAllRestrictedContacts(user, mail, firstName, lastName);
+	}
 }

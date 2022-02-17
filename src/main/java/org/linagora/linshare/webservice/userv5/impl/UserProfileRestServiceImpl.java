@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.webservice.userv5.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -47,18 +49,20 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AbstractUserProfileDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestProfileDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserProfileDto;
 import org.linagora.linshare.core.facade.webservice.user.UserProfileFacade;
 import org.linagora.linshare.webservice.userv5.UserProfileRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-@Path("/me/profile")
+@Path("/me")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UserProfileRestServiceImpl implements UserProfileRestService {
@@ -70,7 +74,7 @@ public class UserProfileRestServiceImpl implements UserProfileRestService {
 		this.userProfileFacade = userProfileFacade;
 	}
 
-	@Path("/")
+	@Path("/profile")
 	@GET
 	@Operation(summary = "Find the user profile.", responses = {
 		@ApiResponse(
@@ -96,7 +100,7 @@ public class UserProfileRestServiceImpl implements UserProfileRestService {
 		return userProfileFacade.find();
 	}
 
-	@Path("/{uuid}")
+	@Path("/profile/{uuid}")
 	@PUT
 	@Operation(summary = "Update the user profile.", responses = {
 		@ApiResponse(
@@ -124,6 +128,32 @@ public class UserProfileRestServiceImpl implements UserProfileRestService {
 		@Parameter(description = "The profile to update", required = true)
 			AbstractUserProfileDto dto) throws BusinessException {
 		return userProfileFacade.update(dto);
+	}
+
+
+	@Path("/restricted_contacts")
+	@GET
+	@Operation(summary = "Find my restricted contacts (Guest only).", responses = {
+		@ApiResponse(
+			responseCode = "200",
+			content = @Content(
+				array = @ArraySchema(
+					schema = @Schema(implementation = RestrictedContactDto.class)
+				)
+			)
+		),
+		@ApiResponse(
+			responseCode = "40X",
+			content = @Content(
+				schema = @Schema(
+					implementation = ErrorDto.class
+				)
+			)
+		)
+	})
+	@Override
+	public List<RestrictedContactDto> restrictedContacts() throws BusinessException {
+		return userProfileFacade.restrictedContacts();
 	}
 
 }

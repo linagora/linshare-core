@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -209,4 +210,6 @@ public interface UserService {
 	 * @throws BusinessException
 	 */
 	User unlockUser(Account authUser, User accountToUnlock) throws BusinessException;
+
+	List<AllowedContact> findAllRestrictedContacts(User user);
 }

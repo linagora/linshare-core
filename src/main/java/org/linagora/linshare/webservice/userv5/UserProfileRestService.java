@@ -36,12 +36,17 @@
 
 package org.linagora.linshare.webservice.userv5;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AbstractUserProfileDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.RestrictedContactDto;
 
 public interface UserProfileRestService {
 
 	AbstractUserProfileDto find() throws BusinessException;
 
 	AbstractUserProfileDto update(String uuid, AbstractUserProfileDto dto) throws BusinessException;
+
+	List<RestrictedContactDto> restrictedContacts() throws BusinessException;
 }
