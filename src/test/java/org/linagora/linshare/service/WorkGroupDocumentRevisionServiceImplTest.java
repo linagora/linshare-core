@@ -65,6 +65,7 @@ import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
+import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
@@ -109,7 +110,10 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	
 	@Autowired
 	protected WorkGroupDocumentService workGroupDocumentService;
-	
+
+	@Autowired
+	protected WorkGroupFolderService workGroupFolderService;
+
 	@Autowired
 	protected WorkGroupDocumentRevisionService workGroupDocumentRevisionService;
 
@@ -161,6 +165,62 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		assertEquals(rootFolder.getUuid(), document.getParent());
 		assertEquals(document.getUuid(), revision.getParent());
 		assertEquals(document.getName(), revision.getName());
+	}
+
+	@Test
+	public void testUpdateModificationDateOnDocumentCreation() throws IOException {
+		InputStream stream1 = getStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
+		assertEquals(tempFile1.getName(), document.getName());
+		assertEquals(folder.getUuid(), document.getParent());
+		folder = workGroupNodeService.find(john, john, workGroup, document.getParent(), false);
+		SharedSpaceNode ssnode = sharedSpaceNodeService.find(john, john, document.getWorkGroup());
+		rootFolder = workGroupNodeService.find(john, john, workGroup, folder.getParent(), false);
+		assertEquals(document.getModificationDate(), ssnode.getModificationDate());
+		assertEquals(document.getModificationDate(), folder.getModificationDate());
+		assertEquals(document.getModificationDate(), rootFolder.getModificationDate());
+	}
+
+	@Test
+	public void testUpdateModificationDateOnDocumentDeletion() throws IOException {
+		InputStream stream1 = getStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
+		assertEquals(tempFile1.getName(), document.getName());
+		assertEquals(folder.getUuid(), document.getParent());
+		document = workGroupDocumentService.delete(john, john, workGroup, document);
+		folder = workGroupNodeService.find(john, john, workGroup, document.getParent(), false);
+		SharedSpaceNode ssnode = sharedSpaceNodeService.find(john, john, document.getWorkGroup());
+		rootFolder = workGroupNodeService.find(john, john, workGroup, folder.getParent(), false);
+		assertEquals(folder.getModificationDate(), ssnode.getModificationDate());
+		assertEquals(rootFolder.getModificationDate(), folder.getModificationDate());
+	}
+
+	@Test
+	public void testUpdateModificationDateOnRevisionCreation() throws IOException {
+		InputStream stream1 = getStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+
+		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
+		WorkGroupNode revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
+
+		assertEquals(tempFile1.getName(), document.getName());
+		assertEquals(folder.getUuid(), document.getParent());
+		assertEquals(document.getUuid(), revision.getParent());
+		assertEquals(document.getName(), revision.getName());
+
+		folder = workGroupNodeService.find(john, john, workGroup, document.getParent(), false);
+		SharedSpaceNode ssnode = sharedSpaceNodeService.find(john, john, document.getWorkGroup());
+		rootFolder = workGroupNodeService.find(john, john, workGroup, folder.getParent(), false);
+		document = workGroupNodeService.find(john, john, workGroup, document.getUuid(), false);
+		assertEquals(revision.getModificationDate(), ssnode.getModificationDate());
+		assertEquals(revision.getModificationDate(), folder.getModificationDate());
+		assertEquals(revision.getModificationDate(), rootFolder.getModificationDate());
+		assertEquals(revision.getModificationDate(), document.getModificationDate());
 	}
 
 	@Test

@@ -41,16 +41,18 @@ import java.util.UUID;
 
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
@@ -67,8 +69,10 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			LogEntryService logEntryService,
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
-			MimeTypeMagicNumberDao mimeTypeIdentifier) {
-		super(repository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService, mimeTypeIdentifier);
+			MimeTypeMagicNumberDao mimeTypeIdentifier,
+			TimeService timeService,
+			WorkGroupNodeBusinessService workGroupNodeBusinessService) {
+		super(repository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService, mimeTypeIdentifier, timeService, workGroupNodeBusinessService);
 	}
 
 	@Override
@@ -110,6 +114,7 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 				return workGroupNode;
 			}
 			workGroupNode = repository.insert(workGroupNode);
+			workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(workGroupNode, workGroupNode.getModificationDate());
 		} catch (org.springframework.dao.DuplicateKeyException e) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS,
 					"Can not create a new folder, it already exists.");
@@ -124,7 +129,7 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 	@Override
 	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException {
 		repository.delete(workGroupNode);
+		workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(workGroupNode, timeService.dateNow());
 		return workGroupNode;
 	}
-
 }

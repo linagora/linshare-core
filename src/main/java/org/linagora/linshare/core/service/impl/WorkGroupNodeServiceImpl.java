@@ -429,6 +429,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			}
 			repository.saveAll(allSubNodes);
 		}
+		workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(node, node.getModificationDate());
 		return node;
 	}
 

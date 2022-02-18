@@ -185,6 +185,40 @@ public class WorkGroupNodeServiceImplTest {
 		});
 	}
 
+	/**
+	 * On a workgroup, test a sub-folder creation and update of modification date for parent folder and workGroup.
+	 */
+	@Test
+	public void testUpdateModificationDateOnFolderCreation() {
+		WorkGroupNode wgn = new WorkGroupNode(new AccountMto(john), "MY_FOLDER", rootFolder.getUuid(),
+				workGroup.getLsUuid());
+		wgn.setNodeType(WorkGroupNodeType.FOLDER);
+		WorkGroupNode embeddedFolder = workGroupFolderService.create(john, john, workGroup, wgn, folder, false, false);
+		folder = workGroupNodeService.find(john, john, workGroup, embeddedFolder.getParent(), false);
+		SharedSpaceNode ssnode = sharedSpaceNodeService.find(john, john, embeddedFolder.getWorkGroup());
+		rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		Assertions.assertEquals(embeddedFolder.getModificationDate(), folder.getModificationDate());
+		Assertions.assertEquals(embeddedFolder.getModificationDate(), ssnode.getModificationDate());
+		Assertions.assertEquals(embeddedFolder.getModificationDate(), rootFolder.getModificationDate());
+	}
+
+	/**
+	 * On a workgroup, test a sub-folder deletion and update of modification date for parent folder and workGroup.
+	 */
+	@Test
+	public void testUpdateModificationDateOnFolderDeletion() {
+		WorkGroupNode wgn = new WorkGroupNode(new AccountMto(john), "MY_FOLDER", rootFolder.getUuid(),
+				workGroup.getLsUuid());
+		wgn.setNodeType(WorkGroupNodeType.FOLDER);
+		WorkGroupNode embeddedFolder = workGroupFolderService.create(john, john, workGroup, wgn, folder, false, false);
+		embeddedFolder = workGroupFolderService.delete(john, john, workGroup, embeddedFolder);
+		folder = workGroupNodeService.find(john, john, workGroup, embeddedFolder.getParent(), false);
+		SharedSpaceNode ssnode = sharedSpaceNodeService.find(john, john, embeddedFolder.getWorkGroup());
+		rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		Assertions.assertEquals(folder.getModificationDate(), ssnode.getModificationDate());
+		Assertions.assertEquals(folder.getModificationDate(), rootFolder.getModificationDate());
+	}
+
 	@Test
 	public void createFolderSpecialCharactersTest() {
 		WorkGroupNode groupNode = new WorkGroupNode(new AccountMto(john),
