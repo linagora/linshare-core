@@ -178,11 +178,13 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	public UserDto delete(String actorUuid, UserDto userDto, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
 		Account actor = getActor(authUser, actorUuid);
-		if (!Strings.isNullOrEmpty(uuid)) {
-			userDto.setUuid(uuid);
+		if (Strings.isNullOrEmpty(uuid)) {
+			Validate.notNull(userDto, "missing user to delete");
+			Validate.notEmpty(userDto.getUuid(), "Missing user's uuid");
+			uuid = userDto.getUuid();
 		}
-		Validate.notEmpty(userDto.getUuid(), "user uuid must be set");
-		User user = userService2.delete(authUser, actor, userDto.getUuid());
+		Validate.notEmpty(uuid, "user uuid must be set");
+		User user = userService2.delete(authUser, actor, uuid);
 		return new UserDto(user);
 	}
 

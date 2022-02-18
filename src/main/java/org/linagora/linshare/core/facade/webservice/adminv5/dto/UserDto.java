@@ -35,8 +35,6 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -46,17 +44,17 @@ import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@XmlRootElement(name = "User")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "UserV5", description = "A linshare user")
 public class UserDto {
 
-	@XmlRootElement(name = "Author")
 	@Schema(name = "UserAuthor", description = "The author of a guest user.")
-	class Author {
+	public class Author {
 
 		@Schema(description = "Uuid")
 		private String uuid;
