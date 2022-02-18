@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.io.File;
@@ -203,6 +204,40 @@ public class WorkGroupNodeServiceImplTest {
 			Assertions.assertNotNull(embeddedFolder, "Folder is null");
 			Assertions.assertEquals(embeddedFolder.getUuid(), folder.getUuid(), "expected node is different.");
 		});
+	}
+
+	/**
+	 * On a workgroup, test a sub-folder creation and update of modification date for parent folder and workGroup.
+	 */
+	@Test
+	public void testUpdateModificationDateOnFolderCreation() {
+		WorkGroupNode wgn = new WorkGroupNode(new AccountMto(john), "MY_FOLDER", rootFolder.getUuid(),
+				workGroup.getLsUuid());
+		wgn.setNodeType(WorkGroupNodeType.FOLDER);
+		WorkGroupNode embeddedFolder = workGroupFolderService.create(john, john, workGroup, wgn, folder, false, false);
+		folder = workGroupNodeService.find(john, john, workGroup, embeddedFolder.getParent(), false);
+		SharedSpaceNode ssnode = sharedSpaceNodeService.find(john, john, embeddedFolder.getWorkGroup());
+		rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		assertThat(embeddedFolder.getModificationDate()).isEqualTo(folder.getModificationDate());
+		assertThat(embeddedFolder.getModificationDate()).isEqualTo(ssnode.getModificationDate());
+		assertThat(embeddedFolder.getModificationDate()).isEqualTo(rootFolder.getModificationDate());
+	}
+
+	/**
+	 * On a workgroup, test a sub-folder deletion and update of modification date for parent folder and workGroup.
+	 */
+	@Test
+	public void testUpdateModificationDateOnFolderDeletion() {
+		WorkGroupNode wgn = new WorkGroupNode(new AccountMto(john), "MY_FOLDER", rootFolder.getUuid(),
+				workGroup.getLsUuid());
+		wgn.setNodeType(WorkGroupNodeType.FOLDER);
+		WorkGroupNode embeddedFolder = workGroupFolderService.create(john, john, workGroup, wgn, folder, false, false);
+		embeddedFolder = workGroupFolderService.delete(john, john, workGroup, embeddedFolder);
+		folder = workGroupNodeService.find(john, john, workGroup, embeddedFolder.getParent(), false);
+		SharedSpaceNode ssnode = sharedSpaceNodeService.find(john, john, embeddedFolder.getWorkGroup());
+		rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		assertThat(folder.getModificationDate()).isEqualTo(ssnode.getModificationDate());
+		assertThat(folder.getModificationDate()).isEqualTo(rootFolder.getModificationDate());
 	}
 
 	@Test

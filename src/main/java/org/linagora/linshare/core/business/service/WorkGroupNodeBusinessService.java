@@ -75,4 +75,5 @@ public interface WorkGroupNodeBusinessService {
 			List<String> lastAuthors, Long minSize, Long maxSize, SortOrder sortOrder, SharedSpaceNodeField sortField,
 			List<DocumentKind> documentKinds);
 
+	void updateRelatedWorkGroupNodeResources(WorkGroupNode workGroupNode, Date dateNow);
 }

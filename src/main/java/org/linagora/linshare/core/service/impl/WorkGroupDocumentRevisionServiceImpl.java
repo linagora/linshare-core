@@ -45,6 +45,7 @@ import org.linagora.linshare.core.business.service.DocumentEntryRevisionBusiness
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -62,6 +63,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.QuotaService;
+import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
@@ -104,11 +106,13 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
 			DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService,
 			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
-			DocumentRepository documentRepository) {
+			DocumentRepository documentRepository,
+			TimeService timeService,
+			WorkGroupNodeBusinessService workGroupNodeBusinessService) {
 		super(documentEntryBusinessService, logEntryService, functionalityReadOnlyService, mimeTypeService,
 				virusScannerService, mimeTypeIdentifier, sanitizerInputHtmlBusinessService, workGroupNodeMongoRepository,
 				documentGarbageCollectorRepository, threadMemberRepository, mongoTemplate, operationHistoryBusinessService,
-				quotaService, sharedSpaceMemberBusinessService);
+				quotaService, sharedSpaceMemberBusinessService,timeService, workGroupNodeBusinessService);
 		this.documentEntryRevisionBusinessService = documentEntryRevisionBusinessService;
 		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
 		this.documentRepository = documentRepository;
@@ -160,6 +164,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 				logger.error("can not delete temp file : " + e.getMessage());
 			}
 		}
+		workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(documentRevision, documentRevision.getModificationDate());
 		return documentRevision;
 	}
 
@@ -225,6 +230,11 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		for (WorkGroupNode rev : revisions) {
 			deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) rev);
 		}
+		// Since all revisions have the same parent and same workGroup we can use just one revision to update related resources
+		WorkGroupNode firstRevision = revisions.stream()
+				.findFirst()
+				.orElseThrow(() -> new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND, "The first revision has not been found."));
+		workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(firstRevision, timeService.dateNow());
 		return revisions;
 	}
 
@@ -246,6 +256,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		WorkGroupDocumentRevision mostRecentRevision = (WorkGroupDocumentRevision) findMostRecent(workGroup,
 				revisionToDelete.getParent());
 		updateDocument(actor, owner, workGroup, mostRecentRevision);
+		workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(revisionToDelete, timeService.dateNow());
 		return revisionToDelete;
 	}
 
