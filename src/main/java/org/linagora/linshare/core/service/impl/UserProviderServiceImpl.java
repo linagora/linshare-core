@@ -320,19 +320,20 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	public User findUser(AbstractDomain domain, UserProvider up, String mail)
 			throws BusinessException {
 		if (up != null) {
+			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
 				User user = null;
 				try {
-					user = ldapQueryService.getUser(userProvider.getLdapConnection(),
-							userProvider.getBaseDn(), userProvider.getPattern(), mail);
+					user = ldapQueryService.getUser(ldapUserProvider.getLdapConnection(),
+							ldapUserProvider.getBaseDn(), ldapUserProvider.getPattern(), mail);
 					if (user != null) {
 						user.setDomain(domain);
 						user.setRole(domain.getDefaultRole());
 						user.setExternalMailLocale(user.getDomain().getExternalMailLocale());
 					}
 				} catch (NamingException | IOException | CommunicationException e) {
-					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
 				}
 				return user;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
@@ -342,7 +343,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					// This code is ugly, it is a quick workaround.
 					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())) {
 						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
-						OIDCUserProvider oidcUp = (OIDCUserProvider) up;
+						OIDCUserProvider oidcUp = (OIDCUserProvider) userProvider;
 						String domainDiscriminator = jwtAuthentication.get("domain_discriminator");
 						if (oidcUp.getDomainDiscriminator().equals(domainDiscriminator)) {
 							String email = jwtAuthentication.get("email");
@@ -375,9 +376,9 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					logger.debug("UserProviderType.OIDC provider does not supported discovering new user.");
 				}
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
-				return twakeUserProviderService.findUser(domain, (TwakeUserProvider) up, mail);
+				return twakeUserProviderService.findUser(domain, (TwakeUserProvider) userProvider, mail);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.findUser(domain, (TwakeGuestUserProvider) up, mail);
+				return twakeGuestUserProviderService.findUser(domain, (TwakeGuestUserProvider) userProvider, mail);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -389,15 +390,16 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	public List<User> searchUser(AbstractDomain domain, UserProvider up,
 			String mail, String firstName, String lastName) throws BusinessException {
 		if (up != null) {
+			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
 				List<User> users = new ArrayList<User>();
 				try {
 					users = ldapQueryService.searchUser(
-							userProvider.getLdapConnection(), userProvider.getBaseDn(),
-							userProvider.getPattern(), mail, firstName, lastName);
+							ldapUserProvider.getLdapConnection(), ldapUserProvider.getBaseDn(),
+							ldapUserProvider.getPattern(), mail, firstName, lastName);
 				} catch (NamingException  | IOException | CommunicationException e) {
-					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
 				}
 				return users;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
@@ -407,9 +409,9 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				List<User> users = container.getPageResponse().getContent();
 				return users;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
-				return twakeUserProviderService.searchUser(domain, (TwakeUserProvider) up, mail, firstName, lastName);
+				return twakeUserProviderService.searchUser(domain, (TwakeUserProvider) userProvider, mail, firstName, lastName);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.searchUser(domain, (TwakeGuestUserProvider) up, mail, firstName, lastName);
+				return twakeGuestUserProviderService.searchUser(domain, (TwakeGuestUserProvider) userProvider, mail, firstName, lastName);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -421,17 +423,18 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	public List<User> autoCompleteUser(AbstractDomain domain,
 			UserProvider up, String pattern) throws BusinessException {
 		if (up != null) {
+			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
 				List<User> users = new ArrayList<User>();
 				try {
 					users = ldapQueryService.completeUser(
-							userProvider.getLdapConnection(), userProvider.getBaseDn(),
-							userProvider.getPattern(), pattern);
+							ldapUserProvider.getLdapConnection(), ldapUserProvider.getBaseDn(),
+							ldapUserProvider.getPattern(), pattern);
 				} catch (NamingException  | IOException | CommunicationException e) {
 					logger.error(
 							"Error while searching for a user with ldap connection {}",
-							userProvider.getLdapConnection().getUuid());
+							ldapUserProvider.getLdapConnection().getUuid());
 					logger.error(e.getMessage());
 					logger.debug(e.toString());
 				}
@@ -444,9 +447,9 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				List<User> users = container.getPageResponse().getContent();
 				return users;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
-				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, pattern);
+				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) userProvider, pattern);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeGuestUserProvider) up, pattern);
+				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeGuestUserProvider) userProvider, pattern);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -458,17 +461,18 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	public List<User> autoCompleteUser(AbstractDomain domain,
 			UserProvider up, String firstName, String lastName) throws BusinessException {
 		if (up != null) {
+			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
 				List<User> users = new ArrayList<User>();
 				try {
 					users = ldapQueryService.completeUser(
-							userProvider.getLdapConnection(), userProvider.getBaseDn(),
-							userProvider.getPattern(), firstName, lastName);
+							ldapUserProvider.getLdapConnection(), ldapUserProvider.getBaseDn(),
+							ldapUserProvider.getPattern(), firstName, lastName);
 				} catch (NamingException | IOException | CommunicationException e) {
 					logger.error(
 							"Error while searching for a user with ldap connection {}",
-							userProvider.getLdapConnection().getUuid());
+							ldapUserProvider.getLdapConnection().getUuid());
 					logger.error(e.getMessage());
 					logger.debug(e.toString());
 				}
@@ -482,9 +486,9 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				List<User> users = container.getPageResponse().getContent();
 				return users;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
-				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) up, firstName, lastName);
+				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) userProvider, firstName, lastName);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeGuestUserProvider) up, firstName, lastName);
+				return twakeGuestUserProviderService.autoCompleteUser(domain, (TwakeGuestUserProvider) userProvider, firstName, lastName);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -496,15 +500,16 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	public Boolean isUserExist(AbstractDomain domain, UserProvider up, String mail)
 			throws BusinessException {
 		if (up != null) {
+			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
 				Boolean result = false;
 				try {
 					result = ldapQueryService.isUserExist(
-							userProvider.getLdapConnection(), userProvider.getBaseDn(),
-							userProvider.getPattern(), mail);
+							ldapUserProvider.getLdapConnection(), ldapUserProvider.getBaseDn(),
+							ldapUserProvider.getPattern(), mail);
 				} catch (NamingException | IOException | CommunicationException e) {
-					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
 				}
 				return result;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
@@ -512,9 +517,9 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				if (user != null)
 					return true;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
-				return twakeUserProviderService.isUserExist(domain, (TwakeUserProvider) up, mail);
+				return twakeUserProviderService.isUserExist(domain, (TwakeUserProvider) userProvider, mail);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.isUserExist(domain, (TwakeGuestUserProvider) up, mail);
+				return twakeGuestUserProviderService.isUserExist(domain, (TwakeGuestUserProvider) userProvider, mail);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
@@ -526,16 +531,17 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	public User auth(UserProvider up, String login,
 			String userPasswd) throws BusinessException {
 		if (up != null) {
+			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
 				User user = null;
 				try {
-					user = ldapQueryService.auth(userProvider.getLdapConnection(),
-							userProvider.getBaseDn(),
-							userProvider.getPattern(),
+					user = ldapQueryService.auth(ldapUserProvider.getLdapConnection(),
+							ldapUserProvider.getBaseDn(),
+							ldapUserProvider.getPattern(),
 							login, userPasswd);
 				} catch (NamingException | IOException | CommunicationException e) {
-					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
 				}
 				return user;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
@@ -555,15 +561,16 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	public User searchForAuth(AbstractDomain domain, UserProvider up, String login)
 			throws BusinessException {
 		if (up != null) {
+			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider userProvider = ldapUserProviderRepository.load(up);
+				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
 				User user = null;
 				try {
-					user = ldapQueryService.searchForAuth(userProvider.getLdapConnection(),
-							userProvider.getBaseDn(),
-							userProvider.getPattern(), login);
+					user = ldapQueryService.searchForAuth(ldapUserProvider.getLdapConnection(),
+							ldapUserProvider.getBaseDn(),
+							ldapUserProvider.getPattern(), login);
 				} catch (NamingException | IOException | CommunicationException e) {
-					logger.error("Error happen while connecting to ldap " + userProvider.getLdapConnection(), e);
+					logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
 				}
 				if (user != null) {
 					user.setDomain(domain);
@@ -577,7 +584,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					// This code is ugly workaround
 					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())){
 						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
-						OIDCUserProvider oidcUp = (OIDCUserProvider) up;
+						OIDCUserProvider oidcUp = (OIDCUserProvider) userProvider;
 						String domainDiscriminator = jwtAuthentication.get("domain_discriminator");
 						// if this user does not belong to this domain, we ignore him.
 						if (oidcUp.getDomainDiscriminator().equals(domainDiscriminator)) {
@@ -593,9 +600,9 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				}
 				logger.info("Using UserProviderType.OIDC provider outside authentication is not supported.");
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
-				return twakeUserProviderService.searchForAuth(domain, (TwakeUserProvider) up, login);
+				return twakeUserProviderService.searchForAuth(domain, (TwakeUserProvider) userProvider, login);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.searchForAuth(domain, (TwakeGuestUserProvider) up, login);
+				return twakeGuestUserProviderService.searchForAuth(domain, (TwakeGuestUserProvider) userProvider, login);
 			} else {
 				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 			}
