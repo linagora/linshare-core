@@ -471,3 +471,49 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 	VALUES (29, 'user_lastname', 'sn', false, true, true, 7, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 	VALUES (30, 'user_uid', 'uid', false, true, true, 7, false);
+
+-- default-openldap-filtered-by-memberOf.
+INSERT INTO ldap_pattern(
+    id,
+    uuid,
+    pattern_type,
+    label,
+    description,
+    auth_command,
+    search_user_command,
+    system,
+    auto_complete_command_on_first_and_last_name,
+    auto_complete_command_on_all_attributes,
+    search_page_size,
+    search_size_limit,
+    completion_page_size,
+    completion_size_limit,
+    creation_date,
+    modification_date)
+VALUES (
+    8,
+    'a8914c53-4ad0-4b30-ae91-c2a2de8f8cc4',
+    'USER_LDAP_PATTERN',
+    'default-openldap-filtered-by-memberOf',
+    'This is default openldap filtered by memberOf.',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(memberOf=cn=regular-users,ou=Groups,dc=linshare,dc=org)(mail=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(memberOf=cn=regular-users,ou=Groups,dc=linshare,dc=org)(mail="+mail+")(givenName="+first_name+")(sn="+last_name+"))");',
+    true,
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(memberOf=cn=regular-users,ou=Groups,dc=linshare,dc=org)(mail=*)(givenName=*)(sn=*)(|(&(sn=" + first_name + ")(givenName=" + last_name + "))(&(sn=" + last_name + ")(givenName=" + first_name + "))))");',
+    'ldap.search(domain, "(&(objectClass=inetOrgPerson)(memberOf=cn=regular-users,ou=Groups,dc=linshare,dc=org)(mail=*)(givenName=*)(sn=*)(|(mail=" + pattern + ")(sn=" + pattern + ")(givenName=" + pattern + ")))");',
+    100,
+    100,
+    10,
+    10,
+    now(),
+    now()
+);
+
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (31, 'user_mail', 'mail', false, true, true, 8, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (32, 'user_firstname', 'givenName', false, true, true, 8, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (33, 'user_lastname', 'sn', false, true, true, 8, true);
+INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+	VALUES (34, 'user_uid', 'uid', false, true, true, 8, false);
