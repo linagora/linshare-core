@@ -48,6 +48,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AbstractUserProfileDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.FavouriteRecipientDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestProfileDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserProfileDto;
@@ -130,7 +131,6 @@ public class UserProfileRestServiceImpl implements UserProfileRestService {
 		return userProfileFacade.update(dto);
 	}
 
-
 	@Path("/restricted_contacts")
 	@GET
 	@Operation(summary = "Find my restricted contacts (Guest only).", responses = {
@@ -156,4 +156,28 @@ public class UserProfileRestServiceImpl implements UserProfileRestService {
 		return userProfileFacade.restrictedContacts();
 	}
 
+	@Path("/favourite_recipients")
+	@GET
+	@Operation(summary = "Find my favourite recipients.", responses = {
+		@ApiResponse(
+			responseCode = "200",
+			content = @Content(
+				array = @ArraySchema(
+					schema = @Schema(implementation = FavouriteRecipientDto.class)
+				)
+			)
+		),
+		@ApiResponse(
+			responseCode = "40X",
+			content = @Content(
+				schema = @Schema(
+					implementation = ErrorDto.class
+				)
+			)
+		)
+	})
+	@Override
+	public List<FavouriteRecipientDto> favouriteRecipients() throws BusinessException {
+		return userProfileFacade.favouriteRecipients();
+	}
 }

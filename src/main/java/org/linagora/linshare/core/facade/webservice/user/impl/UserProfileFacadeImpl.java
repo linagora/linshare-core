@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AbstractUserProfileDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.FavouriteRecipientDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestProfileDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserProfileDto;
@@ -93,6 +94,15 @@ public class UserProfileFacadeImpl extends UserGenericFacadeImp implements UserP
 		return userService.findAllRestrictedContacts(authUser)
 			.stream()
 			.map(RestrictedContactDto::from)
+			.collect(Collectors.toUnmodifiableList());
+	}
+
+	@Override
+	public List<FavouriteRecipientDto> favouriteRecipients() throws BusinessException {
+		User authUser = checkAuthentication();
+		return userService.findRecipientFavourite(authUser)
+			.stream()
+			.map(FavouriteRecipientDto::from)
 			.collect(Collectors.toUnmodifiableList());
 	}
 }

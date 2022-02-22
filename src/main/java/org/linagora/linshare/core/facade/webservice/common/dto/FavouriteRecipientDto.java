@@ -33,23 +33,67 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-package org.linagora.linshare.core.facade.webservice.user;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import java.util.List;
+import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AbstractUserProfileDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.FavouriteRecipientDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.RestrictedContactDto;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.google.common.base.MoreObjects;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-public interface UserProfileFacade {
 
-	AbstractUserProfileDto find() throws BusinessException;
+@JsonDeserialize(builder = FavouriteRecipientDto.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@XmlRootElement(name = "FavouriteRecipient")
+@Schema(name = "FavouriteRecipient", description = "Favourite Recipient")
+public class FavouriteRecipientDto {
 
-	AbstractUserProfileDto update(AbstractUserProfileDto dto) throws BusinessException;
+	public static Builder builder() {
+		return new Builder();
+	}
 
-	List<RestrictedContactDto> restrictedContacts() throws BusinessException;
+	public static FavouriteRecipientDto from(RecipientFavourite recipientFavourite) {
+		return builder()
+			.recipient(recipientFavourite.getRecipient())
+			.build();
+	}
 
-	List<FavouriteRecipientDto> favouriteRecipients() throws BusinessException;
+	@JsonPOJOBuilder(withPrefix = "")
+	public static class Builder {
+
+		protected String recipient;
+
+		public Builder recipient(String recipient) {
+			this.recipient = recipient;
+			return this;
+		}
+
+		public FavouriteRecipientDto build() {
+			Validate.notBlank(recipient, "'recipient' must be set.");
+			return new FavouriteRecipientDto(recipient);
+		}
+	}
+
+	@Schema(description = "FavouriteRecipient's recipient", required = true)
+	private final String recipient;
+
+	private FavouriteRecipientDto(String recipient) {
+		this.recipient = recipient;
+	}
+
+	public String getRecipient() {
+		return recipient;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+			.add("recipient", recipient)
+			.toString();
+	}
 }

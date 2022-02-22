@@ -64,6 +64,7 @@ import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -1010,11 +1011,17 @@ public class UserServiceImpl implements UserService {
 		Validate.notNull(actor);
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"Role not authorized.");
+				"Role not authorized.");
 		}
 		logger.info("updating mailing_list_contact tab ...");
 		mailingListContactRepository.updateEmail(currentEmail, newEmail);
 		logger.info("End of updateMailingListEmail");
+	}
+
+	@Override
+	public List<RecipientFavourite> findRecipientFavourite(User owner) {
+		Validate.notNull(owner);
+		return recipientFavouriteRepository.findMatchElementsOrderByWeight("", owner, 0);
 	}
 
 	@Override
