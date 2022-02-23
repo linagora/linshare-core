@@ -20,6 +20,7 @@
 			<sec:filter-chain pattern="/webservice/api-docs/**" filters="CORSRequestFilter" />
 			<sec:filter-chain pattern="/webservice/rest?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/?_wadl" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/api-versions/**" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/admin?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/user?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/fineuploader?_wadl" filters="none" />
