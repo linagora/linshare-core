@@ -1092,6 +1092,29 @@ VALUES
      now());
 
 
+-- UPGRADE_5_0_RENAME_SHARED_SPACE_PERMISSIONS
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (53,
+     'UNDEFINED',
+     'UPGRADE_5_0_RENAME_SHARED_SPACE_PERMISSIONS',
+     'UPGRADE_5_0',
+     53,
+     'NEW',
+     'MANDATORY',
+     now(),
+     now());
+
+
 -- Fix quota value for all accounts
 CREATE OR REPLACE FUNCTION ls_fix_current_value_for_all_accounts() RETURNS void AS $$
 BEGIN

@@ -317,7 +317,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Rename WORKGROUP_DELETION TO WORK_GROUP_DELETION in AuditLogEntry cause.
 	 */
-	UPGRADE_5_0_RENAME_WORKGROUP_DELETION_TO_WORK_GROUP_DELETION;
+	UPGRADE_5_0_RENAME_WORKGROUP_DELETION_TO_WORK_GROUP_DELETION,
+
+	/**
+	 * Rename sharedSpacePermissions.
+	 */
+	UPGRADE_5_0_RENAME_SHARED_SPACE_PERMISSIONS;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
