@@ -57,10 +57,12 @@
 		<constructor-arg ref="wsDocumentFacade" />
 		<constructor-arg ref="wsAccountQuotaFacade" />
 	</bean>
+	<bean id="supportedApiVersion" class="org.linagora.linshare.webservice.support.SupportedApiVersionImpl"></bean>
 
 	<jaxrs:server id="legacyContainer" address="/rest">
 		<jaxrs:serviceBeans>
 			<ref bean="pluginCompatibilityRestServiceV1" />
+			<ref bean="supportedApiVersion" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
