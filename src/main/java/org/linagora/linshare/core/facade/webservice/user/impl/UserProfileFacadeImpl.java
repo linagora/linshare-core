@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -111,5 +112,21 @@ public class UserProfileFacadeImpl extends UserGenericFacadeImp implements UserP
 			})
 			.map(FavouriteRecipientDto::from)
 			.collect(Collectors.toUnmodifiableList());
+	}
+
+	@Override
+	public FavouriteRecipientDto removeFavouriteRecipient(String recipient) {
+		User authUser = checkAuthentication();
+		Validate.notEmpty(recipient, "'recipient' is mandatory.");
+
+		FavouriteRecipientDto favouriteRecipientDto = userService.findRecipientFavourite(authUser)
+				.stream()
+				.filter(recipientFavourite -> recipientFavourite.getRecipient().equals(recipient))
+				.findFirst()
+				.map(FavouriteRecipientDto::from)
+				.orElseThrow(() -> new BusinessException(BusinessErrorCode.FAVOURITE_RECIPIENT_NOT_FOUND, "Recipient not found."));
+
+		userService.deleteRecipientFavourite(authUser, recipient);
+		return favouriteRecipientDto;
 	}
 }

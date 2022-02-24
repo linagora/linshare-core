@@ -53,4 +53,6 @@ public interface UserProfileFacade {
 	List<RestrictedContactDto> restrictedContacts() throws BusinessException;
 
 	List<FavouriteRecipientDto> favouriteRecipients(Optional<String> mailFilter) throws BusinessException;
+
+	FavouriteRecipientDto removeFavouriteRecipient(String recipient);
 }

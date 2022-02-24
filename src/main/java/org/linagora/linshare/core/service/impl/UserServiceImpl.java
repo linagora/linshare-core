@@ -1036,6 +1036,12 @@ public class UserServiceImpl implements UserService {
 		logger.info("End of updateRecipientFavourite");
 	}
 
+	@Override
+	public void deleteRecipientFavourite(User owner, String recipient) {
+		Validate.notNull(owner);
+		recipientFavouriteRepository.deleteOneFavoriteOfUser(owner, recipient);
+	}
+
 	private void createQuotaUser(User user) throws BusinessException {
 		Validate.notNull(user);
 		Validate.notNull(user.getDomain());

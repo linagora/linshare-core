@@ -197,6 +197,8 @@ public interface UserService {
 
 	void updateRecipientFavourite(Account actor, String currentEmail, String newEmail);
 
+	void deleteRecipientFavourite(User owner, String recipient);
+
 	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
 
 	void changePassword(User authUser, User actor, String oldPassword, String newPassword) throws BusinessException;

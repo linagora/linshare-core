@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -183,5 +184,32 @@ public class UserProfileRestServiceImpl implements UserProfileRestService {
 		@Parameter(description = "Filter favourite recipients by its mail.", required = false)
 			@QueryParam("mail") String mailFilter) throws BusinessException {
 		return userProfileFacade.favouriteRecipients(Optional.ofNullable(mailFilter));
+	}
+
+	@Path("/favourite_recipients/{recipient}")
+	@DELETE
+	@Operation(summary = "Find my favourite recipients.", responses = {
+		@ApiResponse(
+			responseCode = "200",
+			content = @Content(
+				array = @ArraySchema(
+					schema = @Schema(implementation = FavouriteRecipientDto.class)
+				)
+			)
+		),
+		@ApiResponse(
+			responseCode = "40X",
+			content = @Content(
+				schema = @Schema(
+					implementation = ErrorDto.class
+				)
+			)
+		)
+	})
+	@Override
+	public FavouriteRecipientDto removeFavouriteRecipient(
+		@Parameter(description = "Recipient to be deleted.", required = true)
+			@PathParam("recipient") String recipient) throws BusinessException {
+		return userProfileFacade.removeFavouriteRecipient(recipient);
 	}
 }
