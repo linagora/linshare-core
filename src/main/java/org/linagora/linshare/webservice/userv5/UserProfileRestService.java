@@ -51,5 +51,5 @@ public interface UserProfileRestService {
 
 	List<RestrictedContactDto> restrictedContacts() throws BusinessException;
 
-	List<FavouriteRecipientDto> favouriteRecipients() throws BusinessException;
+	List<FavouriteRecipientDto> favouriteRecipients(String mailFilter) throws BusinessException;
 }

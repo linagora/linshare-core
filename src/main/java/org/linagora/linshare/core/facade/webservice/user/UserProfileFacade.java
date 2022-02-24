@@ -37,6 +37,7 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AbstractUserProfileDto;
@@ -51,5 +52,5 @@ public interface UserProfileFacade {
 
 	List<RestrictedContactDto> restrictedContacts() throws BusinessException;
 
-	List<FavouriteRecipientDto> favouriteRecipients() throws BusinessException;
+	List<FavouriteRecipientDto> favouriteRecipients(Optional<String> mailFilter) throws BusinessException;
 }

@@ -37,6 +37,7 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.domain.entities.User;
@@ -98,10 +99,16 @@ public class UserProfileFacadeImpl extends UserGenericFacadeImp implements UserP
 	}
 
 	@Override
-	public List<FavouriteRecipientDto> favouriteRecipients() throws BusinessException {
+	public List<FavouriteRecipientDto> favouriteRecipients(Optional<String> mailFilter) throws BusinessException {
 		User authUser = checkAuthentication();
 		return userService.findRecipientFavourite(authUser)
 			.stream()
+			.filter(recipient -> {
+				if (mailFilter.isPresent()) {
+					return recipient.getRecipient().contains(mailFilter.get());
+				}
+				return true;
+			})
 			.map(FavouriteRecipientDto::from)
 			.collect(Collectors.toUnmodifiableList());
 	}
