@@ -16,5 +16,6 @@ there is an impact on the database. no concurrency issues ?-->
 		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
+		<constructor-arg ref="mongoTemplate" />
 	</bean>
 </beans>

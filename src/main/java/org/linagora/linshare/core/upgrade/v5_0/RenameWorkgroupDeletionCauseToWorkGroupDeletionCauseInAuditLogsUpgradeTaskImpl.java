@@ -54,11 +54,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-public class RenameWorkgroupDeletionCauseToWorkGroupDeletionCauseInAuditLogsImpl extends GenericUpgradeTaskImpl {
+public class RenameWorkgroupDeletionCauseToWorkGroupDeletionCauseInAuditLogsUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
 
-	public RenameWorkgroupDeletionCauseToWorkGroupDeletionCauseInAuditLogsImpl(
+	public RenameWorkgroupDeletionCauseToWorkGroupDeletionCauseInAuditLogsUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			MongoTemplate mongoTemplate) {
@@ -68,7 +68,7 @@ public class RenameWorkgroupDeletionCauseToWorkGroupDeletionCauseInAuditLogsImpl
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_5_0_RENAME_DRIVE_DELETION_TO_WORK_SPACE_DELETION;
+		return UpgradeTaskType.UPGRADE_5_0_RENAME_WORKGROUP_DELETION_TO_WORK_GROUP_DELETION;
 	}
 
 	@Override

@@ -210,10 +210,12 @@ public class InitMongoServiceImplTest {
 
 		// When
 		String newRoleName = "WORK_SPACE_ADMIN";
-		SharedSpaceRole returnedRole = testee.upsertInitRole(roleUuid, newRoleName, rootDomain, NodeType.WORK_GROUP, rootAccount);
+		SharedSpaceRole returnedRole = testee.upsertInitRole(roleUuid, newRoleName, rootDomain, NodeType.WORK_SPACE, rootAccount);
 
 		// Then
 		assertThat(returnedRole.getName()).isEqualTo(newRoleName);
+		assertThat(returnedRole.getType()).isEqualTo(NodeType.WORK_SPACE);
+
 	}
 
 	@Test
@@ -357,6 +359,31 @@ public class InitMongoServiceImplTest {
 
 		// Then
 		assertThat(returnedPermission.getRoles()).hasSize(1);
-		assertThat(returnedPermission.getRoles().get(0).getName()).isEqualTo("WORK_SPACE_ADMIN");
+		assertThat(returnedPermission.getRoles().get(0).getName()).isEqualTo(newRoleName);
+		assertThat(returnedPermission.getResource()).isEqualTo(SharedSpaceResourceType.WORK_SPACE);
+	}
+
+	@Test
+	public void upsertInitPermissionShouldMigrateWhenOldWorkGroupResource() {
+		// Given
+		String permissionUuid = "d006e6ac-047a-4e7f-97cb-39ff2cd11f94";
+		SharedSpaceActionType actionType = SharedSpaceActionType.DELETE;
+		SharedSpaceResourceType resourceType = SharedSpaceResourceType.WORKGROUP;
+		GenericLightEntity entity = new GenericLightEntity("234be74d-2966-41c1-9dee-e47c8c63c14e", "ADMIN");
+
+		SharedSpacePermission permission = new SharedSpacePermission();
+		permission.setUuid(permissionUuid);
+		permission.setAction(actionType);
+		permission.setResource(resourceType);
+		permission.setCreationDate(new Date());
+		permission.setRoles(Lists.newArrayList(entity));
+		permission.setModificationDate(new Date());
+		permissionMongoRepository.insert(permission);
+
+		// When
+		SharedSpacePermission returnedPermission = testee.upsertInitPermission(permissionUuid, actionType, resourceType, entity);
+
+		// Then
+		assertThat(returnedPermission.getResource()).isEqualTo(SharedSpaceResourceType.WORK_GROUP);
 	}
 }
