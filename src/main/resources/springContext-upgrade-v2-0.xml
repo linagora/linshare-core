@@ -157,7 +157,7 @@
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
-				<bean class="org.linagora.linshare.core.upgrade.v5_0.RenameWorkgroupDeletionCauseToWorkGroupDeletionCauseInAuditLogsImpl">
+				<bean class="org.linagora.linshare.core.upgrade.v5_0.RenameWorkgroupDeletionCauseToWorkGroupDeletionCauseInAuditLogsUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />

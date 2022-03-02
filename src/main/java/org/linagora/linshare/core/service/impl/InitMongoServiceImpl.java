@@ -56,6 +56,10 @@ import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoReposito
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
@@ -85,13 +89,17 @@ public class InitMongoServiceImpl implements InitMongoService {
 
 	private final SharedSpacePermissionMongoRepository permissionMongoRepository;
 
+	private final MongoTemplate mongoTemplate;
+
 	public InitMongoServiceImpl(UserService userService,
 			SharedSpaceRoleMongoRepository roleMongoRepository,
-			SharedSpacePermissionMongoRepository permissionMongoRepository) {
+			SharedSpacePermissionMongoRepository permissionMongoRepository,
+			MongoTemplate mongoTemplate) {
 		super();
 		this.userService = userService;
 		this.roleMongoRepository = roleMongoRepository;
 		this.permissionMongoRepository = permissionMongoRepository;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	/**
@@ -115,6 +123,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 			LOGGER.warn("Role " + roleUuid + " is being migrated from " + role.getName() + " to " + roleName);
 			role.setName(roleName);
 			role.setModificationDate(new Date());
+			role.setType(type);
 			roleMongoRepository.save(role);
 		}
 		if (role.getType() == null) {
@@ -176,12 +185,18 @@ public class InitMongoServiceImpl implements InitMongoService {
 			}
 		}
 		if (updated) {
+			permission.setResource(SharedSpaceResourceType.WORK_SPACE);
 			permission.setModificationDate(new Date());
 			permissionMongoRepository.save(permission);
 		}
 		if (rolesHasChanged(permission.getRoles(), roles)) {
 			LOGGER.info("Roles has changed for permission " + permissionUuid);
 			permission.setRoles(Lists.newArrayList(roles));
+			permission.setModificationDate(new Date());
+			permissionMongoRepository.save(permission);
+		}
+		if (SharedSpaceResourceType.WORKGROUP.equals(permission.getResource())) {
+			permission.setResource(SharedSpaceResourceType.WORK_GROUP);
 			permission.setModificationDate(new Date());
 			permissionMongoRepository.save(permission);
 		}
@@ -210,6 +225,27 @@ public class InitMongoServiceImpl implements InitMongoService {
 		permission.setModificationDate(new Date());
 		permissionMongoRepository.insert(permission);
 		return permission;
+	}
+
+	private void patch_5_1() {
+		// Rename WORKGROUP to WORK_GROUP in sharedSpacePermission collection
+		Query wgQuery = new Query();
+		wgQuery.addCriteria(Criteria.where("resource").is(SharedSpaceResourceType.WORKGROUP));
+		Update wgUpdate = new Update();
+		wgUpdate.set("resource", SharedSpaceResourceType.WORK_GROUP);
+		mongoTemplate.updateMulti(wgQuery, wgUpdate, SharedSpacePermission.class);
+		// Rename DRIVE to  WORK_SPACE in sharedSpacePermission collection
+		Query wsQuery = new Query();
+		wsQuery.addCriteria(Criteria.where("resource").is(SharedSpaceResourceType.DRIVE));
+		Update wsUpdate = new Update();
+		wsUpdate.set("resource", SharedSpaceResourceType.WORK_SPACE);
+		mongoTemplate.updateMulti(wsQuery, wsUpdate, SharedSpacePermission.class);
+		// Rename DRIVE to  WORK_SPACE in sharedSpaceRole collection
+		Query roleQuery = new Query();
+		roleQuery.addCriteria(Criteria.where("type").is(NodeType.DRIVE));
+		Update roleUpdate = new Update();
+		roleUpdate.set("type", NodeType.WORK_SPACE);
+		mongoTemplate.updateMulti(roleQuery, roleUpdate, SharedSpaceRole.class);
 	}
 
 	@Override
@@ -262,6 +298,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 		upsertInitPermission("ce73fa89-04aa-41f2-a94f-cf09b46f810b", SharedSpaceActionType.READ, SharedSpaceResourceType.WORK_GROUP, admin, writer, contributor, reader);
 		upsertInitPermission("881dfa55-90c5-460a-9ac2-a38181fd2349", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.WORK_GROUP, admin);
 		upsertInitPermission("efd0d533-cb5b-4bf6-a717-81f28ae0a1fe", SharedSpaceActionType.DELETE, SharedSpaceResourceType.WORK_GROUP, admin);
+		patch_5_1();
 		LOGGER.info("END -- Initialization with default shared space roles and permissions.");
 	}
 
