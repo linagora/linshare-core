@@ -54,6 +54,7 @@ import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.SharedSpaceFacade;
@@ -86,6 +87,8 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	private final SharedSpaceMemberFacade sharedSpaceMemberFacade;
 
 	private PagingResponseBuilder<SharedSpaceNodeNested> pageResponseBuilder= new PagingResponseBuilder<>();
+
+	private PagingResponseBuilder<SharedSpaceMember> memberResponseBuilder= new PagingResponseBuilder<>();
 
 	public SharedSpaceRestServiceImpl(SharedSpaceFacade sharedSpaceFacade,
 			SharedSpaceMemberFacade ssMemberFacade) {
@@ -207,13 +210,26 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		)
 	})
 	@Override
-	public List<SharedSpaceMember> members(
-			@Parameter(description = "The member's uuid to retrieve.")
+	public Response members(
+			@Parameter(description = "The sharedSpace's uuid to retrieve its members.")
 				@PathParam("uuid")String uuid,
 			@Parameter(description = "The uuid of an account within a sharedSpace")
-				@QueryParam("accountUuid")String accountUuid)
-			throws BusinessException {
-		return sharedSpaceFacade.members(null, uuid, accountUuid);
+				@QueryParam("accountUuid")String accountUuid,
+			@Parameter(description = "Filter the returned sharedSpace members by member roles.", required = false)
+				@QueryParam("roles") Set<String> sharedSpaceRoles,
+			@Parameter(description = "Filter the returned sharedSpace members by email.", required = false)
+				@QueryParam("email") String email,
+				@Parameter(description = "The admin can choose the order of sorting the sharedSpaceMembers' list to retrieve, if not set the ascending order will be applied by default.", required = false)
+				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
+			@Parameter(description = "The admin can choose the field to sort with the sharedSpaceMembers list to retrieve, if not set the modification date order will be choosen by default.", required = false)
+				@QueryParam("sortField") @DefaultValue("modificationDate") String sortField,
+			@Parameter(description = "The admin can choose the page number to get.", required = false)
+				@QueryParam("page") Integer pageNumber, @Parameter(description = "The admin can choose the number of elements to get.", required = false)
+				@QueryParam("size") Integer pageSize) throws BusinessException {
+		PageContainer<SharedSpaceMember> container = sharedSpaceFacade.members(null, uuid, accountUuid,
+				sharedSpaceRoles, email, SortOrder.valueOf(sortOrder), SharedSpaceMemberField.valueOf(sortField),
+				pageNumber, pageSize);
+		return memberResponseBuilder.build(container);
 	}
 	
 	@Path("{uuid}/members")

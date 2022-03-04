@@ -54,6 +54,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -349,6 +350,21 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, null);
 		return businessService.findAllRootWorkgroups();
+	}
+
+	@Override
+	public PageContainer<SharedSpaceMember> findAllMembersWithPagination(Account authUser, Account actor,
+			String sharedSpaceNodeUuid, String accountUuid, Set<String> roles, String email, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container) {
+		preChecks(authUser, actor);
+		if (!(authUser.hasSuperAdminRole() || authUser.hasAdminRole())) {
+			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
+					"You do not have an admin role, you are not authorized use this service");
+		}
+		checkListPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				null);
+		Set<String> roleNames = checkRoles(authUser, actor, roles);
+		return memberBusinessService.findAllMembersWithPagination(sharedSpaceNodeUuid, accountUuid, roleNames, email,
+				sortOrder, sortField, container);
 	}
 
 }

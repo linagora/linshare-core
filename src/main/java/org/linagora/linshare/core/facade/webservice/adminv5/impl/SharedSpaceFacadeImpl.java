@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
@@ -133,10 +134,14 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 	}
 
 	@Override
-	public List<SharedSpaceMember> members(String actorUuid, String uuid, String accountUuid) throws BusinessException {
+	public PageContainer<SharedSpaceMember> members(String actorUuid, String sharedSpaceUuid, String accountUuid, Set<String> roles,
+			String email, SortOrder sortOrder, SharedSpaceMemberField sortField, Integer pageNumber, Integer pageSize) throws BusinessException {
 		Account authUser = checkAuthentication();
-		Validate.notEmpty(uuid, "Missing required shared space node");
-		return nodeService.findAllMembers(authUser, authUser, uuid, accountUuid);
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notEmpty(sharedSpaceUuid, "Missing required shared space node");
+		PageContainer<SharedSpaceMember> container = new PageContainer<SharedSpaceMember>(pageNumber, pageSize);
+		return nodeService.findAllMembersWithPagination(authUser, actor, sharedSpaceUuid, accountUuid, roles, email,
+				sortOrder, sortField, container);
 	}
 
 	@Override

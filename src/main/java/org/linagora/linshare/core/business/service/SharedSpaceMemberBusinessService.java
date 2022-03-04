@@ -40,6 +40,8 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -143,4 +145,7 @@ public interface SharedSpaceMemberBusinessService {
 
 	PageContainer<SharedSpaceNodeNested> findOrphanSharedSpaces(Sort sort,
 			PageContainer<SharedSpaceNodeNested> container);
+
+	PageContainer<SharedSpaceMember> findAllMembersWithPagination(String sharedSpaceNodeUuid, String accountUuid,
+			Set<String> roles, String email, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container);
 }

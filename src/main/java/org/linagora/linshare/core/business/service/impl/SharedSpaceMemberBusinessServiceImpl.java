@@ -49,6 +49,8 @@ import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessServ
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
@@ -69,6 +71,8 @@ import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -635,5 +639,33 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 				);
 		nodeOperations.add(projections);
 		return nodeOperations;
+	}
+
+	@Override
+	public PageContainer<SharedSpaceMember> findAllMembersWithPagination(String sharedSpaceNodeUuid, String accountUuid,
+			Set<String> roles, String email, SortOrder sortOrder, SharedSpaceMemberField sortField,
+			PageContainer<SharedSpaceMember> container) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("node.uuid").is(sharedSpaceNodeUuid));
+		if (!Strings.isNullOrEmpty(accountUuid)) {
+			query.addCriteria(Criteria.where("account.uuid").is(accountUuid));
+		}
+		if (!Strings.isNullOrEmpty(email)) {
+			query.addCriteria(Criteria.where("account.mail").is(email));
+		}
+		if (!CollectionUtils.isEmpty(roles)) {
+			query.addCriteria(Criteria.where("role.name").in(roles));
+		}
+		long count = mongoTemplate.count(query, SharedSpaceMember.class);
+		logger.debug("Total of elements returned by the query without pagination: {}", count);
+		if (count == 0) {
+			return new PageContainer<SharedSpaceMember>();
+		}
+		Pageable paging = PageRequest.of(container.getPageNumber(), container.getPageSize());
+		query.with(paging);
+		query.with(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString()));
+		container.validateTotalPagesCount(count);
+		List<SharedSpaceMember> members = mongoTemplate.find(query, SharedSpaceMember.class);
+		return container.loadData(members);
 	}
 }

@@ -41,6 +41,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
@@ -130,4 +131,7 @@ public interface SharedSpaceNodeService {
 	 * @return
 	 */
 	List<SharedSpaceNode> findAllRootWorkgroups(Account authUser, Account actor);
+
+	PageContainer<SharedSpaceMember> findAllMembersWithPagination(Account authUser, Account actor, String sharedSpaceNodeUuid, String accountUuid, Set<String> roles, String email, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container);
+
 }

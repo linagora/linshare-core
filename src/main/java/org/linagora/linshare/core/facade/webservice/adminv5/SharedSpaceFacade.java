@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
+import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
@@ -66,7 +67,7 @@ public interface SharedSpaceFacade {
 
 	SharedSpaceNode updatePartial(String actorUuid, PatchDto patchNode, String uuid) throws BusinessException;
 
-	List<SharedSpaceMember> members(String actorUuid, String uuid, String accountUuid) throws BusinessException;
+	PageContainer<SharedSpaceMember> members(String actorUuid, String sharedSpaceUuid, String accountUuid, Set<String> roles, String email, SortOrder sortOrder, SharedSpaceMemberField sortField, Integer pageNumber, Integer pageSize) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAllSharedSpaceAudits(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate, String nodeUuid);
