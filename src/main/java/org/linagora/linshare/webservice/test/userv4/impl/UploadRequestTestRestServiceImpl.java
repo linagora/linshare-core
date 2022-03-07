@@ -59,7 +59,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 
 
-@Path("/upload_requests_groups")
+@Path("/upload_request_groups")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestTestRestServiceImpl implements UploadRequestTestRestService {
