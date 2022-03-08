@@ -32,6 +32,7 @@ variables:
 
 .snyk: &snyk
   stage: test
+  needs: []
   image:
     name: snyk/snyk-cli:maven-3.6.3_java11
     entrypoint: [""]
