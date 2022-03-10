@@ -161,7 +161,7 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
 	@Override
 	public List<String> getAllDomains() {
-		return abstractDomainService.getAllDomainIdentifiers();
+		return abstractDomainService.findAllDomainIdentifiersForAuthenticationDiscovery();
 	}
 
 	@Override

@@ -57,6 +57,7 @@ public interface AbstractDomainService {
 
 	public AbstractDomain updateDomain(Account actor, AbstractDomain domain) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();
+	List<String> findAllDomainIdentifiersForAuthenticationDiscovery();
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer);
 	List<String> getAllSubDomainIdentifiers(String domain);
 

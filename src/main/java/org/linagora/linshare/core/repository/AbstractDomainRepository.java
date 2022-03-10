@@ -58,6 +58,15 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	List<String> findAllDomainIdentifiers();
 
 	/**
+	 * return all TopDomain, SubDomain, GuestDomain and root domain identifiers
+	 * order by reverse creation date.
+	 * This method is used during authentication process to browser all User Provider.
+	 * It is  temporary workaround for SAAS deployment with thousands of domains.
+	 * @return List<String>
+	 */
+	List<String> findAllDomainIdentifiersForAuthenticationDiscovery();
+
+	/**
 	 * return all TopDomain and SubDomain objects
 	 * @return List<AbstractDomain>
 	 */
