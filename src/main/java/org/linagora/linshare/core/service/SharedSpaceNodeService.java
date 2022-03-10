@@ -132,6 +132,6 @@ public interface SharedSpaceNodeService {
 	 */
 	List<SharedSpaceNode> findAllRootWorkgroups(Account authUser, Account actor);
 
-	PageContainer<SharedSpaceMember> findAllMembersWithPagination(Account authUser, Account actor, String sharedSpaceNodeUuid, String accountUuid, Set<String> roles, String email, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container);
+	PageContainer<SharedSpaceMember> findAllMembersWithPagination(Account authUser, Account actor, String sharedSpaceNodeUuid, String accountUuid, Set<String> roles, String email, String type, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container);
 
 }

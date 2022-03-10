@@ -44,7 +44,9 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -350,5 +352,14 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		criteria.add(Restrictions.eq("domain", domain));
 		criteria.add(Restrictions.eq("mail", mail));
 		return DataAccessUtils.singleResult(findByCriteria(criteria));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllGuestsUuids() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("lsUuid"));
+		List<String> uuids = listByCriteria(criteria);
+		return uuids;
 	}
 }

@@ -301,6 +301,52 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 	VALUES (33, 'user_lastname', 'sn', false, true, true, 8, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 	VALUES (34, 'user_uid', 'uid', false, true, true, 8, false);
+
+-- UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (53,
+     'UNDEFINED',
+     'UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
+     'UPGRADE_5_1',
+     53,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
+
+-- UPGRADE_5_1_0_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ parent_identifier
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (54,
+     'UNDEFINED',
+     'UPGRADE_5_1_0_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
+     'UPGRADE_5_1',
+     'UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER'
+     54,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
 ---- End of your queries
 
 -- Upgrade LinShare version

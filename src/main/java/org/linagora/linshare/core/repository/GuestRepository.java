@@ -93,4 +93,6 @@ public interface GuestRepository extends UserRepository<Guest> {
 	Guest findByDomainAndMail(AbstractDomain domain, String mail);
 
 	List<String> findAllWithDeprecatedPasswordEncoding();
+
+	List<String> findAllGuestsUuids();
 }

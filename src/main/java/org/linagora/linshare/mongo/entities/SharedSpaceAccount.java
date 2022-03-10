@@ -37,6 +37,7 @@ package org.linagora.linshare.mongo.entities;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 
@@ -53,6 +54,8 @@ public class SharedSpaceAccount {
 
 	protected String mail;
 
+	protected AccountType accountType;
+
 	public SharedSpaceAccount() {
 		super();
 	}
@@ -64,6 +67,7 @@ public class SharedSpaceAccount {
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.mail = user.getMail();
+		this.accountType = user.getAccountType();
 	}
 	
 	public SharedSpaceAccount(Account user) {
@@ -71,6 +75,7 @@ public class SharedSpaceAccount {
 		this.uuid = user.getLsUuid();
 		this.name = user.getFullName();
 		this.mail = user.getMail();
+		this.accountType = user.getAccountType();
 	}
 
 	public SharedSpaceAccount(String uuid, String name, String firstName, String lastName, String mail) {
@@ -121,11 +126,19 @@ public class SharedSpaceAccount {
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
+	
+	public AccountType getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(AccountType accountType) {
+		this.accountType = accountType;
+	}
 
 	@Override
 	public String toString() {
 		return "SharedSpaceAccount [uuid=" + uuid + ", name=" + name + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", mail=" + mail + "]";
+				+ lastName + ", mail=" + mail + ", accountType=" + accountType + "]";
 	}
 
 }

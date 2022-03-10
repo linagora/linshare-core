@@ -46,6 +46,7 @@ import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -643,8 +644,8 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public PageContainer<SharedSpaceMember> findAllMembersWithPagination(String sharedSpaceNodeUuid, String accountUuid,
-			Set<String> roles, String email, SortOrder sortOrder, SharedSpaceMemberField sortField,
-			PageContainer<SharedSpaceMember> container) {
+			Set<String> roles, String email, AccountType type, SortOrder sortOrder,
+			SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("node.uuid").is(sharedSpaceNodeUuid));
 		if (!Strings.isNullOrEmpty(accountUuid)) {
@@ -652,6 +653,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		}
 		if (!Strings.isNullOrEmpty(email)) {
 			query.addCriteria(Criteria.where("account.mail").is(email));
+		}
+		if (Objects.nonNull(type)) {
+			query.addCriteria(Criteria.where("account.accountType").is(type));
 		}
 		if (!CollectionUtils.isEmpty(roles)) {
 			query.addCriteria(Criteria.where("role.name").in(roles));

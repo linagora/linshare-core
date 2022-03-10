@@ -219,16 +219,19 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("roles") Set<String> sharedSpaceRoles,
 			@Parameter(description = "Filter the returned sharedSpace members by email.", required = false)
 				@QueryParam("email") String email,
-				@Parameter(description = "The admin can choose the order of sorting the sharedSpaceMembers' list to retrieve, if not set the ascending order will be applied by default.", required = false)
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the sharedSpaceMembers with a chosen accountType.", required = false)
+				@QueryParam("type") String type,
+			@Parameter(description = "The admin can choose the order of sorting the sharedSpaceMembers' list to retrieve, if not set the ascending order will be applied by default.", required = false)
 				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
 			@Parameter(description = "The admin can choose the field to sort with the sharedSpaceMembers list to retrieve, if not set the modification date order will be choosen by default.", required = false)
 				@QueryParam("sortField") @DefaultValue("modificationDate") String sortField,
 			@Parameter(description = "The admin can choose the page number to get.", required = false)
-				@QueryParam("page") Integer pageNumber, @Parameter(description = "The admin can choose the number of elements to get.", required = false)
+				@QueryParam("page") Integer pageNumber,
+			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
 				@QueryParam("size") Integer pageSize) throws BusinessException {
 		PageContainer<SharedSpaceMember> container = sharedSpaceFacade.members(null, uuid, accountUuid,
-				sharedSpaceRoles, email, SortOrder.valueOf(sortOrder), SharedSpaceMemberField.valueOf(sortField),
-				pageNumber, pageSize);
+				sharedSpaceRoles, email, type, SortOrder.valueOf(sortOrder),
+				SharedSpaceMemberField.valueOf(sortField), pageNumber, pageSize);
 		return memberResponseBuilder.build(container);
 	}
 	

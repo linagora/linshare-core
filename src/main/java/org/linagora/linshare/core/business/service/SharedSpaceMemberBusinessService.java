@@ -38,6 +38,7 @@ package org.linagora.linshare.core.business.service;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
@@ -147,5 +148,5 @@ public interface SharedSpaceMemberBusinessService {
 			PageContainer<SharedSpaceNodeNested> container);
 
 	PageContainer<SharedSpaceMember> findAllMembersWithPagination(String sharedSpaceNodeUuid, String accountUuid,
-			Set<String> roles, String email, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container);
+			Set<String> roles, String email, AccountType type, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container);
 }

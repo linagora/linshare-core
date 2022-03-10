@@ -48,6 +48,7 @@ import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessSer
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.business.service.WorkSpaceMemberBusinessService;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -354,7 +355,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	@Override
 	public PageContainer<SharedSpaceMember> findAllMembersWithPagination(Account authUser, Account actor,
-			String sharedSpaceNodeUuid, String accountUuid, Set<String> roles, String email, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container) {
+			String sharedSpaceNodeUuid, String accountUuid, Set<String> roles, String email, String type,
+			SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container) {
 		preChecks(authUser, actor);
 		if (!(authUser.hasSuperAdminRole() || authUser.hasAdminRole())) {
 			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
@@ -363,8 +365,9 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkListPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				null);
 		Set<String> roleNames = checkRoles(authUser, actor, roles);
+		AccountType checkedAccountType = Strings.isNullOrEmpty(type) ? null : AccountType.valueOf(type);
 		return memberBusinessService.findAllMembersWithPagination(sharedSpaceNodeUuid, accountUuid, roleNames, email,
-				sortOrder, sortField, container);
+				checkedAccountType, sortOrder, sortField, container);
 	}
 
 }

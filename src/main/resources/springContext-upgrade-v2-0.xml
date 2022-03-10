@@ -162,6 +162,17 @@
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v5_1.AddInternalAccountTypeToSharedSpaceMemberUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v5_1.AddGuestAccountTypeToSharedSpaceMemberUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+					<constructor-arg ref="guestRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
