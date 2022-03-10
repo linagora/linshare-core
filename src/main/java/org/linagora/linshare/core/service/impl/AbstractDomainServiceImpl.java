@@ -313,6 +313,11 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 	}
 
 	@Override
+	public List<String> findAllDomainIdentifiersForAuthenticationDiscovery() {
+		return abstractDomainRepository.findAllDomainIdentifiersForAuthenticationDiscovery();
+	}
+
+	@Override
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer) {
 		AbstractDomain domain = domainBusinessService.find(personalDomainIdentifer);
 		return domainBusinessService.getAllMyDomainIdentifiers(domain);

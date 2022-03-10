@@ -103,6 +103,16 @@ public class AbstractDomainRepositoryImpl extends
 		return listByCriteria(crit);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllDomainIdentifiersForAuthenticationDiscovery() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
+				.setProjection(Projections.property("uuid"))
+				.addOrder(Order.desc("creationDate"));
+		crit.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
+		return listByCriteria(crit);
+	}
+
 	@Override
 	public List<AbstractDomain> findAllDomain() {
 		return findByCriteria(DetachedCriteria.forClass(getPersistentClass())
