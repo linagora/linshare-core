@@ -293,7 +293,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	@Override
 	public PageContainer<SharedSpaceNodeNested> findAll(Account authUser, Account actor, Account account,
-			List<String> domains, SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, Integer greaterThan, Integer lessThan, PageContainer<SharedSpaceNodeNested> container) {
+			List<String> domains, SortOrder sortOrder, Set<NodeType> nodeTypes, Set<String> sharedSpaceRoles, SharedSpaceField sortField, String name, Integer greaterThanOrEqualTo, Integer lessThanOrEqualTo, PageContainer<SharedSpaceNodeNested> container) {
 		preChecks(authUser, actor);
 		if (!(authUser.hasSuperAdminRole() || authUser.hasAdminRole())) {
 			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
@@ -312,18 +312,18 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		List<String> allowedDomainUuids = domainPermissionBusinessService
 				.checkDomainAdministrationForListingSharedSpaces(actor, domains);
 		Set<String> roleNames = checkRoles(authUser, actor, sharedSpaceRoles);
-		if (Objects.isNull(greaterThan) && Objects.isNull(lessThan)) {
+		if (Objects.isNull(greaterThanOrEqualTo) && Objects.isNull(lessThanOrEqualTo)) {
 			if (roleNames.isEmpty()) {
 				roleNames.addAll(ssRoleService.findAllSharedSpaceRoleNames(authUser, actor));
 			}
 			return memberBusinessService.findAllSharedSpaces(account, allowedDomainUuids, nodeTypes, roleNames,
 					name, container, sort);
 		} else {
-			if ((Objects.nonNull(greaterThan) && greaterThan < 1) || (Objects.nonNull(lessThan) && lessThan < 1)) {
+			if ((Objects.nonNull(greaterThanOrEqualTo) && greaterThanOrEqualTo < 1) || (Objects.nonNull(lessThanOrEqualTo) && lessThanOrEqualTo < 1)) {
 				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 						"The greaterThan or lessThan should be greater than 1, please check the entered values.");
 			}
-			if (Objects.nonNull(lessThan) && lessThan == 1) {
+			if (Objects.nonNull(lessThanOrEqualTo) && lessThanOrEqualTo == 1) {
 				return memberBusinessService.findOrphanSharedSpaces(sort, container);
 			}
 			if (!roleNames.isEmpty()
@@ -331,7 +331,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
 						"You are not authorized to filter by role else the ADMIN role");
 			}
-			return memberBusinessService.findSharedSpacesByMembersNumber(greaterThan, lessThan, roleNames, sort,
+			return memberBusinessService.findSharedSpacesByMembersNumber(greaterThanOrEqualTo, lessThanOrEqualTo, roleNames, sort,
 					container);
 		}
 	}

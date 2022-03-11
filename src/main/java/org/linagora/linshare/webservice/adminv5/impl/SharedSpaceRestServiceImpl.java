@@ -188,16 +188,16 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@Parameter(description = "Search pattern that contains matching sequence in name of sharedSpace.", required = false)
 				@QueryParam("name") String name,
 			@Parameter(description = "It allows administrator to retrieve sharedSpaces with members number greater than the entered value (Should be more than 1).", required = false)
-				@QueryParam("greaterThan") Integer greaterThan,
+				@QueryParam("greaterThanOrEqualTo") Integer greaterThanOrEqualTo,
 			@Parameter(description = "It allows administrator to retrieve sharedSpaces with members number less than the entered value (Should be more than 1).", required = false)
-				@QueryParam("lessThan") Integer lessThan,
+				@QueryParam("lessThanOrEqualTo") Integer lessThanOrEqualTo,
 			@Parameter(description = "The admin can choose the page number to get.", required = false)
 				@QueryParam("page") Integer pageNumber, @Parameter(description = "The admin can choose the number of elements to get.", required = false)
 			@QueryParam("size") Integer pageSize) throws BusinessException {
 		Set<NodeType> types = Sets.newHashSet();
 		nodeTypes.forEach(type -> types.add(NodeType.valueOf(type)));
 		PageContainer<SharedSpaceNodeNested> container = sharedSpaceFacade.findAll(null, accountUuid, domainUuids, SortOrder.valueOf(sortOrder),
-				SharedSpaceField.valueOf(sortField), types, sharedSpaceRoles, name, greaterThan, lessThan, pageNumber, pageSize);
+				SharedSpaceField.valueOf(sortField), types, sharedSpaceRoles, name, greaterThanOrEqualTo, lessThanOrEqualTo, pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}
 

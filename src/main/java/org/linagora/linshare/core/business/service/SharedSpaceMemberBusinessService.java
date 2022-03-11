@@ -141,8 +141,8 @@ public interface SharedSpaceMemberBusinessService {
 
 	List<SharedSpaceMember> findLastFiveUpdatedNestedWorkgroups(String parentUuid, String accountUuid);
 
-	PageContainer<SharedSpaceNodeNested> findSharedSpacesByMembersNumber(Integer greaterThan,
-			Integer lessThan, Set<String> roles, Sort sort, PageContainer<SharedSpaceNodeNested> container);
+	PageContainer<SharedSpaceNodeNested> findSharedSpacesByMembersNumber(Integer greaterThanOrEqualTo,
+			Integer lessThanOrEqualTo, Set<String> roles, Sort sort, PageContainer<SharedSpaceNodeNested> container);
 
 	PageContainer<SharedSpaceNodeNested> findOrphanSharedSpaces(Sort sort,
 			PageContainer<SharedSpaceNodeNested> container);

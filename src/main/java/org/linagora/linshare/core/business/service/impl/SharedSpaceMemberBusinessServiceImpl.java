@@ -528,18 +528,18 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public PageContainer<SharedSpaceNodeNested> findSharedSpacesByMembersNumber(Integer greaterThan,
-			Integer lessThan, Set<String> roles, Sort sort, PageContainer<SharedSpaceNodeNested> container) {
+	public PageContainer<SharedSpaceNodeNested> findSharedSpacesByMembersNumber(Integer greaterThanOrEqualTo,
+			Integer lessThanOrEqualTo, Set<String> roles, Sort sort, PageContainer<SharedSpaceNodeNested> container) {
 		List<AggregationOperation> commonOperations = Lists.newArrayList();
 		if (!CollectionUtils.isEmpty(roles)) {
 			commonOperations.add(Aggregation.match(Criteria.where("role.name").in(roles)));
 		}
 		commonOperations.add(Aggregation.group("node").count().as("total"));
-		if (Objects.nonNull(greaterThan)) {
-			commonOperations.add(Aggregation.match(Criteria.where("total").gt(greaterThan)));
+		if (Objects.nonNull(greaterThanOrEqualTo)) {
+			commonOperations.add(Aggregation.match(Criteria.where("total").gte(greaterThanOrEqualTo)));
 		}
-		if (Objects.nonNull(lessThan)) {
-			commonOperations.add(Aggregation.match(Criteria.where("total").lt(lessThan)));
+		if (Objects.nonNull(lessThanOrEqualTo)) {
+			commonOperations.add(Aggregation.match(Criteria.where("total").lte(lessThanOrEqualTo)));
 		}
 		ProjectionOperation projections = Aggregation.project(
 				Fields.from(

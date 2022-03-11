@@ -443,10 +443,6 @@ public class SharedSpaceNodeServiceImplTest {
 		// Search with wrongPageNumber for an empty list of elements
 		service.delete(foo, foo, node3);
 		service.delete(foo, foo, node4);
-		PageContainer<SharedSpaceNodeNested> fooNodes = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, container);
-		Assertions.assertEquals(0, fooNodes.getPageResponse().getTotalElements());
-		PageContainer<SharedSpaceNodeNested> fooNodesWrongPageNumberContainer = service.findAll(root, root, foo, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, wrongPageNumberContainer);
-		Assertions.assertEquals(fooNodesWrongPageNumberContainer.getPageResponse().getTotalElements(), fooNodes.getPageResponse().getTotalElements());
 		// PageContainer with wrongPageSize we will return all found elements
 		PageContainer<SharedSpaceNodeNested> wrongPageSizeContainer = new PageContainer<SharedSpaceNodeNested>(0, 30);
 		PageContainer<SharedSpaceNodeNested> allNodesWrongPageSizeContainer = service.findAll(root, root, null, null, SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, null, wrongPageSizeContainer);
@@ -473,37 +469,37 @@ public class SharedSpaceNodeServiceImplTest {
 		node3 = service.create(jane, jane, new SharedSpaceNode("Jane third node", null, NodeType.WORK_GROUP));
 		Assertions.assertEquals(1, memberBusinessService.findBySharedSpaceNodeUuid(node3.getUuid()).size());
 		// Find SharedSpaces with members number greater than
-		Integer greaterThan = 1;
-		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByGreaterThan = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, greaterThan, null, container);
-		Assertions.assertEquals(2, fooSharedSpaceByGreaterThan.getPageResponse().getTotalElements());
-		List<String> expectedNodeUuids = Lists.newArrayList(node1.getUuid(), node2.getUuid());
+		Integer greaterThanOrEqualTo = 1;
+		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByGreaterThanOrEqualTo = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, greaterThanOrEqualTo, null, container);
+		Assertions.assertEquals(3, fooSharedSpaceByGreaterThanOrEqualTo.getPageResponse().getTotalElements());
+		List<String> expectedNodeUuids = Lists.newArrayList(node1.getUuid(), node2.getUuid(), node3.getUuid());
 		List<String> returnedNodeUuids = Lists.newArrayList();
-		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByGreaterThan.getPageResponse().getContent()) {
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByGreaterThanOrEqualTo.getPageResponse().getContent()) {
 			returnedNodeUuids.add(sharedSpaceNodeNested.getUuid());
 		}
 		logger.debug("This is the list of the final returned node uuids: {}", returnedNodeUuids);
 		Assertions.assertTrue(CollectionUtils.isEqualCollection(expectedNodeUuids, returnedNodeUuids));
 		// Find SharedSpaces with members number less than
-		Integer lessThan = 3;
-		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByLessThan = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, lessThan, container);
-		Assertions.assertEquals(2, fooSharedSpaceByGreaterThan.getPageResponse().getTotalElements());
-		List<String> expectedNodeUuidsForLessThan = Lists.newArrayList(node2.getUuid(), node3.getUuid());
-		List<String> returnedNodeUuidsForLessThan = Lists.newArrayList();
-		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByLessThan.getPageResponse().getContent()) {
-			returnedNodeUuidsForLessThan.add(sharedSpaceNodeNested.getUuid());
+		Integer lessThanOrEqualTo = 3;
+		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByLessThanOrEqualTo = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, lessThanOrEqualTo, container);
+		Assertions.assertEquals(3, fooSharedSpaceByGreaterThanOrEqualTo.getPageResponse().getTotalElements());
+		List<String> expectedNodeUuidsForLessThanOrEqualTo = Lists.newArrayList(node1.getUuid(), node2.getUuid(), node3.getUuid());
+		List<String> returnedNodeUuidsForLessThanOrEqualTo = Lists.newArrayList();
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByLessThanOrEqualTo.getPageResponse().getContent()) {
+			returnedNodeUuidsForLessThanOrEqualTo.add(sharedSpaceNodeNested.getUuid());
 		}
-		logger.debug("This is the list of the final returned node uuids: {}", returnedNodeUuidsForLessThan);
-		Assertions.assertTrue(CollectionUtils.isEqualCollection(expectedNodeUuidsForLessThan, returnedNodeUuidsForLessThan));
+		logger.debug("This is the list of the final returned node uuids: {}", returnedNodeUuidsForLessThanOrEqualTo);
+		Assertions.assertTrue(CollectionUtils.isEqualCollection(expectedNodeUuidsForLessThanOrEqualTo, returnedNodeUuidsForLessThanOrEqualTo));
 		// Find SharedSpaces with members number greater and less than
-		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByGreaterAndLessThan = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, greaterThan, lessThan, container);
-		Assertions.assertEquals(1, fooSharedSpaceByGreaterThan.getPageResponse().getTotalElements());
-		List<String> expectedNodeUuidsForGreaterAndLessThan = Lists.newArrayList(node2.getUuid());
-		List<String> returnedNodeUuidsForGreaterAndLessThan = Lists.newArrayList();
-		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByGreaterAndLessThan.getPageResponse().getContent()) {
-			returnedNodeUuidsForGreaterAndLessThan.add(sharedSpaceNodeNested.getUuid());
+		PageContainer<SharedSpaceNodeNested> fooSharedSpaceByGreaterAndLessThanOrEqualTo = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, greaterThanOrEqualTo, lessThanOrEqualTo, container);
+		Assertions.assertEquals(3, fooSharedSpaceByGreaterThanOrEqualTo.getPageResponse().getTotalElements());
+		List<String> expectedNodeUuidsForGreaterAndLessThanOrEqualTo = Lists.newArrayList(node1.getUuid(), node2.getUuid(), node3.getUuid());
+		List<String> returnedNodeUuidsForGreaterAndLessThanOrEqualTo = Lists.newArrayList();
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : fooSharedSpaceByGreaterAndLessThanOrEqualTo.getPageResponse().getContent()) {
+			returnedNodeUuidsForGreaterAndLessThanOrEqualTo.add(sharedSpaceNodeNested.getUuid());
 		}
-		logger.debug("This is the list of the final returned node uuids: {}", returnedNodeUuidsForGreaterAndLessThan);
-		Assertions.assertTrue(CollectionUtils.isEqualCollection(expectedNodeUuidsForGreaterAndLessThan, returnedNodeUuidsForGreaterAndLessThan));
+		logger.debug("This is the list of the final returned node uuids: {}", returnedNodeUuidsForGreaterAndLessThanOrEqualTo);
+		Assertions.assertTrue(CollectionUtils.isEqualCollection(expectedNodeUuidsForGreaterAndLessThanOrEqualTo, returnedNodeUuidsForGreaterAndLessThanOrEqualTo));
 		service.delete(root, root, node1);
 		service.delete(root, root, node2);
 		service.delete(root, root, node3);
@@ -526,8 +522,8 @@ public class SharedSpaceNodeServiceImplTest {
 		memberService.delete(root, root, memberBusinessService.findBySharedSpaceNodeUuid(node3.getUuid()).iterator().next().getUuid());
 		Assertions.assertEquals(0, memberBusinessService.findBySharedSpaceNodeUuid(node3.getUuid()).size());
 		// Find SharedSpaces with members number greater than
-		Integer lessThan = 1;
-		PageContainer<SharedSpaceNodeNested> orphanShanredSpaces = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, lessThan, container);
+		Integer lessThanOrEqualTo = 1;
+		PageContainer<SharedSpaceNodeNested> orphanShanredSpaces = service.findAll(root, root, null, Lists.newArrayList(john.getDomainId()), SortOrder.DESC, Sets.newHashSet(), Sets.newHashSet(), SharedSpaceField.creationDate, null, null, lessThanOrEqualTo, container);
 		// Find saved node3 in order to get the last modification date after member deletion
 		node3 = service.find(root, root, node3.getUuid());
 		SharedSpaceNodeNested returnedNode = orphanShanredSpaces.getPageResponse().getContent().iterator().next();
