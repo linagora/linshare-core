@@ -35,8 +35,14 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
-import com.google.common.base.Strings;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -55,11 +61,7 @@ import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.google.common.base.Strings;
 
 public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements WelcomeMessageFacade {
 
@@ -69,12 +71,16 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 
 	private final WelcomeMessagesService welcomeMessagesService;
 
+	private final DomainPermissionBusinessService domainPermissionBusinessService;
+
 	public WelcomeMessageFacadeImpl(AccountService accountService,
 				DomainService domainService,
-				WelcomeMessagesService welcomeMessagesService) {
+				WelcomeMessagesService welcomeMessagesService,
+				DomainPermissionBusinessService domainPermissionBusinessService) {
 		super(accountService);
 		this.domainService = domainService;
 		this.welcomeMessagesService = welcomeMessagesService;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
 	}
 
 	@Override
@@ -84,8 +90,18 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		return welcomeMessagesService.findAll(authUser, domainUuid, true)
 				.stream()
-				.map(welcomeMessage -> WelcomeMessageDto.from(welcomeMessage, domain))
+				.map(welcomeMessage -> WelcomeMessageDto.from(welcomeMessage, domain, isReadOnly(authUser, welcomeMessage)))
 				.collect(Collectors.toUnmodifiableList());
+	}
+
+	private boolean isReadOnly(User authUser, WelcomeMessages welcomeMessages) {
+		if (authUser.getRole().equals(Role.SUPERADMIN)) {
+			return false;
+		}
+		if (domainPermissionBusinessService.isAdminforThisDomain(authUser, welcomeMessages.getDomain())) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -95,7 +111,7 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		Validate.notEmpty(welcomeMessageUuid, "Welcome message uuid must be set.");
 		WelcomeMessages welcomeMessage = welcomeMessagesService.find(authUser, welcomeMessageUuid);
 		AbstractDomain domain = welcomeMessage.getDomain();
-		if (belongsToAnotherDomain(domainUuid, domain)) {
+		if (isReadOnly(authUser, welcomeMessage)) {
 			LOGGER.info("The welcome message %s is belonging to domain %s (not %s)",
 					welcomeMessage.getUuid(),
 					domain.getUuid(),
@@ -104,11 +120,7 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 					BusinessErrorCode.WELCOME_MESSAGES_NOT_FOUND,
 					"Welcome message with uuid :" + welcomeMessageUuid + " not found.");
 		}
-		return WelcomeMessageDto.from(welcomeMessage, domain);
-	}
-
-	private boolean belongsToAnotherDomain(String domainUuid, AbstractDomain domain) {
-		return !domain.getUuid().equals(domainUuid);
+		return WelcomeMessageDto.from(welcomeMessage, domain, isReadOnly(authUser, welcomeMessage));
 	}
 
 	@Override
@@ -117,9 +129,11 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		Validate.notEmpty(domainUuid, "Domain uuid uuid must be set.");
 		Validate.notNull(welcomeMessageDto, "Welcome message must be set.");
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
+		WelcomeMessages welcomeMessages = toEntity(domain, welcomeMessageDto);
 		return WelcomeMessageDto.from(
-				welcomeMessagesService.create(authUser, toEntity(domain, welcomeMessageDto), domainUuid),
-				domain);
+				welcomeMessagesService.create(authUser, welcomeMessages, domainUuid),
+				domain,
+				isReadOnly(authUser, welcomeMessages));
 	}
 
 	private WelcomeMessages toEntity(AbstractDomain domain, WelcomeMessageDto welcomeMessageDto) {
@@ -152,7 +166,7 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		Validate.notEmpty(welcomeMessageDto.getUuid(), "Welcome message uuid must be set.");
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		WelcomeMessages welcomeMessage = welcomeMessagesService.find(authUser, welcomeMessageUuid);
-		if (belongsToAnotherDomain(domainUuid, welcomeMessage.getDomain())) {
+		if (isReadOnly(authUser, welcomeMessage)) {
 			LOGGER.info("The welcome message %s is belonging to domain %s (not %s)",
 					welcomeMessageUuid,
 					domain.getUuid(),
@@ -162,9 +176,11 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 					"Welcome message with uuid :" + welcomeMessageUuid + " not found.");
 		}
 		List<String> domainUuids = null;
+		WelcomeMessages welcomeMessages = toEntity(domain, welcomeMessageDto);
 		return WelcomeMessageDto.from(
-				welcomeMessagesService.update(authUser, toEntity(domain, welcomeMessageDto), domainUuids),
-				domain);
+				welcomeMessagesService.update(authUser, welcomeMessages, domainUuids),
+				domain,
+				isReadOnly(authUser, welcomeMessages));
 	}
 
 	@Override
@@ -178,7 +194,7 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		Validate.notEmpty(welcomeMessageDto.getUuid(), "Welcome message uuid must be set.");
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		WelcomeMessages welcomeMessage = welcomeMessagesService.find(authUser, welcomeMessageDto.getUuid());
-		if (belongsToAnotherDomain(domainUuid, welcomeMessage.getDomain())) {
+		if (isReadOnly(authUser, welcomeMessage)) {
 			LOGGER.info("The welcome message %s is belonging to domain %s (not %s)",
 					welcomeMessageUuid,
 					domain.getUuid(),
@@ -189,7 +205,8 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		}
 		return WelcomeMessageDto.from(
 				welcomeMessagesService.delete(authUser, welcomeMessageDto.getUuid()),
-				domain);
+				domain,
+				isReadOnly(authUser, welcomeMessage));
 	}
 
 	@Override
@@ -217,6 +234,7 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 				welcomeMessagesService.update(authUser,
 						welcomeMessagesService.find(authUser, welcomeMessageUuid),
 						domainUuids),
-				domain);
+				domain,
+				isReadOnly(authUser, welcomeMessage));
 	}
 }
