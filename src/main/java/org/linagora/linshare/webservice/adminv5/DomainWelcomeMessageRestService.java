@@ -35,13 +35,13 @@
  */
 package org.linagora.linshare.webservice.adminv5;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
 
-import java.util.List;
-
-public interface WelcomeMessageRestService {
+public interface DomainWelcomeMessageRestService {
 
 	List<WelcomeMessageDto> findAll(String domainUuid) throws BusinessException;
 

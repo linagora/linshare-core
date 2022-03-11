@@ -54,7 +54,7 @@
 	<bean id="adminv5FunctionalityRestService" class="org.linagora.linshare.webservice.adminv5.impl.FunctionalityRestServiceImpl">
 		<constructor-arg ref="wsAdminV5FunctionalityFacade" />
 	</bean>
-	<bean id="adminv5WelcomeMessageRestService" class="org.linagora.linshare.webservice.adminv5.impl.WelcomeMessageRestServiceImpl">
+	<bean id="adminv5DomainWelcomeMessageRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainWelcomeMessageRestServiceImpl">
 		<constructor-arg ref="wsAdminV5WelcomeMessageFacade"/>
 	</bean>
 
@@ -83,7 +83,7 @@
 			<ref bean="adminv5FunctionalityRestService"/>
 			<ref bean="adminv5GroupProviderRestService"/>
 			<ref bean="adminv5WorkSpaceProviderRestService"/>
-			<ref bean="adminv5WelcomeMessageRestService"/>
+			<ref bean="adminv5DomainWelcomeMessageRestService"/>
 			<ref bean="adminv5DomainQuotaRestService"/>
 			<ref bean="adminv5ContainerQuotaRestService"/>
 			<ref bean="adminSystemConfigurationRestService" />

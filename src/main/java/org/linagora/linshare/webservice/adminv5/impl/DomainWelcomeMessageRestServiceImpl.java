@@ -47,7 +47,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAs
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.adminv5.WelcomeMessageRestService;
+import org.linagora.linshare.webservice.adminv5.DomainWelcomeMessageRestService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -63,11 +63,11 @@ import java.util.List;
 @Path("/domains/{domainUuid}/welcome_messages")
 @Produces({ MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON })
-public class WelcomeMessageRestServiceImpl extends WebserviceBase implements WelcomeMessageRestService {
+public class DomainWelcomeMessageRestServiceImpl extends WebserviceBase implements DomainWelcomeMessageRestService {
 
 	private final WelcomeMessageFacade welcomeMessageFacade;
 
-	public WelcomeMessageRestServiceImpl(WelcomeMessageFacade welcomeMessageFacade) {
+	public DomainWelcomeMessageRestServiceImpl(WelcomeMessageFacade welcomeMessageFacade) {
 		this.welcomeMessageFacade = welcomeMessageFacade;
 	}
 
@@ -186,7 +186,7 @@ public class WelcomeMessageRestServiceImpl extends WebserviceBase implements Wel
 				@PathParam("domainUuid") String domainUuid,
 			@Parameter(description = "welcomeMessage's uuid to delete.", required = false)
 				@PathParam("uuid") String welcomeMessageUuid,
-			@Parameter(description = "Welcome message to update.", required = true) WelcomeMessageDto welcomeMessageDto)
+			@Parameter(description = "Welcome message to delete.", required = true) WelcomeMessageDto welcomeMessageDto)
 			throws BusinessException {
 		return welcomeMessageFacade.delete(domainUuid, welcomeMessageUuid, welcomeMessageDto);
 	}
