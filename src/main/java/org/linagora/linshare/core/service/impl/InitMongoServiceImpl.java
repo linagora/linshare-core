@@ -184,19 +184,28 @@ public class InitMongoServiceImpl implements InitMongoService {
 				updated = true;
 			}
 		}
-		if (updated) {
+		boolean migrated = false;
+		if (SharedSpaceResourceType.DRIVE.equals(permission.getResource())) {
 			permission.setResource(SharedSpaceResourceType.WORK_SPACE);
-			permission.setModificationDate(new Date());
-			permissionMongoRepository.save(permission);
+			updated = true;
+			migrated = true;
 		}
 		if (rolesHasChanged(permission.getRoles(), roles)) {
 			LOGGER.info("Roles has changed for permission " + permissionUuid);
 			permission.setRoles(Lists.newArrayList(roles));
-			permission.setModificationDate(new Date());
-			permissionMongoRepository.save(permission);
+			updated = true;
 		}
 		if (SharedSpaceResourceType.WORKGROUP.equals(permission.getResource())) {
 			permission.setResource(SharedSpaceResourceType.WORK_GROUP);
+			updated = true;
+			migrated = true;
+		}
+		if (!migrated && !permission.getResource().equals(resourceType)) {
+			// If we are not under the migration from old name to new name, then the resource type should match
+			permission.setResource(resourceType);
+			updated = true;
+		}
+		if (updated) {
 			permission.setModificationDate(new Date());
 			permissionMongoRepository.save(permission);
 		}

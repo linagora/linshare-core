@@ -341,7 +341,7 @@ public class InitMongoServiceImplTest {
 		// Given
 		String permissionUuid = "3cd75eec-cacc-42e6-ad59-23d521a1d8d1";
 		SharedSpaceActionType actionType = SharedSpaceActionType.CREATE;
-		SharedSpaceResourceType resourceType = SharedSpaceResourceType.MEMBER;
+		SharedSpaceResourceType resourceType = SharedSpaceResourceType.DRIVE;
 		GenericLightEntity entity = new GenericLightEntity("30b6a3be-e171-4829-8b54-a28c846ed411", "DRIVE_ADMIN");
 
 		SharedSpacePermission permission = new SharedSpacePermission();
