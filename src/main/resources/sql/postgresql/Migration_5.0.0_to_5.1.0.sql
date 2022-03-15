@@ -347,6 +347,21 @@ VALUES
      'REQUIRED',
      now(),
      now());
+
+
+-- Moderator table
+CREATE TABLE moderator (
+  id             int8 NOT NULL,
+  uuid           varchar(255) NOT NULL UNIQUE,
+  role           varchar(255) NOT NULL,
+  creation_date     timestamp(6) NOT NULL,
+  modification_date timestamp(6) NOT NULL,
+  account_id     int8 NOT NULL,
+  guest_id     int8 NOT NULL,
+  PRIMARY KEY (id));
+
+ALTER TABLE moderator ADD CONSTRAINT FKmoder87410 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE moderator ADD CONSTRAINT FKmoder87411 FOREIGN KEY (guest_id) REFERENCES account (id);
 ---- End of your queries
 
 -- Upgrade LinShare version

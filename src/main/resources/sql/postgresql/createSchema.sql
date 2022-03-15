@@ -866,6 +866,15 @@ CREATE TABLE thumbnail (
   creation_date  timestamp(6) NOT NULL,
   document_id    int8 NOT NULL,
   PRIMARY KEY (id));
+CREATE TABLE moderator (
+  id             int8 NOT NULL,
+  uuid           varchar(255) NOT NULL UNIQUE,
+  role           varchar(255) NOT NULL,
+  creation_date     timestamp(6) NOT NULL,
+  modification_date timestamp(6) NOT NULL,
+  account_id     int8 NOT NULL,
+  guest_id     int8 NOT NULL,
+  PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid
@@ -1078,4 +1087,6 @@ ALTER TABLE work_space_provider ADD CONSTRAINT FKdrive_provi820203 FOREIGN KEY (
 ALTER TABLE work_space_provider ADD CONSTRAINT FKdrive_provi1670 FOREIGN KEY (ldap_connection_id) REFERENCES remote_server (id);
 ALTER TABLE mail_attachment ADD CONSTRAINT FKmail_attachment35169 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 ALTER TABLE password_history ADD CONSTRAINT FKpass_hist220240 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE moderator ADD CONSTRAINT FKmoder87410 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE moderator ADD CONSTRAINT FKmoder87411 FOREIGN KEY (guest_id) REFERENCES account (id);
 

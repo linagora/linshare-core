@@ -168,4 +168,10 @@
 			<param name="identifierMethod">name</param>
 			<param name="valueOfMethod">fromString</param>
 		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="ModeratorRole">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.ModeratorRole</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
 </hibernate-mapping>
