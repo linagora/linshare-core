@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
@@ -53,6 +54,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.WelcomeMessageFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
 import org.linagora.linshare.core.service.AccountService;
@@ -73,14 +75,18 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
 
+	private final DomainBusinessService domainBusinessService;
+
 	public WelcomeMessageFacadeImpl(AccountService accountService,
 				DomainService domainService,
 				WelcomeMessagesService welcomeMessagesService,
-				DomainPermissionBusinessService domainPermissionBusinessService) {
+				DomainPermissionBusinessService domainPermissionBusinessService,
+				DomainBusinessService domainBusinessService) {
 		super(accountService);
 		this.domainService = domainService;
 		this.welcomeMessagesService = welcomeMessagesService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
@@ -236,5 +242,16 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 						domainUuids),
 				domain,
 				isReadOnly(authUser, welcomeMessage));
+	}
+
+	@Override
+	public List<DomainDto> associatedDomains(String welcomeMessageUuid) throws BusinessException {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(welcomeMessageUuid, "Welcome message uuid must be set.");
+		WelcomeMessages welcomeMessage = welcomeMessagesService.find(authUser, welcomeMessageUuid);
+		return domainBusinessService.loadRelativeDomains(welcomeMessage)
+			.stream()
+			.map(DomainDto::getLight)
+			.collect(Collectors.toUnmodifiableList());
 	}
 }

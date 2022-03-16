@@ -45,6 +45,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.WelcomeMessageFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv5.WelcomeMessageRestService;
@@ -60,10 +61,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Consumes({ MediaType.APPLICATION_JSON })
 public class WelcomeMessageRestServiceImpl extends WebserviceBase implements WelcomeMessageRestService {
 
-	public WelcomeMessageRestServiceImpl() {
+	private final WelcomeMessageFacade welcomeMessageFacade;
+
+	public WelcomeMessageRestServiceImpl(WelcomeMessageFacade welcomeMessageFacade) {
+		this.welcomeMessageFacade = welcomeMessageFacade;
 	}
 
-	@Path("/{uuid}/associated_domains")
+	@Path("/{uuid}/domains")
 	@GET
 	@Operation(summary = "It will return the domains associated to this welcome message.", responses = {
 		@ApiResponse(
@@ -77,6 +81,6 @@ public class WelcomeMessageRestServiceImpl extends WebserviceBase implements Wel
 	public List<DomainDto> associatedDomains(
 		@Parameter(description = "welcomeMessage's uuid.", required = true)
 			@PathParam("uuid") String welcomeMessageUuid) throws BusinessException {
-		return null;
+		return welcomeMessageFacade.associatedDomains(welcomeMessageUuid);
 	}
 }

@@ -35,11 +35,12 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
-
-import java.util.List;
 
 public interface WelcomeMessageFacade {
 
@@ -54,4 +55,6 @@ public interface WelcomeMessageFacade {
 	WelcomeMessageDto delete(String domainUuid, String welcomeMessageUuid, WelcomeMessageDto welcomeMessageDto) throws BusinessException;
 
 	WelcomeMessageDto assign(String domainUuid, String welcomeMessageUuid, WelcomeMessageAssignDto assignDto) throws BusinessException;
+
+	List<DomainDto> associatedDomains(String welcomeMessageUuid) throws BusinessException;
 }

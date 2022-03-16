@@ -58,6 +58,7 @@
 		<constructor-arg ref="wsAdminV5WelcomeMessageFacade"/>
 	</bean>
 	<bean id="adminv5WelcomeMessageRestService" class="org.linagora.linshare.webservice.adminv5.impl.WelcomeMessageRestServiceImpl">
+		<constructor-arg ref="wsAdminV5WelcomeMessageFacade"/>
 	</bean>
 
 	<bean id="adminv5DomainQuotaRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainQuotaRestServiceImpl">
