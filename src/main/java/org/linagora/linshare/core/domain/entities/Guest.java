@@ -56,6 +56,8 @@ public class Guest extends User {
 
 	private Set<AllowedContact> contacts = Sets.newHashSet();
 
+	private Set<Moderator> moderators = Sets.newHashSet();
+
 	/** Default constructor for hibernate. */
 	public Guest() {
 		super();
@@ -126,5 +128,21 @@ public class Guest extends User {
 
 	public void addContacts(Collection<? extends AllowedContact> c) {
 		this.contacts.addAll(c);
+	}
+
+	public Set<Moderator> getModerators() {
+		return moderators;
+	}
+
+	public void setModerators(Set<Moderator> moderators) {
+		this.moderators = moderators;
+	}
+
+	public void addModerator(Moderator moderator) {
+		this.moderators.add(moderator);
+	}
+
+	public void removeModerator(Moderator moderator) {
+		this.moderators.remove(moderator);
 	}
 }

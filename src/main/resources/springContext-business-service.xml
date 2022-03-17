@@ -368,4 +368,8 @@
 		<constructor-arg ref="thumbnailGeneratorBusinessService" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 	</bean>
+
+	<bean name="moderatorBusinessService" class="org.linagora.linshare.core.business.service.impl.ModeratorBusinessServiceImpl">
+		<constructor-arg ref="moderatorRepository" />
+	</bean>
 </beans>

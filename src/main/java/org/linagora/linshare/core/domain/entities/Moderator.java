@@ -53,18 +53,14 @@ public class Moderator {
 
 	private Account account;
 
-	private Account guest;
+	private Guest guest;
 
 	public Moderator() {
 		super();
 	}
 
-	public Moderator(String uuid, ModeratorRole role, Date creationDate, Date modificationDate, Account account,
-			Account guest) {
-		this.uuid = uuid;
+	public Moderator(ModeratorRole role, Account account, Guest guest) {
 		this.role = role;
-		this.creationDate = creationDate;
-		this.modificationDate = modificationDate;
 		this.account = account;
 		this.guest = guest;
 	}
@@ -117,11 +113,11 @@ public class Moderator {
 		this.account = account;
 	}
 
-	public Account getGuest() {
+	public Guest getGuest() {
 		return guest;
 	}
 
-	public void setGuest(Account guest) {
+	public void setGuest(Guest guest) {
 		this.guest = guest;
 	}
 

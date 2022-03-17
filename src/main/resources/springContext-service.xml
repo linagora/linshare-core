@@ -607,4 +607,11 @@
 		<constructor-arg ref="mailConfigBusinessService" />
 	</bean>
 
+	<bean id="moderatorService" class="org.linagora.linshare.core.service.impl.ModeratorServiceImpl">
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
+		<constructor-arg ref="moderatorBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="guestBusinessService" />
+		<constructor-arg ref="guestRepository" />
+	</bean>
 </beans>
