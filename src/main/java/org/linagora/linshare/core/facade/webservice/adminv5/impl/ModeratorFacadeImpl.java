@@ -34,44 +34,82 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Moderator;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.ModeratorFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.ModeratorService;
 
 public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements ModeratorFacade {
 
+	private ModeratorService moderatorService;
+	
 	public ModeratorFacadeImpl(
-			AccountService accountService) {
+			AccountService accountService,
+			ModeratorService moderatorService) {
 		super(accountService);
+		this.moderatorService = moderatorService;
 	}
 
 	@Override
 	public ModeratorDto create(ModeratorDto dto) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notNull(dto, "Moderator to create should be set.");
+		Validate.notNull(dto.getAccount(), "Moderator's account should be set.");
+		Validate.notNull(dto.getGuest(), "Moderator's guest should be set.");
+		Validate.notNull(dto.getRole(), "Moderator's role should be set.");
+		Account account = accountService.findAccountByLsUuid(dto.getAccount().getUuid());
+		Guest guest = (Guest) accountService.findAccountByLsUuid(dto.getGuest().getUuid());
+		Moderator moderator = moderatorService.create(authUser, dto.toModeratorObject(dto, account, guest));
+		return ModeratorDto.from(moderator);
 	}
 
 	@Override
 	public ModeratorDto find(String uuid) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		User authUser = checkAuthentication(Role.ADMIN);
+		Moderator moderator = moderatorService.find(authUser, uuid);
+		return ModeratorDto.from(moderator);
 	}
 
 	@Override
 	public ModeratorDto update(String uuid, ModeratorDto dto) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notNull(dto, "Moderator to update should be set.");
+		Validate.notNull(dto.getRole(), "Moderator role should be set.");
+		String moderatorUuid = Optional.ofNullable(uuid).orElse(dto.getUuid());
+		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
+		Moderator entity = moderatorService.find(authUser, moderatorUuid);
+		entity.setRole(dto.getRole());
+		Moderator moderatorToUpdate = moderatorService.update(authUser, entity);
+		return ModeratorDto.from(moderatorToUpdate);
 	}
 
 	@Override
 	public ModeratorDto delete(String uuid, ModeratorDto dto) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		User authUser = checkAuthentication(Role.ADMIN);
+		String moderatorUuid = Optional.ofNullable(uuid).orElse(dto.getUuid());
+		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
+		Moderator moderator = moderatorService.find(authUser, moderatorUuid);
+		return ModeratorDto.from(moderatorService.delete(authUser, moderator));
 	}
 
 	@Override
 	public List<ModeratorDto> findAllByGuest(String guestUuid) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		User authUser = checkAuthentication(Role.ADMIN);
+		List<Moderator> moderators = moderatorService.findAllByGuest(authUser, guestUuid);
+		return moderators
+				.stream()
+				.map(ModeratorDto::from)
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 }

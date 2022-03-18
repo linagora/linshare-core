@@ -35,7 +35,11 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -198,5 +202,13 @@ public class ModeratorDto {
 				.add("account", account)
 				.add("guest", guest)
 				.toString();
+	}
+
+	public Moderator toModeratorObject (ModeratorDto dto, Account account, Guest guest) {
+		Moderator moderator = new Moderator();
+		moderator.setRole(dto.getRole());
+		moderator.setAccount(account);
+		moderator.setGuest(guest);
+		return moderator;
 	}
 }

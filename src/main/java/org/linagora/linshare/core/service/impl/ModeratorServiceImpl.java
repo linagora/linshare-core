@@ -85,6 +85,10 @@ public class ModeratorServiceImpl extends GenericAdminServiceImpl implements Mod
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
 		checkAdminFor(authUser, guest, BusinessErrorCode.CANNOT_CREATE_GUEST_MODERATOR);
+		List<Moderator> moderators = findAllByGuest(authUser, guest.getLsUuid());
+		if (moderators.contains(moderator)) {
+			throw new BusinessException(BusinessErrorCode.MODERATOR_ALREADY_EXISTS, "Moderator already exists.");
+		}
 		moderator = moderatorBusinessService.create(moderator);
 		guest.addModerator(moderator);
 		guestRepository.update(guest);
@@ -96,12 +100,22 @@ public class ModeratorServiceImpl extends GenericAdminServiceImpl implements Mod
 		preChecks(authUser);
 		Validate.notEmpty(uuid, "Moderator uuid must be set.");
 		Moderator moderator = moderatorBusinessService.find(uuid);
+		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
+		checkAdminFor(authUser, guest, BusinessErrorCode.CANNOT_GET_GUEST_MODERATOR);
 		return moderator;
 	}
 
 	@Override
 	public Moderator update(Account authUser, Moderator moderator) {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		preChecks(authUser);
+		Validate.notNull(moderator, "Moderator to update must be set.");
+		Validate.notNull(moderator.getRole(), "Moderator role must be set.");
+		Validate.notNull(moderator.getGuest(), "Moderator's guest should be set");
+		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
+		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
+		checkAdminFor(authUser, guest, BusinessErrorCode.CANNOT_UPDATE_GUEST_MODERATOR);
+		moderator = moderatorBusinessService.update(moderator);
+		return moderator;
 	}
 
 	@Override
