@@ -330,7 +330,7 @@ INSERT INTO upgrade_task
  uuid,
  identifier,
  task_group,
- parent_identifier
+ parent_identifier,
  task_order,
  status,
  priority,
@@ -341,7 +341,7 @@ VALUES
      'UNDEFINED',
      'UPGRADE_5_1_0_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
      'UPGRADE_5_1',
-     'UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER'
+     'UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
      54,
      'NEW',
      'REQUIRED',
