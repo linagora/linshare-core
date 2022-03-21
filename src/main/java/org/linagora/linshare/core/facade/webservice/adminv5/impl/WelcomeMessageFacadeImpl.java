@@ -117,15 +117,6 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		Validate.notEmpty(welcomeMessageUuid, "Welcome message uuid must be set.");
 		WelcomeMessages welcomeMessage = welcomeMessagesService.find(authUser, welcomeMessageUuid);
 		AbstractDomain domain = welcomeMessage.getDomain();
-		if (isReadOnly(authUser, welcomeMessage)) {
-			LOGGER.info("The welcome message %s is belonging to domain %s (not %s)",
-					welcomeMessage.getUuid(),
-					domain.getUuid(),
-					domainUuid);
-			throw new BusinessException(
-					BusinessErrorCode.WELCOME_MESSAGES_NOT_FOUND,
-					"Welcome message with uuid :" + welcomeMessageUuid + " not found.");
-		}
 		return WelcomeMessageDto.from(welcomeMessage, domain, isReadOnly(authUser, welcomeMessage));
 	}
 
