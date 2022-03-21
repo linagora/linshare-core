@@ -35,8 +35,6 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 
 import java.util.Date;
 
-import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;

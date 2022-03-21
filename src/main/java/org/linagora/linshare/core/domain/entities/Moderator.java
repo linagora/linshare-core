@@ -154,30 +154,6 @@ public class Moderator {
 				return false;
 		} else if (!account.equals(other.account))
 			return false;
-		if (creationDate == null) {
-			if (other.creationDate != null)
-				return false;
-		} else if (!creationDate.equals(other.creationDate))
-			return false;
-		if (guest == null) {
-			if (other.guest != null)
-				return false;
-		} else if (!guest.equals(other.guest))
-			return false;
-		if (modificationDate == null) {
-			if (other.modificationDate != null)
-				return false;
-		} else if (!modificationDate.equals(other.modificationDate))
-			return false;
-		if (role != other.role)
-			return false;
-		if (uuid == null) {
-			if (other.uuid != null)
-				return false;
-		} else if (!uuid.equals(other.uuid))
-			return false;
 		return true;
 	}
-
-	
 }
