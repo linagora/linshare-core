@@ -135,7 +135,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		Validate.notNull(authUser);
 		Validate.notNull(actor);
 		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
-		supportedTypes.add(AuditLogEntryType.WORKGROUP);
+		supportedTypes.add(AuditLogEntryType.WORK_GROUP);
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_DOCUMENT);
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_FOLDER);
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_MEMBER);

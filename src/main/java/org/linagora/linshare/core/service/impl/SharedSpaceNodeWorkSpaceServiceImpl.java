@@ -140,7 +140,7 @@ public class SharedSpaceNodeWorkSpaceServiceImpl extends AbstractSharedSpaceFrag
 			memberService.deleteAllMembers(authUser, actor, foundNestedWgToDelete, LogActionCause.WORK_SPACE_DELETION,
 					null);
 			SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
-					AuditLogEntryType.WORKGROUP, foundNestedWgToDelete);
+					AuditLogEntryType.WORK_GROUP, foundNestedWgToDelete);
 			businessService.delete(foundNestedWgToDelete);
 			log.setCause(LogActionCause.WORK_SPACE_DELETION);
 			logs.add(log);

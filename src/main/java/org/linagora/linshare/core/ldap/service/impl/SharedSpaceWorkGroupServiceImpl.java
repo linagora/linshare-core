@@ -110,7 +110,7 @@ public class SharedSpaceWorkGroupServiceImpl extends org.linagora.linshare.core.
 				actor.getDomain());
 		simpleUpdate(actor, actor, ldapGroup);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(actor, actor, LogAction.UPDATE,
-				AuditLogEntryType.WORKGROUP, ldapGroup);
+				AuditLogEntryType.WORK_GROUP, ldapGroup);
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
 		return updated;
