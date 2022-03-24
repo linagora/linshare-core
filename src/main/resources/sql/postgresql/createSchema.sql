@@ -973,6 +973,8 @@ CREATE INDEX async_task_domain_abstract_id
   ON async_task (domain_abstract_id);
 CREATE UNIQUE INDEX async_task_uuid
   ON async_task (uuid);
+CREATE UNIQUE INDEX moderator_uuid_index
+  ON moderator (uuid);
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_access_rule ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
