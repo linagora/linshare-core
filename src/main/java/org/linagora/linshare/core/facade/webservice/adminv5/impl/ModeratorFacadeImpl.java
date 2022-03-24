@@ -43,6 +43,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.ModeratorFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
@@ -63,44 +65,58 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 	}
 
 	@Override
-	public ModeratorDto create(ModeratorDto dto) {
+	public ModeratorDto create(String guestUuid, ModeratorDto dto) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto, "Moderator to create should be set.");
 		Validate.notNull(dto.getAccount(), "Moderator's account should be set.");
+		Validate.notEmpty(dto.getAccount().getUuid(), "Moderator's account uuid should be set");
 		Validate.notNull(dto.getGuest(), "Moderator's guest should be set.");
+		Validate.notEmpty(dto.getGuest().getUuid(), "Moderator's guest uuid should be set");
 		Validate.notNull(dto.getRole(), "Moderator's role should be set.");
 		Account account = accountService.findAccountByLsUuid(dto.getAccount().getUuid());
 		Guest guest = (Guest) accountService.findAccountByLsUuid(dto.getGuest().getUuid());
+		checkGuest(guestUuid, guest.getLsUuid());
 		Moderator moderator = moderatorService.create(authUser, dto.toModeratorObject(dto, account, guest));
 		return ModeratorDto.from(moderator);
 	}
 
+	private void checkGuest(String guestInPath, String guestInDto) {
+		if (!guestInPath.equals(guestInDto)) {
+			throw new BusinessException(BusinessErrorCode.WRONG_GUEST_MODERATOR,
+					"Please check the intered guest information.");
+		}
+	}
+
 	@Override
-	public ModeratorDto find(String uuid) {
+	public ModeratorDto find(String guestUuid, String uuid) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Moderator moderator = moderatorService.find(authUser, uuid);
+		Guest guest = (Guest) accountService.findAccountByLsUuid(moderator.getGuest().getLsUuid());
+		checkGuest(guestUuid, guest.getLsUuid());
 		return ModeratorDto.from(moderator);
 	}
 
 	@Override
-	public ModeratorDto update(String uuid, ModeratorDto dto) {
+	public ModeratorDto update(String guestUuid, String uuid, ModeratorDto dto) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto, "Moderator to update should be set.");
 		Validate.notNull(dto.getRole(), "Moderator role should be set.");
 		String moderatorUuid = Optional.ofNullable(Strings.emptyToNull(uuid)).orElse(dto.getUuid());
 		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
 		Moderator entity = moderatorService.find(authUser, moderatorUuid);
+		checkGuest(guestUuid, entity.getGuest().getLsUuid());
 		entity.setRole(dto.getRole());
 		Moderator moderatorToUpdate = moderatorService.update(authUser, entity);
 		return ModeratorDto.from(moderatorToUpdate);
 	}
 
 	@Override
-	public ModeratorDto delete(String uuid, ModeratorDto dto) {
+	public ModeratorDto delete(String guestUuid, String uuid, ModeratorDto dto) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		String moderatorUuid = Optional.ofNullable(Strings.emptyToNull(uuid)).orElse(dto.getUuid());
 		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
 		Moderator moderator = moderatorService.find(authUser, moderatorUuid);
+		checkGuest(guestUuid, moderator.getGuest().getLsUuid());
 		return ModeratorDto.from(moderatorService.delete(authUser, moderator));
 	}
 

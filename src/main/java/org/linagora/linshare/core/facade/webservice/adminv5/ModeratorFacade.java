@@ -39,13 +39,13 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 
 public interface ModeratorFacade {
 
-	ModeratorDto create(ModeratorDto dto);
+	ModeratorDto create(String guestUuid, ModeratorDto dto);
 
-	ModeratorDto find(String uuid);
+	ModeratorDto find(String guestUuid, String uuid);
 
-	ModeratorDto update(String uuid, ModeratorDto dto);
+	ModeratorDto update(String guestUuid, String uuid, ModeratorDto dto);
 
-	ModeratorDto delete(String uuid, ModeratorDto dto);
+	ModeratorDto delete(String guestUuid, String uuid, ModeratorDto dto);
 
 	List<ModeratorDto> findAllByGuest(String guestUuid);
 }
