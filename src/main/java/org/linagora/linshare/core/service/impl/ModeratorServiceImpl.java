@@ -84,10 +84,10 @@ public class ModeratorServiceImpl extends GenericAdminServiceImpl implements Mod
 		Validate.notNull(moderator.getGuest(), "Moderator's guest should be set");
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		checkAdminFor(authUser, guest, BusinessErrorCode.CANNOT_CREATE_GUEST_MODERATOR);
+		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATOR_CANNOT_CREATE);
 		List<Moderator> moderators = findAllByGuest(authUser, guest.getLsUuid());
 		if (moderators.contains(moderator)) {
-			throw new BusinessException(BusinessErrorCode.MODERATOR_ALREADY_EXISTS, "Moderator already exists.");
+			throw new BusinessException(BusinessErrorCode.GUEST_MODERATOR_ALREADY_EXISTS, "Moderator already exists.");
 		}
 		moderator = moderatorBusinessService.create(moderator);
 		guest.addModerator(moderator);
@@ -101,7 +101,7 @@ public class ModeratorServiceImpl extends GenericAdminServiceImpl implements Mod
 		Validate.notEmpty(uuid, "Moderator uuid must be set.");
 		Moderator moderator = moderatorBusinessService.find(uuid);
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		checkAdminFor(authUser, guest, BusinessErrorCode.CANNOT_GET_GUEST_MODERATOR);
+		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATOR_CANNOT_GET);
 		return moderator;
 	}
 
@@ -113,7 +113,7 @@ public class ModeratorServiceImpl extends GenericAdminServiceImpl implements Mod
 		Validate.notNull(moderator.getGuest(), "Moderator's guest should be set");
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		checkAdminFor(authUser, guest, BusinessErrorCode.CANNOT_UPDATE_GUEST_MODERATOR);
+		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATOR_CANNOT_UPDATE);
 		moderator = moderatorBusinessService.update(moderator);
 		return moderator;
 	}
@@ -125,7 +125,7 @@ public class ModeratorServiceImpl extends GenericAdminServiceImpl implements Mod
 		Validate.notNull(moderator.getGuest(), "Moderator must be set.");
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		checkAdminFor(authUser, guest, BusinessErrorCode.CANNOT_DELETE_GUEST_MODERATOR);
+		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATOR_CANNOT_DELETE);
 		moderatorBusinessService.delete(moderator);
 		guest.removeModerator(moderator);
 		guestRepository.update(guest);
@@ -137,7 +137,7 @@ public class ModeratorServiceImpl extends GenericAdminServiceImpl implements Mod
 		preChecks(authUser);
 		Validate.notEmpty(guestUuid, "Guest's uuid must be set.");
 		Guest guest = guestBusinessService.findByLsUuid(guestUuid);
-		checkAdminFor(authUser, guest, BusinessErrorCode.CANNOT_GET_GUEST_MODERATORS);
+		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATORS_CANNOT_GET);
 		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest);
 		return moderators;
 	}

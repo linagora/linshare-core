@@ -82,7 +82,7 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 
 	private void checkGuest(String guestInPath, String guestInDto) {
 		if (!guestInPath.equals(guestInDto)) {
-			throw new BusinessException(BusinessErrorCode.WRONG_GUEST_MODERATOR,
+			throw new BusinessException(BusinessErrorCode.GUEST_MODERATOR_WRONG,
 					"Please check the intered guest information.");
 		}
 	}

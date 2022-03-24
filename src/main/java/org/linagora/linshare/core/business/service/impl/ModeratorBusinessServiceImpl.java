@@ -64,7 +64,7 @@ public class ModeratorBusinessServiceImpl implements ModeratorBusinessService {
 	public Moderator find(String uuid) {
 		Moderator moderator = moderatorRepository.findByUuid(uuid);
 		if (moderator == null) {
-			throw new BusinessException(BusinessErrorCode.CANNOT_FIND_GUEST_MODERATOR,
+			throw new BusinessException(BusinessErrorCode.GUEST_MODERATOR_CANNOT_FIND,
 					"Can not found moderator with uuid: " + uuid + ".");
 		}
 		return moderator;
