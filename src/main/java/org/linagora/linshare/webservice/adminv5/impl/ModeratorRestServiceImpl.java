@@ -77,7 +77,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService{
 		@Parameter(description = "The guest's uuid.", required = true)
 			@PathParam("guestUuid") String guestUuid,
 		@Parameter(description = "Moderator to create", required = false) ModeratorDto moderatorDto) throws BusinessException {
-		return moderatorFacade.create(guestUuid, moderatorDto);
+		return moderatorFacade.create(null, guestUuid, moderatorDto);
 	}
 
 	@Path("/{uuid}")
@@ -91,7 +91,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService{
 			@PathParam("guestUuid") String guestUuid,
 		@Parameter(description = "The admin can find a guest's moderator with the entered uuid.", required = true) 
 			@PathParam("uuid") String uuid) throws BusinessException {
-		return moderatorFacade.find(guestUuid, uuid);
+		return moderatorFacade.find(null, guestUuid, uuid);
 	}
 
 	@Path("/{uuid: .*}")
@@ -107,7 +107,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService{
 			@PathParam("uuid") String uuid,
 		@Parameter(description = "Moderator to update", required = false) ModeratorDto moderatorDto) 
 				throws BusinessException {
-		return moderatorFacade.update(guestUuid, uuid, moderatorDto);
+		return moderatorFacade.update(null, guestUuid, uuid, moderatorDto);
 	}
 
 	@Path("/{uuid: .*}")
@@ -123,7 +123,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService{
 			@PathParam("uuid") String uuid,
 		@Parameter(description = "Moderator to delete", required = false) ModeratorDto moderatorDto) 
 				throws BusinessException {
-		return moderatorFacade.delete(guestUuid, uuid, moderatorDto);
+		return moderatorFacade.delete(null, guestUuid, uuid, moderatorDto);
 	}
 
 	@Path("/")
@@ -135,7 +135,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService{
 	public List<ModeratorDto> findAllByGuest(
 		@Parameter(description = "The guest's uuid.", required = true)
 			@PathParam("guestUuid") String guestUuid) throws BusinessException {
-		return moderatorFacade.findAllByGuest(guestUuid);
+		return moderatorFacade.findAllByGuest(null, guestUuid);
 	}
 
 }

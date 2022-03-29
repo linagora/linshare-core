@@ -36,56 +36,48 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.ModeratorBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.ModeratorResourceAccessControl;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.ModeratorService;
 
-import com.google.common.collect.Lists;
-
-public class ModeratorServiceImpl extends GenericAdminServiceImpl implements ModeratorService {
+public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator> implements ModeratorService {
 
 	private ModeratorBusinessService moderatorBusinessService;
-
-	private DomainPermissionBusinessService domainPermissionService;
 
 	private GuestBusinessService guestBusinessService;
 
 	private GuestRepository guestRepository;
 
-	public static final List<Role> ROLES = Lists.newArrayList(Role.SUPERADMIN, Role.ADMIN);
-
 	public ModeratorServiceImpl(
+			ModeratorResourceAccessControl rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			ModeratorBusinessService moderatorBusinessService,
-			DomainPermissionBusinessService domainPermissionService,
 			GuestBusinessService guestBusinessService,
 			GuestRepository guestRepository) {
-		super(sanitizerInputHtmlBusinessService);
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.moderatorBusinessService = moderatorBusinessService;
-		this.domainPermissionService = domainPermissionService;
 		this.guestBusinessService = guestBusinessService;
 		this.guestRepository = guestRepository;
 	}
 
 	@Override
-	public Moderator create(Account authUser, Moderator moderator) {
-		preChecks(authUser);
+	public Moderator create(Account authUser, Account actor, Moderator moderator) {
+		preChecks(authUser, actor);
 		Validate.notNull(moderator, "Moderator must be set.");
 		Validate.notNull(moderator.getAccount(), "Moderator's account should be set");
 		Validate.notNull(moderator.getGuest(), "Moderator's guest should be set");
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
+		checkCreatePermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_CREATE, moderator);
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATOR_CANNOT_CREATE);
-		List<Moderator> moderators = findAllByGuest(authUser, guest.getLsUuid());
+		List<Moderator> moderators = findAllByGuest(authUser, actor, guest.getLsUuid());
 		if (moderators.contains(moderator)) {
 			throw new BusinessException(BusinessErrorCode.GUEST_MODERATOR_ALREADY_EXISTS, "Moderator already exists.");
 		}
@@ -96,36 +88,34 @@ public class ModeratorServiceImpl extends GenericAdminServiceImpl implements Mod
 	}
 
 	@Override
-	public Moderator find(Account authUser, String uuid) {
-		preChecks(authUser);
+	public Moderator find(Account authUser, Account actor, String uuid) {
+		preChecks(authUser, actor);
 		Validate.notEmpty(uuid, "Moderator uuid must be set.");
 		Moderator moderator = moderatorBusinessService.find(uuid);
-		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATOR_CANNOT_GET);
+		checkReadPermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_GET, moderator);
 		return moderator;
 	}
 
 	@Override
-	public Moderator update(Account authUser, Moderator moderator) {
-		preChecks(authUser);
+	public Moderator update(Account authUser, Account actor, Moderator moderator) {
+		preChecks(authUser, actor);
 		Validate.notNull(moderator, "Moderator to update must be set.");
 		Validate.notNull(moderator.getRole(), "Moderator role must be set.");
 		Validate.notNull(moderator.getGuest(), "Moderator's guest should be set");
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
-		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATOR_CANNOT_UPDATE);
+		checkUpdatePermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_UPDATE, moderator);
 		moderator = moderatorBusinessService.update(moderator);
 		return moderator;
 	}
 
 	@Override
-	public Moderator delete(Account authUser, Moderator moderator) {
-		preChecks(authUser);
+	public Moderator delete(Account authUser, Account actor, Moderator moderator) {
+		preChecks(authUser, actor);
 		Validate.notNull(moderator, "Moderator must be set.");
 		Validate.notNull(moderator.getGuest(), "Moderator must be set.");
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
+		checkDeletePermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_DELETE, moderator);
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATOR_CANNOT_DELETE);
 		moderatorBusinessService.delete(moderator);
 		guest.removeModerator(moderator);
 		guestRepository.update(guest);
@@ -133,25 +123,12 @@ public class ModeratorServiceImpl extends GenericAdminServiceImpl implements Mod
 	}
 
 	@Override
-	public List<Moderator> findAllByGuest(Account authUser, String guestUuid) {
-		preChecks(authUser);
+	public List<Moderator> findAllByGuest(Account authUser, Account actor, String guestUuid) {
+		preChecks(authUser, actor);
 		Validate.notEmpty(guestUuid, "Guest's uuid must be set.");
+		checkListPermission(actor, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATORS_CANNOT_GET, null);
 		Guest guest = guestBusinessService.findByLsUuid(guestUuid);
-		checkAdminFor(authUser, guest, BusinessErrorCode.GUEST_MODERATORS_CANNOT_GET);
 		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest);
 		return moderators;
-	}
-
-	private void checkAdminFor(Account authUser, Guest guest, BusinessErrorCode errorCode) throws BusinessException {
-		if (ROLES.contains(authUser.getRole())) {
-			if (Role.ADMIN.equals(authUser.getRole())) {
-				if (!domainPermissionService.isAdminForThisUser(authUser, guest)) {
-					throw new BusinessException(errorCode, "You are not admin for this guest.");
-				}
-			}
-		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to use this service.");
-		}
-
 	}
 }

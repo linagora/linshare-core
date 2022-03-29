@@ -120,7 +120,7 @@ public class ModeratorServiceImplTest {
 	@Test
 	public void testCreateModerator() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Moderator moderator = moderatorService.create(root, new Moderator(ModeratorRole.ADMIN, john, guest));
+		Moderator moderator = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest));
 		assertThat(moderator).isNotNull();
 		assertThat(moderator.getAccount()).isEqualTo(john);
 		assertThat(moderator.getGuest()).isEqualTo(guest);
@@ -132,13 +132,13 @@ public class ModeratorServiceImplTest {
 	@Test
 	public void testFindModerator() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Moderator moderatorToCreate = moderatorService.create(root, new Moderator(ModeratorRole.ADMIN, john, guest));
+		Moderator moderatorToCreate = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest));
 		assertThat(moderatorToCreate).isNotNull();
 		assertThat(moderatorToCreate.getAccount()).isEqualTo(john);
 		assertThat(moderatorToCreate.getGuest()).isEqualTo(guest);
 		Guest guest = guestRepository.findByLsUuid(moderatorToCreate.getGuest().getLsUuid());
 		assertThat(guest.getModerators()).size().isEqualTo(1);
-		Moderator moderator = moderatorService.find(root, moderatorToCreate.getUuid());
+		Moderator moderator = moderatorService.find(root, root, moderatorToCreate.getUuid());
 		assertThat(moderator).isNotNull();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -146,18 +146,18 @@ public class ModeratorServiceImplTest {
 	@Test
 	public void testDeleteModerator() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Moderator moderator = moderatorService.create(root, new Moderator(ModeratorRole.ADMIN, john, guest));
+		Moderator moderator = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest));
 		assertThat(moderator).isNotNull();
 		assertThat(moderator.getAccount()).isEqualTo(john);
 		assertThat(moderator.getGuest()).isEqualTo(guest);
 		Guest guest = guestRepository.findByLsUuid(moderator.getGuest().getLsUuid());
 		assertThat(guest.getModerators()).size().isEqualTo(1);
-		moderator = moderatorService.delete(root, moderator);
+		moderator = moderatorService.delete(root, root, moderator);
 		String modearotUuid = moderator.getUuid();
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-			moderatorService.find(root, modearotUuid);
+			moderatorService.find(root, root, modearotUuid);
 		});
-		Assertions.assertEquals(BusinessErrorCode.CANNOT_FIND_GUEST_MODERATOR, exception.getErrorCode());
+		Assertions.assertEquals(BusinessErrorCode.GUEST_MODERATOR_CANNOT_FIND, exception.getErrorCode());
 		guest = guestRepository.findByLsUuid(guest.getLsUuid());
 		assertThat(guest.getModerators()).size().isEqualTo(0);
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -166,17 +166,17 @@ public class ModeratorServiceImplTest {
 	@Test
 	public void testFindModeratorsByGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Moderator moderator1 = moderatorService.create(root, new Moderator(ModeratorRole.ADMIN, john, guest));
+		Moderator moderator1 = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest));
 		assertThat(moderator1).isNotNull();
 		assertThat(moderator1.getAccount()).isEqualTo(john);
 		assertThat(moderator1.getGuest()).isEqualTo(guest);
-		Moderator moderator2 = moderatorService.create(root, new Moderator(ModeratorRole.ADMIN, jane, guest));
+		Moderator moderator2 = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, jane, guest));
 		assertThat(moderator2).isNotNull();
 		assertThat(moderator2.getAccount()).isEqualTo(jane);
 		assertThat(moderator2.getGuest()).isEqualTo(guest);
 		Guest guest = guestRepository.findByLsUuid(moderator1.getGuest().getLsUuid());
 		assertThat(guest.getModerators()).size().isEqualTo(2);
-		List<Moderator> moderators = moderatorService.findAllByGuest(root, guest.getLsUuid());
+		List<Moderator> moderators = moderatorService.findAllByGuest(root, root, guest.getLsUuid());
 		assertThat(moderators.size()).isEqualTo(2);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

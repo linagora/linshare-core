@@ -65,8 +65,9 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 	}
 
 	@Override
-	public ModeratorDto create(String guestUuid, ModeratorDto dto) {
-		User authUser = checkAuthentication(Role.ADMIN);
+	public ModeratorDto create(String actorUuid, String guestUuid, ModeratorDto dto) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(dto, "Moderator to create should be set.");
 		Validate.notNull(dto.getAccount(), "Moderator's account should be set.");
 		Validate.notEmpty(dto.getAccount().getUuid(), "Moderator's account uuid should be set");
@@ -76,7 +77,7 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 		Account account = accountService.findAccountByLsUuid(dto.getAccount().getUuid());
 		Guest guest = (Guest) accountService.findAccountByLsUuid(dto.getGuest().getUuid());
 		checkGuest(guestUuid, guest.getLsUuid());
-		Moderator moderator = moderatorService.create(authUser, dto.toModeratorObject(dto, account, guest));
+		Moderator moderator = moderatorService.create(authUser, actor, dto.toModeratorObject(dto, account, guest));
 		return ModeratorDto.from(moderator);
 	}
 
@@ -88,42 +89,46 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 	}
 
 	@Override
-	public ModeratorDto find(String guestUuid, String uuid) {
+	public ModeratorDto find(String actorUuid, String guestUuid, String uuid) {
 		User authUser = checkAuthentication(Role.ADMIN);
-		Moderator moderator = moderatorService.find(authUser, uuid);
+		Account actor = getActor(authUser, actorUuid);
+		Moderator moderator = moderatorService.find(authUser, actor, uuid);
 		Guest guest = (Guest) accountService.findAccountByLsUuid(moderator.getGuest().getLsUuid());
 		checkGuest(guestUuid, guest.getLsUuid());
 		return ModeratorDto.from(moderator);
 	}
 
 	@Override
-	public ModeratorDto update(String guestUuid, String uuid, ModeratorDto dto) {
-		User authUser = checkAuthentication(Role.ADMIN);
+	public ModeratorDto update(String actorUuid, String guestUuid, String uuid, ModeratorDto dto) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(dto, "Moderator to update should be set.");
 		Validate.notNull(dto.getRole(), "Moderator role should be set.");
 		String moderatorUuid = Optional.ofNullable(Strings.emptyToNull(uuid)).orElse(dto.getUuid());
 		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
-		Moderator entity = moderatorService.find(authUser, moderatorUuid);
+		Moderator entity = moderatorService.find(authUser, actor, moderatorUuid);
 		checkGuest(guestUuid, entity.getGuest().getLsUuid());
 		entity.setRole(dto.getRole());
-		Moderator moderatorToUpdate = moderatorService.update(authUser, entity);
+		Moderator moderatorToUpdate = moderatorService.update(authUser, actor, entity);
 		return ModeratorDto.from(moderatorToUpdate);
 	}
 
 	@Override
-	public ModeratorDto delete(String guestUuid, String uuid, ModeratorDto dto) {
+	public ModeratorDto delete(String actorUuid, String guestUuid, String uuid, ModeratorDto dto) {
 		User authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
 		String moderatorUuid = Optional.ofNullable(Strings.emptyToNull(uuid)).orElse(dto.getUuid());
 		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
-		Moderator moderator = moderatorService.find(authUser, moderatorUuid);
+		Moderator moderator = moderatorService.find(authUser, actor, moderatorUuid);
 		checkGuest(guestUuid, moderator.getGuest().getLsUuid());
-		return ModeratorDto.from(moderatorService.delete(authUser, moderator));
+		return ModeratorDto.from(moderatorService.delete(authUser, actor, moderator));
 	}
 
 	@Override
-	public List<ModeratorDto> findAllByGuest(String guestUuid) {
+	public List<ModeratorDto> findAllByGuest(String actorUuid, String guestUuid) {
 		User authUser = checkAuthentication(Role.ADMIN);
-		List<Moderator> moderators = moderatorService.findAllByGuest(authUser, guestUuid);
+		Account actor = getActor(authUser, actorUuid);
+		List<Moderator> moderators = moderatorService.findAllByGuest(authUser, actor, guestUuid);
 		return moderators
 				.stream()
 				.map(ModeratorDto::from)

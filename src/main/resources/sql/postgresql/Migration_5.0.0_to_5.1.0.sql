@@ -364,7 +364,7 @@ ALTER TABLE moderator ADD CONSTRAINT FKmoder87410 FOREIGN KEY (account_id) REFER
 ALTER TABLE moderator ADD CONSTRAINT FKmoder87411 FOREIGN KEY (guest_id) REFERENCES account (id);
 
 CREATE UNIQUE INDEX moderator_uuid_index ON moderator (uuid);
-
+CREATE UNIQUE INDEX moderator_account_id_guest_id ON moderator (account_id, guest_id);
 ---- End of your queries
 
 -- Upgrade LinShare version

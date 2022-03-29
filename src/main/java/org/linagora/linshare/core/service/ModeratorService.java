@@ -40,13 +40,13 @@ import org.linagora.linshare.core.domain.entities.Moderator;
 
 public interface ModeratorService {
 
-	Moderator create(Account authUser, Moderator moderator);
+	Moderator create(Account authUser, Account actor, Moderator moderator);
 
-	Moderator find(Account authUser, String uuid);
+	Moderator find(Account authUser, Account actor, String uuid);
 
-	Moderator update(Account authUser, Moderator moderator);
+	Moderator update(Account authUser, Account actor, Moderator moderator);
 
-	Moderator delete(Account authUser, Moderator moderator);
+	Moderator delete(Account authUser, Account actor, Moderator moderator);
 
-	List<Moderator> findAllByGuest(Account authUser, String guestUuid);
+	List<Moderator> findAllByGuest(Account authUser, Account actor, String guestUuid);
 }
