@@ -327,7 +327,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Add guest accountType to sharedSpaceMember
 	 */
-	UPGRADE_5_1_0_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER;
+	UPGRADE_5_1_0_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER,
+
+	/**
+	 * Rename saved audit workgroup to work_group
+	 */
+	UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

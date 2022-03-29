@@ -348,6 +348,27 @@ VALUES
      now(),
      now());
 
+-- UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (55,
+     'UNDEFINED',
+     'UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP',
+     'UPGRADE_5_1',
+     55,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
 
 -- Moderator table
 CREATE TABLE moderator (
