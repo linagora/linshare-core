@@ -131,9 +131,9 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest find(Account actor, Account owner, String lsUuid)
+	public Guest find(Account authUser, Account owner, String lsUuid)
 			throws BusinessException {
-		preChecks(actor, owner);
+		preChecks(authUser, owner);
 		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
 		if (guest == null) {
 			logger.error("Current actor " + owner.getAccountRepresentation()
@@ -142,23 +142,23 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
 					message);
 		}
-		checkReadPermission(actor, owner, Guest.class,
+		checkReadPermission(authUser, owner, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, guest);
 		return guest;
 	}
 
 	@Override
-	public List<AllowedContact> load(Account actor, User guest)
+	public List<AllowedContact> load(Account authUser, User guest)
 			throws BusinessException {
-		preChecks(actor, guest);
+		preChecks(authUser, guest);
 		Guest guest2 = guestBusinessService.findByLsUuid(guest.getLsUuid());
-		checkReadPermission(actor, actor, Guest.class,
+		checkReadPermission(authUser, authUser, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, guest2);
 		return guestBusinessService.loadAllowedContacts(guest);
 	}
 
 	@Override
-	public Guest find(Account actor, Account owner, String domainUuid, String mail)
+	public Guest find(Account authUser, Account owner, String domainUuid, String mail)
 			throws BusinessException {
 		AbstractDomain domain = null;
 		if (Strings.isNullOrEmpty(domainUuid)) {
@@ -171,10 +171,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> findAll(Account actor, Account owner, Boolean mine)
+	public List<Guest> findAll(Account authUser, Account owner, Boolean mine)
 			throws BusinessException {
-		preChecks(actor, owner);
-		checkListPermission(actor, owner, Guest.class,
+		preChecks(authUser, owner);
+		checkListPermission(authUser, owner, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, null);
 		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(owner.getDomain());
 		List<Guest> list = null;
@@ -194,12 +194,12 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest create(Account actor, Account owner, Guest guest,
+	public Guest create(Account authUser, Account owner, Guest guest,
 			List<String> restrictedMails) throws BusinessException {
-		preChecks(actor, owner);
+		preChecks(authUser, owner);
 		Validate.notNull(guest);
 		Validate.notEmpty(guest.getMail(), "Guest mail must be set.");
-		checkCreatePermission(actor, owner, Guest.class,
+		checkCreatePermission(authUser, owner, Guest.class,
 				BusinessErrorCode.USER_CANNOT_CREATE_GUEST, null);
 		if (!hasGuestDomain(owner.getDomainId())) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
@@ -229,7 +229,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		guest.setLastName(sanitize(guest.getLastName()));
 		List<User> restrictedContacts = null;
 		if (guest.isRestricted()) {
-			restrictedContacts = transformToUsers(actor, restrictedMails);
+			restrictedContacts = transformToUsers(authUser, restrictedMails);
 			if (restrictedContacts == null || restrictedContacts.isEmpty()) {
 				throw new BusinessException(
 						BusinessErrorCode.GUEST_INVALID_INPUT,
@@ -245,23 +245,23 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)owner, create, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
 		notifierService.sendNotification(mail);
-		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
+		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, owner, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
 		logEntryService.insert(log);
 		return create;
 	}
 
 	@Override
-	public Guest update(Account actor, User owner, Guest guest,
+	public Guest update(Account authUser, User owner, Guest guest,
 			List<String> restrictedMails) throws BusinessException {
-		preChecks(actor, owner);
+		preChecks(authUser, owner);
 		Validate.notNull(guest, "Guest object is required");
 		Validate.notEmpty(guest.getLsUuid(), "Guest uuid is required");
 		// In case if guestDto was an existing modified entity.
 		guestBusinessService.evict(guest);
-		Guest entity = find(actor, owner, guest.getLsUuid());
-		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.GUEST,
+		Guest entity = find(authUser, owner, guest.getLsUuid());
+		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, owner, LogAction.UPDATE, AuditLogEntryType.GUEST,
 				entity);
-		checkUpdatePermission(actor, owner, Guest.class,
+		checkUpdatePermission(authUser, owner, Guest.class,
 				BusinessErrorCode.CANNOT_UPDATE_USER, entity);
 		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(owner
 				.getDomainId());
@@ -270,10 +270,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 					BusinessErrorCode.USER_CANNOT_CREATE_GUEST,
 					"New owner doesn't have guest domain");
 		}
-		List<User> restrictedContacts = transformToUsers(actor, restrictedMails);
+		List<User> restrictedContacts = transformToUsers(authUser, restrictedMails);
 		Date newExpirationDate = guest.getExpirationDate(); 
 		if (newExpirationDate != null && !newExpirationDate.before(new Date())) {
-			if (!userService.isAdminForThisUser(actor, owner)) {
+			if (!userService.isAdminForThisUser(authUser, owner)) {
 				newExpirationDate = calculateGuestExpiryDate(owner, newExpirationDate);
 				checkDateValidity(owner, entity.getExpirationDate(), newExpirationDate,
 						functionalityReadOnlyService.getGuestsExpirationDateProlongation(owner.getDomain())
@@ -430,9 +430,9 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> search(Account actor, Account owner, String firstName, String lastName, String mail, boolean all)
+	public List<Guest> search(Account authUser, Account owner, String firstName, String lastName, String mail, boolean all)
 			throws BusinessException {
-		preChecks(actor, owner);
+		preChecks(authUser, owner);
 		if (owner.isGuest()) {
 			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "Guests are not allowed to use this method.");
 		}
@@ -448,8 +448,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> search(Account actor, Account owner, String pattern, Boolean mine) throws BusinessException {
-		preChecks(actor, owner);
+	public List<Guest> search(Account authUser, Account owner, String pattern, Boolean mine) throws BusinessException {
+		preChecks(authUser, owner);
 		if (owner.isGuest()) {
 			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "Guests are not allowed to use this method.");
 		}
@@ -488,16 +488,16 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		return abstractDomainService.findGuestDomain(topDomainId) != null;
 	}
 
-	private Date calculateGuestExpiryDate(Account owner, Date currentGuestExpirationDate) {
+	private Date calculateGuestExpiryDate(Account authUser, Date currentGuestExpirationDate) {
 			TimeUnitValueFunctionality func = functionalityReadOnlyService
-					.getGuestsExpiration(owner.getDomain());
+					.getGuestsExpiration(authUser.getDomain());
 			return functionalityReadOnlyService.getDateValue(func, currentGuestExpirationDate, BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID);
 	}
 
 	@Override
-	public Date getGuestExpirationDate(Account actor,
+	public Date getGuestExpirationDate(Account authUser,
 			Date currentGuestExpirationDate) throws BusinessException {
-		return calculateGuestExpiryDate(actor, currentGuestExpirationDate);
+		return calculateGuestExpiryDate(authUser, currentGuestExpirationDate);
 	}
 
 	@Override
