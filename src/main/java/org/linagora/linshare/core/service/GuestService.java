@@ -51,7 +51,7 @@ public interface GuestService {
 	/**
 	 * Find a guest by is lsUuid
 	 * @param authUser who trigger the action
-	 * @param owner
+	 * @param actor
 	 *            for who trigger the action
 	 * @param lsUuid
 	 *            guest lsUuid
@@ -59,44 +59,44 @@ public interface GuestService {
 	 * @return guest found otherwise throws business exception
 	 * @throws BusinessException
 	 */
-	Guest find(Account authUser, Account owner, String lsUuid) throws BusinessException;
+	Guest find(Account authUser, Account actor, String lsUuid) throws BusinessException;
 
-	List<AllowedContact> load(Account authUser, User owner) throws BusinessException;
+	List<AllowedContact> load(Account authUser, User actor) throws BusinessException;
 
-	Guest find(Account authUser, Account owner, String domainUuid, String mail) throws BusinessException;
+	Guest find(Account authUser, Account actor, String domainUuid, String mail) throws BusinessException;
 
 	/**
 	 * find all guests according to domain access policies
 	 * @param authUser
-	 * @param owner
+	 * @param actor
 	 * @return List<Guest>
 	 * @throws BusinessException
 	 */
-	List<Guest> findAll(Account authUser, Account owner, Boolean mine) throws BusinessException;
+	List<Guest> findAll(Account authUser, Account actor, Boolean mine) throws BusinessException;
 
 	/**
 	 * find all guests according to domain access policies, using firstName or lastName or mail, or both.
 	 * fragment pattern for this three parameter are supported.
 	 * @param authUser
-	 * @param owner
+	 * @param actor
 	 * @param firstName
 	 * @param lastName
 	 * @param mail
 	 * @return List<Guest>
 	 * @throws BusinessException
 	 */
-	List<Guest> search(Account authUser, Account owner, String firstName, String lastName, String mail, boolean all) throws BusinessException;
+	List<Guest> search(Account authUser, Account actor, String firstName, String lastName, String mail, boolean all) throws BusinessException;
 
 	/**
 	 * find all guests according to domain access policies, using pattern as a fragment of firstName or lastName or mail.
 	 * @param authUser
-	 * @param owner
+	 * @param actor
 	 * @param pattern
 	 * @param mine TODO
 	 * @return List<Guest>
 	 * @throws BusinessException
 	 */
-	List<Guest> search(Account authUser, Account owner, String pattern, Boolean mine) throws BusinessException;
+	List<Guest> search(Account authUser, Account actor, String pattern, Boolean mine) throws BusinessException;
 
 	/**
 	 * Test if a guest exists
@@ -109,7 +109,7 @@ public interface GuestService {
 	/**
 	 * Create a guest
 	 * @param authUser who triggered the action
-	 * @param owner
+	 * @param actor
 	 *            for who triggered the action
 	 * @param guest
 	 *            guest to create
@@ -117,19 +117,19 @@ public interface GuestService {
 	 * @return created guest
 	 * @throws BusinessException
 	 */
-	Guest create(Account authUser, Account owner, Guest guest, List<String> restrictedMails)
+	Guest create(Account authUser, Account actor, Guest guest, List<String> restrictedMails)
 			throws BusinessException;
 
 	/**
 	 * Update a guest
 	 * @param authUser
-	 * @param owner
+	 * @param actor
 	 * @param guest
 	 * @param restrictedMails : if null, it won't be updated.
 	 * @return Guest
 	 * @throws BusinessException
 	 */
-	Guest update(Account authUser, User owner, Guest guest, List<String> restrictedMails)
+	Guest update(Account authUser, User actor, Guest guest, List<String> restrictedMails)
 			throws BusinessException;
 
 	/**
@@ -142,7 +142,7 @@ public interface GuestService {
 	 * @return the deleted object
 	 * @throws BusinessException
 	 */
-	Guest delete(Account authUser, User owner, String lsUuid) throws BusinessException;
+	Guest delete(Account authUser, User actor, String lsUuid) throws BusinessException;
 
 	/**
 	 * Reset guest password

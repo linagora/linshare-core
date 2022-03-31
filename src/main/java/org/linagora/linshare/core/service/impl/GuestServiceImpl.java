@@ -131,18 +131,18 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest find(Account authUser, Account owner, String lsUuid)
+	public Guest find(Account authUser, Account actor, String lsUuid)
 			throws BusinessException {
-		preChecks(authUser, owner);
+		preChecks(authUser, actor);
 		Guest guest = guestBusinessService.findByLsUuid(lsUuid);
 		if (guest == null) {
-			logger.error("Current actor " + owner.getAccountRepresentation()
+			logger.error("Current actor " + actor.getAccountRepresentation()
 					+ " is looking for a misssing guest : " + lsUuid);
 			String message = "Can not find guest with uuid : " + lsUuid;
 			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
 					message);
 		}
-		checkReadPermission(authUser, owner, Guest.class,
+		checkReadPermission(authUser, actor, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, guest);
 		return guest;
 	}
@@ -158,11 +158,11 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest find(Account authUser, Account owner, String domainUuid, String mail)
+	public Guest find(Account authUser, Account actor, String domainUuid, String mail)
 			throws BusinessException {
 		AbstractDomain domain = null;
 		if (Strings.isNullOrEmpty(domainUuid)) {
-			domain= owner.getDomain();
+			domain= actor.getDomain();
 		} else {
 			domain = abstractDomainService.findGuestDomain(domainUuid);
 
@@ -171,19 +171,19 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> findAll(Account authUser, Account owner, Boolean mine)
+	public List<Guest> findAll(Account authUser, Account actor, Boolean mine)
 			throws BusinessException {
-		preChecks(authUser, owner);
-		checkListPermission(authUser, owner, Guest.class,
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, null);
-		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(owner.getDomain());
+		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
 		List<Guest> list = null;
 		if (mine == null) {
 			list = guestBusinessService.findAll(authorizedDomains);
 		} else if (mine) {
-			list = guestBusinessService.findAllMyGuests(owner);
+			list = guestBusinessService.findAllMyGuests(actor);
 		} else {
-			list = guestBusinessService.findAllOthersGuests(authorizedDomains, owner);
+			list = guestBusinessService.findAllOthersGuests(authorizedDomains, actor);
 		}
 		return list;
 	}
@@ -194,24 +194,24 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest create(Account authUser, Account owner, Guest guest,
+	public Guest create(Account authUser, Account actor, Guest guest,
 			List<String> restrictedMails) throws BusinessException {
-		preChecks(authUser, owner);
+		preChecks(authUser, actor);
 		Validate.notNull(guest);
 		Validate.notEmpty(guest.getMail(), "Guest mail must be set.");
-		checkCreatePermission(authUser, owner, Guest.class,
+		checkCreatePermission(authUser, actor, Guest.class,
 				BusinessErrorCode.USER_CANNOT_CREATE_GUEST, null);
-		if (!hasGuestDomain(owner.getDomainId())) {
+		if (!hasGuestDomain(actor.getDomainId())) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Guest domain was not found");
 		}
-		Date expiryDate = calculateGuestExpiryDate(owner, guest.getExpirationDate());
+		Date expiryDate = calculateGuestExpiryDate(actor, guest.getExpirationDate());
 		guest.setExpirationDate(expiryDate);
-		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(owner
+		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(actor
 				.getDomainId());
 		User user = null;
 		try {
-			user = userService.findOrCreateUser(guest.getMail(), owner.getDomainId());
+			user = userService.findOrCreateUser(guest.getMail(), actor.getDomainId());
 		} catch (BusinessException e) {
 			logger.error("User is null");
 		}
@@ -236,34 +236,34 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 						"Can not create a restricted guest without restricted contacts (internal or guest users only).");
 			}
 		}
-		Guest create = guestBusinessService.create(owner, guest,
+		Guest create = guestBusinessService.create(actor, guest,
 				guestDomain, restrictedContacts);
 		createQuotaGuest(guest);
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(create);
 		resetGuestPassword.setKind(ResetTokenKind.NEW_PASSWORD);
 		resetGuestPasswordMongoRepository.insert(resetGuestPassword);
-		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)owner, create, resetGuestPassword.getUuid());
+		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)actor, create, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
 		notifierService.sendNotification(mail);
-		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, owner, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
+		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, actor, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
 		logEntryService.insert(log);
 		return create;
 	}
 
 	@Override
-	public Guest update(Account authUser, User owner, Guest guest,
+	public Guest update(Account authUser, User actor, Guest guest,
 			List<String> restrictedMails) throws BusinessException {
-		preChecks(authUser, owner);
+		preChecks(authUser, actor);
 		Validate.notNull(guest, "Guest object is required");
 		Validate.notEmpty(guest.getLsUuid(), "Guest uuid is required");
 		// In case if guestDto was an existing modified entity.
 		guestBusinessService.evict(guest);
-		Guest entity = find(authUser, owner, guest.getLsUuid());
-		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, owner, LogAction.UPDATE, AuditLogEntryType.GUEST,
+		Guest entity = find(authUser, actor, guest.getLsUuid());
+		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, actor, LogAction.UPDATE, AuditLogEntryType.GUEST,
 				entity);
-		checkUpdatePermission(authUser, owner, Guest.class,
+		checkUpdatePermission(authUser, actor, Guest.class,
 				BusinessErrorCode.CANNOT_UPDATE_USER, entity);
-		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(owner
+		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(actor
 				.getDomainId());
 		if (guestDomain == null) {
 			throw new BusinessException(
@@ -273,10 +273,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		List<User> restrictedContacts = transformToUsers(authUser, restrictedMails);
 		Date newExpirationDate = guest.getExpirationDate(); 
 		if (newExpirationDate != null && !newExpirationDate.before(new Date())) {
-			if (!userService.isAdminForThisUser(authUser, owner)) {
-				newExpirationDate = calculateGuestExpiryDate(owner, newExpirationDate);
-				checkDateValidity(owner, entity.getExpirationDate(), newExpirationDate,
-						functionalityReadOnlyService.getGuestsExpirationDateProlongation(owner.getDomain())
+			if (!userService.isAdminForThisUser(authUser, actor)) {
+				newExpirationDate = calculateGuestExpiryDate(actor, newExpirationDate);
+				checkDateValidity(actor, entity.getExpirationDate(), newExpirationDate,
+						functionalityReadOnlyService.getGuestsExpirationDateProlongation(actor.getDomain())
 								.getActivationPolicy().getStatus(),
 						entity);
 			}
@@ -286,7 +286,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		guest.setFirstName(sanitize(guest.getFirstName()));
 		guest.setLastName(sanitize(guest.getLastName()));
-		Guest result = guestBusinessService.update(owner, entity, guest, guestDomain,
+		Guest result = guestBusinessService.update(actor, entity, guest, guestDomain,
 				restrictedContacts);
 		log.setResourceUpdated(new UserMto(result));
 		logEntryService.insert(log);
@@ -430,27 +430,27 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> search(Account authUser, Account owner, String firstName, String lastName, String mail, boolean all)
+	public List<Guest> search(Account authUser, Account actor, String firstName, String lastName, String mail, boolean all)
 			throws BusinessException {
-		preChecks(authUser, owner);
-		if (owner.isGuest()) {
+		preChecks(authUser, actor);
+		if (actor.isGuest()) {
 			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "Guests are not allowed to use this method.");
 		}
 		// TODO : check if one of the 3 parameters is not null/empty.
-		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(owner.getDomain());
+		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
 		List<Guest> list = null;
 		if (all) {
 			list = guestBusinessService.search(authorizedDomains,  firstName, lastName, mail, null);
 		} else {
-			list = guestBusinessService.search(authorizedDomains,  firstName, lastName, mail, owner);
+			list = guestBusinessService.search(authorizedDomains,  firstName, lastName, mail, actor);
 		}
 		return list;
 	}
 
 	@Override
-	public List<Guest> search(Account authUser, Account owner, String pattern, Boolean mine) throws BusinessException {
-		preChecks(authUser, owner);
-		if (owner.isGuest()) {
+	public List<Guest> search(Account authUser, Account actor, String pattern, Boolean mine) throws BusinessException {
+		preChecks(authUser, actor);
+		if (actor.isGuest()) {
 			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "Guests are not allowed to use this method.");
 		}
 		String message = "You must fill a pattern to search ! At least three characters.";
@@ -459,14 +459,14 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			logger.error(message);
 			throw new BusinessException(BusinessErrorCode.GUEST_INVALID_SEARCH_INPUT, message);
 		}
-		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(owner.getDomain());
+		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
 		List<Guest> list = null;
 		if (mine == null) {
 			list = guestBusinessService.search(authorizedDomains, pattern);
 		} else if (mine) {
-			list = guestBusinessService.searchMyGuests(authorizedDomains, pattern, owner);
+			list = guestBusinessService.searchMyGuests(authorizedDomains, pattern, actor);
 		} else {
-			list = guestBusinessService.searchExceptGuests(authorizedDomains, pattern, owner);
+			list = guestBusinessService.searchExceptGuests(authorizedDomains, pattern, actor);
 		}
 		return list;
 	}
