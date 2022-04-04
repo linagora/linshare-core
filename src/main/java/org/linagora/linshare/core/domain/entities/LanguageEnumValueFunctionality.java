@@ -49,6 +49,8 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityEnumLangDto;
 
+import com.google.common.collect.Lists;
+
 public class LanguageEnumValueFunctionality extends OneValueFunctionality<Language> {
 
 	public LanguageEnumValueFunctionality() {
@@ -124,7 +126,7 @@ public class LanguageEnumValueFunctionality extends OneValueFunctionality<Langua
 		if (this.ancestorFunc != null) {
 			parentValue = ((LanguageEnumValueFunctionality)this.ancestorFunc).getValue();
 		}
-		NestedLanguageParameterDto defaut = new NestedLanguageParameterDto(this.value, parentValue);
+		NestedLanguageParameterDto defaut = new NestedLanguageParameterDto(this.value, parentValue, Lists.newArrayList(Language.values()));
 		return new LanguageParameterDto(
 			this.system,
 			!this.getParentAllowParametersUpdate(),
