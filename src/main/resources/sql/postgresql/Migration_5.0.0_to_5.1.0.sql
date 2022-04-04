@@ -386,6 +386,26 @@ ALTER TABLE moderator ADD CONSTRAINT FKmoder87411 FOREIGN KEY (guest_id) REFEREN
 
 CREATE UNIQUE INDEX moderator_uuid_index ON moderator (uuid);
 CREATE UNIQUE INDEX moderator_account_id_guest_id ON moderator (account_id, guest_id);
+
+
+-- Transform guest owner to moderator
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE OR REPLACE FUNCTION ls_transform_guest_owner_to_moderator() RETURNS void AS $$
+BEGIN
+	DECLARE guest record;
+	DECLARE o_id BIGINT;
+	BEGIN
+		FOR guest IN (SELECT id, creation_date, modification_date, owner_id FROM account WHERE account_type=3) loop
+			SELECT id INTO o_id FROM account WHERE id = guest.owner_id;
+			INSERT INTO moderator (id, uuid, role, creation_date, modification_date, account_id, guest_id) VALUES ((SELECT nextVal('hibernate_sequence')), uuid_generate_v4(), 'ADMIN', guest.creation_date, guest.modification_date, o_id, guest.id);
+		END LOOP;
+	END;
+END
+$$ LANGUAGE plpgsql;
+SELECT ls_transform_guest_owner_to_moderator();
+
+
 ---- End of your queries
 
 -- Upgrade LinShare version
