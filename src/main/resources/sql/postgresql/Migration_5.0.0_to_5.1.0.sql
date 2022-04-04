@@ -302,7 +302,7 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 	VALUES (34, 'user_uid', 'uid', false, true, true, 8, false);
 
--- UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
+-- UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
 INSERT INTO upgrade_task
 (id,
  uuid,
@@ -316,7 +316,7 @@ INSERT INTO upgrade_task
 VALUES
     (53,
      'UNDEFINED',
-     'UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
+     'UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
      'UPGRADE_5_1',
      53,
      'NEW',
@@ -324,7 +324,7 @@ VALUES
      now(),
      now());
 
--- UPGRADE_5_1_0_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
+-- UPGRADE_5_1_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
 INSERT INTO upgrade_task
 (id,
  uuid,
@@ -339,9 +339,9 @@ INSERT INTO upgrade_task
 VALUES
     (54,
      'UNDEFINED',
-     'UPGRADE_5_1_0_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
+     'UPGRADE_5_1_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
      'UPGRADE_5_1',
-     'UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
+     'UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
      54,
      'NEW',
      'REQUIRED',

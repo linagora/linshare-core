@@ -322,12 +322,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Add internal accountType to sharedSpaceMember
 	 */
-	UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER,
+	UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER,
 
 	/**
 	 * Add guest accountType to sharedSpaceMember
 	 */
-	UPGRADE_5_1_0_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER,
+	UPGRADE_5_1_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER,
 
 	/**
 	 * Rename saved audit workgroup to work_group

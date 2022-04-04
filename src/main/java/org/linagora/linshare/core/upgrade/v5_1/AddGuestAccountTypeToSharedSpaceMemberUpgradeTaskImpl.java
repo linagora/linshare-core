@@ -71,7 +71,7 @@ public class AddGuestAccountTypeToSharedSpaceMemberUpgradeTaskImpl extends Gener
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_5_1_0_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER;
+		return UpgradeTaskType.UPGRADE_5_1_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER;
 	}
 
 	@Override

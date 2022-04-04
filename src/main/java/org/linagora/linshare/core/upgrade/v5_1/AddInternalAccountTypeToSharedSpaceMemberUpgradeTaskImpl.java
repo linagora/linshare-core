@@ -68,7 +68,7 @@ public class AddInternalAccountTypeToSharedSpaceMemberUpgradeTaskImpl extends Ge
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_5_1_0_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER;
+		return UpgradeTaskType.UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER;
 	}
 
 	@Override
