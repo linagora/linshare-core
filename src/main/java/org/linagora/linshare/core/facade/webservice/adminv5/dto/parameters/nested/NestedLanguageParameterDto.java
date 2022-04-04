@@ -35,7 +35,11 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.nested;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.Language;
+
+import com.google.common.base.MoreObjects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -45,12 +49,33 @@ import io.swagger.v3.oas.annotations.media.Schema;
 )
 public class NestedLanguageParameterDto extends NestedParameterDto<Language> {
 
+	protected List<Language> languages;
+
 	public NestedLanguageParameterDto() {
 		super();
 	}
 
-	public NestedLanguageParameterDto(Language value, Language parentValue) {
+	public NestedLanguageParameterDto(Language value, Language parentValue, List<Language> languages) {
 		super(value, parentValue);
+		this.languages = languages;
+	}
+
+	public List<Language> getLanguages() {
+		return languages;
+	}
+
+	public void setLanguages(List<Language> languages) {
+		this.languages = languages;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("value", value)
+				.add("parentValue", parentValue)
+				.add("isOverriden", isOverriden())
+				.add("languages", languages)
+				.toString();
 	}
 
 }
