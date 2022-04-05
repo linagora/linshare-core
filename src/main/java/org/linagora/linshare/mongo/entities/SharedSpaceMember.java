@@ -51,6 +51,7 @@ import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -114,6 +115,7 @@ public class SharedSpaceMember {
 	// WorkAround
 	// we have to duplicate account information
 	// to avoid a side effect on front-end
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected SharedSpaceAccount user;
 
 	public SharedSpaceMember() {
@@ -219,6 +221,14 @@ public class SharedSpaceMember {
 
 	public void setSeeAsNested(boolean seeAsNested) {
 		this.seeAsNested = seeAsNested;
+	}
+
+	@Schema(description = "If true, sharedSpaceMember belongs to workGroup and its parent (WorkSpace), else he belongs only to the nested workgroup.")
+	public boolean isBelongingToWorkSpace() {
+		return seeAsNested;
+	}
+
+	public void setBelongingToWorkSpace(boolean seeAsNested) {
 	}
 
 	public NodeType getType() {
