@@ -49,5 +49,5 @@ public abstract class LinShareAuthenticationException extends AccountStatusExcep
 		super(msg);
 	}
 
-	public abstract Integer getErrorCode();
+	public abstract LinShareAuthenticationExceptionCode getErrorCode();
 }

@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
+import org.linagora.linshare.auth.exceptions.LinShareAuthenticationExceptionCode;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
@@ -53,13 +54,13 @@ public class LinShareBasicAuthenticationEntryPoint extends BasicAuthenticationEn
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException {
 		String authenticationHeader = request.getHeader("WWW-No-Authenticate");
-		int errorCode = 1000;
+		LinShareAuthenticationExceptionCode errorCode = LinShareAuthenticationExceptionCode.DEFAULT_AUTHENTICATION_ERROR;
 		if (authException instanceof LinShareAuthenticationException) {
 			errorCode = ((LinShareAuthenticationException) authException).getErrorCode();
 		} else if (authException instanceof LockedException) {
-			errorCode = 1004;
+			errorCode = LinShareAuthenticationExceptionCode.ACCOUNT_LOCKED;
 		} else if (authException instanceof BadCredentialsException) {
-			errorCode = 1001;
+			errorCode = LinShareAuthenticationExceptionCode.BAD_CREDENTIAL;
 		}
 		if (authenticationHeader == null) {
 			/**
@@ -67,13 +68,14 @@ public class LinShareBasicAuthenticationEntryPoint extends BasicAuthenticationEn
 			 *  It means login/password authentication succeeded but TOTP was invalid or not provided.
 			 *  So we inform the client of the supported authentication process.
 			 */
-			if (errorCode == 1002 || errorCode == 1003) {
+			if (errorCode.equals(LinShareAuthenticationExceptionCode.TOTP_BAD_VALUE)
+					|| errorCode.equals(LinShareAuthenticationExceptionCode.TOTP_BAD_FORMAT)) {
 				response.addHeader("WWW-Authenticate-", "Basic+TOTP realm=\"" + this.getRealmName() + "\"");
 			} else {
 				response.addHeader("WWW-Authenticate", "Basic realm=\"" + this.getRealmName() + "\"");
 			}
 		}
-		response.addIntHeader("X-LinShare-Auth-error-code", errorCode);
+		response.addIntHeader("X-LinShare-Auth-error-code", errorCode.toInt());
 		response.addHeader("X-LinShare-Auth-error-msg", authException.getMessage());
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
 	}

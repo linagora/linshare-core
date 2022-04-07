@@ -48,8 +48,8 @@ public class JwtBadFormatException extends LinShareAuthenticationException {
 	}
 
 	@Override
-	public Integer getErrorCode() {
-		return 1005;
+	public LinShareAuthenticationExceptionCode getErrorCode() {
+		return LinShareAuthenticationExceptionCode.JWT_BAD_FORMAT;
 	}
 
 }
