@@ -33,31 +33,44 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
+
 package org.linagora.linshare.core.repository.hibernate;
+
+import java.util.Optional;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
 import org.linagora.linshare.core.repository.OIDCUserProviderRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
-public class OIDCUserProviderRepositoryImpl extends AbstractRepositoryImpl<OIDCUserProvider> implements OIDCUserProviderRepository {
+public class OIDCUserProviderRepositoryImpl extends AbstractRepositoryImpl<OIDCUserProvider>
+		implements OIDCUserProviderRepository {
 
 	public OIDCUserProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 
 	@Override
-	public OIDCUserProvider findByDomainDiscriminator(String domainDiscriminator) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"domainDiscriminator", domainDiscriminator)));
+	public Optional<OIDCUserProvider> findByDomainDiscriminator(String discriminator) {
+		return Optional.ofNullable(
+				DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("domainDiscriminator", discriminator))));
+	}
+
+	@Override
+	public boolean isDomainDiscriminatorAlreadyInUse(String discriminator, AbstractDomain domain) {
+		DetachedCriteria det = DetachedCriteria.forClass(OIDCUserProvider.class);
+		det.add(Restrictions.eq("domainDiscriminator", discriminator));
+		det.add(Restrictions.not(Restrictions.eq("domain", domain)));
+		return DataAccessUtils.singleResult(findByCriteria(det)) != null;
 	}
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(OIDCUserProvider entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(OIDCUserProvider.class).add(
-				Restrictions.eq("id", entity.getId()));
+		DetachedCriteria det = DetachedCriteria.forClass(OIDCUserProvider.class)
+				.add(Restrictions.eq("id", entity.getId()));
 		return det;
 	}
 }

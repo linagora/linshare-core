@@ -36,7 +36,10 @@
 package org.linagora.linshare.core.facade.auth.impl;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
+import org.linagora.linshare.auth.exceptions.LinShareAuthenticationExceptionCode;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -57,7 +60,6 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.AuthenticationAuditLogEntryUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationServiceException;
 
 public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
@@ -236,10 +238,21 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
 	@Override
 	public OIDCUserProviderDto findOidcProvider(String domainDiscriminator) {
-		OIDCUserProvider userProvider = oidcUserProviderRepository.findByDomainDiscriminator(domainDiscriminator);
-		if (userProvider == null) {
-			throw new AuthenticationServiceException("Can not find domain using domain discriminator: " + domainDiscriminator);
+		logger.debug("looking for domain with discriminator: {}", domainDiscriminator);
+		Optional<OIDCUserProvider> userProvider = oidcUserProviderRepository.findByDomainDiscriminator(domainDiscriminator);
+		if (userProvider.isEmpty()) {
+			String msg = "Can not find domain using domain discriminator: " + domainDiscriminator;
+			logger.error(msg);
+			throw new LinShareAuthenticationException(msg) {
+
+				private static final long serialVersionUID = -2805671638935042756L;
+
+				@Override
+				public LinShareAuthenticationExceptionCode getErrorCode() {
+					return LinShareAuthenticationExceptionCode.DOMAIN_NOT_FOUND;
+				}
+			};
 		}
-		return new OIDCUserProviderDto(userProvider);
+		return new OIDCUserProviderDto(userProvider.get());
 	}
 }

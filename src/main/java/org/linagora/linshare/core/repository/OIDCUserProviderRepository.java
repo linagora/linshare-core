@@ -35,10 +35,15 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.Optional;
+
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
 
 public interface OIDCUserProviderRepository extends
 		AbstractRepository<OIDCUserProvider> {
 
-	OIDCUserProvider findByDomainDiscriminator(String identifier);
+	Optional<OIDCUserProvider> findByDomainDiscriminator(String discriminator);
+
+	boolean isDomainDiscriminatorAlreadyInUse(String discriminator, AbstractDomain domain);
 }

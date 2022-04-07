@@ -300,7 +300,9 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		Validate.notNull(userProviderDto.getUseAccessClaim(), "useAccessClaim is mandatory for user provider update");
 		Validate.notNull(userProviderDto.getUseRoleClaim(), "useRoleClaim is mandatory for user provider update");
 		Validate.notNull(userProviderDto.getUseEmailLocaleClaim(), "useEmailLocaleClaim is mandatory for user provider update");
-		if (isOtherUserProviderWithSameDomainDiscriminator(userProviderDto.getDomainDiscriminator(), userProvider)) {
+		if (oidcUserProviderRepository.isDomainDiscriminatorAlreadyInUse(
+				userProviderDto.getDomainDiscriminator(),
+				userProvider.getDomain())) {
 			throw new BusinessException(BusinessErrorCode.OIDC_USER_PROVIDER_DOMAIN_DISCRIMINATOR_ALREADY_EXISTS, "Domain discriminator should be unique.");
 		}
 		OIDCUserProvider provider = (OIDCUserProvider) userProvider;
@@ -310,12 +312,6 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		provider.setUseRoleClaim(userProviderDto.getUseRoleClaim());
 		provider.setUseEmailLocaleClaim(userProviderDto.getUseEmailLocaleClaim());
 		return new OIDCUserProviderDto((OIDCUserProvider) userProviderRepository.update(provider));
-	}
-
-	private boolean isOtherUserProviderWithSameDomainDiscriminator(String domainDiscriminator, UserProvider currentUserProvider) {
-		OIDCUserProvider otherUserProvider = oidcUserProviderRepository.findByDomainDiscriminator(domainDiscriminator);
-		return otherUserProvider != null
-			&& otherUserProvider.getId() != currentUserProvider.getId();
 	}
 
 	private LDAPUserProviderDto updateLdapUserProvider(LDAPUserProviderDto userProviderDto, AbstractDomain domain, UserProvider userProvider) {
