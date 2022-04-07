@@ -48,8 +48,8 @@ public class TOTPBadFormatException extends LinShareAuthenticationException {
 	}
 
 	@Override
-	public Integer getErrorCode() {
-		return 1002;
+	public LinShareAuthenticationExceptionCode getErrorCode() {
+		return LinShareAuthenticationExceptionCode.TOTP_BAD_FORMAT;
 	}
 
 }

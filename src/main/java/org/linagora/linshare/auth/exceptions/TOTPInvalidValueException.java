@@ -48,7 +48,7 @@ public class TOTPInvalidValueException extends LinShareAuthenticationException {
 	}
 
 	@Override
-	public Integer getErrorCode() {
-		return 1003;
+	public LinShareAuthenticationExceptionCode getErrorCode() {
+		return LinShareAuthenticationExceptionCode.TOTP_BAD_VALUE;
 	}
 }
