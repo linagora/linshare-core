@@ -36,6 +36,8 @@
 
 package org.linagora.linshare.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -48,6 +50,7 @@ import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.impl.PasswordServiceImpl;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
@@ -55,6 +58,7 @@ import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.PasswordHistory;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -67,6 +71,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
+import org.linagora.linshare.core.service.ModeratorService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.ResetGuestPasswordService;
 import org.linagora.linshare.core.service.UserService;
@@ -149,6 +154,9 @@ public class GuestServiceImplTest {
 	@Autowired
 	private FunctionalityReadOnlyService functionalityReadOnlyService;
 
+	@Autowired
+	private ModeratorService moderatorService;
+
 	private User root;
 
 	private User owner1;
@@ -192,7 +200,7 @@ public class GuestServiceImplTest {
 		owner3.setDomain(subDomain);
 		owner3.setCanCreateGuest(true);
 		owner3.setRole(Role.SIMPLE);
-		owner3 = userService.saveOrUpdateUser(owner2);
+		owner3 = userService.saveOrUpdateUser(owner3);
 
 		Functionality functionality = functionalityService.find(
 				root, LoadingServiceTestDatas.sqlSubDomain,
@@ -533,4 +541,20 @@ public class GuestServiceImplTest {
 		Assertions.assertEquals(1, search.size());
 	}
 
+	@Test
+	public void testModeratorUpdateGuest() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = guestService.create(owner2, owner2, guest, null);
+		Moderator moderator = new Moderator(ModeratorRole.ADMIN, owner3, guest);
+		moderator = moderatorService.create(root, guest, moderator);
+		assertThat(moderator).isNotNull();
+		guest.setFirstName("First");
+		guest.setLastName("Last");
+		Guest update = guestService.update(owner2, owner3, guest, null);
+		assertThat("Last").isEqualTo(update.getLastName());
+		assertThat("First").isEqualTo(update.getFirstName());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }

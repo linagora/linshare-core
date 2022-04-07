@@ -93,7 +93,10 @@ public class ModeratorResourceAccessControlImpl extends AbstractResourceAccessCo
 
 	@Override
 	protected Account getOwner(Moderator entry, Object... opt) {
-		return entry.getAccount();
+		if (entry != null) {
+			return entry.getAccount();
+		}
+		return null;
 	}
 
 	@Override

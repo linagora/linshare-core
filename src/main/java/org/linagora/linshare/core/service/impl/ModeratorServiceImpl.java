@@ -126,7 +126,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 	public List<Moderator> findAllByGuest(Account authUser, Account actor, String guestUuid) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(guestUuid, "Guest's uuid must be set.");
-		checkListPermission(actor, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATORS_CANNOT_GET, null);
+		checkListPermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATORS_CANNOT_GET, null);
 		Guest guest = guestBusinessService.findByLsUuid(guestUuid);
 		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest);
 		return moderators;

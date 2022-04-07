@@ -36,11 +36,16 @@
 
 package org.linagora.linshare.core.rac.impl;
 
+import java.util.Optional;
+
+import org.linagora.linshare.core.business.service.ModeratorBusinessService;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -51,11 +56,15 @@ public class GuestResourceAccessControlImpl extends
 
 	private final AbstractDomainService abstractDomainService;
 
+	private final ModeratorBusinessService moderatorBusinessService;
+
 	public GuestResourceAccessControlImpl(
 			final FunctionalityReadOnlyService functionalityService,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final ModeratorBusinessService moderatorBusinessService) {
 		super(functionalityService);
 		this.abstractDomainService = abstractDomainService;
+		this.moderatorBusinessService = moderatorBusinessService;
 	}
 
 	@Override
@@ -146,6 +155,9 @@ public class GuestResourceAccessControlImpl extends
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor,
 			Guest entry, Object... opt) {
+		if (isActorAdminModeratorOfTheGuest(actor, entry)) {
+			return true;
+		}
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_UPDATE);
@@ -158,6 +170,11 @@ public class GuestResourceAccessControlImpl extends
 			}
 		}
 		return false;
+	}
+
+	private boolean isActorAdminModeratorOfTheGuest(Account actor, Guest guest) {
+		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, guest);
+		return (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) ? true : false;
 	}
 
 	private boolean guestFunctionalityStatus(AbstractDomain domain) {

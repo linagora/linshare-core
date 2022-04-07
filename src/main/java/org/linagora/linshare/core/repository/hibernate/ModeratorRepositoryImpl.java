@@ -34,9 +34,11 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.repository.ModeratorRepository;
@@ -67,5 +69,14 @@ public class ModeratorRepositoryImpl extends AbstractRepositoryImpl<Moderator> i
 		det.add(Restrictions.eq("guest", guest));
 		List<Moderator> moderators = findByCriteria(det);
 		return moderators;
+	}
+
+	@Override
+	public Optional<Moderator> findByGuestAndAccount(Account actor, Guest guest) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("account", actor));
+		det.add(Restrictions.eq("guest", guest));
+		Moderator moderator = DataAccessUtils.singleResult(findByCriteria(det));
+		return Optional.ofNullable(moderator);
 	}
 }

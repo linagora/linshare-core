@@ -35,9 +35,11 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.linagora.linshare.core.business.service.ModeratorBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -85,6 +87,11 @@ public class ModeratorBusinessServiceImpl implements ModeratorBusinessService {
 	@Override
 	public List<Moderator> findAllByGuest(Guest guest) {
 		return moderatorRepository.findAllByGuest(guest);
+	}
+
+	@Override
+	public Optional<Moderator> findByGuestAndAccount(Account actor, Guest guest) {
+		return moderatorRepository.findByGuestAndAccount(actor, guest);
 	}
 
 }

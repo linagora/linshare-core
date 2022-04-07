@@ -78,9 +78,9 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class ModeratorServiceImplTest {
+public class ModeratorServiceImplForRootUserTest {
 
-	private static Logger logger = LoggerFactory.getLogger(ModeratorServiceImplTest.class);
+	private static Logger logger = LoggerFactory.getLogger(ModeratorServiceImplForRootUserTest.class);
 
 	@Autowired
 	private ModeratorService moderatorService;
