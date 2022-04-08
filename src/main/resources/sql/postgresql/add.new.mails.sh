@@ -44,21 +44,16 @@ for i in $(seq 1 ${l_count})
 do
     l_id=$(expr ${i} + ${l_offset})
     l_uuid=$(uuid)
-    echo "INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english)
-        VALUES (${l_id}, 1, '', true, ${l_id}, '', '<!DOCTYPE html><html
-        xmlns:th="http://www.thymeleaf.org"><body>layout</body></html>',
-        '${l_uuid}', now(), now(), true, NULL,
-        NULL);"
+    echo "INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible)
+        VALUES ('',NOW(),'',1,${l_id},${l_id},'','','',NOW(),true,'','${l_uuid}',true);"
 
         # language : 2
         l_id_mclang=${l_id}
-        for l_lang in $(seq 0 1)
+        for l_lang in $(seq 0 2)
         do
             l_uuid=$(uuid)
-            echo "INSERT INTO mail_content_lang (id, language, mail_content_id,
-            mail_config_id, mail_content_type, uuid, readonly) VALUES
-            (${l_id_mclang}, ${l_lang},
-            ${l_id}, 1, ${l_id}, '${l_uuid}', true);"
+            echo "INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES
+            (${l_id_mclang},${l_lang},${l_id},1,${l_id},true,'${l_uuid}');"
             l_id_mclang=$(expr ${l_id_mclang} + 100)
         done
 done

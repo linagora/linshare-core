@@ -428,7 +428,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
 	VALUES(43, false, 'GUEST_MODERATOR_UPDATE', 341, 342, 343, 1, true);
 
--- Mail activation: GUEST_MODERATOR_UPDATE
+-- Mail activation: GUEST_MODERATOR_DELETION
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (344, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)

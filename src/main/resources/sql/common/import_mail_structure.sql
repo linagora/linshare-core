@@ -80,12 +80,11 @@ INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,m
 
 INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,40,40,'','','',NOW(),true,'','c34c8f84-c47f-11eb-8529-0242ac130003',true);
 
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,41,41,'','','',NOW(),true,'','11650cc8-b73c-11ec-a84c-235f5362c454',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,41,41,'','','',NOW(),true,'','9fffc1a4-b73b-11ec-a832-07985008b1ff',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,42,42,'','','',NOW(),true,'','11679380-b73c-11ec-8bba-17ee00d3ad28',true);
 
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english, messages_russian) VALUES (42, 1, '', true, 42, '', '<!DOCTYPE html><html xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '70358f32-b64e-11ec-88d2-5b80acdc358d', now(), now(), true, 'french message','english message', 'russian message');
-
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english, messages_russian) VALUES (43, 1, '', true, 43, '', '<!DOCTYPE html><html xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '7042d958-b64e-11ec-9e00-772ecc4710e2', now(), now(), true, 'french message', 'english message', 'russian message');
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,43,43,'','','',NOW(),true,'','116957c4-b73c-11ec-80f2-2b24398412f7',true);
 
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (1,0,1,1,1,true,'4f3c4723-531e-449b-a1ae-d304fd3d2387');
 
