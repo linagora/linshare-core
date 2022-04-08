@@ -417,6 +417,60 @@ ALTER TABLE share_entry_group ADD COLUMN external_mail_locale VARCHAR(255);
 UPDATE share_entry_group SET external_mail_locale = 'en';
 ALTER TABLE share_entry_group ALTER COLUMN external_mail_locale SET NOT NULL;
 
+-- Add moderator mail_content and mail_content_lang
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,41,41,'','','',NOW(),true,'','11650cc8-b73c-11ec-a84c-235f5362c454',true);
+
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES (41,0,41,1,41,true,'1165b0b0-b73c-11ec-b20a-33728c1610a7');
+
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES (141,1,41,1,41,true,'11663c88-b73c-11ec-8649-27fb71fc49cf');
+
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES (241,2,41,1,41,true,'1166d990-b73c-11ec-b337-4b09e04976cd');
+
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,42,42,'','','',NOW(),true,'','11679380-b73c-11ec-8bba-17ee00d3ad28',true);
+
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES (42,0,42,1,42,true,'1167f136-b73c-11ec-947a-7f07dff5f89a');
+
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES (142,1,42,1,42,true,'11685018-b73c-11ec-8a49-0b3657e2f901');
+
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES (242,2,42,1,42,true,'1168ad92-b73c-11ec-b7d0-8bf4f18337f7');
+
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,43,43,'','','',NOW(),true,'','116957c4-b73c-11ec-80f2-2b24398412f7',true);
+
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES (43,0,43,1,43,true,'1169c600-b73c-11ec-8f48-177d8ee3ef97');
+
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES (143,1,43,1,43,true,'116a1cb8-b73c-11ec-9e9e-b7c7d1b3387a');
+
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES (243,2,43,1,43,true,'116a9968-b73c-11ec-b40a-53616caa8660');
+
+-- Mail activation: GUEST_MODERATOR_CREATION
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (338, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (339, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (340, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(42, false, 'GUEST_MODERATOR_CREATION', 338, 339, 340, 1, true);
+
+-- Mail activation: GUEST_MODERATOR_UPDATE
+INSERT INTO policy(id, status, default_status, policy, system) 
+	VALUES (341, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (342, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (343, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(43, false, 'GUEST_MODERATOR_UPDATE', 341, 342, 343, 1, true);
+
+-- Mail activation: GUEST_MODERATOR_DELETION
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (344, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (345, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (346, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(44, false, 'GUEST_MODERATOR_DELETION', 344, 345, 346, 1, true);
 ---- End of your queries
 
 -- Upgrade LinShare version

@@ -407,3 +407,33 @@ INSERT INTO mail_activation
 VALUES
 	(39, false, 'SHARE_ANONYMOUS_RESET_PASSWORD',
 	322, 323, 324, 1, true);
+
+-- Mail activation: GUEST_MODERATOR_CREATION
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (338, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (339, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (340, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(42, false, 'GUEST_MODERATOR_CREATION', 338, 339, 340, 1, true);
+
+-- Mail activation: GUEST_MODERATOR_UPDATE
+INSERT INTO policy(id, status, default_status, policy, system) 
+	VALUES (341, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (342, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (343, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(43, false, 'GUEST_MODERATOR_UPDATE', 341, 342, 343, 1, true);
+
+-- Mail activation: GUEST_MODERATOR_UPDATE
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (344, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (345, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (346, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(44, false, 'GUEST_MODERATOR_DELETION', 344, 345, 346, 1, true);
