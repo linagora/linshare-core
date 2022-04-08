@@ -41,6 +41,7 @@
 		<constructor-arg ref="wsUserProfileFacade" />
 	</bean>
 	<bean id="userv5ModeratorRestService" class="org.linagora.linshare.webservice.userv5.impl.ModeratorRestServiceImpl">
+		<constructor-arg ref="wsAdminV5ModeratorFacade" />
 	</bean>
 	<jaxrs:server id="userv5RestContainer" address="/rest/user/v5">
 		<jaxrs:serviceBeans>

@@ -47,6 +47,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.ModeratorFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 import org.linagora.linshare.webservice.userv5.ModeratorRestService;
 
@@ -61,6 +62,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Produces({ MediaType.APPLICATION_JSON })
 public class ModeratorRestServiceImpl implements ModeratorRestService {
 
+	private final ModeratorFacade moderatorFacade;
+
+	public ModeratorRestServiceImpl(ModeratorFacade moderatorFacade) {
+		this.moderatorFacade = moderatorFacade;
+	}
 
 	@Path("/")
 	@POST
@@ -72,7 +78,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService {
 		@Parameter(description = "The guest's uuid.", required = true)
 			@PathParam("guestUuid") String guestUuid,
 		@Parameter(description = "Moderator to create", required = false) ModeratorDto moderatorDto) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		return moderatorFacade.create(null, guestUuid, moderatorDto);
 	}
 
 	@Path("/{uuid}")
@@ -86,7 +92,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService {
 			@PathParam("guestUuid") String guestUuid,
 		@Parameter(description = "The user can find a guest's moderator with the entered uuid.", required = true) 
 			@PathParam("uuid") String uuid) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		return moderatorFacade.find(null, guestUuid, uuid);
 	}
 
 	@Path("/{uuid: .*}")
@@ -102,7 +108,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService {
 			@PathParam("uuid") String uuid,
 		@Parameter(description = "Moderator to update", required = false) ModeratorDto moderatorDto) 
 				throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		return moderatorFacade.update(null, guestUuid, uuid, moderatorDto);
 	}
 
 	@Path("/{uuid: .*}")
@@ -118,7 +124,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService {
 			@PathParam("uuid") String uuid,
 		@Parameter(description = "Moderator to delete", required = false) ModeratorDto moderatorDto) 
 				throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		return moderatorFacade.delete(null, guestUuid, uuid, moderatorDto);
 	}
 
 	@Path("/")
@@ -130,7 +136,7 @@ public class ModeratorRestServiceImpl implements ModeratorRestService {
 	public List<ModeratorDto> findAllByGuest(
 		@Parameter(description = "The guest's uuid.", required = true)
 			@PathParam("guestUuid") String guestUuid) throws BusinessException {
-		throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "Not implemented yet");
+		return moderatorFacade.findAllByGuest(null, guestUuid);
 	}
 
 }
