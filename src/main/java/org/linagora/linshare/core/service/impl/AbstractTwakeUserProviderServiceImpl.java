@@ -89,6 +89,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 		if (!isValid(domain)) {
 			return null;
 		}
+		LOGGER.debug("findUser calling {} endpoint", USERS_ENDPOINT);
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			if (!validateResponse(response, userProvider)) {
 				return null;
@@ -132,6 +133,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 		if (!isValid(domain)) {
 			return ImmutableList.of();
 		}
+		LOGGER.debug("searchUser calling {} endpoint", USERS_ENDPOINT);
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			if (!validateResponse(response, userProvider)) {
 				return ImmutableList.of();
@@ -166,6 +168,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 		if (!isValid(domain)) {
 			return ImmutableList.of();
 		}
+		LOGGER.debug("autoCompleteUser calling {} endpoint", USERS_ENDPOINT);
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			if (!validateResponse(response, userProvider)) {
 				return ImmutableList.of();
@@ -186,6 +189,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 		if (!isValid(domain)) {
 			return ImmutableList.of();
 		}
+		LOGGER.debug("autoCompleteUser calling {} endpoint", USERS_ENDPOINT);
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			if (!validateResponse(response, userProvider)) {
 				return ImmutableList.of();
@@ -218,6 +222,7 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 		if (!isValid(domain)) {
 			return null;
 		}
+		LOGGER.debug("searchForAuth calling {} endpoint", USERS_ENDPOINT);
 		try (Response response = client().newCall(request(userProvider, Optional.of(USERS_ENDPOINT))).execute()) {
 			if (!validateResponse(response, userProvider)) {
 				return null;
