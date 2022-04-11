@@ -53,7 +53,7 @@ public class OIDCUserProviderRepositoryImpl extends AbstractRepositoryImpl<OIDCU
 	public boolean isDomainDiscriminatorAlreadyInUse(String discriminator, AbstractDomain domain) {
 		DetachedCriteria det = DetachedCriteria.forClass(OIDCUserProvider.class);
 		det.add(Restrictions.eq("domainDiscriminator", discriminator));
-		det.add(Restrictions.not(Restrictions.eq("domain", domain)));
+		det.add(Restrictions.ne("domain", domain));
 		return DataAccessUtils.singleResult(findByCriteria(det)) != null;
 	}
 
