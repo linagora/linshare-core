@@ -107,7 +107,7 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 				"Welcome message domain identifier must be set.");
 
 		WelcomeMessages wlcm = wlcmDto.toObject();
-		WelcomeMessages wlcmMessage = service.create(authUser, wlcm, domainId);
+		WelcomeMessages wlcmMessage = service.createByCopy(authUser, wlcm, domainId);
 		WelcomeMessagesDto ret = new WelcomeMessagesDto(wlcmMessage, true);
 		loadRelativeDomains(authUser, ret);
 		return ret;

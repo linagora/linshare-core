@@ -111,8 +111,8 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 	}
 	
 	@Override
-	public WelcomeMessages create(User actor, WelcomeMessages wlcmInput,
-			String domainId) throws BusinessException {
+	public WelcomeMessages createByCopy(User actor, WelcomeMessages wlcmInput,
+	                                    String domainId) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(wlcmInput, "Welcome message must be set.");
 		Validate.notNull(wlcmInput.getUuid(),

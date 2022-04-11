@@ -156,7 +156,7 @@ public class WelcomeMessagesServiceImplTest {
 		try {
 			WelcomeMessages welcm = welcomeService.find(actor,
 					"4bc57114-c8c9-11e4-a859-37b5db95d856");
-			WelcomeMessages welcm_create = welcomeService.create(actor, welcm,
+			WelcomeMessages welcm_create = welcomeService.createByCopy(actor, welcm,
 					LinShareTestConstants.ROOT_DOMAIN);
 			logger.debug("Object created.");
 			Assertions.assertNotNull(welcm_create);
@@ -186,7 +186,7 @@ public class WelcomeMessagesServiceImplTest {
 		WelcomeMessages welcomeMessage = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 		welcomeMessage.setName("EP_TEST_v233<script>alert(document.cookie)</script>");
 		welcomeMessage.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
-		WelcomeMessages welcomeMessage_create = welcomeService.create(actor, welcomeMessage,
+		WelcomeMessages welcomeMessage_create = welcomeService.createByCopy(actor, welcomeMessage,
 				LoadingServiceTestDatas.sqlRootDomain);
 		Assertions.assertNotNull(welcomeMessage_create);
 		Assertions.assertEquals(welcomeMessage_create.getName(), "EP_TEST_v233");
@@ -198,7 +198,7 @@ public class WelcomeMessagesServiceImplTest {
 	public void createAndUpdateWelcomeMessageSpecialChar() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		WelcomeMessages welcomeMessage = welcomeService.find(actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
-		WelcomeMessages welcomeMessage_create = welcomeService.create(actor, welcomeMessage,
+		WelcomeMessages welcomeMessage_create = welcomeService.createByCopy(actor, welcomeMessage,
 				LoadingServiceTestDatas.sqlRootDomain);
 		Assertions.assertNotNull(welcomeMessage_create);
 		welcomeMessage_create.setName("EP_TEST_v233<script>alert(document.cookie)</script>");

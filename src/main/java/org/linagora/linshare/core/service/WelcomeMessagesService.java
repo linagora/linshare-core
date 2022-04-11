@@ -50,7 +50,7 @@ public interface WelcomeMessagesService {
 
 	WelcomeMessages find(Account actor, String uuid) throws BusinessException;
 	
-	WelcomeMessages create(User actor, WelcomeMessages wlcm, String domainId)
+	WelcomeMessages createByCopy(User actor, WelcomeMessages wlcm, String domainId)
 			throws BusinessException;
 
 	/**

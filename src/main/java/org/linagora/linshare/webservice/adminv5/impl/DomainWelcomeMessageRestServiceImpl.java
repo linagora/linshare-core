@@ -35,19 +35,7 @@
  */
 package org.linagora.linshare.webservice.adminv5.impl;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.WelcomeMessageFacade;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.adminv5.DomainWelcomeMessageRestService;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -58,7 +46,21 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
+
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.WelcomeMessageFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageAssignDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.WelcomeMessageDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
+import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.adminv5.DomainWelcomeMessageRestService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/domains/{domainUuid}/welcome_messages")
 @Produces({ MediaType.APPLICATION_JSON })
