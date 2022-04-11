@@ -578,7 +578,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				return user;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-				if(authentication !=null && !authentication.isAuthenticated()) {
+				if(authentication != null && !authentication.isAuthenticated()) {
 					// It means we are trying to find this profile during authentication process.
 					// It was the auto discover feature of LDAP, but it does not exist for OIDC.
 					// This code is ugly workaround
@@ -586,6 +586,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
 						OIDCUserProvider oidcUp = (OIDCUserProvider) userProvider;
 						String domainDiscriminator = jwtAuthentication.get("domain_discriminator");
+						logger.trace("domainDiscriminator : {}", domainDiscriminator);
 						// if this user does not belong to this domain, we ignore him.
 						if (oidcUp.getDomainDiscriminator().equals(domainDiscriminator)) {
 							String email = jwtAuthentication.get("email");
@@ -594,11 +595,15 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							internal.setDomain(domain);
 							return internal;
 						} else {
-							logger.debug("Skipped. Provided oidcDomainIdentifier does not match current domain: {}, {}", domainDiscriminator, domain.getUuid());
+							logger.debug("Skipped. Provided oidcDomainIdentifier does not match current domain: domainDiscriminator={}, domain={}", domainDiscriminator, domain.getUuid());
 						}
+					} else {
+						logger.trace("It is not a OidcOpaqueAuthenticationToken class: {}", authentication.getClass());
 					}
+				} else {
+					logger.debug("Using UserProviderType.OIDC provider outside authentication is not supported.");
+					logger.debug("authentication context is null or account is not authenticated.");
 				}
-				logger.info("Using UserProviderType.OIDC provider outside authentication is not supported.");
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.searchForAuth(domain, (TwakeUserProvider) userProvider, login);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
