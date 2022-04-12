@@ -166,7 +166,7 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 			try {
 				// It means we are using a OIDC user provider, so we need to provide some extra properties to allow on-the-fly creation.
 				// It won't be use if the profile already exists.
-				jwtAuthentication.put("first_name", loadUser.getAttribute("name"));
+				jwtAuthentication.put("first_name", loadUser.getAttribute("given_name"));
 				jwtAuthentication.put("last_name", loadUser.getAttribute("family_name"));
 				jwtAuthentication.put("external_uid", externalUid);
 				jwtAuthentication.put("linshare_locale", loadUser.getAttribute("linshare_locale"));
