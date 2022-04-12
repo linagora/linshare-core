@@ -36,6 +36,8 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import static org.linagora.linshare.core.domain.constants.LinShareConstants.defaultWelcomeMessagesUuid;
+
 import java.util.List;
 import java.util.Map;
 
@@ -122,6 +124,7 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		AbstractDomain domain = domainBusinessService.findById(domainId);
 		WelcomeMessages wlcm = find(actor, wlcmInput.getUuid());
 		WelcomeMessages welcomeMessage = new WelcomeMessages(wlcm);
+		addDefaultLanguagesEntriesIfNeeded(actor, welcomeMessage);
 		welcomeMessage.setBussinessName(sanitizerInputHtmlBusinessService.strictClean(wlcmInput.getName()));
 		if (wlcmInput.getDescription() != null) {
 			welcomeMessage
@@ -129,6 +132,33 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		}
 		welcomeMessage.setDomain(domain);
 		return businessService.create(welcomeMessage);
+	}
+
+	@Override
+	public WelcomeMessages create(User actor, WelcomeMessages welcomeMessages) throws BusinessException {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(welcomeMessages, "Welcome message must be set.");
+
+		addDefaultLanguagesEntriesIfNeeded(actor, welcomeMessages);
+		welcomeMessages.setBussinessName(sanitizerInputHtmlBusinessService.strictClean(welcomeMessages.getName()));
+		if (welcomeMessages.getDescription() != null) {
+			welcomeMessages
+				.setBussinessDescription(sanitizerInputHtmlBusinessService.strictClean(welcomeMessages.getDescription()));
+		}
+		return businessService.create(welcomeMessages);
+	}
+
+	private void addDefaultLanguagesEntriesIfNeeded(User actor, WelcomeMessages welcomeMessages) {
+		Map<SupportedLanguage, WelcomeMessagesEntry> entries = welcomeMessages.getWelcomeMessagesEntries();
+		if (entries.size() != SupportedLanguage.values().length) {
+			Map<SupportedLanguage, WelcomeMessagesEntry> defaultEntries = find(actor, defaultWelcomeMessagesUuid)
+				.getWelcomeMessagesEntries();
+			for (SupportedLanguage language : SupportedLanguage.values()) {
+				if (!entries.containsKey(language)) {
+					entries.put(language, new WelcomeMessagesEntry(language, defaultEntries.get(language).getValue()));
+				}
+			}
+		}
 	}
 
 	@Override

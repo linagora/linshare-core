@@ -130,7 +130,7 @@ public class DomainWelcomeMessageRestServiceImpl extends WebserviceBase implemen
 	public WelcomeMessageDto create(
 			@Parameter(description = "domain's uuid.", required = true)
 				@PathParam("domainUuid") String domainUuid,
-			@Parameter(description = "Welcome message to create (uuid is required because we will duplicate an existing WelcomeMessage)", required = true) WelcomeMessageDto welcomeMessageDto)
+			@Parameter(description = "Welcome message to create", required = true) WelcomeMessageDto welcomeMessageDto)
 			throws BusinessException {
 		return welcomeMessageFacade.create(domainUuid, welcomeMessageDto);
 	}

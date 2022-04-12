@@ -128,9 +128,16 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		WelcomeMessages welcomeMessages = toEntity(domain, welcomeMessageDto);
 		return WelcomeMessageDto.from(
-				welcomeMessagesService.createByCopy(authUser, welcomeMessages, domainUuid),
+				createWelcomeMessages(domainUuid, welcomeMessageDto, authUser, welcomeMessages),
 				domain,
 				isReadOnly(authUser, welcomeMessages));
+	}
+
+	private WelcomeMessages createWelcomeMessages(String domainUuid, WelcomeMessageDto welcomeMessageDto, User authUser, WelcomeMessages welcomeMessages) {
+		if (!Strings.isNullOrEmpty(welcomeMessageDto.getUuid())) {
+			return welcomeMessagesService.createByCopy(authUser, welcomeMessages, domainUuid);
+		}
+		return welcomeMessagesService.create(authUser, welcomeMessages);
 	}
 
 	private WelcomeMessages toEntity(AbstractDomain domain, WelcomeMessageDto welcomeMessageDto) {

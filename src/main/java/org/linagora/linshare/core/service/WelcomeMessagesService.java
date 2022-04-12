@@ -53,6 +53,8 @@ public interface WelcomeMessagesService {
 	WelcomeMessages createByCopy(User actor, WelcomeMessages wlcm, String domainId)
 			throws BusinessException;
 
+	WelcomeMessages create(User actor, WelcomeMessages welcomeMessages) throws BusinessException;
+
 	/**
 	 * 
 	 * @param actor
