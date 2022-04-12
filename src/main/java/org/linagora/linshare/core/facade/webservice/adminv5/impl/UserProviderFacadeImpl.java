@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -223,7 +224,8 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		if (dto.getUseEmailLocaleClaim() != null) {
 			userProvider.setUseEmailLocaleClaim(dto.getUseEmailLocaleClaim());
 		}
-		if (oidcUserProviderRepository.findByDomainDiscriminator(dto.getDomainDiscriminator()) != null) {
+		Optional<OIDCUserProvider> oidcUserProvider = oidcUserProviderRepository.findByDomainDiscriminator(dto.getDomainDiscriminator());
+		if (oidcUserProvider.isPresent()) {
 			throw new BusinessException(BusinessErrorCode.OIDC_USER_PROVIDER_DOMAIN_DISCRIMINATOR_ALREADY_EXISTS, "Domain discriminator should be unique.");
 		}
 		OIDCUserProvider created = (OIDCUserProvider) userProviderRepository.create(userProvider);
@@ -300,9 +302,9 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 		Validate.notNull(userProviderDto.getUseAccessClaim(), "useAccessClaim is mandatory for user provider update");
 		Validate.notNull(userProviderDto.getUseRoleClaim(), "useRoleClaim is mandatory for user provider update");
 		Validate.notNull(userProviderDto.getUseEmailLocaleClaim(), "useEmailLocaleClaim is mandatory for user provider update");
-		if (oidcUserProviderRepository.isDomainDiscriminatorAlreadyInUse(
-				userProviderDto.getDomainDiscriminator(),
-				userProvider.getDomain())) {
+		boolean isDomainDiscriminatorAlreadyInUse = oidcUserProviderRepository
+				.isDomainDiscriminatorAlreadyInUse(userProviderDto.getDomainDiscriminator(), userProvider.getDomain());
+		if (isDomainDiscriminatorAlreadyInUse) {
 			throw new BusinessException(BusinessErrorCode.OIDC_USER_PROVIDER_DOMAIN_DISCRIMINATOR_ALREADY_EXISTS, "Domain discriminator should be unique.");
 		}
 		OIDCUserProvider provider = (OIDCUserProvider) userProvider;
