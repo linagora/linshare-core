@@ -65,6 +65,8 @@ public abstract class Account {
 
 	protected Language mailLocale;
 
+	protected Language externalMailLocale;
+
 	protected String cmisLocale;
 
 	protected boolean enable;
@@ -458,5 +460,13 @@ public abstract class Account {
 			return false;
 		}
 		return true;
+	}
+
+	public Language getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+	public void setExternalMailLocale(Language externalUsersMailLocale) {
+		this.externalMailLocale = externalUsersMailLocale;
 	}
 }

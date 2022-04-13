@@ -15,6 +15,7 @@
 		<property access="field" column="role_id" name="role" not-null="true" type="roleEnumType"/>
 		<property access="field" name="locale" column="locale" type="supportedLanguageType" not-null="true" lazy="false"/>
 		<property access="field" name="mailLocale" column="mail_locale" type="enumLanguage" not-null="true" lazy="false"/>
+		<property access="field" name="externalMailLocale" column="external_mail_locale" type="enumLanguage" not-null="true" lazy="false"/>
 		<property name="cmisLocale" column="cmis_locale" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
 		<property name="password" column="password" type="string" length="255" not-null="false" lazy="false"/>

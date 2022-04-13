@@ -16,6 +16,7 @@ CREATE TABLE account (
   role_id                         int4 NOT NULL,
   locale                          varchar(255) NOT NULL,
   mail_locale            varchar(255) NOT NULL,
+  external_mail_locale      varchar(255) NOT NULL,
   enable                          bool NOT NULL,
   account_type                    int4 NOT NULL,
   password                        varchar(255),

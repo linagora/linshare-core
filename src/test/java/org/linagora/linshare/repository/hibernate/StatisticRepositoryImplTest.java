@@ -88,7 +88,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
-public class StatisticRepositoryImplTest {
+	public class StatisticRepositoryImplTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired

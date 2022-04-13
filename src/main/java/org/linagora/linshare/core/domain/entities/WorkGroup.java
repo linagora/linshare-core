@@ -63,6 +63,7 @@ public class WorkGroup extends Account {
 		this.locale = owner.locale;
 		this.cmisLocale=owner.cmisLocale;
 		this.mailLocale = owner.mailLocale;
+		this.externalMailLocale = owner.externalMailLocale;
 	}
 
 	public WorkGroup(SharedSpaceNode sharedSpaceNode) {

@@ -145,6 +145,9 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		if (guest.getMailLocale() == null) {
 			guest.setMailLocale(domain.getExternalMailLocale());
 		}
+		if (guest.getExternalMailLocale() == null) {
+			guest.setExternalMailLocale(domain.getExternalMailLocale());
+		}
 		guest.setPassword(hashedPassword);
 		Guest create = guestRepository.create(guest);
 		Set<AllowedContact> allowedContactsToAdd = Sets.newHashSet();

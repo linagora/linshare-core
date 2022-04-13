@@ -407,6 +407,9 @@ SELECT ls_transform_guest_owner_to_moderator();
 
 -- Account table, new field
 ALTER TABLE account RENAME COLUMN mail_locale TO mail_locale;
+ALTER TABLE account ADD COLUMN external_mail_locale VARCHAR(255);
+UPDATE account SET external_mail_locale = 'en';
+ALTER TABLE account ALTER COLUMN external_mail_locale SET NOT NULL;
 
 ---- End of your queries
 

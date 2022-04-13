@@ -161,6 +161,7 @@ public class SafeDetailServiceTest {
 		workGroup = new WorkGroup();
 		workGroup.setLocale(SupportedLanguage.ENGLISH);
 		workGroup.setMailLocale(Language.ENGLISH);
+		workGroup.setExternalMailLocale(Language.ENGLISH);
 		workGroup.setCmisLocale(CMIS_LOCALE);
 		workGroup.setDomain(testDomain);
 		workGroup.setName(THREAD_NAME);

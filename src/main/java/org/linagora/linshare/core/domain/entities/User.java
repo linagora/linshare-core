@@ -84,6 +84,7 @@ public abstract class User extends Account {
 		this.canUpload = true;
 		this.canCreateGuest = true;
 		this.mailLocale = Language.ENGLISH;
+		this.externalMailLocale = Language.ENGLISH;
 	}
 
 	public User(String firstName, String lastName, String mail) {
@@ -99,6 +100,7 @@ public abstract class User extends Account {
 		this.canUpload = true;
 		this.canCreateGuest = true;
 		this.mailLocale = Language.ENGLISH;
+		this.externalMailLocale = Language.ENGLISH;
 	}
 
 	public User(UserDto userDto) {

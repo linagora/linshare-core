@@ -763,6 +763,9 @@ public class UserServiceImpl implements UserService {
 				if (user.getMailLocale() == null) {
 					user.setMailLocale(Language.ENGLISH);
 				}
+				if (user.getExternalMailLocale() == null) {
+					user.setExternalMailLocale(Language.ENGLISH);
+				}
 				// useless fields.
 				user.setLocale(SupportedLanguage.ENGLISH);
 				user.setCmisLocale(SupportedLanguage.ENGLISH.toString());
@@ -936,6 +939,7 @@ public class UserServiceImpl implements UserService {
 			user.setLocale(updatedUser.getLocale());
 		}
 		user.setMailLocale(updatedUser.getMailLocale());
+		user.setExternalMailLocale(updatedUser.getExternalMailLocale());
 		if (user.isGuest()) {
 			Guest updatedGuest = (Guest) updatedUser;
 			Assert.notNull(updatedGuest.getExpirationDate(), "Expiration date must not be null");
