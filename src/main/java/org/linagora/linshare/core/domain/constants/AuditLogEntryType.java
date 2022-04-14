@@ -77,7 +77,8 @@ public enum AuditLogEntryType {
 	JWT_PERMANENT_TOKEN,
 	SHARED_SPACE_NODE,
 	MAIL_ATTACHMENT,
-	SHARED_SPACE_MEMBER;
+	SHARED_SPACE_MEMBER,
+	GUEST_MODERATOR;
 
 	public static AuditLogEntryType fromString(String s) {
 		try {
