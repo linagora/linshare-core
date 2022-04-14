@@ -59,7 +59,7 @@ public interface UserService {
 	 * The method is using space to split pattern in order to build first name and last name 
 	 * @throws BusinessException
 	 */
-	public List<User> autoCompleteUser(Account actor, String pattern) throws BusinessException;
+	List<User> autoCompleteUser(Account actor, String pattern) throws BusinessException;
 
 	/** Search a user.
 	 * @param mail user email.
@@ -80,7 +80,7 @@ public interface UserService {
 	 * @param locale : the new local
 	 * @throws BusinessException 
 	 */
-	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale) throws BusinessException;
+	void updateUserLocale(String domainId, String mail, SupportedLanguage locale) throws BusinessException;
 
 	/**
 	 * Update a user mailLocale
@@ -88,7 +88,7 @@ public interface UserService {
 	 * @param mailLocale : the new mailLocale
 	 * @throws BusinessException
 	 */
-	public void updateUserMailLocale(String domainId, String mail, Language mailLocale) throws BusinessException;
+	void updateUserMailLocale(String domainId, String mail, Language mailLocale) throws BusinessException;
 
 	/**
 	 * Update a user locale
@@ -96,7 +96,7 @@ public interface UserService {
 	 * @param locale : the new local
 	 * @throws BusinessException 
 	 */
-	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale,Language externalMailLocale, String cmisLocale) throws BusinessException;
+	void updateUserLocale(String domainId, String mail, SupportedLanguage locale,Language externalMailLocale, String cmisLocale) throws BusinessException;
 
 	/**
 	 * Search user that are internal and in the DB but not in domains (=removed from ldap).
@@ -108,7 +108,7 @@ public interface UserService {
 	 * This method create a new user entity from a valid user object, or update an existing one. 
 	 * @return user entity created or updated.
 	 */
-	public User saveOrUpdateUser(User user) throws TechnicalException ;
+	User saveOrUpdateUser(User user) throws TechnicalException ;
 	
 	/** Find a  user (based on mail address).
 	 * Search first in database, then on ldap if not found.
@@ -119,7 +119,7 @@ public interface UserService {
 	 * @return founded user.
 	 * @throws BusinessException if the user could not be found
 	 */
-	public User findOrCreateUser(String mail, String domainId) throws BusinessException ;
+	User findOrCreateUser(String mail, String domainId) throws BusinessException ;
 
 
 	 /** Find a  user (based on mail address).
@@ -130,7 +130,7 @@ public interface UserService {
 	 * @return founded user.
 	 * @throws BusinessException if the user could not be found
 	 */
-	public User findOrCreateUserWithDomainPolicies(String mail, String domainId) throws BusinessException ;
+	User findOrCreateUserWithDomainPolicies(String mail, String domainId) throws BusinessException ;
 
 
 	/** Find a  user (based on mail address).
@@ -143,20 +143,20 @@ public interface UserService {
 	 * @return founded user.
 	 * @throws BusinessException if the user could not be found
 	 */
-	public User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId) throws BusinessException ;
+	User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId) throws BusinessException ;
 
-	public User findByLsUuid(String lsUuid);
+	User findByLsUuid(String lsUuid);
 
 	boolean exist(String lsUuid);
 
-	public User findUserInDB(String domain, String mail);
+	User findUserInDB(String domain, String mail);
 
-	public List<User> findUsersInDB(String domain);
+	List<User> findUsersInDB(String domain);
 
 	/**
 	 * Check if the actor is authorized to manage the second user (userToManage).
 	 */
-	public boolean isAdminForThisUser(Account actor, User user);
+	boolean isAdminForThisUser(Account actor, User user);
 
 
 	/**
