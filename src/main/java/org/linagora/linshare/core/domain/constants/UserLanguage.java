@@ -50,12 +50,30 @@ public enum UserLanguage {
 		}
 	}
 
+	public static UserLanguage from(Language language) {
+		switch (language) {
+			case FRENCH: return FRENCH;
+			case RUSSIAN: return RUSSIAN;
+			case ENGLISH:
+			default: return ENGLISH;
+		}
+	}
+
 	public SupportedLanguage convert() {
 		switch (this) {
 			case FRENCH: return SupportedLanguage.FRENCH;
 			case RUSSIAN: return SupportedLanguage.RUSSIAN;
 			case ENGLISH:
 			default: return SupportedLanguage.ENGLISH;
+		}
+	}
+
+	public Language convertToLanguage() {
+		switch (this) {
+			case FRENCH: return Language.FRENCH;
+			case RUSSIAN: return Language.RUSSIAN;
+			case ENGLISH:
+			default: return Language.ENGLISH;
 		}
 	}
 }

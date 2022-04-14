@@ -666,6 +666,26 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void updateUserExternalMailLocale(String domainId, String mail,
+			Language externalMailLocale) throws BusinessException {
+		User user = findOrCreateUser(mail, domainId);
+		if (user == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
+					"Couldn't find the user " + mail);
+		}
+		user.setExternalMailLocale(externalMailLocale);
+		try {
+			user = userRepository.update(user);
+		} catch (IllegalArgumentException e) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
+					"Couldn't find the user " + mail);
+		} catch (BusinessException e) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
+					"Couldn't save the locale " + externalMailLocale);
+		}
+	}
+
+	@Override
 	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale,
 			Language externalMailLocale, String cmisLocale) throws BusinessException {
 		User user = findOrCreateUser(mail, domainId);

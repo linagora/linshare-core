@@ -58,6 +58,7 @@ public class UserProfileDto extends AbstractUserProfileDto<UserProfileDto> {
 		userProfileDto.setCreationDate(user.getCreationDate());
 		userProfileDto.setModificationDate(user.getModificationDate());
 		userProfileDto.setLocale(UserLanguage.from(user.getLocale()));
+		userProfileDto.setExternalMailLocale(UserLanguage.from(user.getExternalMailLocale()));
 		userProfileDto.setPersonalSpaceEnabled(user.isCanUpload());
 		userProfileDto.setAccountType(user.getAccountType());
 		userProfileDto.setCanCreateGuest(user.isCanCreateGuest());

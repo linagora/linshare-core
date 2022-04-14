@@ -162,6 +162,22 @@ public class GuestProfileDtoTest {
 	}
 
 	@Test
+	public void validationShouldThrowWhenExternalMailLocaleIsNull() {
+		GuestProfileDto guestProfileDto = new GuestProfileDto();
+		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
+		guestProfileDto.setRestricted(true);
+		guestProfileDto.setAuthor(authorDto);
+		guestProfileDto.setUuid("uuid");
+		guestProfileDto.setFirstName("first name");
+		guestProfileDto.setLastName("last name");
+		guestProfileDto.setMail("mail");
+		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		assertThatThrownBy(() -> guestProfileDto.validation())
+			.isInstanceOf(NullPointerException.class)
+			.hasMessage("'externalMailLocale' must be set.");
+	}
+
+	@Test
 	public void validationShouldThrowWhenPersonalSpaceEnabledIsNull() {
 		GuestProfileDto guestProfileDto = new GuestProfileDto();
 		guestProfileDto.setExpirationDate(Date.from(Instant.now()));
@@ -172,6 +188,7 @@ public class GuestProfileDtoTest {
 		guestProfileDto.setLastName("last name");
 		guestProfileDto.setMail("mail");
 		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setExternalMailLocale(UserLanguage.FRENCH);
 		guestProfileDto.setAccountType(AccountType.GUEST);
 		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
@@ -189,6 +206,7 @@ public class GuestProfileDtoTest {
 		guestProfileDto.setLastName("last name");
 		guestProfileDto.setMail("mail");
 		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setExternalMailLocale(UserLanguage.FRENCH);
 		guestProfileDto.setPersonalSpaceEnabled(true);
 		assertThatThrownBy(() -> guestProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
@@ -205,6 +223,7 @@ public class GuestProfileDtoTest {
 		guestProfileDto.setLastName("last name");
 		guestProfileDto.setMail("mail");
 		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setExternalMailLocale(UserLanguage.FRENCH);
 		guestProfileDto.setPersonalSpaceEnabled(true);
 		guestProfileDto.setAccountType(AccountType.GUEST);
 		assertThatThrownBy(() -> guestProfileDto.validation())
@@ -222,6 +241,7 @@ public class GuestProfileDtoTest {
 		guestProfileDto.setLastName("last name");
 		guestProfileDto.setMail("mail");
 		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setExternalMailLocale(UserLanguage.FRENCH);
 		guestProfileDto.setPersonalSpaceEnabled(true);
 		guestProfileDto.setAccountType(AccountType.GUEST);
 		assertThatThrownBy(() -> guestProfileDto.validation())
@@ -239,6 +259,7 @@ public class GuestProfileDtoTest {
 		guestProfileDto.setLastName("last name");
 		guestProfileDto.setMail("mail");
 		guestProfileDto.setLocale(UserLanguage.FRENCH);
+		guestProfileDto.setExternalMailLocale(UserLanguage.FRENCH);
 		guestProfileDto.setPersonalSpaceEnabled(true);
 		guestProfileDto.setAccountType(AccountType.GUEST);
 		assertThatThrownBy(() -> guestProfileDto.validation())
@@ -258,6 +279,7 @@ public class GuestProfileDtoTest {
 		Date creationDate = Date.from(Instant.now());
 		Date modificationDate = Date.from(Instant.now());
 		UserLanguage locale = UserLanguage.FRENCH;
+		UserLanguage externalMailLocale = UserLanguage.FRENCH;
 		AccountType accountType = AccountType.GUEST;
 		GuestProfileDto dto = new GuestProfileDto();
 		dto.setExpirationDate(expirationDate);
@@ -268,6 +290,7 @@ public class GuestProfileDtoTest {
 		dto.setLastName(lastName);
 		dto.setMail(mail);
 		dto.setLocale(locale);
+		dto.setExternalMailLocale(externalMailLocale);
 		dto.setPersonalSpaceEnabled(canUpload);
 		dto.setAccountType(accountType);
 		dto.setCreationDate(creationDate);
@@ -283,6 +306,7 @@ public class GuestProfileDtoTest {
 		assertThat(dto.getCreationDate()).isEqualTo(creationDate);
 		assertThat(dto.getModificationDate()).isEqualTo(modificationDate);
 		assertThat(dto.getLocale()).isEqualTo(locale);
+		assertThat(dto.getExternalMailLocale()).isEqualTo(externalMailLocale);
 		assertThat(dto.isPersonalSpaceEnabled()).isEqualTo(canUpload);
 		assertThat(dto.getAccountType()).isEqualTo(accountType);
 	}

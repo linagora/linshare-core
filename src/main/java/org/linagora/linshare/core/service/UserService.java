@@ -90,6 +90,8 @@ public interface UserService {
 	 */
 	void updateUserMailLocale(String domainId, String mail, Language mailLocale) throws BusinessException;
 
+	void updateUserExternalMailLocale(String domainId, String mail, Language externalMailLocale) throws BusinessException;
+
 	/**
 	 * Update a user locale
 	 * @param mail : the user email

@@ -87,6 +87,9 @@ public abstract class AbstractUserProfileDto<T extends AbstractUserProfileDto> {
 	@Schema(description = "User's language", required = true)
 	protected UserLanguage locale;
 
+	@Schema(description = "User's language used for external mail notification", required = true)
+	protected UserLanguage externalMailLocale;
+
 	@Schema(description = "User personal space is enable", required = true)
 	protected Boolean personalSpaceEnabled;
 
@@ -149,6 +152,14 @@ public abstract class AbstractUserProfileDto<T extends AbstractUserProfileDto> {
 		this.locale = locale;
 	}
 
+	public UserLanguage getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+	public void setExternalMailLocale(UserLanguage externalMailLocale) {
+		this.externalMailLocale = externalMailLocale;
+	}
+
 	public boolean isPersonalSpaceEnabled() {
 		return personalSpaceEnabled;
 	}
@@ -173,6 +184,7 @@ public abstract class AbstractUserProfileDto<T extends AbstractUserProfileDto> {
 			.add("creationDate", creationDate)
 			.add("modificationDate", modificationDate)
 			.add("locale", locale)
+			.add("externalMailLocale", externalMailLocale)
 			.add("personalSpaceEnabled", personalSpaceEnabled)
 			.add("accountType", accountType);
 	}
@@ -183,6 +195,7 @@ public abstract class AbstractUserProfileDto<T extends AbstractUserProfileDto> {
 		Validate.notBlank(lastName, "'lastName' must be set.");
 		Validate.notBlank(mail, "'mail' must be set.");
 		Validate.notNull(locale, "'locale' must be set.");
+		Validate.notNull(externalMailLocale, "'externalMailLocale' must be set.");
 		Validate.notNull(personalSpaceEnabled, "'personalSpaceEnabled' must be set.");
 		Validate.notNull(accountType, "'accountType' must be set.");
 	}

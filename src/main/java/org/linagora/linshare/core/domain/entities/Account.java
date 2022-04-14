@@ -466,7 +466,7 @@ public abstract class Account {
 		return externalMailLocale;
 	}
 
-	public void setExternalMailLocale(Language externalUsersMailLocale) {
-		this.externalMailLocale = externalUsersMailLocale;
+	public void setExternalMailLocale(Language externalMailLocale) {
+		this.externalMailLocale = externalMailLocale;
 	}
 }

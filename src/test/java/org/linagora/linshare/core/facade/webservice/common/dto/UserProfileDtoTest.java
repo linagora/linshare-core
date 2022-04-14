@@ -139,6 +139,20 @@ public class UserProfileDtoTest {
 	}
 
 	@Test
+	public void validationThrowWhenExternalMailLocaleIsNull() {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setCanCreateGuest(true);
+		userProfileDto.setUuid("uuid");
+		userProfileDto.setFirstName("first name");
+		userProfileDto.setLastName("last name");
+		userProfileDto.setMail("mail");
+		userProfileDto.setLocale(UserLanguage.FRENCH);
+		assertThatThrownBy(() -> userProfileDto.validation())
+			.isInstanceOf(NullPointerException.class)
+			.hasMessage("'externalMailLocale' must be set.");
+	}
+
+	@Test
 	public void validationThrowWhenPersonalSpaceEnabledIsNull() {
 		UserProfileDto userProfileDto = new UserProfileDto();
 		userProfileDto.setCanCreateGuest(true);
@@ -147,6 +161,7 @@ public class UserProfileDtoTest {
 		userProfileDto.setLastName("last name");
 		userProfileDto.setMail("mail");
 		userProfileDto.setLocale(UserLanguage.FRENCH);
+		userProfileDto.setExternalMailLocale(UserLanguage.FRENCH);
 		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
 			.hasMessage("'personalSpaceEnabled' must be set.");
@@ -161,6 +176,7 @@ public class UserProfileDtoTest {
 		userProfileDto.setLastName("last name");
 		userProfileDto.setMail("mail");
 		userProfileDto.setLocale(UserLanguage.FRENCH);
+		userProfileDto.setExternalMailLocale(UserLanguage.FRENCH);
 		userProfileDto.setPersonalSpaceEnabled(true);
 		assertThatThrownBy(() -> userProfileDto.validation())
 			.isInstanceOf(NullPointerException.class)
@@ -175,6 +191,7 @@ public class UserProfileDtoTest {
 		userProfileDto.setLastName("last name");
 		userProfileDto.setMail("mail");
 		userProfileDto.setLocale(UserLanguage.FRENCH);
+		userProfileDto.setExternalMailLocale(UserLanguage.FRENCH);
 		userProfileDto.setPersonalSpaceEnabled(true);
 		userProfileDto.setAccountType(AccountType.INTERNAL);
 		assertThatThrownBy(() -> userProfileDto.validation())
@@ -193,6 +210,7 @@ public class UserProfileDtoTest {
 		Date creationDate = Date.from(Instant.now());
 		Date modificationDate = Date.from(Instant.now());
 		UserLanguage locale = UserLanguage.FRENCH;
+		UserLanguage externalMailLocale = UserLanguage.FRENCH;
 		AccountType accountType = AccountType.INTERNAL;
 		UserProfileDto dto = new UserProfileDto();
 		dto.setCanCreateGuest(canCreateGuest);
@@ -201,6 +219,7 @@ public class UserProfileDtoTest {
 		dto.setLastName(lastName);
 		dto.setMail(mail);
 		dto.setLocale(locale);
+		dto.setExternalMailLocale(externalMailLocale);
 		dto.setPersonalSpaceEnabled(canUpload);
 		dto.setAccountType(accountType);
 		dto.setCreationDate(creationDate);
@@ -213,6 +232,7 @@ public class UserProfileDtoTest {
 		assertThat(dto.getCreationDate()).isEqualTo(creationDate);
 		assertThat(dto.getModificationDate()).isEqualTo(modificationDate);
 		assertThat(dto.getLocale()).isEqualTo(locale);
+		assertThat(dto.getExternalMailLocale()).isEqualTo(externalMailLocale);
 		assertThat(dto.isPersonalSpaceEnabled()).isEqualTo(canUpload);
 		assertThat(dto.getAccountType()).isEqualTo(accountType);
 		assertThat(dto.isCanCreateGuest()).isEqualTo(canCreateGuest);

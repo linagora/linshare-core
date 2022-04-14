@@ -84,6 +84,7 @@ public class UserProfileFacadeImpl extends UserGenericFacadeImp implements UserP
 		}
 		User user = userService.findByLsUuid(dto.getUuid());
 		userService.updateUserLocale(user.getDomainId(), dto.getMail(), dto.getLocale().convert());
+		userService.updateUserExternalMailLocale(user.getDomainId(), dto.getMail(), dto.getExternalMailLocale().convertToLanguage());
 		return dto;
 	}
 
