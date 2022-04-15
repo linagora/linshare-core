@@ -107,7 +107,6 @@ public class GuestDto extends AccountDto {
 		guest.setLsUuid(getUuid());
 		guest.setCanUpload(isCanUpload());
 		guest.setComment(getComment());
-		guest.setLocale(getLocale());
 		guest.setMailLocale(getExternalMailLocale());
 		guest.setExpirationDate(getExpirationDate());
 		guest.setFirstName(getFirstName());

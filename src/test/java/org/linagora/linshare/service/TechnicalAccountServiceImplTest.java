@@ -44,7 +44,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -104,7 +103,6 @@ public class TechnicalAccountServiceImplTest {
 		technicalAccount.setPassword("Secret123!!!");
 		technicalAccount.setEnable(true);
 		technicalAccount.setRole(Role.DELEGATION);
-		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
 		technicalAccount = technicalAccountService.create(root, technicalAccount);
 		Assertions.assertNotNull(technicalAccount);
 		Assertions.assertEquals(technicalAccount.getMail(), "technical-account@linshare.org");
@@ -118,7 +116,6 @@ public class TechnicalAccountServiceImplTest {
 		technicalAccount.setPassword("Secret123!!!");
 		technicalAccount.setEnable(true);
 		technicalAccount.setRole(Role.DELEGATION);
-		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
 		technicalAccount = technicalAccountService.create(root, technicalAccount);
 		Assertions.assertNotNull(technicalAccount);
 		Assertions.assertNotNull(technicalAccount.getMail(), "Mail should not be null");

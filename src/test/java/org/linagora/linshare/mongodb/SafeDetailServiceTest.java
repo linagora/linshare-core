@@ -44,7 +44,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AccountPermission;
@@ -144,7 +143,6 @@ public class SafeDetailServiceTest {
 
 		technicalAccount = new TechnicalAccount();
 		technicalAccount.setRole(Role.DELEGATION);
-		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
 		technicalAccount.setCmisLocale(CMIS_LOCALE);
 		technicalAccount.setDomain(testDomain);
 		technicalAccount.setPermission(technicalAccountPermission);
@@ -153,13 +151,11 @@ public class SafeDetailServiceTest {
 
 		actor = new Internal();
 		actor.setMail(EMAIL);
-		actor.setLocale(SupportedLanguage.ENGLISH);
 		actor.setCmisLocale(CMIS_LOCALE);
 		actor.setDomain(testDomain);
 		actor = internalRepository.create(actor);
 
 		workGroup = new WorkGroup();
-		workGroup.setLocale(SupportedLanguage.ENGLISH);
 		workGroup.setMailLocale(Language.ENGLISH);
 		workGroup.setExternalMailLocale(Language.ENGLISH);
 		workGroup.setCmisLocale(CMIS_LOCALE);

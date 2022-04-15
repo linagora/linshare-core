@@ -625,27 +625,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale)
-			throws BusinessException {
-		User user = findOrCreateUser(mail, domainId);
-		if (user == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Couldn't find the user " + mail);
-		}
-		user.setLocale(locale);
-		try {
-			user = userRepository.update(user);
-		} catch (IllegalArgumentException e) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Couldn't find the user " + mail);
-		} catch (BusinessException e) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Couldn't save the locale " + locale);
-		}
-
-	}
-
-	@Override
 	public void updateUserMailLocale(String domainId, String mail,
 			Language mailLocale) throws BusinessException {
 		User user = findOrCreateUser(mail, domainId);
@@ -683,22 +662,6 @@ public class UserServiceImpl implements UserService {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
 					"Couldn't save the locale " + externalMailLocale);
 		}
-	}
-
-	@Override
-	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale,
-			Language externalMailLocale, String cmisLocale) throws BusinessException {
-		User user = findOrCreateUser(mail, domainId);
-		if (user == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Couldn't find the user " + mail);
-		}
-		user.setLocale(locale);
-		user.setMailLocale(externalMailLocale);
-		if (cmisLocale != null) {
-			user.setCmisLocale(cmisLocale);
-		}
-		userRepository.update(user);
 	}
 
 	private boolean checkPermissionForChangePassword(User authUser, User actor) {
@@ -786,8 +749,6 @@ public class UserServiceImpl implements UserService {
 				if (user.getExternalMailLocale() == null) {
 					user.setExternalMailLocale(Language.ENGLISH);
 				}
-				// useless fields.
-				user.setLocale(SupportedLanguage.ENGLISH);
 				user.setCmisLocale(SupportedLanguage.ENGLISH.toString());
 				user = userRepository.create(user);
 				createQuotaUser(user);
@@ -954,10 +915,6 @@ public class UserServiceImpl implements UserService {
 		}
 		user.setCanCreateGuest(updatedUser.isCanCreateGuest());
 		user.setCanUpload(updatedUser.isCanUpload());
-		// TODO: Workaround to not break the adminv4 API (Field 'Local' does not exist on new UserDto of adminv5)
-		if (Objects.nonNull(updatedUser.getLocale())) {
-			user.setLocale(updatedUser.getLocale());
-		}
 		user.setMailLocale(updatedUser.getMailLocale());
 		user.setExternalMailLocale(updatedUser.getExternalMailLocale());
 		if (user.isGuest()) {

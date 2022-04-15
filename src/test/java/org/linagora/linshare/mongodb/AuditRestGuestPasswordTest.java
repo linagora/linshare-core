@@ -44,7 +44,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -127,7 +126,6 @@ public class AuditRestGuestPasswordTest {
 		guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guest = new Guest(FIRST_NAME, LAST_NAME, EMAIL);
 		guest.setLsUuid(UUID);
-		guest.setLocale(SupportedLanguage.ENGLISH);
 		guest.setCmisLocale(CMIS_LOCALE);
 		guest.setDomain(guestDomain);
 		guest.setOwner(resetGuestPasswordService.getGuestSystemAccount());

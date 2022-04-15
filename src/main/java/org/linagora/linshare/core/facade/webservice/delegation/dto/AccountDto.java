@@ -82,7 +82,7 @@ public class AccountDto {
 		this.mail = u.getMail();
 		this.name = u.getLastName();
 		this.domain = u.getDomainId();
-		this.locale = u.getLocale();
+		this.locale = SupportedLanguage.fromLanguage(u.getMailLocale());
 	}
 
 	public String getUuid() {

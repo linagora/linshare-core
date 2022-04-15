@@ -14,7 +14,6 @@ CREATE TABLE account (
   creation_date                   timestamp(6) NOT NULL,
   modification_date               timestamp(6) NOT NULL,
   role_id                         int4 NOT NULL,
-  locale                          varchar(255) NOT NULL,
   mail_locale            varchar(255) NOT NULL,
   external_mail_locale      varchar(255) NOT NULL,
   enable                          bool NOT NULL,

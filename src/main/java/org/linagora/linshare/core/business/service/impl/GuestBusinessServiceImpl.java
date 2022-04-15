@@ -138,9 +138,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		guest.setMail(guest.getMail().toLowerCase());
 		guest.setOwner(owner);
 		guest.setDomain(domain);
-		if (guest.getLocale() == null) {
-			guest.setLocale(domain.getDefaultTapestryLocale());
-		}
 		guest.setCmisLocale(Language.ENGLISH.toString());
 		if (guest.getMailLocale() == null) {
 			guest.setMailLocale(domain.getExternalMailLocale());
@@ -179,7 +176,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		entity.setRestricted(guest.isRestricted());
 		// fields that can be null.
 		entity.setComment(guest.getComment());
-		entity.setBusinessLocale(guest.getLocale());
 		entity.setBusinessExternalMailLocale(guest.getMailLocale());
 		entity.setBusinessLastName(guest.getLastName());
 		entity.setBusinessFirstName(guest.getFirstName());

@@ -75,14 +75,6 @@ public interface UserService {
 	User deleteUser(Account actor, String uuid) throws BusinessException;
 
 	/**
-	 * Update a user locale
-	 * @param mail : the user email
-	 * @param locale : the new local
-	 * @throws BusinessException 
-	 */
-	void updateUserLocale(String domainId, String mail, SupportedLanguage locale) throws BusinessException;
-
-	/**
 	 * Update a user mailLocale
 	 * @param mail : the user email
 	 * @param mailLocale : the new mailLocale
@@ -91,14 +83,6 @@ public interface UserService {
 	void updateUserMailLocale(String domainId, String mail, Language mailLocale) throws BusinessException;
 
 	void updateUserExternalMailLocale(String domainId, String mail, Language externalMailLocale) throws BusinessException;
-
-	/**
-	 * Update a user locale
-	 * @param mail : the user email
-	 * @param locale : the new local
-	 * @throws BusinessException 
-	 */
-	void updateUserLocale(String domainId, String mail, SupportedLanguage locale,Language externalMailLocale, String cmisLocale) throws BusinessException;
 
 	/**
 	 * Search user that are internal and in the DB but not in domains (=removed from ldap).

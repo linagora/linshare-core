@@ -113,7 +113,6 @@ public class ConatctListSearchRepositoryImplTest {
 
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		internal = new Internal(FIRST_NAME, LAST_NAME, MAIL, UID);
-		internal.setLocale(domain.getDefaultTapestryLocale());
 		internal.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		internal.setDomain(domain);
 		accountRepository.create(internal);

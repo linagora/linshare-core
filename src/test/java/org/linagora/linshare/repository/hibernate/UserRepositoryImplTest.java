@@ -117,14 +117,12 @@ public class UserRepositoryImplTest {
 		String encpassword = passwordService.encode(PASSWORD);
 		if (!flag) {
 			User u1=new Guest(FIRST_NAME2, LAST_NAME2, MAIL2,encpassword, true, "comment");
-			u1.setLocale(domain.getDefaultTapestryLocale());
 			u1.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 			u1.setDomain(domain);
 			userRepository.create(u1);
 			
 		
 			User u2=new Guest(FIRST_NAME3, LAST_NAME3, MAIL3,encpassword, true, "comment");
-			u2.setLocale(domain.getDefaultTapestryLocale());
 			u2.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 			u2.setDomain(domain);
 			userRepository.create(u2);
@@ -139,7 +137,6 @@ public class UserRepositoryImplTest {
 		String encpassword = passwordService.encode(PASSWORD);
 		
 		User u = new Guest( FIRST_NAME, LAST_NAME, MAIL, encpassword, true, "comment");
-		u.setLocale(domain.getDefaultTapestryLocale());
 		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		u.setDomain(domain);
 	
@@ -152,7 +149,6 @@ public class UserRepositoryImplTest {
 	@Test
 	public void testfindUser() throws BusinessException{
 		User u = new Internal( FIRST_NAME4, LAST_NAME4, MAIL4, null);
-		u.setLocale(domain.getDefaultTapestryLocale());
 		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		u.setDomain(domain);
 		

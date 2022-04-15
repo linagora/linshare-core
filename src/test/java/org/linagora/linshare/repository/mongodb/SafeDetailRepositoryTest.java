@@ -45,7 +45,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -119,14 +118,12 @@ public class SafeDetailRepositoryTest {
 		
 		internal = new Internal();
 		internal.setMail(EMAIL1);
-		internal.setLocale(SupportedLanguage.ENGLISH);
 		internal.setCmisLocale(CMIS_LOCALE);
 		internal.setDomain(testDomain);
 		internal = internalRepository.create(internal);
 		
 
 		workGroup = new WorkGroup();
-		workGroup.setLocale(SupportedLanguage.ENGLISH);
 		workGroup.setMailLocale(Language.ENGLISH);
 		workGroup.setExternalMailLocale(Language.ENGLISH);
 		workGroup.setCmisLocale(CMIS_LOCALE);

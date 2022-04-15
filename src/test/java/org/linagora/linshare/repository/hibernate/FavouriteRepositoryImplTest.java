@@ -96,17 +96,14 @@ public class FavouriteRepositoryImplTest {
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
 		Guest robert = new Guest("robert", "lechat", "robert.lechat@linagora.com","secret", true, "comment");
-		robert.setLocale(domain.getDefaultTapestryLocale());
 		robert.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		robert.setDomain(domain);
 		
 		Guest jean = new Guest("jean", "lechat", "jean.lechat@linagora.com","secret", true, "comment");
-		jean.setLocale(domain.getDefaultTapestryLocale());
 		jean.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		jean.setDomain(domain);
 		
 		Guest pierre = new Guest("pierre", "lechat", "pierre.lechat@linagora.com","secret", true,"comment");
-		pierre.setLocale(domain.getDefaultTapestryLocale());
 		pierre.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		pierre.setDomain(domain);
 		

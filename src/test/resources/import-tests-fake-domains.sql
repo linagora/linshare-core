@@ -41,8 +41,8 @@ UPDATE domain_abstract SET mime_policy_id=1 WHERE id >= 100001;
 
 
 
-INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, mail_locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent, authentication_failure_count)
-VALUES (100001, 'root@localhost.localdomain@test', 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', 'en', 'en', true, '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW4k3k0UxxtdFIEquzTA6', 0, 100001, 'IN_USE', 'Super', 'Administrator', true, '', false, false, false, 0);
+INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, mail_locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent, authentication_failure_count)
+VALUES (100001, 'root@localhost.localdomain@test', 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', 'en', true, '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW4k3k0UxxtdFIEquzTA6', 0, 100001, 'IN_USE', 'Super', 'Administrator', true, '', false, false, false, 0);
 
 -- root domain de test
 -- Functionality : TEST_TIME_STAMPING

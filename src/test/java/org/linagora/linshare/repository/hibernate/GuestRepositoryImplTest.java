@@ -130,13 +130,11 @@ public class GuestRepositoryImplTest {
 		String encpass = passwordService.encode(PASSWORD);
 		if (!flag) {
 			Guest u1 = new Guest(FIRST_NAME2, LAST_NAME2, MAIL2, encpass, true, "comment");
-			u1.setLocale(domain.getDefaultTapestryLocale());
 			u1.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 			u1.setDomain(domain);
 			guestRepository.create(u1);
 
 			Guest u2 = new Guest(FIRST_NAME3, LAST_NAME3, MAIL3, encpass, true, "comment");
-			u2.setLocale(domain.getDefaultTapestryLocale());
 			u2.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 			u2.setDomain(domain);
 			guestRepository.create(u2);
@@ -239,14 +237,12 @@ public class GuestRepositoryImplTest {
 
 		User owner = new Internal(O_FIRST_NAME, O_LAST_NAME, O_MAIL, null);
 		owner.setDomain(domain);
-		owner.setLocale(domain.getDefaultTapestryLocale());
 		owner.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		userRepository.create(owner);
 
 		Guest u = new Guest(FIRST_NAME, LAST_NAME, MAIL);
 		u.setOwner(owner);
 		u.setDomain(domain);
-		u.setLocale(domain.getDefaultTapestryLocale());
 		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 
 		guestRepository.create(u);
@@ -297,7 +293,6 @@ public class GuestRepositoryImplTest {
 		Guest u = new Guest(FIRST_NAME, LAST_NAME, MAIL);
 		u.setExpirationDate(new Date(0));
 		u.setDomain(domain);
-		u.setLocale(domain.getDefaultTapestryLocale());
 		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		guestRepository.create(u);
 

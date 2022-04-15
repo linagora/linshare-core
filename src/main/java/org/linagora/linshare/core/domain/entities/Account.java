@@ -45,7 +45,6 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 
 public abstract class Account {
 
@@ -60,8 +59,6 @@ public abstract class Account {
 	protected Date modificationDate;
 
 	protected Role role = Role.SIMPLE;
-
-	protected SupportedLanguage locale;
 
 	protected Language mailLocale;
 
@@ -180,20 +177,6 @@ public abstract class Account {
 
 	public void setRole(Role role) {
 		this.role = role;
-	}
-
-	public SupportedLanguage getLocale() {
-		return locale;
-	}
-
-	public void setLocale(SupportedLanguage locale) {
-		this.locale = locale;
-	}
-
-	public void setBusinessLocale(SupportedLanguage locale) {
-		if (locale != null) {
-			this.locale = locale;
-		}
 	}
 
 	public boolean isEnable() {

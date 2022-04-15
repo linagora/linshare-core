@@ -107,10 +107,6 @@ public class RecipientFavouriteRepositoryImplTest {
 		user3 = new Internal("Foo","Bar","user3@linshare.org", null); 
 
 		AbstractDomain userGuestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
-		user1.setLocale(userGuestDomain.getDefaultTapestryLocale());
-		user2.setLocale(userGuestDomain.getDefaultTapestryLocale());
-		user3.setLocale(userGuestDomain.getDefaultTapestryLocale());
-
 		user1.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
 		user2.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());
 		user3.setCmisLocale(userGuestDomain.getDefaultTapestryLocale().toString());

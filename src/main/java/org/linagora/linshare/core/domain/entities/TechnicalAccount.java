@@ -37,7 +37,6 @@ package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
 
 public class TechnicalAccount extends User {
@@ -57,7 +56,6 @@ public class TechnicalAccount extends User {
 		this.enable = dto.isEnable();
 		this.mailLocale = Language.ENGLISH;
 		this.externalMailLocale = Language.ENGLISH;
-		this.locale = SupportedLanguage.ENGLISH;
 		this.role = dto.getRole();
 		this.password = dto.getPassword();
 	}

@@ -100,7 +100,6 @@ public class ThreadRepositoryImplTest {
 		
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		internal = new Internal( FIRST_NAME, LAST_NAME, MAIL, UID);
-		internal.setLocale(domain.getDefaultTapestryLocale());
 		internal.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		internal.setDomain(domain);
 		accountRepository.create(internal);
@@ -122,7 +121,6 @@ public class ThreadRepositoryImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		WorkGroup t = new WorkGroup(domain, internal, "myThread");
-		t.setLocale(domain.getDefaultTapestryLocale());
 		t.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		threadRepository.create(t);
 		
@@ -134,7 +132,6 @@ public class ThreadRepositoryImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		WorkGroup t = new WorkGroup(domain, internal, "myThread");
-		t.setLocale(domain.getDefaultTapestryLocale());
 		t.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		threadRepository.create(t);
 		

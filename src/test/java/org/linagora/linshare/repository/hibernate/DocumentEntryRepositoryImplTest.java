@@ -113,7 +113,6 @@ public class DocumentEntryRepositoryImplTest  {
 		rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
 		user = new Guest(FIRST_NAME, LAST_NAME, MAIL, PASSWORD, true, "comment");
 		user.setDomain(rootDomain);
-		user.setLocale(rootDomain.getDefaultTapestryLocale());
 		user.setCmisLocale(rootDomain.getDefaultTapestryLocale().toString());
 		userRepository.create(user);
 		document = new Document(identifier, "name", type, Calendar.getInstance(), null, user, false, false, fileSize);

@@ -82,7 +82,6 @@ public class AccountRepositoryImplTest {
 		AbstractDomain domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
 		User u = new Internal(FIRST_NAME, LAST_NAME, MAIL, UID);
-		u.setLocale(domain.getDefaultTapestryLocale());
 		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		u.setDomain(domain);
 		accountRepository.create(u);

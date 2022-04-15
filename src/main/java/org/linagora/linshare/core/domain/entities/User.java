@@ -112,7 +112,6 @@ public abstract class User extends Account {
 		this.canUpload = userDto.getCanUpload();
 		this.canCreateGuest = userDto.getCanCreateGuest();
 		this.mailLocale = userDto.getExternalMailLocale();
-		this.locale = userDto.getLocale();
 	}
 
 	@Override

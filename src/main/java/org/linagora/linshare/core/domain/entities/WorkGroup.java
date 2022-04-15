@@ -60,7 +60,6 @@ public class WorkGroup extends Account {
 		this.enable = true;
 		this.toUpgrade = false;
 		this.destroyed = 0;
-		this.locale = owner.locale;
 		this.cmisLocale=owner.cmisLocale;
 		this.mailLocale = owner.mailLocale;
 		this.externalMailLocale = owner.externalMailLocale;
