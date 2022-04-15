@@ -83,7 +83,7 @@ public class UserProfileFacadeImpl extends UserGenericFacadeImp implements UserP
 			throw new BusinessException(BusinessErrorCode.USER_PROFILE_ONLY_LOCALE_CAN_BE_MODIFIED, "Only the locale of the user can be modified.");
 		}
 		User user = userService.findByLsUuid(dto.getUuid());
-		userService.updateUserLocale(user.getDomainId(), dto.getMail(), dto.getLocale().convert());
+		userService.updateUserMailLocale(user.getDomainId(), dto.getMail(), dto.getMailLocale().convertToLanguage());
 		userService.updateUserExternalMailLocale(user.getDomainId(), dto.getMail(), dto.getExternalMailLocale().convertToLanguage());
 		return dto;
 	}

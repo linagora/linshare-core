@@ -84,8 +84,8 @@ public abstract class AbstractUserProfileDto<T extends AbstractUserProfileDto> {
 	@Schema(description = "User's modification date")
 	protected Date modificationDate;
 
-	@Schema(description = "User's language", required = true)
-	protected UserLanguage locale;
+	@Schema(description = "User's language used for mail notification", required = true)
+	protected UserLanguage mailLocale;
 
 	@Schema(description = "User's language used for external mail notification", required = true)
 	protected UserLanguage externalMailLocale;
@@ -144,12 +144,12 @@ public abstract class AbstractUserProfileDto<T extends AbstractUserProfileDto> {
 		this.modificationDate = modificationDate;
 	}
 
-	public UserLanguage getLocale() {
-		return locale;
+	public UserLanguage getMailLocale() {
+		return mailLocale;
 	}
 
-	public void setLocale(UserLanguage locale) {
-		this.locale = locale;
+	public void setMailLocale(UserLanguage mailLocale) {
+		this.mailLocale = mailLocale;
 	}
 
 	public UserLanguage getExternalMailLocale() {
@@ -183,7 +183,7 @@ public abstract class AbstractUserProfileDto<T extends AbstractUserProfileDto> {
 			.add("mail", mail)
 			.add("creationDate", creationDate)
 			.add("modificationDate", modificationDate)
-			.add("locale", locale)
+			.add("locale", mailLocale)
 			.add("externalMailLocale", externalMailLocale)
 			.add("personalSpaceEnabled", personalSpaceEnabled)
 			.add("accountType", accountType);
@@ -194,7 +194,7 @@ public abstract class AbstractUserProfileDto<T extends AbstractUserProfileDto> {
 		Validate.notBlank(firstName, "'firstName' must be set.");
 		Validate.notBlank(lastName, "'lastName' must be set.");
 		Validate.notBlank(mail, "'mail' must be set.");
-		Validate.notNull(locale, "'locale' must be set.");
+		Validate.notNull(mailLocale, "'locale' must be set.");
 		Validate.notNull(externalMailLocale, "'externalMailLocale' must be set.");
 		Validate.notNull(personalSpaceEnabled, "'personalSpaceEnabled' must be set.");
 		Validate.notNull(accountType, "'accountType' must be set.");

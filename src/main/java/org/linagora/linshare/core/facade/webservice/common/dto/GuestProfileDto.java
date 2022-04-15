@@ -60,7 +60,7 @@ public class GuestProfileDto extends AbstractUserProfileDto<GuestProfileDto> {
 		guestProfileDto.setMail(user.getMail());
 		guestProfileDto.setCreationDate(user.getCreationDate());
 		guestProfileDto.setModificationDate(user.getModificationDate());
-		guestProfileDto.setLocale(UserLanguage.from(user.getLocale()));
+		guestProfileDto.setMailLocale(UserLanguage.from(user.getMailLocale()));
 		guestProfileDto.setExternalMailLocale(UserLanguage.from(user.getExternalMailLocale()));
 		guestProfileDto.setPersonalSpaceEnabled(user.isCanUpload());
 		guestProfileDto.setAccountType(user.getAccountType());
