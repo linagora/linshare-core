@@ -55,7 +55,7 @@ public class TechnicalAccount extends User {
 		this.canUpload = false;
 		this.canCreateGuest = false;
 		this.enable = dto.isEnable();
-		this.externalMailLocale = Language.ENGLISH;
+		this.mailLocale = Language.ENGLISH;
 		this.locale = SupportedLanguage.ENGLISH;
 		this.role = dto.getRole();
 		this.password = dto.getPassword();

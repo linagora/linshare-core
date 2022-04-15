@@ -17,18 +17,18 @@ UPDATE domain_abstract SET mime_policy_id=1;
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
 -- password generated from https://www.browserling.com/tools/bcrypt
-INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, password, destroyed, domain_id, purge_step, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, authentication_failure_count) 
+INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, mail_locale,cmis_locale, enable, password, destroyed, domain_id, purge_step, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, authentication_failure_count)
 	VALUES (1, 'root@localhost.localdomain', 6, 'root@localhost.localdomain', now(),now(), 3, 'en', 'en','en', true, '{bcrypt}$2a$10$LQSvbfb2ZsCrWzPp5lj2weSZCz2fWRDBOW4k3k0UxxtdFIEquzTA6', 0, 1, 'IN_USE', 'Super', 'Administrator', true, '', false, false, 0);
 
 -- system account :
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count) 
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count)
 	VALUES (2, 'system', 7, 'system', now(),now(), 3, 'en', 'en','en', true, 0, 1, 'IN_USE', false, false, false, 0);
 -- system account for upload-request:
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count) 
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count)
 	VALUES (3,'system-account-uploadrequest', 7, 'system-account-uploadrequest', now(),now(), 6, 'en', 'en','en', true, 0, 1, 'IN_USE', false, false, false, 0);
 
 -- System account for anonymous share
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count) 
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step, can_upload, restricted, can_create_guest, authentication_failure_count)
 	VALUES (4,'system-anonymous-share-account', 7, 'system-anonymous-share-account', now(),now(), 8, 'en', 'en','en', true, 0, 1, 'IN_USE', false, false, false, 0);
 
 -- system

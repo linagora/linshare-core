@@ -86,7 +86,7 @@ UPDATE domain_abstract SET mailconfig_id = 1;
 INSERT INTO account(
 	id, mail, account_type, ls_uuid, 
 	creation_date, modification_date, role_id, locale, 
-	external_mail_locale, cmis_locale, enable, password, 
+	mail_locale, cmis_locale, enable, password,
 	destroyed, domain_id, purge_step, first_name, 
 	last_name, can_upload, comment, restricted, 
 	CAN_CREATE_GUEST, inconsistent, authentication_failure_count)
@@ -138,7 +138,7 @@ VALUES
 INSERT INTO account(
 	id, mail, account_type, ls_uuid,
 	creation_date, modification_date, role_id, locale, 
-	external_mail_locale, cmis_locale, enable, password, 
+	mail_locale, cmis_locale, enable, password,
 	destroyed, domain_id, purge_step, authentication_failure_count)
 VALUES
 	(20, 'cf32c1e4-4f44-11ea-9f38-f7f9633276e3', 5, 'cf32c1e4-4f44-11ea-9f38-f7f9633276e3', 

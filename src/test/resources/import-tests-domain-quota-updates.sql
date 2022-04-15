@@ -1,7 +1,7 @@
 INSERT INTO account(
 	id, mail, account_type, ls_uuid,
 	creation_date, modification_date, role_id, locale,
-	external_mail_locale, cmis_locale, enable, password,
+	mail_locale, cmis_locale, enable, password,
 	destroyed, domain_id, purge_step,first_name,
 	last_name, can_upload, comment, restricted,
 	CAN_CREATE_GUEST, inconsistent, authentication_failure_count)
@@ -26,4 +26,3 @@ VALUES (
 	3, 14, 2, 1000000000,
 	false, false, false,
 	1000000000, 1000000000, null, 'ACCOUNT_QUOTA');
-	

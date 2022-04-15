@@ -127,7 +127,7 @@ public class SafeDetailRepositoryTest {
 
 		workGroup = new WorkGroup();
 		workGroup.setLocale(SupportedLanguage.ENGLISH);
-		workGroup.setExternalMailLocale(Language.ENGLISH);
+		workGroup.setMailLocale(Language.ENGLISH);
 		workGroup.setCmisLocale(CMIS_LOCALE);
 		workGroup.setDomain(testDomain);
 		workGroup.setName(THREAD_NAME);

@@ -57,7 +57,7 @@ public class ShareNewShareAcknowledgementEmailContext extends EmailContext {
 		this.shareOwner = sender;
 		this.shares = shares;
 		this.shareContainer = shareContainer;
-		this.language = shareOwner.getExternalMailLocale();
+		this.language = shareOwner.getMailLocale();
 	}
 
 	public User getShareOwner() {

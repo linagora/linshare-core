@@ -330,7 +330,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					if (user != null) {
 						user.setDomain(domain);
 						user.setRole(domain.getDefaultRole());
-						user.setExternalMailLocale(user.getDomain().getExternalMailLocale());
+						user.setMailLocale(user.getDomain().getExternalMailLocale());
 					}
 				} catch (NamingException | IOException | CommunicationException e) {
 					logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
@@ -356,14 +356,14 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							Internal internal = new Internal(firstName, lastName, email, externalUuid.orElse(email));
 							internal.setDomain(domain);
 							internal.setRole(domain.getDefaultRole());
-							internal.setExternalMailLocale(domain.getExternalMailLocale());
+							internal.setMailLocale(domain.getExternalMailLocale());
 							if (oidcUp.getUseRoleClaim()) {
 								internal.setRole(Role.toDefaultRole(
 									domain.getDefaultRole(),
 									jwtAuthentication.get("linshare_role")));
 							}
 							if (oidcUp.getUseEmailLocaleClaim()) {
-								internal.setExternalMailLocale(Language.toDefaultLanguage(
+								internal.setMailLocale(Language.toDefaultLanguage(
 									domain.getExternalMailLocale(),
 									jwtAuthentication.get("linshare_locale")));
 							} else {

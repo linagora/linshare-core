@@ -55,7 +55,7 @@ public class WorkGroupWarnNewMemberEmailContext extends EmailContext {
 		super(newMember.getDomain(), false);
 		this.workgroupMember = workgroupMember;
 		this.owner = owner;
-		this.language = newMember.getExternalMailLocale();
+		this.language = newMember.getMailLocale();
 		this.newMember = newMember;
 	}
 

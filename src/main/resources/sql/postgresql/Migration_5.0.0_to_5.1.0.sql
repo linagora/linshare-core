@@ -405,6 +405,8 @@ END
 $$ LANGUAGE plpgsql;
 SELECT ls_transform_guest_owner_to_moderator();
 
+-- Account table, new field
+ALTER TABLE account RENAME COLUMN mail_locale TO mail_locale;
 
 ---- End of your queries
 

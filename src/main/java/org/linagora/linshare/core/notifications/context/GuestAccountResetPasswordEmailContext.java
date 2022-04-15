@@ -50,7 +50,7 @@ public class GuestAccountResetPasswordEmailContext extends EmailContext {
 		super(guest.getDomain(), false);
 		this.guest = guest;
 		this.resetPasswordTokenUuid= resetPasswordTokenUuid;
-		this.language = guest.getExternalMailLocale();
+		this.language = guest.getMailLocale();
 	}
 
 	public Guest getGuest() {

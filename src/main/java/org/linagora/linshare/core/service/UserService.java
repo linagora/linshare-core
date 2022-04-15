@@ -83,12 +83,12 @@ public interface UserService {
 	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale) throws BusinessException;
 
 	/**
-	 * Update a user externalMailLocale
+	 * Update a user mailLocale
 	 * @param mail : the user email
-	 * @param externalMailLocale : the new externalMailLocal
+	 * @param mailLocale : the new mailLocale
 	 * @throws BusinessException
 	 */
-	public void updateUserExternalMailLocale(String domainId, String mail, Language externalMailLocale) throws BusinessException;
+	public void updateUserMailLocale(String domainId, String mail, Language mailLocale) throws BusinessException;
 
 	/**
 	 * Update a user locale

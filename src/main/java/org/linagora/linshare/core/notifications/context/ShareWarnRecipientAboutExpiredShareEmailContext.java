@@ -48,7 +48,7 @@ public class ShareWarnRecipientAboutExpiredShareEmailContext extends EmailContex
 	public ShareWarnRecipientAboutExpiredShareEmailContext(ShareEntry shareEntry) {
 		super(shareEntry.getEntryOwner().getDomain(), false);
 		this.shareEntry = shareEntry;
-		this.language = shareEntry.getRecipient().getExternalMailLocale();
+		this.language = shareEntry.getRecipient().getMailLocale();
 	}
 
 	public ShareEntry getShareEntry() {

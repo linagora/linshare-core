@@ -199,7 +199,7 @@ public class UserDto {
 		}
 		this.canUpload = user.isCanUpload();
 		this.canCreateGuest = user.isCanCreateGuest();
-		this.externalMailLocale = user.getExternalMailLocale();
+		this.externalMailLocale = user.getMailLocale();
 		this.secondFAEnabled = user.isUsing2FA();
 		this.secondFAUuid = user.getLsUuid();
 	}
@@ -210,7 +210,7 @@ public class UserDto {
 			guest.setLsUuid(getUuid());
 			guest.setCanUpload(isCanUpload());
 			guest.setComment(getComment());
-			guest.setExternalMailLocale(getExternalMailLocale());
+			guest.setMailLocale(getExternalMailLocale());
 			guest.setExpirationDate(getExpirationDate());
 			guest.setFirstName(getFirstName());
 			guest.setLastName(getLastName());
@@ -222,7 +222,7 @@ public class UserDto {
 			internal.setLsUuid(getUuid());
 			internal.setCanUpload(isCanUpload());
 			internal.setCanCreateGuest(isCanCreateGuest());
-			internal.setExternalMailLocale(getExternalMailLocale());
+			internal.setMailLocale(getExternalMailLocale());
 			internal.setFirstName(getFirstName());
 			internal.setLastName(getLastName());
 			internal.setRole(getRole());

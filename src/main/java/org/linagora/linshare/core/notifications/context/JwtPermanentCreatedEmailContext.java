@@ -46,7 +46,7 @@ public class JwtPermanentCreatedEmailContext extends AbstractJwtLongTimeEmailCon
 			Account actor,
 			PermanentToken jwtPermanentToken) {
 		super(creator, actor, jwtPermanentToken);
-		this.language = actor.getExternalMailLocale();
+		this.language = actor.getMailLocale();
 	}
 
 	@Override

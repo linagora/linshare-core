@@ -54,7 +54,7 @@ public abstract class AbstractJwtLongTimeEmailContext extends EmailContext{
 			PermanentToken jwtLongTime) {
 		super(actor.getDomain(), true);
 		this.jwtLongTime = jwtLongTime;
-		this.language = actor.getExternalMailLocale();
+		this.language = actor.getMailLocale();
 		this.recipient = actor;
 		this.owner = creator;
 	}

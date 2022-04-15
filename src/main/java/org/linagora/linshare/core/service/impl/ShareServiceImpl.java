@@ -287,7 +287,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		Boolean forceAnonymousSharing = aufas.getFinalValue(shareContainer.getForceAnonymousSharing());
 		for (Recipient recipient : shareContainer.getRecipients()) {
 			if (forceAnonymousSharing) {
-				recipient.setLocale(owner.getExternalMailLocale());
+				recipient.setLocale(owner.getMailLocale());
 				shareContainer.addAnonymousShareRecipient(recipient);
 				continue;
 			}
@@ -308,7 +308,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			}
 			// step 4
 			// It did not find a account related to the recipient object.
-			recipient.setLocale(owner.getExternalMailLocale());
+			recipient.setLocale(owner.getMailLocale());
 			shareContainer.addAnonymousShareRecipient(recipient);
 		}
 	}

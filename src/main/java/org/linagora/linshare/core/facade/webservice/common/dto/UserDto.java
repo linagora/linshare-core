@@ -143,7 +143,7 @@ public class UserDto extends AccountDto {
 			guest.setCanUpload(getCanUpload());
 			guest.setComment(getComment());
 			guest.setLocale(getLocale());
-			guest.setExternalMailLocale(getExternalMailLocale());
+			guest.setMailLocale(getExternalMailLocale());
 			guest.setExpirationDate(getExpirationDate());
 			guest.setFirstName(getFirstName());
 			guest.setLastName(getLastName());
@@ -156,7 +156,7 @@ public class UserDto extends AccountDto {
 			internal.setCanUpload(getCanUpload());
 			internal.setCanCreateGuest(getCanCreateGuest());
 			internal.setLocale(getLocale());
-			internal.setExternalMailLocale(getExternalMailLocale());
+			internal.setMailLocale(getExternalMailLocale());
 			internal.setFirstName(getFirstName());
 			internal.setLastName(getLastName());
 			internal.setRole(Role.valueOf(getRole()));

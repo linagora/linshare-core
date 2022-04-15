@@ -82,7 +82,7 @@ public class Recipient {
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.domain = user.getDomain();
-		this.locale = user.getExternalMailLocale();
+		this.locale = user.getMailLocale();
 	}
 
 	public Recipient(UserDto userDto) {

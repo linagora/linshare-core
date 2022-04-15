@@ -646,14 +646,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserExternalMailLocale(String domainId, String mail,
-			Language externalMailLocale) throws BusinessException {
+	public void updateUserMailLocale(String domainId, String mail,
+			Language mailLocale) throws BusinessException {
 		User user = findOrCreateUser(mail, domainId);
 		if (user == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
 					"Couldn't find the user " + mail);
 		}
-		user.setExternalMailLocale(externalMailLocale);
+		user.setMailLocale(mailLocale);
 		try {
 			user = userRepository.update(user);
 		} catch (IllegalArgumentException e) {
@@ -661,7 +661,7 @@ public class UserServiceImpl implements UserService {
 					"Couldn't find the user " + mail);
 		} catch (BusinessException e) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE,
-					"Couldn't save the locale " + externalMailLocale);
+					"Couldn't save the locale " + mailLocale);
 		}
 	}
 
@@ -674,7 +674,7 @@ public class UserServiceImpl implements UserService {
 					"Couldn't find the user " + mail);
 		}
 		user.setLocale(locale);
-		user.setExternalMailLocale(externalMailLocale);
+		user.setMailLocale(externalMailLocale);
 		if (cmisLocale != null) {
 			user.setCmisLocale(cmisLocale);
 		}
@@ -760,8 +760,8 @@ public class UserServiceImpl implements UserService {
 				BooleanValueFunctionality userCanUploadFunc = functionalityReadOnlyService
 						.getEnableInternalPersonalSpaceFunctionality(user.getDomain());
 				user.setCanUpload(userCanUploadFunc.getValue());
-				if (user.getExternalMailLocale() == null) {
-					user.setExternalMailLocale(Language.ENGLISH);
+				if (user.getMailLocale() == null) {
+					user.setMailLocale(Language.ENGLISH);
 				}
 				// useless fields.
 				user.setLocale(SupportedLanguage.ENGLISH);
@@ -935,7 +935,7 @@ public class UserServiceImpl implements UserService {
 		if (Objects.nonNull(updatedUser.getLocale())) {
 			user.setLocale(updatedUser.getLocale());
 		}
-		user.setExternalMailLocale(updatedUser.getExternalMailLocale());
+		user.setMailLocale(updatedUser.getMailLocale());
 		if (user.isGuest()) {
 			Guest updatedGuest = (Guest) updatedUser;
 			Assert.notNull(updatedGuest.getExpirationDate(), "Expiration date must not be null");

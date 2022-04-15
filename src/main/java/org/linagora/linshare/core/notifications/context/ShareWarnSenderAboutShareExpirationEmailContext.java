@@ -51,7 +51,7 @@ public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContex
 		super(shareEntry.getEntryOwner().getDomain(), false);
 		this.shareEntry = shareEntry;
 		this.daysLeft = daysLeft;
-		this.language = shareEntry.getEntryOwner().getExternalMailLocale();
+		this.language = shareEntry.getEntryOwner().getMailLocale();
 	}
 
 	public ShareEntry getShareEntry() {

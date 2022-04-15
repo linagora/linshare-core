@@ -36,7 +36,6 @@
 package org.linagora.linshare.core.notifications.context;
 
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
@@ -60,7 +59,7 @@ public abstract class GenericUploadRequestEmailContext extends EmailContext {
 		this.warnOwner = warnOwner;
 		this.uploadRequest = uploadRequest;
 		if (warnOwner) {
-			this.language = uploadRequest.getUploadRequestGroup().getOwner().getExternalMailLocale();
+			this.language = uploadRequest.getUploadRequestGroup().getOwner().getMailLocale();
 		} else {
 			this.language = uploadRequest.getLocale();
 		}

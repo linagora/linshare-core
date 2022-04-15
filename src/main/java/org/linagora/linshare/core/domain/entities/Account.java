@@ -63,7 +63,7 @@ public abstract class Account {
 
 	protected SupportedLanguage locale;
 
-	protected Language externalMailLocale;
+	protected Language mailLocale;
 
 	protected String cmisLocale;
 
@@ -270,13 +270,13 @@ public abstract class Account {
 
 	public abstract ContainerQuotaType getContainerQuotaType();
 
-	public Language getExternalMailLocale() {
-		return externalMailLocale;
+	public Language getMailLocale() {
+		return mailLocale;
 	}
 
 	public Locale getJavaExternalMailLocale() {
 		Locale locale = Locale.ENGLISH;
-		switch (getExternalMailLocale()) {
+		switch (getMailLocale()) {
 		case FRENCH:
 			locale = Locale.FRANCE;
 			break;
@@ -286,13 +286,13 @@ public abstract class Account {
 		return locale;
 	}
 
-	public void setExternalMailLocale(Language externalMailLocale) {
-		this.externalMailLocale = externalMailLocale;
+	public void setMailLocale(Language externalMailLocale) {
+		this.mailLocale = externalMailLocale;
 	}
 
 	public void setBusinessExternalMailLocale(Language externalMailLocale) {
 		if (externalMailLocale != null) {
-			this.externalMailLocale = externalMailLocale;
+			this.mailLocale = externalMailLocale;
 		}
 	}
 

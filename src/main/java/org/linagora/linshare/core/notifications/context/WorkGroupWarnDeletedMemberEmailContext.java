@@ -56,7 +56,7 @@ public class WorkGroupWarnDeletedMemberEmailContext extends EmailContext {
 		this.workgroupMember = workgroupMember;
 		this.owner = owner;
 		this.userMember = userMember;
-		this.language = userMember.getExternalMailLocale();
+		this.language = userMember.getMailLocale();
 	}
 
 	public SharedSpaceMember getWorkgroupMember() {

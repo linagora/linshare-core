@@ -57,7 +57,7 @@ public class WorkGroupWarnUpdatedMemberEmailContext extends EmailContext{
 		this.member = member;
 		this.userMember = userMember;
 		this.actor = actor;
-		this.language = userMember.getExternalMailLocale();
+		this.language = userMember.getMailLocale();
 	}
 
 	public SharedSpaceMember getWorkGroupMember() {

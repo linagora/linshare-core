@@ -68,7 +68,7 @@ public class ShareNewShareEmailContext extends EmailContext {
 		this.shareOwner = shareOwner;
 		this.shareRecipient = shareRecipient;
 		this.shares = shares;
-		this.language = shareRecipient.getExternalMailLocale();
+		this.language = shareRecipient.getMailLocale();
 		this.anonymousUrl = null;
 		this.isAnonymous = false;
 		this.shareContainer = shareContainer;
@@ -78,7 +78,7 @@ public class ShareNewShareEmailContext extends EmailContext {
 		super(shareOwner.getDomain(), true);
 		this.shareOwner = shareOwner;
 		this.anonymousUrl = anonymousUrl;
-		this.language = shareOwner.getExternalMailLocale();
+		this.language = shareOwner.getMailLocale();
 		this.shareRecipient = null;
 		this.shares = null;
 		this.isAnonymous = true;
@@ -170,9 +170,9 @@ public class ShareNewShareEmailContext extends EmailContext {
 		if (language == null) {
 			// Locale was not override by the current logged in user.
 			if (isAnonymous) {
-				return Language.toLocale(shareOwner.getExternalMailLocale());
+				return Language.toLocale(shareOwner.getMailLocale());
 			} else {
-				return Language.toLocale(shareRecipient.getExternalMailLocale());
+				return Language.toLocale(shareRecipient.getMailLocale());
 			}
 		}
 		return super.getLocale();

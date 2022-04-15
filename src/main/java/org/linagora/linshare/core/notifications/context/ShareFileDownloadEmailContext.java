@@ -60,7 +60,7 @@ public class ShareFileDownloadEmailContext extends EmailContext {
 		this.entry = shareEntry;
 		this.anonymous = false;
 		this.actionDate = new Date();
-		this.language = shareEntry.getEntryOwner().getExternalMailLocale();
+		this.language = shareEntry.getEntryOwner().getMailLocale();
 	}
 
 	public ShareFileDownloadEmailContext(AnonymousShareEntry shareEntry) {
@@ -68,7 +68,7 @@ public class ShareFileDownloadEmailContext extends EmailContext {
 		this.entry = shareEntry;
 		this.anonymous = true;
 		this.actionDate = new Date();
-		this.language = shareEntry.getEntryOwner().getExternalMailLocale();
+		this.language = shareEntry.getEntryOwner().getMailLocale();
 	}
 
 	public Entry getEntry() {

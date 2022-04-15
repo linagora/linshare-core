@@ -96,7 +96,7 @@ public class AccountDto {
 		this.modificationDate = a.getModificationDate();
 		if (full) {
 			this.locale = a.getLocale();
-			this.externalMailLocale = a.getExternalMailLocale();
+			this.externalMailLocale = a.getMailLocale();
 		}
 	}
 

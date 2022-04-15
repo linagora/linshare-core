@@ -79,7 +79,7 @@ UPDATE domain_abstract SET welcome_messages_id = 1;
 
 
 
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, password, destroyed, domain_id, first_name, last_name, can_upload, comment, restricted, can_create_guest)
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, mail_locale,cmis_locale, enable, password, destroyed, domain_id, first_name, last_name, can_upload, comment, restricted, can_create_guest)
 	VALUES (40, 'undefined.technical_account@int6.linshare.dev', 4, 'fff38827-490a-4654-86a6-57b61611b42d', now(),now(), 4, 'en', 'en','en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 1, null, 'Technical Account for test', false, '', false, false);
 
 INSERT INTO technical_account_permission (id, uuid, creation_date, modification_date) VALUES (40, 'fbba4e41-ca60-4f09-8d59-fbfe052acb82', current_timestamp(3), current_timestamp(3));
@@ -87,10 +87,10 @@ INSERT INTO technical_account_permission (id, uuid, creation_date, modification_
 
 -- Users
 -- amy.wolsh
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, password, destroyed, domain_id, first_name, last_name, can_upload, comment, restricted, can_create_guest)
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, mail_locale,cmis_locale, enable, password, destroyed, domain_id, first_name, last_name, can_upload, comment, restricted, can_create_guest)
 	VALUES (50, 'amy.wolsh@int6.linshare.dev', 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_timestamp(3), current_timestamp(3), 0, 'fr', 'en','fr', true, 0, 3, 'Amy', 'Wolsh', true, '', false, true);
 -- pierre mongin : 15kn60njvhdjh
--- INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, owner_id , password ) VALUES (53, 'pmongin@ratp.fr', 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr','en', true, 0, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=');
+-- INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, mail_locale,cmis_locale, enable, destroyed, domain_id, owner_id , password ) VALUES (53, 'pmongin@ratp.fr', 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr','en', true, 0, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=');
 -- INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', true, '', false, false, current_timestamp(3));
 
 -- MyDomain QUOTA

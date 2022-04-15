@@ -404,7 +404,7 @@ public class UserServiceImplTest {
 		guest.setDomain(abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user2);
-		guest.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
+		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setCmisLocale(guestDomain.getDefaultTapestryLocale().toString());
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guest = guestRepository.create(guest);
@@ -471,7 +471,7 @@ public class UserServiceImplTest {
 		guest.setDomain(abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
-		guest.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
+		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setCmisLocale("en");
 		String oldPassword = "password222";
@@ -509,7 +509,7 @@ public class UserServiceImplTest {
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest.setOwner(user1);
 		guest.setRestricted(true);
-		guest.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
+		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setCmisLocale("en");
 		guest = guestRepository.create(guest);
@@ -542,7 +542,7 @@ public class UserServiceImplTest {
 		guest2.setDomain(abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		guest2.setOwner(user1);
-		guest2.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
+		guest2.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest2.setCmisLocale("en");
 		guest2.setLocale(guestDomain.getDefaultTapestryLocale());
 		guest2 = guestRepository.create(guest2);
@@ -554,7 +554,7 @@ public class UserServiceImplTest {
 
 		guest.setOwner(user1);
 		guest.setRestricted(true);
-		guest.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
+		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setLocale(guestDomain.getDefaultTapestryLocale());
 		guest.setCmisLocale(guestDomain.getDefaultTapestryLocale().toString());
 		guest = guestRepository.create(guest);
