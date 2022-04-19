@@ -26,6 +26,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -47,6 +48,13 @@ public class OIDCUserProviderRepositoryImpl extends AbstractRepositoryImpl<OIDCU
 	public Optional<OIDCUserProvider> findByDomainDiscriminator(String discriminator) {
 		return Optional.ofNullable(
 				DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("domainDiscriminator", discriminator))));
+	}
+
+	@Override
+	public List<OIDCUserProvider> findAllByDomainDiscriminator(List<String> discriminators) {
+		DetachedCriteria det = DetachedCriteria.forClass(OIDCUserProvider.class);
+		det.add(Restrictions.in("domainDiscriminator", discriminators));
+		return findByCriteria(det);
 	}
 
 	@Override

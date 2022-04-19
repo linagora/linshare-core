@@ -36,7 +36,6 @@
 package org.linagora.linshare.core.facade.auth.impl;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationExceptionCode;
@@ -237,22 +236,31 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
-	public OIDCUserProviderDto findOidcProvider(String domainDiscriminator) {
-		logger.debug("looking for domain with discriminator: {}", domainDiscriminator);
-		Optional<OIDCUserProvider> userProvider = oidcUserProviderRepository.findByDomainDiscriminator(domainDiscriminator);
+	public OIDCUserProviderDto findOidcProvider(List<String> domainDiscriminators) {
+		logger.debug("looking for domain with discriminator: {}", domainDiscriminators);
+		List<OIDCUserProvider> userProvider = oidcUserProviderRepository.findAllByDomainDiscriminator(domainDiscriminators);
 		if (userProvider.isEmpty()) {
-			String msg = "Can not find domain using domain discriminator: " + domainDiscriminator;
+			String msg = "Can not find domain using domain discriminators: " + domainDiscriminators;
 			logger.error(msg);
 			throw new LinShareAuthenticationException(msg) {
-
 				private static final long serialVersionUID = -2805671638935042756L;
-
 				@Override
 				public LinShareAuthenticationExceptionCode getErrorCode() {
 					return LinShareAuthenticationExceptionCode.DOMAIN_NOT_FOUND;
 				}
 			};
 		}
-		return new OIDCUserProviderDto(userProvider.get());
+		if (userProvider.size() >= 2) {
+			String msg = "User should not belong to mutiple domains (discriminators): " + domainDiscriminators;
+			logger.error(msg);
+			throw new LinShareAuthenticationException(msg) {
+				private static final long serialVersionUID = 4157262685317509985L;
+				@Override
+				public LinShareAuthenticationExceptionCode getErrorCode() {
+					return LinShareAuthenticationExceptionCode.MULTIPLE_DOMAIN_NOT_FOUND;
+				}
+			};
+		}
+		return new OIDCUserProviderDto(userProvider.get(0));
 	}
 }

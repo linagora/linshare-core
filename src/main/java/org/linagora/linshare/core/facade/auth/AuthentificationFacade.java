@@ -78,5 +78,5 @@ public interface AuthentificationFacade {
 
 	public boolean isJwtLongTimeFunctionalityEnabled(String domainUuid);
 
-	OIDCUserProviderDto findOidcProvider(String oidcDomainIdentifier);
+	OIDCUserProviderDto findOidcProvider(List<String> domainDiscriminators);
 }
