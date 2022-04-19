@@ -595,7 +595,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							internal.setDomain(domain);
 							return internal;
 						} else {
-							logger.debug("Skipped. Provided oidcDomainIdentifier does not match current domain: domainDiscriminator={}, domain={}", domainDiscriminator, domain.getUuid());
+							logger.trace("Skipped. Provided oidcDomainIdentifier does not match current domain: domainDiscriminator={}, domain={}", domainDiscriminator, domain.getUuid());
 						}
 					} else {
 						logger.trace("It is not a OidcOpaqueAuthenticationToken class: {}", authentication.getClass());
