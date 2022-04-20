@@ -56,6 +56,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
@@ -126,12 +127,17 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		WelcomeMessages welcomeMessage = new WelcomeMessages(wlcm);
 		addDefaultLanguagesEntriesIfNeeded(actor, welcomeMessage);
 		welcomeMessage.setBussinessName(sanitizerInputHtmlBusinessService.strictClean(wlcmInput.getName()));
-		if (wlcmInput.getDescription() != null) {
-			welcomeMessage
-					.setBussinessDescription(sanitizerInputHtmlBusinessService.strictClean(wlcmInput.getDescription()));
-		}
+		welcomeMessage.setBussinessDescription(getDescription(wlcmInput));
 		welcomeMessage.setDomain(domain);
 		return businessService.create(welcomeMessage);
+	}
+
+	private String getDescription(WelcomeMessages welcomeMessages) {
+		String description = Strings.nullToEmpty(welcomeMessages.getDescription());
+		if (!Strings.isNullOrEmpty(description)) {
+			description = sanitizerInputHtmlBusinessService.strictClean(description);
+		}
+		return description;
 	}
 
 	@Override
@@ -141,10 +147,7 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 
 		addDefaultLanguagesEntriesIfNeeded(actor, welcomeMessages);
 		welcomeMessages.setBussinessName(sanitizerInputHtmlBusinessService.strictClean(welcomeMessages.getName()));
-		if (welcomeMessages.getDescription() != null) {
-			welcomeMessages
-				.setBussinessDescription(sanitizerInputHtmlBusinessService.strictClean(welcomeMessages.getDescription()));
-		}
+		welcomeMessages.setBussinessDescription(getDescription(welcomeMessages));
 		return businessService.create(welcomeMessages);
 	}
 
@@ -194,8 +197,7 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 						"Invalid number of keys.");
 		}
 		// Updating current WM.
-		if (wlcm.getDescription() != null)
-			welcomeMessage.setDescription(sanitizerInputHtmlBusinessService.strictClean(wlcm.getDescription()));
+		welcomeMessage.setDescription(getDescription(wlcm));
 		if (wlcm.getName() != null)
 			welcomeMessage.setName(sanitizerInputHtmlBusinessService.strictClean(wlcm.getName()));
 		Map<SupportedLanguage, WelcomeMessagesEntry> welcomeMessagesEntries = welcomeMessage
