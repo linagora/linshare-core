@@ -196,6 +196,11 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 			welcomeMessageDto.setUuid(welcomeMessageUuid);
 		}
 		Validate.notEmpty(welcomeMessageDto.getUuid(), "Welcome message uuid must be set.");
+		if (isAssigned(welcomeMessageDto.getUuid())) {
+			throw new BusinessException(
+				BusinessErrorCode.WELCOME_MESSAGES_ASSIGNED,
+				"Welcome message with uuid :" + welcomeMessageDto.getUuid() + " is assigned to a domain.");
+		}
 		AbstractDomain domain = domainService.find(authUser, domainUuid);
 		WelcomeMessages welcomeMessage = welcomeMessagesService.find(authUser, welcomeMessageDto.getUuid());
 		if (isReadOnly(authUser, welcomeMessage)) {
@@ -211,6 +216,13 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 				welcomeMessagesService.delete(authUser, welcomeMessageDto.getUuid()),
 				domain,
 				isReadOnly(authUser, welcomeMessage));
+	}
+
+	private boolean isAssigned(String uuid) {
+		return associatedDomains(uuid)
+			.stream()
+			.findAny()
+			.isPresent();
 	}
 
 	@Override
