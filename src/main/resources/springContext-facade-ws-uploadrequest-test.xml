@@ -12,4 +12,8 @@
 		<constructor-arg ref="uploadRequestGroupService" />
 		<constructor-arg ref="uploadRequestService" />
 	</bean>
+	<bean id="wsUserTestFacade" class="org.linagora.linshare.core.facade.webservice.test.user.uploadrequest.impl.UserTestFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
+	</bean>
 </beans>

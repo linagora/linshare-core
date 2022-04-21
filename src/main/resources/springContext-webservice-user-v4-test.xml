@@ -21,6 +21,9 @@
 			<bean class="org.linagora.linshare.webservice.test.userv4.impl.UploadRequestTestRestServiceImpl">
 				<constructor-arg ref="wsUploadRequestTestFacade" />
 			</bean>
+			<bean class="org.linagora.linshare.webservice.test.userv4.impl.UserRestServiceImpl">
+				<constructor-arg ref="wsUserTestFacade" />
+			</bean>
 <!-- 			<ref bean="id"/> -->
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
