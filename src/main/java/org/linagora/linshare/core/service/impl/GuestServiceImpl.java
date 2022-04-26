@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -57,6 +58,7 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -71,6 +73,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.ModeratorService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
@@ -105,6 +108,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	protected final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository;
 
+	protected final ModeratorService moderatorService;
+
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -116,7 +121,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
-			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			final ModeratorService moderatorService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -128,6 +134,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.resetGuestPasswordMongoRepository = resetGuestPasswordMongoRepository;
+		this.moderatorService = moderatorService;
 	}
 
 	@Override
@@ -245,6 +252,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)actor, create, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
 		notifierService.sendNotification(mail);
+		moderatorService.create(authUser, actor, new Moderator(ModeratorRole.ADMIN, actor, create));
 		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, actor, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
 		logEntryService.insert(log);
 		return create;

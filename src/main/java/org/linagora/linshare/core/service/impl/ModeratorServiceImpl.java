@@ -77,7 +77,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
 		checkCreatePermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_CREATE, moderator);
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		List<Moderator> moderators = findAllByGuest(authUser, actor, guest.getLsUuid());
+		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest);
 		if (moderators.contains(moderator)) {
 			throw new BusinessException(BusinessErrorCode.GUEST_MODERATOR_ALREADY_EXISTS, "Moderator already exists.");
 		}

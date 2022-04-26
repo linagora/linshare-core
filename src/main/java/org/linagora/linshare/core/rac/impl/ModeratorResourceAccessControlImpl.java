@@ -56,34 +56,37 @@ public class ModeratorResourceAccessControlImpl extends AbstractResourceAccessCo
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, entry);
+		return checkAdminFor(actor, entry);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, entry);
+		return checkAdminFor(actor, entry);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, entry);
+		return checkAdminFor(actor, entry);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, entry);
+		return checkAdminFor(actor, entry);
 	}
 
-	private boolean checkAdminFor(Account authUser, Moderator entry) {
-		if(authUser.hasAdminRole()) {
-			return domainPermissionService.isAdminForThisUser(authUser, entry.getGuest());
+	private boolean checkAdminFor(Account actor, Moderator entry) {
+		if(actor.hasAdminRole()) {
+			return domainPermissionService.isAdminForThisUser(actor, entry.getGuest());
+		}
+		if (actor.getLsUuid().equals(entry.getAccount().getLsUuid())) {
+			return true;
 		}
 		return false;
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, entry);
+		return checkAdminFor(actor, entry);
 	}
 
 	@Override
