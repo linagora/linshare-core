@@ -732,6 +732,7 @@ CREATE TABLE share_entry_group (
   notified          bool DEFAULT 'false' NOT NULL,
   processed         bool DEFAULT 'false' NOT NULL,
   expiration_date   timestamp,
+  external_mail_locale      varchar(255) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_activation (
   id                       int8 NOT NULL,

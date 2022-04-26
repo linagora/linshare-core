@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.Language;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -79,6 +81,8 @@ public class ShareEntryGroup {
 	protected Map<DocumentEntry, Boolean> tmpDocumentsWereDownloaded;
 	protected Map<DocumentEntry, Boolean> tmpAllSharesWereNotDownloaded;
 
+	protected Language externalMailLocale;
+
 	public ShareEntryGroup() {
 		super();
 	}
@@ -90,6 +94,7 @@ public class ShareEntryGroup {
 		this.notificationDate = null;
 		this.notified = false;
 		this.processed = false;
+		this.externalMailLocale = null;
 	}
 
 	@Override
@@ -193,6 +198,14 @@ public class ShareEntryGroup {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public Language getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+	public void setExternalMailLocale(Language externalMailLocale) {
+		this.externalMailLocale = externalMailLocale;
 	}
 
 	public boolean needNotification() {

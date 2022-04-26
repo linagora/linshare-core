@@ -412,6 +412,11 @@ UPDATE account SET external_mail_locale = 'en';
 ALTER TABLE account ALTER COLUMN external_mail_locale SET NOT NULL;
 ALTER TABLE account DROP COLUMN locale;
 
+-- Share related tables, new field
+ALTER TABLE share_entry_group ADD COLUMN external_mail_locale VARCHAR(255);
+UPDATE share_entry_group SET external_mail_locale = 'en';
+ALTER TABLE share_entry_group ALTER COLUMN external_mail_locale SET NOT NULL;
+
 ---- End of your queries
 
 -- Upgrade LinShare version

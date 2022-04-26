@@ -40,12 +40,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -127,8 +129,10 @@ public class ShareContainer {
 
 	protected List<EventNotification> events = Lists.newArrayList();
 
+	private Optional<Language> externalMailLocale;
+
 	public ShareContainer(String subject, String message, Boolean secured, Boolean creationAcknowledgement) {
-		super();
+		this();
 		this.subject = subject;
 		this.message = message;
 		this.locale = "en";
@@ -140,6 +144,7 @@ public class ShareContainer {
 	public ShareContainer() {
 		super();
 		this.encrypted = false;
+		this.externalMailLocale = Optional.empty();
 	}
 
 	public String getSubject() {
@@ -482,5 +487,13 @@ public class ShareContainer {
 
 	private boolean restrictedMode() {
 		return !(allowedRecipients == null);
+	}
+
+	public Optional<Language> getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+	public void setExternalMailLocale(Language externalMailLocale) {
+		this.externalMailLocale = Optional.ofNullable(externalMailLocale);
 	}
 }

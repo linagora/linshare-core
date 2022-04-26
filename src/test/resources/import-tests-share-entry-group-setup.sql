@@ -30,8 +30,8 @@ INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha2
 	VALUES (12, 4, false, 'data', 1024, 'plop', false, 1);
 
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
-	VALUES (1, 10, 'c96d778e-b09b-4557-b785-ff5124bd2b8d', 'subject 1', now() - 5, now() - 5, now() - 1, false, false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed, external_mail_locale)
+	VALUES (1, 10, 'c96d778e-b09b-4557-b785-ff5124bd2b8d', 'subject 1', now() - 5, now() - 5, now() - 1, false, false, 'en');
 
 -- SE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, expiration_date, name, comment, uuid, cmis_sync)
@@ -68,8 +68,8 @@ INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha2
 	VALUES (4, 2, false, 'data', 1024, 'plop', false, 2);
 
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
-	VALUES (2, 10, '61eae04b-9496-4cb1-900e-eda8caac6703', 'subject 2', now() - 5, now() - 5, now() - 1, false, false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed, external_mail_locale)
+	VALUES (2, 10, '61eae04b-9496-4cb1-900e-eda8caac6703', 'subject 2', now() - 5, now() - 5, now() - 1, false, false, 'en');
 
 -- SE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, expiration_date, name, comment, uuid, cmis_sync)
@@ -92,8 +92,8 @@ INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha2
 	VALUES (7, 3, false, 'data', 1024, 'plop', false, 2);
 
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
-	VALUES (3, 10, 'c8a54434-7898-472d-93c0-b98e1b526062', 'subject 3', now() - 5, now() - 5, now() - 1, false, false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed, external_mail_locale)
+	VALUES (3, 10, 'c8a54434-7898-472d-93c0-b98e1b526062', 'subject 3', now() - 5, now() - 5, now() - 1, false, false, 'en');
 
 -- SE
 INSERT INTO entry (id, owner_id, creation_date, modification_date, expiration_date, name, comment, uuid, cmis_sync)
@@ -110,14 +110,14 @@ INSERT INTO share_entry (entry_id, document_entry_id, downloaded, recipient_id, 
 
 -- Share 4 - notified : 0/0
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
-	VALUES (4, 10, '421a2bc5-d41c-4b83-8e94-cd87aa2964c3', 'subject 4', now() - 5, now(), now() - 1, true, false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed, external_mail_locale)
+	VALUES (4, 10, '421a2bc5-d41c-4b83-8e94-cd87aa2964c3', 'subject 4', now() - 5, now(), now() - 1, true, false, 'en');
 
 
 -- Share 5 - 1 SE, 1 ASE, one download : 1/2
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
-	VALUES (5, 10, '6588844c-3891-44bf-af14-b2b85ca47de4', 'subject 5', now() - 5, now() - 5, now() - 1, false, false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed, external_mail_locale)
+	VALUES (5, 10, '6588844c-3891-44bf-af14-b2b85ca47de4', 'subject 5', now() - 5, now() - 5, now() - 1, false, false, 'en');
 
 -- ASE
 INSERT INTO anonymous_url (id, url_path, uuid, contact_id) VALUES (2, 'download', 'd7587b25-6545-45d9-b465-679e3fb585e4', 2);
@@ -135,6 +135,6 @@ INSERT INTO share_entry (entry_id, document_entry_id, downloaded, recipient_id, 
 
 -- Share 6 - notified : 0/0
 -- SEG
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
-	VALUES (6, 10, '027599d8-3433-4e07-9b7c-e8be82fed4a9', 'subject 6', now() - 5, now() - 5, now() - 1, false, false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed, external_mail_locale)
+	VALUES (6, 10, '027599d8-3433-4e07-9b7c-e8be82fed4a9', 'subject 6', now() - 5, now() - 5, now() - 1, false, false, 'en');
 

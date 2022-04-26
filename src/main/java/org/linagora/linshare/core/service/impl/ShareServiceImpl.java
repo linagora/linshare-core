@@ -45,6 +45,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.EntryType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -188,6 +189,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		// Creation
 		ShareEntryGroup shareEntryGroup = new ShareEntryGroup(owner, shareContainer.getSubject());
 		shareEntryGroup.setExpirationDate(shareContainer.getExpiryDate());
+		shareEntryGroup.setExternalMailLocale(shareContainer.getExternalMailLocale().orElse(Language.ENGLISH));
 
 		BooleanValueFunctionality usdaFunc = funcService
 				.getUndownloadedSharedDocumentsAlert(actor.getDomain());

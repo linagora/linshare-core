@@ -9,8 +9,8 @@ INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha2
 	VALUES (1, 1, false, 'data', 1024, 'plop', false, 2);
 -- DE
 
-INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed)
-	VALUES (1, 10, 'c96d778e-b09b-4557-b785-ff5124bd2b8d', 'subject 1', now(), now(), now(), false, false);
+INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed, external_mail_locale)
+	VALUES (1, 10, 'c96d778e-b09b-4557-b785-ff5124bd2b8d', 'subject 1', now(), now(), now(), false, false, 'en');
 
 INSERT INTO entry (id, owner_id, creation_date, modification_date, expiration_date, name, comment, uuid, cmis_sync)
 	VALUES (2, 10, now(), now(), now(), 'SE test doc entry name 1', '', 'cb1e7ba6-40db-11e5-9c46-0800271467bb', false);

@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -89,6 +90,9 @@ public class ShareCreationDto {
 	@Schema(description = "You can provide the IDs of all emails related the email you are about to send in your MUA client"
 			+ "(ex Thunderbird plugin). LinShare will send its emails with this value.")
 	protected String references;
+
+	@Schema(description= "Language used for mail notification to external recipients.")
+	protected Language externalMailLocale;
 
 	public ShareCreationDto() {
 		super();
@@ -204,5 +208,13 @@ public class ShareCreationDto {
 
 	public void setReferences(String references) {
 		this.references = references;
+	}
+
+	public Language getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+	public void setExternalMailLocale(Language externalMailLocale) {
+		this.externalMailLocale = externalMailLocale;
 	}
 }

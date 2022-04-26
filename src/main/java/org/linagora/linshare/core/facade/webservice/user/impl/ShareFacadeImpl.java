@@ -234,6 +234,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.setSharingNote(createDto.getSharingNote());
 		sc.setInReplyTo(createDto.getInReplyTo());
 		sc.setReferences(createDto.getReferences());
+		sc.setExternalMailLocale(createDto.getExternalMailLocale());
 		Set<Entry> shares = shareService.create(authUser, authUser, sc);
 		Set<ShareDto> sharesDto = Sets.newHashSet();
 		List<String> uuids = Lists.newArrayList();

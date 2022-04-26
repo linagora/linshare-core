@@ -13,9 +13,9 @@
 		<property name="expirationDate" column="expiration_date" type="timestamp" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="notified" column="notified" type="boolean" length="1" not-null="true" lazy="false"/>
-				<property name="processed" column="processed" type="boolean" length="1" not-null="true" lazy="false"/>
+		<property name="processed" column="processed" type="boolean" length="1" not-null="true" lazy="false"/>
 		<many-to-one name="owner" cascade="lock" column="account_id"
-			class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="proxy"/>
+		class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="proxy"/>
 		<set name="anonymousShareEntries" lazy="true" cascade="save-update,lock" inverse="false">
 			<key column="share_entry_group_id" not-null="false"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.AnonymousShareEntry"/>
@@ -24,5 +24,6 @@
 			<key column="share_entry_group_id" not-null="false"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ShareEntry"/>
 		</set>
+		<property name="externalMailLocale" column="external_mail_locale" type="enumLanguage" not-null="false" lazy="false"/>
 	</class>
 </hibernate-mapping>
