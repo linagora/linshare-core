@@ -37,6 +37,7 @@ package org.linagora.linshare.core.notifications.emails.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
@@ -71,8 +72,13 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		ShareContainer shareContainer = emailCtx.getShareContainer();
 
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
-		Context ctx = new Context(emailCtx.getLocale());
-		ctx.setVariable("anonymous", emailCtx.isAnonymous());
+		boolean anonymous = emailCtx.isAnonymous();
+		Locale locale = emailCtx.getLocale();
+		if (anonymous) {
+			locale = Language.toLocale(emailCtx.getShareContainer().getExternalMailLocale().orElse(Language.ENGLISH));
+		}
+		Context ctx = new Context(locale);
+		ctx.setVariable("anonymous", anonymous);
 		ctx.setVariable("customMessage", shareContainer.getMessage());
 		ctx.setVariable("customSubject", shareContainer.getSubject());
 		ctx.setVariable("expiryDate", shareContainer.getExpiryDate());
@@ -82,7 +88,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		ctx.setVariable("shareRecipient", emailCtx.getMailContactShareRecipient());
 
 		List<Share> shares = Lists.newArrayList();
-		if (emailCtx.isAnonymous()) {
+		if (anonymous) {
 			AnonymousUrl url = emailCtx.getAnonymousUrl();
 			String linshareURL = getLinShareUrlForExternals(shareOwner);
 			ctx.setVariable("linshareURL", linshareURL);

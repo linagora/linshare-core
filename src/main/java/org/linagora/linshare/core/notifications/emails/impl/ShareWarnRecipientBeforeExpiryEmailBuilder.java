@@ -77,7 +77,8 @@ public class ShareWarnRecipientBeforeExpiryEmailBuilder extends EmailBuilder {
 		}
 
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
-		Context ctx = new Context(emailCtx.getLocale());
+		Language externalMailLocale = emailCtx.getShareEntry().getShareEntryGroup().getExternalMailLocale();
+		Context ctx = new Context(Language.toLocale(externalMailLocale));
 		ctx.setVariable("anonymous", anonymous);
 		ctx.setVariable("daysLeft", emailCtx.getDay());
 		ctx.setVariable("linshareURL", linshareURL);

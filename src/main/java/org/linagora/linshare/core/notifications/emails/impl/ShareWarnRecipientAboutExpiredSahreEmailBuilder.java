@@ -69,7 +69,8 @@ public class ShareWarnRecipientAboutExpiredSahreEmailBuilder extends EmailBuilde
 		String linshareURL = getLinShareUrl(shareOwner);
 
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
-		Context ctx = new Context(emailCtx.getLocale());
+		Language externalMailLocale = emailCtx.getShareEntry().getShareEntryGroup().getExternalMailLocale();
+		Context ctx = new Context(Language.toLocale(externalMailLocale));
 		ctx.setVariable("shareOwner", new MailContact(shareOwner));
 		ctx.setVariable("shareRecipient", new MailContact(shareRecipient));
 		ctx.setVariable("share", share);

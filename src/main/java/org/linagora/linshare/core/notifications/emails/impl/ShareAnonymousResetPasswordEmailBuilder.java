@@ -70,7 +70,8 @@ public class ShareAnonymousResetPasswordEmailBuilder extends EmailBuilder {
 		ShareContainer shareContainer = emailCtx.getShareContainer();
 
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
-		Context ctx = new Context(emailCtx.getLocale());
+		Language externalMailLocale = emailCtx.getShareContainer().getExternalMailLocale().orElse(Language.ENGLISH);
+		Context ctx = new Context(Language.toLocale(externalMailLocale));
 		ctx.setVariable("expiryDate", shareContainer.getExpiryDate());
 		ctx.setVariable("shareDate", new Date());
 		ctx.setVariable("shareOwner", emailCtx.getMailContactShareOwner());
