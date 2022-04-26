@@ -275,9 +275,9 @@ public abstract class Account {
 		this.mailLocale = externalMailLocale;
 	}
 
-	public void setBusinessExternalMailLocale(Language externalMailLocale) {
-		if (externalMailLocale != null) {
-			this.mailLocale = externalMailLocale;
+	public void setBusinessMailLocale(Language mailLocale) {
+		if (mailLocale != null) {
+			this.mailLocale = mailLocale;
 		}
 	}
 

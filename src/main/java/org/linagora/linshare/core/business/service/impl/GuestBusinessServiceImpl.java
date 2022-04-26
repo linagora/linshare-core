@@ -176,7 +176,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		entity.setRestricted(guest.isRestricted());
 		// fields that can be null.
 		entity.setComment(guest.getComment());
-		entity.setBusinessExternalMailLocale(guest.getMailLocale());
+		entity.setBusinessMailLocale(guest.getMailLocale());
 		entity.setBusinessLastName(guest.getLastName());
 		entity.setBusinessFirstName(guest.getFirstName());
 		entity.setExpirationDate(guest.getExpirationDate());
