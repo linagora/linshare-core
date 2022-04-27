@@ -413,10 +413,10 @@ public class UserServiceImplTest {
 		List <String> restricted = Lists.newArrayList();
 		restricted.add("user1@linshare.org");
 		guestService.update(user2, user2, guest, restricted);
-		Assertions.assertFalse(guest.getCanCreateGuest());
+		Assertions.assertFalse(guest.isCanCreateGuest());
 		guest.setCanCreateGuest(true);
 		guestService.update(user2, user2, guest, restricted);
-		Assertions.assertTrue(guest.getCanCreateGuest());
+		Assertions.assertTrue(guest.isCanCreateGuest());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -868,10 +868,10 @@ public class UserServiceImplTest {
 		user.setDomain(domain);
 		userService.saveOrUpdateUser(user);
 		logger.debug("user id : " + user.getId());
-		Assertions.assertTrue(user.getCanUpload());
+		Assertions.assertTrue(user.isCanUpload());
 		user.setCanUpload(false);
 		userService.saveOrUpdateUser(user);
-		Assertions.assertFalse(user.getCanUpload());
+		Assertions.assertFalse(user.isCanUpload());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

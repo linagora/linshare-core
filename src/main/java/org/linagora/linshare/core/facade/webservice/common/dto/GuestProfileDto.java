@@ -61,7 +61,7 @@ public class GuestProfileDto extends AbstractUserProfileDto<GuestProfileDto> {
 		guestProfileDto.setCreationDate(user.getCreationDate());
 		guestProfileDto.setModificationDate(user.getModificationDate());
 		guestProfileDto.setLocale(UserLanguage.from(user.getLocale()));
-		guestProfileDto.setPersonalSpaceEnabled(user.getCanUpload());
+		guestProfileDto.setPersonalSpaceEnabled(user.isCanUpload());
 		guestProfileDto.setAccountType(user.getAccountType());
 		guestProfileDto.setExpirationDate(user.getCreationDate());
 		guestProfileDto.setRestricted(user.isRestricted());

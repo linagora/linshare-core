@@ -90,7 +90,7 @@ public class DocumentEntryResourceAccessControlImpl extends
 			return hasPermission(authUser, TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
 		} else if (authUser.isInternal() || authUser.isGuest()) {
 			if (authUser.equals(actor)) {
-				if (((User) actor).getCanUpload()) {
+				if (((User) actor).isCanUpload()) {
 					return true;
 				}
 			}

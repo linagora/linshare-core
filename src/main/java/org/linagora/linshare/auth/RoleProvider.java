@@ -66,7 +66,7 @@ public class RoleProvider {
 			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_USER));
 			if (account.isGuest()) {
 				Guest guest =(Guest)account;
-				if(guest.getCanUpload()) {
+				if(guest.isCanUpload()) {
 					grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_UPLOAD));
 				}
 			} else if (account.isInternal()) {

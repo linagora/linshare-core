@@ -58,7 +58,14 @@ public class UserDto {
 	@Schema(description = "DomainName")
 	private String domainName;
 
-	public UserDto(String uuid, String firstName, String lastName, String mail, String domainUuid, String domainName) {
+	@Schema(description = "canCreateGuest")
+	private Boolean canCreateGuest;
+
+	@Schema(description = "canUpload")
+	private Boolean canUpload;
+
+	public UserDto(String uuid, String firstName, String lastName, String mail, String domainUuid, String domainName,
+			Boolean canCreateGuest, Boolean canUpload) {
 		super();
 		this.uuid = uuid;
 		this.firstName = firstName;
@@ -66,6 +73,8 @@ public class UserDto {
 		this.mail = mail;
 		this.domainUuid = domainUuid;
 		this.domainName = domainName;
+		this.canCreateGuest = canCreateGuest;
+		this.canUpload = canUpload;
 	}
 
 	public UserDto() {
@@ -120,10 +129,27 @@ public class UserDto {
 		this.domainName = domainName;
 	}
 
+	public Boolean isCanCreateGuest() {
+		return canCreateGuest;
+	}
+
+	public void setCanCreateGuest(Boolean canCreateGuest) {
+		this.canCreateGuest = canCreateGuest;
+	}
+
+	public Boolean isCanUpload() {
+		return canUpload;
+	}
+
+	public void setCanUpload(Boolean canUpload) {
+		this.canUpload = canUpload;
+	}
+
 	@Override
 	public String toString() {
 		return "UserDto [uuid=" + uuid + ", firstName=" + firstName + ", lastName=" + lastName + ", mail=" + mail
-				+ ", domainUuid=" + domainUuid + ", domainName=" + domainName + "]";
+				+ ", domainUuid=" + domainUuid + ", domainName=" + domainName + ", canCreateGuest=" + canCreateGuest
+				+ ", canUpload=" + canUpload + "]";
 	}
 
 }

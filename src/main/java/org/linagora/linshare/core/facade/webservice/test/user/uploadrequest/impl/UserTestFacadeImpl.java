@@ -37,6 +37,7 @@
 package org.linagora.linshare.core.facade.webservice.test.user.uploadrequest.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
@@ -67,7 +68,9 @@ public class UserTestFacadeImpl extends GenericFacadeImpl implements UserTestFac
 						res.getLastName(),
 						res.getMail(),
 						res.getDomain().getUuid(),
-						res.getDomain().getLabel()))
+						res.getDomain().getLabel(),
+						res.isCanCreateGuest(),
+						res.isCanUpload()))
 				.collect(Collectors.toUnmodifiableList());
 	}
 
@@ -83,13 +86,19 @@ public class UserTestFacadeImpl extends GenericFacadeImpl implements UserTestFac
 		Validate.notEmpty(mail, "User mail must be set.");
 //		Validate.notEmpty(domain, "User domain identifier must be set.");
 		User res = userService.findOrCreateUserWithDomainPolicies(domain, mail, domain);
+		Boolean canCreateGuest = Objects.isNull(user.isCanCreateGuest()) ? true : user.isCanCreateGuest();
+		Boolean canUpload = Objects.isNull(user.isCanUpload()) ? true : user.isCanUpload();
+		res.setCanCreateGuest(canCreateGuest);
+		res.setCanUpload(canUpload);
 		return new UserDto(
 				res.getLsUuid(),
 				res.getFirstName(),
 				res.getLastName(),
 				res.getMail(),
 				res.getDomain().getUuid(),
-				res.getDomain().getLabel());
+				res.getDomain().getLabel(),
+				res.isCanCreateGuest(),
+				res.isCanUpload());
 	}
 
 }

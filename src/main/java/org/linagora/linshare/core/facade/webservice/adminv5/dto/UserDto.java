@@ -197,8 +197,8 @@ public class UserDto {
 		} else {
 			this.restricted = false;
 		}
-		this.canUpload = user.getCanUpload();
-		this.canCreateGuest = user.getCanCreateGuest();
+		this.canUpload = user.isCanUpload();
+		this.canCreateGuest = user.isCanCreateGuest();
 		this.externalMailLocale = user.getExternalMailLocale();
 		this.secondFAEnabled = user.isUsing2FA();
 		this.secondFAUuid = user.getLsUuid();

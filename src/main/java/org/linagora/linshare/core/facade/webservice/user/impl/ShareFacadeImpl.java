@@ -123,7 +123,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	public void sharedocument(String targetMail, String uuid, int securedShare)
 			throws BusinessException {
 		User authUser = checkAuthentication();
-		if ((authUser.isGuest() && !authUser.getCanUpload()))
+		if ((authUser.isGuest() && !authUser.isCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
@@ -149,7 +149,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 			int securedShare, String messageOpt, String inReplyToOpt,
 			String referencesOpt) throws BusinessException {
 		User authUser = checkAuthentication();
-		if ((authUser.isGuest() && !authUser.getCanUpload()))
+		if ((authUser.isGuest() && !authUser.isCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
@@ -167,7 +167,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	public void multiplesharedocuments(List<ShareDto> shares, boolean secured,
 			String message) throws BusinessException {
 		User authUser = checkAuthentication();
-		if ((authUser.isGuest() && !authUser.getCanUpload()))
+		if ((authUser.isGuest() && !authUser.isCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
@@ -207,7 +207,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public Set<ShareDto> create(ShareCreationDto createDto) {
 		User authUser = checkAuthentication();
-		if ((authUser.isGuest() && !authUser.getCanUpload()))
+		if ((authUser.isGuest() && !authUser.isCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");

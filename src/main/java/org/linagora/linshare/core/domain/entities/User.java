@@ -197,7 +197,7 @@ public abstract class User extends Account {
 		this.canUpload = value;
 	}
 
-	public Boolean getCanUpload() {
+	public Boolean isCanUpload() {
 		return canUpload;
 	}
 
@@ -213,7 +213,7 @@ public abstract class User extends Account {
 		this.myWorkgroupMembers = myWorkgroupMembers;
 	}
 
-	public Boolean getCanCreateGuest() {
+	public Boolean isCanCreateGuest() {
 		return canCreateGuest;
 	}
 

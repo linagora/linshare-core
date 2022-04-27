@@ -60,9 +60,9 @@ public class UserMto extends AccountMto {
 	public UserMto(User user) {
 		super(user);
 		this.ldapUid = user.getLdapUid();
-		this.canUpload = user.getCanUpload();
+		this.canUpload = user.isCanUpload();
 		this.inconsistent = user.isInconsistent();
-		this.canCreateGuest = user.getCanCreateGuest();
+		this.canCreateGuest = user.isCanCreateGuest();
 		if (user instanceof Guest) {
 			Guest guest = (Guest) user;
 			this.restricted = guest.isRestricted();
@@ -80,9 +80,9 @@ public class UserMto extends AccountMto {
 		this.role = user.getRole();
 		this.accountType = user.getAccountType();
 		this.ldapUid = user.getLdapUid();
-		this.canUpload = user.getCanUpload();
+		this.canUpload = user.isCanUpload();
 		this.inconsistent = user.isInconsistent();
-		this.canCreateGuest = user.getCanCreateGuest();
+		this.canCreateGuest = user.isCanCreateGuest();
 		this.restricted = user.isRestricted();
 		this.expirationDate = user.getExpirationDate();
 	}

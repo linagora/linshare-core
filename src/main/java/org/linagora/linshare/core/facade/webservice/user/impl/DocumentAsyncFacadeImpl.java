@@ -68,7 +68,7 @@ public class DocumentAsyncFacadeImpl extends
 		Validate.notNull(dtc.getFile(),
 				"Missing required file (check parameter named file)");
 		Validate.notEmpty(dtc.getFileName(), "Missing required file name");
-		if ((actor.isGuest() && !actor.getCanUpload()))
+		if ((actor.isGuest() && !actor.isCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		DocumentEntry res = service.create(authUser, actor,
@@ -87,7 +87,7 @@ public class DocumentAsyncFacadeImpl extends
 				"Missing required file (check parameter named file)");
 		Validate.notEmpty(dtc.getFileName(), "Missing required file name");
 		Validate.notNull(dtc.getDocEntryUuid(), "Missing docEntryUuid for the updated document");
-		if ((actor.isGuest() && !actor.getCanUpload()))
+		if ((actor.isGuest() && !actor.isCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		DocumentEntry update = service.update(authUser, actor, dtc.getDocEntryUuid(), dtc.getFile(), dtc.getFileName());

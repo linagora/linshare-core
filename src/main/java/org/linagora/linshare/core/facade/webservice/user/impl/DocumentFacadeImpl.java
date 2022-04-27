@@ -171,7 +171,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			throws BusinessException {
 		Validate.notNull(tempFile, "Missing required file (check parameter named file)");
 		User authUser = checkAuthentication();
-		if ((authUser.isGuest() && !authUser.getCanUpload()))
+		if ((authUser.isGuest() && !authUser.isCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		DocumentEntry res = documentEntryService.create(authUser, authUser, tempFile, fileName, description, false, metadata);
@@ -287,7 +287,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			InputStream signatureFile, String signatureFileName, InputStream x509) throws BusinessException {
 		Validate.notNull(tempFile, "Missing required file (check parameter named file)");
 		User authUser = checkAuthentication();
-		if ((authUser.isGuest() && !authUser.getCanUpload()))
+		if ((authUser.isGuest() && !authUser.isCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		DocumentEntry res = documentEntryService.create(authUser, authUser, tempFile, fileName, description, false, null);

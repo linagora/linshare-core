@@ -124,8 +124,8 @@ public class UserDto extends AccountDto {
 					}
 				}
 			}
-			this.canUpload = u.getCanUpload();
-			this.canCreateGuest = u.getCanCreateGuest();
+			this.canUpload = u.isCanUpload();
+			this.canCreateGuest = u.isCanCreateGuest();
 		}
 	}
 

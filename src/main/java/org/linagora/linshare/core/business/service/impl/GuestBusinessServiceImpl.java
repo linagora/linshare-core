@@ -172,7 +172,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		entity.setOwner(owner);
 		entity.setDomain(domain);
 		// fields that can not be null
-		entity.setCanUpload(guest.getCanUpload());
+		entity.setCanUpload(guest.isCanUpload());
 		entity.setRestricted(guest.isRestricted());
 		// fields that can be null.
 		entity.setComment(guest.getComment());

@@ -92,7 +92,7 @@ public class GuestDto extends AccountDto {
 		this.restricted = guest.isRestricted();
 		this.comment = guest.getComment();
 		this.expirationDate = guest.getExpirationDate();
-		this.canUpload = guest.getCanUpload();
+		this.canUpload = guest.isCanUpload();
 		this.owner = new GenericUserDto((User) guest.getOwner());
 		if (this.restricted) {
 			for (AllowedContact contact : guest.getRestrictedContacts()) {

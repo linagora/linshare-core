@@ -99,7 +99,7 @@ public class UploadRequestEntryRessourceAccessControlImpl extends EntryResourceA
 			return hasPermission(authUser, TechnicalAccountPermissionType.UPLOAD_REQUEST_ENTRIES_CREATE);
 		} else if (authUser.isInternal() || authUser.isGuest()) {
 			if (authUser.equals(actor)) {
-				if (((User) actor).getCanUpload()) {
+				if (((User) actor).isCanUpload()) {
 					return true;
 				}
 			}

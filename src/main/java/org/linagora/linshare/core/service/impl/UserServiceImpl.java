@@ -929,8 +929,8 @@ public class UserServiceImpl implements UserService {
 		if (!(updatedUser.getRole().equals(Role.SIMPLE) || updatedUser.getRole().equals(Role.ADMIN))) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Role not authorized.");
 		}
-		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
-		user.setCanUpload(updatedUser.getCanUpload());
+		user.setCanCreateGuest(updatedUser.isCanCreateGuest());
+		user.setCanUpload(updatedUser.isCanUpload());
 		// TODO: Workaround to not break the adminv4 API (Field 'Local' does not exist on new UserDto of adminv5)
 		if (Objects.nonNull(updatedUser.getLocale())) {
 			user.setLocale(updatedUser.getLocale());
@@ -939,7 +939,7 @@ public class UserServiceImpl implements UserService {
 		if (user.isGuest()) {
 			Guest updatedGuest = (Guest) updatedUser;
 			Assert.notNull(updatedGuest.getExpirationDate(), "Expiration date must not be null");
-			Assert.isTrue(updatedUser.getCanCreateGuest() == false, "Guest can not create a guest user");
+			Assert.isTrue(updatedUser.isCanCreateGuest() == false, "Guest can not create a guest user");
 			Guest guest = (Guest) user;
 			guest.setExpirationDate(updatedGuest.getExpirationDate());
 			guest.setComment(updatedGuest.getComment());

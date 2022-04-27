@@ -71,7 +71,7 @@ public class ShareFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
-		if ((authUser.isGuest() && !authUser.getCanUpload()))
+		if ((authUser.isGuest() && !authUser.isCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
