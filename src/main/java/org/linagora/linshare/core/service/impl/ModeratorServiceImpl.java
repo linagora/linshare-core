@@ -39,14 +39,22 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.ModeratorBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
+import org.linagora.linshare.core.notifications.context.GuestModeratorCreationEmailContext;
+import org.linagora.linshare.core.notifications.context.GuestModeratorDeletionEmailContext;
+import org.linagora.linshare.core.notifications.context.GuestModeratorUpdateEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ModeratorResourceAccessControl;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.ModeratorService;
+import org.linagora.linshare.core.service.NotifierService;
 
 public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator> implements ModeratorService {
 
@@ -56,16 +64,24 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 
 	private GuestRepository guestRepository;
 
+	private final NotifierService notifierService;
+
+	private final MailBuildingService mailBuildingService;
+
 	public ModeratorServiceImpl(
 			ModeratorResourceAccessControl rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			ModeratorBusinessService moderatorBusinessService,
 			GuestBusinessService guestBusinessService,
-			GuestRepository guestRepository) {
+			GuestRepository guestRepository,
+			NotifierService notifierService,
+			MailBuildingService mailBuildingService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.moderatorBusinessService = moderatorBusinessService;
 		this.guestBusinessService = guestBusinessService;
 		this.guestRepository = guestRepository;
+		this.notifierService = notifierService;
+		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
@@ -84,6 +100,11 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		moderator = moderatorBusinessService.create(moderator);
 		guest.addModerator(moderator);
 		guestRepository.update(guest);
+		if (!actor.equals(moderator.getAccount())) {
+			GuestModeratorCreationEmailContext mailContext = new GuestModeratorCreationEmailContext(actor, moderator);
+			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
+			notifierService.sendNotification(mail);
+		}
 		return moderator;
 	}
 
@@ -97,14 +118,22 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 	}
 
 	@Override
-	public Moderator update(Account authUser, Account actor, Moderator moderator) {
+	public Moderator update(Account authUser, Account actor, Moderator moderator, ModeratorDto dto) {
 		preChecks(authUser, actor);
 		Validate.notNull(moderator, "Moderator to update must be set.");
 		Validate.notNull(moderator.getRole(), "Moderator role must be set.");
 		Validate.notNull(moderator.getGuest(), "Moderator's guest should be set");
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
 		checkUpdatePermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_UPDATE, moderator);
+		ModeratorRole oldRole = moderator.getRole();
+		moderator.setRole(dto.getRole());
 		moderator = moderatorBusinessService.update(moderator);
+		if (!actor.equals(moderator.getAccount())) {
+			GuestModeratorUpdateEmailContext mailContext = new GuestModeratorUpdateEmailContext(actor, moderator,
+					oldRole);
+			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
+			notifierService.sendNotification(mail);
+		}
 		return moderator;
 	}
 
@@ -119,6 +148,12 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		moderatorBusinessService.delete(moderator);
 		guest.removeModerator(moderator);
 		guestRepository.update(guest);
+		if (!actor.equals(moderator.getAccount())) {
+			GuestModeratorDeletionEmailContext mailContext = new GuestModeratorDeletionEmailContext(actor,
+					moderator);
+			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
+			notifierService.sendNotification(mail);
+		}
 		return moderator;
 	}
 

@@ -64,6 +64,9 @@ import org.linagora.linshare.core.notifications.emails.impl.FileWarnOwnerBeforeE
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountNewCreationEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPasswordEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPasswordFor4_0_EmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.GuestModeratorCreationEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.GuestModeratorDeletionEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.GuestModeratorUpdateEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestWarnGuestAboutHisPasswordResetEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.JwtPermanentCreatedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.JwtPermanentDeletedEmailBuilder;
@@ -137,7 +140,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			String urlTemplateForWorkSpace,
 			String urlTemplateForUploadRequestEntries,
 			String urlTemplateForUploadRequestUploadedFile,
-			String urlTemplateForJwtToken
+			String urlTemplateForJwtToken,
+			String urlTemplateForGuests
 			) throws Exception {
 		this.domainBusinessService = domainBusinessService;
 		this.templateEngine = new TemplateEngine();
@@ -204,9 +208,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_FOR_4_0, new GuestAccountResetPasswordFor4_0_EmailBuilder(urlTemplateForGuestReset));
 
+		emailBuilders.put(MailContentType.GUEST_MODERATOR_CREATION, new GuestModeratorCreationEmailBuilder());
+		emailBuilders.put(MailContentType.GUEST_MODERATOR_DELETION, new GuestModeratorDeletionEmailBuilder());
+		emailBuilders.put(MailContentType.GUEST_MODERATOR_UPDATE, new GuestModeratorUpdateEmailBuilder());
+
 		initMailBuilders(domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService,
 				fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments, urlTemplateForAnonymousUrl,
-				urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForWorkSpace, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile, urlTemplateForJwtToken);
+				urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForWorkSpace, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile, urlTemplateForJwtToken, urlTemplateForGuests);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -227,7 +235,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		String urlTemplateForWorkSpace,
 		String urlTemplateForUploadRequestEntries,
 		String urlTemplateForUploadRequestUploadedFile,
-		String urlTemplateForJwtToken
+		String urlTemplateForJwtToken,
+		String urlTemplateForGuests
 	) {
 		Collection<EmailBuilder> values = emailBuilders.values();
 		for (EmailBuilder emailBuilder : values) {
@@ -245,6 +254,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setUrlTemplateForUploadRequestEntries(urlTemplateForUploadRequestEntries);
 			emailBuilder.setUrlTemplateForUploadRequestUploadedFile(urlTemplateForUploadRequestUploadedFile);
 			emailBuilder.setUrlTemplateForJwtToken(urlTemplateForJwtToken);
+			emailBuilder.setUrlTemplateForGuests(urlTemplateForGuests);
 		}
 	}
 

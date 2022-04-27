@@ -31,23 +31,67 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.notifications.context;
 
-import java.util.List;
-
+import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Moderator;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 
-public interface ModeratorService {
+public class GuestModeratorDeletionEmailContext extends EmailContext {
 
-	Moderator create(Account authUser, Account actor, Moderator moderator);
+	protected Moderator moderator;
 
-	Moderator find(Account authUser, Account actor, String uuid);
+	protected Account actor;
 
-	Moderator update(Account authUser, Account actor, Moderator moderator, ModeratorDto dto);
+	public GuestModeratorDeletionEmailContext(Account actor, Moderator moderator) {
+		super(moderator.getAccount().getDomain(), false);
+		this.actor = actor;
+		this.moderator = moderator;
+	}
 
-	Moderator delete(Account authUser, Account actor, Moderator moderator);
+	public Moderator getModerator() {
+		return moderator;
+	}
 
-	List<Moderator> findAllByGuest(Account authUser, Account actor, String guestUuid);
+	public void setModerator(Moderator moderator) {
+		this.moderator = moderator;
+	}
+
+	public Account getActor() {
+		return actor;
+	}
+
+	public void setActor(Account actor) {
+		this.actor = actor;
+	}
+
+	@Override
+	public MailContentType getType() {
+		return MailContentType.GUEST_MODERATOR_DELETION;
+	}
+
+	@Override
+	public MailActivationType getActivation() {
+		return MailActivationType.GUEST_MODERATOR_DELETION;
+	}
+
+	@Override
+	public String getMailRcpt() {
+		return moderator.getAccount().getMail();
+	}
+
+	@Override
+	public String getMailReplyTo() {
+		return actor.getMail();
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(actor, "Missing actor");
+		Validate.notNull(moderator.getAccount(), "Missing account");
+		Validate.notNull(moderator.getGuest(), "Missing guest");
+	}
+
 }

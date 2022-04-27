@@ -108,8 +108,7 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
 		Moderator entity = moderatorService.find(authUser, actor, moderatorUuid);
 		checkGuest(guestUuid, entity.getGuest().getLsUuid());
-		entity.setRole(dto.getRole());
-		Moderator moderatorToUpdate = moderatorService.update(authUser, actor, entity);
+		Moderator moderatorToUpdate = moderatorService.update(authUser, actor, entity, dto);
 		return ModeratorDto.from(moderatorToUpdate);
 	}
 

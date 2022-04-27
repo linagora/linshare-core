@@ -150,6 +150,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected String urlTemplateForJwtToken;
 
+	protected String urlTemplateForGuests;
+
 	public EmailBuilder() {
 		initSupportedTypes();
 	}
@@ -282,6 +284,14 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	public void setUrlTemplateForJwtToken(String urlTemplateForJwtPermanentToken) {
 		this.urlTemplateForJwtToken = urlTemplateForJwtPermanentToken;
+	}
+
+	public String getUrlTemplateForGuests() {
+		return urlTemplateForGuests;
+	}
+
+	public void setUrlTemplateForGuests(String urlTemplateForGuests) {
+		this.urlTemplateForGuests = urlTemplateForGuests;
 	}
 
 	@Override
