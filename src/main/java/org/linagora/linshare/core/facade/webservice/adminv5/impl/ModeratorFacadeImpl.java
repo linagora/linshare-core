@@ -66,7 +66,7 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 
 	@Override
 	public ModeratorDto create(String actorUuid, String guestUuid, ModeratorDto dto) {
-		Account authUser = checkAuthentication(Role.ADMIN);
+		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(dto, "Moderator to create should be set.");
 		Validate.notNull(dto.getAccount(), "Moderator's account should be set.");
@@ -90,7 +90,7 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 
 	@Override
 	public ModeratorDto find(String actorUuid, String guestUuid, String uuid) {
-		User authUser = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Moderator moderator = moderatorService.find(authUser, actor, uuid);
 		Guest guest = (Guest) accountService.findAccountByLsUuid(moderator.getGuest().getLsUuid());
@@ -100,7 +100,7 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 
 	@Override
 	public ModeratorDto update(String actorUuid, String guestUuid, String uuid, ModeratorDto dto) {
-		Account authUser = checkAuthentication(Role.ADMIN);
+		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(dto, "Moderator to update should be set.");
 		Validate.notNull(dto.getRole(), "Moderator role should be set.");
@@ -115,7 +115,7 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 
 	@Override
 	public ModeratorDto delete(String actorUuid, String guestUuid, String uuid, ModeratorDto dto) {
-		User authUser = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		String moderatorUuid = Optional.ofNullable(Strings.emptyToNull(uuid)).orElse(dto.getUuid());
 		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
@@ -126,7 +126,7 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 
 	@Override
 	public List<ModeratorDto> findAllByGuest(String actorUuid, String guestUuid) {
-		User authUser = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		List<Moderator> moderators = moderatorService.findAllByGuest(authUser, actor, guestUuid);
 		return moderators
