@@ -73,7 +73,7 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
 </body>
 </html>',messages_french='beginningMainMsgForRecipient =   L''''invitation de dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b>: :  <b>{2}</b> sera clôturée dans <b>{3} jours</b>
 beginningMainMsgCollective =   Votre Invitation de dépôt collective: {0}, sera clôturée dans  <b>{1} jours</b>.
-beginningMainMsgIndividual =   Votre Invitation de dépôt individuelle: {0}, sera clôturée dans  <b>{0} jours</b>.
+beginningMainMsgIndividual =   Votre Invitation de dépôt individuelle: {0}, sera clôturée dans  <b>{1} jours</b>.
 endingMainMsgPlural = Il y a un total de <b> {0} fichiers </b> dans le dépôt.
 endingMainMsgPluralForRecipient = et vous avez actuellement envoyé  <b> {0} fichiers </b> dans l''''invitation de dépôt.
 endingMainMsgSingular = Il y a au total <b>1 fichier </b> dans le dépôt.
