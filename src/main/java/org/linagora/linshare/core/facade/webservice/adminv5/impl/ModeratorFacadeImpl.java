@@ -34,11 +34,11 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
@@ -104,7 +104,8 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(dto, "Moderator to update should be set.");
 		Validate.notNull(dto.getRole(), "Moderator role should be set.");
-		String moderatorUuid = Optional.ofNullable(Strings.emptyToNull(uuid)).orElse(dto.getUuid());
+		String dtoUuid = (Objects.nonNull(dto)) ? dto.getUuid() : null;
+		String moderatorUuid = Optional.ofNullable(dtoUuid).orElse(uuid);
 		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
 		Moderator entity = moderatorService.find(authUser, actor, moderatorUuid);
 		checkGuest(guestUuid, entity.getGuest().getLsUuid());
@@ -116,7 +117,8 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 	public ModeratorDto delete(String actorUuid, String guestUuid, String uuid, ModeratorDto dto) {
 		User authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		String moderatorUuid = Optional.ofNullable(Strings.emptyToNull(uuid)).orElse(dto.getUuid());
+		String dtoUuid = (Objects.nonNull(dto)) ? dto.getUuid() : null;
+		String moderatorUuid = Optional.ofNullable(dtoUuid).orElse(uuid);
 		Validate.notEmpty(moderatorUuid, "Moderator's uuid must be set");
 		Moderator moderator = moderatorService.find(authUser, actor, moderatorUuid);
 		checkGuest(guestUuid, moderator.getGuest().getLsUuid());
