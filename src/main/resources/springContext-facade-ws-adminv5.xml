@@ -111,8 +111,4 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="quotaService" />
 	</bean>
-	<bean id="wsAdminV5ModeratorFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.ModeratorFacadeImpl">
-		<constructor-arg ref="accountService" />
-		<constructor-arg ref="moderatorService" />
-	</bean>
 </beans>

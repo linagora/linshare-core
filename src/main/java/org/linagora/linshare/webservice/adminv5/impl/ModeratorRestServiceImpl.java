@@ -46,8 +46,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.ModeratorFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
+import org.linagora.linshare.core.facade.webservice.user.ModeratorFacade;
 import org.linagora.linshare.webservice.adminv5.ModeratorRestService;
 
 import io.swagger.v3.oas.annotations.Operation;

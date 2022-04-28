@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5.impl;
+package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,8 +46,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
-import org.linagora.linshare.core.facade.webservice.adminv5.ModeratorFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
+import org.linagora.linshare.core.facade.webservice.user.ModeratorFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ModeratorService;
 

@@ -183,4 +183,8 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
 	</bean>
+		<bean id="wsModeratorFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ModeratorFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="moderatorService" />
+	</bean>
 </beans>

@@ -34,7 +34,7 @@
  * Additional Terms applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.test.user.uploadrequest.dto;
+package org.linagora.linshare.core.facade.webservice.test.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -61,11 +61,11 @@ public class UserDto {
 	@Schema(description = "canCreateGuest")
 	private Boolean canCreateGuest;
 
-	@Schema(description = "canUpload")
-	private Boolean canUpload;
+	@Schema(description = "personalSpaceEnabled")
+	private Boolean personalSpaceEnabled;
 
 	public UserDto(String uuid, String firstName, String lastName, String mail, String domainUuid, String domainName,
-			Boolean canCreateGuest, Boolean canUpload) {
+			Boolean canCreateGuest, Boolean personalSpaceEnabled) {
 		super();
 		this.uuid = uuid;
 		this.firstName = firstName;
@@ -74,7 +74,7 @@ public class UserDto {
 		this.domainUuid = domainUuid;
 		this.domainName = domainName;
 		this.canCreateGuest = canCreateGuest;
-		this.canUpload = canUpload;
+		this.personalSpaceEnabled = personalSpaceEnabled;
 	}
 
 	public UserDto() {
@@ -137,19 +137,19 @@ public class UserDto {
 		this.canCreateGuest = canCreateGuest;
 	}
 
-	public Boolean isCanUpload() {
-		return canUpload;
+	public Boolean isPersonalSpaceEnabled() {
+		return personalSpaceEnabled;
 	}
 
-	public void setCanUpload(Boolean canUpload) {
-		this.canUpload = canUpload;
+	public void setPersonalSpaceEnabled(Boolean personalSpaceEnabled) {
+		this.personalSpaceEnabled = personalSpaceEnabled;
 	}
 
 	@Override
 	public String toString() {
 		return "UserDto [uuid=" + uuid + ", firstName=" + firstName + ", lastName=" + lastName + ", mail=" + mail
 				+ ", domainUuid=" + domainUuid + ", domainName=" + domainName + ", canCreateGuest=" + canCreateGuest
-				+ ", canUpload=" + canUpload + "]";
+				+ ", personalSpaceEnabled=" + personalSpaceEnabled + "]";
 	}
 
 }

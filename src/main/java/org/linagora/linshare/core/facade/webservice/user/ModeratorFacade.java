@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.adminv5;
+package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
 

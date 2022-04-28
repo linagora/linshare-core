@@ -46,8 +46,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.test.user.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.test.user.uploadrequest.UserTestFacade;
-import org.linagora.linshare.core.facade.webservice.test.user.uploadrequest.dto.UserDto;
 import org.linagora.linshare.webservice.test.userv4.UserRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

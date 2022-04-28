@@ -38,7 +38,7 @@ package org.linagora.linshare.webservice.test.userv4;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.test.user.uploadrequest.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.test.user.dto.UserDto;
 
 public interface UserRestService {
 
