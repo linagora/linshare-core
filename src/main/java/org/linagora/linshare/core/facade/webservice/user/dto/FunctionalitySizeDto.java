@@ -56,6 +56,9 @@ public class FunctionalitySizeDto extends FunctionalityDto {
 
 	protected String maxUnit;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected Boolean unlimited;
+
 	protected List<String> units = new ArrayList<String>();
 
 	public FunctionalitySizeDto(FileSizeUnit... units) {
@@ -135,6 +138,14 @@ public class FunctionalitySizeDto extends FunctionalityDto {
 
 	public void setMaxValue(Integer defaultValue) {
 		this.maxValue = defaultValue;
+	}
+
+	public Boolean isUnlimited() {
+		return unlimited;
+	}
+
+	public void setUnlimited(Boolean unlimited) {
+		this.unlimited = unlimited;
 	}
 
 }

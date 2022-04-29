@@ -341,7 +341,9 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			FunctionalitySizeDto f = new FunctionalitySizeDto();
 			if (enable) {
 				if (version >= 4) {
+					f.setUnlimited(false);
 					if (this.getMaxValueUsed()) {
+						f.setUnlimited(this.unlimited);
 						f.setMaxValue(maxValue);
 						f.setMaxUnit(sizeMaxUnit.getUnitValue().toString());
 					}
@@ -358,7 +360,9 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			TimeUnitClass maxTimeUnit = (TimeUnitClass) getMaxUnit();
 			if (enable) {
 				if (version >= 4) {
+					f.setUnlimited(false);
 					if (this.getMaxValueUsed()) {
+						f.setUnlimited(this.unlimited);
 						f.setMaxValue(maxValue);
 						f.setMaxUnit(maxTimeUnit.getUnitValue().toString());
 					}
