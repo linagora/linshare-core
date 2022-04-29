@@ -56,22 +56,22 @@ public class ModeratorResourceAccessControlImpl extends AbstractResourceAccessCo
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, actor, entry);
+		return true;
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, actor, entry);
+		return true;
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, actor, entry);
+		return true;
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, actor, entry);
+		return true;
 	}
 
 	private boolean checkAdminFor(Account authUser, Account actor, Moderator entry) {
@@ -89,7 +89,7 @@ public class ModeratorResourceAccessControlImpl extends AbstractResourceAccessCo
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return checkAdminFor(authUser, actor, entry);
+		return true;
 	}
 
 	@Override
