@@ -42,6 +42,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "FunctionalityTime")
@@ -57,6 +59,9 @@ public class FunctionalityTimeDto extends FunctionalityDto {
 	protected String unit;
 
 	protected String maxUnit;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected Boolean unlimited;
 
 	protected List<String> units = new ArrayList<String>();
 
@@ -119,6 +124,14 @@ public class FunctionalityTimeDto extends FunctionalityDto {
 
 	public void setMaxValue(Integer maxValue) {
 		this.maxValue = maxValue;
+	}
+
+	public Boolean isUnlimited() {
+		return unlimited;
+	}
+
+	public void setUnlimited(Boolean unlimited) {
+		this.unlimited = unlimited;
 	}
 
 }
