@@ -42,7 +42,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.LoggerStatus;
@@ -75,11 +77,10 @@ public class SystemConfigurationRestServiceImpl implements
 		userFacade.isAuthorized(Role.SUPERADMIN, 1);
 		logger.warn("Trying to update log level at runtime using logger name : "
 				+ loggerName);
-		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
-				.getLogger(loggerName);
+		org.apache.logging.log4j.Logger currLogger = LogManager.getLogger(loggerName);
 		Level level = Level.toLevel(levelStr.toUpperCase());
 		logger.warn("Log level value : " + level);
-		currLogger.setLevel(level);
+		Configurator.setLevel(currLogger, level);
 		logger.warn("Log level updated at runtime.");
 		return new LoggerStatus(currLogger, level);
 	}
@@ -90,8 +91,7 @@ public class SystemConfigurationRestServiceImpl implements
 	public LoggerStatus getLogLevel(
 			@PathParam(value = "loggerName") String loggerName) {
 		userFacade.isAuthorized(Role.SUPERADMIN, 1);
-		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
-				.getLogger(loggerName);
+		org.apache.logging.log4j.Logger currLogger = LogManager.getLogger(loggerName);
 		return new LoggerStatus(currLogger, currLogger.getLevel());
 	}
 }

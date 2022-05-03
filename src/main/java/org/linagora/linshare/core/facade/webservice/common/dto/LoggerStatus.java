@@ -37,7 +37,8 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 @XmlRootElement(name = "LoggerStatus")
 public class LoggerStatus {
@@ -56,7 +57,7 @@ public class LoggerStatus {
 		this.level = level;
 	}
 
-	public LoggerStatus(org.apache.log4j.Logger logger, Level level) {
+	public LoggerStatus(Logger logger, Level level) {
 		super();
 		this.name = logger.getName();
 		if (level != null) {

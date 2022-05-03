@@ -439,6 +439,14 @@
 					<groupId>org.apache.commons</groupId>
 					<artifactId>commons-lang3</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -453,6 +461,14 @@
 				<exclusion>
 					<groupId>org.apache.commons</groupId>
 					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -480,10 +496,20 @@
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
+			<artifactId>log4j-over-slf4j</artifactId>
 			<version>${slf4j-release-version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j-release-version}</version>
+		</dependency>
+
 		<!-- bridge logs from commons loggings to slf4j -->
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -1511,6 +1537,30 @@
 					</componentProperties>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>enforce-banned-dependencies</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<excludes>
+										<exclude>log4j:log4j</exclude>
+										<exclude>org.slf4j:slf4j-log4j12</exclude>
+									</excludes>
+								</bannedDependencies>
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
@@ -1855,6 +1905,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<slf4j-release-version>1.7.32</slf4j-release-version>
+		<log4j-release-version>2.17.2</log4j-release-version>
 		<spring.version>5.2.20.RELEASE</spring.version>
 		<spring-data.version>Moore-SR13</spring-data.version>
 		<spring-security-release-version>5.4.9</spring-security-release-version>

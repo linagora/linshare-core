@@ -40,7 +40,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.linagora.linshare.jmx.LoggersConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,8 +67,7 @@ public class LoggersConfigImpl implements LoggersConfig {
 	@Override
 	public String level(String loggerName) {
 		Validate.notEmpty(loggerName);
-		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
-				.getLogger(loggerName);
+		org.apache.logging.log4j.Logger currLogger = LogManager.getLogger(loggerName);
 		Level level = currLogger.getLevel();
 		String currLevel = null;
 		if (level != null) {
@@ -78,8 +79,7 @@ public class LoggersConfigImpl implements LoggersConfig {
 	@Override
 	public String level(String loggerName, String levelStr) {
 		Validate.notEmpty(loggerName);
-		org.apache.log4j.Logger currLogger = org.apache.log4j.LogManager
-				.getLogger(loggerName);
+		org.apache.logging.log4j.Logger currLogger = LogManager.getLogger(loggerName);
 		Level level = currLogger.getLevel();
 		String currLevel = null;
 		if (level != null) {
@@ -90,7 +90,7 @@ public class LoggersConfigImpl implements LoggersConfig {
 					+ loggerName);
 			level = Level.toLevel(levelStr.toUpperCase());
 			logger.warn("Log level value : " + level);
-			currLogger.setLevel(level);
+			Configurator.setLevel(currLogger, level);
 			logger.warn("Log level updated at runtime.");
 		}
 		return currLevel;
