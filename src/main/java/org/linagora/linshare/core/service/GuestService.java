@@ -173,4 +173,7 @@ public interface GuestService {
 	Date getGuestExpirationDate(Account authUser, Date currentGuestExpirationDate) throws BusinessException;
 
 	SystemAccount getGuestSystemAccount();
+
+	List<Guest> findAll(User authUser, User actor, String pattern,
+			org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole moderatorRole);
 }

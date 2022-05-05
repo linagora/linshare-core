@@ -49,7 +49,6 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
-import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -65,6 +64,7 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
 import org.linagora.linshare.core.notifications.context.GuestAccountNewCreationEmailContext;
 import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -252,7 +252,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)actor, create, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
 		notifierService.sendNotification(mail);
-		moderatorService.create(authUser, actor, new Moderator(ModeratorRole.ADMIN, actor, create));
+		moderatorService.create(authUser, actor, new Moderator(org.linagora.linshare.core.domain.constants.ModeratorRole.ADMIN, actor, create));
 		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, actor, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
 		logEntryService.insert(log);
 		return create;
@@ -527,5 +527,19 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		userQuota.setDomainShared(containerQuota.getDomainQuota().getDomainShared());
 		userQuota.setDomainSharedOverride(false);
 		accountQuotaBusinessService.create(userQuota);
+	}
+
+	@Override
+	public List<Guest> findAll(User authUser, User actor, String pattern, ModeratorRole moderatorRole) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, Guest.class, BusinessErrorCode.GUEST_FORBIDDEN, null);
+		List<Guest> guests = Lists.newArrayList();
+		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
+		if (Strings.isNullOrEmpty(pattern)) {
+			guests = guestBusinessService.findAll(actor, authorizedDomains, moderatorRole);
+		} else {
+			guests = guestBusinessService.search(actor, authorizedDomains, pattern, moderatorRole);
+		}
+		return guests;
 	}
 }

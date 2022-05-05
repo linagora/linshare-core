@@ -37,6 +37,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.GuestBusinessService;
@@ -50,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
@@ -314,6 +316,36 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 		public Guest getGuest() {
 			return guest;
+		}
+	}
+
+	@Override
+	public List<Guest> findAll(Account actor, List<AbstractDomain> authorizedDomains, ModeratorRole moderatorRole) {
+		if (Objects.isNull(moderatorRole)) {
+			// return all guests
+			return guestRepository.findAll(authorizedDomains);
+		} else {
+			if (ModeratorRole.ALL.equals(moderatorRole)) {
+				// return all actor's guests
+				return guestRepository.findAllMyGuests(actor);
+			}
+			// return all actor's guests filtered by moderatorRole (SIMPLE/ADMIN)
+			return guestRepository.findAllByModerator(actor, ModeratorRole.toModeratorRole(moderatorRole), null);
+		}
+	}
+
+	@Override
+	public List<Guest> search(Account actor, List<AbstractDomain> authorizedDomains, String pattern,
+			ModeratorRole moderatorRole) {
+		if (Objects.isNull(moderatorRole)) {
+			return guestRepository.search(authorizedDomains, pattern);
+		} else {
+			if (ModeratorRole.ALL.equals(moderatorRole)) {
+				// return all actor's guests
+				return guestRepository.searchMyGuests(authorizedDomains, pattern, actor);
+			}
+			// return all actor's guests filtered by moderatorRole (SIMPLE/ADMIN)
+			return guestRepository.findAllByModerator(actor, ModeratorRole.toModeratorRole(moderatorRole), pattern);
 		}
 	}
 }

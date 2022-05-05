@@ -43,13 +43,16 @@
 	<bean id="userv5ModeratorRestService" class="org.linagora.linshare.webservice.userv5.impl.ModeratorRestServiceImpl">
 		<constructor-arg ref="wsModeratorFacade" />
 	</bean>
+
+	<bean id="userv5GuestRestService" class="org.linagora.linshare.webservice.userv5.impl.GuestRestServiceImpl">
+		<constructor-arg ref="wsGuestFacade" />
+	</bean>
 	<jaxrs:server id="userv5RestContainer" address="/rest/user/v5">
 		<jaxrs:serviceBeans>
 			<ref bean="userv2EnumRestService" />
 			<ref bean="userv5AuthenticationRestService" />
 			<ref bean="userv2DocumentRestService" />
 			<ref bean="userv2MailingListRestService" />
-			<ref bean="userv2GuestRestService" />
 			<ref bean="userv2ShareRestService" />
 			<ref bean="userv2RestService" />
 			<ref bean="userv2ReceivedShareRestService" />
@@ -75,6 +78,7 @@
 			<ref bean="userv2SharedSpaceNodeRestService" />
 			<ref bean="userv5UserProfileRestService" />
 			<ref bean="userv5ModeratorRestService" />
+			<ref bean="userv5GuestRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

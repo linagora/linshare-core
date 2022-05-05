@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
 
 public interface GuestBusinessService {
 
@@ -106,4 +107,9 @@ public interface GuestBusinessService {
 	List<Guest> searchExceptGuests(List<AbstractDomain> authorizedDomains, String pattern, Account owner) throws BusinessException;
 
 	SystemAccount getGuestSystemAccount();
+
+	List<Guest> findAll(Account actor, List<AbstractDomain> authorizedDomains, ModeratorRole moderatorRole);
+
+	List<Guest> search(Account actor, List<AbstractDomain> authorizedDomains, String pattern,
+			ModeratorRole moderatorRole);
 }

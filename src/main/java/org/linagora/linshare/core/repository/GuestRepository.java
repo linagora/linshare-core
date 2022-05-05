@@ -37,6 +37,7 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -95,4 +96,6 @@ public interface GuestRepository extends UserRepository<Guest> {
 	List<String> findAllWithDeprecatedPasswordEncoding();
 
 	List<String> findAllGuestsUuids();
+
+	List<Guest> findAllByModerator(Account actor, ModeratorRole moderatorRole, String pattern);
 }

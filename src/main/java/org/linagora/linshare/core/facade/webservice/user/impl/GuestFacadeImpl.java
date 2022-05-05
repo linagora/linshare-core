@@ -38,26 +38,34 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.DomainMto;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class GuestFacadeImpl extends GenericFacadeImpl implements
@@ -69,27 +77,62 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	
 	private final PasswordService passwordService;
 
+	private final MongoTemplate mongoTemplate;
+
 	public GuestFacadeImpl(final AccountService accountService,
 			final GuestService guestService,
 			UserService userService,
-			PasswordService passwordService) {
+			PasswordService passwordService,
+			MongoTemplate mongoTemplate) {
 		super(accountService);
 		this.guestService = guestService;
 		this.userService = userService;
 		this.passwordService = passwordService;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
-	public List<GuestDto> findAll(Boolean mine, String pattern) throws BusinessException {
+	public List<GuestDto> findAll(String pattern, ModeratorRole moderatorRole)
+			throws BusinessException {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, null);
-		List<Guest> guests = null;
-		if (pattern == null) {
-			guests = guestService.findAll(authUser, actor, mine);
-		} else {
-			guests = guestService.search(authUser, actor, pattern, mine);
+		List<Guest> guests = guestService.findAll(authUser, actor, pattern, moderatorRole);
+		return toDtoList(guests);
+	}
+
+	private List<GuestDto> toDtoList(List<Guest> guests) {
+		List<GuestDto> guestsWithOwners = Lists.newArrayList();
+		for (Guest guest : guests) {
+			GuestDto dto = GuestDto.getSimple(guest);
+			GenericUserDto guestOwnerFromAudit = getGuestOwner(guest.getLsUuid());
+			dto.setOwner(guestOwnerFromAudit);
+			guestsWithOwners.add(dto);
 		}
-		return toGuestDto(guests);
+		return guestsWithOwners;
+	}
+
+	private GenericUserDto getGuestOwner(String guestUuid) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("resourceUuid").is(guestUuid));
+		query.addCriteria(Criteria.where("action").is(LogAction.CREATE));
+		AuditLogEntryUser guestCreationTrace = mongoTemplate.findOne(query, AuditLogEntryUser.class);
+		AccountMto owner;
+		if (Objects.nonNull(guestCreationTrace)) {
+			owner = guestCreationTrace.getActor();
+			owner.setFirstName("John");
+			owner.setLastName("DOE");
+		} else {
+			logger.warn(
+					"Guest Audit trace not found a fake owner will be used. Using John DOE unknown-user@linshare.org instead.");
+			owner = new AccountMto();
+			owner.setFirstName("John");
+			owner.setLastName("DOE");
+			owner.setMail("unknown-user@linshare.org");
+			owner.setUuid("7bf2982c-6933-47db-9203-f3b9c543eced");
+			owner.setAccountType(AccountType.INTERNAL);
+			owner.setDomain(new DomainMto("bee08e5a-2fd9-43d1-a4f0-012a0078fec2", "FakeOwnerDomain"));
+		}
+		return new GenericUserDto(owner);
 	}
 
 	@Override
@@ -99,7 +142,10 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		Validate.notEmpty(mail, "Missing required guest mail");
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
-		return GuestDto.getFull(guestService.find(authUser, actor, domain, mail));
+		Guest guest = guestService.find(authUser, actor, domain, mail);
+		GuestDto dto = GuestDto.getFull(guest);
+		dto.setOwner(getGuestOwner(guest.getLsUuid()));
+		return dto;
 	}
 
 	@Override
@@ -121,7 +167,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		User actor = getActor(authUser, null);
 		List<Guest> guests = guestService.search(authUser, actor, userSearchDto.getFirstName(),
 				userSearchDto.getLastName(), userSearchDto.getMail(), true);
-		return toGuestDto(guests);
+		return toDtoList(guests);
 	}
 
 	@Override
@@ -145,7 +191,9 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 				}
 			}
 		}
-		return GuestDto.getFull(guestService.create(authUser, authUser, guest, ac));
+		GuestDto dto = GuestDto.getFull(guestService.create(authUser, authUser, guest, ac));
+		dto.setOwner(getGuestOwner(guest.getLsUuid()));
+		return dto;
 	}
 
 	@Override
@@ -163,7 +211,9 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 				ac.add(contactDto.getMail());
 			}
 		}
-		return GuestDto.getFull(guestService.update(authUser, authUser, guest, ac));
+		GuestDto guestDto = GuestDto.getFull(guestService.update(authUser, authUser, guest, ac));
+		guestDto.setOwner(getGuestOwner(guest.getLsUuid()));
+		return guestDto;
 	}
 
 	@Override
@@ -176,7 +226,9 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 			uuid = guestDto.getUuid();
 		}
 		Guest guest = guestService.delete(authUser, actor, uuid);
-		return GuestDto.getSimple(guest);
+		GuestDto dto = GuestDto.getSimple(guest);
+		dto.setOwner(getGuestOwner(guest.getLsUuid()));
+		return dto;
 	}
 
 	@Override
@@ -187,10 +239,6 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		}
 		Validate.notEmpty(dto.getUuid(), "guest uuid is required");
 		guestService.triggerResetPassword(dto.getUuid());
-	}
-
-	private List<GuestDto> toGuestDto(List<Guest> col) {
-		return ImmutableList.copyOf(Lists.transform(col, GuestDto.toDto()));
 	}
 
 	private void validatePasswordInputs(String password, String message) {

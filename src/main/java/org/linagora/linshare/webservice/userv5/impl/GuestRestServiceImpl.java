@@ -34,10 +34,9 @@
  * Additional Terms applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv2.impl;
+package org.linagora.linshare.webservice.userv5.impl;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -58,14 +57,14 @@ import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
-import org.linagora.linshare.webservice.userv2.GuestRestService;
+import org.linagora.linshare.webservice.userv5.GuestRestService;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/guests")
@@ -83,35 +82,28 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/")
 	@GET
 	@Operation(summary = "Find all guests of a user.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
-			responseCode = "200"
-		)
-	})
+			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))), responseCode = "200") })
 	@Override
 	public List<GuestDto> findAll(
-			@QueryParam("mine") Boolean mine,
-			@QueryParam("pattern") String pattern) throws BusinessException {
-		ModeratorRole moderatorRole = (Objects.nonNull(mine) && mine) ? ModeratorRole.ALL : null;
-		return guestFacade.findAll(pattern, moderatorRole);
+			@Parameter(description = "If value is SIMPLE/ADMIN the guests where a user is moderator of by role will be returned, if value is `ALL` all user's guests, if null all guests of user's authorized domains will be returned.", required = false)
+				@QueryParam("role") ModeratorRole role,
+			@Parameter(description = "The list of returned guests will be filtered by the entered patten if not null.", required = false)
+				@QueryParam("pattern") String pattern)
+			throws BusinessException {
+		return guestFacade.findAll(pattern, role);
 	}
 
 	@Path("/search")
 	@POST
 	@Operation(summary = "Search all guests who match with some pattern.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
-			responseCode = "200"
-		)
-	})
+			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))), responseCode = "200") })
 	@Override
 	public List<GuestDto> search(
 			@Parameter(description = "Patterns to search.", required = true) UserSearchDto userSearchDto)
 			throws BusinessException {
-		Validate.isTrue(!(
-				lessThan3Char(userSearchDto.getFirstName())
-				&& lessThan3Char(userSearchDto.getLastName())
-				&& lessThan3Char(userSearchDto.getMail())),
+		Validate.isTrue(
+				!(lessThan3Char(userSearchDto.getFirstName()) && lessThan3Char(userSearchDto.getLastName())
+						&& lessThan3Char(userSearchDto.getMail())),
 				"One pattern is required, pattern must be greater than 3 characters");
 		return guestFacade.search(userSearchDto);
 	}
@@ -119,11 +111,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/{uuid}")
 	@GET
 	@Operation(summary = "Find a guest.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
-			responseCode = "200"
-		)
-	})
+			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))), responseCode = "200") })
 	@Override
 	public GuestDto find(@Parameter(description = "Guest's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
@@ -142,11 +130,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/")
 	@POST
 	@Operation(summary = "Create a guest.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
-			responseCode = "200"
-		)
-	})
+			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))), responseCode = "200") })
 	@Override
 	public GuestDto create(@Parameter(description = "Guest to create.", required = true) GuestDto guest)
 			throws BusinessException {
@@ -156,16 +140,10 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/{uuid : .*}")
 	@PUT
 	@Operation(summary = "Update a guest.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
-			responseCode = "200"
-		)
-	})
+			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))), responseCode = "200") })
 	@Override
-	public GuestDto update(
-			@Parameter(description = "Guest to update.", required = true) GuestDto guest,
-			@Parameter(description = "Guest uuid, if null dto.uuid is used.", required = false)
-				@PathParam("uuid") String uuid)
+	public GuestDto update(@Parameter(description = "Guest to update.", required = true) GuestDto guest,
+			@Parameter(description = "Guest uuid, if null dto.uuid is used.", required = false) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return guestFacade.update(null, guest, uuid);
 
@@ -174,16 +152,10 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/{uuid : .*}")
 	@DELETE
 	@Operation(summary = "Delete a guest.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
-			responseCode = "200"
-		)
-	})
+			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))), responseCode = "200") })
 	@Override
-	public GuestDto delete(
-			@Parameter(description = "Guest to delete.", required = true) GuestDto guest,
-			@Parameter(description = "Guest's uuid to delete.", required = true)
-			@PathParam("uuid") String uuid)
+	public GuestDto delete(@Parameter(description = "Guest to delete.", required = true) GuestDto guest,
+			@Parameter(description = "Guest's uuid to delete.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return guestFacade.delete(null, guest, uuid);
 	}
@@ -191,15 +163,11 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Path("/{uuid}/reset")
 	@POST
 	@Operation(summary = "Reset guest password.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))),
-			responseCode = "200"
-		)
-	})
+			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))), responseCode = "200") })
 	@Override
-	public void resetPassword(
-			@Parameter(description = "reset password for the guest.", required = true) GuestDto guest,
-			@Parameter(description = "Guest's uuid to reset.", required = true) @PathParam("uuid") String uuid) throws BusinessException {
+	public void resetPassword(@Parameter(description = "reset password for the guest.", required = true) GuestDto guest,
+			@Parameter(description = "Guest's uuid to reset.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
 		guestFacade.resetPassword(guest, uuid);
 	}
 

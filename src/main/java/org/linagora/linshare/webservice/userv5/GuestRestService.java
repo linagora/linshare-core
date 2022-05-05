@@ -34,47 +34,30 @@
  * Additional Terms applicable to LinShare software.
  */
 
-package org.linagora.linshare.mongo.entities.mto;
+package org.linagora.linshare.webservice.userv5;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import java.util.List;
 
-public class DomainMto {
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
-	protected String uuid;
+public interface GuestRestService {
 
-	protected String label;
+	GuestDto find(String uuid) throws BusinessException;
 
-	public DomainMto() {
-	}
+	void head(String uuid) throws BusinessException;
 
-	public DomainMto(String uuid, String label) {
-		this.uuid = uuid;
-		this.label = label;
-	}
+	List<GuestDto> findAll(ModeratorRole moderatorRole, String pattern) throws BusinessException;
 
-	public DomainMto(AbstractDomain domain) {
-		this.uuid = domain.getUuid();
-		this.label = domain.getLabel();
-	}
+	GuestDto create(GuestDto guest) throws BusinessException;
 
-	public String getUuid() {
-		return uuid;
-	}
+	GuestDto update(GuestDto guest, String uuid) throws BusinessException;
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+	GuestDto delete(GuestDto guest, String uuid) throws BusinessException;
 
-	public String getLabel() {
-		return label;
-	}
+	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	@Override
-	public String toString() {
-		return "Domain [uuid=" + uuid + ", label=" + label + "]";
-	}
+	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
 }

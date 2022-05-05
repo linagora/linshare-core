@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -90,6 +91,16 @@ public class GenericUserDto {
 		this.external = false;
 		this.accountType = u.getAccountType();
 		this.domain = u.getDomain().getUuid();
+	}
+
+	public GenericUserDto(AccountMto account) {
+		this.uuid = account.getUuid();
+		this.mail = account.getMail();
+		this.firstName = account.getFirstName();
+		this.lastName = account.getLastName();
+		this.external = false;
+		this.accountType = account.getAccountType();
+		this.domain = account.getDomain().getUuid();
 	}
 
 	public String getUuid() {

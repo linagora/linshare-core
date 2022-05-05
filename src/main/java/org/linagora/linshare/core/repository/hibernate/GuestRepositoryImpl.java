@@ -39,21 +39,26 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.constants.AccountType;
+import org.hibernate.query.Query;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.HibernateTemplate;
+
+import com.google.common.base.Strings;
 
 public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implements GuestRepository {
 	
@@ -361,5 +366,28 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		criteria.setProjection(Projections.property("lsUuid"));
 		List<String> uuids = listByCriteria(criteria);
 		return uuids;
+	}
+
+	@Override
+	public List<Guest> findAllByModerator(Account actor, ModeratorRole moderatorRole, String pattern) {
+		HibernateCallback<List<Guest>> action = new HibernateCallback<>() {
+			public List<Guest> doInHibernate(final Session session) throws HibernateException {
+				String query = "SELECT g FROM Guest g JOIN Moderator m ON (g.id = m.guest) WHERE (m.account = :actor) AND (:moderatorRole is NULL or m.role = :moderatorRole)";
+				if (!Strings.isNullOrEmpty(pattern)) {
+					query += " AND ((g.firstName like :pattern) OR (g.lastName like :pattern) OR (g.mail like :pattern))";
+				}
+				@SuppressWarnings("unchecked")
+				Query<Guest> createQuery = session.createQuery(query);
+				createQuery.setParameter("actor", actor);
+				createQuery.setParameter("moderatorRole", moderatorRole);
+				if (!Strings.isNullOrEmpty(pattern)) {
+					createQuery.setString("pattern", "%" + pattern + "%");
+				}
+				List<Guest> guests = createQuery.getResultList();
+				return guests;
+			}
+		};
+		List<Guest> guests = getHibernateTemplate().execute(action);
+		return guests;
 	}
 }
