@@ -77,6 +77,7 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		this.maxValue = maxValue;
 		this.valueUsed = valueUsed;
 		this.maxValueUsed = maxValueUsed;
+		this.unlimitedUsed = false;
 	}
 	
 	@Override
@@ -103,6 +104,17 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 				}
 			} else {
 				if(!maxValue.equals(integerFunc.getMaxValue())) {
+					return false;
+				}
+			}
+		}
+		if (this.getUnlimitedUsed()) {
+			if (unlimited == null) {
+				if(integerFunc.getUnlimited() != null) {
+					return false;
+				}
+			} else {
+				if(!unlimited.equals(integerFunc.getUnlimited())) {
 					return false;
 				}
 			}
@@ -140,6 +152,9 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		}
 		if (this.getMaxValueUsed()) {
 			this.maxValue = f.getMaxValue();
+		}
+		if (this.getUnlimitedUsed()) {
+			this.setUnlimited(f.getUnlimited());
 		}
 	}
 
