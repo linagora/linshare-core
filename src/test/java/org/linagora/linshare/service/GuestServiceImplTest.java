@@ -65,6 +65,7 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.ModeratorRepository;
 import org.linagora.linshare.core.repository.PasswordHistoryRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -156,6 +157,9 @@ public class GuestServiceImplTest {
 
 	@Autowired
 	private ModeratorService moderatorService;
+
+	@Autowired
+	private ModeratorRepository moderatorRepository;
 
 	private User root;
 
@@ -555,6 +559,23 @@ public class GuestServiceImplTest {
 		Guest update = guestService.update(owner2, owner3, guest, null);
 		assertThat("Last").isEqualTo(update.getLastName());
 		assertThat("First").isEqualTo(update.getFirstName());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testModeratorDeleteGuest() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = guestService.create(owner2, owner2, guest, null);
+		Moderator moderator = new Moderator(ModeratorRole.ADMIN, owner3, guest);
+		moderator = moderatorService.create(root, guest, moderator);
+		assertThat(moderator).isNotNull();
+		List<Moderator> moderators = moderatorService.findAllByGuest(owner2, owner2, guest.getLsUuid());
+		assertThat(moderators.size()).isEqualTo(2);
+		guest = guestService.delete(owner2, owner2, guest.getLsUuid());
+		moderators = moderatorRepository.findAllByGuest(guest);
+		assertThat(moderators.size()).isEqualTo(0);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
@@ -55,6 +56,8 @@ import org.linagora.linshare.core.rac.ModeratorResourceAccessControl;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.ModeratorService;
 import org.linagora.linshare.core.service.NotifierService;
+
+import com.google.common.collect.Lists;
 
 public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator> implements ModeratorService {
 
@@ -163,7 +166,31 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		Validate.notEmpty(guestUuid, "Guest's uuid must be set.");
 		checkListPermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATORS_CANNOT_GET, null);
 		Guest guest = guestBusinessService.findByLsUuid(guestUuid);
+		if(Objects.isNull(guest)) {
+			String errMsg = String.format("Guest with uuid: %1$s not found, cannot get its moderators list", guestUuid);
+			logger.debug(errMsg);
+			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND, errMsg);
+		}
 		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest);
+		return moderators;
+	}
+
+	@Override
+	public List<Moderator> deleteAllModerators(Account authUser, Account actor, List<Moderator> moderators, Guest guest) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(moderators, "Moderator list should not be null");
+		List<MailContainerWithRecipient> mailContainers = Lists
+				.newArrayList();
+		for (Moderator moderator : moderators) {
+			if (!moderator.getAccount().equals(actor)) {
+				GuestModeratorDeletionEmailContext mailContext = new GuestModeratorDeletionEmailContext(actor,
+						moderator);
+				mailContainers.add(mailBuildingService.build(mailContext));
+			}
+			// TODO: We need to add moderator audit trace with cause GUEST_DELETION
+		}
+		moderatorBusinessService.deleteAllModerators(guest);
+		notifierService.sendNotification(mailContainers);
 		return moderators;
 	}
 }

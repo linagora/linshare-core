@@ -94,4 +94,9 @@ public class ModeratorBusinessServiceImpl implements ModeratorBusinessService {
 		return moderatorRepository.findByGuestAndAccount(actor, guest);
 	}
 
+	@Override
+	public void deleteAllModerators(Guest guest) {
+		moderatorRepository.deleteAllModerators(guest);
+	}
+
 }

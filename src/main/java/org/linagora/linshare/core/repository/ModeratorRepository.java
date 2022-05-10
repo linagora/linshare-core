@@ -47,4 +47,6 @@ public interface ModeratorRepository extends  AbstractRepository<Moderator>{
 	List<Moderator> findAllByGuest(Guest guest);
 
 	Optional<Moderator> findByGuestAndAccount(Account actor, Guest guest);
+
+	void deleteAllModerators(Guest guest);
 }

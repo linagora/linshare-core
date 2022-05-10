@@ -79,4 +79,13 @@ public class ModeratorRepositoryImpl extends AbstractRepositoryImpl<Moderator> i
 		Moderator moderator = DataAccessUtils.singleResult(findByCriteria(det));
 		return Optional.ofNullable(moderator);
 	}
+
+	@Override
+	public void deleteAllModerators(Guest guest) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("guest", guest));
+		List<Moderator> moderators = findByCriteria(det);
+		moderators.forEach(moderator -> delete(moderator));
+		logger.debug("{} Moderators deleted where guest is {}", moderators.size(), guest);
+	}
 }
