@@ -43,8 +43,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 import org.linagora.linshare.core.facade.webservice.user.ModeratorFacade;
@@ -134,8 +136,12 @@ public class ModeratorRestServiceImpl implements ModeratorRestService {
 	@Override
 	public List<ModeratorDto> findAllByGuest(
 		@Parameter(description = "The guest's uuid.", required = true)
-			@PathParam("guestUuid") String guestUuid) throws BusinessException {
-		return moderatorFacade.findAllByGuest(null, guestUuid);
+			@PathParam("guestUuid") String guestUuid,
+		@Parameter(description = "Filter moderators list by moderatorRole, if null moderatos with any roles will be returned.", required = false)
+			@QueryParam("role") ModeratorRole role,
+		@Parameter(description = "Filter moderator by pattern.", required = false)
+			@QueryParam("pattern") String pattern) throws BusinessException {
+		return moderatorFacade.findAllByGuest(null, guestUuid, role, pattern);
 	}
 
 }

@@ -571,10 +571,10 @@ public class GuestServiceImplTest {
 		Moderator moderator = new Moderator(ModeratorRole.ADMIN, owner3, guest);
 		moderator = moderatorService.create(root, guest, moderator);
 		assertThat(moderator).isNotNull();
-		List<Moderator> moderators = moderatorService.findAllByGuest(owner2, owner2, guest.getLsUuid());
+		List<Moderator> moderators = moderatorService.findAllByGuest(owner2, owner2, guest.getLsUuid(), null, null);
 		assertThat(moderators.size()).isEqualTo(2);
 		guest = guestService.delete(owner2, owner2, guest.getLsUuid());
-		moderators = moderatorRepository.findAllByGuest(guest);
+		moderators = moderatorRepository.findAllByGuest(guest, null, null);
 		assertThat(moderators.size()).isEqualTo(0);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

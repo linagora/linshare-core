@@ -36,6 +36,7 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
@@ -44,7 +45,7 @@ public interface ModeratorRepository extends  AbstractRepository<Moderator>{
 
 	Moderator findByUuid(String uuid);
 
-	List<Moderator> findAllByGuest(Guest guest);
+	List<Moderator> findAllByGuest(Guest guest, ModeratorRole role, String pattern);
 
 	Optional<Moderator> findByGuestAndAccount(Account actor, Guest guest);
 

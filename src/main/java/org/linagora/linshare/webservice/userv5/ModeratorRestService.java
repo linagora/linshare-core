@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.userv5;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 
 public interface ModeratorRestService {
@@ -47,5 +48,5 @@ public interface ModeratorRestService {
 
 	ModeratorDto delete(String guestUuid, String uuid, ModeratorDto dto);
 
-	List<ModeratorDto> findAllByGuest(String guestUuid);
+	List<ModeratorDto> findAllByGuest(String guestUuid, ModeratorRole role, String pattern);
 }

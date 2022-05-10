@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
@@ -50,7 +51,7 @@ public interface ModeratorService {
 
 	Moderator delete(Account authUser, Account actor, Moderator moderator);
 
-	List<Moderator> findAllByGuest(Account authUser, Account actor, String guestUuid);
-
 	List<Moderator> deleteAllModerators(Account authUser, Account actor, List<Moderator> moderators, Guest guest);
+
+	List<Moderator> findAllByGuest(Account authUser, Account actor, String guestUuid, ModeratorRole role, String pattern);
 }

@@ -34,16 +34,22 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.repository.ModeratorRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
+
+import com.google.common.base.Strings;
 
 public class ModeratorRepositoryImpl extends AbstractRepositoryImpl<Moderator> implements ModeratorRepository {
 
@@ -64,9 +70,20 @@ public class ModeratorRepositoryImpl extends AbstractRepositoryImpl<Moderator> i
 	}
 
 	@Override
-	public List<Moderator> findAllByGuest(Guest guest) {
+	public List<Moderator> findAllByGuest(Guest guest, ModeratorRole role, String pattern) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("guest", guest));
+		if(Objects.nonNull(role)) {
+			det.add(Restrictions.eq("role", role));
+		}
+		if(!Strings.isNullOrEmpty(pattern)) {
+			det.createAlias("account", "a");
+			Disjunction or = Restrictions.disjunction();
+			det.add(or);
+			or.add(Restrictions.ilike("a.mail", pattern, MatchMode.ANYWHERE));
+			or.add(Restrictions.ilike("a.firstName", pattern, MatchMode.ANYWHERE));
+			or.add(Restrictions.ilike("a.lastName", pattern, MatchMode.ANYWHERE));
+		}
 		List<Moderator> moderators = findByCriteria(det);
 		return moderators;
 	}

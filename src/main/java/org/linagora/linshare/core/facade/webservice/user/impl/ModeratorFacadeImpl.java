@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
@@ -50,8 +51,6 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 import org.linagora.linshare.core.facade.webservice.user.ModeratorFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ModeratorService;
-
-import com.google.common.base.Strings;
 
 public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements ModeratorFacade {
 
@@ -126,10 +125,10 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 	}
 
 	@Override
-	public List<ModeratorDto> findAllByGuest(String actorUuid, String guestUuid) {
+	public List<ModeratorDto> findAllByGuest(String actorUuid, String guestUuid, ModeratorRole role, String pattern) {
 		User authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		List<Moderator> moderators = moderatorService.findAllByGuest(authUser, actor, guestUuid);
+		List<Moderator> moderators = moderatorService.findAllByGuest(authUser, actor, guestUuid, role, pattern);
 		return moderators
 				.stream()
 				.map(ModeratorDto::from)

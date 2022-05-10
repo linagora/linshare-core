@@ -96,7 +96,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
 		checkCreatePermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_CREATE, moderator);
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
-		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest);
+		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest, null, null);
 		if (moderators.contains(moderator)) {
 			throw new BusinessException(BusinessErrorCode.GUEST_MODERATOR_ALREADY_EXISTS, "Moderator already exists.");
 		}
@@ -161,7 +161,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 	}
 
 	@Override
-	public List<Moderator> findAllByGuest(Account authUser, Account actor, String guestUuid) {
+	public List<Moderator> findAllByGuest(Account authUser, Account actor, String guestUuid, ModeratorRole role, String pattern) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(guestUuid, "Guest's uuid must be set.");
 		checkListPermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATORS_CANNOT_GET, null);
@@ -171,7 +171,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 			logger.debug(errMsg);
 			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND, errMsg);
 		}
-		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest);
+		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest, role, pattern);
 		return moderators;
 	}
 

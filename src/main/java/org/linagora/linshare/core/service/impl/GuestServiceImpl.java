@@ -348,7 +348,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Guest original = find(authUser, actor, lsUuid);
 		checkDeletePermission(authUser, actor, Guest.class,
 				BusinessErrorCode.CANNOT_DELETE_USER, original);
-		List<Moderator> moderators = moderatorService.findAllByGuest(authUser, actor, original.getLsUuid());
+		List<Moderator> moderators = moderatorService.findAllByGuest(authUser, actor, original.getLsUuid(), null, null);
 		if (!moderators.isEmpty()) {
 			moderatorService.deleteAllModerators(authUser, actor, moderators, original);
 		}

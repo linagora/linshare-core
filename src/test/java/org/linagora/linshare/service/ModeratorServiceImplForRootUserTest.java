@@ -176,7 +176,7 @@ public class ModeratorServiceImplForRootUserTest {
 		assertThat(moderator2.getGuest()).isEqualTo(guest);
 		Guest guest = guestRepository.findByLsUuid(moderator1.getGuest().getLsUuid());
 		assertThat(guest.getModerators()).size().isEqualTo(2);
-		List<Moderator> moderators = moderatorService.findAllByGuest(root, root, guest.getLsUuid());
+		List<Moderator> moderators = moderatorService.findAllByGuest(root, root, guest.getLsUuid(), null, null);
 		assertThat(moderators.size()).isEqualTo(2);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
