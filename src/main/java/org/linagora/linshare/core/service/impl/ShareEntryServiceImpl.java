@@ -262,7 +262,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		if (share.getDownloaded() <= 0) {
 			ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
+			notifierService.sendNotification(mail, true);
 		}
 		share = shareEntryBusinessService.updateDownloadCounter(share.getUuid());
 		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DOWNLOAD, share,
