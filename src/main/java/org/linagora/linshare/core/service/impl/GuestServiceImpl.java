@@ -69,6 +69,7 @@ import org.linagora.linshare.core.notifications.context.GuestAccountNewCreationE
 import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
@@ -110,6 +111,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	protected final ModeratorService moderatorService;
 
+	protected final AccountRepository<Account> accountRepository;
+
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -122,7 +125,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			final ModeratorService moderatorService) {
+			final ModeratorService moderatorService,
+			final AccountRepository<Account> accountRepository) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -135,6 +139,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.resetGuestPasswordMongoRepository = resetGuestPasswordMongoRepository;
 		this.moderatorService = moderatorService;
+		this.accountRepository = accountRepository;
 	}
 
 	@Override
@@ -254,6 +259,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		notifierService.sendNotification(mail);
 		moderatorService.create(authUser, actor, new Moderator(org.linagora.linshare.core.domain.constants.ModeratorRole.ADMIN, actor, create));
 		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, actor, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
+		List<String> moderatorUuids = accountRepository.findAllModeratorUuidsByGuest(create);
+		log.addRelatedAccounts(moderatorUuids);
 		logEntryService.insert(log);
 		return create;
 	}
@@ -297,6 +304,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Guest result = guestBusinessService.update(actor, entity, guest, guestDomain,
 				restrictedContacts);
 		log.setResourceUpdated(new UserMto(result));
+		List<String> moderatorUuids = accountRepository.findAllModeratorUuidsByGuest(result);
+		log.addRelatedAccounts(moderatorUuids);
 		logEntryService.insert(log);
 		return result;
 	}
@@ -349,12 +358,14 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		checkDeletePermission(authUser, actor, Guest.class,
 				BusinessErrorCode.CANNOT_DELETE_USER, original);
 		List<Moderator> moderators = moderatorService.findAllByGuest(authUser, actor, original.getLsUuid(), null, null);
+		userService.deleteUser(authUser, original.getLsUuid());
 		if (!moderators.isEmpty()) {
 			moderatorService.deleteAllModerators(authUser, actor, moderators, original);
 		}
-		userService.deleteUser(authUser, original.getLsUuid());
 		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, actor, LogAction.DELETE, AuditLogEntryType.GUEST,
 				original);
+		List<String> moderatorUuids = accountRepository.findAllModeratorUuidsByGuest(original);
+		log.addRelatedAccounts(moderatorUuids);
 		logEntryService.insert(log);
 		return original;
 	}
@@ -362,9 +373,9 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	@Override
 	public void deleteUser(SystemAccount systemAccount, String uuid) {
 		Guest original = guestBusinessService.findByLsUuid(uuid);
-		userService.deleteUser(systemAccount, original.getLsUuid());
 		GuestAuditLogEntry log = new GuestAuditLogEntry(systemAccount, systemAccount, LogAction.DELETE, AuditLogEntryType.GUEST,
 				original);
+		userService.deleteUser(systemAccount, original.getLsUuid());
 		log.setCause(LogActionCause.EXPIRATION);
 		logEntryService.insert(log);
 	}

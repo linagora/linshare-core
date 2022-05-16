@@ -93,6 +93,10 @@ public class GuestResourceAccessControlImpl extends
 		if (authUser.isInternal() || authUser.isGuest()) {
 			return true;
 		}
+		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry);
+		if (moderator.isPresent()) {
+			return true;
+		}
 		return false;
 	}
 
@@ -102,13 +106,18 @@ public class GuestResourceAccessControlImpl extends
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_LIST);
-		} else if (authUser.isInternal()) {
+		} 
+		if (authUser.isInternal()) {
 			/* Is it usefull to check if the current authUser is an internal ?
 			 * Only internals have the right to create guests.
 			*/
 			if (authUser.equals(actor)) {
 				return true;
 			}
+		}
+		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry);
+		if (moderator.isPresent()) {
+			return true;
 		}
 		return false;
 	}
@@ -121,6 +130,9 @@ public class GuestResourceAccessControlImpl extends
 					TechnicalAccountPermissionType.GUESTS_DELETE);
 		} else if (authUser.isInternal()) {
 			if (entry.getOwner().equals(actor)) {
+				return true;
+			}
+			if (isActorAdminModeratorOfTheGuest(actor, entry)) {
 				return true;
 			}
 			if (!entry.getDomain().isManagedBy(authUser)) {
@@ -155,14 +167,14 @@ public class GuestResourceAccessControlImpl extends
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor,
 			Guest entry, Object... opt) {
-		if (isActorAdminModeratorOfTheGuest(actor, entry)) {
-			return true;
-		}
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_UPDATE);
 		} else if (authUser.isInternal()) {
 			if (entry.getOwner().equals(actor)) {
+				return true;
+			}
+			if (isActorAdminModeratorOfTheGuest(actor, entry)) {
 				return true;
 			}
 			if (!entry.getDomain().isManagedBy(authUser)) {

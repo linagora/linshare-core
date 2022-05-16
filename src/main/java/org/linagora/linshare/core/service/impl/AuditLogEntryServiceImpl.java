@@ -298,7 +298,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
-	private List<LogAction> getMailAttachmentActions(List<LogAction> actions) {
+	private List<LogAction> getCreateUpdateDeletetActions(List<LogAction> actions) {
 		if (actions == null || actions.isEmpty()) {
 			actions.add(LogAction.CREATE);
 			actions.add(LogAction.DELETE);
@@ -310,7 +310,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	@Override
 	public Set<MailAttachmentAuditLogEntry> findAllAudits(Account authUser, String uuid,
 			List<LogAction> actions) {
-		List<LogAction> actionsList = getMailAttachmentActions(actions);
+		List<LogAction> actionsList = getCreateUpdateDeletetActions(actions);
 		return auditMongoRepository.findAllAudits(uuid, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
@@ -318,7 +318,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	@Override
 	public Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(Account authUser, List<String> domains,
 			List<LogAction> actions) {
-		List<LogAction> actionsList = getMailAttachmentActions(actions);
+		List<LogAction> actionsList = getCreateUpdateDeletetActions(actions);
 		return auditMongoRepository.findAllAuditsByDomain(domains, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
@@ -329,7 +329,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		if (!authUser.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not allowed to use this api.");
 		}
-		List<LogAction> actionsList = getMailAttachmentActions(actions);
+		List<LogAction> actionsList = getCreateUpdateDeletetActions(actions);
 		return auditMongoRepository.findAllAuditsByRoot(actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
@@ -350,5 +350,17 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			String uploadRequestEntryUuid, List<LogAction> actions) {
 		return userMongoRepository.findAllUploadRequestEntryAuditTraces(actor.getLsUuid(), uploadRequestEntryUuid,
 				getActions(actions), Sort.by(Sort.Direction.DESC, CREATION_DATE));
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAllModeratorAudits(Account authUser, Account actor, String ModeratorUuid,
+			List<LogAction> actions, List<AuditLogEntryType> types, String beginDate, String endDate) {
+		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
+		supportedTypes.add(AuditLogEntryType.GUEST_MODERATOR);
+		supportedTypes.add(AuditLogEntryType.GUEST);
+		Set<AuditLogEntryUser> audits = userMongoRepository.findAllModeratorTraces(actor.getLsUuid(), ModeratorUuid,
+				getCreateUpdateDeletetActions(actions), getEntryTypes(types, supportedTypes, true),
+				Sort.by(Sort.Direction.DESC, CREATION_DATE));
+		return audits;
 	}
 }

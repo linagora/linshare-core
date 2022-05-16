@@ -36,10 +36,13 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
@@ -50,17 +53,28 @@ import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacad
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 import org.linagora.linshare.core.facade.webservice.user.ModeratorFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
+import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.ModeratorService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements ModeratorFacade {
 
 	private ModeratorService moderatorService;
-	
+
+	private AuditLogEntryService auditLogEntryService;
+
+	private GuestService guestService;
+
 	public ModeratorFacadeImpl(
 			AccountService accountService,
-			ModeratorService moderatorService) {
+			ModeratorService moderatorService,
+			AuditLogEntryService auditLogEntryService,
+			GuestService guestService) {
 		super(accountService);
 		this.moderatorService = moderatorService;
+		this.auditLogEntryService = auditLogEntryService;
+		this.guestService = guestService;
 	}
 
 	@Override
@@ -133,6 +147,19 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 				.stream()
 				.map(ModeratorDto::from)
 				.collect(Collectors.toUnmodifiableList());
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAllAudits(String actorUuid, String guestUuid, String moderatorUuid,
+			List<LogAction> actions, List<AuditLogEntryType> types, String beginDate, String endDate) {
+		Account authUser = checkAuthentication();
+		Account actor = (User) getActor(authUser, actorUuid);
+		Validate.notEmpty(guestUuid, "guestUuid required");
+		Validate.notEmpty(moderatorUuid, "moderatorUuid required");
+		Moderator moderator = moderatorService.find(authUser, actor, moderatorUuid);
+		Guest guest = guestService.find(authUser, actor, moderator.getGuest().getLsUuid());
+		checkGuest(guestUuid, guest.getLsUuid());
+		return auditLogEntryService.findAllModeratorAudits(authUser, actor, moderator.getUuid(), actions, types, beginDate, endDate);
 	}
 
 }

@@ -612,6 +612,5 @@
 		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="moderatorBusinessService" />
 		<constructor-arg ref="guestBusinessService" />
-		<constructor-arg ref="guestRepository" />
 	</bean>
 </beans>

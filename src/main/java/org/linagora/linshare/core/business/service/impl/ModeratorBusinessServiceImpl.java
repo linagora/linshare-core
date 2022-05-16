@@ -45,14 +45,20 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.ModeratorRepository;
 
 public class ModeratorBusinessServiceImpl implements ModeratorBusinessService {
 
 	private final ModeratorRepository  moderatorRepository;
 
-	public ModeratorBusinessServiceImpl(ModeratorRepository moderatorRepository) {
+	private final AccountRepository<Account> accountRepository;
+
+	public ModeratorBusinessServiceImpl(
+			ModeratorRepository moderatorRepository,
+			AccountRepository<Account> accountRepository) {
 		this.moderatorRepository = moderatorRepository;
+		this.accountRepository = accountRepository;
 	}
 
 	@Override
@@ -98,6 +104,11 @@ public class ModeratorBusinessServiceImpl implements ModeratorBusinessService {
 	@Override
 	public void deleteAllModerators(Guest guest) {
 		moderatorRepository.deleteAllModerators(guest);
+	}
+
+	@Override
+	public List<String> findAllModeratorUuidsByGuest(Guest guest) {
+		return accountRepository.findAllModeratorUuidsByGuest(guest);
 	}
 
 }

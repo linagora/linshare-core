@@ -79,4 +79,7 @@ public interface AuditLogEntryService {
 
 	Set<AuditLogEntryUser> findAllSharedSpaceAudits(Account authUser, User actor, String sharedSpaceUuid, String nodeUuid, List<LogAction> actions,
 			List<AuditLogEntryType> types, String beginDate, String endDate);
+
+	Set<AuditLogEntryUser> findAllModeratorAudits(Account authUser, Account actor, String ModeratorUuid, List<LogAction> actions,
+			List<AuditLogEntryType> types, String beginDate, String endDate);
 }

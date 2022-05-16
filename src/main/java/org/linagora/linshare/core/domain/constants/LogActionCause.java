@@ -49,5 +49,6 @@ public enum LogActionCause {
 	DRIVE_DELETION, // TODO: for migration purpose
 	WORK_SPACE_DELETION,
 	WORKGROUP_DELETION, // TODO: for migration purpose
-	WORK_GROUP_DELETION;
+	WORK_GROUP_DELETION,
+	GUEST_DELETION;
 }

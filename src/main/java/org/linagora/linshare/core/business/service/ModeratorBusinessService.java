@@ -56,4 +56,6 @@ public interface ModeratorBusinessService {
 	Optional<Moderator> findByGuestAndAccount(Account actor, Guest guest);
 
 	void deleteAllModerators(Guest guest);
+
+	List<String> findAllModeratorUuidsByGuest(Guest guest);
 }

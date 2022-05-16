@@ -34,9 +34,13 @@
 package org.linagora.linshare.webservice.userv5;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface ModeratorRestService {
 
@@ -49,4 +53,7 @@ public interface ModeratorRestService {
 	ModeratorDto delete(String guestUuid, String uuid, ModeratorDto dto);
 
 	List<ModeratorDto> findAllByGuest(String guestUuid, ModeratorRole role, String pattern);
+
+	Set<AuditLogEntryUser> findAllAudits(String guestUuid, String moderatorUuid, List<LogAction> actions, List<AuditLogEntryType> types,
+			String beginDate, String endDate);
 }

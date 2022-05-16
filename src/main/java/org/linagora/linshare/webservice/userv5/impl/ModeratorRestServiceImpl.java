@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.userv5.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -47,13 +48,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 import org.linagora.linshare.core.facade.webservice.user.ModeratorFacade;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv5.ModeratorRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -144,4 +149,28 @@ public class ModeratorRestServiceImpl implements ModeratorRestService {
 		return moderatorFacade.findAllByGuest(null, guestUuid, role, pattern);
 	}
 
+	@Path("/{uuid}/audits")
+	@GET
+	@Operation(summary = "Get all traces chosen moderator.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLogEntryUser.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public Set<AuditLogEntryUser> findAllAudits(
+			@Parameter(description = "The guest's uuid.", required = true)
+				@PathParam("guestUuid") String guestUuid,
+			@Parameter(description = "The moderator's uuid.", required = true)
+				@PathParam("uuid") String moderatorUuid,
+			@Parameter(description = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<LogAction> actions,
+			@Parameter(description = "Filter by type of resource's types.", required = false)
+				@QueryParam("types") List<AuditLogEntryType> types,
+			@Parameter(description = "Filter by beginDate.", required = false)
+				@QueryParam("beginDate") String beginDate,
+			@Parameter(description = "Filter by endDate.", required = false)
+				@QueryParam("endDate") String endDate) {
+		return moderatorFacade.findAllAudits(null, guestUuid, moderatorUuid, actions, types, beginDate, endDate);
+	}
 }

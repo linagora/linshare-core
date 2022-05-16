@@ -134,4 +134,8 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	Set<AuditLogEntryUser> findAllUploadRequestEntryAuditTraces(String actorUuid, String uploadRequestEntryUuid,
 			List<LogAction> actions, Sort sort);
 
+	@Query("{$or: [ {'actor.uuid' : ?0 } , { 'relatedAccounts': {'$elemMatch' : { '$eq' : ?0 }} } ], 'resourceUuid' : ?1 , 'action' : {'$in' : ?2},'type' :  {'$in' : ?3}} ")
+	Set<AuditLogEntryUser> findAllModeratorTraces(String actorUuid, String moderatorUuid,
+			List<LogAction> createUpdateDeletetActions, List<AuditLogEntryType> entryTypes, Sort by);
+
 }

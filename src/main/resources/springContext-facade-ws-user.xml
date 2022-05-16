@@ -187,5 +187,6 @@
 		<bean id="wsModeratorFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ModeratorFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="moderatorService" />
+		<constructor-arg ref="guestService" />
 	</bean>
 </beans>

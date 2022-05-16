@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +48,7 @@ import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
+import org.linagora.linshare.core.business.service.ModeratorBusinessService;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -54,6 +56,7 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -64,6 +67,7 @@ import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -132,6 +136,8 @@ public class UserServiceImpl implements UserService {
 
 	private final JwtLongTimeBusinessService jwtLongTimeBusinessService;
 
+	private final ModeratorBusinessService moderatorBusinessService;
+
 	public UserServiceImpl(
 			final UserRepository<User> userRepository,
 			final LogEntryService logEntryService,
@@ -147,7 +153,8 @@ public class UserServiceImpl implements UserService {
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final JwtLongTimeBusinessService jwtLongTimeBusinessService,
 			final SharedSpaceMemberService ssMemberService,
-			final PasswordService passwordService) {
+			final PasswordService passwordService,
+			final ModeratorBusinessService moderatorBusinessService) {
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
@@ -163,6 +170,7 @@ public class UserServiceImpl implements UserService {
 		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
 		this.ssMemberService = ssMemberService;
 		this.passwordService = passwordService;
+		this.moderatorBusinessService = moderatorBusinessService;
 	}
 
 	@Override
@@ -204,25 +212,35 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User deleteUser(Account actor, String lsUuid)
 			throws BusinessException {
-		User user = userRepository.findByLsUuid(lsUuid);
-		if (user != null) {
-			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, user);
+		User userToDelete = userRepository.findByLsUuid(lsUuid);
+		if (userToDelete != null) {
+			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete);
+			boolean isModeratorOf = false;
+			if(userToDelete.isGuest()) {
+				isModeratorOf = isModeratorAdmin(actor, (Guest) userToDelete);
+			}
 			logger.debug("Has right ? : " + hasRightToDeleteThisUser);
-			if (!hasRightToDeleteThisUser) {
+			if(hasRightToDeleteThisUser || isModeratorOf) {
+				setUserToDestroy(actor, userToDelete);
+			} else {
 				throw new BusinessException(
 						BusinessErrorCode.CANNOT_DELETE_USER, "The user "
 								+ lsUuid
 								+ " cannot be deleted, he is not a guest, or "
 								+ actor.getAccountRepresentation()
 								+ " is not an admin");
-			} else {
-				setUserToDestroy(actor, user);
 			}
-			return user;
+			return userToDelete;
 		} else {
 			logger.debug("User not found in DB : " + lsUuid);
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "User not found in DB : " + lsUuid);
 		}
+	}
+
+
+	private boolean isModeratorAdmin(Account actor, Guest guest) {
+		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, guest);
+		return (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) ? true : false;
 	}
 
 	@Override
