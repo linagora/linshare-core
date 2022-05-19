@@ -341,6 +341,8 @@ public class UserServiceImpl implements UserService {
 			// Delete all Jwt Long Time tokens owned by this user
 			deleteAllJwtLongTime(actor, userToDelete);
 
+			recipientFavouriteRepository.deleteFavoritesOfUser(userToDelete);
+
 			userRepository.purge(userToDelete);
 
 //			AKO : To think about, logical delete, delete, physical delete staging for delete...

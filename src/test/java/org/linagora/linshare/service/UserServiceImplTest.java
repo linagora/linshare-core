@@ -35,8 +35,12 @@
  */
 package org.linagora.linshare.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -66,6 +70,7 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.Policy;
+import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
@@ -79,6 +84,7 @@ import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
@@ -156,6 +162,9 @@ public class UserServiceImplTest {
 
 	@Autowired
 	private GuestService guestService;
+
+	@Autowired
+	private RecipientFavouriteRepository recipientFavouriteRepository;
 
 	private User john;
 
@@ -991,5 +1000,28 @@ public class UserServiceImplTest {
 				lastName, restricted, canCreateGuest, canUpload, role, type, container);
 		Assertions.assertEquals(1, usersByMail.getTotalElements());
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void purgeShouldDeleteRecipientFavourite() {
+		// Given
+		AbstractDomain domain = abstractDomainRepository.findById(LinShareTestConstants.TOP_DOMAIN);
+		String recipientEmail = "userToBePurged@linshare.org";
+		User user = new Internal("", "Fischer", recipientEmail, null);
+		user.setCmisLocale(domain.getDefaultTapestryLocale().toString());
+		user.setDomain(domain);
+		userRepository.create(user);
+
+		RecipientFavourite recipientFavourite = new RecipientFavourite(user, recipientEmail, Date.from(Instant.now()));
+		recipientFavouriteRepository.create(recipientFavourite);
+
+		assertThat(recipientFavouriteRepository.existFavourite(user, recipientEmail)).isTrue();
+
+		// When
+		userService.deleteUser(root, user.getLsUuid());
+		userService.purge(root, user.getLsUuid());
+
+		// Then
+		assertThat(recipientFavouriteRepository.existFavourite(user, recipientEmail)).isFalse();
 	}
 }
