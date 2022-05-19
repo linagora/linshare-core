@@ -36,8 +36,16 @@
 
 package org.linagora.linshare.core.rac.impl;
 
-import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import java.util.Optional;
+
+import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.ModeratorBusinessService;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
+import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.rac.ModeratorResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -45,51 +53,121 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 public class ModeratorResourceAccessControlImpl extends AbstractResourceAccessControlImpl<Account, Account, Moderator>
 		implements ModeratorResourceAccessControl {
 
-	private DomainPermissionBusinessService domainPermissionService;
+	private ModeratorBusinessService moderatorBusinessService;
 
 	public ModeratorResourceAccessControlImpl(
 			FunctionalityReadOnlyService functionalityService,
-			DomainPermissionBusinessService domainPermissionService) {
+			ModeratorBusinessService moderatorBusinessService) {
 		super(functionalityService);
-		this.domainPermissionService = domainPermissionService;
+		this.moderatorBusinessService = moderatorBusinessService;
 	}
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return true;
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.GUESTS_MODERATOR_GET);
+		} else if (actor.isInternal()) {
+			if (entry.getGuest().getDomain().isManagedBy(actor)) {
+				return true;
+			}
+			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry.getGuest());
+			if (moderator.isPresent()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return true;
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.GUESTS_MODERATOR_LIST);
+		} else if (actor.isInternal()) {
+			Validate.notNull(opt[0], "Guest should be set.");
+			Guest guest = (Guest) opt[0];
+			if (guest.getDomain().isManagedBy(actor)) {
+				return true;
+			}
+			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, guest);
+			if (moderator.isPresent()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return true;
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
+					TechnicalAccountPermissionType.GUESTS_MODERATOR_DELETE);
+		} else if (actor.isInternal()) {
+			if (entry.getGuest().getDomain().isManagedBy(actor)) {
+				return true;
+			}
+			if (!guestFunctionalityStatus(actor.getDomain())) {
+				return false;
+			}
+			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry.getGuest());
+			if (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return true;
-	}
-
-	private boolean checkAdminFor(Account authUser, Account actor, Moderator entry) {
-		if(actor.hasAdminRole()) {
-			return domainPermissionService.isAdminForThisUser(actor, entry.getGuest());
-		}
-		if(authUser.equals(actor)) {
-			return true;
-		}
-		if (actor.getLsUuid().equals(entry.getAccount().getLsUuid())) {
-			return true;
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.GUESTS_MODERATOR_CREATE);
+		} else if (actor.isInternal()) {
+			if (entry.getGuest().getDomain().isManagedBy(actor)) {
+				return true;
+			}
+			if (!guestFunctionalityStatus(actor.getDomain())) {
+				return false;
+			}
+			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry.getGuest());
+			if (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) {
+				return true;
+			}
+			// The guest creator is automatically its first moderator with ADMIN role, we
+			// will return true if `onGuestCreation` status is true
+			Boolean onGuestCreation = (Boolean) opt[0];
+			if (onGuestCreation) {
+				return true;
+			}
 		}
 		return false;
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, Moderator entry, Object... opt) {
-		return true;
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.GUESTS_MODERATOR_UPDATE);
+		} else if (actor.isInternal()) {
+			if (entry.getGuest().getDomain().isManagedBy(actor)) {
+				return true;
+			}
+			if (!guestFunctionalityStatus(actor.getDomain())) {
+				return false;
+			}
+			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry.getGuest());
+			if (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean guestFunctionalityStatus(AbstractDomain domain) {
+		Functionality guestFunctionality = functionalityService.getGuests(domain);
+		boolean status = guestFunctionality
+				.getActivationPolicy().getStatus();
+		if (!status) {
+			logger.warn("guest functionality is disabled.");
+		}
+		return status;
 	}
 
 	@Override

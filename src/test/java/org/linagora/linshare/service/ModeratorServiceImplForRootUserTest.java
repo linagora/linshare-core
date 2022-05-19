@@ -120,7 +120,7 @@ public class ModeratorServiceImplForRootUserTest {
 	@Test
 	public void testCreateModerator() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Moderator moderator = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest));
+		Moderator moderator = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest), false);
 		assertThat(moderator).isNotNull();
 		assertThat(moderator.getAccount()).isEqualTo(john);
 		assertThat(moderator.getGuest()).isEqualTo(guest);
@@ -132,7 +132,7 @@ public class ModeratorServiceImplForRootUserTest {
 	@Test
 	public void testFindModerator() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Moderator moderatorToCreate = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest));
+		Moderator moderatorToCreate = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest), false);
 		assertThat(moderatorToCreate).isNotNull();
 		assertThat(moderatorToCreate.getAccount()).isEqualTo(john);
 		assertThat(moderatorToCreate.getGuest()).isEqualTo(guest);
@@ -146,7 +146,7 @@ public class ModeratorServiceImplForRootUserTest {
 	@Test
 	public void testDeleteModerator() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Moderator moderator = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest));
+		Moderator moderator = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest), false);
 		assertThat(moderator).isNotNull();
 		assertThat(moderator.getAccount()).isEqualTo(john);
 		assertThat(moderator.getGuest()).isEqualTo(guest);
@@ -166,11 +166,11 @@ public class ModeratorServiceImplForRootUserTest {
 	@Test
 	public void testFindModeratorsByGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Moderator moderator1 = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest));
+		Moderator moderator1 = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, john, guest), false);
 		assertThat(moderator1).isNotNull();
 		assertThat(moderator1.getAccount()).isEqualTo(john);
 		assertThat(moderator1.getGuest()).isEqualTo(guest);
-		Moderator moderator2 = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, jane, guest));
+		Moderator moderator2 = moderatorService.create(root, root, new Moderator(ModeratorRole.ADMIN, jane, guest), false);
 		assertThat(moderator2).isNotNull();
 		assertThat(moderator2.getAccount()).isEqualTo(jane);
 		assertThat(moderator2.getGuest()).isEqualTo(guest);

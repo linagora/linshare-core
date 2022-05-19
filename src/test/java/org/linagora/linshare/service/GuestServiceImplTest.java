@@ -552,7 +552,7 @@ public class GuestServiceImplTest {
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner2, owner2, guest, null);
 		Moderator moderator = new Moderator(ModeratorRole.ADMIN, owner3, guest);
-		moderator = moderatorService.create(root, guest, moderator);
+		moderator = moderatorService.create(root, guest, moderator, true);
 		assertThat(moderator).isNotNull();
 		guest.setFirstName("First");
 		guest.setLastName("Last");
@@ -569,7 +569,7 @@ public class GuestServiceImplTest {
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner2, owner2, guest, null);
 		Moderator moderator = new Moderator(ModeratorRole.ADMIN, owner3, guest);
-		moderator = moderatorService.create(root, guest, moderator);
+		moderator = moderatorService.create(root, guest, moderator, true);
 		assertThat(moderator).isNotNull();
 		List<Moderator> moderators = moderatorService.findAllByGuest(owner2, owner2, guest.getLsUuid(), null, null);
 		assertThat(moderators.size()).isEqualTo(2);

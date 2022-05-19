@@ -90,11 +90,7 @@ public class GuestResourceAccessControlImpl extends
 			Guest entry, Object... opt) {
 		if (authUser.hasDelegationRole())
 			return hasPermission(authUser, TechnicalAccountPermissionType.GUESTS_GET);
-		if (authUser.isInternal() || authUser.isGuest()) {
-			return true;
-		}
-		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry);
-		if (moderator.isPresent()) {
+		if (actor.isInternal() || actor.isGuest()) {
 			return true;
 		}
 		return false;
@@ -107,17 +103,13 @@ public class GuestResourceAccessControlImpl extends
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_LIST);
 		} 
-		if (authUser.isInternal()) {
+		if (actor.isInternal()) {
 			/* Is it usefull to check if the current authUser is an internal ?
 			 * Only internals have the right to create guests.
 			*/
 			if (authUser.equals(actor)) {
 				return true;
 			}
-		}
-		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry);
-		if (moderator.isPresent()) {
-			return true;
 		}
 		return false;
 	}
@@ -128,15 +120,16 @@ public class GuestResourceAccessControlImpl extends
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_DELETE);
-		} else if (authUser.isInternal()) {
-			if (entry.getOwner().equals(actor)) {
+		} else if (actor.isInternal()) {
+			if (entry.getDomain().isManagedBy(actor)) {
 				return true;
 			}
-			if (isActorAdminModeratorOfTheGuest(actor, entry)) {
-				return true;
-			}
-			if (!entry.getDomain().isManagedBy(authUser)) {
+			if (!guestFunctionalityStatus(actor.getDomain())) {
 				return false;
+			}
+			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry);
+			if (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) {
+				return true;
 			}
 		}
 		return false;
@@ -170,23 +163,19 @@ public class GuestResourceAccessControlImpl extends
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_UPDATE);
-		} else if (authUser.isInternal()) {
-			if (entry.getOwner().equals(actor)) {
+		} else if (actor.isInternal()) {
+			if (entry.getDomain().isManagedBy(actor)) {
 				return true;
 			}
-			if (isActorAdminModeratorOfTheGuest(actor, entry)) {
-				return true;
-			}
-			if (!entry.getDomain().isManagedBy(authUser)) {
+			if (!guestFunctionalityStatus(actor.getDomain())) {
 				return false;
+			}
+			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry);
+			if (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) {
+				return true;
 			}
 		}
 		return false;
-	}
-
-	private boolean isActorAdminModeratorOfTheGuest(Account actor, Guest guest) {
-		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, guest);
-		return (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) ? true : false;
 	}
 
 	private boolean guestFunctionalityStatus(AbstractDomain domain) {

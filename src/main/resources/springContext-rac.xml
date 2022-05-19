@@ -107,6 +107,5 @@
 
 	<bean name="moderatorResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ModeratorResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 </beans>

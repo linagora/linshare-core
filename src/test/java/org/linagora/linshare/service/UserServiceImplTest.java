@@ -80,6 +80,7 @@ import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
 import org.linagora.linshare.core.service.UserService;
@@ -146,6 +147,9 @@ public class UserServiceImplTest {
 
 	@Autowired
 	private DomainAccessPolicyRepository domainAccessRepository;
+
+	@Autowired
+	private FunctionalityService functionalityService;
 
 	@Autowired
 	private UserService2 userService2;
@@ -500,8 +504,15 @@ public class UserServiceImplTest {
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guestDomain.setDefaultTapestryLocale(SupportedLanguage.fromTapestryLocale("en"));
 
+		Functionality functionality = functionalityService.find(
+				root, LoadingServiceTestDatas.sqlSubDomain,
+				FunctionalityNames.GUESTS.toString());
+		functionality.getActivationPolicy().setStatus(true);
+		functionalityService.update(root, LoadingServiceTestDatas.sqlSubDomain,
+				functionality);
+
 		// create guest
-		Guest guest = new Guest("Foo", "Bar", "user3@linshare.org");
+		Guest guest = new Guest("Foo", "Bar", "user1@linpki.org");
 
 		guest.setDomain(abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
@@ -509,7 +520,9 @@ public class UserServiceImplTest {
 		guest.setRestricted(true);
 		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setCmisLocale("en");
-		guest = guestRepository.create(guest);
+		List<String> contacts = Lists.newArrayList();
+		contacts.add("user1@linshare.org");
+		guest = guestService.create(user1, user1, guest, contacts);
 
 		Assertions.assertTrue(guest.isRestricted());
 		guest.setRestricted(false);
@@ -522,10 +535,10 @@ public class UserServiceImplTest {
 	public void testAddGuestContactRestriction() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AbstractDomain rootDomain = abstractDomainRepository
+		AbstractDomain subDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlSubDomain);
 		User user1 = new Internal("John", "Doe", "user1@linpki.org", null);
-		user1.setDomain(rootDomain);
+		user1.setDomain(subDomain);
 		user1.setCanCreateGuest(true);
 		user1.setCmisLocale("en");
 		user1 = userService.saveOrUpdateUser(user1);
@@ -534,6 +547,13 @@ public class UserServiceImplTest {
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guestDomain.setDefaultTapestryLocale(SupportedLanguage.fromTapestryLocale("en"));
 
+		Functionality functionality = functionalityService.find(
+				root, LoadingServiceTestDatas.sqlSubDomain,
+				FunctionalityNames.GUESTS.toString());
+		functionality.getActivationPolicy().setStatus(true);
+		functionalityService.update(root, LoadingServiceTestDatas.sqlSubDomain,
+				functionality);
+	
 		// create guest
 		Guest guest2 = new Guest("Jane", "Smith", "user2@linpki.org");
 		guest2.setDomain(abstractDomainRepository
@@ -542,7 +562,7 @@ public class UserServiceImplTest {
 		guest2.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest2.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest2.setCmisLocale("en");
-		guest2 = guestRepository.create(guest2);
+		guest2 = guestService.create(user1, user1, guest2, null);
 
 		// create guest
 		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
@@ -550,12 +570,13 @@ public class UserServiceImplTest {
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 
 		guest.setOwner(user1);
-		guest.setRestricted(true);
+		guest.setRestricted(false);
 		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setCmisLocale(guestDomain.getDefaultTapestryLocale().toString());
-		guest = guestRepository.create(guest);
+		guest = guestService.create(user1, user1, guest, null);
 
+		guest.setRestricted(true);
 		List<String> contacts = Lists.newArrayList();
 		contacts.add("user1@linshare.org");
 		guestService.update(user1, user1, guest, contacts);

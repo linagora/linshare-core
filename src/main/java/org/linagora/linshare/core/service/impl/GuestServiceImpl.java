@@ -257,7 +257,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)actor, create, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
 		notifierService.sendNotification(mail);
-		moderatorService.create(authUser, actor, new Moderator(org.linagora.linshare.core.domain.constants.ModeratorRole.ADMIN, actor, create));
+		// we need a boolean onguestCreation to be passed into the moderator rac
+		Boolean onGuestCreation = true;
+		Moderator moderator = new Moderator(org.linagora.linshare.core.domain.constants.ModeratorRole.ADMIN, actor, create);
+		moderatorService.create(authUser, actor, moderator, onGuestCreation);
 		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, actor, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
 		List<String> moderatorUuids = accountRepository.findAllModeratorUuidsByGuest(create);
 		log.addRelatedAccounts(moderatorUuids);

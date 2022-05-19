@@ -90,7 +90,8 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 		Account account = accountService.findAccountByLsUuid(dto.getAccount().getUuid());
 		Guest guest = (Guest) accountService.findAccountByLsUuid(dto.getGuest().getUuid());
 		checkGuest(guestUuid, guest.getLsUuid());
-		Moderator moderator = moderatorService.create(authUser, actor, dto.toModeratorObject(dto, account, guest));
+		boolean onGuestCreation = false;
+		Moderator moderator = moderatorService.create(authUser, actor, dto.toModeratorObject(dto, account, guest), onGuestCreation);
 		return ModeratorDto.from(moderator);
 	}
 

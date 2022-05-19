@@ -43,7 +43,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 
 public interface ModeratorService {
 
-	Moderator create(Account authUser, Account actor, Moderator moderator);
+	Moderator create(Account authUser, Account actor, Moderator moderator, boolean onGuestCreation);
 
 	Moderator find(Account authUser, Account actor, String uuid);
 
