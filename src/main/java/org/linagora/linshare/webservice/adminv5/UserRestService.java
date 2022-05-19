@@ -39,10 +39,12 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 
 public interface UserRestService {
@@ -74,4 +76,6 @@ public interface UserRestService {
 	SecondFactorDto delete2FA(String uuid, String secondfaUuid, SecondFactorDto dto) throws BusinessException;
 
 	UserDtoQuotaDto updateUserQuota(String userUuid, String quotaUuid, UserDtoQuotaDto dto) throws BusinessException;
+
+	List<GuestDto> findAllUserGuests(String uuid, ModeratorRole role, String pattern) throws BusinessException;
 }

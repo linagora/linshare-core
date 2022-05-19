@@ -34,12 +34,15 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -57,6 +60,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -350,6 +354,20 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_SECOND_FACTOR_FORBIDEN,
 					"Not allowed to perform this action");
 		}
+	}
+
+	@Override
+	public List<GuestDto> findAllUserGuests(String actorUuid, String uuid, ModeratorRole role, String pattern) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notEmpty(uuid, "User's uuid should be set.");
+		Account user = userService2.find(authUser, actor, uuid);
+		checkAdminPermission(authUser, user);
+		org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole moderatorRole = (Objects.nonNull(role))
+				? ModeratorRole.toModeratorRole(role)
+				: null;
+		List<Guest> guests = guestService.findAll(authUser, user, pattern, moderatorRole);
+		return guests.stream().map(GuestDto.toDto()).collect(Collectors.toUnmodifiableList());
 	}
 
 }

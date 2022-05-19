@@ -555,7 +555,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> findAll(User authUser, User actor, String pattern, ModeratorRole moderatorRole) {
+	public List<Guest> findAll(Account authUser, Account actor, String pattern, ModeratorRole moderatorRole) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, Guest.class, BusinessErrorCode.GUEST_FORBIDDEN, null);
 		List<Guest> guests = Lists.newArrayList();

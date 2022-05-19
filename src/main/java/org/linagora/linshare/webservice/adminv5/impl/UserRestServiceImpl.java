@@ -50,6 +50,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -57,6 +58,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.webservice.adminv5.UserRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
@@ -300,5 +302,22 @@ public class UserRestServiceImpl implements UserRestService {
 			UserDtoQuotaDto dto
 			) throws BusinessException {
 		return userFacade.updateUserQuota(null, userUuid, quotaUuid, dto);
+	}
+
+	@Path("/{uuid}/guests")
+	@GET
+	@Operation(summary = "Find a user.", responses = {
+		@ApiResponse(content = @Content(schema = @Schema(implementation = UserDto.class)), responseCode = "200")
+	})
+	@Override
+	public List<GuestDto> findAllUserGuests(
+			@Parameter(description = "The admin can find all user's guests.", required = true)
+				@PathParam("uuid") String uuid,
+			@Parameter(description = "The admin can filter the users' guests by moderator role.", required = false)
+				@QueryParam("role") ModeratorRole role,
+			@Parameter(description = "The list of returned guests will be filtered by the entered patten if not null.", required = false)
+				@QueryParam("pattern") String pattern)
+			throws BusinessException {
+		return userFacade.findAllUserGuests(null, uuid, role, pattern);
 	}
 }

@@ -174,6 +174,6 @@ public interface GuestService {
 
 	SystemAccount getGuestSystemAccount();
 
-	List<Guest> findAll(User authUser, User actor, String pattern,
+	List<Guest> findAll(Account authUser, Account actor, String pattern,
 			org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole moderatorRole);
 }
