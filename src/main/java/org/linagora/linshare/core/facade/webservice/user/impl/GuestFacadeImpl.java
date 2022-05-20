@@ -45,19 +45,23 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestModeratorRole;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.impl.ModeratorServiceImpl;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.DomainMto;
@@ -74,8 +78,10 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	private final GuestService guestService;
 
 	private final UserService userService;
-	
+
 	private final PasswordService passwordService;
+
+	private final ModeratorServiceImpl moderatorService;
 
 	private final MongoTemplate mongoTemplate;
 
@@ -83,30 +89,32 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 			final GuestService guestService,
 			UserService userService,
 			PasswordService passwordService,
+			ModeratorServiceImpl moderatorService,
 			MongoTemplate mongoTemplate) {
 		super(accountService);
 		this.guestService = guestService;
 		this.userService = userService;
 		this.passwordService = passwordService;
+		this.moderatorService = moderatorService;
 		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
-	public List<GuestDto> findAll(String pattern, ModeratorRole moderatorRole)
+	public List<GuestDto> findAll(Integer version, String pattern, ModeratorRole moderatorRole)
 			throws BusinessException {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, null);
 		List<Guest> guests = guestService.findAll(authUser, actor, pattern, moderatorRole);
-		return toDtoList(guests);
+		return toDtoList(version, authUser, actor, guests);
 	}
 
-	private List<GuestDto> toDtoList(List<Guest> guests) {
+	private List<GuestDto> toDtoList(Integer version, Account authUser, Account actor, List<Guest> guests) {
 		List<GuestDto> guestsWithOwners = Lists.newArrayList();
 		for (Guest guest : guests) {
 			GuestDto dto = GuestDto.getSimple(guest);
-			GenericUserDto guestOwnerFromAudit = getGuestOwner(guest.getLsUuid());
-			dto.setOwner(guestOwnerFromAudit);
-			guestsWithOwners.add(dto);
+			guestsWithOwners.add(
+				addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto)
+			);
 		}
 		return guestsWithOwners;
 	}
@@ -135,6 +143,10 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		return new GenericUserDto(owner);
 	}
 
+	/**
+	 * Only used by delegation api. to be removed
+	 */
+	@Deprecated
 	@Override
 	public GuestDto find(String actorUuid, String domain, String mail)
 			throws BusinessException {
@@ -148,6 +160,10 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		return dto;
 	}
 
+	/**
+	 * Only used by delegation api. to be removed
+	 */
+	@Deprecated
 	@Override
 	public List<GuestDto> findAll(String actorUuid) throws BusinessException {
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
@@ -162,25 +178,29 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	}
 
 	@Override
-	public List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException {
+	public List<GuestDto> search(Integer version, UserSearchDto userSearchDto) throws BusinessException {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, null);
 		List<Guest> guests = guestService.search(authUser, actor, userSearchDto.getFirstName(),
 				userSearchDto.getLastName(), userSearchDto.getMail(), true);
-		return toDtoList(guests);
+		return toDtoList(version, authUser, actor, guests);
 	}
 
 	@Override
-	public GuestDto find(String actorUuid, String uuid) throws BusinessException {
+	public GuestDto find(Integer version, String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "guest uuid is required");
 		User authUser = checkAuthentication();
-		return GuestDto.getFull(guestService.find(authUser, authUser, uuid));
+		User actor = getActor(authUser, null);
+		Guest guest = guestService.find(authUser, actor, uuid);
+		GuestDto dto = GuestDto.getFull(guest);
+		return addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
 	@Override
-	public GuestDto create(String actorUuid, GuestDto guestDto) throws BusinessException {
+	public GuestDto create(Integer version, String actorUuid, GuestDto guestDto) throws BusinessException {
 		Validate.notNull(guestDto, "guest dto is required");
 		User authUser = checkAuthentication();
+		User actor = getActor(authUser, null);
 		Guest guest = guestDto.toUserObject();
 		List<String> ac = null;
 		if (guest.isRestricted()) {
@@ -192,32 +212,31 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 			}
 		}
 		GuestDto dto = GuestDto.getFull(guestService.create(authUser, authUser, guest, ac));
-		dto.setOwner(getGuestOwner(guest.getLsUuid()));
-		return dto;
+		return addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
 	@Override
-	public GuestDto update(String actorUuid, GuestDto dto, String uuid) throws BusinessException {
-		Validate.notNull(dto, "guest dto is required");
+	public GuestDto update(Integer version, String actorUuid, GuestDto dtoIn, String uuid) throws BusinessException {
+		Validate.notNull(dtoIn, "guest dto is required");
 		if (!Strings.isNullOrEmpty(uuid)) {
-			dto.setUuid(uuid);
+			dtoIn.setUuid(uuid);
 		}
-		Validate.notEmpty(dto.getUuid(), "guest uuid is required");
+		Validate.notEmpty(dtoIn.getUuid(), "guest uuid is required");
 		User authUser = checkAuthentication();
-		Guest guest = dto.toUserObject();
+		User actor = getActor(authUser, null);
+		Guest guest = dtoIn.toUserObject();
 		List<String> ac = Lists.newArrayList();
 		if (guest.isRestricted()) {
-			for (GenericUserDto contactDto : dto.getRestrictedContacts()) {
+			for (GenericUserDto contactDto : dtoIn.getRestrictedContacts()) {
 				ac.add(contactDto.getMail());
 			}
 		}
-		GuestDto guestDto = GuestDto.getFull(guestService.update(authUser, authUser, guest, ac));
-		guestDto.setOwner(getGuestOwner(guest.getLsUuid()));
-		return guestDto;
+		GuestDto dto = GuestDto.getFull(guestService.update(authUser, authUser, guest, ac));
+		return addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
 	@Override
-	public GuestDto delete(String actorUuid, GuestDto guestDto, String uuid) throws BusinessException {
+	public GuestDto delete(Integer version, String actorUuid, GuestDto guestDto, String uuid) throws BusinessException {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		if (Strings.isNullOrEmpty(uuid)) {
@@ -227,7 +246,18 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		}
 		Guest guest = guestService.delete(authUser, actor, uuid);
 		GuestDto dto = GuestDto.getSimple(guest);
+		return addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
+	}
+
+	private GuestDto addOwnerAndModeratorRoletoGuestDto(Integer version, Account authUser, Account actor, Guest guest, GuestDto dto) {
 		dto.setOwner(getGuestOwner(guest.getLsUuid()));
+		if(version >= 5) {
+			dto.setMyRole(GuestModeratorRole.NONE);
+			Optional<Moderator> moderator = moderatorService.findByActorAndGuest(authUser, actor, guest.getLsUuid());
+			if (moderator.isPresent()) {
+				dto.setMyModeratorRole(moderator.get().getRole());
+			}
+		}
 		return dto;
 	}
 

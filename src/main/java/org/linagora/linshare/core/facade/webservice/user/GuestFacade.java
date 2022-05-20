@@ -47,21 +47,21 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
 public interface GuestFacade extends GenericFacade {
 
-	List<GuestDto> findAll(String pattern, ModeratorRole moderatorRole) throws BusinessException;
+	List<GuestDto> findAll(Integer version, String pattern, ModeratorRole moderatorRole) throws BusinessException;
 
 	List<GuestDto> findAll(String actorUuid) throws BusinessException;
 
-	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
+	List<GuestDto> search(Integer version, UserSearchDto userSearchDto) throws BusinessException;
 
-	GuestDto find(String actorUuid, String uuid) throws BusinessException;
+	GuestDto find(Integer version, String actorUuid, String uuid) throws BusinessException;
 
 	GuestDto find(String actorUuid, String domain, String mail) throws BusinessException;
 
-	GuestDto create(String actorUuid, GuestDto dto) throws BusinessException;
+	GuestDto create(Integer version, String actorUuid, GuestDto dto) throws BusinessException;
 
-	GuestDto update(String actorUuid, GuestDto dto, String uuid) throws BusinessException;
+	GuestDto update(Integer version, String actorUuid, GuestDto dto, String uuid) throws BusinessException;
 
-	GuestDto delete(String actorUuid, GuestDto dto, String uuid) throws BusinessException;
+	GuestDto delete(Integer version, String actorUuid, GuestDto dto, String uuid) throws BusinessException;
 
 	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
 

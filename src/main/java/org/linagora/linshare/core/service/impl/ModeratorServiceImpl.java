@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
@@ -126,6 +127,18 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		Validate.notEmpty(uuid, "Moderator uuid must be set.");
 		Moderator moderator = moderatorBusinessService.find(uuid);
 		checkReadPermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_GET, moderator);
+		return moderator;
+	}
+
+	@Override
+	public Optional<Moderator> findByActorAndGuest(Account authUser, Account actor, String guestUuid) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(guestUuid, "Guest uuid must be set.");
+		Guest guest = this.guestBusinessService.findByLsUuid(guestUuid);
+		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, guest);
+		if (moderator.isPresent()) {
+			checkReadPermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_GET, moderator.get());
+		}
 		return moderator;
 	}
 

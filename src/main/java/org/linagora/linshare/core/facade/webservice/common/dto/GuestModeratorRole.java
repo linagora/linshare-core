@@ -31,37 +31,26 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-import java.util.List;
-import java.util.Optional;
 
-import org.linagora.linshare.core.domain.constants.ModeratorRole;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.Moderator;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
+public enum GuestModeratorRole {
 
-public interface ModeratorService {
+	ADMIN, SIMPLE, NONE;
 
-	Moderator create(Account authUser, Account actor, Moderator moderator, boolean onGuestCreation);
+	public static GuestModeratorRole fromString(String s) {
+		try {
+			return GuestModeratorRole.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException("Doesn't match an existing moderator role.");
+		}
+	}
 
-	Moderator find(Account authUser, Account actor, String uuid);
-
-	/**
-	 * It will return the Moderator instance for the current actor and guest.
-	 * @param authUser
-	 * @param actor
-	 * @param guestUuid
-	 * @return
-	 */
-	Optional<Moderator> findByActorAndGuest(Account authUser, Account actor, String guestUuid);
-
-	Moderator update(Account authUser, Account actor, Moderator moderator, ModeratorDto dto);
-
-	Moderator delete(Account authUser, Account actor, Moderator moderator);
-
-	List<Moderator> deleteAllModerators(Account authUser, Account actor, List<Moderator> moderators, Guest guest);
-
-	List<Moderator> findAllByGuest(Account authUser, Account actor, String guestUuid, ModeratorRole role, String pattern);
+	public static org.linagora.linshare.core.domain.constants.ModeratorRole toModeratorRole(GuestModeratorRole dto) {
+		try {
+			return org.linagora.linshare.core.domain.constants.ModeratorRole.valueOf(dto.toString());
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException("Doesn't match an existing moderator role.");
+		}
+	}
 }

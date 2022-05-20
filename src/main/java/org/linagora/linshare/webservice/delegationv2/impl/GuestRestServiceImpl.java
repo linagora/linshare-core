@@ -91,7 +91,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 				@PathParam("actorUuid") String actorUuid,
 			@Parameter(description = "Guest to create.", required = true) GuestDto guest)
 					throws BusinessException {
-		return guestFacade.create(actorUuid, guest);
+		return guestFacade.create(2, actorUuid, guest);
 	}
 
 	@Path("/{identifier}")
@@ -112,7 +112,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 		if (isMail) {
 			return guestFacade.find(actorUuid, domain, identifier);
 		}
-		return guestFacade.find(actorUuid, identifier);
+		return guestFacade.find(2, actorUuid, identifier);
 	}
 
 	@Path("/{identifier}")
@@ -133,7 +133,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 		if (isMail) {
 			guestFacade.find(actorUuid, domain, identifier);
 		}
-		guestFacade.find(actorUuid, identifier);
+		guestFacade.find(2, actorUuid, identifier);
 	}
 
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -169,7 +169,7 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 			@Parameter(description = "The guest uuid.", required = true)
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return guestFacade.update(actorUuid, guest, uuid);
+		return guestFacade.update(2, actorUuid, guest, uuid);
 	}
 
 	@Path("/{uuid: .*}")
@@ -188,6 +188,6 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 			@Parameter(description = "The guest uuid.", required = true)
 				@PathParam("uuid") String uuid)
 					throws BusinessException {
-		return guestFacade.delete(actorUuid, guest, uuid);
+		return guestFacade.delete(2, actorUuid, guest, uuid);
 	}
 }

@@ -40,14 +40,17 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 @XmlRootElement(name = "Guest")
 @Schema(name = "Guest", description = "")
@@ -79,6 +82,10 @@ public class GuestDto extends AccountDto {
 
 	@Schema(description = "Owner")
 	protected GenericUserDto owner;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@Schema(description = "My moderator role for this guest.", accessMode = AccessMode.READ_ONLY)
+	protected GuestModeratorRole myRole;
 
 	public GuestDto() {
 		super();
@@ -239,6 +246,14 @@ public class GuestDto extends AccountDto {
 		this.owner = owner;
 	}
 
+	public GuestModeratorRole getMyRole() {
+		return myRole;
+	}
+
+	public void setMyRole(GuestModeratorRole myRole) {
+		this.myRole = myRole;
+	}
+
 	/*
 	 * Transformers
 	 */
@@ -249,5 +264,23 @@ public class GuestDto extends AccountDto {
 				return new GuestDto(arg0, false);
 			}
 		};
+	}
+
+	/**
+	 * Helper
+	 * 
+	 * @param role
+	 */
+	public void setMyModeratorRole(ModeratorRole role) {
+		switch (role) {
+		case ADMIN:
+			this.myRole = GuestModeratorRole.ADMIN;
+			break;
+		case SIMPLE:
+			this.myRole = GuestModeratorRole.SIMPLE;
+			break;
+		default:
+			throw new IllegalArgumentException("Doesn't match an existing role.");
+		}
 	}
 }
