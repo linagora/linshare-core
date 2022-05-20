@@ -131,65 +131,93 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 	@Override
 	public List<AutoCompleteResultDto> search(String pattern, String type, String threadUuid) throws BusinessException {
 		User authUser = checkAuthentication();
-		if (pattern.length() > 2) {
-			List<AutoCompleteResultDto> result = Lists.newArrayList();
-			SearchType enumType = SearchType.fromString(type);
-			if (enumType.equals(SearchType.SHARING)) {
-				List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
-				int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
-				Set<UserDto> userList = findUser(pattern);
-				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
-				result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
-				// TODO : Fix this dirty hack ! :(
-				List<RecipientFavourite> favouriteRecipeints = favourite.findMatchElementsOrderByWeight(pattern, authUser, FAVOURTITE_RECIPIENT_LIMIT);
-				int range2 = (favouriteRecipeints.size() < AUTO_COMPLETE_LIMIT ? favouriteRecipeints.size() : AUTO_COMPLETE_LIMIT);
-				result.addAll(ImmutableList.copyOf(Lists.transform(favouriteRecipeints.subList(0, range2), AutoCompleteResultDto.toRFDto())));
-			} else if (enumType.equals(SearchType.USERS)) {
-				Set<UserDto> userList = findUser(pattern);
-				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
-			} else if (enumType.equals(SearchType.THREAD_MEMBERS)) {
-				Validate.notEmpty(threadUuid, "You must fill threadUuid query parameter.");
-				List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
-				int rangeContactList = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
-				result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, rangeContactList), ListAutoCompleteResultDto.toDto())));
-				List<User> users = userService.autoCompleteUser(authUser, pattern);
-				int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
-				for (User user : users.subList(0, range)) {
-					User account = userService.findOrCreateUser(user.getMail(), user.getDomainId());
-					SharedSpaceMember member = null;
-					try {
-						member = ssMemberService.findMemberByAccountUuid(authUser, authUser, account.getLsUuid(), threadUuid);
-					} catch (BusinessException e) {
-						logger.debug(String.format("Thes account %s is not yet a member of this SharedSpace %s",
-								account.getAccountRepresentation(), threadUuid));
-					}
-					if (member == null) {
-						result.add(new ThreadMemberAutoCompleteResultDto(account));
-					} else {
-						result.add(new ThreadMemberAutoCompleteResultDto(member, account));
-					}
-				}
-			} else if (enumType.equals(SearchType.UPLOAD_REQUESTS)) {
-				List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
-				int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
-				Set<UserDto> userList = findUser(pattern);
-				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
-				result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
-			} else if (enumType.equals(SearchType.WORKGROUP_MEMBERS)) {
-				List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocompleteOnActiveMembers(authUser, authUser, threadUuid, pattern);
-				int range = (autocomplete.size() < AUTO_COMPLETE_LIMIT ? autocomplete.size() : AUTO_COMPLETE_LIMIT);
-				result.addAll(autocomplete.subList(0, range));
-			} else if (enumType.equals(SearchType.WORKGROUP_AUTHORS)) {
-				List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocompleteOnAssetAuthor(authUser, authUser, threadUuid, pattern);
-				int range = (autocomplete.size() < AUTO_COMPLETE_LIMIT ? autocomplete.size() : AUTO_COMPLETE_LIMIT);
-				// TODO: How to get author of assets in a workgroup that does not belong to the workgroup anymore ?
-				result.addAll(autocomplete.subList(0, range));
-			} else {
-				throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, "Unexpected search type.");
-			}
-			return result;
-		} else {
+		if (pattern.length() < 3) {
 			throw new BusinessException("Pattern size must be at least tree.");
 		}
+		SearchType enumType = SearchType.fromString(type);
+		switch (enumType) {
+			case SHARING:
+				return searchForSharing(pattern, authUser);
+			case USERS:
+				return searchUsers(pattern);
+			case THREAD_MEMBERS:
+				return searchForThreadMembers(pattern, threadUuid, authUser);
+			case UPLOAD_REQUESTS:
+				return searchForUploadRequests(pattern, authUser);
+			case WORKGROUP_MEMBERS:
+				return searchForWorkgroupMembers(pattern, threadUuid, authUser);
+			case WORKGROUP_AUTHORS:
+				return searchForWorkgroupAuthors(pattern, threadUuid, authUser);
+		default:
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, "Unexpected search type.");
+		}
+	}
+
+	private List<AutoCompleteResultDto> searchForWorkgroupAuthors(String pattern, String threadUuid, User authUser) {
+		List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocompleteOnAssetAuthor(authUser, authUser, threadUuid, pattern);
+		int range = (autocomplete.size() < AUTO_COMPLETE_LIMIT ? autocomplete.size() : AUTO_COMPLETE_LIMIT);
+		// TODO: How to get author of assets in a workgroup that does not belong to the workgroup anymore ?
+		return Lists.newArrayList(autocomplete.subList(0, range));
+	}
+
+	private List<AutoCompleteResultDto> searchForWorkgroupMembers(String pattern, String threadUuid, User authUser) {
+		List<WorkgroupMemberAutoCompleteResultDto> autocomplete = ssMemberService.autocompleteOnActiveMembers(authUser, authUser, threadUuid, pattern);
+		int range = (autocomplete.size() < AUTO_COMPLETE_LIMIT ? autocomplete.size() : AUTO_COMPLETE_LIMIT);
+		return Lists.newArrayList(autocomplete.subList(0, range));
+	}
+
+	private List<AutoCompleteResultDto> searchForUploadRequests(String pattern, User authUser) {
+		List<AutoCompleteResultDto> result = Lists.newArrayList();
+		List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
+		int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
+		Set<UserDto> userList = findUser(pattern);
+		result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
+		result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
+		return result;
+	}
+
+	private List<AutoCompleteResultDto> searchForThreadMembers(String pattern, String threadUuid, User authUser) {
+		List<AutoCompleteResultDto> result = Lists.newArrayList();
+		Validate.notEmpty(threadUuid, "You must fill threadUuid query parameter.");
+		List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
+		int rangeContactList = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
+		result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, rangeContactList), ListAutoCompleteResultDto.toDto())));
+		List<User> users = userService.autoCompleteUser(authUser, pattern);
+		int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
+		for (User user : users.subList(0, range)) {
+			User account = userService.findOrCreateUser(user.getMail(), user.getDomainId());
+			SharedSpaceMember member = null;
+			try {
+				member = ssMemberService.findMemberByAccountUuid(authUser, authUser, account.getLsUuid(), threadUuid);
+			} catch (BusinessException e) {
+				logger.debug(String.format("Thes account %s is not yet a member of this SharedSpace %s",
+						account.getAccountRepresentation(), threadUuid));
+			}
+			if (member == null) {
+				result.add(new ThreadMemberAutoCompleteResultDto(account));
+			} else {
+				result.add(new ThreadMemberAutoCompleteResultDto(member, account));
+			}
+		}
+		return result;
+	}
+
+	private List<AutoCompleteResultDto> searchUsers(String pattern) {
+		Set<UserDto> userList = findUser(pattern);
+		return ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto()));
+	}
+
+	private List<AutoCompleteResultDto> searchForSharing(String pattern, User authUser) {
+		List<AutoCompleteResultDto> result = Lists.newArrayList();
+		List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
+		int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
+		Set<UserDto> userList = findUser(pattern);
+		result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
+		result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
+		// TODO : Fix this dirty hack ! :(
+		List<RecipientFavourite> favouriteRecipeints = favourite.findMatchElementsOrderByWeight(pattern, authUser, FAVOURTITE_RECIPIENT_LIMIT);
+		int range2 = (favouriteRecipeints.size() < AUTO_COMPLETE_LIMIT ? favouriteRecipeints.size() : AUTO_COMPLETE_LIMIT);
+		result.addAll(ImmutableList.copyOf(Lists.transform(favouriteRecipeints.subList(0, range2), AutoCompleteResultDto.toRFDto())));
+		return result;
 	}
 }
