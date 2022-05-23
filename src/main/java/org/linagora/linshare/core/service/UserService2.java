@@ -50,6 +50,8 @@ public interface UserService2 {
 			UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
 			Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container);
 
+	List<User> autoCompleteUser(Account authUser, Account actor, String pattern) throws BusinessException;
+
 	public User find(Account authUser, Account actor, String lsUuid);
 
 	public User update(Account authUser, Account actor, User userToUpdate, String domainId) throws BusinessException;

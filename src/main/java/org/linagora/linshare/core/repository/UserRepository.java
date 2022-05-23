@@ -79,4 +79,8 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
 	PageContainer<T> findAll(AbstractDomain domain, Order sortOrder, String mail, String firstName, String lastName,
 			Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,
 			PageContainer<T> container);
+
+	List<T> autoCompleteUser(List<AbstractDomain> domains, String mail);
+
+	List<T> autoCompleteUser(List<AbstractDomain> domains, String firstName, String lastName);
 } 

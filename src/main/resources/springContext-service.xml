@@ -39,6 +39,7 @@
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="allowedContactRepository" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">

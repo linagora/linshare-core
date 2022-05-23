@@ -43,6 +43,7 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.SearchType;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.User;
@@ -60,6 +61,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ContactListService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.UserService2;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 import com.google.common.collect.ImmutableList;
@@ -73,6 +75,8 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	private final UserService userService;
 
+	private final UserService2 userService2;
+
 	private final ContactListService contactListService;
 
 	private final RecipientFavouriteRepository favourite;
@@ -82,11 +86,13 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 	public AutoCompleteFacadeImpl(final AccountService accountService,
 			final UserService userService,
 			final ContactListService contactListService,
-			RecipientFavouriteRepository favourite,
+			final RecipientFavouriteRepository favourite,
+			final UserService2 userService2,
 			final SharedSpaceMemberService ssMemberService
 			) {
 		super(accountService);
 		this.userService = userService;
+		this.userService2 = userService2;
 		this.contactListService = contactListService;
 		this.favourite = favourite;
 		this.ssMemberService = ssMemberService;
@@ -131,6 +137,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 	@Override
 	public List<AutoCompleteResultDto> search(String pattern, String type, String threadUuid) throws BusinessException {
 		User authUser = checkAuthentication();
+		User actor = this.getActor(authUser, null);
 		if (pattern.length() < 3) {
 			throw new BusinessException("Pattern size must be at least tree.");
 		}
@@ -139,7 +146,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 			case SHARING:
 				return searchForSharing(pattern, authUser);
 			case USERS:
-				return searchUsers(pattern);
+				return searchUsers(authUser, actor, pattern);
 			case THREAD_MEMBERS:
 				return searchForThreadMembers(pattern, threadUuid, authUser);
 			case UPLOAD_REQUESTS:
@@ -202,9 +209,9 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 		return result;
 	}
 
-	private List<AutoCompleteResultDto> searchUsers(String pattern) {
-		Set<UserDto> userList = findUser(pattern);
-		return ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto()));
+	private List<AutoCompleteResultDto> searchUsers(Account authUser, Account actor, String pattern) {
+		List<User> users = userService2.autoCompleteUser(authUser, actor, pattern);
+		return Lists.transform(users, UserAutoCompleteResultDto.toDtoV2());
 	}
 
 	private List<AutoCompleteResultDto> searchForSharing(String pattern, User authUser) {

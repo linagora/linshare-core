@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -59,6 +60,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountRepositoryImpl<U> implements UserRepository<U> {
+
+	final private static int AUTO_COMPLETE_LIMIT = 20;
 
 	public GenericUserRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -184,5 +187,52 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 			detachedCrit.add(Restrictions.in("class", type.toInt()));
 		}
 		return detachedCrit;
+	}
+
+	@Override
+	public List<U> autoCompleteUser(List<AbstractDomain> domains, String mail) {
+		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
+		detachedCrit.add(Restrictions.eq("destroyed", 0L));
+		detachedCrit.add(Restrictions.not(Restrictions.in("class", Lists.newArrayList(AccountType.ROOT.toInt(),
+				AccountType.TECHNICAL_ACCOUNT.toInt()))));
+		if (Objects.nonNull(domains)) {
+			detachedCrit.add(Restrictions.in("domain", domains));
+		}
+		detachedCrit.addOrder(Order.asc("mail"));
+		detachedCrit.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
+		Criteria executableCriteria = detachedCrit.getExecutableCriteria(getCurrentSession());
+		executableCriteria.setMaxResults(AUTO_COMPLETE_LIMIT);
+		@SuppressWarnings("unchecked")
+		List<U> list = listByCriteria(detachedCrit);
+		return list;
+	}
+
+	@Override
+	public List<U> autoCompleteUser(List<AbstractDomain> domains, String firstName, String lastName) {
+		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
+		detachedCrit.add(Restrictions.eq("destroyed", 0L));
+		detachedCrit.add(Restrictions.not(Restrictions.in("class", Lists.newArrayList(AccountType.ROOT.toInt(),
+				AccountType.TECHNICAL_ACCOUNT.toInt()))));
+		if (Objects.nonNull(domains)) {
+			detachedCrit.add(Restrictions.in("domain", domains));
+		}
+		detachedCrit.addOrder(Order.asc("mail"));
+		detachedCrit.add(
+				Restrictions.or(
+					Restrictions.and(
+						Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE),
+						Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE)
+					),
+					Restrictions.and(
+						Restrictions.ilike("firstName", lastName, MatchMode.ANYWHERE),
+						Restrictions.ilike("lastName", firstName, MatchMode.ANYWHERE)
+					)
+				)
+		);
+		Criteria executableCriteria = detachedCrit.getExecutableCriteria(getCurrentSession());
+		executableCriteria.setMaxResults(AUTO_COMPLETE_LIMIT);
+		@SuppressWarnings("unchecked")
+		List<U> list = listByCriteria(detachedCrit);
+		return list;
 	}
 }

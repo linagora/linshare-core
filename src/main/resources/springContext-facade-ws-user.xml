@@ -71,6 +71,7 @@
 	<bean id="wsAutoCompleteFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AutoCompleteFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="userService2" />
 		<constructor-arg ref="contactListService" />
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="sharedSpaceMemberService" />

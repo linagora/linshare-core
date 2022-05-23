@@ -38,6 +38,7 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 import com.google.common.base.Function;
@@ -61,6 +62,14 @@ public class UserAutoCompleteResultDto extends AutoCompleteResultDto {
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.domain = user.getDomain();
+		this.mail = user.getMail();
+	}
+
+	public UserAutoCompleteResultDto(User user) {
+		super(user.getLsUuid(), user.getMail());
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+		this.domain = user.getDomain().getUuid();
 		this.mail = user.getMail();
 	}
 
@@ -103,6 +112,15 @@ public class UserAutoCompleteResultDto extends AutoCompleteResultDto {
 		return new Function<UserDto, UserAutoCompleteResultDto>() {
 			@Override
 			public UserAutoCompleteResultDto apply(UserDto arg0) {
+				return new UserAutoCompleteResultDto(arg0);
+			}
+		};
+	}
+
+	public static Function<User, UserAutoCompleteResultDto> toDtoV2() {
+		return new Function<User, UserAutoCompleteResultDto>() {
+			@Override
+			public UserAutoCompleteResultDto apply(User arg0) {
 				return new UserAutoCompleteResultDto(arg0);
 			}
 		};

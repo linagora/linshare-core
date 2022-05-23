@@ -35,7 +35,10 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.criterion.Order;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -44,6 +47,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
@@ -52,6 +56,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.UserService2;
 import org.linagora.linshare.webservice.utils.PageContainer;
@@ -63,20 +68,24 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 
 	private final UserRepository<User> userRepository;
 
+	private final AllowedContactRepository allowedContactRepository;
+
 	private final UserService userService;
 
-	private final AllowedContactRepository allowedContactRepository;
+	private final AbstractDomainService abstractDomainService;
 
 	public UserService2Impl(
 			AbstractResourceAccessControl<Account, Account, User> rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			UserRepository<User> userRepository,
 			UserService userService,
+			AbstractDomainService abstractDomainService,
 			AllowedContactRepository allowedContactRepository) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.userRepository = userRepository;
 		this.userService = userService;
 		this.allowedContactRepository = allowedContactRepository;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -90,6 +99,34 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 		Order order = checkSortOrderAndField(sortOrder, sortField);
 		return userRepository.findAll(domain, order, mail, firstName, lastName, restricted, canCreateGuest, canUpload,
 				checkedRole, checkedAccountType, container);
+	}
+
+	@Override
+	public List<User> autoCompleteUser(Account authUser, Account actor, String patternStr) throws BusinessException {
+		preChecks(authUser, actor);
+		Pattern pattern = new Pattern(patternStr);
+		if (actor.isGuest()) {
+			// restricted guests must not see all users.
+			Guest guest = (Guest)actor;
+			if (guest.isRestricted()) {
+				List<AllowedContact> contacts;
+				if (pattern.useEmailAsSearchPattern()) {
+					contacts = allowedContactRepository.completeContact(guest, pattern.getMail());
+				} else {
+					contacts = allowedContactRepository.completeContact(guest, pattern.getFirstName(), pattern.getLastName());
+				}
+				return contacts.stream().map(contact -> contact.getContact()).collect(Collectors.toUnmodifiableList());
+			}
+		}
+		List<AbstractDomain> domains = null;
+		if (!actor.isRoot()) {
+			domains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
+		}
+		if (pattern.useEmailAsSearchPattern()) {
+			return userRepository.autoCompleteUser(domains, pattern.getMail());
+		} else {
+			return userRepository.autoCompleteUser(domains, pattern.getFirstName(), pattern.getLastName());
+		}
 	}
 
 	private Order checkSortOrderAndField(SortOrder sortOrder, UserFields sortField) {
@@ -184,5 +221,58 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 		checkDeletePermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, allowedContact.getContact());
 		allowedContactRepository.delete(allowedContact);
 		return allowedContact;
+	}
+
+	private class Pattern {
+		final String pattern;
+		String mail;
+		String firstName;
+		String lastName;
+
+		public Pattern(String pattern) {
+			super();
+			this.pattern = StringUtils.trim(pattern);
+			StringTokenizer stringTokenizer = new StringTokenizer(pattern, " ");
+			if (stringTokenizer.countTokens() <= 1) {
+				this.mail = pattern;
+			} else {
+				if (stringTokenizer.hasMoreTokens()) {
+					firstName = stringTokenizer.nextToken();
+					if (stringTokenizer.hasMoreTokens()) {
+						lastName = stringTokenizer.nextToken();
+					}
+				}
+			}
+		}
+
+		public boolean useEmailAsSearchPattern() {
+			if (lastName == null) {
+				return true;
+			}
+			return false;
+		}
+
+		public String getMail() {
+			return mail;
+		}
+
+		public String getFirstName() {
+			return firstName;
+		}
+
+		public String getLastName() {
+			return lastName;
+		}
+
+		@SuppressWarnings("unused")
+		public String getPattern() {
+			return pattern;
+		}
+
+		@Override
+		public String toString() {
+			return "Pattern [pattern=" + pattern + ", mail=" + mail + ", firstName=" + firstName + ", lastName="
+					+ lastName + ", useEmailAsSearchPattern()=" + useEmailAsSearchPattern() + "]";
+		}
 	}
 }
