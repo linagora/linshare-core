@@ -47,6 +47,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
+import org.linagora.linshare.core.batches.impl.gdpr.GDPRConstants;
 import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -255,6 +256,16 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
 		return list;
+	}
+
+	@Override
+	public List<String> findAllNonAnonymizedPurgedAccounts(Date modificationDate) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("lsUuid"));
+		criteria.add(Restrictions.lt("modificationDate", modificationDate));
+		criteria.add(Restrictions.eq("purgeStep", AccountPurgeStepEnum.PURGED));
+		criteria.add(Restrictions.ne("mail", GDPRConstants.MAIL_ANONYMIZATION));
+		return listByCriteria(criteria);
 	}
 
 	private long getUserDestroyedMaxValue(AbstractDomain domain, String mail) {

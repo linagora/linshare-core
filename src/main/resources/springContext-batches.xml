@@ -233,4 +233,12 @@
 		<constructor-arg ref="hibernateTemplate" />
 		<constructor-arg ref="timeService" />
 	</bean>
+
+	<bean name="GDPRUserBatch"
+		class="org.linagora.linshare.core.batches.impl.gdpr.GDPRUserBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="timeService" />
+		<constructor-arg ref="userRepository" />
+		<constructor-arg ref="mongoTemplate" />
+	</bean>
 </beans>
