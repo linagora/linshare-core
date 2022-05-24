@@ -44,6 +44,9 @@ import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -143,6 +146,33 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			if (!canCreateWorkGroupsInside) {
 				logger.error("You cannot create workgroups inside this node");
 				return false;
+			}
+		}
+		if (NodeType.WORK_GROUP.equals(entry.getNodeType()) && Objects.nonNull(entry.getParentUuid()) && parent == null) {
+			IntegerValueFunctionality functionality = functionalityService.getWorkGroupLimitFunctionality(actor.getDomain());
+			if (functionality.getActivationPolicy().getStatus()) {
+				Integer limit = functionality.getMaxValue();
+				Long count = sharedSpaceNodeMongoRepository.countNestedWorkgroups(actor.getDomainId(), entry.getParentUuid());
+				logger.debug("Nested WORK_GROUP count: " + count);
+				logger.debug("Nested WORK_GROUP limit: " + limit);
+				if (count >= limit) {
+					throw new BusinessException(
+							BusinessErrorCode.WORK_GROUP_LIMIT_REACHED,
+							"You have reached the limit of allowed nested workgroups in your domain: " + count + "/" + limit);
+				}
+			}
+		} else if (NodeType.WORK_SPACE.equals(entry.getNodeType())) {
+			IntegerValueFunctionality functionality = functionalityService.getWorkSpaceLimitFunctionality(actor.getDomain());
+			if (functionality.getActivationPolicy().getStatus()) {
+				Integer limit = functionality.getMaxValue();
+				Long count = sharedSpaceNodeMongoRepository.countWorkspaces(actor.getDomainId());
+				logger.debug("WORK_SPACE count: " + count);
+				logger.debug("WORK_SPACE limit: " + limit);
+				if (count >= limit) {
+					throw new BusinessException(
+							BusinessErrorCode.WORKSPACE_LIMIT_REACHED,
+							"You have reached the limit of allowed workspaces in your domain: " + count + "/" + limit);
+				}
 			}
 		}
 		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE,

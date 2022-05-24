@@ -53,4 +53,9 @@ public interface SharedSpaceNodeMongoRepository extends MongoRepository<SharedSp
 	@Query("{name: {'$regex':?0,'option':'i'}}")
 	List<SharedSpaceNode> findByName(String name);
 
+	@Query(value = "{ 'domainUuid' : ?0, nodeType: 'WORK_SPACE' }", count = true)
+	Long countWorkspaces(String domainUuid);
+
+	@Query(value = "{ 'domainUuid' : ?0 , 'parentUuid' : ?1, nodeType: 'WORK_GROUP' }", count = true)
+	Long countNestedWorkgroups(String domainUuid, String parentUuid);
 }
