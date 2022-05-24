@@ -431,6 +431,21 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public IntegerValueFunctionality getWorkSpaceLimitFunctionality(AbstractDomain domain) {
+		return (IntegerValueFunctionality)_getFunctionality(domain, FunctionalityNames.SHARED_SPACE__WORKSPACE_LIMIT);
+	}
+
+	@Override
+	public IntegerValueFunctionality getWorkGroupLimitFunctionality(AbstractDomain domain) {
+		return (IntegerValueFunctionality)_getFunctionality(domain, FunctionalityNames.SHARED_SPACE__NESTED_WORKGROUPS_LIMIT);
+	}
+
+	@Override
+	public IntegerValueFunctionality getUploadRequestLimitFunctionality(AbstractDomain domain) {
+		return (IntegerValueFunctionality)_getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__LIMIT);
+	}
+
+	@Override
 	public Integer getIntegerValue(IntegerValueFunctionality func, Integer currentInteger,
 			BusinessErrorCode errorCode) {
 		if (!func.getActivationPolicy().getStatus()) {

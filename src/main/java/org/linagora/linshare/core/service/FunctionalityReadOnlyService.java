@@ -83,7 +83,7 @@ public interface FunctionalityReadOnlyService {
 	BooleanValueFunctionality getWorkGroupFileVersioning(AbstractDomain domain);
 	StringValueFunctionality getWorkGroupFileEdition(AbstractDomain domain);
 	SizeUnitValueFunctionality getWorkGoupDownloadArchive(AbstractDomain domain);
-	
+
 	BooleanValueFunctionality getEnableInternalPersonalSpaceFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlForExternalsFunctionality(AbstractDomain domain);
@@ -147,4 +147,8 @@ public interface FunctionalityReadOnlyService {
 	Calendar getCalendarWithoutTime(Date date);
 
 	TimeUnitValueFunctionality getCollectedEmailsExpirationTimeFunctionality(AbstractDomain domain);
+
+	IntegerValueFunctionality getWorkSpaceLimitFunctionality(AbstractDomain domain);
+	IntegerValueFunctionality getWorkGroupLimitFunctionality(AbstractDomain domain);
+	IntegerValueFunctionality getUploadRequestLimitFunctionality(AbstractDomain domain);
 }

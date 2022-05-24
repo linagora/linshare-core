@@ -641,3 +641,34 @@ INSERT INTO unit(id, unit_type, unit_value)
 	VALUES (22, 0, 0), (23, 0, 0);
 INSERT INTO functionality_unit(functionality_id, integer_max_value, unit_id, max_unit_id, integer_default_value, default_value_used, max_value_used)
 	VALUES (70, 0, 22, 23, 8, true, false);
+
+-- SHARED_SPACE__WORKSPACE_LIMIT
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (347, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (348, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES (71, false, 'SHARED_SPACE__WORKSPACE_LIMIT', 347, 348, 1, 'SHARED_SPACE', true, now(), now());
+INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value, default_value_used, max_value_used, unlimited_value, unlimited_value_used)
+	VALUES (71, 5, 0, false, true, false, false);
+
+-- SHARED_SPACE__NESTED_WORKGROUPS_LIMIT
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (349, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (350, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES (72, false, 'SHARED_SPACE__NESTED_WORKGROUPS_LIMIT', 349, 350, 1, 'SHARED_SPACE', true, now(), now());
+INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value, default_value_used, max_value_used, unlimited_value, unlimited_value_used)
+	VALUES (72, 5, 5, false, true, false, false);
+
+-- UPLOAD_REQUEST__LIMIT
+	INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (351, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (352, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES (73, false, 'UPLOAD_REQUEST__LIMIT', 351, 352, 1, 'UPLOAD_REQUEST', true, now(), now());
+INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value, default_value_used, max_value_used, unlimited_value, unlimited_value_used)
+	VALUES (73, 5, 5, false, true, false, false);
+
