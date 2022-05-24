@@ -136,4 +136,17 @@ public class UploadRequestGroupRepositoryImpl extends
 		}
 		return 0L;
 	}
+
+	@Override
+	public Long computeURGcount(Account owner) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.setProjection(Projections.rowCount());
+		det.add(Restrictions.eq("owner", owner));
+		det.add(Restrictions.or(
+			Restrictions.eq("status", UploadRequestStatus.CREATED),
+			Restrictions.eq("status", UploadRequestStatus.ENABLED),
+			Restrictions.eq("status", UploadRequestStatus.CLOSED)
+		));
+		return DataAccessUtils.longResult(findByCriteria(det));
+	}
 }

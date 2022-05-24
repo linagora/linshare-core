@@ -59,4 +59,6 @@ public interface UploadRequestGroupRepository extends
 	public Integer countNbrUploadedFiles(UploadRequestGroup uploadRequestGroup);
 
 	public Long computeEntriesSize(UploadRequestGroup uploadRequestGroup);
+
+	Long computeURGcount(Account owner);
 }

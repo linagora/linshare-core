@@ -38,16 +38,24 @@ package org.linagora.linshare.core.rac.impl;
 
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
+import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class UploadRequestGroupResourceAccessControlImpl
 		extends AbstractUploadRequestResourceAccessControlImpl<Account, UploadRequestGroup>
 		implements UploadRequestGroupResourceAccessControl {
 
-	public UploadRequestGroupResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+	protected UploadRequestGroupRepository uploadRequestGroupRepository;
+
+	public UploadRequestGroupResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
+			UploadRequestGroupRepository uploadRequestGroupRepository) {
 		super(functionalityService);
+		this.uploadRequestGroupRepository = uploadRequestGroupRepository;
 	}
 
 	@Override
@@ -68,6 +76,18 @@ public class UploadRequestGroupResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, UploadRequestGroup entry, Object... opt) {
+		IntegerValueFunctionality functionality = functionalityService.getUploadRequestLimitFunctionality(actor.getDomain());
+		if (functionality.getActivationPolicy().getStatus()) {
+			Integer limit = functionality.getMaxValue();
+			Long count = uploadRequestGroupRepository.computeURGcount(actor);
+			logger.debug("uploadRequestGroup count: " + count);
+			logger.debug("uploadRequestGroup limit: " + limit);
+			if (count >= limit) {
+				throw new BusinessException(
+						BusinessErrorCode.UPLOAD_REQUEST_LIMIT_REACHED,
+						"You have reached the limit of allowed upload requests: " + count + "/" + limit);
+			}
+		}
 		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_CREATE,
 				false);
 	}
