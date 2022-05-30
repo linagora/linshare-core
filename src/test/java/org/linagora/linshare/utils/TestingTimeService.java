@@ -49,6 +49,12 @@ public class TestingTimeService implements TimeService {
 		return reference;
 	}
 
+	@Override
+	public Date previousYear() {
+		// Not in used in tests now
+		return dateNow();
+	}
+
 	public void setReference(Date reference) {
 		this.reference = reference;
 	}

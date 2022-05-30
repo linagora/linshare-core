@@ -37,5 +37,8 @@ import java.util.Date;
 
 public interface TimeService {
 
-	public Date dateNow();
+	Date dateNow();
+
+	Date previousYear();
+
 }

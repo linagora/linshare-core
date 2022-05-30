@@ -33,15 +33,31 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Date;
 
 import org.linagora.linshare.core.service.TimeService;
 
 public class TimeServiceImpl implements TimeService {
 
+	public static final Period ONE_YEAR = Period.ofYears(1);
+
 	@Override
 	public Date dateNow() {
 		return new Date();
 	}
 
+	@Override
+	public Date previousYear() {
+		// Adding one year on instant is failing due to TZ / DST -> have to convert to LocalDate
+		return Date.from(dateNow()
+			.toInstant()
+			.atZone(ZoneId.systemDefault())
+			.toLocalDate()
+			.minus(ONE_YEAR)
+			.atStartOfDay()
+			.atZone(ZoneId.systemDefault())
+			.toInstant());
+	}
 }

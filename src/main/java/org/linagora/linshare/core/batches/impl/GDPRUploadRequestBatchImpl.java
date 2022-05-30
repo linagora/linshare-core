@@ -36,11 +36,8 @@
 
 package org.linagora.linshare.core.batches.impl;
 
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.batches.impl.GenericBatchImpl;
 import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeUploadRequestAuditLogEntry;
 import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeUploadRequestGroupAuditLogEntry;
 import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeUploadRequestUrlAuditLogEntry;
@@ -85,19 +82,7 @@ public class GDPRUploadRequestBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		return uploadRequestRepository.findAllArchivedOrPurgedOlderThan(previousYear());
-	}
-
-	private Date previousYear() {
-		// Adding one year on instant is failing due to TZ / DST -> have to convert to LocalDate
-		return Date.from(timeService.dateNow()
-			.toInstant()
-			.atZone(ZoneId.systemDefault())
-			.toLocalDate()
-			.minus(GDPRConstants.ONE_YEAR)
-			.atStartOfDay()
-			.atZone(ZoneId.systemDefault())
-			.toInstant());
+		return uploadRequestRepository.findAllArchivedOrPurgedOlderThan(timeService.previousYear());
 	}
 
 	@Override

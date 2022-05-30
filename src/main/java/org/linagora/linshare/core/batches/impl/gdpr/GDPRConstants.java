@@ -36,11 +36,7 @@
 
 package org.linagora.linshare.core.batches.impl.gdpr;
 
-import java.time.Period;
-
 public interface GDPRConstants {
-	Period ONE_YEAR = Period.ofYears(1);
-
 	String MAIL_ANONYMIZATION = "xxxx@xxx.xxx";
 	String FIRST_NAME_ANONYMIZATION = "Xxxxx";
 	String LAST_NAME_ANONYMIZATION = "XXXXX";

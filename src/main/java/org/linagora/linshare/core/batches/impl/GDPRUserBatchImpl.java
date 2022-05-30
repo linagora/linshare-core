@@ -36,8 +36,6 @@
 
 package org.linagora.linshare.core.batches.impl;
 
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeAuditLogEntry;
@@ -78,19 +76,7 @@ public class GDPRUserBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		return userRepository.findAllNonAnonymizedPurgedAccounts(previousYear());
-	}
-
-	private Date previousYear() {
-		// Adding one year on instant is failing due to TZ / DST -> have to convert to LocalDate
-		return Date.from(timeService.dateNow()
-			.toInstant()
-			.atZone(ZoneId.systemDefault())
-			.toLocalDate()
-			.minus(GDPRConstants.ONE_YEAR)
-			.atStartOfDay()
-			.atZone(ZoneId.systemDefault())
-			.toInstant());
+		return userRepository.findAllNonAnonymizedPurgedAccounts(timeService.previousYear());
 	}
 
 	@Override
