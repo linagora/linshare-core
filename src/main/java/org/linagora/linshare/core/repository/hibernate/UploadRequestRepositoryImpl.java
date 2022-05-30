@@ -162,6 +162,15 @@ public class UploadRequestRepositoryImpl extends
 	}
 
 	@Override
+	public List<String> findAllArchivedOrPurgedOlderThan(Date modificationDate) {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.add(Restrictions.lt("modificationDate", modificationDate));
+		crit.add(Restrictions.in("status", UploadRequestStatus.ARCHIVED, UploadRequestStatus.PURGED));
+		crit.setProjection(Projections.property("uuid"));
+		return (List<String>) listByCriteria(crit);
+	}
+
+	@Override
 	public Integer countNbrUploadedFiles(UploadRequest uploadRequest) {
 		DetachedCriteria urCrit = DetachedCriteria.forClass(getPersistentClass(), "uploadRequest");
 		urCrit.createAlias("uploadRequest.uploadRequestURLs", "urls");

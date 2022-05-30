@@ -241,4 +241,14 @@
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
+
+	<bean name="GDPRUploadRequestBatch"
+		class="org.linagora.linshare.core.batches.impl.GDPRUploadRequestBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="timeService" />
+		<constructor-arg ref="uploadRequestRepository" />
+		<constructor-arg ref="uploadRequestUrlRepository" />
+		<constructor-arg ref="contactRepository" />
+		<constructor-arg ref="mongoTemplate" />
+	</bean>
 </beans>

@@ -1,8 +1,8 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
- * 
- * Copyright (C) 2015-2022 LINAGORA
- * 
+ *
+ * Copyright (C) 2022 LINAGORA
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,12 +20,12 @@
  * commercial brands. Other Additional Terms apply, see
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for more
  * details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -33,60 +33,35 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
 
-import java.util.Date;
-import java.util.List;
+package org.linagora.linshare.core.batches.impl.gdpr;
 
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
-public interface UploadRequestRepository extends
-		AbstractRepository<UploadRequest> {
+public class AnonymizeUploadRequestAuditLogEntry extends MongoAnonymize {
 
-	/**
-	 * Find a uploadRequestEntry using its uuid.
-	 * 
-	 * @param uuid
-	 * @return found uploadRequest (null if no uploadRequestEntry found).
-	 */
-	UploadRequest findByUuid(String uuid);
+	public AnonymizeUploadRequestAuditLogEntry(MongoTemplate mongoTemplate) {
+		super(mongoTemplate);
+	}
 
-	/**
-	 * Find uploadRequests using their status.
-	 *
-	 * @param status
-	 * @return found uploadRequests otherwise null.
-	 */
-	List<UploadRequest> findByStatus(UploadRequestStatus... status);
+	@Override
+	public void process(String identifier) {
+		Query resourceQuery = Query.query(Criteria.where("resource.uuid").is(identifier));
+		Update resourceUpdate = new Update();
+		resourceUpdate.set("resource.owner.mail", GDPRConstants.MAIL_ANONYMIZATION);
+		resourceUpdate.set("resource.owner.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
+		resourceUpdate.set("resource.owner.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
+		mongoTemplate.updateMulti(resourceQuery, resourceUpdate, UploadRequestAuditLogEntry.class);
 
-	/**
-	 * Find uploadRequests using their status and their domains.
-	 *
-	 * @param domains
-	 * @param status
-	 * @param after based on creation date
-	 * @param before based on creation date
-	 * @return found uploadRequests otherwise null.
-	 */
-	List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date after, Date before);
-
-	List<String> findOutdatedRequests();
-
-	List<String> findCreatedUploadRequests();
-
-	List<String> findAllRequestsToBeNotified();
-
-	List<String> findAllArchivedOrPurgedOlderThan(Date modificationDate);
-
-	List<UploadRequest> findAll(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList);
-
-	Integer countNbrUploadedFiles(UploadRequest uploadRequest);
-
-	Long computeEntriesSize(UploadRequest request);
-
-	List<UploadRequest> findUploadRequestsToUpdate(UploadRequestGroup uploadRequestGroup,
-			List<UploadRequestStatus> listAllowedStatusToUpdate);
+		Query resourceUpdatedQuery = Query.query(Criteria.where("resourceUpdated.uuid").is(identifier));
+		Update resourceUpdatedUpdate = new Update();
+		resourceUpdatedUpdate.set("resourceUpdated.owner.mail", GDPRConstants.MAIL_ANONYMIZATION);
+		resourceUpdatedUpdate.set("resourceUpdated.owner.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
+		resourceUpdatedUpdate.set("resourceUpdated.owner.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
+		mongoTemplate.updateMulti(resourceUpdatedQuery, resourceUpdatedUpdate, UploadRequestAuditLogEntry.class);
+	}
 }
