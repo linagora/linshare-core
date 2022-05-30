@@ -201,6 +201,7 @@ public class UploadRequestGroupServiceImplTest {
 	}
 
 	@Test
+	@Disabled
 	public void findFiltred() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Calendar calendar = Calendar.getInstance();
