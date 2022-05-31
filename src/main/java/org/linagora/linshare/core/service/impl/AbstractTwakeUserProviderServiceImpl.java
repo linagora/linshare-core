@@ -69,6 +69,8 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 	public static final String API_COMPANIES_ENDPOINT = "/api/companies/";
 	public static final String USERS_ENDPOINT = "/users";
 	public static final String GUEST_ROLE = "guest";
+	public static final String QUERY_PARAMETER_INCLUDED_APPLICATIONS_NAME = "includedApplications";
+	public static final String QUERY_PARAMETER_INCLUDED_APPLICATIONS_VALUE = "linshare";
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 	private final OkHttpClient client;
@@ -251,8 +253,11 @@ public abstract class AbstractTwakeUserProviderServiceImpl implements TwakeUserP
 
 	protected HttpUrl httpUrlFrom(AbstractTwakeUserProvider userProvider, Optional<String> extraPath) {
 		return HttpUrl.parse(userProvider.getTwakeConnection().getProviderUrl()
-			+ API_COMPANIES_ENDPOINT
-			+ userProvider.getTwakeCompanyId()
-			+ extraPath.orElse(""));
+				+ API_COMPANIES_ENDPOINT
+				+ userProvider.getTwakeCompanyId()
+				+ extraPath.orElse(""))
+			.newBuilder()
+			.addQueryParameter(QUERY_PARAMETER_INCLUDED_APPLICATIONS_NAME, QUERY_PARAMETER_INCLUDED_APPLICATIONS_VALUE)
+			.build();
 	}
 }
