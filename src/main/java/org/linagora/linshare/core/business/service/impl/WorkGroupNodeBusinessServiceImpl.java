@@ -55,6 +55,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryRevisionBusinessService;
 import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -427,5 +428,19 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		Update update2 = new Update();
 		update2.set("node.modificationDate", modificationDate);
 		mongoTemplate.updateMulti(query3, update2, SharedSpaceMember.class);
+	}
+
+	@Override
+	public Long computeAllWorkgroupNodesSize(String workGroupUuid) {
+		Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(
+				Criteria.where("workGroup").is(workGroupUuid)
+				.and("nodeType").is(WorkGroupNodeType.DOCUMENT_REVISION)),
+				Aggregation.group().sum("size").as("size"));
+		NodeMetadataMto result = mongoTemplate.aggregate(aggregation, "work_group_nodes", NodeMetadataMto.class)
+				.getUniqueMappedResult();
+		if (result == null) {
+			return 0L;
+		}
+		return result.getSize();
 	}
 }

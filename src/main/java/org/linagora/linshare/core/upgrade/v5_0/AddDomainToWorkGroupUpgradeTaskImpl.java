@@ -34,11 +34,21 @@
 package org.linagora.linshare.core.upgrade.v5_0;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
+import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
+import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -64,16 +74,32 @@ public class AddDomainToWorkGroupUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 
 	private final ThreadRepository threadRepository;
 
+	private final OperationHistoryBusinessService operationHistoryBusinessService;
+
+	private final WorkGroupNodeBusinessService workGroupNodeBusinessService;
+
+	private final ContainerQuotaBusinessService containerQuotaBusinessService;
+
+	private final AccountQuotaBusinessService accountQuotaBusinessService;
+
 	public AddDomainToWorkGroupUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			MongoTemplate mongoTemplate,
 			SharedSpaceNodeMongoRepository nodeMongoRepository,
-			ThreadRepository threadRepository) {
+			ThreadRepository threadRepository,
+			OperationHistoryBusinessService operationHistoryBusinessService,
+			WorkGroupNodeBusinessService workGroupNodeBusinessService,
+			ContainerQuotaBusinessService containerQuotaBusinessService,
+			AccountQuotaBusinessService accountQuotaBusinessService) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.mongoTemplate = mongoTemplate;
 		this.nodeMongoRepository = nodeMongoRepository;
 		this.threadRepository = threadRepository;
+		this.operationHistoryBusinessService = operationHistoryBusinessService;
+		this.workGroupNodeBusinessService = workGroupNodeBusinessService;
+		this.containerQuotaBusinessService = containerQuotaBusinessService;
+		this.accountQuotaBusinessService = accountQuotaBusinessService;
 	}
 
 	@Override
@@ -101,11 +127,38 @@ public class AddDomainToWorkGroupUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 			return res;
 		}
 		WorkGroup workGroup = threadRepository.findByLsUuid(sharedSpace.getUuid());
+		if (Objects.isNull(workGroup)) {
+			Account author = accountRepository.findActivateAndDestroyedByLsUuid(sharedSpace.getAuthor().getUuid());
+			workGroup = new WorkGroup(author.getDomain(), author, sharedSpace.getName());
+			threadRepository.create(workGroup);
+			workGroup.setLsUuid(sharedSpace.getUuid());
+			workGroup.setCreationDate(sharedSpace.getCreationDate());
+			workGroup.setModificationDate(sharedSpace.getModificationDate());
+			workGroup.setOwner(author);
+			createThreadQuota(sharedSpace, workGroup);
+			threadRepository.update(workGroup);
+			Long nodeSize = workGroupNodeBusinessService.computeAllWorkgroupNodesSize(sharedSpace.getUuid());
+			OperationHistory oh = new OperationHistory(workGroup, workGroup.getDomain(), nodeSize,
+					OperationHistoryTypeEnum.CREATE, ContainerQuotaType.WORK_GROUP);
+			operationHistoryBusinessService.create(oh);
+		}
 		sharedSpace.setDomainUuid(workGroup.getDomainId());
 		nodeMongoRepository.save(sharedSpace);
 		updateSharedSpaceNested(sharedSpace);
 		res.setProcessed(true);
 		return res;
+	}
+
+	private void createThreadQuota(SharedSpaceNode sharedSpace, WorkGroup workGroup) {
+		ContainerQuota containerQuota = containerQuotaBusinessService.find(workGroup.getDomain(), ContainerQuotaType.WORK_GROUP);
+		AccountQuota threadQuota = new AccountQuota(
+				workGroup.getDomain(),
+				workGroup.getDomain().getParentDomain(),
+				workGroup, containerQuota);
+		threadQuota.setDomainShared(containerQuota.getDomainQuota().getDomainShared());
+		threadQuota.setDomainSharedOverride(containerQuota.getDomainQuota().getDomainSharedOverride());
+		threadQuota = accountQuotaBusinessService.create(threadQuota);
+		threadQuota.setUuid(sharedSpace.getQuotaUuid());
 	}
 
 	private void updateSharedSpaceNested(SharedSpaceNode sharedSpace) {

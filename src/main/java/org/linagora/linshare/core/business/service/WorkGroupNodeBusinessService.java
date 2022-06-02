@@ -76,4 +76,7 @@ public interface WorkGroupNodeBusinessService {
 			List<DocumentKind> documentKinds);
 
 	void updateRelatedWorkGroupNodeResources(WorkGroupNode workGroupNode, Date dateNow);
+
+	Long computeAllWorkgroupNodesSize(String workGroupUuid);
+
 }
