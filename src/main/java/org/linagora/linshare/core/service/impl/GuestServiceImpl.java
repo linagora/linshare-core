@@ -213,6 +213,13 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Validate.notEmpty(guest.getMail(), "Guest mail must be set.");
 		checkCreatePermission(authUser, actor, Guest.class,
 				BusinessErrorCode.USER_CANNOT_CREATE_GUEST, null);
+		// The root user is not allowed to create guests because there is no related
+		// guest domain, it is not a true email so it will not work with notifications,
+		// and moderators
+		if (actor.isRoot()) {
+			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN,
+					"The root user is not allowed to create guests.");
+		}
 		if (!hasGuestDomain(actor.getDomainId())) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Guest domain was not found");

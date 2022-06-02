@@ -239,6 +239,18 @@ public class GuestServiceImplTest {
 	}
 
 	@Test
+	public void testForbidRootGuestCreation() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			guestService.create(root, root, guest, null);
+		});
+		Assertions.assertEquals(BusinessErrorCode.GUEST_FORBIDDEN, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testCreateGuestSpecialCharacters() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Guest guest = new Guest("EP_TEST_v233<script>alert(document.cookie)</script>",
