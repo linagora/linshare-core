@@ -84,8 +84,7 @@ public class AnonymizeSharedSpace extends MongoAnonymize {
 		Query query = Query.query(Criteria.where("author.uuid").is(identifier));
 		Update update = new Update();
 		update.set("author.mail", GDPRConstants.MAIL_ANONYMIZATION);
-		update.set("author.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		update.set("author.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
+		update.set("author.name", GDPRConstants.FIRST_NAME_ANONYMIZATION);
 		mongoTemplate.updateMulti(query, update, SharedSpaceRole.class);
 	}
 
@@ -117,49 +116,21 @@ public class AnonymizeSharedSpace extends MongoAnonymize {
 		resourceUpdatedUserUpdate.set("resourceUpdated.user.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
 		resourceUpdatedUserUpdate.set("resourceUpdated.user.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
 		mongoTemplate.updateMulti(resourceUpdatedUserQuery, resourceUpdatedUserUpdate, SharedSpaceMemberAuditLogEntry.class);
-
-		Query actorQuery = Query.query(Criteria.where("actor.uuid").is(identifier));
-		Update actorUpdate = new Update();
-		actorUpdate.set("actor.mail", GDPRConstants.MAIL_ANONYMIZATION);
-		actorUpdate.set("actor.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		actorUpdate.set("actor.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(actorQuery, actorUpdate, SharedSpaceMemberAuditLogEntry.class);
-
-		Query authUserQuery = Query.query(Criteria.where("authUser.uuid").is(identifier));
-		Update authUserUpdate = new Update();
-		authUserUpdate.set("authUser.mail", GDPRConstants.MAIL_ANONYMIZATION);
-		authUserUpdate.set("authUser.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		authUserUpdate.set("authUser.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(authUserQuery, authUserUpdate, SharedSpaceMemberAuditLogEntry.class);
 	}
 
 	private void anonymizeSharedSpaceNodeAuditLogEntry(String identifier) {
-		Query resourceAccountQuery = Query.query(Criteria.where("resource.account.uuid").is(identifier));
-		Update resourceAccountUpdate = new Update();
-		resourceAccountUpdate.set("resource.account.mail", GDPRConstants.MAIL_ANONYMIZATION);
-		resourceAccountUpdate.set("resource.account.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		resourceAccountUpdate.set("resource.account.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(resourceAccountQuery, resourceAccountUpdate, SharedSpaceNodeAuditLogEntry.class);
+		Query resourceAuthorQuery = Query.query(Criteria.where("resource.author.uuid").is(identifier));
+		Update resourceAuthorUpdate = new Update();
+		resourceAuthorUpdate.set("resource.author.mail", GDPRConstants.MAIL_ANONYMIZATION);
+		resourceAuthorUpdate.set("resource.author.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
+		resourceAuthorUpdate.set("resource.author.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
+		mongoTemplate.updateMulti(resourceAuthorQuery, resourceAuthorUpdate, SharedSpaceNodeAuditLogEntry.class);
 
-		Query resourceUserQuery = Query.query(Criteria.where("resource.user.uuid").is(identifier));
-		Update resourceUserUpdate = new Update();
-		resourceUserUpdate.set("resource.user.mail", GDPRConstants.MAIL_ANONYMIZATION);
-		resourceUserUpdate.set("resource.user.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		resourceUserUpdate.set("resource.user.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(resourceUserQuery, resourceUserUpdate, SharedSpaceNodeAuditLogEntry.class);
-
-		Query resourceUpdatedAccountQuery = Query.query(Criteria.where("resourceUpdated.account.uuid").is(identifier));
-		Update resourceUpdatedAccountUpdate = new Update();
-		resourceUpdatedAccountUpdate.set("resourceUpdated.account.mail", GDPRConstants.MAIL_ANONYMIZATION);
-		resourceUpdatedAccountUpdate.set("resourceUpdated.account.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		resourceUpdatedAccountUpdate.set("resourceUpdated.account.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(resourceUpdatedAccountQuery, resourceUpdatedAccountUpdate, SharedSpaceNodeAuditLogEntry.class);
-
-		Query resourceUpdatedUserQuery = Query.query(Criteria.where("resourceUpdated.user.uuid").is(identifier));
-		Update resourceUpdatedUserUpdate = new Update();
-		resourceUpdatedUserUpdate.set("resourceUpdated.user.mail", GDPRConstants.MAIL_ANONYMIZATION);
-		resourceUpdatedUserUpdate.set("resourceUpdated.user.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		resourceUpdatedUserUpdate.set("resourceUpdated.user.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(resourceUpdatedUserQuery, resourceUpdatedUserUpdate, SharedSpaceNodeAuditLogEntry.class);
+		Query resourceUpdatedAuthorQuery = Query.query(Criteria.where("resourceUpdated.author.uuid").is(identifier));
+		Update resourceUpdatedAuthorUpdate = new Update();
+		resourceUpdatedAuthorUpdate.set("resourceUpdated.author.mail", GDPRConstants.MAIL_ANONYMIZATION);
+		resourceUpdatedAuthorUpdate.set("resourceUpdated.author.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
+		resourceUpdatedAuthorUpdate.set("resourceUpdated.author.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
+		mongoTemplate.updateMulti(resourceUpdatedAuthorQuery, resourceUpdatedAuthorUpdate, SharedSpaceNodeAuditLogEntry.class);
 	}
 }

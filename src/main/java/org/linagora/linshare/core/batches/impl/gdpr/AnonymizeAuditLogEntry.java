@@ -36,76 +36,13 @@
 
 package org.linagora.linshare.core.batches.impl.gdpr;
 
-import java.util.List;
-
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.logs.AuthenticationAuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.DomainAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.DomainPatternAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.FunctionalityAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.GuestAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.LdapConnectionAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.MailingListAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.MailingListContactAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.ModeratorAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.PublicKeyAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.SafeDetailAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.ThreadAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.ThreadMemberAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.UploadRequestEntryAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.UploadRequestGroupAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.UploadRequestUrlAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.UserPreferenceAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import com.google.common.collect.ImmutableList;
-
 public class AnonymizeAuditLogEntry extends MongoAnonymize {
-
-	List<Class<? extends AuditLogEntry>> AUDIT_LOG_ENTRY_CLASSES = ImmutableList.of(
-		AuditLogEntry.class,
-		AuditLogEntryAdmin.class,
-		AuditLogEntryUser.class,
-		AuthenticationAuditLogEntryUser.class,
-		MailAttachmentAuditLogEntry.class,
-		SafeDetailAuditLogEntry.class,
-		WorkGroupNodeAuditLogEntry.class,
-		ShareEntryAuditLogEntry.class,
-		DocumentEntryAuditLogEntry.class,
-		ThreadAuditLogEntry.class,
-		ThreadMemberAuditLogEntry.class,
-		UserAuditLogEntry.class,
-		GuestAuditLogEntry.class,
-		MailingListContactAuditLogEntry.class,
-		MailingListAuditLogEntry.class,
-		ModeratorAuditLogEntry.class,
-		UploadRequestAuditLogEntry.class,
-		UploadRequestGroupAuditLogEntry.class,
-		UploadRequestUrlAuditLogEntry.class,
-		UploadRequestEntryAuditLogEntry.class,
-		UserPreferenceAuditLogEntry.class,
-		DomainAuditLogEntry.class,
-		DomainPatternAuditLogEntry.class,
-		LdapConnectionAuditLogEntry.class,
-		FunctionalityAuditLogEntry.class,
-		PublicKeyAuditLogEntry.class,
-		JwtLongTimeAuditLogEntry.class,
-		SharedSpaceNodeAuditLogEntry.class,
-		SharedSpaceMemberAuditLogEntry.class);
 
 	public AnonymizeAuditLogEntry(MongoTemplate mongoTemplate) {
 		super(mongoTemplate);
@@ -113,22 +50,18 @@ public class AnonymizeAuditLogEntry extends MongoAnonymize {
 
 	@Override
 	public void process(String identifier) {
-		AUDIT_LOG_ENTRY_CLASSES.forEach(clazz -> anonymizeAuditLogEntry(clazz, identifier));
-	}
-
-	private void anonymizeAuditLogEntry(Class<? extends AuditLogEntry> clazz, String identifier) {
 		Query authUserQuery = Query.query(Criteria.where("authUser.uuid").is(identifier));
 		Update authUserUpdate = new Update();
 		authUserUpdate.set("authUser.mail", GDPRConstants.MAIL_ANONYMIZATION);
 		authUserUpdate.set("authUser.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
 		authUserUpdate.set("authUser.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(authUserQuery, authUserUpdate, clazz);
+		mongoTemplate.updateMulti(authUserQuery, authUserUpdate, AuditLogEntry.class);
 
 		Query actorQuery = Query.query(Criteria.where("actor.uuid").is(identifier));
 		Update actorUpdate = new Update();
 		actorUpdate.set("actor.mail", GDPRConstants.MAIL_ANONYMIZATION);
 		actorUpdate.set("actor.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
 		actorUpdate.set("actor.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(actorQuery, actorUpdate, clazz);
+		mongoTemplate.updateMulti(actorQuery, actorUpdate, AuditLogEntry.class);
 	}
 }

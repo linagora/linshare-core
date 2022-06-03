@@ -37,7 +37,6 @@
 package org.linagora.linshare.core.batches.impl.gdpr;
 
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -51,33 +50,11 @@ public class AnonymizeWorkGroup extends MongoAnonymize {
 
 	@Override
 	public void process(String identifier) {
-		anonymizeWorkGroupNode(identifier);
-
-		anonymizeSharedSpaceNodeAuditLogEntry(identifier);
-	}
-
-	private void anonymizeWorkGroupNode(String identifier) {
 		Query query = Query.query(Criteria.where("lastAuthor.uuid").is(identifier));
 		Update update = new Update();
 		update.set("lastAuthor.mail", GDPRConstants.MAIL_ANONYMIZATION);
 		update.set("lastAuthor.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
 		update.set("lastAuthor.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
 		mongoTemplate.updateMulti(query, update, WorkGroupNode.class);
-	}
-
-	private void anonymizeSharedSpaceNodeAuditLogEntry(String identifier) {
-		Query actorQuery = Query.query(Criteria.where("actor.uuid").is(identifier));
-		Update actorUpdate = new Update();
-		actorUpdate.set("actor.mail", GDPRConstants.MAIL_ANONYMIZATION);
-		actorUpdate.set("actor.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		actorUpdate.set("actor.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(actorQuery, actorUpdate, WorkGroupNodeAuditLogEntry.class);
-
-		Query authUserQuery = Query.query(Criteria.where("authUser.uuid").is(identifier));
-		Update authUserUpdate = new Update();
-		authUserUpdate.set("authUser.mail", GDPRConstants.MAIL_ANONYMIZATION);
-		authUserUpdate.set("authUser.firstName", GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		authUserUpdate.set("authUser.lastName", GDPRConstants.LAST_NAME_ANONYMIZATION);
-		mongoTemplate.updateMulti(authUserQuery, authUserUpdate, WorkGroupNodeAuditLogEntry.class);
 	}
 }

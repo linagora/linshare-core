@@ -235,7 +235,7 @@
 	</bean>
 
 	<bean name="GDPRUserBatch"
-		class="org.linagora.linshare.core.batches.impl.gdpr.GDPRUserBatchImpl">
+		class="org.linagora.linshare.core.batches.impl.GDPRUserBatchImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="timeService" />
 		<constructor-arg ref="userRepository" />

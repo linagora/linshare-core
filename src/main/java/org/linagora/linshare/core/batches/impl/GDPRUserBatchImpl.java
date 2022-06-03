@@ -34,13 +34,19 @@
  * Additional Terms applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.batches.impl.gdpr;
+package org.linagora.linshare.core.batches.impl;
 
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.batches.impl.GenericBatchImpl;
+import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeAuditLogEntry;
+import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeMailingListLogEntry;
+import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeModeratorLogEntry;
+import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeSharedSpace;
+import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeThreadAuditLogEntry;
+import org.linagora.linshare.core.batches.impl.gdpr.AnonymizeWorkGroup;
+import org.linagora.linshare.core.batches.impl.gdpr.GDPRConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
@@ -92,17 +98,17 @@ public class GDPRUserBatchImpl extends GenericBatchImpl {
 		User user = (User) userRepository.findActivateAndDestroyedByLsUuid(identifier);
 		ResultContext context = new AccountBatchResultContext(user);
 
-		user.setMail(GDPRConstants.MAIL_ANONYMIZATION);
-		user.setFirstName(GDPRConstants.FIRST_NAME_ANONYMIZATION);
-		user.setLastName(GDPRConstants.LAST_NAME_ANONYMIZATION);
-		userRepository.update(user);
-
 		new AnonymizeAuditLogEntry(mongoTemplate).process(identifier);
 		new AnonymizeMailingListLogEntry(mongoTemplate).process(identifier);
 		new AnonymizeModeratorLogEntry(mongoTemplate).process(identifier);
 		new AnonymizeSharedSpace(mongoTemplate).process(identifier);
 		new AnonymizeThreadAuditLogEntry(mongoTemplate).process(identifier);
 		new AnonymizeWorkGroup(mongoTemplate).process(identifier);
+
+		user.setMail(GDPRConstants.MAIL_ANONYMIZATION);
+		user.setFirstName(GDPRConstants.FIRST_NAME_ANONYMIZATION);
+		user.setLastName(GDPRConstants.LAST_NAME_ANONYMIZATION);
+		userRepository.update(user);
 
 		context.setProcessed(true);
 		return context;
