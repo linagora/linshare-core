@@ -44,7 +44,7 @@ public class ModeratorMto {
 
 	private String uuid;
 
-	private ModeratorRole role;
+	private ModeratorRole moderatorRole;
 
 	private AccountMto account;
 
@@ -59,7 +59,7 @@ public class ModeratorMto {
 
 	public ModeratorMto(Moderator moderator) {
 		this.uuid = moderator.getUuid();
-		this.role = moderator.getRole();
+		this.moderatorRole = moderator.getRole();
 		this.account = new AccountMto(moderator.getAccount());
 		this.guest = new AccountMto(moderator.getGuest());
 		this.creationDate = moderator.getCreationDate();
@@ -74,12 +74,12 @@ public class ModeratorMto {
 		this.uuid = uuid;
 	}
 
-	public ModeratorRole getRole() {
-		return role;
+	public ModeratorRole getModeratorRole() {
+		return moderatorRole;
 	}
 
-	public void setRole(ModeratorRole role) {
-		this.role = role;
+	public void setModeratorRole(ModeratorRole moderatorRole) {
+		this.moderatorRole = moderatorRole;
 	}
 
 	public AccountMto getAccount() {
@@ -118,7 +118,7 @@ public class ModeratorMto {
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
 				.add("uuid", uuid)
-				.add("role", role)
+				.add("moderatorRole", moderatorRole)
 				.add("creationDate", creationDate)
 				.add("modificationDate", modificationDate)
 				.add("account", account)

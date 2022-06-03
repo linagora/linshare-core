@@ -35,15 +35,16 @@
  */
 package org.linagora.linshare.mongo.entities.logs;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.UserMto;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="auditLogEntry")
+@XmlRootElement(name = "GuestAuditLogEntry")
 public class GuestAuditLogEntry extends AuditLogEntryUser {
 
 	private UserMto resource;

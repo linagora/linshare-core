@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.mongo.entities.logs;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -40,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.ModeratorMto;
 
+@XmlRootElement(name = "ModeratorAuditLogEntry")
 public class ModeratorAuditLogEntry extends AuditLogEntryUser {
 
 	protected ModeratorMto resource;
