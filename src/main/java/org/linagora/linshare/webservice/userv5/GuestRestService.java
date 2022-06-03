@@ -40,7 +40,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
 public interface GuestRestService {
@@ -49,7 +49,7 @@ public interface GuestRestService {
 
 	void head(String uuid) throws BusinessException;
 
-	List<GuestDto> findAll(ModeratorRole moderatorRole, String pattern) throws BusinessException;
+	List<GuestDto> findAll(ModeratorRoleEnum moderatorRole, String pattern) throws BusinessException;
 
 	GuestDto create(GuestDto guest) throws BusinessException;
 

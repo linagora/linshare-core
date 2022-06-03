@@ -44,12 +44,4 @@ public enum ModeratorRole {
 			throw new IllegalArgumentException("Doesn't match an existing moderator role.");
 		}
 	}
-
-	public static org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole toModeratorRole(ModeratorRole role) {
-		try {
-			return org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole.valueOf(role.toString());
-		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing moderator role.");
-		}
-	}
 }

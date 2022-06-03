@@ -51,7 +51,7 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
@@ -171,7 +171,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			AbstractDomain domain, List<User> allowedContacts)
 			throws BusinessException {
 		boolean wasRestricted = entity.isRestricted();
-		entity.setOwner(owner);
 		entity.setDomain(domain);
 		// fields that can not be null
 		entity.setCanUpload(guest.isCanUpload());
@@ -320,32 +319,32 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public List<Guest> findAll(Account actor, List<AbstractDomain> authorizedDomains, ModeratorRole moderatorRole) {
+	public List<Guest> findAll(Account actor, List<AbstractDomain> authorizedDomains, ModeratorRoleEnum moderatorRole) {
 		if (Objects.isNull(moderatorRole)) {
 			// return all guests
 			return guestRepository.findAll(authorizedDomains);
 		} else {
-			if (ModeratorRole.ALL.equals(moderatorRole)) {
-				// return all actor's guests
-				return guestRepository.findAllMyGuests(actor);
+			if (ModeratorRoleEnum.ALL.equals(moderatorRole)) {
+				// return all actor's guests where he has SIMPLE and ADMIN role
+				return guestRepository.findAllByModerator(actor, null, null);
 			}
 			// return all actor's guests filtered by moderatorRole (SIMPLE/ADMIN)
-			return guestRepository.findAllByModerator(actor, ModeratorRole.toModeratorRole(moderatorRole), null);
+			return guestRepository.findAllByModerator(actor, ModeratorRoleEnum.toModeratorRole(moderatorRole), null);
 		}
 	}
 
 	@Override
 	public List<Guest> search(Account actor, List<AbstractDomain> authorizedDomains, String pattern,
-			ModeratorRole moderatorRole) {
+			ModeratorRoleEnum moderatorRole) {
 		if (Objects.isNull(moderatorRole)) {
 			return guestRepository.search(authorizedDomains, pattern);
 		} else {
-			if (ModeratorRole.ALL.equals(moderatorRole)) {
+			if (ModeratorRoleEnum.ALL.equals(moderatorRole)) {
 				// return all actor's guests
 				return guestRepository.searchMyGuests(authorizedDomains, pattern, actor);
 			}
 			// return all actor's guests filtered by moderatorRole (SIMPLE/ADMIN)
-			return guestRepository.findAllByModerator(actor, ModeratorRole.toModeratorRole(moderatorRole), pattern);
+			return guestRepository.findAllByModerator(actor, ModeratorRoleEnum.toModeratorRole(moderatorRole), pattern);
 		}
 	}
 }

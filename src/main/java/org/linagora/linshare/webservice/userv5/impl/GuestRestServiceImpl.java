@@ -54,7 +54,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.webservice.userv5.GuestRestService;
@@ -86,7 +86,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Override
 	public List<GuestDto> findAll(
 			@Parameter(description = "If value is SIMPLE/ADMIN the guests where a user is moderator of by role will be returned, if value is `ALL` all user's guests, if null all guests of user's authorized domains will be returned.", required = false)
-				@QueryParam("role") ModeratorRole role,
+				@QueryParam("role") ModeratorRoleEnum role,
 			@Parameter(description = "The list of returned guests will be filtered by the entered patten if not null.", required = false)
 				@QueryParam("pattern") String pattern)
 			throws BusinessException {

@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
@@ -42,7 +42,6 @@ import org.linagora.linshare.core.business.service.DomainPermissionBusinessServi
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
-import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -61,6 +60,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContac
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -181,15 +181,20 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	@Override
 	public UserDto delete(String actorUuid, UserDto userDto, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		Account actor = getActor(authUser, actorUuid);
+		User actor = getActor(authUser, actorUuid);
 		if (Strings.isNullOrEmpty(uuid)) {
 			Validate.notNull(userDto, "missing user to delete");
 			Validate.notEmpty(userDto.getUuid(), "Missing user's uuid");
 			uuid = userDto.getUuid();
 		}
 		Validate.notEmpty(uuid, "user uuid must be set");
-		User user = userService2.delete(authUser, actor, uuid);
-		return new UserDto(user);
+		User userToDelete = userService2.find(authUser, actor, uuid);
+		if (userToDelete.isGuest()) {
+			userToDelete = guestService.delete(authUser, actor, userToDelete.getLsUuid());
+		} else {
+			userToDelete = userService2.delete(authUser, actor, userToDelete.getLsUuid());
+		}
+		return new UserDto(userToDelete);
 	}
 
 	@Override
@@ -357,17 +362,16 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	}
 
 	@Override
-	public List<GuestDto> findAllUserGuests(String actorUuid, String uuid, ModeratorRole role, String pattern) {
+	public List<GuestDto> findAllUserGuests(String actorUuid, String uuid, ModeratorRoleEnum role, String pattern) {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		Account actor = getActor(authUser, actorUuid);
+		User actor = getActor(authUser, actorUuid);
 		Validate.notEmpty(uuid, "User's uuid should be set.");
-		Account user = userService2.find(authUser, actor, uuid);
-		checkAdminPermission(authUser, user);
-		org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole moderatorRole = (Objects.nonNull(role))
-				? ModeratorRole.toModeratorRole(role)
-				: null;
-		List<Guest> guests = guestService.findAll(authUser, user, pattern, moderatorRole);
-		return guests.stream().map(GuestDto.toDto()).collect(Collectors.toUnmodifiableList());
+		User userToFilterBy = userService2.find(authUser, actor, uuid);
+		List<Guest> guests = guestService.findAll(authUser, actor, Optional.ofNullable(userToFilterBy), pattern, role);
+		return guests
+				.stream()
+				.map(GuestDto.toDto())
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 }

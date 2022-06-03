@@ -55,7 +55,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.webservice.userv2.GuestRestService;
@@ -92,7 +92,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	public List<GuestDto> findAll(
 			@QueryParam("mine") Boolean mine,
 			@QueryParam("pattern") String pattern) throws BusinessException {
-		ModeratorRole moderatorRole = (Objects.nonNull(mine) && mine) ? ModeratorRole.ALL : null;
+		ModeratorRoleEnum moderatorRole = (Objects.nonNull(mine) && mine) ? ModeratorRoleEnum.ALL : null;
 		return guestFacade.findAll(4, pattern, moderatorRole);
 	}
 

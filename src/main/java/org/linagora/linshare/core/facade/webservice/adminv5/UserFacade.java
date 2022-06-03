@@ -35,7 +35,6 @@ package org.linagora.linshare.core.facade.webservice.adminv5;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -44,6 +43,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContac
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDtoQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.webservice.utils.PageContainer;
@@ -82,6 +82,6 @@ public interface UserFacade extends AdminGenericFacade {
 
 	UserDtoQuotaDto updateUserQuota(String actorUuid, String userUuid, String quotaUuid, UserDtoQuotaDto dto);
 
-	List<GuestDto> findAllUserGuests(String actorUuid, String uuid, ModeratorRole role, String pattern);
+	List<GuestDto> findAllUserGuests(String actorUuid, String uuid, ModeratorRoleEnum role, String pattern);
 
 }

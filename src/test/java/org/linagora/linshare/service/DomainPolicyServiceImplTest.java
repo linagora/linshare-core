@@ -37,7 +37,6 @@ package org.linagora.linshare.service;
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

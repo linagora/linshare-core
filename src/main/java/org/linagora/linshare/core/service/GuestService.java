@@ -38,6 +38,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -45,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 
 public interface GuestService {
 
@@ -174,6 +176,17 @@ public interface GuestService {
 
 	SystemAccount getGuestSystemAccount();
 
-	List<Guest> findAll(Account authUser, Account actor, String pattern,
-			org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole moderatorRole);
+	/**
+	 * This method is used to findAll guests where a user is moderator of it is used on:
+	 *	- ADMIN API: the 'userToFilterBy' should be set
+	 *	- USER API: the 'userToFilterBy' will be the actor
+	 * @param authUser
+	 * @param actor
+	 * @param userToFilterBy
+	 * @param pattern
+	 * @param moderatorRole
+	 * @return List<Guest>
+	 */
+	List<Guest> findAll(Account authUser, User actor, Optional<User> userToFilterBy, String pattern,
+			ModeratorRoleEnum moderatorRole);
 }

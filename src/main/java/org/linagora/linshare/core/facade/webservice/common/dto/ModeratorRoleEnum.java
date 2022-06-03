@@ -33,22 +33,23 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 
-public enum ModeratorRole {
+public enum ModeratorRoleEnum {
 
 	ADMIN, SIMPLE, ALL;
 
-	public static ModeratorRole fromString(String s) {
+	public static ModeratorRoleEnum fromString(String s) {
 		try {
-			return ModeratorRole.valueOf(s.toUpperCase());
+			return ModeratorRoleEnum.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
 			throw new IllegalArgumentException("Doesn't match an existing moderator role.");
 		}
 	}
 
-	public static org.linagora.linshare.core.domain.constants.ModeratorRole toModeratorRole(ModeratorRole dto) {
+	public static ModeratorRole toModeratorRole(ModeratorRoleEnum dto) {
 		try {
-			return org.linagora.linshare.core.domain.constants.ModeratorRole.valueOf(dto.toString());
+			return ModeratorRole.valueOf(dto.toString());
 		} catch (RuntimeException e) {
 			throw new IllegalArgumentException("Doesn't match an existing moderator role.");
 		}

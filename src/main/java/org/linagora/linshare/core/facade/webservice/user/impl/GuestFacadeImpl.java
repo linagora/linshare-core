@@ -53,8 +53,8 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestModeratorRole;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
@@ -100,11 +100,11 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	}
 
 	@Override
-	public List<GuestDto> findAll(Integer version, String pattern, ModeratorRole moderatorRole)
+	public List<GuestDto> findAll(Integer version, String pattern, ModeratorRoleEnum moderatorRole)
 			throws BusinessException {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, null);
-		List<Guest> guests = guestService.findAll(authUser, actor, pattern, moderatorRole);
+		List<Guest> guests = guestService.findAll(authUser, actor, Optional.empty(), pattern, moderatorRole);
 		return toDtoList(version, authUser, actor, guests);
 	}
 

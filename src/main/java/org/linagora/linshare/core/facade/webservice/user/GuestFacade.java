@@ -41,13 +41,13 @@ import java.util.Map;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
 public interface GuestFacade extends GenericFacade {
 
-	List<GuestDto> findAll(Integer version, String pattern, ModeratorRole moderatorRole) throws BusinessException;
+	List<GuestDto> findAll(Integer version, String pattern, ModeratorRoleEnum moderatorRole) throws BusinessException;
 
 	List<GuestDto> findAll(String actorUuid) throws BusinessException;
 

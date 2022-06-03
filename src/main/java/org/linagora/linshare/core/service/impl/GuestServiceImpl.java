@@ -39,6 +39,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
@@ -64,7 +65,7 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRole;
+import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.notifications.context.GuestAccountNewCreationEmailContext;
 import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -555,9 +556,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> findAll(Account authUser, Account actor, String pattern, ModeratorRole moderatorRole) {
+	public List<Guest> findAll(Account authUser, User actor, Optional<User> userToFilterBy, String pattern, ModeratorRoleEnum moderatorRole) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, Guest.class, BusinessErrorCode.GUEST_FORBIDDEN, null);
+		actor = userToFilterBy.orElse(actor);
 		List<Guest> guests = Lists.newArrayList();
 		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
 		if (Strings.isNullOrEmpty(pattern)) {
