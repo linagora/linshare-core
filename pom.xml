@@ -1552,11 +1552,7 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>version.properties</include>
-					<include>openapi-configuration-adminv4.json</include>
-					<include>openapi-configuration-admin.json</include>
-					<include>openapi-configuration-delegationv2.json</include>
-					<include>openapi-configuration-uploadrequestv2.json</include>
-					<include>openapi-configuration-userv2.json</include>
+					<include>openapi-configuration-*.json</include>
 				</includes>
 			</resource>
 		</resources>
