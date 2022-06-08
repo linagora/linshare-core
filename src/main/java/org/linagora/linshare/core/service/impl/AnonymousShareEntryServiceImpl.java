@@ -163,7 +163,7 @@ public class AnonymousShareEntryServiceImpl extends
 			sc.addMailContainer(mail);
 			sc.addLogs(anonymousUrl.getLogs());
 			recipientFavouriteRepository.incAndCreate(owner,
-					recipient.getMail(), contactExpirationDate);
+					recipient.getMail(), contactExpirationDate, true);
 			entries.addAll(anonymousUrl.getAnonymousShareEntries());
 		}
 		// logs all entries in share container and reset it.

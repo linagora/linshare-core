@@ -300,7 +300,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				updateGuestExpiryDate(recipient);
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
-						recipient.getMail(), contactExpirationDate);
+						recipient.getMail(), contactExpirationDate, false);
 				ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.CREATE, createShare,
 						AuditLogEntryType.SHARE_ENTRY);
 				String recipientUuid = recipient.getLsUuid();

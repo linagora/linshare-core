@@ -128,14 +128,14 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 	}
 
 	@Override
-	public void incAndCreate(User u, String mail, Date expirationDate) throws BusinessException {
+	public void incAndCreate(User u, String mail, Date expirationDate, boolean isExternal) throws BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", u));
 		det.add(Restrictions.eq("recipient", mail));
 		RecipientFavourite recipient = DataAccessUtils
 				.singleResult(findByCriteria(det));
 		if (recipient == null) {
-			recipient = create(new RecipientFavourite(u, mail, expirationDate));
+			recipient = create(new RecipientFavourite(u, mail, expirationDate), isExternal);
 		} else {
 			recipient.setExpirationDate(expirationDate);
 			recipient.inc();
@@ -321,5 +321,15 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 			}
 		};
 		getHibernateTemplate().execute(action);
+	}
+
+	@Override
+	public RecipientFavourite create(RecipientFavourite entity, boolean isExternal) throws BusinessException {
+		RecipientFavourite recipientFavourite = super.create(entity);
+		if (isExternal) {
+			GDPRExternalRecipientFavourite externalRecipientFavourite = new GDPRExternalRecipientFavourite(entity);
+			GDPRExternalRecipientFavouriteRepository.create(externalRecipientFavourite);
+		}
+		return recipientFavourite;
 	}
 }

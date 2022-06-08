@@ -63,7 +63,7 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 * Increment the weight of an element.
 	 * @param element the element concerned by the increase of weight.
 	 */
-	void incAndCreate(U owner, T element, Date expirationDate);
+	void incAndCreate(U owner, T element, Date expirationDate, boolean isExternal);
 	
 	/**
 	 * Increment the weight of an element.

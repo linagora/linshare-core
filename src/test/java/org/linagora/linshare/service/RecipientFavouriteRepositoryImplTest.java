@@ -172,7 +172,7 @@ public class RecipientFavouriteRepositoryImplTest {
 		favouriteRepository.incAndCreate(owner, recipients, null);
 	
 		elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeight(owner);
-		favouriteRepository.incAndCreate(owner, user3, null);
+		favouriteRepository.incAndCreate(owner, user3, null, false);
 
 		elementsOrderByWeightDesc = favouriteRepository.getElementsOrderByWeight(owner);
 		Assertions.assertTrue(elementsOrderByWeightDesc.get(1).equals(user3));
@@ -199,7 +199,7 @@ public class RecipientFavouriteRepositoryImplTest {
 
 		favouriteRepository.incAndCreate(owner, recipients, null);
 		
-		favouriteRepository.incAndCreate(owner, user3, null);
+		favouriteRepository.incAndCreate(owner, user3, null, false);
 		
 		List<String> recipientsOrderedByWeightDesc = favouriteRepository.reorderElementsByWeightDesc(recipients, owner);
 		Assertions.assertTrue(recipientsOrderedByWeightDesc.get(0).equals(user3));
@@ -227,7 +227,7 @@ public class RecipientFavouriteRepositoryImplTest {
 
 		favouriteRepository.incAndCreate(owner, recipients, null);
 		
-		favouriteRepository.incAndCreate(owner, user3, null);
+		favouriteRepository.incAndCreate(owner, user3, null, false);
 		Assertions.assertFalse(favouriteRepository.findMatchElementsOrderByWeight( getUser3().getMail(), owner).isEmpty());
 		Assertions.assertTrue(favouriteRepository.findMatchElementsOrderByWeight( "failMail@mail.com", owner).isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);

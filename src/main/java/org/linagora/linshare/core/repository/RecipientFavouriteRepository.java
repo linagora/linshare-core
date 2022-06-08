@@ -42,4 +42,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface RecipientFavouriteRepository extends FavouriteRepository<String, User, RecipientFavourite> {
 
 	void updateEmail(String currentEmail, String newEmail) throws BusinessException;
+
+	RecipientFavourite create(RecipientFavourite entity, boolean isExternal) throws BusinessException;
 }
