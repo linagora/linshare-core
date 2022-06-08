@@ -250,6 +250,13 @@ CREATE TABLE recipient_favourite (
   user_id        int8 NOT NULL,
   CONSTRAINT linshare_recipient_favourite_pkey
     PRIMARY KEY (id));
+CREATE TABLE external_recipient_favourite (
+  id                      int8 NOT NULL,
+  uuid                    varchar(255) NOT NULL UNIQUE,
+  recipient_favourite_id  int8 NOT NULL,
+  expiration_date         timestamp(6),
+  CONSTRAINT linshare_external_recipient_favourite_pkey
+    PRIMARY KEY (id));
 CREATE TABLE anonymous_url (
   id          int8 NOT NULL,
   url_path   varchar(255) NOT NULL,

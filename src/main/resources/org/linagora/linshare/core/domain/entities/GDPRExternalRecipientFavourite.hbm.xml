@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="org.linagora.linshare.core.domain.entities.GDPRExternalRecipientFavourite" table="external_recipient_favourite">
+    <id name="id" type="long">
+      <column name="id" not-null="true" index="index_external_recipient_favourite_id"/>
+      <generator class="native"/>
+    </id>
+    <property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
+    <property column="recipient_favourite_id" name="recipientFavouritePersistenceId" type="long" not-null="true" lazy="false"/>
+    <property column="expiration_date" name="expirationDate" type="timestamp"/>
+  </class>
+</hibernate-mapping>

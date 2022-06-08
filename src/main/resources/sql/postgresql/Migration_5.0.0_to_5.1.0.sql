@@ -747,6 +747,35 @@ recipientsURequest = Получатели
 subjectForOwner =  Срок действия вашего приглашения заканчивается.
 subjectForRecipient =  {0} {1}''''s срок действия вашего приглашения заканчивается.
 uploadFileBtn = Загрузить файл' WHERE id=12;
+
+CREATE TABLE external_recipient_favourite (
+  id                      int8 NOT NULL,
+  uuid                    varchar(255) NOT NULL UNIQUE,
+  recipient_favourite_id  int8 NOT NULL,
+  expiration_date         timestamp(6),
+  CONSTRAINT linshare_external_recipient_favourite_pkey
+    PRIMARY KEY (id));
+
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (56,
+     'UNDEFINED',
+     'OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT',
+     'OPTIONALS',
+     56,
+     'NEW',
+     'OPTIONAL',
+     now(),
+     now());
 ---- End of your queries
 
 -- Upgrade LinShare version

@@ -46,10 +46,12 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.linagora.linshare.core.domain.entities.GDPRExternalRecipientFavourite;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
+import org.linagora.linshare.core.repository.GDPRExternalRecipientFavouriteRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateCallback;
@@ -57,8 +59,11 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<RecipientFavourite> implements RecipientFavouriteRepository {
 
-	public RecipientFavouriteRepositoryImpl(HibernateTemplate hibernateTemplate) {
+	private final GDPRExternalRecipientFavouriteRepository GDPRExternalRecipientFavouriteRepository;
+
+	public RecipientFavouriteRepositoryImpl(HibernateTemplate hibernateTemplate, GDPRExternalRecipientFavouriteRepository GDPRExternalRecipientFavouriteRepository) {
 		super(hibernateTemplate);
+		this.GDPRExternalRecipientFavouriteRepository = GDPRExternalRecipientFavouriteRepository;
 	}
 
 	@Override

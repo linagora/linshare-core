@@ -46,6 +46,7 @@
 		<mapping resource="org/linagora/linshare/core/domain/entities/Entry.hbm.xml"/> 
 		<mapping resource="org/linagora/linshare/core/domain/entities/Document.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/RecipientFavourite.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/GDPRExternalRecipientFavourite.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/Contact.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/AnonymousUrl.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/Signature.hbm.xml"/>
