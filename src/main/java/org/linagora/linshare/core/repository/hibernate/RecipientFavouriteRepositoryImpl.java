@@ -332,4 +332,11 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 		}
 		return recipientFavourite;
 	}
+
+	@Override
+	public RecipientFavourite findById(long id) {
+		DetachedCriteria detachedCriteria = DetachedCriteria.forClass(RecipientFavourite.class);
+		detachedCriteria.add(Restrictions.eq("id", id));
+		return DataAccessUtils.singleResult(findByCriteria(detachedCriteria));
+	}
 }

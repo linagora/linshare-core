@@ -332,7 +332,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Rename saved audit workgroup to work_group
 	 */
-	UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP;
+	UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP,
+
+	/**
+	 * Populating ExternalFavouriteRecipient new table
+	 */
+	UPGRADE_5_1_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

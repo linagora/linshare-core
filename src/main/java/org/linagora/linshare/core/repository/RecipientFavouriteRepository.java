@@ -44,4 +44,6 @@ public interface RecipientFavouriteRepository extends FavouriteRepository<String
 	void updateEmail(String currentEmail, String newEmail) throws BusinessException;
 
 	RecipientFavourite create(RecipientFavourite entity, boolean isExternal) throws BusinessException;
+
+	RecipientFavourite findById(long id);
 }
