@@ -96,7 +96,7 @@ public class UserRestServiceImpl implements UserRestService {
 	@Override
 	public Response findAll(
 			@Parameter(description = "If the admin specify the domain he will retrieve the list of the choosen domain, else all users of all domains will be returned.", required = false)
-				@QueryParam("domain") String domainUuid,
+				@QueryParam("domains") List<String> domainsUuids,
 			@Parameter(description = "The admin can choose the order of sorting the user's list to retrieve, if not set the ascending order will be applied by default.", required = false)
 				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
 			@Parameter(description = "The admin can choose the field to sort with the user's list to retrieve, if not set the modification date order will be choosen by default.", required = false)
@@ -121,7 +121,7 @@ public class UserRestServiceImpl implements UserRestService {
 				@QueryParam("page") Integer pageNumber,
 			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
 				@QueryParam("size") Integer pageSize) throws BusinessException {
-		PageContainer<UserDto> container = userFacade.findAll(null, domainUuid, SortOrder.valueOf(sortOrder),
+		PageContainer<UserDto> container = userFacade.findAll(null, domainsUuids, SortOrder.valueOf(sortOrder),
 				UserFields.valueOf(sortField), mail, firstName, lastName, restricted, canCreateGuest, canUpload, role,
 				type, pageNumber, pageSize);
 		return pageResponseBuilder.build(container);

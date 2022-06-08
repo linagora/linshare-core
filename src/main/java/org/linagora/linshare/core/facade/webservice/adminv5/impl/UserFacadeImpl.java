@@ -126,17 +126,13 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	}
 
 	@Override
-	public PageContainer<UserDto> findAll(String actorUuid, String domainUuid, SortOrder sortOrder,
+	public PageContainer<UserDto> findAll(String actorUuid, List<String> domainsUuids, SortOrder sortOrder,
 			UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
 			Boolean canCreateGuest, Boolean canUpload, String role, String type, Integer pageNumber, Integer pageSize) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		User actor = getActor(authUser, actorUuid);
 		PageContainer<User> container = new PageContainer<>(pageNumber, pageSize);
-		AbstractDomain domain = null;
-		if (!Strings.isNullOrEmpty(domainUuid)) {
-			domain = abstractDomainService.findById(domainUuid);
-		}
-		container = userService2.findAll(authUser, actor, domain, sortOrder, sortField, mail, firstName, lastName,
+		container = userService2.findAll(authUser, actor, domainsUuids, sortOrder, sortField, mail, firstName, lastName,
 				restricted, canCreateGuest, canUpload, role, type, container);
 		PageContainer<UserDto> dto = pageContainerAdaptor.convert(container, UserDto.toDto());
 		return dto;

@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.criterion.Order;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -53,7 +54,7 @@ import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
+import org.linagora.linshare.core.rac.impl.UserResourceAccessControlImpl;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -74,30 +75,44 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 
 	private final AbstractDomainService abstractDomainService;
 
+	private DomainPermissionBusinessService permissionService;
+
 	public UserService2Impl(
-			AbstractResourceAccessControl<Account, Account, User> rac,
+			UserResourceAccessControlImpl rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			UserRepository<User> userRepository,
 			UserService userService,
 			AbstractDomainService abstractDomainService,
-			AllowedContactRepository allowedContactRepository) {
+			AllowedContactRepository allowedContactRepository,
+			DomainPermissionBusinessService permissionService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.userRepository = userRepository;
 		this.userService = userService;
 		this.allowedContactRepository = allowedContactRepository;
 		this.abstractDomainService = abstractDomainService;
+		this.permissionService = permissionService;
 	}
 
 	@Override
-	public PageContainer<User> findAll(Account authUser, Account actor, AbstractDomain domain, SortOrder sortOrder,
+	public PageContainer<User> findAll(Account authUser, Account actor, List<String> domainsUuids, SortOrder sortOrder,
 			UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
 			Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container) {
 		preChecks(authUser, actor);
-		checkListPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
+		List<AbstractDomain> domains = Lists.newArrayList();
+		for (String domainUuid : domainsUuids) {
+			AbstractDomain domain = abstractDomainService.findById(domainUuid);
+			domains.add(domain);
+		}
+		checkListPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null, domains);
+		if (actor.hasAdminRole()) {
+			if (domains.isEmpty()) {
+				domains = permissionService.getMyAdministredDomains(actor);
+			}
+		}
 		Role checkedRole = Strings.isNullOrEmpty(role) ? null : Role.valueOf(role);
 		AccountType checkedAccountType = Strings.isNullOrEmpty(type) ? null : AccountType.valueOf(type);
 		Order order = checkSortOrderAndField(sortOrder, sortField);
-		return userRepository.findAll(domain, order, mail, firstName, lastName, restricted, canCreateGuest, canUpload,
+		return userRepository.findAll(domains, order, mail, firstName, lastName, restricted, canCreateGuest, canUpload,
 				checkedRole, checkedAccountType, container);
 	}
 

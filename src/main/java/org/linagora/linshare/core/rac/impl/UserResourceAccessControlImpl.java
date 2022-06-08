@@ -33,16 +33,30 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import java.util.List;
+
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.UserResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+
+import com.google.common.collect.Lists;
+
 
 public class UserResourceAccessControlImpl extends AbstractResourceAccessControlImpl<Account, Account, User>
 		implements UserResourceAccessControl {
 
-	public UserResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+	private DomainPermissionBusinessService permissionService;
+
+	public UserResourceAccessControlImpl(
+			FunctionalityReadOnlyService functionalityService,
+			DomainPermissionBusinessService permissionService) {
 		super(functionalityService);
+		this.permissionService = permissionService;
 	}
 
 	@Override
@@ -57,12 +71,28 @@ public class UserResourceAccessControlImpl extends AbstractResourceAccessControl
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, User entry, Object... opt) {
-		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
-			if (authUser.equals(actor)) {
+		if (authUser.hasAdminRole()) {
+			if (checkAdminOfDomain(actor, opt)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private boolean checkAdminOfDomain(Account actor, Object... opt) {
+		@SuppressWarnings("unchecked")
+		List<AbstractDomain> domains = (List<AbstractDomain>) opt[0];
+		List<String> notAllowedDomains = Lists.newArrayList();
+		for (AbstractDomain domain : domains) {
+			if (!permissionService.isAdminforThisDomain(actor, domain)) {
+				notAllowedDomains.add(domain.getUuid());
+			}
+		}
+		if (!notAllowedDomains.isEmpty()) {
+			String errMsg = String.format("You are not allowed to list users of these domains: %1$s", notAllowedDomains);
+			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN, errMsg);
+		}
+		return true;
 	}
 
 	@Override
