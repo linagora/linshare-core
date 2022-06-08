@@ -404,7 +404,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				return users;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				PageContainer<User> container = new PageContainer<>(0,50);
-				container = userRepository.findAll(domain, Order.asc("modificationDate"), mail, firstName,
+				container = userRepository.findAll(Lists.newArrayList(domain), Order.asc("modificationDate"), mail, firstName,
 						lastName, null, null, null, null, null, container);
 				List<User> users = container.getPageResponse().getContent();
 				return users;
@@ -442,7 +442,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				return users;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				PageContainer<User> container = new PageContainer<>(0,50);
-				container = userRepository.findAll(domain, Order.asc("modificationDate"), pattern, null,
+				container = userRepository.findAll(Lists.newArrayList(domain), Order.asc("modificationDate"), pattern, null,
 						null, null, null, null, null, null, container);
 				List<User> users = container.getPageResponse().getContent();
 				return users;
@@ -480,7 +480,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				return users;
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				PageContainer<User> container = new PageContainer<>(0,50);
-				container = userRepository.findAll(domain, Order.asc("modificationDate"), null, firstName,
+				container = userRepository.findAll(Lists.newArrayList(domain), Order.asc("modificationDate"), null, firstName,
 						lastName, null, null, null, null, null,
 						container);
 				List<User> users = container.getPageResponse().getContent();

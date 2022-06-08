@@ -131,33 +131,33 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	}
 
 	@Override
-	public PageContainer<U> findAll(AbstractDomain domain, Order sortOrder, String mail, String firstName,
+	public PageContainer<U> findAll(List<AbstractDomain> domains, Order sortOrder, String mail, String firstName,
 			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,
 			PageContainer<U> container) {
-		DetachedCriteria detachedCrit = getAllCriteria(domain, mail, firstName, lastName, restricted, canCreateGuest,
+		DetachedCriteria detachedCrit = getAllCriteria(domains, mail, firstName, lastName, restricted, canCreateGuest,
 				canUpload, role, type);
 		detachedCrit.addOrder(sortOrder);
-		Long totalNumberElements = count(domain, mail, firstName, lastName, restricted, canCreateGuest, canUpload, role,
+		Long totalNumberElements = count(domains, mail, firstName, lastName, restricted, canCreateGuest, canUpload, role,
 				type);
 		return findAll(detachedCrit, totalNumberElements, container);
 	}
 
-	private Long count(AbstractDomain domain, String mail, String firstName, String lastName, Boolean restricted,
+	private Long count(List<AbstractDomain> domains, String mail, String firstName, String lastName, Boolean restricted,
 			Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type) {
-		DetachedCriteria detachedCrit = getAllCriteria(domain, mail, firstName, lastName, restricted, canCreateGuest,
+		DetachedCriteria detachedCrit = getAllCriteria(domains, mail, firstName, lastName, restricted, canCreateGuest,
 				canUpload, role, type);
 		detachedCrit.setProjection(Projections.rowCount());
 		return (Long) detachedCrit.getExecutableCriteria(getCurrentSession()).uniqueResult();
 	}
 
-	private DetachedCriteria getAllCriteria(AbstractDomain domain, String mail, String firstName,
+	private DetachedCriteria getAllCriteria(List<AbstractDomain> domains, String mail, String firstName,
 			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type) {
 		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
 		detachedCrit.add(Restrictions.eq("destroyed", 0L));
 		detachedCrit.add(Restrictions.not(Restrictions.in("class", Lists.newArrayList(AccountType.ROOT.toInt(),
 				AccountType.TECHNICAL_ACCOUNT.toInt()))));
-		if (!Objects.isNull(domain)) {
-			detachedCrit.add(Restrictions.eq("domain", domain));
+		if (!domains.isEmpty()) {
+			detachedCrit.add(Restrictions.in("domain", domains));
 		}
 		if (!Strings.isNullOrEmpty(mail)) {
 			detachedCrit.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));

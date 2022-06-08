@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -155,6 +157,8 @@ public class UserServiceImplTest {
 
 	private User john;
 
+	private User amy;
+
 	private Account root;
 
 	private TechnicalAccount technicalAccount;
@@ -173,6 +177,9 @@ public class UserServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
+		amy = userRepository.findByMail(LinShareTestConstants.AMY_WOLSH_ACCOUNT);
+		amy.setRole(Role.ADMIN);
+		userRepository.update(amy);
 		technicalAccount = new TechnicalAccount();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -180,6 +187,8 @@ public class UserServiceImplTest {
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		amy.setRole(Role.SIMPLE);
+		userRepository.update(amy);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -962,19 +971,67 @@ public class UserServiceImplTest {
 		Boolean canCreateGuest = null;
 		//filter users by John's domain
 		AbstractDomain domain1 = abstractDomainRepository.findById(john.getDomainId());
-		PageContainer<User> usersByJohnsDomain = userService2.findAll(root, root, domain1, order, field, mail, firstName,
+		PageContainer<User> usersByJohnsDomain = userService2.findAll(root, root, Lists.newArrayList(domain1.getUuid()), order, field, mail, firstName,
 				lastName, restricted, canCreateGuest, canUpload, role, type, container);
 		Assertions.assertEquals(3, usersByJohnsDomain.getTotalElements());
 		//filter users by Amy's domain
 		AbstractDomain domain2 = abstractDomainRepository.findById(LinShareTestConstants.TOP_DOMAIN2);
-		PageContainer<User> usersByAmysDomain = userService2.findAll(root, root, domain2, order, field, mail, firstName,
+		PageContainer<User> usersByAmysDomain = userService2.findAll(root, root, Lists.newArrayList(domain2.getUuid()), order, field, mail, firstName,
 				lastName, restricted, canCreateGuest, canUpload, role, type, container);
 		Assertions.assertEquals(1, usersByAmysDomain.getTotalElements());
 		// Filter users by john's mail
 		mail = LinShareTestConstants.JOHN_ACCOUNT;
-		PageContainer<User> usersByMail = userService2.findAll(root, root, domain1, order, field, mail, firstName,
+		PageContainer<User> usersByMail = userService2.findAll(root, root, Lists.newArrayList(domain1.getUuid()), order, field, mail, firstName,
 				lastName, restricted, canCreateGuest, canUpload, role, type, container);
 		Assertions.assertEquals(1, usersByMail.getTotalElements());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void testFailFindAllUsersNestedAdmin() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PageContainer<User> container = new PageContainer<User>(0, 2);
+		SortOrder order = SortOrder.DESC;
+		UserFields field = UserFields.modificationDate;
+		String mail = null;
+		String firstName = null;
+		String lastName = null;
+		String role = null;
+		String type = null;
+		Boolean restricted = null;
+		Boolean canUpload = null;
+		Boolean canCreateGuest = null;
+		AbstractDomain domain1 = abstractDomainRepository.findById(john.getDomainId());
+		AbstractDomain domain2 = abstractDomainRepository.findById(amy.getDomainId());
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			userService2.findAll(amy, amy, Lists.newArrayList(domain1.getUuid(), domain2.getUuid()), order, field, mail,
+					firstName, lastName, restricted, canCreateGuest, canUpload, role, type, container);
+		});
+		Assertions.assertEquals(BusinessErrorCode.USER_FORBIDDEN, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testFindAllUsersOfAdministratedDomains() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PageContainer<User> container = new PageContainer<User>(0, 2);
+		SortOrder order = SortOrder.DESC;
+		UserFields field = UserFields.modificationDate;
+		String mail = null;
+		String firstName = null;
+		String lastName = null;
+		String role = null;
+		String type = null;
+		Boolean restricted = null;
+		Boolean canUpload = null;
+		Boolean canCreateGuest = null;
+		List<String> domainUuids = Lists.newArrayList();
+		PageContainer<User> users = userService2.findAll(amy, amy, domainUuids, order, field, mail, firstName, lastName,
+				restricted, canCreateGuest, canUpload, role, type, container);
+		assertThat(users.getList()).allMatch((user) -> {
+			return user.getDomain().equals(amy.getDomain());
+		});
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 }

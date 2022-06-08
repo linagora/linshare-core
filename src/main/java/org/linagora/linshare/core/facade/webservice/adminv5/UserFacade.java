@@ -48,7 +48,7 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface UserFacade extends AdminGenericFacade {
 
-	PageContainer<UserDto> findAll(String actorUuid, String domainUuid, SortOrder sortOrder, UserFields sortField,
+	PageContainer<UserDto> findAll(String actorUuid, List<String> domainsUuids, SortOrder sortOrder, UserFields sortField,
 			String mail, String firstName, String lastName, Boolean restricted, Boolean canCreateGuest,
 			Boolean canUpload, String role, String type, Integer pageNumber, Integer pageSize);
 
