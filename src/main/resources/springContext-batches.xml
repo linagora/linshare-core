@@ -252,4 +252,12 @@
 		<constructor-arg ref="contactRepository" />
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
+
+	<bean name="GDPRFavouriteRecipientBatch"
+		class="org.linagora.linshare.core.batches.impl.GDPRFavouriteRecipientBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="timeService" />
+		<constructor-arg ref="gdprExternalRecipientFavouriteRepository" />
+		<constructor-arg ref="recipientFavouriteRepository" />
+	</bean>
 </beans>

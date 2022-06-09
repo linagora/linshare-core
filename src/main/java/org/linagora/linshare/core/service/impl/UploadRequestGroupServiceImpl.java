@@ -184,7 +184,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				Validate.notNull(contact, "contact must be set");
 				Validate.notEmpty(contact.getMail(), "mail of the contact must be set");
 				container = uploadRequestUrlService.create(container.getUploadRequests().iterator().next(), contact, container);
-				recipientFavouriteRepository.incAndCreate(owner, contact.getMail(), contactExpirationDate, true);
+				recipientFavouriteRepository.incAndCreate(owner, contact.getMail(), contactExpirationDate, false);
 			}
 		} else {
 			for (Contact contact : contacts) {
@@ -193,7 +193,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				UploadRequest clone = req.clone();
 				container = uploadRequestService.create(actor, owner, clone, container);
 				container = uploadRequestUrlService.create(clone, contact, container);
-				recipientFavouriteRepository.incAndCreate(owner, contact.getMail(), contactExpirationDate, true);
+				recipientFavouriteRepository.incAndCreate(owner, contact.getMail(), contactExpirationDate, false);
 			}
 		}
 		uploadRequestGroup.setUploadRequests(container.getUploadRequests());
