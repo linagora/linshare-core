@@ -62,6 +62,9 @@ import org.linagora.linshare.webservice.adminv5.UserRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
 
+import com.beust.jcommander.internal.Lists;
+import com.google.common.base.Strings;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -93,8 +96,10 @@ public class UserRestServiceImpl implements UserRestService {
 	})
 	@Override
 	public Response findAll(
-			@Parameter(description = "If the admin specify the domain he will retrieve the list of the choosen domain, else all users of all domains will be returned.", required = false)
+			@Parameter(description = "If the admin specify the domains he will retrieve the list of users from the chosen domains, else all users of all authorized domains will be returned.", required = false)
 				@QueryParam("domains") List<String> domainsUuids,
+			@Parameter(description = "The `domain` param is deprecated, `domains`can be used instead, if provided the `domains` list will be overrided by `domain` value.", deprecated = true, required = false)
+				@QueryParam("domain") String domainUuid,
 			@Parameter(description = "The admin can choose the order of sorting the user's list to retrieve, if not set the ascending order will be applied by default.", required = false)
 				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
 			@Parameter(description = "The admin can choose the field to sort with the user's list to retrieve, if not set the modification date order will be choosen by default.", required = false)
@@ -116,9 +121,11 @@ public class UserRestServiceImpl implements UserRestService {
 			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users with a choosen type.", required = false)
 				@QueryParam("type") String type,
 			@Parameter(description = "The admin can choose the page number to get.", required = false)
-				@QueryParam("page") Integer pageNumber,
-			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
+				@QueryParam("page") Integer pageNumber, @Parameter(description = "The admin can choose the number of elements to get.", required = false)
 				@QueryParam("size") Integer pageSize) throws BusinessException {
+		if (!Strings.isNullOrEmpty(domainUuid)) {
+			domainsUuids = Lists.newArrayList(domainUuid);
+		}
 		PageContainer<UserDto> container = userFacade.findAll(null, domainsUuids, SortOrder.valueOf(sortOrder),
 				UserFields.valueOf(sortField), mail, firstName, lastName, restricted, canCreateGuest, canUpload, role,
 				type, pageNumber, pageSize);
