@@ -58,22 +58,25 @@ public class ExternalRecipientFavouriteUpgradeTaskImpl extends GenericUpgradeTas
 	private final RecipientFavouriteRepository recipientFavouriteRepository;
 	private final GDPRExternalRecipientFavouriteRepository GDPRExternalRecipientFavouriteRepository;
 	private final UserRepository<User> userRepository;
+	private final boolean gdprActivated;
 
 	public ExternalRecipientFavouriteUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			RecipientFavouriteRepository recipientFavouriteRepository,
 			GDPRExternalRecipientFavouriteRepository GDPRExternalRecipientFavouriteRepository,
-			UserRepository<User> userRepository) {
+			UserRepository<User> userRepository,
+			boolean gdprActivated) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
 		this.GDPRExternalRecipientFavouriteRepository = GDPRExternalRecipientFavouriteRepository;
 		this.userRepository = userRepository;
+		this.gdprActivated = gdprActivated;
 	}
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_5_1_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
+		return UpgradeTaskType.OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
 	}
 
 	@Override
@@ -83,6 +86,11 @@ public class ExternalRecipientFavouriteUpgradeTaskImpl extends GenericUpgradeTas
 			.map(RecipientFavourite::getPersistenceId)
 			.map(String::valueOf)
 			.collect(Collectors.toUnmodifiableList());
+	}
+
+	@Override
+	public boolean needToRun() {
+		return gdprActivated;
 	}
 
 	@Override

@@ -71,6 +71,7 @@
 	<bean name="recipientFavouriteRepository" class="org.linagora.linshare.core.repository.hibernate.RecipientFavouriteRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 		<constructor-arg ref="gdprExternalRecipientFavouriteRepository" />
+		<constructor-arg name="gdprActivated" value="${linshare.gdpr.enable}"/>
 	</bean>
 
 	<bean name="gdprExternalRecipientFavouriteRepository" class="org.linagora.linshare.core.repository.hibernate.GDPRExternalRecipientFavouriteRepositoryImpl">

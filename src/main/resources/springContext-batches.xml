@@ -241,6 +241,7 @@
 		<constructor-arg ref="timeService" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="mongoTemplate" />
+		<constructor-arg name="gdprActivated" value="${linshare.gdpr.enable}"/>
 	</bean>
 
 	<bean name="GDPRUploadRequestBatch"
@@ -251,6 +252,7 @@
 		<constructor-arg ref="uploadRequestUrlRepository" />
 		<constructor-arg ref="contactRepository" />
 		<constructor-arg ref="mongoTemplate" />
+		<constructor-arg name="gdprActivated" value="${linshare.gdpr.enable}"/>
 	</bean>
 
 	<bean name="GDPRFavouriteRecipientBatch"
@@ -259,5 +261,6 @@
 		<constructor-arg ref="timeService" />
 		<constructor-arg ref="gdprExternalRecipientFavouriteRepository" />
 		<constructor-arg ref="recipientFavouriteRepository" />
+		<constructor-arg name="gdprActivated" value="${linshare.gdpr.enable}"/>
 	</bean>
 </beans>

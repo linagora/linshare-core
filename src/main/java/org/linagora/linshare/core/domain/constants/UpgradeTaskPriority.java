@@ -45,7 +45,8 @@ public enum UpgradeTaskPriority {
 	MANDATORY,
 	// Upgrade task need to be run but it is not required to restore the service.
 	// Upgrade task processing can be postpone.
-	REQUIRED;
+	REQUIRED,
+	OPTIONAL;
 
 	public static UpgradeTaskPriority fromString(String s) {
 		try {

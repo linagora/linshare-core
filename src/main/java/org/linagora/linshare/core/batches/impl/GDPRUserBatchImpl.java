@@ -62,21 +62,29 @@ public class GDPRUserBatchImpl extends GenericBatchImpl {
 	private final TimeService timeService;
 	private final UserRepository userRepository;
 	private final MongoTemplate mongoTemplate;
+	private final boolean gdprActivated;
 
 	public GDPRUserBatchImpl(
-		AccountRepository<Account> accountRepository,
-		TimeService timeService,
-		UserRepository userRepository,
-		MongoTemplate mongoTemplate) {
+			AccountRepository<Account> accountRepository,
+			TimeService timeService,
+			UserRepository userRepository,
+			MongoTemplate mongoTemplate,
+			boolean gdprActivated) {
 		super(accountRepository);
 		this.timeService = timeService;
 		this.userRepository = userRepository;
 		this.mongoTemplate = mongoTemplate;
+		this.gdprActivated = gdprActivated;
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
 		return userRepository.findAllNonAnonymizedPurgedAccounts(timeService.previousYear());
+	}
+
+	@Override
+	public boolean needToRun() {
+		return gdprActivated;
 	}
 
 	@Override

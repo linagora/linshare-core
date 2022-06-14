@@ -30,6 +30,8 @@ linshare.db.hbm2ddl.auto=create
 linshare.test.mail.sender=mailSender@mailSender.test
 linshare.test.mail.recipient=mailRecipient@mailRecipient.test
 
+linshare.gdpr.enable=true
+
 virusscanner.clamav.host=localhost
 virusscanner.clamav.port=3310
 virusscanner.clamav.filetocheck=/path/to/the/file/to/check

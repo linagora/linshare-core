@@ -60,10 +60,12 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
 public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<RecipientFavourite> implements RecipientFavouriteRepository {
 
 	private final GDPRExternalRecipientFavouriteRepository GDPRExternalRecipientFavouriteRepository;
+	private final boolean gdprActivated;
 
-	public RecipientFavouriteRepositoryImpl(HibernateTemplate hibernateTemplate, GDPRExternalRecipientFavouriteRepository GDPRExternalRecipientFavouriteRepository) {
+	public RecipientFavouriteRepositoryImpl(HibernateTemplate hibernateTemplate, GDPRExternalRecipientFavouriteRepository GDPRExternalRecipientFavouriteRepository, boolean gdprActivated) {
 		super(hibernateTemplate);
 		this.GDPRExternalRecipientFavouriteRepository = GDPRExternalRecipientFavouriteRepository;
+		this.gdprActivated = gdprActivated;
 	}
 
 	@Override
@@ -326,9 +328,9 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 	@Override
 	public RecipientFavourite create(RecipientFavourite entity, boolean isExternal) throws BusinessException {
 		RecipientFavourite recipientFavourite = super.create(entity);
-		if (isExternal) {
-			GDPRExternalRecipientFavourite externalRecipientFavourite = new GDPRExternalRecipientFavourite(entity);
-			GDPRExternalRecipientFavouriteRepository.create(externalRecipientFavourite);
+		if (isExternal && gdprActivated) {
+			GDPRExternalRecipientFavourite GDPRExternalRecipientFavourite = new GDPRExternalRecipientFavourite(entity);
+			GDPRExternalRecipientFavouriteRepository.create(GDPRExternalRecipientFavourite);
 		}
 		return recipientFavourite;
 	}

@@ -337,7 +337,7 @@ public enum UpgradeTaskType {
 	/**
 	 * Populating ExternalFavouriteRecipient new table
 	 */
-	UPGRADE_5_1_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
+	OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

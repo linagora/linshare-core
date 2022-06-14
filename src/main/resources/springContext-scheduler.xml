@@ -199,7 +199,29 @@
         <property name="cronExpression" value="${job.updateDailyStatQuota.cron.expression}"/>
     </bean>
 
-    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<bean id="gdprBatchJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+				  value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch">
+					<list value-type="org.linagora.linshare.core.batches.GenericBatch">
+						<ref bean="GDPRFavouriteRecipientBatch" />
+						<ref bean="GDPRUploadRequestBatch" />
+						<ref bean="GDPRUserBatch" />
+					</list>
+				</entry>
+				<entry key="batchRunner" value-ref="batchRunner" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="gdprBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="gdprBatchJob"/>
+		<property name="cronExpression" value="${job.gdpr.cron.expression}"/>
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
                 <ref bean="cleanOutdatedUsersAndDomainsJobTrigger"/>
@@ -210,6 +232,7 @@
                 <ref bean="cleaningShareEntriesJobTrigger"/>
                 <ref bean="dailyBatchJobTrigger"/>
                 <ref bean="synchronizingLdapGroupsJobTrigger"/>
+                <ref bean="gdprBatchJobTrigger"/>
             </list>
         </property>
     </bean>

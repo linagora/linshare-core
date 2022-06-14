@@ -57,21 +57,29 @@ public class GDPRFavouriteRecipientBatchImpl extends GenericBatchImpl {
 	private final TimeService timeService;
 	private final GDPRExternalRecipientFavouriteRepository GDPRExternalRecipientFavouriteRepository;
 	private final RecipientFavouriteRepository recipientFavouriteRepository;
+	private final boolean gdprActivated;
 
 	public GDPRFavouriteRecipientBatchImpl(
 			AccountRepository<Account> accountRepository,
 			TimeService timeService,
 			GDPRExternalRecipientFavouriteRepository GDPRExternalRecipientFavouriteRepository,
-			RecipientFavouriteRepository recipientFavouriteRepository) {
+			RecipientFavouriteRepository recipientFavouriteRepository,
+			boolean gdprActivated) {
 		super(accountRepository);
 		this.timeService = timeService;
 		this.GDPRExternalRecipientFavouriteRepository = GDPRExternalRecipientFavouriteRepository;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
+		this.gdprActivated = gdprActivated;
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
 		return GDPRExternalRecipientFavouriteRepository.findUuidByExpirationDateLessThan(timeService.previousYear());
+	}
+
+	@Override
+	public boolean needToRun() {
+		return gdprActivated;
 	}
 
 	@Override

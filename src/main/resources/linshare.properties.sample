@@ -232,6 +232,12 @@ job.uploadrequest.cron.expression=0 0 * ? * *
 #   - synchronizing LdapGroups with Workgroups
 # job.ldapgroups.cron.expression=0 0 0/4 * * ?
 
+# Batches are launched every days at 4a.m
+# This cron is responsible of :
+#   - executing task populating gdpr garbage collector
+# job.gdpr.cron.expression=0 0 4 * * ?
+# linshare.gdpr.enable=false
+
 
 # webservice
 # data exceeding the memory threshold will be written to the directory (in bytes)

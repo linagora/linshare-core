@@ -64,6 +64,7 @@ public class GDPRUploadRequestBatchImpl extends GenericBatchImpl {
 	private final UploadRequestUrlRepository uploadRequestUrlRepository;
 	private final ContactRepository contactRepository;
 	private final MongoTemplate mongoTemplate;
+	private final boolean gdprActivated;
 
 	public GDPRUploadRequestBatchImpl(
 			AccountRepository<Account> accountRepository,
@@ -71,18 +72,25 @@ public class GDPRUploadRequestBatchImpl extends GenericBatchImpl {
 			UploadRequestRepository uploadRequestRepository,
 			UploadRequestUrlRepository uploadRequestUrlRepository,
 			ContactRepository contactRepository,
-			MongoTemplate mongoTemplate) {
+			MongoTemplate mongoTemplate,
+			boolean gdprActivated) {
 		super(accountRepository);
 		this.timeService = timeService;
 		this.uploadRequestRepository = uploadRequestRepository;
 		this.uploadRequestUrlRepository = uploadRequestUrlRepository;
 		this.contactRepository = contactRepository;
 		this.mongoTemplate = mongoTemplate;
+		this.gdprActivated = gdprActivated;
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
 		return uploadRequestRepository.findAllArchivedOrPurgedOlderThan(timeService.previousYear());
+	}
+
+	@Override
+	public boolean needToRun() {
+		return gdprActivated;
 	}
 
 	@Override
