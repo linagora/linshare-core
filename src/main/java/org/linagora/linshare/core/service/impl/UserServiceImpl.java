@@ -38,7 +38,6 @@ package org.linagora.linshare.core.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
 
@@ -267,9 +266,8 @@ public class UserServiceImpl implements UserService {
 			// clear all thread memberships
 			UserAuditLogEntry log = new UserAuditLogEntry(actor, actor, LogAction.DELETE, AuditLogEntryType.USER,
 					userToDelete);
-			if (Objects.nonNull(userToDelete.getOwner())) {
-				log.addRelatedAccounts(userToDelete.getOwner().getLsUuid());
-			}
+			List<String> moderators = moderatorBusinessService.findAllModeratorUuidsByGuest(userToDelete);
+			log.addRelatedAccounts(moderators);
 			ssMemberService.deleteAllUserMemberships(actor, actor, userToDelete.getLsUuid());
 			userRepository.delete(userToDelete);
 			deleteAllJwtLongTime(actor, userToDelete);
@@ -945,11 +943,6 @@ public class UserServiceImpl implements UserService {
 			guest.setExpirationDate(updatedGuest.getExpirationDate());
 			guest.setComment(updatedGuest.getComment());
 			guest.setRestricted(updatedGuest.isRestricted());
-			Account ownerRef = updatedGuest.getOwner();
-			if (ownerRef != null) {
-				User owner = find((User) ownerRef, ownerRef.getDomainId());
-				guest.setOwner(owner);
-			}
 		} else {
 			// For internal users.
 			user.setRole(updatedUser.getRole());

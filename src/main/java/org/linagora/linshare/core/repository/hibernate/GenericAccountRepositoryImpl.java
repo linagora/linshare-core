@@ -51,7 +51,6 @@ import org.linagora.linshare.core.batches.impl.gdpr.GDPRConstants;
 import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -310,7 +309,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	}
 
 	@Override
-	public List<String> findAllModeratorUuidsByGuest(Guest guest) {
+	public List<String> findAllModeratorUuidsByGuest(Account guest) {
 		HibernateCallback<List<String>> action = new HibernateCallback<>() {
 			public List<String> doInHibernate(final Session session) throws HibernateException {
 				String query = "SELECT a.lsUuid FROM Account a JOIN Moderator m ON (a.id = m.account) WHERE (m.guest = :guest)";

@@ -57,5 +57,5 @@ public interface ModeratorBusinessService {
 
 	void deleteAllModerators(Guest guest);
 
-	List<String> findAllModeratorUuidsByGuest(Guest guest);
+	List<String> findAllModeratorUuidsByGuest(Account guest);
 }

@@ -127,9 +127,6 @@ public class UserResourceAccessControlImpl extends AbstractResourceAccessControl
 
 	@Override
 	protected Account getOwner(User entry, Object... opt) {
-		if (entry != null) {
-			return entry.getOwner();
-		}
 		return null;
 	}
 

@@ -107,7 +107,7 @@ public class ModeratorBusinessServiceImpl implements ModeratorBusinessService {
 	}
 
 	@Override
-	public List<String> findAllModeratorUuidsByGuest(Guest guest) {
+	public List<String> findAllModeratorUuidsByGuest(Account guest) {
 		return accountRepository.findAllModeratorUuidsByGuest(guest);
 	}
 

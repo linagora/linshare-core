@@ -39,7 +39,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 
 public interface AccountRepository<U extends Account> extends
@@ -84,5 +83,5 @@ public interface AccountRepository<U extends Account> extends
 
 	List<String> findAllAccountWithMissingQuota();
 
-	List<String> findAllModeratorUuidsByGuest(Guest guest);
+	List<String> findAllModeratorUuidsByGuest(Account guest);
 }
