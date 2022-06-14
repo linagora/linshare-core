@@ -69,9 +69,6 @@ public class GuestResourceAccessControlImpl extends
 
 	@Override
 	protected Account getOwner(Guest entry, Object... opt) {
-		if (entry != null) {
-			return entry.getOwner();
-		}
 		return null;
 	}
 
@@ -152,6 +149,8 @@ public class GuestResourceAccessControlImpl extends
 				} else {
 					logger.error("Missing guest domain to create a guest.");
 				}
+			} else {
+				logger.warn("Guests functionality is not enabled.");
 			}
 		}
 		return false;

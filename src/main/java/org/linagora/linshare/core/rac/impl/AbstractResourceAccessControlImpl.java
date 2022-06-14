@@ -60,8 +60,7 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 		this.functionalityService = functionalityService;
 	}
 
-	protected static Logger logger = LoggerFactory
-			.getLogger(AbstractResourceAccessControlImpl.class);
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	protected abstract boolean hasReadPermission(Account authUser, A account,
 			E entry, Object... opt);
