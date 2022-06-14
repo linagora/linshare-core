@@ -58,6 +58,8 @@ public class Guest extends User {
 
 	private Set<Moderator> moderators = Sets.newHashSet();
 
+	protected AbstractDomain guestSourceDomain;
+
 	/** Default constructor for hibernate. */
 	public Guest() {
 		super();
@@ -144,5 +146,13 @@ public class Guest extends User {
 
 	public void removeModerator(Moderator moderator) {
 		this.moderators.remove(moderator);
+	}
+
+	public AbstractDomain getGuestSourceDomain() {
+		return guestSourceDomain;
+	}
+
+	public void setGuestSourceDomain(AbstractDomain guestSourceDomain) {
+		this.guestSourceDomain = guestSourceDomain;
 	}
 }

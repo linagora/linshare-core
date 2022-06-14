@@ -247,6 +247,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		guest.setRole(Role.SIMPLE);
 		guest.setFirstName(sanitize(guest.getFirstName()));
 		guest.setLastName(sanitize(guest.getLastName()));
+		guest.setGuestSourceDomain(actor.getDomain());
 		List<User> restrictedContacts = null;
 		if (guest.isRestricted()) {
 			restrictedContacts = transformToUsers(authUser, restrictedMails);

@@ -502,6 +502,11 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_integer(functionality_id, integer_max_value, integer_default_value, default_value_used, max_value_used, unlimited_value, unlimited_value_used)
 	VALUES (73, 5, 5, false, true, false, false);
 
+ALTER TABLE account ADD COLUMN guest_source_domain_id int8;
+ALTER TABLE account ADD CONSTRAINT guest_source_domain_id_fk FOREIGN KEY (guest_source_domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+CREATE INDEX guest_source_domain_id_index ON account (guest_source_domain_id);
+UPDATE account AS g SET guest_source_domain_id = o.domain_id FROM account AS o WHERE g.owner_id = o.id AND g.account_type = 3;
+
 
 -- GUEST_MODERATOR_CREATION
 UPDATE mail_content SET subject='[( #{subject(${actor.firstName},${actor.lastName}, #{productName})})]',body='<!DOCTYPE html>

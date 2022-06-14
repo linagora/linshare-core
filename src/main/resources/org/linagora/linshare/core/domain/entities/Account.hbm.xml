@@ -86,6 +86,9 @@
 					<property name="expirationDate" column="expiration_date" type="timestamp" not-null="false" lazy="false"/>
 					<property name="restricted" column="restricted" type="boolean" not-null="false" lazy="false"/>
 					<property name="comment" column="comment" type="text" not-null="false" lazy="false"/>
+					<many-to-one name="guestSourceDomain" column="guest_source_domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="false"
+						lazy="proxy"  >
+					</many-to-one>
 			</subclass>
 			<subclass name="org.linagora.linshare.core.domain.entities.Root" discriminator-value="6" lazy="false">
 					<property name="firstName" column="first_name" type="string" length="255" not-null="false" lazy="false"/>

@@ -7,6 +7,7 @@ CREATE SEQUENCE hibernate_sequence INCREMENT BY 1 NO MINVALUE NO MAXVALUE START 
 CREATE TABLE account (
   id                               int8 NOT NULL,
   domain_id                       int8 NOT NULL,
+  guest_source_domain_id           int8,
   technical_account_permission_id int8,
   owner_id                        int8,
   ls_uuid                         varchar(255) NOT NULL,
@@ -981,6 +982,8 @@ CREATE UNIQUE INDEX moderator_account_id_guest_id
 
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE account ADD CONSTRAINT guest_source_domain_id_fk FOREIGN KEY (guest_source_domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+CREATE INDEX guest_source_domain_id_index ON account (guest_source_domain_id);
 ALTER TABLE domain_access_rule ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_access_rule ADD CONSTRAINT fkf75719ed85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES domain_access_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_policy ADD CONSTRAINT fk49c9a27c85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES domain_access_policy (id) ON UPDATE No action ON DELETE No action;
