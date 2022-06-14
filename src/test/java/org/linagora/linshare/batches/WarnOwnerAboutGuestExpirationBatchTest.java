@@ -46,7 +46,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
@@ -55,6 +54,7 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,8 +102,15 @@ public class WarnOwnerAboutGuestExpirationBatchTest {
 	private GuestRepository guestRepository;
 
 	@Autowired
+	private GuestService guestService;
+
+	@Autowired
 	@Qualifier("accountService")
 	AccountService accountService;
+
+	private Guest guest;
+
+	private User user1;
 
 	public WarnOwnerAboutGuestExpirationBatchTest() {
 		super();
@@ -112,13 +119,22 @@ public class WarnOwnerAboutGuestExpirationBatchTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		initAccount();
+		LoadingServiceTestDatas datas = new LoadingServiceTestDatas(userRepository);
+		datas.loadUsers();
+		user1 = datas.getUser1();
+		guest = guestService.create(user1, user1, new Guest("Guest", "One", "guest1@linshare.org"), null);
+		Calendar expirationDate = Calendar.getInstance();
+		expirationDate.add(Calendar.DATE, 7);
+		guest.setExpirationDate(expirationDate.getTime());
+		guest = guestRepository.update(guest);
+		logger.info("guestAccount " + guest);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		guestService.delete(user1, user1, guest.getLsUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -128,18 +144,4 @@ public class WarnOwnerAboutGuestExpirationBatchTest {
 		batches.add(warnOwnerAboutGuestExpirationBatch);
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 	}
-
-	private void initAccount() {
-		LoadingServiceTestDatas datas = new LoadingServiceTestDatas(userRepository);
-		datas.loadUsers();
-		Guest guest = guestRepository.findByLsUuid("46455499-f703-46a2-9659-24ed0fa0d63c");
-		Calendar expirationDate = Calendar.getInstance();
-		expirationDate.add(Calendar.DATE, 7);
-		guest.setExpirationDate(expirationDate.getTime());
-		Account guestAccount = accountService.findByLsUuid(guest.getLsUuid());
-		Account owner = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
-		guestAccount.setOwner(owner);
-		logger.info("guestAccount " + guestAccount);
-	}
-
 }

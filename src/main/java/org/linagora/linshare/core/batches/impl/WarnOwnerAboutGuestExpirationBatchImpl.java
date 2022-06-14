@@ -38,8 +38,10 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.ModeratorBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -54,11 +56,16 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.NotifierService;
 
+import com.google.common.collect.Lists;
+
+// TODO: moderators: rename it
 public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 
 	protected GuestRepository guestRepository;
 
 	protected AccountService accountService;
+
+	private ModeratorBusinessService moderatorBusinessService;
 
 	protected MailBuildingService mailBuildingService;
 
@@ -68,6 +75,7 @@ public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 
 	public WarnOwnerAboutGuestExpirationBatchImpl(AccountRepository<Account> accountRepository,
 			GuestRepository guestRepository,
+			ModeratorBusinessService moderatorBusinessService,
 			MailBuildingService mailBuildingService,
 			NotifierService notifierService,
 			AccountService accountService,
@@ -78,6 +86,7 @@ public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 		this.notifierService = notifierService;
 		this.accountService = accountService;
 		this.nbDaysBeforeExpiration = daysBeforeExpiration;
+		this.moderatorBusinessService = moderatorBusinessService;
 	}
 
 	@Override
@@ -95,17 +104,16 @@ public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 		if (guest == null) {
 			return null;
 		}
-		Account owner = accountService.findByLsUuid(guest.getOwner().getLsUuid());
-		if (owner == null) {
-			logger.warn("No owner found for this guest : " + guest.getAccountRepresentation());
-			return null;
-		}
 		console.logInfo(batchRunContext, total, position, "Processing guest account " + guest.getAccountRepresentation());
-		ResultContext context = new AccountBatchResultContext(owner);
+		ResultContext context = new AccountBatchResultContext(guest);
 		try {
-			EmailContext ctx = new WarnOwnerAboutGuestExpirationEmailContext(guest, nbDaysBeforeExpiration);
-			MailContainerWithRecipient mail = mailBuildingService.build(ctx);
-			notifierService.sendNotification(mail);
+			List<MailContainerWithRecipient> mails = Lists.newArrayList();
+			List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest, null, null);
+			for (Moderator moderator : moderators) {
+				EmailContext ctx = new WarnOwnerAboutGuestExpirationEmailContext(moderator, guest, nbDaysBeforeExpiration);
+				mails.add(mailBuildingService.build(ctx));
+			}
+			notifierService.sendNotification(mails);
 		} catch (BusinessException businessException) {
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to send a notification for expiration guest");

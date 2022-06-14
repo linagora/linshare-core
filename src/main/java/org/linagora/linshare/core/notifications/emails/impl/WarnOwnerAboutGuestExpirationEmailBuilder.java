@@ -40,9 +40,9 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
@@ -52,6 +52,7 @@ import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
+//TODO: moderators: rename it
 public class WarnOwnerAboutGuestExpirationEmailBuilder extends EmailBuilder {
 
 	@Override
@@ -63,11 +64,12 @@ public class WarnOwnerAboutGuestExpirationEmailBuilder extends EmailBuilder {
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		WarnOwnerAboutGuestExpirationEmailContext emailCtx = (WarnOwnerAboutGuestExpirationEmailContext) context;
 		Guest guest = emailCtx.getGuest();
-		User owner = (User) guest.getOwner();
-		String linshareURL = getLinShareUrl(owner);
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+		AbstractDomain fromDomain = emailCtx.getFromDomain();
+		String linshareURL = getLinShareUrl(fromDomain);
+		MailConfig cfg = fromDomain.getCurrentMailConfiguration();
 		Context ctx = new Context(emailCtx.getLocale());
-		ctx.setVariable("owner", new MailContact(owner));
+		// FIXME template owner variable should have been renamed into moderator.
+		ctx.setVariable("owner", new MailContact(emailCtx.getModerator()));
 		ctx.setVariable("guest", new MailContact(guest));
 		ctx.setVariable("guestCreationDate", guest.getCreationDate());
 		ctx.setVariable("guestExpirationDate", guest.getExpirationDate());
@@ -82,6 +84,7 @@ public class WarnOwnerAboutGuestExpirationEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
+		// FIXME template owner variable should have been renamed into moderator.
 		ctx.setVariable("owner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("guestCreationDate", getFakeCreationDate());

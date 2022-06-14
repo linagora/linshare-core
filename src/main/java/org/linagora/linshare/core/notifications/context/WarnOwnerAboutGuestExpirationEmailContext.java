@@ -40,18 +40,23 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Moderator;
 
+//TODO: moderators: rename it
 public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 
 	protected Guest guest;
 
+	protected Moderator moderator;
+
 	protected int daysLeft;
 
-	public WarnOwnerAboutGuestExpirationEmailContext(Guest guest, int daysLeft) {
-		super(guest.getOwner().getDomain(), false);
+	public WarnOwnerAboutGuestExpirationEmailContext(Moderator moderator, Guest guest, int daysLeft) {
+		super(moderator.getAccount().getDomain(), false);
 		this.guest = guest;
 		this.daysLeft = daysLeft;
-		this.language = guest.getOwner().getMailLocale();
+		this.language = moderator.getAccount().getMailLocale();
+		this.moderator = moderator;
 	}
 
 	public Guest getGuest() {
@@ -70,6 +75,14 @@ public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 		this.daysLeft = daysLeft;
 	}
 
+	public Moderator getModerator() {
+		return moderator;
+	}
+
+	public void setModerator(Moderator moderator) {
+		this.moderator = moderator;
+	}
+
 	@Override
 	public MailContentType getType() {
 		return MailContentType.GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION;
@@ -82,7 +95,7 @@ public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 
 	@Override
 	public String getMailRcpt() {
-		return guest.getOwner().getMail();
+		return moderator.getAccount().getMail();
 	}
 
 	@Override

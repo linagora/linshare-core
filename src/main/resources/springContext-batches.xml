@@ -170,6 +170,7 @@
 		class="org.linagora.linshare.core.batches.impl.WarnOwnerAboutGuestExpirationBatchImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="guestRepository" />
+		<constructor-arg ref="moderatorBusinessService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="accountService" />
