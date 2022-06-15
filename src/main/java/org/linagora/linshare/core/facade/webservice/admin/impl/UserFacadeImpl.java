@@ -210,7 +210,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 					ac.add(contactDto.getMail());
 				}
 			}
-			update = guestService.update(authUser, (User) entity.getOwner(),
+			update = guestService.update(authUser, authUser,
 					(Guest) userToUpdate, ac);
 		} else {
 			update = userService.updateUser(authUser, userToUpdate,
