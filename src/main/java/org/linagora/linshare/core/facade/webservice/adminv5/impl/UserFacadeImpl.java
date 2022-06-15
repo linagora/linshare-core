@@ -34,13 +34,11 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
@@ -56,6 +54,7 @@ import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.UtilGuestAuthor;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
@@ -74,15 +73,10 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.UserService2;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.DomainMto;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -110,7 +104,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	
 	private final LogEntryService logEntryService;
 
-	private final MongoTemplate mongoTemplate;
+
+	private final UtilGuestAuthor utilGuestAuthor;
 
 	public UserFacadeImpl(
 			AccountService accountService,
@@ -134,7 +129,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		this.accountQuotaService = accountQuotaService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.logEntryService = logEntryService;
-		this.mongoTemplate = mongoTemplate;
+		this.utilGuestAuthor = new UtilGuestAuthor(mongoTemplate);
 	}
 
 	@Override
@@ -379,34 +374,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	private UserDto toDtoV5(User user) {
 		UserDto userDto;
 		if (user.isGuest()) {
-			userDto = UserDto.toDtoV5(user, getGuestOwner(user.getLsUuid()));
+			userDto = UserDto.toDtoV5(user, utilGuestAuthor.getAuthor(user.getLsUuid()));
 		} else {
 			userDto = UserDto.toDtoV5(user, null);
 		}
 		return userDto;
-	}
-
-	private AccountMto getGuestOwner(String guestUuid) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("resourceUuid").is(guestUuid));
-		query.addCriteria(Criteria.where("action").is(LogAction.CREATE));
-		AuditLogEntryUser guestCreationTrace = mongoTemplate.findOne(query, AuditLogEntryUser.class);
-		AccountMto owner;
-		if (Objects.nonNull(guestCreationTrace)) {
-			owner = guestCreationTrace.getActor();
-			owner.setFirstName("John");
-			owner.setLastName("DOE");
-		} else {
-			logger.warn(
-					"Guest Audit trace not found a fake owner will be used. Using John DOE unknown-user@linshare.org instead.");
-			owner = new AccountMto();
-			owner.setFirstName("John");
-			owner.setLastName("DOE");
-			owner.setMail("unknown-user@linshare.org");
-			owner.setUuid("7bf2982c-6933-47db-9203-f3b9c543eced");
-			owner.setAccountType(AccountType.INTERNAL);
-			owner.setDomain(new DomainMto("bee08e5a-2fd9-43d1-a4f0-012a0078fec2", "FakeOwnerDomain"));
-		}
-		return owner;
 	}
 }

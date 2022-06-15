@@ -38,19 +38,18 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.UtilGuestAuthor;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestModeratorRole;
@@ -62,12 +61,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.impl.ModeratorServiceImpl;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.DomainMto;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -83,7 +77,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 
 	private final ModeratorServiceImpl moderatorService;
 
-	private final MongoTemplate mongoTemplate;
+	private final UtilGuestAuthor utilGuestAuthor;
 
 	public GuestFacadeImpl(final AccountService accountService,
 			final GuestService guestService,
@@ -96,7 +90,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		this.userService = userService;
 		this.passwordService = passwordService;
 		this.moderatorService = moderatorService;
-		this.mongoTemplate = mongoTemplate;
+		this.utilGuestAuthor = new UtilGuestAuthor(mongoTemplate);
 	}
 
 	@Override
@@ -111,36 +105,12 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	private List<GuestDto> toDtoList(Integer version, Account authUser, Account actor, List<Guest> guests) {
 		List<GuestDto> guestsWithOwners = Lists.newArrayList();
 		for (Guest guest : guests) {
-			GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+			GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 			guestsWithOwners.add(
 				addModeratorRoletoGuestDto(version, authUser, actor, guest, dto)
 			);
 		}
 		return guestsWithOwners;
-	}
-
-	private GenericUserDto getGuestOwner(String guestUuid) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("resourceUuid").is(guestUuid));
-		query.addCriteria(Criteria.where("action").is(LogAction.CREATE));
-		AuditLogEntryUser guestCreationTrace = mongoTemplate.findOne(query, AuditLogEntryUser.class);
-		AccountMto owner;
-		if (Objects.nonNull(guestCreationTrace)) {
-			owner = guestCreationTrace.getActor();
-			owner.setFirstName("John");
-			owner.setLastName("DOE");
-		} else {
-			logger.warn(
-					"Guest Audit trace not found a fake owner will be used. Using John DOE unknown-user@linshare.org instead.");
-			owner = new AccountMto();
-			owner.setFirstName("John");
-			owner.setLastName("DOE");
-			owner.setMail("unknown-user@linshare.org");
-			owner.setUuid("7bf2982c-6933-47db-9203-f3b9c543eced");
-			owner.setAccountType(AccountType.INTERNAL);
-			owner.setDomain(new DomainMto("bee08e5a-2fd9-43d1-a4f0-012a0078fec2", "FakeOwnerDomain"));
-		}
-		return new GenericUserDto(owner);
 	}
 
 	/**
@@ -155,7 +125,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		Guest guest = guestService.find(authUser, actor, domain, mail);
-		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return dto;
 	}
 
@@ -171,7 +141,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		List<GuestDto> res = Lists.newArrayList();
 		List<Guest> guests = guestService.findAll(authUser, actor, null);
 		for (Guest guest : guests) {
-			res.add(GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid())));
+			res.add(GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid())));
 		}
 		return res;
 	}
@@ -191,7 +161,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, null);
 		Guest guest = guestService.find(authUser, actor, uuid);
-		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
@@ -211,7 +181,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 			}
 		}
 		guest = guestService.create(authUser, authUser, guest, ac);
-		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
@@ -232,7 +202,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 			}
 		}
 		guest = guestService.update(authUser, authUser, guest, ac);
-		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
@@ -246,7 +216,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 			uuid = guestDto.getUuid();
 		}
 		Guest guest = guestService.delete(authUser, actor, uuid);
-		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 

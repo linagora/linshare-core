@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2019-2022 LINAGORA
+ * Copyright (C) 2016-2022 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,43 +33,51 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin.impl;
+package org.linagora.linshare.core.facade.webservice;
 
-import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.UtilGuestAuthor;
-import org.linagora.linshare.core.facade.webservice.admin.GuestFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.GuestService;
+import java.util.Objects;
+
+import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.DomainMto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
-public class GuestFacadeImpl extends AdminGenericFacadeImpl implements
-		GuestFacade {
+public class UtilGuestAuthor {
 
-	private final GuestService guestService;
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private final UtilGuestAuthor utilGuestAuthor;
+	private final MongoTemplate mongoTemplate;
 
-	public GuestFacadeImpl(
-			final AccountService accountService,
-			final GuestService guestService,
-			final MongoTemplate mongoTemplate
-			) {
-		super(accountService);
-		this.guestService = guestService;
-		this.utilGuestAuthor = new UtilGuestAuthor(mongoTemplate);
+	public UtilGuestAuthor(MongoTemplate mongoTemplate) {
+		super();
+		this.mongoTemplate = mongoTemplate;
 	}
 
-	@Override
-	public GuestDto find(String uuid) throws BusinessException {
-		User currentUser = checkAuthentication(Role.ADMIN);
-		Validate.notEmpty(uuid, "Guest uuid must be set.");
-		Guest guest = guestService.find(currentUser, currentUser, uuid);
-		return GuestDto.getFull(guest, utilGuestAuthor.getAuthor(uuid));
+	public AccountMto getAuthor(String guestUuid) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("resourceUuid").is(guestUuid));
+		query.addCriteria(Criteria.where("action").is(LogAction.CREATE));
+		AuditLogEntryUser guestCreationTrace = mongoTemplate.findOne(query, AuditLogEntryUser.class);
+		AccountMto owner;
+		if (Objects.isNull(guestCreationTrace)) {
+			logger.warn(
+					"Guest Audit trace not found a fake owner will be used. Using John DOE unknown-user@linshare.org instead.");
+			owner = new AccountMto();
+			owner.setFirstName("John");
+			owner.setLastName("DOE");
+			owner.setMail("unknown-user@linshare.org");
+			owner.setUuid("7bf2982c-6933-47db-9203-f3b9c543eced");
+			owner.setAccountType(AccountType.INTERNAL);
+			owner.setDomain(new DomainMto("bee08e5a-2fd9-43d1-a4f0-012a0078fec2", "FakeOwnerDomain"));
+		} else {
+			owner = guestCreationTrace.getActor();
+		}
+		return owner;
 	}
-
 }

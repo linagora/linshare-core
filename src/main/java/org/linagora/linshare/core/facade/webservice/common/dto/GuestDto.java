@@ -44,6 +44,8 @@ import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto.Author;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
@@ -84,6 +86,10 @@ public class GuestDto extends AccountDto {
 	protected GenericUserDto owner;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@Schema(description = "Author of the guest. Since v5.1")
+	protected Author author;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@Schema(description = "My moderator role for this guest.", accessMode = AccessMode.READ_ONLY)
 	protected GuestModeratorRole myRole;
 
@@ -91,7 +97,7 @@ public class GuestDto extends AccountDto {
 		super();
 	}
 
-	protected GuestDto(Guest guest, boolean full, GenericUserDto owner) {
+	protected GuestDto(Guest guest, boolean full, AccountMto author) {
 		super(guest, full);
 		this.firstName = guest.getFirstName();
 		this.lastName = guest.getLastName();
@@ -100,7 +106,10 @@ public class GuestDto extends AccountDto {
 		this.comment = guest.getComment();
 		this.expirationDate = guest.getExpirationDate();
 		this.canUpload = guest.isCanUpload();
-		this.owner = owner;
+		if (author != null) {
+			this.owner = new GenericUserDto(author);
+			this.author = new Author(author);
+		}
 		if (this.restricted) {
 			for (AllowedContact contact : guest.getRestrictedContacts()) {
 				this.restrictedContacts.add(new GenericUserDto(contact
@@ -131,8 +140,8 @@ public class GuestDto extends AccountDto {
 		return new UserDto(user, false);
 	}
 
-	public static GuestDto getFull(Guest user, GenericUserDto owner) {
-		return new GuestDto(user, true, owner);
+	public static GuestDto getFull(Guest user, AccountMto author) {
+		return new GuestDto(user, true, author);
 	}
 
 	@Override
@@ -252,6 +261,14 @@ public class GuestDto extends AccountDto {
 
 	public void setMyRole(GuestModeratorRole myRole) {
 		this.myRole = myRole;
+	}
+
+	public Author getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(Author author) {
+		this.author = author;
 	}
 
 	/*
