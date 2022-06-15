@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -296,7 +297,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareEntry createShare = shareEntryBusinessService.create(
 						documentEntry, owner, recipient, sc.getExpiryCalendar(), shareEntryGroup, sc.getSharingNote());
-				updateGuestExpiryDate(recipient,  (User) recipient.getOwner());
+				updateGuestExpiryDate(recipient);
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
 						recipient.getMail(), contactExpirationDate);
@@ -320,14 +321,15 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		return entries;
 	}
 
-	private void updateGuestExpiryDate(User recipient, User recipientOwner) {
+	private void updateGuestExpiryDate(User recipient) {
 		// update guest account expiry date
 		if (recipient.isGuest()) {
 
 			// get new guest expiry date
 			Calendar guestExpiryDate = Calendar.getInstance();
+			AbstractDomain sourceDomain = ((Guest)recipient).getGuestSourceDomain();
 			TimeUnitValueFunctionality guestFunctionality = functionalityService
-					.getGuestsExpiration(recipientOwner.getDomain());
+					.getGuestsExpiration(sourceDomain);
 			guestExpiryDate.add(guestFunctionality.toCalendarValue(),
 					guestFunctionality.getMaxValue());
 
