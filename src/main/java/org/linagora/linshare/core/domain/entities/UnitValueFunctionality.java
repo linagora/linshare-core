@@ -599,7 +599,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	@Override
 	public String toString() {
-		return "UnitValueFunctionality [unit=" + unit + ", maxUnit=" + maxUnit + ", maxValue=" + maxValue
+		return "UnitValueFunctionality [unit=" + unit + ", maxUnit=" + maxUnit + ", value=" + value + ", maxValue=" + maxValue
 				+ ", valueUsed=" + valueUsed + ", maxValueUsed=" + maxValueUsed
 				+ ", unlimited=" + unlimited
 				+ ", unlimitedUsed=" + unlimitedUsed
