@@ -46,7 +46,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jsoup.helper.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 
