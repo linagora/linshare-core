@@ -76,7 +76,7 @@ public class GuestTestFacadeImpl extends GenericFacadeImpl implements GuestTestF
 		User authUser = checkAuthentication();
 		ImmutableList<String> restrictedMails = ImmutableList.of();
 		Guest guest = guestDto.toUserObject();
-		return GuestDto.getFull(guestService.create(authUser, authUser, guest, restrictedMails));
+		return GuestDto.getSimple(guestService.create(authUser, authUser, guest, restrictedMails));
 	}
 
 	@Override
@@ -89,13 +89,13 @@ public class GuestTestFacadeImpl extends GenericFacadeImpl implements GuestTestF
 			.orElseThrow(() -> new BusinessException(BusinessErrorCode.RESET_GUEST_PASSWORD_NOT_FOUND, "The reset token was not found."));
 		resetGuestPassword.setPassword(dto.getPassword());
 		resetGuestPasswordService.update(authUser, authUser, resetGuestPassword);
-		return GuestDto.getFull(guest);
+		return GuestDto.getSimple(guest);
 	}
 
 	@Override
 	public GuestDto delete(String uuid) {
 		User authUser = checkAuthentication();
 		Guest guest = guestService.delete(authUser, authUser, uuid);
-		return GuestDto.getFull(guest);
+		return GuestDto.getSimple(guest);
 	}
 }

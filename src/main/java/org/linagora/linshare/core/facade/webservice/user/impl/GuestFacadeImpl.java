@@ -111,9 +111,9 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	private List<GuestDto> toDtoList(Integer version, Account authUser, Account actor, List<Guest> guests) {
 		List<GuestDto> guestsWithOwners = Lists.newArrayList();
 		for (Guest guest : guests) {
-			GuestDto dto = GuestDto.getSimple(guest);
+			GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
 			guestsWithOwners.add(
-				addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto)
+				addModeratorRoletoGuestDto(version, authUser, actor, guest, dto)
 			);
 		}
 		return guestsWithOwners;
@@ -155,8 +155,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		Guest guest = guestService.find(authUser, actor, domain, mail);
-		GuestDto dto = GuestDto.getFull(guest);
-		dto.setOwner(getGuestOwner(guest.getLsUuid()));
+		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
 		return dto;
 	}
 
@@ -172,7 +171,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		List<GuestDto> res = Lists.newArrayList();
 		List<Guest> guests = guestService.findAll(authUser, actor, null);
 		for (Guest guest : guests) {
-			res.add(GuestDto.getFull(guest));
+			res.add(GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid())));
 		}
 		return res;
 	}
@@ -192,8 +191,8 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, null);
 		Guest guest = guestService.find(authUser, actor, uuid);
-		GuestDto dto = GuestDto.getFull(guest);
-		return addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
+		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
 	@Override
@@ -211,8 +210,9 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 				}
 			}
 		}
-		GuestDto dto = GuestDto.getFull(guestService.create(authUser, authUser, guest, ac));
-		return addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
+		guest = guestService.create(authUser, authUser, guest, ac);
+		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
 	@Override
@@ -231,8 +231,9 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 				ac.add(contactDto.getMail());
 			}
 		}
-		GuestDto dto = GuestDto.getFull(guestService.update(authUser, authUser, guest, ac));
-		return addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
+		guest = guestService.update(authUser, authUser, guest, ac);
+		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
 	@Override
@@ -245,12 +246,11 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 			uuid = guestDto.getUuid();
 		}
 		Guest guest = guestService.delete(authUser, actor, uuid);
-		GuestDto dto = GuestDto.getSimple(guest);
-		return addOwnerAndModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
+		GuestDto dto = GuestDto.getFull(guest, getGuestOwner(guest.getLsUuid()));
+		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
-	private GuestDto addOwnerAndModeratorRoletoGuestDto(Integer version, Account authUser, Account actor, Guest guest, GuestDto dto) {
-		dto.setOwner(getGuestOwner(guest.getLsUuid()));
+	private GuestDto addModeratorRoletoGuestDto(Integer version, Account authUser, Account actor, Guest guest, GuestDto dto) {
 		if(version >= 5) {
 			dto.setMyRole(GuestModeratorRole.NONE);
 			Optional<Moderator> moderator = moderatorService.findByActorAndGuest(authUser, actor, guest.getLsUuid());

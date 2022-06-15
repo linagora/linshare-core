@@ -92,6 +92,7 @@
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.GuestFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="guestService" />
+		<constructor-arg ref="mongoTemplate" />
 	</bean>
 	<bean id="wsAdminMailConfigFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.MailConfigFacadeImpl">

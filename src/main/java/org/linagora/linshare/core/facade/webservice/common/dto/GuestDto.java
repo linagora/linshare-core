@@ -91,7 +91,7 @@ public class GuestDto extends AccountDto {
 		super();
 	}
 
-	protected GuestDto(Guest guest, boolean full) {
+	protected GuestDto(Guest guest, boolean full, GenericUserDto owner) {
 		super(guest, full);
 		this.firstName = guest.getFirstName();
 		this.lastName = guest.getLastName();
@@ -100,7 +100,7 @@ public class GuestDto extends AccountDto {
 		this.comment = guest.getComment();
 		this.expirationDate = guest.getExpirationDate();
 		this.canUpload = guest.isCanUpload();
-		this.owner = new GenericUserDto((User) guest.getOwner());
+		this.owner = owner;
 		if (this.restricted) {
 			for (AllowedContact contact : guest.getRestrictedContacts()) {
 				this.restrictedContacts.add(new GenericUserDto(contact
@@ -124,15 +124,15 @@ public class GuestDto extends AccountDto {
 	}
 
 	public static GuestDto getSimple(Guest user) {
-		return new GuestDto(user, false);
+		return new GuestDto(user, false, null);
 	}
 
 	public static UserDto getSimpleUserDto(User user) {
 		return new UserDto(user, false);
 	}
 
-	public static GuestDto getFull(Guest user) {
-		return new GuestDto(user, true);
+	public static GuestDto getFull(Guest user, GenericUserDto owner) {
+		return new GuestDto(user, true, owner);
 	}
 
 	@Override
@@ -261,7 +261,7 @@ public class GuestDto extends AccountDto {
 		return new Function<Guest, GuestDto>() {
 			@Override
 			public GuestDto apply(Guest arg0) {
-				return new GuestDto(arg0, false);
+				return new GuestDto(arg0, false, null);
 			}
 		};
 	}

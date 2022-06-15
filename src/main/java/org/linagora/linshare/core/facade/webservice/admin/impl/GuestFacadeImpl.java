@@ -35,27 +35,42 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.GuestFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.DomainMto;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 public class GuestFacadeImpl extends AdminGenericFacadeImpl implements
 		GuestFacade {
 
 	private final GuestService guestService;
 
+	private final MongoTemplate mongoTemplate;
+
 	public GuestFacadeImpl(
 			final AccountService accountService,
-			final GuestService guestService
+			final GuestService guestService,
+			final MongoTemplate mongoTemplate
 			) {
 		super(accountService);
 		this.guestService = guestService;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
@@ -63,7 +78,31 @@ public class GuestFacadeImpl extends AdminGenericFacadeImpl implements
 		User currentUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "Guest uuid must be set.");
 		Guest guest = guestService.find(currentUser, currentUser, uuid);
-		return GuestDto.getFull(guest);
+		return GuestDto.getFull(guest, getGuestOwner(uuid));
+	}
+
+	private GenericUserDto getGuestOwner(String guestUuid) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("resourceUuid").is(guestUuid));
+		query.addCriteria(Criteria.where("action").is(LogAction.CREATE));
+		AuditLogEntryUser guestCreationTrace = mongoTemplate.findOne(query, AuditLogEntryUser.class);
+		AccountMto owner;
+		if (Objects.nonNull(guestCreationTrace)) {
+			owner = guestCreationTrace.getActor();
+			owner.setFirstName("John");
+			owner.setLastName("DOE");
+		} else {
+			logger.warn(
+					"Guest Audit trace not found a fake owner will be used. Using John DOE unknown-user@linshare.org instead.");
+			owner = new AccountMto();
+			owner.setFirstName("John");
+			owner.setLastName("DOE");
+			owner.setMail("unknown-user@linshare.org");
+			owner.setUuid("7bf2982c-6933-47db-9203-f3b9c543eced");
+			owner.setAccountType(AccountType.INTERNAL);
+			owner.setDomain(new DomainMto("bee08e5a-2fd9-43d1-a4f0-012a0078fec2", "FakeOwnerDomain"));
+		}
+		return new GenericUserDto(owner);
 	}
 
 }
