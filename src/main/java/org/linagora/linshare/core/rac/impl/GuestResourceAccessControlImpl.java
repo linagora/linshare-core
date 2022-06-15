@@ -170,7 +170,7 @@ public class GuestResourceAccessControlImpl extends
 				return false;
 			}
 			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry);
-			if (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) {
+			if (moderator.isPresent() && moderator.get().isAdmin()) {
 				return true;
 			}
 		}

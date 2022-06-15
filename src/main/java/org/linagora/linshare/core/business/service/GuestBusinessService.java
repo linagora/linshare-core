@@ -71,7 +71,7 @@ public interface GuestBusinessService {
 			throws BusinessException;
 
 	Guest update(Account owner, Guest entity, Guest guestDto,
-			AbstractDomain domain, List<User> allowedContacts) throws BusinessException;
+			List<User> allowedContacts) throws BusinessException;
 
 	void delete(Guest guest) throws BusinessException;
 

@@ -168,10 +168,9 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	@Override
 	public Guest update(Account owner, Guest entity, Guest guest,
-			AbstractDomain domain, List<User> allowedContacts)
+			List<User> allowedContacts)
 			throws BusinessException {
 		boolean wasRestricted = entity.isRestricted();
-		entity.setDomain(domain);
 		// fields that can not be null
 		entity.setCanUpload(guest.isCanUpload());
 		entity.setRestricted(guest.isRestricted());

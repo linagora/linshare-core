@@ -257,7 +257,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean isAdminForThisUser(Account actor, User user) {
-		return domainPermisionService.isAdminForThisUser(actor, user);
+		if(domainPermisionService.isAdminforThisDomain(actor, user.getDomain())) {
+			return true;
+		}
+		if (user.isGuest()) {
+			Optional<Moderator> permission = moderatorBusinessService.findByGuestAndAccount(actor, (Guest)user);
+			if (permission.isPresent()) {
+				return permission.get().isAdmin();
+			}
+		}
+		return false;
 	}
 
 	private void setUserToDestroy(Account actor, User userToDelete)

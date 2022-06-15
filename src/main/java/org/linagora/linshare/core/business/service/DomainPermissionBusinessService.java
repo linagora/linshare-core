@@ -41,13 +41,10 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.User;
 
 public interface DomainPermissionBusinessService {
 
 	boolean isAdminforThisDomain(Account actor, AbstractDomain domain);
-
-	boolean isAdminForThisUser(Account actor, User user);
 
 	boolean isAdminForThisUploadRequest(Account actor, UploadRequest request);
 

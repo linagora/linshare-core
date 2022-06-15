@@ -290,31 +290,21 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 				entity);
 		checkUpdatePermission(authUser, actor, Guest.class,
 				BusinessErrorCode.CANNOT_UPDATE_USER, entity);
-		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(actor
-				.getDomainId());
-		if (guestDomain == null) {
-			throw new BusinessException(
-					BusinessErrorCode.USER_CANNOT_CREATE_GUEST,
-					"New owner doesn't have guest domain");
-		}
 		List<User> restrictedContacts = transformToUsers(authUser, restrictedMails);
 		Date newExpirationDate = guest.getExpirationDate(); 
 		if (newExpirationDate != null && !newExpirationDate.before(new Date())) {
-			if (!userService.isAdminForThisUser(authUser, actor)) {
 				newExpirationDate = calculateGuestExpiryDate(actor, newExpirationDate);
 				checkDateValidity(actor, entity.getExpirationDate(), newExpirationDate,
 						functionalityReadOnlyService.getGuestsExpirationDateProlongation(actor.getDomain())
 								.getActivationPolicy().getStatus(),
 						entity);
-			}
 			guest.setExpirationDate(newExpirationDate);
 		} else {
 			guest.setExpirationDate(entity.getExpirationDate());
 		}
 		guest.setFirstName(sanitize(guest.getFirstName()));
 		guest.setLastName(sanitize(guest.getLastName()));
-		Guest result = guestBusinessService.update(actor, entity, guest, guestDomain,
-				restrictedContacts);
+		Guest result = guestBusinessService.update(actor, entity, guest, restrictedContacts);
 		log.setResourceUpdated(new UserMto(result));
 		List<String> moderatorUuids = accountRepository.findAllModeratorUuidsByGuest(result);
 		log.addRelatedAccounts(moderatorUuids);

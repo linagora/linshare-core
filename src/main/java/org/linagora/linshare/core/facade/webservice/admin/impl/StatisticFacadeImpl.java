@@ -92,11 +92,12 @@ public class StatisticFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 		if (accountUuid != null) {
 			actor = accountService.findByLsUuid(accountUuid);
-			if (!permissionService.isAdminForThisUser(authUser, (User) actor)) {
-				throw new BusinessException(
-						BusinessErrorCode.STATISTIC_READ_ACTOR_ERROR,
-						"You are not allowed to read these accounts statistics");
-			}
+			// This facade must be revampped, permissions management too.
+//			if (!permissionService.isAdminForThisUser(authUser, (User) actor)) {
+//				throw new BusinessException(
+//						BusinessErrorCode.STATISTIC_READ_ACTOR_ERROR,
+//						"You are not allowed to read these accounts statistics");
+//			}
 		}
 		List<Statistic> listStat = statisticService.findBetweenTwoDates(authUser, actor,
 				domain, beginDate, endDate, statisticType);

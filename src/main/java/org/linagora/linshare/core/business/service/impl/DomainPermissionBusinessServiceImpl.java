@@ -44,9 +44,7 @@ import org.linagora.linshare.core.business.service.DomainPermissionBusinessServi
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
@@ -107,12 +105,6 @@ public class DomainPermissionBusinessServiceImpl implements
 	}
 
 	@Override
-	public boolean isAdminForThisUser(Account actor, User user) {
-		return isAdminforThisDomain(actor, user.getDomain())
-				|| isOwner(actor, user);
-	}
-
-	@Override
 	public boolean isAdminForThisUploadRequest(Account actor, UploadRequest request) {
 		return isAdminforThisDomain(actor, request.getUploadRequestGroup().getAbstractDomain())
 				|| isOwner(actor, request);
@@ -152,10 +144,6 @@ public class DomainPermissionBusinessServiceImpl implements
 			list.addAll(findRecursivelyDomains(sub));
 		}
 		return list;
-	}
-
-	private boolean isOwner(Account actor, User guest) {
-		return guest instanceof Guest && guest.getOwner().equals(actor);
 	}
 
 	private boolean isOwner(Account actor, UploadRequest request) {

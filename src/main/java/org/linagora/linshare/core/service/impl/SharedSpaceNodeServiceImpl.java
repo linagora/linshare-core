@@ -52,7 +52,6 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
@@ -301,10 +300,9 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		}
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 				null);
-		PageContainer<SharedSpaceNodeNested> sharedSpaces = new PageContainer<SharedSpaceNodeNested>();
 		Sort sort = Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString());
 		if (Objects.nonNull(account)) {
-			if (!domainPermissionBusinessService.isAdminForThisUser(actor, (User) account)) {
+			if (!domainPermissionBusinessService.isAdminforThisDomain(actor, account.getDomain())) {
 				throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
 						"You are not authorized to retieve the sharedSpaces of this account: " + account.getLsUuid());
 			}

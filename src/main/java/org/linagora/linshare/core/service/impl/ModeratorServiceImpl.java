@@ -109,7 +109,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		}
 		moderator = moderatorBusinessService.create(moderator);
 		guest.addModerator(moderator);
-		guestBusinessService.update(actor, guest, guest, guest.getDomain(), null);
+		guestBusinessService.update(actor, guest, guest, null);
 		if (!actor.equals(moderator.getAccount())) {
 			GuestModeratorCreationEmailContext mailContext = new GuestModeratorCreationEmailContext(actor, moderator);
 			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
@@ -176,7 +176,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
 		moderatorBusinessService.delete(moderator);
 		guest.removeModerator(moderator);
-		guestBusinessService.update(actor, guest, guest, guest.getDomain(), null);
+		guestBusinessService.update(actor, guest, guest, null);
 		if (!actor.equals(moderator.getAccount())) {
 			GuestModeratorDeletionEmailContext mailContext = new GuestModeratorDeletionEmailContext(actor,
 					moderator);

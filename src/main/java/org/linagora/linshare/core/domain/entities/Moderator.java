@@ -156,4 +156,8 @@ public class Moderator {
 			return false;
 		return true;
 	}
+
+	public boolean isAdmin() {
+		return ModeratorRole.ADMIN.equals(this.getRole());
+	}
 }
