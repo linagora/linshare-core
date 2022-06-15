@@ -20,6 +20,7 @@
 		<constructor-arg ref="accountQuotaService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="mongoTemplate" />
 	</bean>
 
 	<bean id="wsAdminV5SharedSpaceFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.SharedSpaceFacadeImpl">

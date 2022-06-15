@@ -38,10 +38,10 @@ import java.util.Date;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -54,7 +54,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class UserDto {
 
 	@Schema(name = "UserAuthor", description = "The author of a guest user.")
-	public class Author {
+	public static class Author {
 
 		@Schema(description = "Uuid")
 		private String uuid;
@@ -72,12 +72,12 @@ public class UserDto {
 			super();
 		}
 
-		public Author(Account author) {
+		public Author(AccountMto accountMto) {
 			super();
-			this.uuid = author.getLsUuid();
-			this.name = author.getFullName();
-			this.email = author.getMail();
-			this.domain = new DomainLightDto(author.getDomain());
+			this.uuid = accountMto.getUuid();
+			this.name = accountMto.getName();
+			this.email = accountMto.getMail();
+			this.domain = new DomainLightDto(accountMto.getDomain());
 		}
 
 		public String getUuid() {
@@ -177,7 +177,7 @@ public class UserDto {
 		super();
 	}
 
-	public UserDto(User user) {
+	protected UserDto(User user) {
 		this.uuid = user.getLsUuid();
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
@@ -193,7 +193,6 @@ public class UserDto {
 			this.restricted = g.isRestricted();
 			this.comment = g.getComment();
 			this.expirationDate = g.getExpirationDate();
-			this.author = new Author(user.getOwner());
 		} else {
 			this.restricted = false;
 		}
@@ -406,5 +405,13 @@ public class UserDto {
 				return new UserDto(arg0);
 			}
 		};
+	}
+
+	public static UserDto toDtoV5(User arg0, AccountMto accountMto) {
+		UserDto dto = new UserDto(arg0);
+		if (accountMto != null) {
+			dto.setAuthor(new Author(accountMto));
+		}
+		return dto;
 	}
 }

@@ -38,6 +38,7 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.mongo.entities.mto.DomainMto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -59,6 +60,11 @@ public class DomainLightDto {
 	}
 
 	public DomainLightDto(AbstractDomain domain) {
+		this.setUuid(domain.getUuid());
+		this.setName(domain.getLabel());
+	}
+
+	public DomainLightDto(DomainMto domain) {
 		this.setUuid(domain.getUuid());
 		this.setName(domain.getLabel());
 	}

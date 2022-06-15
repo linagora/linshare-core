@@ -34,11 +34,13 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
@@ -72,9 +74,15 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.UserService2;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.DomainMto;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -102,6 +110,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	
 	private final LogEntryService logEntryService;
 
+	private final MongoTemplate mongoTemplate;
+
 	public UserFacadeImpl(
 			AccountService accountService,
 			UserService2 userService2,
@@ -112,6 +122,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			AccountQuotaService accountQuotaService, 
 			DomainPermissionBusinessService domainPermissionBusinessService,
+			MongoTemplate mongoTemplate,
 			LogEntryService logEntryService) {
 		super(accountService);
 		this.userService2 = userService2;
@@ -123,6 +134,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		this.accountQuotaService = accountQuotaService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.logEntryService = logEntryService;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
@@ -144,13 +156,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		User actor = getActor(authUser, actorUuid);
 		Validate.notEmpty(uuid, "User uuid must be set.");
 		User user = userService2.find(authUser, actor, uuid);
-		UserDto userDto = null;
-		if (user.isGuest() && user.isRestricted()) {
-			Guest guest = guestService.find(authUser, actor, uuid);
-			userDto = new UserDto(guest);
-		} else {
-			userDto = new UserDto(user);
-		}
+		UserDto userDto = toDtoV5(user);
 		AccountQuota quota = quotaService.findByRelatedAccount(user);
 		userDto.setQuotaUuid(quota.getUuid());
 		return userDto;
@@ -171,7 +177,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			userService2.unlock(authUser, actor, entity);
 		}
 		entity = userService2.update(authUser, actor, userToUpdate, userDto.getDomain().getUuid());
-		return new UserDto(entity);
+		return toDtoV5(entity);
 	}
 
 	@Override
@@ -190,7 +196,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		} else {
 			userToDelete = userService2.delete(authUser, actor, userToDelete.getLsUuid());
 		}
-		return new UserDto(userToDelete);
+		return toDtoV5(userToDelete);
 	}
 
 	@Override
@@ -255,7 +261,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
-		UserDto dto = new UserDto(authUser);
+		UserDto dto = toDtoV5(authUser);
 		BooleanValueFunctionality twofaFunc = functionalityReadOnlyService
 				.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
 		if (twofaFunc.getActivationPolicy().getStatus()) {
@@ -370,4 +376,37 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 				.collect(Collectors.toUnmodifiableList());
 	}
 
+	private UserDto toDtoV5(User user) {
+		UserDto userDto;
+		if (user.isGuest()) {
+			userDto = UserDto.toDtoV5(user, getGuestOwner(user.getLsUuid()));
+		} else {
+			userDto = UserDto.toDtoV5(user, null);
+		}
+		return userDto;
+	}
+
+	private AccountMto getGuestOwner(String guestUuid) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("resourceUuid").is(guestUuid));
+		query.addCriteria(Criteria.where("action").is(LogAction.CREATE));
+		AuditLogEntryUser guestCreationTrace = mongoTemplate.findOne(query, AuditLogEntryUser.class);
+		AccountMto owner;
+		if (Objects.nonNull(guestCreationTrace)) {
+			owner = guestCreationTrace.getActor();
+			owner.setFirstName("John");
+			owner.setLastName("DOE");
+		} else {
+			logger.warn(
+					"Guest Audit trace not found a fake owner will be used. Using John DOE unknown-user@linshare.org instead.");
+			owner = new AccountMto();
+			owner.setFirstName("John");
+			owner.setLastName("DOE");
+			owner.setMail("unknown-user@linshare.org");
+			owner.setUuid("7bf2982c-6933-47db-9203-f3b9c543eced");
+			owner.setAccountType(AccountType.INTERNAL);
+			owner.setDomain(new DomainMto("bee08e5a-2fd9-43d1-a4f0-012a0078fec2", "FakeOwnerDomain"));
+		}
+		return owner;
+	}
 }
