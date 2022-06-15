@@ -63,15 +63,17 @@ public class UserProfileFacadeImpl extends UserGenericFacadeImp implements UserP
 		this.userService = userService;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public AbstractUserProfileDto find() throws BusinessException {
 		User authUser = checkAuthentication();
 		if (authUser.isGuest()) {
-			return GuestProfileDto.from(authUser, userService.findByLsUuid(authUser.getOwner().getLsUuid()));
+			return GuestProfileDto.from(authUser, userService.findByLsUuid(authUser.getLsUuid()));
 		}
 		return UserProfileDto.from(authUser);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public AbstractUserProfileDto update(AbstractUserProfileDto dto) throws BusinessException {
 		dto.validation();
