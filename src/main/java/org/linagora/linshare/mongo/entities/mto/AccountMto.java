@@ -79,6 +79,10 @@ public class AccountMto {
 		this.name = account.getFullName();
 		this.mail = account.getMail();
 		this.uuid = account.getLsUuid();
+		if (account.isUser()) {
+			this.firstName = ((User)account).getFirstName();
+			this.lastName = ((User)account).getLastName();
+		}
 		if (!light) {
 			this.domain = new DomainMto(account.getDomain());
 			this.role = account.getRole();
