@@ -301,18 +301,19 @@ public class GuestServiceImplTest {
 
 	@Test
 	public void testUpdateExpirationDateByAdmin() throws BusinessException {
-		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
-		guest.setCmisLocale("en");
-		guest = guestService.create(owner2, owner2, guest, null);
-
-		TimeUnitValueFunctionality func = functionalityReadOnlyService
-				.getGuestsExpiration(owner1.getDomain());
-		Calendar newExpiryDate = Calendar.getInstance();
-		newExpiryDate.setTime(guest.getCreationDate());
-		newExpiryDate.add(Calendar.MONTH, func.getMaxValue() + 2); // the new expiration date is over the maximum value setted in the functionality.
-		guest.setExpirationDate(newExpiryDate.getTime());
-		Guest update = guestService.update(owner1, owner2, guest, null); // Owner1 is SuperAdmin and owner2 is a simple user
-		Assertions.assertEquals(newExpiryDate.getTime(), update.getExpirationDate());
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+			guest.setCmisLocale("en");
+			guest = guestService.create(owner2, owner2, guest, null);
+			TimeUnitValueFunctionality func = functionalityReadOnlyService
+					.getGuestsExpiration(owner1.getDomain());
+			Calendar newExpiryDate = Calendar.getInstance();
+			newExpiryDate.setTime(guest.getCreationDate());
+			newExpiryDate.add(Calendar.MONTH, func.getMaxValue() + 2); // the new expiration date is over the maximum value setted in the functionality.
+			guest.setExpirationDate(newExpiryDate.getTime());
+			guestService.update(owner1, owner2, guest, null);
+		});
+		Assertions.assertEquals(BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID, exception.getErrorCode());
 	}
 
 	@Test
