@@ -437,3 +437,13 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (346, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
 	VALUES(44, false, 'GUEST_MODERATOR_DELETION', 344, 345, 346, 1, true);
+
+-- Mail activation: WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT
+INSERT INTO policy(id, status, default_status, policy, system) 
+	VALUES (353, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (354, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (355, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(45, false, 'WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT', 353, 354, 355, 1, true);

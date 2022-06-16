@@ -78,6 +78,7 @@
 		<constructor-arg value="${linshare.user.url.download.uploadrequests.upload.file}"/>
 		<constructor-arg value="${linshare.user.jwt.token.link}"/>
 		<constructor-arg value="${linshare.user.guest.link}"/>
+		<constructor-arg value="${linshare.user.url.workgroup.folder.link}" />
 	</bean>
 
 	<bean name="commonRemoteServerService"

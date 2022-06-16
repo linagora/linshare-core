@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -58,18 +59,23 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewWorkgroupDocumentContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.core.utils.UniqueName;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
@@ -79,6 +85,7 @@ import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepos
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceImpl
@@ -102,6 +109,10 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 
 	protected final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
 
+	protected final MailBuildingService mailBuildingService;
+
+	protected final NotifierService notifierService;
+
 	public WorkGroupDocumentServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -117,7 +128,9 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			QuotaService quotaService,
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
 			TimeService timeService,
-			WorkGroupNodeBusinessService workGroupNodeBusinessService) {
+			WorkGroupNodeBusinessService workGroupNodeBusinessService,
+			MailBuildingService mailBuildingService,
+			NotifierService notifierService) {
 		super(workGroupNodeMongoRepository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService, mimeTypeIdentifier, timeService, workGroupNodeBusinessService);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -128,6 +141,8 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		this.quotaService = quotaService;
 		this.repository = workGroupNodeMongoRepository;
 		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
+		this.mailBuildingService = mailBuildingService;
+		this.notifierService = notifierService;
 	}
 
 	@Override
@@ -157,6 +172,19 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		document.setPathFromParent(nodeParent);
 		document = repository.insert(document);
 		workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(document, document.getModificationDate());
+		List<SharedSpaceMember> members = sharedSpaceMemberBusinessService.findBySharedSpaceNodeUuid(workGroup.getLsUuid());
+		List<MailContainerWithRecipient> mailContainers = Lists.newArrayList();
+		for (SharedSpaceMember sharedSpaceMember : members) {
+			if (!sharedSpaceMember.getAccount().getUuid().equals(actor.getLsUuid())) {
+				WorkGroupNode parent = repository
+						.findByWorkGroupAndUuid(sharedSpaceMember.getNode().getUuid(), document.getParent());
+				WorkGroupWarnNewWorkgroupDocumentContext context = new WorkGroupWarnNewWorkgroupDocumentContext(
+						workGroup.getDomain(), false, owner, sharedSpaceMember, parent, document);
+				MailContainerWithRecipient mail = mailBuildingService.build(context);
+				mailContainers.add(mail);
+			}
+		}
+		notifierService.sendNotification(mailContainers);
 		return document;
 	}
 

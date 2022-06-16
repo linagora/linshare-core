@@ -57,11 +57,13 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.VirusScannerService;
@@ -108,11 +110,13 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
 			DocumentRepository documentRepository,
 			TimeService timeService,
-			WorkGroupNodeBusinessService workGroupNodeBusinessService) {
+			WorkGroupNodeBusinessService workGroupNodeBusinessService,
+			MailBuildingService mailBuildingService,
+			NotifierService notifierService) {
 		super(documentEntryBusinessService, logEntryService, functionalityReadOnlyService, mimeTypeService,
 				virusScannerService, mimeTypeIdentifier, sanitizerInputHtmlBusinessService, workGroupNodeMongoRepository,
 				documentGarbageCollectorRepository, threadMemberRepository, mongoTemplate, operationHistoryBusinessService,
-				quotaService, sharedSpaceMemberBusinessService,timeService, workGroupNodeBusinessService);
+				quotaService, sharedSpaceMemberBusinessService,timeService, workGroupNodeBusinessService, mailBuildingService, notifierService);
 		this.documentEntryRevisionBusinessService = documentEntryRevisionBusinessService;
 		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
 		this.documentRepository = documentRepository;

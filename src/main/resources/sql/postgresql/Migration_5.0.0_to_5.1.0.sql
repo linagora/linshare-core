@@ -783,6 +783,81 @@ ALTER TABLE account DROP COLUMN owner_id;
 UPDATE mail_activation set identifier='GUEST_WARN_MODERATOR_ABOUT_GUEST_EXPIRATION' WHERE identifier='GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION';
 
 
+-- Add mail_content and mail_content_lang for workgroup document upload
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible)
+	VALUES ('',NOW(),'',1,44,44,'','','',NOW(),true,'','c23bf2a6-e7f6-11ec-914a-635e67f5625b',true);
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES
+	(44,0,44,1,44,true,'c23de28c-e7f6-11ec-b95c-5312dd811c59');
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES
+	(144,1,44,1,44,true,'c23f9d34-e7f6-11ec-bc34-73bea5d8f368');
+INSERT INTO mail_content_lang (id,language,mail_content_id,mail_config_id,mail_content_type,readonly,uuid) VALUES
+	(244,2,44,1,44,true,'c2410228-e7f6-11ec-8243-376f41b1ce73');
+
+-- Mail activation: WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT
+INSERT INTO policy(id, status, default_status, policy, system) 
+	VALUES (353, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (354, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (355, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(45, false, 'WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT', 353, 354, 355, 1, true);
+
+-- WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT
+UPDATE mail_content SET subject='[( #{subject(${document.name},${workGroupMember.node.name},${subject})})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${workGroupMember.account.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+           <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}"></span>
+             <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${document.name}" th:href="@{${workGroupFolderLink}}" >
+               link
+             </a>
+          <span data-th-utext="#{folderMsg}"></span>
+             <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${folderName}" th:href="@{${workGroupFolderLink}}" >
+               link
+             </a>
+          <span data-th-utext="#{workgroupMsg}"></span>
+             <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupMember.node.name}" th:href="@{${workGroupLink}}" >
+               link
+             </a>
+          <!--/* Activation link for initialisation of the guest account */-->
+         </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupCreationDateTitle},${document.creationDate})"/>
+    <th:block data-th-replace="layout :: infoStandardArea(#{DocumentSize},${document.size})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>',messages_french='workGroupCreationDateTitle = Date de création
+DocumentSize = Taille du document
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a ajouté un nouveau document <br>
+folderMsg = dans le dossier
+workgroupMsg = du groupe de travail
+subject = Le Document {0} a été ajouté à {1}',messages_english='workGroupCreationDateTitle = Creation date
+DocumentSize = Document size
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> uploaded a new document<br>
+folderMsg = into the folder
+workgroupMsg = of the workgroup
+subject = The document {0} was uploaded in the workgroup {1}',messages_russian='workGroupCreationDateTitle = Creation date
+DocumentSize = Document size
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> uploaded a new document<br>
+folderMsg = into the folder
+workgroupMsg = of the workgroup
+subject = The document {0} was uploaded in the workgroup {1}' WHERE id=44;
 ---- End of your queries
 
 -- Upgrade LinShare version

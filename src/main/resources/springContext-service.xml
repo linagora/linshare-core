@@ -360,6 +360,8 @@
 		<constructor-arg ref="quotaService"/>
 		<constructor-arg ref="timeService" />
 		<constructor-arg ref="workGroupNodeBusinessService"/>
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="notifierService" />
 	</bean>
 
 	<bean id="workGroupDocumentRevisionService" class="org.linagora.linshare.core.service.impl.WorkGroupDocumentRevisionServiceImpl">

@@ -152,6 +152,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected String urlTemplateForGuests;
 
+	protected String urlTemplateForWorkgroupDocument;
+
 	public EmailBuilder() {
 		initSupportedTypes();
 	}
@@ -292,6 +294,14 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	public void setUrlTemplateForGuests(String urlTemplateForGuests) {
 		this.urlTemplateForGuests = urlTemplateForGuests;
+	}
+	
+	public String getUrlTemplateForWorkgroupDocument() {
+		return urlTemplateForWorkgroupDocument;
+	}
+
+	public void setUrlTemplateForWorkgroupDocument(String urlTemplateForWorkgroupDocument) {
+		this.urlTemplateForWorkgroupDocument = urlTemplateForWorkgroupDocument;
 	}
 
 	@Override
@@ -739,6 +749,16 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		sb.append(linshareURL);
 		Formatter formatter = new Formatter(sb);
 		formatter.format(urlTemplateForWorkgroup, workGroupUuid);
+		formatter.close();
+		return sb.toString();
+	}
+
+	protected String getWorkGroupFolderLink(String linshareURL, String workGroupUuid, String workGroupName,
+			String parentUuid, String parentName) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlTemplateForWorkgroupDocument, workGroupUuid, workGroupName, parentUuid, parentName);
 		formatter.close();
 		return sb.toString();
 	}
