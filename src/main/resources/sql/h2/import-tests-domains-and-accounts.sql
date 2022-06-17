@@ -573,4 +573,3 @@ UPDATE policy SET status=true WHERE id IN (SELECT policy_activation_id FROM func
 
 -- Functionality : GUESTS
 UPDATE policy SET status=true WHERE id = 27;
-

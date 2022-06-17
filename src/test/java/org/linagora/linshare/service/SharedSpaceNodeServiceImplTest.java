@@ -52,6 +52,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -213,6 +214,36 @@ public class SharedSpaceNodeServiceImplTest {
 		Assertions.assertNotNull(expectedNode, "node not created");
 		Assertions.assertNotNull(expectedNode.getQuotaUuid());
 		service.delete(john, john, expectedNode);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void createWorkgroupWithSaasLimitation() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account root = rootUserRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
+		Functionality functionality = functionalityService.find(root, LinShareTestConstants.ROOT_DOMAIN, FunctionalityNames.SHARED_SPACE__NESTED_WORKGROUPS_LIMIT.toString());
+		functionality.getActivationPolicy().setStatus(true);
+		functionalityService.update(root, LinShareTestConstants.ROOT_DOMAIN, functionality);
+
+		// by default we only have the permissions to create 5 upload requests
+		SharedSpaceNode workspace = service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", NodeType.WORK_SPACE));
+		List<SharedSpaceNode> nodes = Lists.newArrayList();
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", workspace.getUuid(), NodeType.WORK_GROUP)));
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", workspace.getUuid(), NodeType.WORK_GROUP)));
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", workspace.getUuid(), NodeType.WORK_GROUP)));
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", workspace.getUuid(), NodeType.WORK_GROUP)));
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", workspace.getUuid(), NodeType.WORK_GROUP)));
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", workspace.getUuid(), NodeType.WORK_GROUP)));
+		});
+		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_LIMIT_REACHED, exception.getErrorCode());
+		for (SharedSpaceNode sharedSpaceNode : nodes) {
+			service.delete(john, john, sharedSpaceNode);
+		}
+		functionality = functionalityService.find(root, LinShareTestConstants.ROOT_DOMAIN, FunctionalityNames.SHARED_SPACE__NESTED_WORKGROUPS_LIMIT.toString());
+		functionality.getActivationPolicy().setStatus(false);
+		functionalityService.update(root, LinShareTestConstants.ROOT_DOMAIN, functionality);
+
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
