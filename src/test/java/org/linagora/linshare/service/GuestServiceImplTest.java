@@ -191,7 +191,7 @@ public class GuestServiceImplTest {
 				.findById(LoadingServiceTestDatas.sqlSubDomain);
 		owner1 = new Internal("John", "Doe", "user1@linshare.org", null);
 		owner1.setDomain(subDomain);
-		owner1.setRole(Role.SUPERADMIN);
+		owner1.setRole(Role.ADMIN);
 		owner1.setCanCreateGuest(true);
 		owner1 = userService.saveOrUpdateUser(owner1);
 
@@ -303,6 +303,21 @@ public class GuestServiceImplTest {
 
 	@Test
 	public void testUpdateExpirationDateByAdmin() throws BusinessException {
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = guestService.create(owner2, owner2, guest, null);
+		TimeUnitValueFunctionality func = functionalityReadOnlyService
+				.getGuestsExpiration(owner1.getDomain());
+		Calendar newExpiryDate = Calendar.getInstance();
+		newExpiryDate.setTime(guest.getCreationDate());
+		newExpiryDate.add(Calendar.MONTH, func.getMaxValue() + 2); // the new expiration date is over the maximum value setted in the functionality.
+		guest.setExpirationDate(newExpiryDate.getTime());
+		guest = guestService.update(root, root, guest, null);
+		Assertions.assertEquals(newExpiryDate.getTime(), guest.getExpirationDate());
+	}
+
+	@Test
+	public void testUpdateExpirationDateByUser() throws BusinessException {
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 			guest.setCmisLocale("en");
@@ -313,7 +328,7 @@ public class GuestServiceImplTest {
 			newExpiryDate.setTime(guest.getCreationDate());
 			newExpiryDate.add(Calendar.MONTH, func.getMaxValue() + 2); // the new expiration date is over the maximum value setted in the functionality.
 			guest.setExpirationDate(newExpiryDate.getTime());
-			guestService.update(owner1, owner2, guest, null);
+			guestService.update(owner2, owner2, guest, null);
 		});
 		Assertions.assertEquals(BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID, exception.getErrorCode());
 	}
@@ -428,7 +443,7 @@ public class GuestServiceImplTest {
 		
 		// updateGuestDomain
 		AbstractDomain domain = abstractDomainRepository.findById(guestDomainName1);
-		inconsistentUserService.updateDomain(owner1, guest.getLsUuid(), domain.getUuid());
+		inconsistentUserService.updateDomain(root, guest.getLsUuid(), domain.getUuid());
 
 	}
 

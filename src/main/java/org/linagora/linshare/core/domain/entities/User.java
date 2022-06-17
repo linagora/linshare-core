@@ -235,7 +235,7 @@ public abstract class User extends Account {
 	 */
 
 	public boolean isAdmin() {
-		return this.getRole().equals(Role.ADMIN);
+		return this.role.equals(Role.ADMIN) || this.role.equals(Role.SUPERADMIN);
 	}
 
 	public boolean isInternal() {
@@ -253,7 +253,10 @@ public abstract class User extends Account {
 	@Override
 	public String toString() {
 		return "User [firstName=" + firstName + ", lastName=" + lastName
-				+ ", mail=" + getMail() + ", lsUuid=" + lsUuid + "]";
+				+ ", mail=" + getMail()
+				+ ", role=" + getRole()
+				+ ", type=" + getAccountType()
+				+ ", lsUuid=" + lsUuid + "]";
 	}
 
 	public boolean isLocked() {

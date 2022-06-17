@@ -276,7 +276,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		List<User> restrictedContacts = transformToUsers(authUser, restrictedMails);
 		Date newExpirationDate = guest.getExpirationDate(); 
 		if (newExpirationDate != null && !newExpirationDate.before(new Date())) {
-				if (actor.isAdmin()) {
+				if (!actor.isAdmin()) {
 					// 1. Checking if he is admin of this domain was done by the rac.
 					// 2. For admin, we let them through
 					newExpirationDate = calculateGuestExpiryDate(actor, newExpirationDate);

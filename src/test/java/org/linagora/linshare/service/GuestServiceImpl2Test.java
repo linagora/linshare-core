@@ -90,10 +90,10 @@ import com.beust.jcommander.internal.Lists;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 @DirtiesContext
-public class GuestServiceImplTest2 {
+public class GuestServiceImpl2Test {
 
 	private static Logger logger = LoggerFactory
-			.getLogger(GuestServiceImplTest2.class);
+			.getLogger(GuestServiceImpl2Test.class);
 
 	@Autowired
 	private GuestService guestService;
