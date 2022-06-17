@@ -231,6 +231,25 @@ public class UploadRequestServiceImplV2Test {
 	}
 
 	@Test
+	public void createUploadRequestWithSaasLimitation() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequest request = globaleUploadRequest.clone();
+
+		// by default we only have the permissions to create 5 upload requests
+		uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			uploadRequestGroupService.create(john, john, request, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_LIMIT_REACHED, exception.getErrorCode());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, globaleUploadRequest, Lists.newArrayList(yoda), "This is a subject",

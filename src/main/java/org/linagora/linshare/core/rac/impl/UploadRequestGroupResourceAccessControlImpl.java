@@ -82,7 +82,7 @@ public class UploadRequestGroupResourceAccessControlImpl
 			Long count = uploadRequestGroupRepository.computeURGcount(actor);
 			logger.debug("uploadRequestGroup count: " + count);
 			logger.debug("uploadRequestGroup limit: " + limit);
-			if (count >= limit) {
+			if (count > limit) {
 				throw new BusinessException(
 						BusinessErrorCode.UPLOAD_REQUEST_LIMIT_REACHED,
 						"You have reached the limit of allowed upload requests: " + count + "/" + limit);
