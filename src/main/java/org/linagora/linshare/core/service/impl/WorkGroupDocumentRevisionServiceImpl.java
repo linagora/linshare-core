@@ -55,8 +55,10 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnWorkgroupDocumentUpdatedContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
@@ -70,6 +72,7 @@ import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
@@ -81,6 +84,7 @@ import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServiceImpl
@@ -152,6 +156,21 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 				addMembersToLog(workGroup.getLsUuid(), log);
 				log.addRelatedResources(parentNode.getUuid());
 				logEntryService.insert(log);
+				List<SharedSpaceMember> members = sharedSpaceMemberBusinessService
+						.findBySharedSpaceNodeUuid(workGroup.getLsUuid());
+				List<MailContainerWithRecipient> mailContainers = Lists.newArrayList();
+				for (SharedSpaceMember sharedSpaceMember : members) {
+					if (!sharedSpaceMember.getAccount().getUuid().equals(actor.getLsUuid())) {
+						WorkGroupNode folder = repository.findByWorkGroupAndUuid(sharedSpaceMember.getNode().getUuid(),
+								parentNode.getParent());
+						WorkGroupWarnWorkgroupDocumentUpdatedContext context = new WorkGroupWarnWorkgroupDocumentUpdatedContext(
+								workGroup.getDomain(), false, actor, sharedSpaceMember, folder, (WorkGroupDocument) parentNode, documentRevision);
+						MailContainerWithRecipient mail = mailBuildingService.build(context);
+						mailContainers.add(mail);
+					}
+				}
+				notifierService.sendNotification(mailContainers);
+
 			} else {
 				WorkGroupDocument parentDocument = (WorkGroupDocument) repository
 						.findByWorkGroupAndUuid(workGroup.getLsUuid(), documentRevision.getParent());

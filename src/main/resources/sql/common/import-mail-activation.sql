@@ -447,3 +447,13 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (355, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
 	VALUES(45, false, 'WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT', 353, 354, 355, 1, true);
+
+-- Mail activation: WORKGROUP_WARN_WORKGROUP_DOCUMENT_UPDATED
+INSERT INTO policy(id, status, default_status, policy, system) 
+	VALUES (356, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (357, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (358, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(46, false, 'WORKGROUP_WARN_WORKGROUP_DOCUMENT_UPDATED', 356, 357, 358, 1, true);

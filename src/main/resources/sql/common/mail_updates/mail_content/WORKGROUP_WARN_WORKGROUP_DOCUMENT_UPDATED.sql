@@ -26,31 +26,37 @@ UPDATE mail_content SET subject='[( #{subject(${document.name},${workGroupMember
              <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupMember.node.name}" th:href="@{${workGroupLink}}" >
                link
              </a>
+          <span data-th-utext="#{revisionMsg}"></span>
           <!--/* Activation link for initialisation of the guest account */-->
          </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
     </div><!--/* End of main-content container*/-->
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoDateArea(#{workGroupCreationDateTitle},${document.creationDate})"/>
+         <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupModificationDateTitle},${document.modificationDate})"/>
     <th:block data-th-replace="layout :: infoStandardArea(#{DocumentSize},${document.size})"/>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='workGroupCreationDateTitle = Date de création
+</html>',messages_french='workGroupModificationDateTitle = Date de modification
 DocumentSize = Taille du document
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a ajouté un nouveau document <br>
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a modifié le document <br>
 folderMsg = dans le dossier
 workgroupMsg = du groupe de travail
-subject = Le Document {0} a été ajouté à {1}',messages_english='workGroupCreationDateTitle = Creation date
+revisionMsg = en ajoutant une nouvelle révision 
+subject = Le Document {0} a été modifié à {1}
+name: ',messages_english='workGroupModificationDateTitle = Modification date
 DocumentSize = Document size
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> uploaded a new document<br>
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> updated the document<br>
 folderMsg = into the folder
 workgroupMsg = on the workgroup
-subject = The document {0} was uploaded in the workgroup {1}',messages_russian='workGroupCreationDateTitle = Creation date
+revisionMsg = by adding a new document revision 
+subject = The document {0} was updated in the workgroup {1}',messages_russian='workGroupModificationDateTitle = Modification date
 DocumentSize = Document size
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> uploaded a new document<br>
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> updated the document<br>
 folderMsg = into the folder
-workgroupMsg = of the workgroup
-subject = The document {0} was uploaded in the workgroup {1}' WHERE id=44;
+workgroupMsg = on the workgroup
+revisionMsg = by adding a new document revision 
+subject = The document {0} was updated in the workgroup {1}' WHERE id=45;

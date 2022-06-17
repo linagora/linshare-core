@@ -48,7 +48,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewWorkgroupDocumentContext;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnWorkgroupDocumentUpdatedContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
@@ -56,19 +56,19 @@ import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.thymeleaf.context.Context;
 
+import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
-public class WorkGroupWarnNewWorkgroupDocumentEmailBuilder extends EmailBuilder {
+public class WorkGroupWarnWorkgroupDocumentUpdatedEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT;
+		return MailContentType.WORKGROUP_WARN_WORKGROUP_DOCUMENT_UPDATED;
 	}
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		WorkGroupWarnNewWorkgroupDocumentContext emailCtx = (WorkGroupWarnNewWorkgroupDocumentContext) context;
+		WorkGroupWarnWorkgroupDocumentUpdatedContext emailCtx = (WorkGroupWarnWorkgroupDocumentUpdatedContext) context;
 		return buildMailContainer(emailCtx, Maps.newHashMap());
 	}
 
@@ -82,7 +82,7 @@ public class WorkGroupWarnNewWorkgroupDocumentEmailBuilder extends EmailBuilder 
 		WorkGroupDocument wgDocument = new WorkGroupDocument();
 		wgDocument.setName("New document");
 		wgDocument.setSize(1457L);
-		wgDocument.setCreationDate(new Date());
+		wgDocument.setModificationDate(new Date());
 		ctx.setVariable("owner", workGroupMember.getAccount());
 		ctx.setVariable("workGroupMember", workGroupMember);
 		ctx.setVariable("document", wgDocument);
@@ -97,7 +97,7 @@ public class WorkGroupWarnNewWorkgroupDocumentEmailBuilder extends EmailBuilder 
 		return res;
 	}
 
-	protected MailContainerWithRecipient buildMailContainer(WorkGroupWarnNewWorkgroupDocumentContext emailCtx,
+	protected MailContainerWithRecipient buildMailContainer(WorkGroupWarnWorkgroupDocumentUpdatedContext emailCtx,
 			Map<String, Object> variables) {
 		Context ctx = new Context(emailCtx.getLocale());
 		MailContact owner = null;
@@ -115,10 +115,10 @@ public class WorkGroupWarnNewWorkgroupDocumentEmailBuilder extends EmailBuilder 
 		variables.put("document", workGroupDocument);
 		variables.put("linshareURL", linshareURL);
 		variables.put("workGroupMember", workGroupMember);
-		variables.put("workGroupLink", getWorkGroupLink(linshareURL, workGroupMember.getNode().getUuid()));
 		variables.put("folder", folder);
-		variables.put("workGroupFolderLink", getWorkGroupFolderLink(linshareURL,
-				workGroupMember.getNode().getUuid(), workGroupMember.getNode().getName(), folder.getUuid(), folder.getName()));
+		variables.put("workGroupLink", getWorkGroupLink(linshareURL, workGroupMember.getNode().getUuid()));
+		variables.put("workGroupFolderLink", getWorkGroupFolderLink(linshareURL, workGroupMember.getNode().getUuid(),
+				workGroupMember.getNode().getName(), folder.getUuid(), folder.getName()));
 		variables.put("workGroupDocumentLink", getWorkGroupDocumentLink(linshareURL, workGroupMember.getNode().getUuid(),
 				workGroupMember.getNode().getName(), folder.getUuid(), folder.getName(), workGroupDocument.getUuid()));
 		ctx.setVariables(variables);

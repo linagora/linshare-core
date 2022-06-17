@@ -43,26 +43,30 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
-public class WorkGroupWarnNewWorkgroupDocumentContext extends EmailContext {
+public class WorkGroupWarnWorkgroupDocumentUpdatedContext extends EmailContext {
 
 	protected Account owner;
 
 	protected SharedSpaceMember workgroupMember;
 
-	protected WorkGroupNode folder;
-
 	protected WorkGroupDocument document;
 
-	public WorkGroupWarnNewWorkgroupDocumentContext(AbstractDomain domain, boolean needToRetrieveGuestDomain,
-			Account owner, SharedSpaceMember workgroupMember, WorkGroupNode folder, WorkGroupDocument document) {
-		super(domain, needToRetrieveGuestDomain);
-		this.owner = owner;
-		this.workgroupMember = workgroupMember;
-		this.folder = folder;
-		this.document = document;
-	}
+	protected WorkGroupNode folder;
+
+	protected WorkGroupDocumentRevision documentRevision;
+
+	public WorkGroupWarnWorkgroupDocumentUpdatedContext(AbstractDomain domain, boolean needToRetrieveGuestDomain, Account owner,
+		SharedSpaceMember workgroupMember, WorkGroupNode folder, WorkGroupDocument document, WorkGroupDocumentRevision documentRevision) {
+	super(domain, needToRetrieveGuestDomain);
+	this.owner = owner;
+	this.workgroupMember = workgroupMember;
+	this.document = document;
+	this.documentRevision = documentRevision;
+	this.folder = folder;
+}
 
 	public Account getOwner() {
 		return owner;
@@ -71,6 +75,7 @@ public class WorkGroupWarnNewWorkgroupDocumentContext extends EmailContext {
 	public void setOwner(Account owner) {
 		this.owner = owner;
 	}
+
 
 	public SharedSpaceMember getWorkgroupMember() {
 		return workgroupMember;
@@ -96,14 +101,22 @@ public class WorkGroupWarnNewWorkgroupDocumentContext extends EmailContext {
 		this.folder = folder;
 	}
 
+	public WorkGroupDocumentRevision getDocumentRevision() {
+		return documentRevision;
+	}
+
+	public void setDocumentRevision(WorkGroupDocumentRevision documentRevision) {
+		this.documentRevision = documentRevision;
+	}
+
 	@Override
 	public MailContentType getType() {
-		return MailContentType.WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT;
+		return MailContentType.WORKGROUP_WARN_WORKGROUP_DOCUMENT_UPDATED;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT;
+		return MailActivationType.WORKGROUP_WARN_WORKGROUP_DOCUMENT_UPDATED;
 	}
 
 	@Override

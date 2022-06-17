@@ -152,7 +152,9 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected String urlTemplateForGuests;
 
-	protected String urlTemplateForWorkgroupDocument;
+	protected String urlTemplateForWorkgroupFolder;
+
+	protected String urlTemplateForWorkgroupDocment;
 
 	public EmailBuilder() {
 		initSupportedTypes();
@@ -296,12 +298,20 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		this.urlTemplateForGuests = urlTemplateForGuests;
 	}
 	
-	public String getUrlTemplateForWorkgroupDocument() {
-		return urlTemplateForWorkgroupDocument;
+	public String getUrlTemplateForWorkgroupFolder() {
+		return urlTemplateForWorkgroupFolder;
 	}
 
-	public void setUrlTemplateForWorkgroupDocument(String urlTemplateForWorkgroupDocument) {
-		this.urlTemplateForWorkgroupDocument = urlTemplateForWorkgroupDocument;
+	public void setUrlTemplateForWorkgroupFolder(String urlTemplateForWorkgroupFolder) {
+		this.urlTemplateForWorkgroupFolder = urlTemplateForWorkgroupFolder;
+	}
+
+	public String getUrlTemplateForWorkgroupDocment() {
+		return urlTemplateForWorkgroupDocment;
+	}
+
+	public void setUrlTemplateForWorkgroupDocment(String urlTemplateForWorkgroupDocment) {
+		this.urlTemplateForWorkgroupDocment = urlTemplateForWorkgroupDocment;
 	}
 
 	@Override
@@ -758,7 +768,18 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		StringBuilder sb = new StringBuilder();
 		sb.append(linshareURL);
 		Formatter formatter = new Formatter(sb);
-		formatter.format(urlTemplateForWorkgroupDocument, workGroupUuid, workGroupName, parentUuid, parentName);
+		formatter.format(urlTemplateForWorkgroupFolder, workGroupUuid, workGroupName, parentUuid, parentName);
+		formatter.close();
+		return sb.toString();
+	}
+
+	protected String getWorkGroupDocumentLink(String linshareURL, String workGroupUuid, String workGroupName,
+			String parentUuid, String parentName, String documentUuid) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlTemplateForWorkgroupDocment, workGroupUuid, workGroupName, parentUuid, parentName,
+				documentUuid);
 		formatter.close();
 		return sb.toString();
 	}

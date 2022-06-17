@@ -100,6 +100,7 @@ import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnDeleted
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnNewMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnNewWorkgroupDocumentEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnUpdatedMemberEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnWorkgroupDocumentUpdatedEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
@@ -143,6 +144,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			String urlTemplateForUploadRequestUploadedFile,
 			String urlTemplateForJwtToken,
 			String urlTemplateForGuests,
+			String urlTemplateForWorkgroupFolder,
 			String urlTemplateForWorkgroupDocument
 			) throws Exception {
 		this.domainBusinessService = domainBusinessService;
@@ -200,6 +202,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_DELETED_MEMBER, new WorkGroupWarnDeletedMemberEmailBuilder());
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_DELETED_WORKGROUP, new WorkGroupDeletedtWarnEmailBuilder());
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_NEW_WORKGROUP_DOCUMENT, new WorkGroupWarnNewWorkgroupDocumentEmailBuilder());
+		emailBuilders.put(MailContentType.WORKGROUP_WARN_WORKGROUP_DOCUMENT_UPDATED, new WorkGroupWarnWorkgroupDocumentUpdatedEmailBuilder());
 
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED, new JwtPermanentCreatedEmailBuilder());
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED, new JwtPermanentDeletedEmailBuilder());
@@ -217,7 +220,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		initMailBuilders(domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService,
 				fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments, urlTemplateForAnonymousUrl,
-				urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForWorkSpace, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile, urlTemplateForJwtToken, urlTemplateForGuests, urlTemplateForWorkgroupDocument);
+				urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForWorkSpace, urlTemplateForUploadRequestEntries, urlTemplateForUploadRequestUploadedFile, urlTemplateForJwtToken, urlTemplateForGuests, urlTemplateForWorkgroupFolder, urlTemplateForWorkgroupDocument);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -240,6 +243,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		String urlTemplateForUploadRequestUploadedFile,
 		String urlTemplateForJwtToken,
 		String urlTemplateForGuests,
+		String urlTemplateForWorkgroupFolder,
 		String urlTemplateForWorkgroupDocument
 	) {
 		Collection<EmailBuilder> values = emailBuilders.values();
@@ -259,7 +263,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setUrlTemplateForUploadRequestUploadedFile(urlTemplateForUploadRequestUploadedFile);
 			emailBuilder.setUrlTemplateForJwtToken(urlTemplateForJwtToken);
 			emailBuilder.setUrlTemplateForGuests(urlTemplateForGuests);
-			emailBuilder.setUrlTemplateForWorkgroupDocument(urlTemplateForWorkgroupDocument);
+			emailBuilder.setUrlTemplateForWorkgroupFolder(urlTemplateForWorkgroupFolder);
+			emailBuilder.setUrlTemplateForWorkgroupDocment(urlTemplateForWorkgroupDocument);
 		}
 	}
 
