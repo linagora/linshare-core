@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -250,7 +251,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		notifierService.sendNotification(mail);
 		// we need a boolean onguestCreation to be passed into the moderator rac
 		Boolean onGuestCreation = true;
-		Moderator moderator = new Moderator(org.linagora.linshare.core.domain.constants.ModeratorRole.ADMIN, actor, create);
+		Moderator moderator = new Moderator(ModeratorRole.ADMIN, actor, create);
 		moderatorService.create(authUser, actor, moderator, onGuestCreation);
 		GuestAuditLogEntry log = new GuestAuditLogEntry(authUser, actor, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
 		List<String> moderatorUuids = accountRepository.findAllModeratorUuidsByGuest(create);
@@ -275,11 +276,15 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		List<User> restrictedContacts = transformToUsers(authUser, restrictedMails);
 		Date newExpirationDate = guest.getExpirationDate(); 
 		if (newExpirationDate != null && !newExpirationDate.before(new Date())) {
-				newExpirationDate = calculateGuestExpiryDate(actor, newExpirationDate);
-				checkDateValidity(actor, entity.getExpirationDate(), newExpirationDate,
-						functionalityReadOnlyService.getGuestsExpirationDateProlongation(actor.getDomain())
-								.getActivationPolicy().getStatus(),
-						entity);
+				if (actor.isAdmin()) {
+					// 1. Checking if he is admin of this domain was done by the rac.
+					// 2. For admin, we let them through
+					newExpirationDate = calculateGuestExpiryDate(actor, newExpirationDate);
+					checkDateValidity(actor, entity.getExpirationDate(), newExpirationDate,
+							functionalityReadOnlyService.getGuestsExpirationDateProlongation(actor.getDomain())
+							.getActivationPolicy().getStatus(),
+							entity);
+				}
 			guest.setExpirationDate(newExpirationDate);
 		} else {
 			guest.setExpirationDate(entity.getExpirationDate());

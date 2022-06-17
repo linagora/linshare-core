@@ -234,6 +234,10 @@ public abstract class User extends Account {
 	 * Helpers
 	 */
 
+	public boolean isAdmin() {
+		return this.getRole().equals(Role.ADMIN);
+	}
+
 	public boolean isInternal() {
 		return this.getAccountType().equals(AccountType.INTERNAL);
 	}

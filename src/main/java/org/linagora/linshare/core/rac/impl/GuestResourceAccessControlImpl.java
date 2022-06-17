@@ -163,14 +163,19 @@ public class GuestResourceAccessControlImpl extends
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_UPDATE);
 		} else if (actor.isInternal()) {
+			// if actor is an administrator of this guest, we let him through,
+			// no matter if the functionality is enabled or not.
 			if (entry.getDomain().isManagedBy(actor)) {
 				return true;
 			}
+			// the user is a regular user, so he can not use this endpoint if func is disabled.
 			if (!guestFunctionalityStatus(actor.getDomain())) {
 				return false;
 			}
 			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry);
-			if (moderator.isPresent() && moderator.get().isAdmin()) {
+			if (moderator.isPresent() &&
+					(moderator.get().isAdminModerator() || moderator.get().isSimpleModerator())
+				) {
 				return true;
 			}
 		}

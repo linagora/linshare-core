@@ -157,7 +157,11 @@ public class Moderator {
 		return true;
 	}
 
-	public boolean isAdmin() {
+	public boolean isAdminModerator() {
+		return ModeratorRole.ADMIN.equals(this.getRole());
+	}
+
+	public boolean isSimpleModerator() {
 		return ModeratorRole.ADMIN.equals(this.getRole());
 	}
 }

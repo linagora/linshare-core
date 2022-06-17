@@ -263,7 +263,7 @@ public class UserServiceImpl implements UserService {
 		if (user.isGuest()) {
 			Optional<Moderator> permission = moderatorBusinessService.findByGuestAndAccount(actor, (Guest)user);
 			if (permission.isPresent()) {
-				return permission.get().isAdmin();
+				return permission.get().isAdminModerator();
 			}
 		}
 		return false;

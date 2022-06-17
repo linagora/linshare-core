@@ -109,7 +109,7 @@ public class ModeratorResourceAccessControlImpl extends AbstractResourceAccessCo
 				return false;
 			}
 			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry.getGuest());
-			if (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) {
+			if (moderator.isPresent() && moderator.get().isAdminModerator()) {
 				return true;
 			}
 		}
@@ -128,7 +128,7 @@ public class ModeratorResourceAccessControlImpl extends AbstractResourceAccessCo
 				return false;
 			}
 			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, entry.getGuest());
-			if (moderator.isPresent() && ModeratorRole.ADMIN.equals(moderator.get().getRole())) {
+			if (moderator.isPresent() && moderator.get().isAdminModerator()) {
 				return true;
 			}
 			// The guest creator is automatically its first moderator with ADMIN role, we
