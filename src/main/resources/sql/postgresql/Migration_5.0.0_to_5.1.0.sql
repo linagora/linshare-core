@@ -776,6 +776,13 @@ VALUES
      'OPTIONAL',
      now(),
      now());
+
+
+ALTER TABLE account DROP COLUMN owner_id;
+
+UPDATE mail_activation set identifier='GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION' WHERE identifier='GUEST_WARN_MODERATOR_ABOUT_GUEST_EXPIRATION';
+
+
 ---- End of your queries
 
 -- Upgrade LinShare version

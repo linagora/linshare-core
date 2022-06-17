@@ -76,8 +76,6 @@ public abstract class Account {
 
 	protected AbstractDomain domain;
 
-	protected Account owner;
-
 	protected Set<Entry> entries = new HashSet<Entry>();
 
 	protected Set<ShareEntry> shareEntries = new HashSet<ShareEntry>();
@@ -145,14 +143,6 @@ public abstract class Account {
 
 	public void setLsUuid(String lsUuid) {
 		this.lsUuid = lsUuid;
-	}
-
-	public Account getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Account owner) {
-		this.owner = owner;
 	}
 
 	public Date getCreationDate() {

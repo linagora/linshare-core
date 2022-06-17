@@ -247,7 +247,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (260, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
- 	VALUES(26, false, 'GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION', 258, 259, 260, 1, true);
+	VALUES(26, false, 'GUEST_WARN_MODERATOR_ABOUT_GUEST_EXPIRATION', 258, 259, 260, 1, true);
 
 -- MailActivation : SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD
 INSERT INTO policy(id, status, default_status, policy, system)

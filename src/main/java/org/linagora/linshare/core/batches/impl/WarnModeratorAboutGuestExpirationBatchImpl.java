@@ -49,7 +49,7 @@ import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.WarnOwnerAboutGuestExpirationEmailContext;
+import org.linagora.linshare.core.notifications.context.WarnModeratorAboutGuestExpirationEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
@@ -58,8 +58,7 @@ import org.linagora.linshare.core.service.NotifierService;
 
 import com.google.common.collect.Lists;
 
-// TODO: moderators: rename it
-public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
+public class WarnModeratorAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 
 	protected GuestRepository guestRepository;
 
@@ -73,7 +72,7 @@ public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 
 	protected int nbDaysBeforeExpiration;
 
-	public WarnOwnerAboutGuestExpirationBatchImpl(AccountRepository<Account> accountRepository,
+	public WarnModeratorAboutGuestExpirationBatchImpl(AccountRepository<Account> accountRepository,
 			GuestRepository guestRepository,
 			ModeratorBusinessService moderatorBusinessService,
 			MailBuildingService mailBuildingService,
@@ -110,7 +109,7 @@ public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 			List<MailContainerWithRecipient> mails = Lists.newArrayList();
 			List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest, null, null);
 			for (Moderator moderator : moderators) {
-				EmailContext ctx = new WarnOwnerAboutGuestExpirationEmailContext(moderator, guest, nbDaysBeforeExpiration);
+				EmailContext ctx = new WarnModeratorAboutGuestExpirationEmailContext(moderator, guest, nbDaysBeforeExpiration);
 				mails.add(mailBuildingService.build(ctx));
 			}
 			notifierService.sendNotification(mails);

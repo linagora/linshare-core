@@ -133,12 +133,11 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public Guest create(Account owner, Guest guest,
+	public Guest create(Account actor, Guest guest,
 			AbstractDomain domain, List<User> allowedContacts) throws BusinessException {
 		String password = passwordService.generatePassword();
 		String hashedPassword = passwordService.encode(password);
 		guest.setMail(guest.getMail().toLowerCase());
-		guest.setOwner(owner);
 		guest.setDomain(domain);
 		guest.setCmisLocale(Language.ENGLISH.toString());
 		if (guest.getMailLocale() == null) {
@@ -167,7 +166,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public Guest update(Account owner, Guest entity, Guest guest,
+	public Guest update(Account actor, Guest entity, Guest guest,
 			List<User> allowedContacts)
 			throws BusinessException {
 		boolean wasRestricted = entity.isRestricted();
@@ -264,26 +263,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public List<Guest> search(List<AbstractDomain> authorizedDomains, String firstName, String lastName, String mail, Account owner)
-			throws BusinessException {
-		return guestRepository.search(authorizedDomains, mail, firstName, lastName, owner);
-	}
-
-	@Override
 	public List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern) throws BusinessException {
 		return guestRepository.search(authorizedDomains, pattern);
-	}
-
-	@Override
-	public List<Guest> searchMyGuests(List<AbstractDomain> authorizedDomains, String pattern, Account owner)
-			throws BusinessException {
-		return guestRepository.searchMyGuests(authorizedDomains, pattern, owner);
-	}
-
-	@Override
-	public List<Guest> searchExceptGuests(List<AbstractDomain> authorizedDomains, String pattern, Account owner)
-			throws BusinessException {
-		return guestRepository.searchExceptGuests(authorizedDomains, pattern, owner);
 	}
 
 	@Override
@@ -339,8 +320,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			return guestRepository.search(authorizedDomains, pattern);
 		} else {
 			if (ModeratorRoleEnum.ALL.equals(moderatorRole)) {
-				// return all actor's guests
-				return guestRepository.searchMyGuests(authorizedDomains, pattern, actor);
+				// return all actor's guests where he has SIMPLE and ADMIN role
+				return guestRepository.findAllByModerator(actor, null, pattern);
 			}
 			// return all actor's guests filtered by moderatorRole (SIMPLE/ADMIN)
 			return guestRepository.findAllByModerator(actor, ModeratorRoleEnum.toModeratorRole(moderatorRole), pattern);

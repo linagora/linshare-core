@@ -423,7 +423,6 @@ public class UserServiceImplTest {
 		Guest guest = new Guest("Foo", "Bar", "user3@linshare.org");
 		guest.setDomain(abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		guest.setOwner(user2);
 		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setCmisLocale(guestDomain.getDefaultTapestryLocale().toString());
 		guest = guestRepository.create(guest);
@@ -489,7 +488,6 @@ public class UserServiceImplTest {
 		
 		guest.setDomain(abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		guest.setOwner(user1);
 		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setCmisLocale("en");
 		String oldPassword = "password222";
@@ -532,7 +530,6 @@ public class UserServiceImplTest {
 
 		guest.setDomain(abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		guest.setOwner(user1);
 		guest.setRestricted(true);
 		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setCmisLocale("en");
@@ -574,7 +571,6 @@ public class UserServiceImplTest {
 		Guest guest2 = new Guest("Jane", "Smith", "user2@linpki.org");
 		guest2.setDomain(abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		guest2.setOwner(user1);
 		guest2.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest2.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest2.setCmisLocale("en");
@@ -585,7 +581,6 @@ public class UserServiceImplTest {
 		guest.setDomain(abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain));
 
-		guest.setOwner(user1);
 		guest.setRestricted(false);
 		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
@@ -917,7 +912,6 @@ public class UserServiceImplTest {
 		technicalAccount.setEnable(true);
 		technicalAccount.setRole(Role.SUPERADMIN);
 		technicalAccount.setPassword(NEW_PASSWORD);
-		technicalAccount.setOwner(root);
 		technicalAccount = technicalAccountService.create(root, technicalAccount);
 		Assertions.assertNotNull(technicalAccount);
 		Assertions.assertEquals("EP_TEST_v233", technicalAccount.getLastName());
@@ -932,7 +926,6 @@ public class UserServiceImplTest {
 		technicalAccount.setEnable(true);
 		technicalAccount.setRole(Role.SUPERADMIN);
 		technicalAccount.setPassword(NEW_PASSWORD);
-		technicalAccount.setOwner(root);
 		technicalAccount = technicalAccountService.create(root, technicalAccount);
 		Assertions.assertNotNull(technicalAccount);
 		technicalAccount.setLastName("EP_TEST_v233<script>alert(document.cookie)</script>");
@@ -949,7 +942,6 @@ public class UserServiceImplTest {
 		technicalAccount.setEnable(true);
 		technicalAccount.setRole(Role.SUPERADMIN);
 		technicalAccount.setPassword("secret");
-		technicalAccount.setOwner(root);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			technicalAccountService.create(root, technicalAccount);
 		});

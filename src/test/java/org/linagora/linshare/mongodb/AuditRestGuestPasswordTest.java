@@ -128,7 +128,6 @@ public class AuditRestGuestPasswordTest {
 		guest.setLsUuid(UUID);
 		guest.setCmisLocale(CMIS_LOCALE);
 		guest.setDomain(guestDomain);
-		guest.setOwner(resetGuestPasswordService.getGuestSystemAccount());
 		Calendar instance = Calendar.getInstance();
 		instance.add(Calendar.MONTH, 3);
 		guest.setExpirationDate(instance.getTime());

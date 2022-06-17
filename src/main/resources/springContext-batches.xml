@@ -167,7 +167,7 @@
 	</bean>
 
 	<bean name="warnOwnerAboutGuestExpirationBatch"
-		class="org.linagora.linshare.core.batches.impl.WarnOwnerAboutGuestExpirationBatchImpl">
+		class="org.linagora.linshare.core.batches.impl.WarnModeratorAboutGuestExpirationBatchImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="guestRepository" />
 		<constructor-arg ref="moderatorBusinessService" />

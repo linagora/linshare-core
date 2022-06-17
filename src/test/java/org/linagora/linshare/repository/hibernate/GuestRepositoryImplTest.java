@@ -241,41 +241,10 @@ public class GuestRepositoryImplTest {
 		userRepository.create(owner);
 
 		Guest u = new Guest(FIRST_NAME, LAST_NAME, MAIL);
-		u.setOwner(owner);
 		u.setDomain(domain);
 		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 
 		guestRepository.create(u);
-
-		results = guestRepository.searchGuest(owner, null, null, null);
-		assertNotNull(results);
-		assertFalse(results.isEmpty());
-		assertEquals(results.size(), 1);
-		results = null;
-
-		results = guestRepository.searchGuest(null, null, null, LAST_NAME);
-		assertNotNull(results);
-		assertFalse(results.isEmpty());
-		assertEquals(results.size(), 1);
-		results = null;
-
-		results = guestRepository.searchGuest(null, null, FIRST_NAME, null);
-		assertNotNull(results);
-		assertFalse(results.isEmpty());
-		assertEquals(results.size(), 1);
-		results = null;
-
-		results = guestRepository.searchGuest(null, MAIL, null, null);
-		assertNotNull(results);
-		assertFalse(results.isEmpty());
-		assertEquals(results.size(), 2);
-		results = null;
-
-		results = guestRepository.searchGuest(null, "foo@", null, null);
-		assertNotNull(results);
-		assertFalse(results.isEmpty());
-		assertEquals(results.size(), 2);
-		results = null;
 
 		results = guestRepository.searchGuestAnyWhere("foo@", null, null);
 		assertNotNull(results);

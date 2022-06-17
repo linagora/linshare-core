@@ -94,7 +94,7 @@ import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUpdated
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUploadedFileEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnExpiryEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.WarnOwnerAboutGuestExpirationEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.WarnModeratorAboutGuestExpirationEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupDeletedtWarnEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnDeletedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnNewMemberEmailBuilder;
@@ -191,7 +191,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPDATED_SETTINGS, new UploadRequestUpdatedSettingsEmailBuilder());
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_FILE_DELETED_BY_OWNER, new UploadRequestFileDeletedByOwnerEmailBuilder());
 
-		emailBuilders.put(MailContentType.GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION, new WarnOwnerAboutGuestExpirationEmailBuilder());
+		emailBuilders.put(MailContentType.GUEST_WARN_MODERATOR_ABOUT_GUEST_EXPIRATION, new WarnModeratorAboutGuestExpirationEmailBuilder());
 
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_NEW_MEMBER, new WorkGroupWarnNewMemberEmailBuilder());
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_UPDATED_MEMBER, new WorkGroupWarnUpdatedMemberEmailBuilder());

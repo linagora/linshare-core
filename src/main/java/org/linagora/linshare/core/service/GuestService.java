@@ -68,39 +68,6 @@ public interface GuestService {
 	Guest find(Account authUser, Account actor, String domainUuid, String mail) throws BusinessException;
 
 	/**
-	 * find all guests according to domain access policies
-	 * @param authUser
-	 * @param actor
-	 * @return List<Guest>
-	 * @throws BusinessException
-	 */
-	List<Guest> findAll(Account authUser, Account actor, Boolean mine) throws BusinessException;
-
-	/**
-	 * find all guests according to domain access policies, using firstName or lastName or mail, or both.
-	 * fragment pattern for this three parameter are supported.
-	 * @param authUser
-	 * @param actor
-	 * @param firstName
-	 * @param lastName
-	 * @param mail
-	 * @return List<Guest>
-	 * @throws BusinessException
-	 */
-	List<Guest> search(Account authUser, Account actor, String firstName, String lastName, String mail, boolean all) throws BusinessException;
-
-	/**
-	 * find all guests according to domain access policies, using pattern as a fragment of firstName or lastName or mail.
-	 * @param authUser
-	 * @param actor
-	 * @param pattern
-	 * @param mine TODO
-	 * @return List<Guest>
-	 * @throws BusinessException
-	 */
-	List<Guest> search(Account authUser, Account actor, String pattern, Boolean mine) throws BusinessException;
-
-	/**
 	 * Test if a guest exists
 	 * @param lsUuid
 	 * @return boolean

@@ -66,11 +66,11 @@ public interface GuestBusinessService {
 
 	List<String> findOutdatedGuestIdentifiers();
 
-	Guest create(Account owner, Guest guest, AbstractDomain domain,
+	Guest create(Account actor, Guest guest, AbstractDomain domain,
 			List<User> allowedContacts)
 			throws BusinessException;
 
-	Guest update(Account owner, Guest entity, Guest guestDto,
+	Guest update(Account actor, Guest entity, Guest guestDto,
 			List<User> allowedContacts) throws BusinessException;
 
 	void delete(Guest guest) throws BusinessException;
@@ -82,18 +82,6 @@ public interface GuestBusinessService {
 	void evict(Guest entity);
 
 	/**
-	 * search a guest using firstName and lastName and mail as a pattern. If a pattern is null, it is ignored.
-	 * @param authorizedDomains
-	 * @param firstName
-	 * @param lastName
-	 * @param mail
-	 * @param owner : if owner is not null, the search will be limited to all guests managed my the owner parameter.
-	 * @return List<Guest>
-	 * @throws BusinessException
-	 */
-	List<Guest> search(List<AbstractDomain> authorizedDomains, String firstName, String lastName, String mail, Account owner) throws BusinessException;
-
-	/**
 	 * search a guest using input pattern as fragment of firstName or lastName or mail.
 	 * @param authorizedDomains
 	 * @param pattern
@@ -101,10 +89,6 @@ public interface GuestBusinessService {
 	 * @throws BusinessException
 	 */
 	List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern) throws BusinessException;
-
-	List<Guest> searchMyGuests(List<AbstractDomain> authorizedDomains, String pattern, Account owner) throws BusinessException;
-
-	List<Guest> searchExceptGuests(List<AbstractDomain> authorizedDomains, String pattern, Account owner) throws BusinessException;
 
 	SystemAccount getGuestSystemAccount();
 

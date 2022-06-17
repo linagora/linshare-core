@@ -184,24 +184,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> findAll(Account authUser, Account actor, Boolean mine)
-			throws BusinessException {
-		preChecks(authUser, actor);
-		checkListPermission(authUser, actor, Guest.class,
-				BusinessErrorCode.GUEST_FORBIDDEN, null);
-		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
-		List<Guest> list = null;
-		if (mine == null) {
-			list = guestBusinessService.findAll(authorizedDomains);
-		} else if (mine) {
-			list = guestBusinessService.findAllMyGuests(actor);
-		} else {
-			list = guestBusinessService.findAllOthersGuests(authorizedDomains, actor);
-		}
-		return list;
-	}
-
-	@Override
 	public boolean exist(String lsUuid) throws BusinessException {
 		return guestBusinessService.findByLsUuid(lsUuid) != null;
 	}
@@ -452,48 +434,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 				resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail);
-	}
-
-	@Override
-	public List<Guest> search(Account authUser, Account actor, String firstName, String lastName, String mail, boolean all)
-			throws BusinessException {
-		preChecks(authUser, actor);
-		if (actor.isGuest()) {
-			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "Guests are not allowed to use this method.");
-		}
-		// TODO : check if one of the 3 parameters is not null/empty.
-		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
-		List<Guest> list = null;
-		if (all) {
-			list = guestBusinessService.search(authorizedDomains,  firstName, lastName, mail, null);
-		} else {
-			list = guestBusinessService.search(authorizedDomains,  firstName, lastName, mail, actor);
-		}
-		return list;
-	}
-
-	@Override
-	public List<Guest> search(Account authUser, Account actor, String pattern, Boolean mine) throws BusinessException {
-		preChecks(authUser, actor);
-		if (actor.isGuest()) {
-			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "Guests are not allowed to use this method.");
-		}
-		String message = "You must fill a pattern to search ! At least three characters.";
-		Validate.notEmpty(pattern, message);
-		if (pattern.length() < 3) {
-			logger.error(message);
-			throw new BusinessException(BusinessErrorCode.GUEST_INVALID_SEARCH_INPUT, message);
-		}
-		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
-		List<Guest> list = null;
-		if (mine == null) {
-			list = guestBusinessService.search(authorizedDomains, pattern);
-		} else if (mine) {
-			list = guestBusinessService.searchMyGuests(authorizedDomains, pattern, actor);
-		} else {
-			list = guestBusinessService.searchExceptGuests(authorizedDomains, pattern, actor);
-		}
-		return list;
 	}
 
 	/**

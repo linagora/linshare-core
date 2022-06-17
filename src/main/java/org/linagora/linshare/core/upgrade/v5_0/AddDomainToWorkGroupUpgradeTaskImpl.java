@@ -134,7 +134,6 @@ public class AddDomainToWorkGroupUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 			workGroup.setLsUuid(sharedSpace.getUuid());
 			workGroup.setCreationDate(sharedSpace.getCreationDate());
 			workGroup.setModificationDate(sharedSpace.getModificationDate());
-			workGroup.setOwner(author);
 			createThreadQuota(sharedSpace, workGroup);
 			threadRepository.update(workGroup);
 			Long nodeSize = workGroupNodeBusinessService.computeAllWorkgroupNodesSize(sharedSpace.getUuid());

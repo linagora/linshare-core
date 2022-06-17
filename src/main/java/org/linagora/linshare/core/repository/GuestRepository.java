@@ -45,15 +45,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 
 public interface GuestRepository extends UserRepository<Guest> {
-	 /** Search some guests.
-	  * (start matching)
-	 * @param owner login of the user who creates the searched guest(s).
-	 * @param mail user mail.
-	 * @param firstName user first name.
-	 * @param lastName user last name.
-	 * @return List<Guest> a list of matching users.
-	 */
-	List<Guest> searchGuest(Account owner, String mail, String firstName, String lastName);
 
 	/**
 	 * Find outdated guest account identifiers.
@@ -77,13 +68,7 @@ public interface GuestRepository extends UserRepository<Guest> {
 
 	void evict(Guest entity);
 
-	List<Guest> search(List<AbstractDomain> domains, String mail, String firstName, String lastName, Account owner);
-
 	List<Guest> search(List<AbstractDomain> domains, String pattern) throws BusinessException;
-
-	List<Guest> searchMyGuests(List<AbstractDomain> domains, String pattern, Account owner) throws BusinessException;
-
-	List<Guest> searchExceptGuests(List<AbstractDomain> domains, String pattern, Account owner) throws BusinessException;
 
 	List<Guest> findAll(List<AbstractDomain> domains);
 

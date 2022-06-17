@@ -46,23 +46,22 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.WarnOwnerAboutGuestExpirationEmailContext;
+import org.linagora.linshare.core.notifications.context.WarnModeratorAboutGuestExpirationEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-//TODO: moderators: rename it
-public class WarnOwnerAboutGuestExpirationEmailBuilder extends EmailBuilder {
+public class WarnModeratorAboutGuestExpirationEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION;
+		return MailContentType.GUEST_WARN_MODERATOR_ABOUT_GUEST_EXPIRATION;
 	}
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		WarnOwnerAboutGuestExpirationEmailContext emailCtx = (WarnOwnerAboutGuestExpirationEmailContext) context;
+		WarnModeratorAboutGuestExpirationEmailContext emailCtx = (WarnModeratorAboutGuestExpirationEmailContext) context;
 		Guest guest = emailCtx.getGuest();
 		AbstractDomain fromDomain = emailCtx.getFromDomain();
 		String linshareURL = getLinShareUrl(fromDomain);

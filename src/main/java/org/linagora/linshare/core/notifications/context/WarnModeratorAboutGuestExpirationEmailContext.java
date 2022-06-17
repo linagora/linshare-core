@@ -42,8 +42,7 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 
-//TODO: moderators: rename it
-public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
+public class WarnModeratorAboutGuestExpirationEmailContext extends EmailContext {
 
 	protected Guest guest;
 
@@ -51,7 +50,7 @@ public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 
 	protected int daysLeft;
 
-	public WarnOwnerAboutGuestExpirationEmailContext(Moderator moderator, Guest guest, int daysLeft) {
+	public WarnModeratorAboutGuestExpirationEmailContext(Moderator moderator, Guest guest, int daysLeft) {
 		super(moderator.getAccount().getDomain(), false);
 		this.guest = guest;
 		this.daysLeft = daysLeft;
@@ -85,12 +84,12 @@ public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION;
+		return MailContentType.GUEST_WARN_MODERATOR_ABOUT_GUEST_EXPIRATION;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION;
+		return MailActivationType.GUEST_WARN_MODERATOR_ABOUT_GUEST_EXPIRATION;
 	}
 
 	@Override

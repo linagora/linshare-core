@@ -40,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -269,13 +270,14 @@ public class GuestServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Guest guest = new Guest("Guest", "Doe", "user4@linshare.org");
 		guest.setCmisLocale("en");
-		int size = guestService.findAll(owner1, owner1, null).size();
+		List<Guest> findAll = guestService.findAll(owner1, owner1, Optional.empty(), null, null);
+		int size = findAll.size();
 		try {
 			guest = guestService.create(owner1, owner1, guest, null);
 		} catch (BusinessException e) {
 			logger.debug("Can not create an internal user as guest");
 		}
-		Assertions.assertEquals(size, guestService.findAll(owner1, owner1, null).size());
+		Assertions.assertEquals(size, guestService.findAll(owner1, owner1, Optional.empty(), null, null).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -533,29 +535,6 @@ public class GuestServiceImplTest {
 		ac = guestService.load(owner1, guest);
 		Assertions.assertEquals(0, ac.size());
 		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	@Test
-	public void testSearchGuest() throws IllegalArgumentException, BusinessException {
-		boolean mine= true;
-		List<Guest> search = guestService.search(owner1, owner1, "org", mine);
-		logger.info("nb guests : " + search.size());
-		Assertions.assertEquals(0, search.size());
-
-		search = guestService.search(owner1, owner1, "org", null);
-		logger.info("nb guests : " + search.size());
-		Assertions.assertEquals(1, search.size());
-
-		search = guestService.search(owner1, owner1, "toto", mine);
-		logger.info("nb guests : " + search.size());
-		Assertions.assertEquals(0, search.size());
-
-		search = guestService.search(owner1, owner1, "test", null);
-		logger.info("nb guests : " + search.size());
-		Assertions.assertEquals(1, search.size());
-
-		search = guestService.search(owner1, owner1, null, null, "guest", mine);
-		logger.info("nb guests : " + search.size());
-		Assertions.assertEquals(1, search.size());
 	}
 
 	@Test

@@ -139,7 +139,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		List<GuestDto> res = Lists.newArrayList();
-		List<Guest> guests = guestService.findAll(authUser, actor, null);
+		List<Guest> guests = guestService.findAll(authUser, actor, Optional.empty(), null, null);
 		for (Guest guest : guests) {
 			res.add(GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid())));
 		}
@@ -150,8 +150,12 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	public List<GuestDto> search(Integer version, UserSearchDto userSearchDto) throws BusinessException {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, null);
-		List<Guest> guests = guestService.search(authUser, actor, userSearchDto.getFirstName(),
-				userSearchDto.getLastName(), userSearchDto.getMail(), true);
+		Optional<String> pattern = Optional.ofNullable(userSearchDto.getMail());
+		if (pattern.isEmpty()) {
+			pattern = Optional.ofNullable(userSearchDto.getFirstName());
+		}
+		String patternStr = pattern.orElse(userSearchDto.getLastName());
+		List<Guest> guests = guestService.findAll(authUser, actor, Optional.empty(), patternStr, null);
 		return toDtoList(version, authUser, actor, guests);
 	}
 

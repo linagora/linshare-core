@@ -52,7 +52,6 @@ import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateCallback;
@@ -75,37 +74,6 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	@Override
 	public void evict(Guest entity) {
 		getHibernateTemplate().evict(entity);
-	}
-
-	/**
-	 * Search some guests. If given agument is null, it's not considered.
-	 * @param owner
-	 *            owner who creates the searched guest(s).
-	 * @param mail
-	 *            user mail.
-	 * @param firstName
-	 *            user first name.
-	 * @param lastName
-	 *            user last name.
-	 * 
-	 * @return a list of matching users.
-	 */
-	public List<Guest> searchGuest(Account owner, String mail, String firstName, String lastName) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", 0L));
-		if (mail != null) {
-			criteria.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
-		}
-		if (firstName != null) {
-			criteria.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
-		}
-		if (lastName != null) {
-			criteria.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
-		}
-		if (owner != null) {
-			criteria.add(Restrictions.eq("owner", owner));
-		}
-		return findByCriteria(criteria);
 	}
 
 	/**
@@ -224,30 +192,6 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	}
 
 	@Override
-	public List<Guest> search(List<AbstractDomain> domains, String mail, String firstName, String lastName, Account owner) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", 0L));
-		if (mail != null) {
-			criteria.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
-		}
-		if (firstName != null) {
-			criteria.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
-		}
-		if (lastName != null) {
-			criteria.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
-		}
-		if (owner != null) {
-			criteria.add(Restrictions.eq("owner", owner));
-		}
-		Disjunction or = Restrictions.disjunction();
-		for (AbstractDomain domain : domains) {
-			or.add(Restrictions.eq("domain", domain));
-		}
-		criteria.add(or);
-		return findByCriteria(criteria);
-	}
-
-	@Override
 	public List<Guest> search(List<AbstractDomain> domains, String pattern) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("destroyed", 0L));
@@ -256,44 +200,6 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		or.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
 		or.add(Restrictions.ilike("firstName", pattern, MatchMode.ANYWHERE));
 		or.add(Restrictions.ilike("lastName", pattern, MatchMode.ANYWHERE));
-		Disjunction or2 = Restrictions.disjunction();
-		for (AbstractDomain domain : domains) {
-			or2.add(Restrictions.eq("domain", domain));
-		}
-		criteria.add(or);
-		return findByCriteria(criteria);
-	}
-
-	@Override
-	public List<Guest> searchMyGuests(List<AbstractDomain> domains, String pattern, Account owner)
-			throws BusinessException {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", 0L));
-		Disjunction or = Restrictions.disjunction();
-		criteria.add(or);
-		or.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
-		or.add(Restrictions.ilike("firstName", pattern, MatchMode.ANYWHERE));
-		or.add(Restrictions.ilike("lastName", pattern, MatchMode.ANYWHERE));
-		criteria.add(Restrictions.eq("owner", owner));
-		Disjunction or2 = Restrictions.disjunction();
-		for (AbstractDomain domain : domains) {
-			or2.add(Restrictions.eq("domain", domain));
-		}
-		criteria.add(or);
-		return findByCriteria(criteria);
-	}
-
-	@Override
-	public List<Guest> searchExceptGuests(List<AbstractDomain> domains, String pattern, Account owner)
-			throws BusinessException {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", 0L));
-		Disjunction or = Restrictions.disjunction();
-		criteria.add(or);
-		or.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
-		or.add(Restrictions.ilike("firstName", pattern, MatchMode.ANYWHERE));
-		or.add(Restrictions.ilike("lastName", pattern, MatchMode.ANYWHERE));
-		criteria.add(Restrictions.ne("owner", owner));
 		Disjunction or2 = Restrictions.disjunction();
 		for (AbstractDomain domain : domains) {
 			or2.add(Restrictions.eq("domain", domain));
@@ -381,7 +287,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 				createQuery.setParameter("actor", actor);
 				createQuery.setParameter("moderatorRole", moderatorRole);
 				if (!Strings.isNullOrEmpty(pattern)) {
-					createQuery.setString("pattern", "%" + pattern + "%");
+					createQuery.setParameter("pattern", "%" + pattern + "%");
 				}
 				List<Guest> guests = createQuery.getResultList();
 				return guests;
