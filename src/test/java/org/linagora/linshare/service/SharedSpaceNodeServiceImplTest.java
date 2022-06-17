@@ -243,7 +243,33 @@ public class SharedSpaceNodeServiceImplTest {
 		functionality = functionalityService.find(root, LinShareTestConstants.ROOT_DOMAIN, FunctionalityNames.SHARED_SPACE__NESTED_WORKGROUPS_LIMIT.toString());
 		functionality.getActivationPolicy().setStatus(false);
 		functionalityService.update(root, LinShareTestConstants.ROOT_DOMAIN, functionality);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
 
+	@Test
+	public void createWorkspaceWithSaasLimitation() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account root = rootUserRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
+		Functionality functionality = functionalityService.find(root, LinShareTestConstants.ROOT_DOMAIN, FunctionalityNames.SHARED_SPACE__WORKSPACE_LIMIT.toString());
+		functionality.getActivationPolicy().setStatus(true);
+		functionalityService.update(root, LinShareTestConstants.ROOT_DOMAIN, functionality);
+		// by default we only have the permissions to create 5 upload requests
+		List<SharedSpaceNode> nodes = Lists.newArrayList();
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", NodeType.WORK_SPACE)));
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", NodeType.WORK_SPACE)));
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", NodeType.WORK_SPACE)));
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", NodeType.WORK_SPACE)));
+		nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", NodeType.WORK_SPACE)));
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			nodes.add(service.create(john, john, new SharedSpaceNode("Testing SAAS limitation", NodeType.WORK_SPACE)));
+		});
+		Assertions.assertEquals(BusinessErrorCode.WORKSPACE_LIMIT_REACHED, exception.getErrorCode());
+		for (SharedSpaceNode sharedSpaceNode : nodes) {
+			service.delete(john, john, sharedSpaceNode);
+		}
+		functionality = functionalityService.find(root, LinShareTestConstants.ROOT_DOMAIN, FunctionalityNames.SHARED_SPACE__WORKSPACE_LIMIT.toString());
+		functionality.getActivationPolicy().setStatus(false);
+		functionalityService.update(root, LinShareTestConstants.ROOT_DOMAIN, functionality);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
