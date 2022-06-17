@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -50,7 +49,6 @@ import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessServic
 import org.linagora.linshare.core.business.service.WorkSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.NodeType;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceField;
@@ -323,11 +321,6 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			}
 			if (Objects.nonNull(lessThanOrEqualTo) && lessThanOrEqualTo == 1) {
 				return memberBusinessService.findOrphanSharedSpaces(sort, container);
-			}
-			if (!roleNames.isEmpty()
-					&& !CollectionUtils.isEqualCollection(roleNames, Sets.newHashSet(Role.ADMIN.toString()))) {
-				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
-						"You are not authorized to filter by role else the ADMIN role");
 			}
 			return memberBusinessService.findSharedSpacesByMembersNumber(greaterThanOrEqualTo, lessThanOrEqualTo, roleNames, sort,
 					container);

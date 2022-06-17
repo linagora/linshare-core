@@ -70,13 +70,16 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.ldap.Role;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
+import org.linagora.linshare.mongo.entities.SharedSpaceAuthor;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +90,8 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -132,6 +137,9 @@ public class SharedSpaceNodeServiceImplTest {
 
 	@Autowired
 	private FunctionalityService functionalityService;
+
+	@Autowired
+	private SharedSpaceRoleMongoRepository sharedSpaceRoleMongoRepository;
 
 	private Account john;
 
@@ -540,5 +548,21 @@ public class SharedSpaceNodeServiceImplTest {
 		service.delete(root, root, node2);
 		service.delete(root, root, node3);
 		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void findAllShouldWorkWhenFilteringByRole() {
+		String role = "MyRole";
+		SharedSpaceAuthor sharedSpaceAuthor = new SharedSpaceAuthor(john.getFullName(), john.getMail());
+		SharedSpaceRole sharedSpaceRole = new SharedSpaceRole(role, true, new GenericLightEntity(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_DOMAIN), sharedSpaceAuthor, NodeType.WORK_GROUP);
+		sharedSpaceRoleMongoRepository.save(sharedSpaceRole);
+
+		PageContainer<SharedSpaceNodeNested> container = new PageContainer<SharedSpaceNodeNested>(0, 10);
+		SharedSpaceNode sharedSpaceNode = service.create(john, john, new SharedSpaceNode("John's first node", null, NodeType.WORK_GROUP));
+		memberService.create(john, john, sharedSpaceNode, sharedSpaceRole, new SharedSpaceAccount(jane));
+		memberService.create(john, john, sharedSpaceNode, adminRole, new SharedSpaceAccount(foo));
+
+		PageContainer<SharedSpaceNodeNested> nodes = service.findAll(root, root, null, ImmutableList.of(john.getDomainId()), SortOrder.ASC, ImmutableSet.of(), ImmutableSet.of(role), SharedSpaceField.creationDate, null, 1, null, container);
+		assertThat(nodes.getTotalElements()).isEqualTo(1);
 	}
 }
