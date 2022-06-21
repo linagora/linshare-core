@@ -51,6 +51,8 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 
 	List<AuditLogEntryUser> findByAction(String action);
 
+	AuditLogEntryUser findByUuid(String uuid);
+
 	@Query("{ 'actor.uuid' : ?0 }")
 	List<AuditLogEntryUser> findByActorUuid(String actor);
 

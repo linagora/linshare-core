@@ -186,6 +186,11 @@
 					<constructor-arg ref="userRepository" />
 					<constructor-arg name="gdprActivated" value="${linshare.gdpr.enable}"/>
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v5_1.AddFirstLastNameToActorAuditsUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

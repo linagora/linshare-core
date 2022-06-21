@@ -335,6 +335,11 @@ public enum UpgradeTaskType {
 	UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP,
 
 	/**
+	 * Add first and last name to actor on audit traces
+	 */
+	UPGRADE_5_1_ADD_FIRST_NAME_AND_LAST_NAME_TO_AUDIT_ACTOR_FIELD,
+
+	/**
 	 * Populating ExternalFavouriteRecipient new table
 	 */
 	OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;

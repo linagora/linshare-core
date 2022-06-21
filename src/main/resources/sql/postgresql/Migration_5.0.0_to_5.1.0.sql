@@ -945,6 +945,29 @@ folderMsg = into the folder
 workgroupMsg = on the workgroup
 revisionMsg = by adding a new document revision 
 subject = The document {0} was updated in the workgroup {1}' WHERE id=45;
+
+
+-- UPGRADE_5_1_ADD_FIRST_NAME_AND_LAST_NAME_TO_AUDIT_ACTOR_FIELD
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (57,
+     'UNDEFINED',
+     'UPGRADE_5_1_ADD_FIRST_NAME_AND_LAST_NAME_TO_AUDIT_ACTOR_FIELD',
+     'UPGRADE_5_1',
+     57,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
 ---- End of your queries
 
 -- Upgrade LinShare version
