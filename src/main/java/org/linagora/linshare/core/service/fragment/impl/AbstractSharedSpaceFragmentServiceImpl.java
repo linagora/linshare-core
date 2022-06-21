@@ -148,8 +148,7 @@ public abstract class AbstractSharedSpaceFragmentServiceImpl extends GenericServ
 		nodeToUpdate.setDescription(sanitize(nodeToUpdate.getDescription()));
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
-		List<String> members = memberBusinessService.findMembersUuidBySharedSpaceNodeUuid(updated.getUuid());
-		log.addRelatedAccounts(members);
+		memberBusinessService.addMembersToRelatedAccountsAndRelatedDomains(updated.getUuid(), log);
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
 		return updated;

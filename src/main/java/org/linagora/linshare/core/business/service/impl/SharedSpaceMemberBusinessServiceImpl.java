@@ -63,6 +63,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.projections.dto.AggregateNestedNodeUuidResult;
 import org.linagora.linshare.mongo.projections.dto.AggregateNodeCountResult;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
@@ -243,6 +244,19 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		List<SharedSpaceMember> members = repository.findByNodeUuid(shareSpaceNodeUuid);
 		Stream<SharedSpaceAccount> accounts = members.stream().map(SharedSpaceMember::getAccount);
 		return accounts.map(SharedSpaceAccount::getUuid).collect(Collectors.toList());
+	}
+
+	@Override
+	public void addMembersToRelatedAccountsAndRelatedDomains(String shareSpaceNodeUuid, AuditLogEntryUser log)
+			throws BusinessException {
+		List<SharedSpaceMember> members = repository.findByNodeUuid(shareSpaceNodeUuid);
+		Stream<SharedSpaceAccount> accounts = members.stream().map(SharedSpaceMember::getAccount);
+		List<String> collect = accounts.map(SharedSpaceAccount::getUuid).collect(Collectors.toList());
+		log.addRelatedAccounts(collect);
+
+		accounts = members.stream().map(SharedSpaceMember::getAccount);
+		collect = accounts.map(SharedSpaceAccount::getDomainUuid).collect(Collectors.toList());
+		log.addRelatedDomains(collect);
 	}
 
 	@Override

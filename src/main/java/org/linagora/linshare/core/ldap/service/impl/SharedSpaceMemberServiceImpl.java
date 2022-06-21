@@ -36,7 +36,6 @@
 package org.linagora.linshare.core.ldap.service.impl;
 
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
@@ -96,8 +95,7 @@ public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.ser
 		notifierService.sendNotification(mail, true);
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(actor, actor, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, created);
-		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(created.getNode().getUuid());
-		log.addRelatedAccounts(members);
+		businessService.addMembersToRelatedAccountsAndRelatedDomains(created.getNode().getUuid(), log);
 		logEntryService.insert(log);
 		return created;
 	}
@@ -120,8 +118,7 @@ public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.ser
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(actor, actor, LogAction.UPDATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
 		log.setResourceUpdated(updated);
-		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(member.getNode().getUuid());
-		log.addRelatedAccounts(members);
+		businessService.addMembersToRelatedAccountsAndRelatedDomains(member.getNode().getUuid(), log);
 		logEntryService.insert(log);
 		return updated;
 	}

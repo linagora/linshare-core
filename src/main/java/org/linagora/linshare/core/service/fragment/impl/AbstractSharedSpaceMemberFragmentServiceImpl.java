@@ -142,8 +142,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 			SharedSpaceMember resource, AuditLogEntryType auditType) {
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
 				auditType, resource);
-		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(resource.getNode().getUuid());
-		log.addRelatedAccounts(members);
+		businessService.addMembersToRelatedAccountsAndRelatedDomains(resource.getNode().getUuid(), log);
 		logEntryService.insert(log);
 		return log;
 	}
@@ -164,8 +163,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action, auditType,
 				resource);
 		log.setResourceUpdated(resourceUpdated);
-		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(resource.getNode().getUuid());
-		log.addRelatedAccounts(members);
+		businessService.addMembersToRelatedAccountsAndRelatedDomains(resource.getNode().getUuid(), log);
 		logEntryService.insert(log);
 		return log;
 	}

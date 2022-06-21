@@ -152,7 +152,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 				nodeParent);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
-		addMembersToLog(workgroup.getLsUuid(), log);
+		sharedSpaceMemberBusinessService.addMembersToRelatedAccountsAndRelatedDomains(workgroup.getLsUuid(), log);
 		logEntryService.insert(log);
 		return document;
 	}
@@ -230,7 +230,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		}
 		log.setFromResourceUuid(fromNodeUuid);
 		log.setCopiedFrom(copiedFrom);
-		addMembersToLog(toWorkGroup.getLsUuid(), log);
+		sharedSpaceMemberBusinessService.addMembersToRelatedAccountsAndRelatedDomains(toWorkGroup.getLsUuid(), log);
 		logEntryService.insert(log);
 		addToQuota(toWorkGroup, size);
 		return node;
@@ -255,7 +255,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			WorkGroupDocumentRevision revision, WorkGroupNodeType nodeType) throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, AuditLogEntryType.WORKGROUP_DOCUMENT,
 				revision, workGroup);
-		addMembersToLog(workGroup.getLsUuid(), log);
+		sharedSpaceMemberBusinessService.addMembersToRelatedAccountsAndRelatedDomains(workGroup.getLsUuid(), log);
 		log.addRelatedResources(revision.getParent());
 		logEntryService.insert(log);
 		return documentEntryBusinessService.getByteSource(revision);
@@ -277,7 +277,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD, AuditLogEntryType.WORKGROUP_DOCUMENT,
 				node, workGroup);
 		log.setCause(LogActionCause.COPY);
-		addMembersToLog(workGroup.getLsUuid(), log);
+		sharedSpaceMemberBusinessService.addMembersToRelatedAccountsAndRelatedDomains(workGroup.getLsUuid(), log);
 		log.setCopiedTo(copiedTo);
 		logEntryService.insert(log);
 	}

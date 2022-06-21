@@ -47,6 +47,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.data.domain.Sort;
@@ -71,6 +72,8 @@ public interface SharedSpaceMemberBusinessService {
 	void deleteAll(List<SharedSpaceMember> foundMembersToDelete) throws BusinessException;
 
 	List<String> findMembersUuidBySharedSpaceNodeUuid(String shareSpaceNodeUuid) throws BusinessException;
+
+	void addMembersToRelatedAccountsAndRelatedDomains(String shareSpaceNodeUuid, AuditLogEntryUser log) throws BusinessException;
 
 	List<SharedSpaceMember> findByMemberName(String name) throws BusinessException;
 

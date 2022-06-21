@@ -150,8 +150,7 @@ public class WorkGroupMemberServiceImpl extends AbstractSharedSpaceMemberFragmen
 					container.addMailContainersAddEmail(mailBuildingService.build(context));
 				}
 			}
-			List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(member.getNode().getUuid());
-			log.addRelatedAccounts(members);
+			businessService.addMembersToRelatedAccountsAndRelatedDomains(member.getNode().getUuid(), log);
 			if (Objects.nonNull(cause)) {
 				log.setCause(cause);
 			}

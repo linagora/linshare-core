@@ -238,11 +238,18 @@ public class AuditLogEntry {
 		return relatedDomains;
 	}
 
-	public void addRelatedDomains(String... relatedResources) {
-		if (this.relatedDomains== null) {
+	public void addRelatedDomains(String... relatedDomains) {
+		if (this.relatedDomains == null) {
 			this.relatedDomains = Lists.newArrayList();
 		}
-		this.relatedDomains.addAll(Lists.newArrayList(relatedResources));
+		this.relatedDomains.addAll(Lists.newArrayList(relatedDomains));
+	}
+
+	public void addRelatedDomains(List<String> relatedDomains) {
+		if (this.relatedDomains == null) {
+			this.relatedDomains = Lists.newArrayList();
+		}
+		this.relatedDomains.addAll(relatedDomains);
 	}
 
 	@Override

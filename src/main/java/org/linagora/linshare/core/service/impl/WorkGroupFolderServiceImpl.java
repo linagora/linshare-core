@@ -121,7 +121,7 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 		}
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_FOLDER, workGroupNode, workGroup);
-		addMembersToLog(workGroup.getLsUuid(), log);
+		sharedSpaceMemberBusinessService.addMembersToRelatedAccountsAndRelatedDomains(workGroup.getLsUuid(), log);
 		logEntryService.insert(log);
 		return workGroupNode;
 	}

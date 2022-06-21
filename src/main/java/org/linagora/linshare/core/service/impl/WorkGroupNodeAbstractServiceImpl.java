@@ -189,8 +189,7 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 
 	@Override
 	public void addMembersToLog(String workGroupUuid, AuditLogEntryUser log) {
-		List<String> members = sharedSpaceMemberBusinessService.findMembersUuidBySharedSpaceNodeUuid(workGroupUuid);
-		log.addRelatedAccounts(members);
+		sharedSpaceMemberBusinessService.addMembersToRelatedAccountsAndRelatedDomains(workGroupUuid, log);
 	}
 
 	@Override

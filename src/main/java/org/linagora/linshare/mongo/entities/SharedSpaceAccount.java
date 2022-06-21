@@ -41,6 +41,9 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
+
 @XmlRootElement(name = "SharedSpaceAccount")
 public class SharedSpaceAccount {
 
@@ -56,6 +59,9 @@ public class SharedSpaceAccount {
 
 	protected AccountType accountType;
 
+	@Schema(description = "The domain's uuid of the current account.", accessMode = AccessMode.READ_ONLY)
+	protected String domainUuid;
+
 	public SharedSpaceAccount() {
 		super();
 	}
@@ -68,16 +74,26 @@ public class SharedSpaceAccount {
 		this.lastName = user.getLastName();
 		this.mail = user.getMail();
 		this.accountType = user.getAccountType();
+		this.domainUuid = user.getDomainId();
 	}
-	
+
 	public SharedSpaceAccount(Account user) {
 		super();
 		this.uuid = user.getLsUuid();
 		this.name = user.getFullName();
 		this.mail = user.getMail();
 		this.accountType = user.getAccountType();
+		this.domainUuid = user.getDomainId();
 	}
 
+	/**
+	 * Only used by FakeEmail builder.
+	 * @param uuid
+	 * @param name
+	 * @param firstName
+	 * @param lastName
+	 * @param mail
+	 */
 	public SharedSpaceAccount(String uuid, String name, String firstName, String lastName, String mail) {
 		super();
 		this.uuid = uuid;
@@ -133,6 +149,14 @@ public class SharedSpaceAccount {
 
 	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
+	}
+
+	public String getDomainUuid() {
+		return domainUuid;
+	}
+
+	public void setDomainUuid(String domainUuid) {
+		this.domainUuid = domainUuid;
 	}
 
 	@Override
