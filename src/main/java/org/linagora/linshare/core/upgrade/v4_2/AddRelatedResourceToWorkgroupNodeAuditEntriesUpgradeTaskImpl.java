@@ -35,6 +35,7 @@ package org.linagora.linshare.core.upgrade.v4_2;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -88,7 +89,7 @@ public class AddRelatedResourceToWorkgroupNodeAuditEntriesUpgradeTaskImpl extend
 		BatchResultContext<WorkGroupNodeAuditLogEntry> res = new BatchResultContext<>(audit);
 		res.setProcessed(false);
 		if (audit != null) {
-			List<String> relatedResources = audit.getRelatedResources();
+			Set<String> relatedResources = audit.getRelatedResources();
 			if (relatedResources != null && relatedResources.contains(audit.getWorkGroup().getUuid())) {
 				//avoid processing if workgroup uuid already exists in the relatedResource list 
 				return res;

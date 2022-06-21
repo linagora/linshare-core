@@ -53,6 +53,8 @@ import org.linagora.linshare.core.facade.webservice.admin.AuditLogEntryAdminFaca
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.webservice.admin.AuditLogEntryAdminRestService;
 
+import io.swagger.v3.oas.annotations.Parameter;
+
 @Path("/audit")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -70,7 +72,8 @@ public class AuditLogEntryAdminRestServiceImpl implements AuditLogEntryAdminRest
 	@Override
 	public Set<AuditLogEntry> findAll(@QueryParam("action") List<LogAction> action,
 			@QueryParam("type") List<AuditLogEntryType> type,
-			@QueryParam("forceAll") @DefaultValue("false") boolean forceAll,
+			@Parameter(description = "Do not filter by time rage. Careful, it is very resource consuming. Only root.", required = false)
+				@QueryParam("forceAll") @DefaultValue("false") boolean forceAll,
 			@QueryParam("beginDate") String beginDate,
 			@QueryParam("endDate") String endDate) {
 		return auditLogFacade.findAll(action, type, forceAll, beginDate, endDate);

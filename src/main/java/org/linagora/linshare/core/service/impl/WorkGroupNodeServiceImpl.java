@@ -552,6 +552,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 						node.getUuid());
 				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
 						AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
+				// TODO FMA AuditLogEntry : Bug ? missing members
+				
 				for (WorkGroupNode revision : subRevisions) {
 					revision.setName(workGroupDocumentService.computeFileName((WorkGroupDocument) node,
 							(WorkGroupDocumentRevision) revision, false));

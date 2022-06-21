@@ -80,7 +80,6 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	// TODO FMA AuditLogEntry
 	public WorkGroupNodeAuditLogEntry(Account authUser, Account actor, LogAction action, AuditLogEntryType type,
 			WorkGroupNode node, WorkGroup workGroup) {
 		super(new AccountMto(authUser), new AccountMto(actor), action, type, node.getUuid());
@@ -88,6 +87,8 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 		this.resource = buildCopy(node);
 		// used only to get the name of the workgroup
 		this.workGroup = new WorkGroupLightDto(workGroup);
+		// Related accounts or related domains are provided by an external method named businessService.addMembersToRelatedAccountsAndRelatedDomains()
+		// Unfortunately it should been done by the constructor, but it was not done like that :'(
 	}
 
 	private WorkGroupNode buildCopy(WorkGroupNode node) {

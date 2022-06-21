@@ -75,11 +75,11 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 
 	private static final String CREATION_DATE = "creationDate";
 
-	final protected AuditAdminMongoRepository auditMongoRepository;
+	protected final AuditAdminMongoRepository auditMongoRepository;
 
-	final protected AuditUserMongoRepository userMongoRepository;
+	protected final AuditUserMongoRepository userMongoRepository;
 
-	final protected DomainPermissionBusinessService permissionService;
+	protected final DomainPermissionBusinessService permissionService;
 
 	public AuditLogEntryServiceImpl(AuditAdminMongoRepository auditMongoRepository,
 			AuditUserMongoRepository userMongoRepository,
@@ -96,7 +96,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	 * UserRestService
 	 */
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account authUser, Account actor, List<LogAction> action, List<AuditLogEntryType> type,
+	public Set<AuditLogEntryUser> findAllForUsers(Account authUser, Account actor, List<LogAction> action, List<AuditLogEntryType> type,
 			boolean forceAll, String beginDate, String endDate) {
 		Validate.notNull(authUser);
 		Validate.notNull(actor);
@@ -116,32 +116,31 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	}
 
 	/**
-	 * AdminRestService
+	 * For administrators only.
 	 */
 	@Override
-	public Set<AuditLogEntry> findAll(Account actor, List<LogAction> action, List<AuditLogEntryType> type,
+	public Set<AuditLogEntry> findAllForAdmins(Account actor, List<LogAction> action, List<AuditLogEntryType> type,
 			boolean forceAll, String beginDate, String endDate) {
-		// TODO FMA AuditLogEntry
 		Validate.notNull(actor);
-//		if (!actor.hasSuperAdminRole()) {
-//			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not allowed to use this api."); 
-//		}
-
-		List<String> domains = permissionService.getAdministredDomainsIdentifiers(actor, actor.getDomainId());
-		Set<AuditLogEntry> res = Sets.newHashSet();
+		if (!(actor.hasSuperAdminRole() || actor.hasAdminRole())) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not allowed to use this api."); 
+		}
 		List<LogAction> actions = getActions(action);
 		List<AuditLogEntryType> types = getEntryTypes(type, null, true);
-		types.remove(AuditLogEntryType.AUTHENTICATION);
-//		forceAll=true;
+		if (actor.hasSuperAdminRole()) {
 			if (forceAll) {
-//				res = auditMongoRepository.findAll(domainLists);
-				res = auditMongoRepository.findAll(actions, types, domains);
+				return auditMongoRepository.findAll(actions, types);
 			} else {
 				Date end = getEndDate(endDate);
 				Date begin = getBeginDate(beginDate, end);
-				res = auditMongoRepository.findAll(actions, types, begin, end, domains);
+				return auditMongoRepository.findAll(actions, types, begin, end);
 			}
-		return res;
+		} else {
+			List<String> domains = permissionService.getAdministredDomainsIdentifiers(actor, actor.getDomainId());
+			Date end = getEndDate(endDate);
+			Date begin = getBeginDate(beginDate, end);
+			return auditMongoRepository.findAll(actions, types, begin, end, domains);
+		}
 	}
 
 	@Override

@@ -162,7 +162,6 @@ public class SharedSpaceAccount {
 	@Override
 	public String toString() {
 		return "SharedSpaceAccount [uuid=" + uuid + ", name=" + name + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", mail=" + mail + ", accountType=" + accountType + "]";
+				+ lastName + ", mail=" + mail + ", accountType=" + accountType + ", domainUuid=" + domainUuid + "]";
 	}
-
 }

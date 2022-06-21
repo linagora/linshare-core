@@ -61,6 +61,6 @@ public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements Au
 			String beginDate, String endDate) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		return service.findAll(authUser, actor, action, type, forceAll, beginDate, endDate);
+		return service.findAllForUsers(authUser, actor, action, type, forceAll, beginDate, endDate);
 	}
 }

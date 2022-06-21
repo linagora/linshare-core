@@ -61,6 +61,6 @@ public class AuditLogEntryAdminFacadeImpl extends AdminGenericFacadeImpl impleme
 	public Set<AuditLogEntry> findAll(List<LogAction> action, List<AuditLogEntryType> type, boolean forceAll, String beginDate,
 			String endDate) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
-		return service.findAll(authUser, action, type, forceAll, beginDate, endDate);
+		return service.findAllForAdmins(authUser, action, type, forceAll, beginDate, endDate);
 	}
 }

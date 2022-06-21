@@ -55,7 +55,6 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryRevisionBusinessService;
 import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
-import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;

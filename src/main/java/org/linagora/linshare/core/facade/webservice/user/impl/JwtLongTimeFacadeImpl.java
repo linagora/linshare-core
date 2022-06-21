@@ -121,6 +121,6 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 		}
 		List<AuditLogEntryType> type = Lists.newArrayList();
 		type.add(AuditLogEntryType.JWT_PERMANENT_TOKEN);
-		return auditLogEntryService.findAll(authUser, authUser, actions, type, true, null, null);
+		return auditLogEntryService.findAllForUsers(authUser, authUser, actions, type, true, null, null);
 	}
 }

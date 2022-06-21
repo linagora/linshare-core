@@ -60,7 +60,6 @@ public class SharedSpaceMemberAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	// TODO FMA AuditLogEntry
 	public SharedSpaceMemberAuditLogEntry(Account authUser, Account actor, LogAction action, AuditLogEntryType type,
 			SharedSpaceMember member) {
 		super(new AccountMto(authUser), new AccountMto(actor), action, type, member.getUuid());
@@ -68,9 +67,8 @@ public class SharedSpaceMemberAuditLogEntry extends AuditLogEntryUser {
 		this.workGroup = new WorkGroupLightDto(member.getNode());
 		addRelatedResources(member.getNode().getUuid());
 		this.resource = member;
-		// no related account ? missing ?
-		// no domain related information ! :'(
-		// addRelatedDomains();
+		// Related accounts or related domains are provided by an external method named businessService.addMembersToRelatedAccountsAndRelatedDomains()
+		// Unfortunately it should been done by the constructor, but it was not done like that :'(
 	}
 
 	public SharedSpaceMember getResource() {

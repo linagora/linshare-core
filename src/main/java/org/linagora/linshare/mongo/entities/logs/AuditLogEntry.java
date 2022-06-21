@@ -37,6 +37,7 @@ package org.linagora.linshare.mongo.entities.logs;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.GeneratedValue;
@@ -57,6 +58,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
@@ -137,7 +139,7 @@ public class AuditLogEntry {
 	protected Date creationDate;
 
 	@JsonIgnore
-	protected List<String> relatedDomains;
+	protected Set<String> relatedDomains;
 
 	@JsonIgnore
 	protected String technicalComment;
@@ -234,20 +236,20 @@ public class AuditLogEntry {
 	}
 
 	@XmlTransient
-	public List<String> getRelatedDomains() {
+	public Set<String> getRelatedDomains() {
 		return relatedDomains;
 	}
 
 	public void addRelatedDomains(String... relatedDomains) {
 		if (this.relatedDomains == null) {
-			this.relatedDomains = Lists.newArrayList();
+			this.relatedDomains = Sets.newHashSet();
 		}
 		this.relatedDomains.addAll(Lists.newArrayList(relatedDomains));
 	}
 
 	public void addRelatedDomains(List<String> relatedDomains) {
 		if (this.relatedDomains == null) {
-			this.relatedDomains = Lists.newArrayList();
+			this.relatedDomains = Sets.newHashSet();
 		}
 		this.relatedDomains.addAll(relatedDomains);
 	}

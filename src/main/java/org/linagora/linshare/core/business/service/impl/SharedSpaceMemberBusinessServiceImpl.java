@@ -249,11 +249,11 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public void addMembersToRelatedAccountsAndRelatedDomains(String shareSpaceNodeUuid, AuditLogEntryUser log)
 			throws BusinessException {
+		// TODO FMA AuditLogEntry : optimization
 		List<SharedSpaceMember> members = repository.findByNodeUuid(shareSpaceNodeUuid);
 		Stream<SharedSpaceAccount> accounts = members.stream().map(SharedSpaceMember::getAccount);
 		List<String> collect = accounts.map(SharedSpaceAccount::getUuid).collect(Collectors.toList());
 		log.addRelatedAccounts(collect);
-
 		accounts = members.stream().map(SharedSpaceMember::getAccount);
 		collect = accounts.map(SharedSpaceAccount::getDomainUuid).collect(Collectors.toList());
 		log.addRelatedDomains(collect);

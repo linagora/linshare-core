@@ -38,6 +38,7 @@ package org.linagora.linshare.mongo.entities.logs;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -49,6 +50,7 @@ import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @JsonIgnoreProperties({"relatedAccounts"})
 @XmlRootElement(name = "AuditLogEntryUser")
@@ -58,10 +60,10 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 	protected AccountMto actor;
 
 	@JsonIgnore
-	protected List<String> relatedAccounts;
+	protected Set<String> relatedAccounts;
 
 	@JsonIgnore
-	protected List<String> relatedResources;
+	protected Set<String> relatedResources;
 
 	public AuditLogEntryUser() {
 		super();
@@ -81,7 +83,7 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 	}
 
 	protected void initRelatedAccountField() {
-		this.relatedAccounts = Lists.newArrayList();
+		this.relatedAccounts = Sets.newHashSet();
 		String authUserUuid = authUser.getUuid();
 		String actorUuid = actor.getUuid();
 		this.relatedAccounts.add(authUserUuid);
@@ -101,39 +103,39 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 	}
 
 	@XmlTransient
-	public List<String> getRelatedAccounts() {
+	public Set<String> getRelatedAccounts() {
 		return relatedAccounts;
 	}
 
 	public void addRelatedAccounts(List<String> relatedAccounts) {
 		if (this.relatedAccounts == null) {
-			this.relatedAccounts = Lists.newArrayList();
+			this.relatedAccounts = Sets.newHashSet();
 		}
 		this.relatedAccounts.addAll(relatedAccounts);
 	}
 
 	public void addRelatedAccounts(String... relatedAccounts) {
 		if (this.relatedAccounts == null) {
-			this.relatedAccounts = Lists.newArrayList();
+			this.relatedAccounts = Sets.newHashSet();
 		}
 		this.relatedAccounts.addAll(Lists.newArrayList(relatedAccounts));
 	}
 
 	@XmlTransient
-	public List<String> getRelatedResources() {
+	public Set<String> getRelatedResources() {
 		return relatedResources;
 	}
 
 	public void addRelatedResources(List<String> relatedResources) {
 		if (this.relatedResources == null) {
-			this.relatedResources = Lists.newArrayList();
+			this.relatedResources = Sets.newHashSet();
 		}
 		this.relatedResources.addAll(relatedResources);
 	}
 
 	public void addRelatedResources(String... relatedResources) {
 		if (this.relatedResources == null) {
-			this.relatedResources = Lists.newArrayList();
+			this.relatedResources = Sets.newHashSet();
 		}
 		this.relatedResources.addAll(Lists.newArrayList(relatedResources));
 	}
