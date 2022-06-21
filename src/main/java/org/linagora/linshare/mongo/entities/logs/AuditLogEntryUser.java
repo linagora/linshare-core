@@ -77,28 +77,7 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		this.type = type;
 		this.resourceUuid = resourceUuid;
 		initRelatedAccountField();
-	}
-
-	public AuditLogEntryUser(ShareEntryAuditLogEntry log) {
-		super();
-		this.authUser = log.getAuthUser();
-		this.actor = log.getActor();
-		this.action = log.getAction();
-		this.creationDate = log.getCreationDate();
-		this.type = log.getType();
-		this.resourceUuid = log.getResourceUuid();
-		initRelatedAccountField();
-	}
-
-	public AuditLogEntryUser(ThreadAuditLogEntry log) {
-		super();
-		this.authUser = log.getAuthUser();
-		this.actor = log.getActor();
-		this.action = log.getAction();
-		this.creationDate = log.getCreationDate();
-		this.type = log.getType();
-		this.resourceUuid = log.getResourceUuid();
-		initRelatedAccountField();
+		this.addRelatedDomains(actor.getDomain().getUuid());
 	}
 
 	protected void initRelatedAccountField() {
@@ -126,10 +105,6 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		return relatedAccounts;
 	}
 
-	public void setRelatedAccounts(List<String> relatedAccounts) {
-		this.relatedAccounts = relatedAccounts;
-	}
-
 	public void addRelatedAccounts(List<String> relatedAccounts) {
 		if (this.relatedAccounts == null) {
 			this.relatedAccounts = Lists.newArrayList();
@@ -144,10 +119,7 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		this.relatedAccounts.addAll(Lists.newArrayList(relatedAccounts));
 	}
 
-	public void setRelatedResources(List<String> relatedResources) {
-		this.relatedResources = relatedResources;
-	}
-
+	@XmlTransient
 	public List<String> getRelatedResources() {
 		return relatedResources;
 	}
@@ -165,4 +137,5 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		}
 		this.relatedResources.addAll(Lists.newArrayList(relatedResources));
 	}
+
 }

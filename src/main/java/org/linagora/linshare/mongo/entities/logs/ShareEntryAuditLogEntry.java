@@ -88,6 +88,10 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		if (!actor.getLsUuid().equals(entry.getEntryOwner().getLsUuid())) {
 			this.addRelatedAccounts(entry.getEntryOwner().getLsUuid());
 		}
+		this.addRelatedDomains(
+				entry.getEntryOwner().getDomainId(),
+				entry.getRecipient().getDomainId()
+		);
 	}
 
 	public ShareEntryAuditLogEntry(Account authUser, Account actor, LogAction action, AnonymousShareEntry entry,
@@ -100,6 +104,8 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 			this.shareEntryGroup = new ShareEntryGroupMto(entryGroup);
 		}
 		this.addRelatedResources(entry.getDocumentEntry().getUuid());
+		this.addRelatedAccounts(entry.getEntryOwner().getLsUuid());
+		this.addRelatedDomains(entry.getEntryOwner().getDomainId());
 	}
 
 	public ShareEntryAuditLogEntry(Account authUser, Contact actor, AnonymousShareEntry entry,
@@ -113,6 +119,7 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		}
 		this.addRelatedResources(entry.getDocumentEntry().getUuid());
 		this.addRelatedAccounts(entry.getEntryOwner().getLsUuid());
+		this.addRelatedDomains(entry.getEntryOwner().getDomainId());
 	}
 
 	public EntryMto getResource() {

@@ -58,6 +58,7 @@ public class MailAttachmentAuditLogEntry extends AuditLogEntryAdmin {
 			MailAttachment attachment) {
 		super(authUser, attachment.getMailConfig().getDomain().getUuid(), action, type, attachment.getUuid());
 		this.setResource(new MailAttachmentMto(attachment));
+		this.addRelatedDomains(targetDomainUuid);
 	}
 
 	public MailAttachmentMto getResource() {

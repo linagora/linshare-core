@@ -288,6 +288,7 @@
 		<constructor-arg ref="auditUserMongoRepository" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 	<bean id="statisticService" class="org.linagora.linshare.core.service.impl.StatisticServiceImpl">
 		<constructor-arg ref="statisticBusinessService" />

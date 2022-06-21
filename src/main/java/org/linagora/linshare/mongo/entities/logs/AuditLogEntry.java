@@ -36,6 +36,7 @@
 package org.linagora.linshare.mongo.entities.logs;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.GeneratedValue;
@@ -51,65 +52,65 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.collect.Lists;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
 		@Type(value = AuthenticationAuditLogEntryUser.class, name = "authentication_audit"),
-		@Type(value = MailAttachmentAuditLogEntry.class, name = "mail_attchment_audit"),
-		@Type(value = SafeDetailAuditLogEntry.class, name = "safe_detali_audit"),
-		@Type(value = WorkGroupNodeAuditLogEntry.class, name = "workgroup_node_audit"),
-		@Type(value = ShareEntryAuditLogEntry.class, name = "share_audit"),
-		@Type(value = ThreadAuditLogEntry.class, name = "thread_audit"),
-		@Type(value = ThreadMemberAuditLogEntry.class, name = "thread_member_audit"),
-		@Type(value = UserAuditLogEntry.class, name = "user_audit"),
-		@Type(value = GuestAuditLogEntry.class, name = "guest_audit"),
-		@Type(value = MailingListAuditLogEntry.class, name = "mailing_list_audit"),
-		@Type(value = MailingListContactAuditLogEntry.class, name = "mailing_list_contact_audit"),
-		@Type(value = UploadRequestAuditLogEntry.class, name = "upload_request_audit"),
-		@Type(value = UploadRequestGroupAuditLogEntry.class, name = "upload_request_group_audit"),
-		@Type(value = UploadRequestUrlAuditLogEntry.class, name = "upload_request_url_audit"),
-		@Type(value = UploadRequestEntryAuditLogEntry.class, name = "upload_request_entry_audit"),
-		@Type(value = UserPreferenceAuditLogEntry.class, name = "user_preference_audit"),
 		@Type(value = DomainAuditLogEntry.class, name = "domain_audit"),
 		@Type(value = DomainPatternAuditLogEntry.class, name = "domain_pattern_audit"),
-		@Type(value = LdapConnectionAuditLogEntry.class, name = "ldap_connection_audit"),
 		@Type(value = FunctionalityAuditLogEntry.class, name = "ldap_connection_audit"),
-		@Type(value = PublicKeyAuditLogEntry.class, name = "public_key_audit"),
+		@Type(value = GroupFilterAuditLogEntry.class, name = "group_filter_audit"),
+		@Type(value = GuestAuditLogEntry.class, name = "guest_audit"),
 		@Type(value = JwtLongTimeAuditLogEntry.class, name = "jwt_longtime"),
+		@Type(value = LdapConnectionAuditLogEntry.class, name = "ldap_connection_audit"),
+		@Type(value = MailAttachmentAuditLogEntry.class, name = "mail_attchment_audit"),
+		@Type(value = MailingListAuditLogEntry.class, name = "mailing_list_audit"),
+		@Type(value = MailingListContactAuditLogEntry.class, name = "mailing_list_contact_audit"),
+		@Type(value = ModeratorAuditLogEntry.class, name = "moderator_audit"),
+		@Type(value = PublicKeyAuditLogEntry.class, name = "public_key_audit"),
+		@Type(value = SafeDetailAuditLogEntry.class, name = "safe_detali_audit"),
+		@Type(value = SharedSpaceMemberAuditLogEntry.class, name = "shared_space_member_audit"),
 		@Type(value = SharedSpaceNodeAuditLogEntry.class, name = "shared_space_node_audit"),
-		@Type(value = SharedSpaceMemberAuditLogEntry.class, name = "shared_space_member_audit")
+		@Type(value = ShareEntryAuditLogEntry.class, name = "share_audit"),
+		@Type(value = UploadRequestAuditLogEntry.class, name = "upload_request_audit"),
+		@Type(value = UploadRequestEntryAuditLogEntry.class, name = "upload_request_entry_audit"),
+		@Type(value = UploadRequestGroupAuditLogEntry.class, name = "upload_request_group_audit"),
+		@Type(value = UploadRequestUrlAuditLogEntry.class, name = "upload_request_url_audit"),
+		@Type(value = UserAuditLogEntry.class, name = "user_audit"),
+		@Type(value = UserPreferenceAuditLogEntry.class, name = "user_preference_audit"),
+		@Type(value = WorkGroupNodeAuditLogEntry.class, name = "workgroup_node_audit"),
+		@Type(value = WorkSpaceFilterAuditLogEntry.class, name = "workspace_node_audit"),
 	})
 @XmlSeeAlso({
 	AuthenticationAuditLogEntryUser.class,
-	MailAttachmentAuditLogEntry.class,
-	SafeDetailAuditLogEntry.class,
-	WorkGroupNodeAuditLogEntry.class,
-	ShareEntryAuditLogEntry.class,
 	DocumentEntryAuditLogEntry.class,
-	ThreadAuditLogEntry.class,
-	ThreadMemberAuditLogEntry.class,
-	UserAuditLogEntry.class,
-	GuestAuditLogEntry.class,
-	MailingListContactAuditLogEntry.class,
-	MailingListAuditLogEntry.class,
-	UploadRequestAuditLogEntry.class,
-	UploadRequestGroupAuditLogEntry.class,
-	UploadRequestUrlAuditLogEntry.class,
-	UploadRequestEntryAuditLogEntry.class,
-	UserPreferenceAuditLogEntry.class,
 	DomainAuditLogEntry.class,
 	DomainPatternAuditLogEntry.class,
-	LdapConnectionAuditLogEntry.class,
 	FunctionalityAuditLogEntry.class,
-	PublicKeyAuditLogEntry.class,
+	GuestAuditLogEntry.class,
 	JwtLongTimeAuditLogEntry.class,
+	LdapConnectionAuditLogEntry.class,
+	MailAttachmentAuditLogEntry.class,
+	MailingListAuditLogEntry.class,
+	MailingListContactAuditLogEntry.class,
+	PublicKeyAuditLogEntry.class,
+	SafeDetailAuditLogEntry.class,
+	SharedSpaceMemberAuditLogEntry.class,
 	SharedSpaceNodeAuditLogEntry.class,
-	SharedSpaceMemberAuditLogEntry.class
+	ShareEntryAuditLogEntry.class,
+	UploadRequestAuditLogEntry.class,
+	UploadRequestEntryAuditLogEntry.class,
+	UploadRequestGroupAuditLogEntry.class,
+	UploadRequestUrlAuditLogEntry.class,
+	UserAuditLogEntry.class,
+	UserPreferenceAuditLogEntry.class,
+	WorkGroupNodeAuditLogEntry.class,
 	})
 @XmlRootElement(name = "AuditLogEntry")
 @Document(collection="audit_log_entries")
@@ -134,6 +135,9 @@ public class AuditLogEntry {
 	protected AuditLogEntryType type;
 
 	protected Date creationDate;
+
+	@JsonIgnore
+	protected List<String> relatedDomains;
 
 	@JsonIgnore
 	protected String technicalComment;
@@ -227,6 +231,18 @@ public class AuditLogEntry {
 
 	public void setFromResourceUuid(String fromResourceUuid) {
 		this.fromResourceUuid = fromResourceUuid;
+	}
+
+	@XmlTransient
+	public List<String> getRelatedDomains() {
+		return relatedDomains;
+	}
+
+	public void addRelatedDomains(String... relatedResources) {
+		if (this.relatedDomains== null) {
+			this.relatedDomains = Lists.newArrayList();
+		}
+		this.relatedDomains.addAll(Lists.newArrayList(relatedResources));
 	}
 
 	@Override

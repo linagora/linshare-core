@@ -65,8 +65,8 @@ public class DocumentEntryAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public DocumentEntryAuditLogEntry(Account authUser, Account owner, DocumentEntry entry, LogAction action) {
-		super(new AccountMto(authUser), new AccountMto(owner), action, AuditLogEntryType.DOCUMENT_ENTRY, entry.getUuid());
+	public DocumentEntryAuditLogEntry(Account authUser, Account actor, DocumentEntry entry, LogAction action) {
+		super(new AccountMto(authUser), new AccountMto(actor), action, AuditLogEntryType.DOCUMENT_ENTRY, entry.getUuid());
 		this.resource = new DocumentMto(entry);
 	}
 

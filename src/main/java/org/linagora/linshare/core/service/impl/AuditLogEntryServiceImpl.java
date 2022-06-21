@@ -45,6 +45,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -74,58 +75,72 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 
 	private static final String CREATION_DATE = "creationDate";
 
-	private AuditAdminMongoRepository auditMongoRepository;
+	final protected AuditAdminMongoRepository auditMongoRepository;
 
-	private AuditUserMongoRepository userMongoRepository;
+	final protected AuditUserMongoRepository userMongoRepository;
+
+	final protected DomainPermissionBusinessService permissionService;
 
 	public AuditLogEntryServiceImpl(AuditAdminMongoRepository auditMongoRepository,
 			AuditUserMongoRepository userMongoRepository,
 			UserService userService,
+			DomainPermissionBusinessService permissionService,
 			AbstractDomainService domainService) {
 		super();
 		this.auditMongoRepository = auditMongoRepository;
 		this.userMongoRepository = userMongoRepository;
+		this.permissionService = permissionService;
 	}
 
+	/**
+	 * UserRestService
+	 */
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<LogAction> action, List<AuditLogEntryType> type,
+	public Set<AuditLogEntryUser> findAll(Account authUser, Account actor, List<LogAction> action, List<AuditLogEntryType> type,
 			boolean forceAll, String beginDate, String endDate) {
+		Validate.notNull(authUser);
 		Validate.notNull(actor);
-		Validate.notNull(owner);
 		Set<AuditLogEntryUser> res = Sets.newHashSet();
 		List<LogAction> actions = getActions(action);
 		List<AuditLogEntryType> types = getEntryTypes(type, null, true);
 		if (forceAll) {
-			res = userMongoRepository.findForUser(owner.getLsUuid(), actions, types);
+			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types);
 		} else {
 			Date end = getEndDate(endDate);
 			Date begin = getBeginDate(beginDate, end);
-			res = userMongoRepository.findForUser(owner.getLsUuid(), actions, types, begin, end);
+			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, begin, end);
 		}
 //		checkListPermission(actor, owner, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
 //				res.iterator().next());
 		return res;
 	}
 
+	/**
+	 * AdminRestService
+	 */
 	@Override
 	public Set<AuditLogEntry> findAll(Account actor, List<LogAction> action, List<AuditLogEntryType> type,
 			boolean forceAll, String beginDate, String endDate) {
+		// TODO FMA AuditLogEntry
 		Validate.notNull(actor);
-		if (!actor.hasSuperAdminRole()) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not allowed to use this api."); 
-		}
+//		if (!actor.hasSuperAdminRole()) {
+//			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not allowed to use this api."); 
+//		}
+
+		List<String> domains = permissionService.getAdministredDomainsIdentifiers(actor, actor.getDomainId());
 		Set<AuditLogEntry> res = Sets.newHashSet();
 		List<LogAction> actions = getActions(action);
 		List<AuditLogEntryType> types = getEntryTypes(type, null, true);
-		if (actor.hasSuperAdminRole()) {
+		types.remove(AuditLogEntryType.AUTHENTICATION);
+//		forceAll=true;
 			if (forceAll) {
-				res = auditMongoRepository.findAll(actions, types);
+//				res = auditMongoRepository.findAll(domainLists);
+				res = auditMongoRepository.findAll(actions, types, domains);
 			} else {
 				Date end = getEndDate(endDate);
 				Date begin = getBeginDate(beginDate, end);
-				res = auditMongoRepository.findAll(actions, types, begin, end);
+				res = auditMongoRepository.findAll(actions, types, begin, end, domains);
 			}
-		}
 		return res;
 	}
 

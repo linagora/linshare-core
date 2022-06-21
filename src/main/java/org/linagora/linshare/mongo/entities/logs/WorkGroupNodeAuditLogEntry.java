@@ -80,9 +80,10 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public WorkGroupNodeAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
+	// TODO FMA AuditLogEntry
+	public WorkGroupNodeAuditLogEntry(Account authUser, Account actor, LogAction action, AuditLogEntryType type,
 			WorkGroupNode node, WorkGroup workGroup) {
-		super(new AccountMto(authUser), new AccountMto(owner), action, type, node.getUuid());
+		super(new AccountMto(authUser), new AccountMto(actor), action, type, node.getUuid());
 		this.addRelatedResources(workGroup.getLsUuid());
 		this.resource = buildCopy(node);
 		// used only to get the name of the workgroup

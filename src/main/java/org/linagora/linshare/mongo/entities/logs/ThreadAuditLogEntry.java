@@ -44,6 +44,7 @@ import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.ThreadMto;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Deprecated
 @XmlRootElement
 @Document(collection="auditLogEntry")
 public class ThreadAuditLogEntry extends AuditLogEntryUser {

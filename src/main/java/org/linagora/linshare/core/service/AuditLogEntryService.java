@@ -49,10 +49,10 @@ import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 
 public interface AuditLogEntryService {
 
-	Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<LogAction> action, List<AuditLogEntryType> type,
+	Set<AuditLogEntryUser> findAll(Account authUser, Account actor, List<LogAction> action, List<AuditLogEntryType> type,
 			boolean forceAll, String beginDate, String endDate);
 
-	Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<LogAction> action,
+	Set<AuditLogEntryUser> findAll(Account authUser, Account actor, String entryUuid, List<LogAction> action,
 			List<AuditLogEntryType> type, String beginDate, String endDate);
 
 	Set<AuditLogEntry> findAll(Account actor, List<LogAction> action, List<AuditLogEntryType> type, boolean forceAll,

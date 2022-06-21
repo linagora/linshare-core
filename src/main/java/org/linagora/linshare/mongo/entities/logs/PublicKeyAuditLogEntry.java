@@ -54,6 +54,7 @@ public class PublicKeyAuditLogEntry extends AuditLogEntryAdmin {
 			PublicKeyLs publicKey) {
 		super(authUser, publicKey.getDomainUuid(), action, type, resourceUuid);
 		this.resource = new PublicKeyLsMto(publicKey);
+		this.addRelatedDomains(targetDomainUuid);
 	}
 
 	public PublicKeyLsMto getResource() {

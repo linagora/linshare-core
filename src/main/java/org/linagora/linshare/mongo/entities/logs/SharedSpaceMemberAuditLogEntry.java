@@ -60,21 +60,17 @@ public class SharedSpaceMemberAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public SharedSpaceMemberAuditLogEntry(SharedSpaceMember resource, SharedSpaceMember resourceUpdated) {
-		super();
-		this.resource = resource;
-		this.workGroup = new WorkGroupLightDto(resource.getNode());
-		resourceUpdated.setUser(resourceUpdated.getAccount());
-		this.resourceUpdated = resourceUpdated;
-	}
-
-	public SharedSpaceMemberAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
+	// TODO FMA AuditLogEntry
+	public SharedSpaceMemberAuditLogEntry(Account authUser, Account actor, LogAction action, AuditLogEntryType type,
 			SharedSpaceMember member) {
-		super(new AccountMto(authUser), new AccountMto(owner), action, type, member.getUuid());
+		super(new AccountMto(authUser), new AccountMto(actor), action, type, member.getUuid());
 		member.setUser(member.getAccount());
 		this.workGroup = new WorkGroupLightDto(member.getNode());
 		addRelatedResources(member.getNode().getUuid());
 		this.resource = member;
+		// no related account ? missing ?
+		// no domain related information ! :'(
+		// addRelatedDomains();
 	}
 
 	public SharedSpaceMember getResource() {

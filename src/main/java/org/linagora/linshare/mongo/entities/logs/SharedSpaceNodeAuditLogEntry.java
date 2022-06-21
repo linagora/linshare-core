@@ -55,20 +55,14 @@ public class SharedSpaceNodeAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public SharedSpaceNodeAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
+	public SharedSpaceNodeAuditLogEntry(Account authUser, Account actor, LogAction action, AuditLogEntryType type,
 			SharedSpaceNode node) {
-		super(new AccountMto(authUser), new AccountMto(owner), action, type, node.getUuid());
+		super(new AccountMto(authUser), new AccountMto(actor), action, type, node.getUuid());
 		this.resource = node;
 		// bind nested workgroups traces with drive trace
 		if (node.getParentUuid() != null && node.getNodeType().equals(NodeType.WORK_GROUP)) {
 			addRelatedResources(node.getParentUuid());
 		}
-	}
-
-	public SharedSpaceNodeAuditLogEntry(SharedSpaceNode resource, SharedSpaceNode resourceUpdated) {
-		super();
-		this.resource = resource;
-		this.resourceUpdated = resourceUpdated;
 	}
 
 	public SharedSpaceNode getResource() {
@@ -86,6 +80,4 @@ public class SharedSpaceNodeAuditLogEntry extends AuditLogEntryUser {
 	public void setResourceUpdated(SharedSpaceNode resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
-
 }
-

@@ -57,6 +57,11 @@ public class ModeratorAuditLogEntry extends AuditLogEntryUser {
 		super(new AccountMto(authUser), new AccountMto(actor), action, type, moderator.getUuid());
 		this.resource = new ModeratorMto(moderator);
 		addRelatedResources(relatedResources);
+		addRelatedAccounts(moderator.getAccount().getLsUuid());
+		addRelatedDomains(
+				moderator.getAccount().getDomainId(),
+				moderator.getGuest().getDomainId()
+		);
 	}
 
 	public ModeratorMto getResource() {

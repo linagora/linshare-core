@@ -54,9 +54,9 @@ public class UploadRequestAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public UploadRequestAuditLogEntry(AccountMto authUser, AccountMto owner, LogAction action, AuditLogEntryType type,
+	public UploadRequestAuditLogEntry(AccountMto authUser, AccountMto actor, LogAction action, AuditLogEntryType type,
 			String resourceUuid, UploadRequest req) {
-		super(authUser, owner, action, type, req.getUuid());
+		super(authUser, actor, action, type, req.getUuid());
 		this.resource = new UploadRequestMto(req);
 	}
 

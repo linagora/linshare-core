@@ -45,6 +45,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.ThreadMemberMto;
 
+@Deprecated
 @XmlRootElement
 public class ThreadMemberAuditLogEntry extends AuditLogEntryUser {
 
