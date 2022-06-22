@@ -156,6 +156,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	private DetachedCriteria getAllCriteria(List<AbstractDomain> domains, String mail, String firstName,
 			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type) {
 		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
+		detachedCrit.createAlias("domain", "d");
 		detachedCrit.add(Restrictions.eq("destroyed", 0L));
 		detachedCrit.add(Restrictions.not(Restrictions.in("class", Lists.newArrayList(AccountType.ROOT.toInt(),
 				AccountType.TECHNICAL_ACCOUNT.toInt()))));

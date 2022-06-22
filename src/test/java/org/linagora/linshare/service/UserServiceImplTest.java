@@ -1049,6 +1049,62 @@ public class UserServiceImplTest {
 	}
 
 	@Test
+	public void findAllShouldSortByDomainWhenAsc() {
+		PageContainer<User> container = new PageContainer<User>(0, 5);
+		SortOrder order = SortOrder.ASC;
+		UserFields field = UserFields.domain;
+		String mail = null;
+		String firstName = null;
+		String lastName = null;
+		String role = null;
+		String type = null;
+		Boolean restricted = null;
+		Boolean canUpload = null;
+		Boolean canCreateGuest = null;
+		List<String> domainUuids = Lists.newArrayList();
+		List<User> users = userService2.findAll(root, root, domainUuids, order, field, mail, firstName, lastName, restricted, canCreateGuest, canUpload, role, type, container)
+			.getList();
+		String domain = null;
+		for (User user : users) {
+			logger.debug("Processing domain: " + user.getDomain());
+			if (domain == null) {
+				domain = user.getDomain().getLabel();
+			} else {
+				assertThat(user.getDomain().getLabel()).isGreaterThanOrEqualTo(domain);
+				domain = user.getDomain().getLabel();
+			}
+		}
+	}
+
+	@Test
+	public void findAllShouldSortByDomainWhenDesc() {
+		PageContainer<User> container = new PageContainer<User>(0, 5);
+		SortOrder order = SortOrder.DESC;
+		UserFields field = UserFields.domain;
+		String mail = null;
+		String firstName = null;
+		String lastName = null;
+		String role = null;
+		String type = null;
+		Boolean restricted = null;
+		Boolean canUpload = null;
+		Boolean canCreateGuest = null;
+		List<String> domainUuids = Lists.newArrayList();
+		List<User> users = userService2.findAll(root, root, domainUuids, order, field, mail, firstName, lastName, restricted, canCreateGuest, canUpload, role, type, container)
+			.getList();
+		String domain = null;
+		for (User user : users) {
+			logger.debug("Processing domain: " + user.getDomain());
+			if (domain == null) {
+				domain = user.getDomain().getLabel();
+			} else {
+				assertThat(user.getDomain().getLabel()).isLessThanOrEqualTo(domain);
+				domain = user.getDomain().getLabel();
+			}
+		}
+	}
+
+	@Test
 	public void purgeShouldDeleteRecipientFavourite() {
 		// Given
 		AbstractDomain domain = abstractDomainRepository.findById(LinShareTestConstants.TOP_DOMAIN);

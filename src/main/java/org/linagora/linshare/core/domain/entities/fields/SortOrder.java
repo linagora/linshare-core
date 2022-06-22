@@ -49,6 +49,10 @@ public enum SortOrder {
 		return SortOrder.ASC.equals(order) ? Property.forName("class").asc() : Property.forName("class").desc();
 	}
 	
+	public static Order addDomainSortOrder(SortOrder order) {
+		return SortOrder.ASC.equals(order) ? Order.asc("d.label") : Order.desc("d.label");
+	}
+
 	public static Direction getSortDir(SortOrder dir) {
 		return SortOrder.ASC.equals(dir) ? Direction.ASC : Direction.DESC;
 	}

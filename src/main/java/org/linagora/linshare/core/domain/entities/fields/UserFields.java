@@ -42,5 +42,6 @@ public enum UserFields {
 	accountType,
 	modificationDate,
 	creationDate,
-	expirationDate;
+	expirationDate,
+	domain;
 }

@@ -145,13 +145,14 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 	}
 
 	private Order checkSortOrderAndField(SortOrder sortOrder, UserFields sortField) {
-		Order order = null;
-		if (UserFields.accountType.equals(sortField)) {
-			order = SortOrder.addAccountTypeSortOrder(sortOrder);
-		} else {
-			order = SortOrder.addOrder(sortOrder, sortField);
+		switch (sortField) {
+			case accountType:
+				return SortOrder.addAccountTypeSortOrder(sortOrder);
+			case domain:
+				return SortOrder.addDomainSortOrder(sortOrder);
+			default:
+				return SortOrder.addOrder(sortOrder, sortField);
 		}
-		return order;
 	}
 
 	@Override
