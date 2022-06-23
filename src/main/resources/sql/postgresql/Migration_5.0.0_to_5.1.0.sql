@@ -968,6 +968,11 @@ VALUES
      'REQUIRED',
      now(),
      now());
+
+
+-- Hide old upgrade tasks
+UPDATE upgrade_task SET hidden = true WHERE task_group like 'UPGRADE_4%';
+
 ---- End of your queries
 
 -- Upgrade LinShare version
