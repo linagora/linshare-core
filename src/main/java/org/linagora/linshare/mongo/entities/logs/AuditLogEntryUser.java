@@ -54,7 +54,6 @@ import com.google.common.collect.Sets;
 
 @JsonIgnoreProperties({"relatedAccounts"})
 @XmlRootElement(name = "AuditLogEntryUser")
-@XmlTransient
 public abstract class AuditLogEntryUser extends AuditLogEntry {
 
 	protected AccountMto actor;
@@ -79,7 +78,10 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		this.type = type;
 		this.resourceUuid = resourceUuid;
 		initRelatedAccountField();
-		this.addRelatedDomains(actor.getDomain().getUuid());
+		this.addRelatedDomains(
+				authUser.getDomain().getUuid(),
+				actor.getDomain().getUuid()
+		);
 	}
 
 	protected void initRelatedAccountField() {

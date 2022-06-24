@@ -204,6 +204,11 @@
 					<constructor-arg ref="mongoTemplate" />
 					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v5_1.AddRelatedDomainsToAuditUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

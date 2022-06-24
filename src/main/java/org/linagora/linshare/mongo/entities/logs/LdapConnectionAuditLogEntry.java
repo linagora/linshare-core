@@ -42,6 +42,8 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.mongo.entities.mto.LdapConnectionMto;
+
+@Deprecated
 @XmlRootElement
 public class LdapConnectionAuditLogEntry extends AuditLogEntryAdmin {
 

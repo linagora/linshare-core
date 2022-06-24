@@ -56,7 +56,6 @@ public class FunctionalityAuditLogEntry extends AuditLogEntryAdmin {
 	public FunctionalityAuditLogEntry(Account authUser, LogAction action, AuditLogEntryType type, Functionality func) {
 		super(authUser, func.getDomain().getUuid(), action, type, func.getIdentifier());
 		this.setResource(new FunctionalityMto(func));
-		this.addRelatedDomains(targetDomainUuid);
 	}
 
 	public FunctionalityMto getResource() {

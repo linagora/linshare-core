@@ -996,7 +996,6 @@ VALUES
      now());
 ---- End of your queries
 
-
 -- UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_NODES
 INSERT INTO upgrade_task
 (id,
@@ -1014,6 +1013,28 @@ VALUES
      'UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_NODES',
      'UPGRADE_5_1',
      59,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
+
+-- UPGRADE_5_1_ADD_RELATED_DOMAIN_FIELD_TO_AUDIT
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (60,
+     'UNDEFINED',
+     'UPGRADE_5_1_ADD_RELATED_DOMAIN_FIELD_TO_AUDIT',
+     'UPGRADE_5_1',
+     60,
      'NEW',
      'REQUIRED',
      now(),

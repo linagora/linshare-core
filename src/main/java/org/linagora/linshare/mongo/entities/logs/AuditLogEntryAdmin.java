@@ -63,6 +63,7 @@ public abstract class AuditLogEntryAdmin extends AuditLogEntry {
 		this.action = action;
 		this.creationDate = new Date();
 		this.resourceUuid = resourceUuid;
+		this.addRelatedDomains(targetDomainUuid, authUser.getDomainId());
 	}
 
 	public String getTargetDomainUuid() {

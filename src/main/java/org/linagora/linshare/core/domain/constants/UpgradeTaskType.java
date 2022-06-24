@@ -349,6 +349,11 @@ public enum UpgradeTaskType {
 	UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_NODES,
 
 	/**
+	 * Add related domains collections to all audit traces.
+	 */
+	UPGRADE_5_1_ADD_RELATED_DOMAIN_FIELD_TO_AUDIT,
+
+	/**
 	 * Populating ExternalFavouriteRecipient new table
 	 */
 	OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
