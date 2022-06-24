@@ -973,7 +973,54 @@ VALUES
 -- Hide old upgrade tasks
 UPDATE upgrade_task SET hidden = true WHERE task_group like 'UPGRADE_4%';
 
+-- UPGRADE_5_1_UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_MEMBERS
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (58,
+     'UNDEFINED',
+     'UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_MEMBERS',
+     'UPGRADE_5_1',
+     58,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
 ---- End of your queries
+
+
+-- UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_NODES
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (59,
+     'UNDEFINED',
+     'UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_NODES',
+     'UPGRADE_5_1',
+     59,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
+
+---- End of your queries
+
 
 -- Upgrade LinShare version
 SELECT ls_version();

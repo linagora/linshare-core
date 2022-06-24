@@ -340,6 +340,15 @@ public enum UpgradeTaskType {
 	UPGRADE_5_1_ADD_FIRST_NAME_AND_LAST_NAME_TO_AUDIT_ACTOR_FIELD,
 
 	/**
+	 * Add domain uuid to SharedSpaceAccount in SharedSpaceMember
+	 */
+	UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_MEMBERS,
+	/**
+	 * Add domain uuid to SharedSpaceAccount in SharedSpaceNode
+	 */
+	UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_NODES,
+
+	/**
 	 * Populating ExternalFavouriteRecipient new table
 	 */
 	OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
