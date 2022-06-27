@@ -107,7 +107,7 @@ public class AddFirstLastNameToActorAuditsUpgradeTaskImpl extends GenericUpgrade
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		BatchResultContext batchResultContext = new BatchResultContext<>(identifier);
+		BatchResultContext<String> batchResultContext = new BatchResultContext<>(identifier);
 		try {
 			String firstName;
 			String lastName;
