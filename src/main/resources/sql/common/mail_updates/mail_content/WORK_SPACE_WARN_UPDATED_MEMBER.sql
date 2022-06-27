@@ -27,7 +27,7 @@ UPDATE mail_content SET subject='[(#{subject(${workSpaceName})})]',body='<!DOCTY
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
     <th:block data-th-replace="layout :: infoStandardArea(#{workSpaceNameTitle},${workSpaceName})"/>
-    <th:block th:switch="${workSpaceMember.role.name}">c
+    <th:block th:switch="${workSpaceMember.role.name}">
       <p th:case="''WORK_SPACE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{workSpaceRight}, #{workSpaceRoleAdminTitle})"/></p>
       <p th:case="''WORK_SPACE_WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workSpaceRight}, #{workSpaceRoleWriteTitle})"/></p>
       <p th:case="''WORK_SPACE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workSpaceRight}, #{workSpaceRoleReadTitle})"/></p>
