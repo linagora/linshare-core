@@ -302,74 +302,6 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 	VALUES (34, 'user_uid', 'uid', false, true, true, 8, false);
 
--- UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
-INSERT INTO upgrade_task
-(id,
- uuid,
- identifier,
- task_group,
- task_order,
- status,
- priority,
- creation_date,
- modification_date)
-VALUES
-    (53,
-     'UNDEFINED',
-     'UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
-     'UPGRADE_5_1',
-     53,
-     'NEW',
-     'REQUIRED',
-     now(),
-     now());
-
--- UPGRADE_5_1_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
-INSERT INTO upgrade_task
-(id,
- uuid,
- identifier,
- task_group,
- parent_identifier,
- task_order,
- status,
- priority,
- creation_date,
- modification_date)
-VALUES
-    (54,
-     'UNDEFINED',
-     'UPGRADE_5_1_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
-     'UPGRADE_5_1',
-     'UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
-     54,
-     'NEW',
-     'REQUIRED',
-     now(),
-     now());
-
--- UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP
-INSERT INTO upgrade_task
-(id,
- uuid,
- identifier,
- task_group,
- task_order,
- status,
- priority,
- creation_date,
- modification_date)
-VALUES
-    (55,
-     'UNDEFINED',
-     'UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP',
-     'UPGRADE_5_1',
-     55,
-     'NEW',
-     'REQUIRED',
-     now(),
-     now());
-
 -- Moderator table
 CREATE TABLE moderator (
   id             int8 NOT NULL,
@@ -756,28 +688,6 @@ CREATE TABLE external_recipient_favourite (
   CONSTRAINT linshare_external_recipient_favourite_pkey
     PRIMARY KEY (id));
 
-INSERT INTO upgrade_task
-(id,
- uuid,
- identifier,
- task_group,
- task_order,
- status,
- priority,
- creation_date,
- modification_date)
-VALUES
-    (56,
-     'UNDEFINED',
-     'OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT',
-     'OPTIONALS',
-     56,
-     'NEW',
-     'OPTIONAL',
-     now(),
-     now());
-
-
 ALTER TABLE account DROP COLUMN owner_id;
 
 UPDATE mail_activation set identifier='GUEST_WARN_MODERATOR_ABOUT_GUEST_EXPIRATION' WHERE identifier='GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION';
@@ -947,6 +857,74 @@ revisionMsg = by adding a new document revision
 subject = The document {0} was updated in the workgroup {1}' WHERE id=45;
 
 
+-- UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (53,
+     'UNDEFINED',
+     'UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
+     'UPGRADE_5_1',
+     53,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
+
+-- UPGRADE_5_1_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ parent_identifier,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (54,
+     'UNDEFINED',
+     'UPGRADE_5_1_ADD_GUEST_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
+     'UPGRADE_5_1',
+     'UPGRADE_5_1_ADD_INTERNAL_ACCOUNT_TYPE_TO_SHARED_SPACE_MEMBER',
+     54,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
+
+-- UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (55,
+     'UNDEFINED',
+     'UPGRADE_5_1_RENAME_WORKGROUP_TO_WORK_GROUP',
+     'UPGRADE_5_1',
+     55,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
+
 -- UPGRADE_5_1_ADD_FIRST_NAME_AND_LAST_NAME_TO_AUDIT_ACTOR_FIELD
 INSERT INTO upgrade_task
 (id,
@@ -1005,6 +983,7 @@ INSERT INTO upgrade_task
  task_order,
  status,
  priority,
+ parent_identifier,
  creation_date,
  modification_date)
 VALUES
@@ -1015,6 +994,7 @@ VALUES
      59,
      'NEW',
      'REQUIRED',
+     'UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_MEMBERS',
      now(),
      now());
 
@@ -1027,6 +1007,7 @@ INSERT INTO upgrade_task
  task_order,
  status,
  priority,
+ parent_identifier,
  creation_date,
  modification_date)
 VALUES
@@ -1037,8 +1018,31 @@ VALUES
      60,
      'NEW',
      'REQUIRED',
+     'UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_NODES',
      now(),
      now());
+
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (56,
+     'UNDEFINED',
+     'OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT',
+     'OPTIONALS',
+     56,
+     'NEW',
+     'OPTIONAL',
+     now(),
+     now());
+
 
 ---- End of your queries
 
