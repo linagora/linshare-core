@@ -190,7 +190,6 @@
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
-					<constructor-arg ref="auditUserMongoRepository" />
 				</bean>
 				<bean class="org.linagora.linshare.core.upgrade.v5_1.AddDomainUuidToSharedSpaceAccountUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />

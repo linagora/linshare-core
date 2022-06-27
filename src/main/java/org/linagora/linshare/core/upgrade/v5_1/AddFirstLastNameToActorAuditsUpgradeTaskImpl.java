@@ -49,7 +49,6 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -62,16 +61,12 @@ public class AddFirstLastNameToActorAuditsUpgradeTaskImpl extends GenericUpgrade
 
 	private final MongoTemplate mongoTemplate;
 
-	private final AuditUserMongoRepository userMongoRepository;
-
 	public AddFirstLastNameToActorAuditsUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
-			MongoTemplate mongoTemplate,
-			AuditUserMongoRepository userMongoRepository) {
+			MongoTemplate mongoTemplate) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.mongoTemplate = mongoTemplate;
-		this.userMongoRepository = userMongoRepository;
 	}
 
 	@Override
@@ -99,6 +94,7 @@ public class AddFirstLastNameToActorAuditsUpgradeTaskImpl extends GenericUpgrade
 	private static class UUID {
 		private final String uuid;
 
+		@SuppressWarnings("unused")
 		public UUID(String uuid) {
 			this.uuid = uuid;
 		}
