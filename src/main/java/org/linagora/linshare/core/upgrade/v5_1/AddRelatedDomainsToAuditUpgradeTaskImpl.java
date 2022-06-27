@@ -178,8 +178,35 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 
 	private void updateUserTraces(BatchRunContext batchRunContext, long total, long position) {
 		Query query = Query.query(
-				Criteria.where("relatedDomains").exists(false));
-		long localTotal = mongoTemplate.count(query, AuditLogEntryAdmin.class);
+				Criteria.where
+				("type").in(Lists.newArrayList(
+//						AuditLogEntryType.AUTHENTICATION.toString(),	// ?
+						AuditLogEntryType.DOCUMENT_ENTRY.toString(),
+						AuditLogEntryType.GUEST.toString(),
+						AuditLogEntryType.JWT_PERMANENT_TOKEN.toString(),
+						AuditLogEntryType.CONTACTS_LISTS.toString(),
+						AuditLogEntryType.CONTACTS_LISTS_CONTACTS.toString(),
+//						AuditLogEntryType.GUEST_MODERATOR.toString(), // Handle by a specific case.
+						AuditLogEntryType.SAFE_DETAIL.toString(),
+//						AuditLogEntryType.SHARE_ENTRY.toString(), // Handle by a specific case.
+						AuditLogEntryType.ANONYMOUS_SHARE_ENTRY.toString(),
+						AuditLogEntryType.UPLOAD_REQUEST.toString(),
+						AuditLogEntryType.UPLOAD_REQUEST_ENTRY.toString(),
+						AuditLogEntryType.UPLOAD_REQUEST_GROUP.toString(),
+						AuditLogEntryType.UPLOAD_REQUEST_URL.toString(),
+//						AuditLogEntryType.USER.toString(), // Handle by a specific case.
+						AuditLogEntryType.USER_PREFERENCE.toString(),
+						AuditLogEntryType.WORK_GROUP.toString(),
+						AuditLogEntryType.WORKGROUP_MEMBER.toString(),
+						AuditLogEntryType.WORK_SPACE.toString(),
+						AuditLogEntryType.WORK_SPACE_MEMBER.toString(),
+//						AuditLogEntryType.WORKGROUP_DOCUMENT.toString(), // Handle by a specific case.
+//						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION.toString(), // Handle by a specific case.
+//						AuditLogEntryType.WORKGROUP_FOLDER.toString(), // Handle by a specific case.
+						AuditLogEntryType.RESET_PASSWORD.toString()
+					)).and
+				("relatedDomains").exists(false));;
+		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
 		console.logInfo(batchRunContext, total, position, "localTotal updateUserTraces found: " + localTotal);
 		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
 		AtomicInteger localPosition = new AtomicInteger(0);
