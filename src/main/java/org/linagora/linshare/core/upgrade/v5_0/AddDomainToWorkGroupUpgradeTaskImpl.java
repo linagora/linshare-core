@@ -127,7 +127,9 @@ public class AddDomainToWorkGroupUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 			return res;
 		}
 		WorkGroup workGroup = threadRepository.findByLsUuid(sharedSpace.getUuid());
+		logger.debug("Workgroup: %s", workGroup);
 		if (Objects.isNull(workGroup)) {
+			logger.debug("Workgroup not found with uuid: %s, so it will be created with the related quota", sharedSpace.getUuid());
 			Account author = accountRepository.findActivateAndDestroyedByLsUuid(sharedSpace.getAuthor().getUuid());
 			workGroup = new WorkGroup(author.getDomain(), author, sharedSpace.getName());
 			threadRepository.create(workGroup);
@@ -141,6 +143,7 @@ public class AddDomainToWorkGroupUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 			OperationHistory oh = new OperationHistory(workGroup, workGroup.getDomain(), nodeSize,
 					OperationHistoryTypeEnum.CREATE, ContainerQuotaType.WORK_GROUP);
 			operationHistoryBusinessService.create(oh);
+			logger.debug("Workgroup with uuid: %s is created", sharedSpace.getUuid());
 		}
 		sharedSpace.setDomainUuid(workGroup.getDomainId());
 		nodeMongoRepository.save(sharedSpace);
