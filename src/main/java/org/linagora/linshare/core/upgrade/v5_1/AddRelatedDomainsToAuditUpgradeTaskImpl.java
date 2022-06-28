@@ -35,6 +35,7 @@ package org.linagora.linshare.core.upgrade.v5_1;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
@@ -52,6 +53,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.ModeratorAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.EntryMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
@@ -93,14 +95,17 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 
 		updateAdminTraces(batchRunContext, total, position);
 
-//		// Peculiar use case : AuditLogEntryType.USER
+		// Peculiar use case : AuditLogEntryType.USER
 		peculiarUseCaseUsers(batchRunContext, total, position);
-//
-//		// Peculiar use case : AuditLogEntryType.GUEST_MODERATOR
+
+		// Peculiar use case : AuditLogEntryType.GUEST_MODERATOR
 		peculiarUseCaseModerators(batchRunContext, total, position);
 
-//		// Peculiar use case : AuditLogEntryType.SHARE_ENTRY
+		// Peculiar use case : AuditLogEntryType.SHARE_ENTRY
 		peculiarUseCaseShareEntries(batchRunContext, total, position);
+
+		// Peculiar use case : AuditLogEntryType WORKGROUP and WORKSPACE
+		peculiarUseCaseSharedSpaceNodeTraces(batchRunContext, total, position);
 
 		updateUserTraces(batchRunContext, total, position);
 
@@ -186,23 +191,23 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 						AuditLogEntryType.JWT_PERMANENT_TOKEN.toString(),
 						AuditLogEntryType.CONTACTS_LISTS.toString(),
 						AuditLogEntryType.CONTACTS_LISTS_CONTACTS.toString(),
-//						AuditLogEntryType.GUEST_MODERATOR.toString(), // Handle by a specific case.
+//						AuditLogEntryType.GUEST_MODERATOR.toString(), // Handled by a specific case.
 						AuditLogEntryType.SAFE_DETAIL.toString(),
-//						AuditLogEntryType.SHARE_ENTRY.toString(), // Handle by a specific case.
+//						AuditLogEntryType.SHARE_ENTRY.toString(), // Handled by a specific case.
 						AuditLogEntryType.ANONYMOUS_SHARE_ENTRY.toString(),
 						AuditLogEntryType.UPLOAD_REQUEST.toString(),
 						AuditLogEntryType.UPLOAD_REQUEST_ENTRY.toString(),
 						AuditLogEntryType.UPLOAD_REQUEST_GROUP.toString(),
 						AuditLogEntryType.UPLOAD_REQUEST_URL.toString(),
-//						AuditLogEntryType.USER.toString(), // Handle by a specific case.
+//						AuditLogEntryType.USER.toString(), // Handled by a specific case.
 						AuditLogEntryType.USER_PREFERENCE.toString(),
-						AuditLogEntryType.WORK_GROUP.toString(),
-						AuditLogEntryType.WORKGROUP_MEMBER.toString(),
-						AuditLogEntryType.WORK_SPACE.toString(),
-						AuditLogEntryType.WORK_SPACE_MEMBER.toString(),
-//						AuditLogEntryType.WORKGROUP_DOCUMENT.toString(), // Handle by a specific case.
-//						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION.toString(), // Handle by a specific case.
-//						AuditLogEntryType.WORKGROUP_FOLDER.toString(), // Handle by a specific case.
+//						AuditLogEntryType.WORK_GROUP.toString(), // Handled by a specific case.
+//						AuditLogEntryType.WORKGROUP_MEMBER.toString(), // Handled by a specific case.
+//						AuditLogEntryType.WORK_SPACE.toString(), // Handled by a specific case.
+//						AuditLogEntryType.WORK_SPACE_MEMBER.toString(), // Handled by a specific case.
+//						AuditLogEntryType.WORKGROUP_DOCUMENT.toString(), // Handled by a specific case.
+//						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION.toString(), // Handled by a specific case.
+//						AuditLogEntryType.WORKGROUP_FOLDER.toString(), // Handled by a specific case.
 						AuditLogEntryType.RESET_PASSWORD.toString()
 					)).and
 				("relatedDomains").exists(false));;
@@ -212,6 +217,25 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 		AtomicInteger localPosition = new AtomicInteger(0);
 		stream.forEachRemaining(entry -> {
 				updateRelatedDomainsForUserTraces(batchRunContext, localPosition, localTotal, entry);
+			}
+		);
+	}
+
+	private void peculiarUseCaseSharedSpaceNodeTraces(BatchRunContext batchRunContext, long total, long position) {
+		Query query = Query.query(
+				Criteria.where
+				("type").in(Lists.newArrayList(
+						AuditLogEntryType.WORK_GROUP.toString(),
+						AuditLogEntryType.WORKGROUP.toString(),
+						AuditLogEntryType.WORK_SPACE.toString()
+					)).and
+				("relatedDomains").exists(false));;
+		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
+		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpacesTraces found: " + localTotal);
+		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
+		AtomicInteger localPosition = new AtomicInteger(0);
+		stream.forEachRemaining(entry -> {
+			updateRelatedDomainsForShareSpaceNodeTraces(batchRunContext, localPosition, localTotal, entry);
 			}
 		);
 	}
@@ -275,6 +299,46 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 				entry.getAuthUser().getDomain().getUuid(),
 				entry.getActor().getDomain().getUuid()
 		);
+		mongoTemplate.save(entry);
+	}
+
+	private void updateRelatedDomainsForShareSpaceNodeTraces(BatchRunContext batchRunContext, AtomicInteger position, long total, AuditLogEntryUser entry) {
+		if ((position.incrementAndGet() % 100) == 0) {
+			console.logInfo(batchRunContext, total, position.get(), "Processing updateRelatedDomainsForShareSpaceNodeTraces ... " + entry.getType() + " : " + entry.getUuid());
+		}
+		SharedSpaceNodeAuditLogEntry node = (SharedSpaceNodeAuditLogEntry) entry;
+		List<String> relatedDomains = Lists.newArrayList();
+		relatedDomains.add(node.getAuthUser().getDomain().getUuid());
+		relatedDomains.add(node.getActor().getDomain().getUuid());
+
+		List<String> relatedAccounts = Lists.newArrayList();
+		Account author = accountRepository.findActivateAndDestroyedByLsUuid(node.getResource().getAuthor().getUuid());
+		if (Objects.nonNull(author)) {
+			// add missing information
+			node.getResource().getAuthor().setDomainUuid(author.getDomainId());
+			relatedDomains.add(author.getDomainId());
+			// just in case we need it later.
+			relatedAccounts.add(author.getLsUuid());
+		}
+		if (node.getRelatedAccounts() == null || node.getRelatedAccounts().isEmpty()) {
+			// relatedAccounts field was never initialize :'(
+			// we need to provide a workaround because we can fix it.
+			// there is no way to know which users were member of this wg at the time of the creation of the audit trace.
+
+			// fixing related accounts
+			relatedAccounts.add(node.getAuthUser().getUuid());
+			relatedAccounts.add(node.getActor().getUuid());
+			node.getRelatedAccounts().addAll(relatedAccounts);
+		}
+
+		// fixing related domains
+		for (String accountUuid : node.getRelatedAccounts()) {
+			Account account = accountRepository.findActivateAndDestroyedByLsUuid(accountUuid);
+			if (Objects.nonNull(account)) {
+				relatedDomains.add(account.getDomainId());
+			}
+		}
+		node.getRelatedDomains().addAll(relatedDomains);
 		mongoTemplate.save(entry);
 	}
 
