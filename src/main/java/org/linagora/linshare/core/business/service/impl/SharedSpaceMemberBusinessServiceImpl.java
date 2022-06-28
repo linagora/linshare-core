@@ -658,15 +658,29 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public PageContainer<SharedSpaceMember> findAllMembersWithPagination(String sharedSpaceNodeUuid, String accountUuid,
-			Set<String> roles, String email, AccountType type, SortOrder sortOrder,
-			SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container) {
+			Set<String> roles, String email, String firstName, String lastName,
+			String pattern, AccountType type, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("node.uuid").is(sharedSpaceNodeUuid));
 		if (!Strings.isNullOrEmpty(accountUuid)) {
 			query.addCriteria(Criteria.where("account.uuid").is(accountUuid));
 		}
+		if (!Strings.isNullOrEmpty(pattern)) {
+			Criteria patternCriteria = new Criteria().orOperator(
+					Criteria.where("account.mail").regex("(?i).*" + pattern + ".*"),
+					Criteria.where("account.firstName").regex("(?i).*" + pattern + ".*"),
+					Criteria.where("account.lastName").regex("(?i).*" + pattern + ".*")
+					);
+			query.addCriteria(patternCriteria);
+		}
 		if (!Strings.isNullOrEmpty(email)) {
-			query.addCriteria(Criteria.where("account.mail").is(email));
+			query.addCriteria(Criteria.where("account.mail").regex("(?i).*" + email + ".*"));
+		}
+		if (!Strings.isNullOrEmpty(firstName)) {
+			query.addCriteria(Criteria.where("account.firstName").regex("(?i).*" + firstName + ".*"));
+		}
+		if (!Strings.isNullOrEmpty(lastName)) {
+			query.addCriteria(Criteria.where("account.lastName").regex("(?i).*" + lastName + ".*"));
 		}
 		if (Objects.nonNull(type)) {
 			query.addCriteria(Criteria.where("account.accountType").is(type));

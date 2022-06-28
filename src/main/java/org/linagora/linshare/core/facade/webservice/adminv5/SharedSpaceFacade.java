@@ -67,7 +67,7 @@ public interface SharedSpaceFacade {
 
 	SharedSpaceNode updatePartial(String actorUuid, PatchDto patchNode, String uuid) throws BusinessException;
 
-	PageContainer<SharedSpaceMember> members(String actorUuid, String sharedSpaceUuid, String accountUuid, Set<String> roles, String email, String type, SortOrder sortOrder, SharedSpaceMemberField sortField, Integer pageNumber, Integer pageSize) throws BusinessException;
+	PageContainer<SharedSpaceMember> members(String actorUuid, String sharedSpaceUuid, String accountUuid, Set<String> roles, String email, String firstName, String lastName, String pattern, String type, SortOrder sortOrder, SharedSpaceMemberField sortField, Integer pageNumber, Integer pageSize) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAllSharedSpaceAudits(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate, String nodeUuid);

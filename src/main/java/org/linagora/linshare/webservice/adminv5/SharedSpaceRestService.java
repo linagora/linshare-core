@@ -53,7 +53,7 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException;
 
-	Response members(String uuid, String accountUuid, Set<String> roles, String email, String type, String sortOrder, String sortField, Integer pageNumber, Integer pageSize) throws BusinessException;
+	Response members(String uuid, String accountUuid, Set<String> roles, String email, String firstName, String lastName, String pattern, String type, String sortOrder, String sortField, Integer pageNumber, Integer pageSize) throws BusinessException;
 
 	Response findAll(String accountUuid, List<String> domainUuids, String sortOrder, String sortField, Set<String> nodeTypes,
 			Set<String> roles, String name, Integer greaterThanOrEqualTo, Integer lessThanOrEqualTo, Integer pageNumber, Integer pageSize);

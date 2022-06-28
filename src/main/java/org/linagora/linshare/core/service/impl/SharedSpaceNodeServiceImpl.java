@@ -346,8 +346,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	@Override
 	public PageContainer<SharedSpaceMember> findAllMembersWithPagination(Account authUser, Account actor,
-			String sharedSpaceNodeUuid, String accountUuid, Set<String> roles, String email, String type,
-			SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container) {
+			String sharedSpaceNodeUuid, String accountUuid, Set<String> roles, String email, String firstName,
+			String lastName, String pattern, String type, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container) {
 		preChecks(authUser, actor);
 		if (!(authUser.hasSuperAdminRole() || authUser.hasAdminRole())) {
 			throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
@@ -358,7 +358,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Set<String> roleNames = checkRoles(authUser, actor, roles);
 		AccountType checkedAccountType = Strings.isNullOrEmpty(type) ? null : AccountType.valueOf(type);
 		return memberBusinessService.findAllMembersWithPagination(sharedSpaceNodeUuid, accountUuid, roleNames, email,
-				checkedAccountType, sortOrder, sortField, container);
+				firstName, lastName, pattern, checkedAccountType, sortOrder, sortField, container);
 	}
 
 }

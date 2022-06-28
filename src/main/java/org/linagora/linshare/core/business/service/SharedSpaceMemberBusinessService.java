@@ -151,5 +151,5 @@ public interface SharedSpaceMemberBusinessService {
 			PageContainer<SharedSpaceNodeNested> container);
 
 	PageContainer<SharedSpaceMember> findAllMembersWithPagination(String sharedSpaceNodeUuid, String accountUuid,
-			Set<String> roles, String email, AccountType type, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container);
+			Set<String> roles, String email, String firstName, String lastName, String pattern, AccountType type, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container);
 }

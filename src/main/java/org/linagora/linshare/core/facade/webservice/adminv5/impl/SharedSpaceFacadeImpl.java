@@ -135,13 +135,13 @@ public class SharedSpaceFacadeImpl extends AdminGenericFacadeImpl implements Sha
 
 	@Override
 	public PageContainer<SharedSpaceMember> members(String actorUuid, String sharedSpaceUuid, String accountUuid, Set<String> roles,
-			String email, String type, SortOrder sortOrder, SharedSpaceMemberField sortField, Integer pageNumber, Integer pageSize) throws BusinessException {
+			String email, String firstName, String lastName, String pattern, String type, SortOrder sortOrder, SharedSpaceMemberField sortField, Integer pageNumber, Integer pageSize) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notEmpty(sharedSpaceUuid, "Missing required shared space node");
 		PageContainer<SharedSpaceMember> container = new PageContainer<SharedSpaceMember>(pageNumber, pageSize);
 		return nodeService.findAllMembersWithPagination(authUser, actor, sharedSpaceUuid, accountUuid, roles, email,
-				type, sortOrder, sortField, container);
+				firstName, lastName, pattern, type, sortOrder, sortField, container);
 	}
 
 	@Override

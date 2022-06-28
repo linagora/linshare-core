@@ -67,6 +67,7 @@ import org.linagora.linshare.webservice.adminv5.SharedSpaceRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -217,21 +218,29 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("accountUuid")String accountUuid,
 			@Parameter(description = "Filter the returned sharedSpace members by member roles.", required = false)
 				@QueryParam("roles") Set<String> sharedSpaceRoles,
-			@Parameter(description = "Filter the returned sharedSpace members by email.", required = false)
+			@Parameter(description = "Filter the sharedSpace members list by email, if `pattern` is provided `email` won't be used.", required = false)
 				@QueryParam("email") String email,
-			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the sharedSpaceMembers with a chosen accountType.", required = false)
+			@Parameter(description = "Filter the sharedSpace members list by first name, if `pattern` is provided `firstName` won't be used.", required = false)
+				@QueryParam("firstName") String firstName,
+			@Parameter(description = "Filter the sharedSpace members list by last name, if `pattern` is provided `lastName` won't be used.", required = false)
+				@QueryParam("lastName") String lastName,
+			@Parameter(description = "Filter the sharedSpace members list by pattern, if provided, `firstName`, `lastName` and `email` won't be used.", required = false)
+				@QueryParam("pattern") String pattern,
+			@Parameter(description = "Filter the sharedSpace members list by accountType.", required = false)
 				@QueryParam("type") String type,
 			@Parameter(description = "The admin can choose the order of sorting the sharedSpaceMembers' list to retrieve, if not set the ascending order will be applied by default.", required = false)
-				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
-			@Parameter(description = "The admin can choose the field to sort with the sharedSpaceMembers list to retrieve, if not set the modification date order will be choosen by default.", required = false)
-				@QueryParam("sortField") @DefaultValue("modificationDate") String sortField,
-			@Parameter(description = "The admin can choose the page number to get.", required = false)
-				@QueryParam("page") Integer pageNumber,
-			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
+				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder, @Parameter(description = "The admin can choose the field to sort with the sharedSpaceMembers list to retrieve, if not set the modification date order will be choosen by default.", required = false)
+				@QueryParam("sortField") @DefaultValue("modificationDate") String sortField, @Parameter(description = "The admin can choose the page number to get.", required = false)
+				@QueryParam("page") Integer pageNumber, @Parameter(description = "The admin can choose the number of elements to get.", required = false)
 				@QueryParam("size") Integer pageSize) throws BusinessException {
+		if (!Strings.isNullOrEmpty(pattern)) {
+			firstName = null;
+			lastName = null;
+			email = null;
+		}
 		PageContainer<SharedSpaceMember> container = sharedSpaceFacade.members(null, uuid, accountUuid,
-				sharedSpaceRoles, email, type, SortOrder.valueOf(sortOrder),
-				SharedSpaceMemberField.valueOf(sortField), pageNumber, pageSize);
+				sharedSpaceRoles, email, firstName, lastName,
+				pattern, type, SortOrder.valueOf(sortOrder), SharedSpaceMemberField.valueOf(sortField), pageNumber, pageSize);
 		return memberResponseBuilder.build(container);
 	}
 	
