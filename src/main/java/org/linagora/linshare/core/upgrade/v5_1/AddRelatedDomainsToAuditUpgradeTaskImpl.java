@@ -34,8 +34,10 @@
 package org.linagora.linshare.core.upgrade.v5_1;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
@@ -329,11 +331,11 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 			console.logInfo(batchRunContext, total, position.get(), "Processing updateRelatedDomainsForShareSpaceNodeTraces ... " + entry.getType() + " : " + entry.getUuid());
 		}
 		SharedSpaceNodeAuditLogEntry node = (SharedSpaceNodeAuditLogEntry) entry;
-		List<String> relatedDomains = Lists.newArrayList();
+		Set<String> relatedDomains = Sets.newHashSet();
 		relatedDomains.add(node.getAuthUser().getDomain().getUuid());
 		relatedDomains.add(node.getActor().getDomain().getUuid());
 
-		List<String> relatedAccounts = Lists.newArrayList();
+		Set<String> relatedAccounts = Sets.newHashSet();
 		Account author = accountRepository.findActivateAndDestroyedByLsUuid(node.getResource().getAuthor().getUuid());
 		if (Objects.nonNull(author)) {
 			// add missing information
@@ -354,7 +356,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 		}
 
 		// fixing related domains
-		for (String accountUuid : node.getRelatedAccounts()) {
+		for (String accountUuid : new HashSet<String>(node.getRelatedAccounts())) {
 			Account account = accountRepository.findActivateAndDestroyedByLsUuid(accountUuid);
 			if (Objects.nonNull(account)) {
 				relatedDomains.add(account.getDomainId());
@@ -369,11 +371,11 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 			console.logInfo(batchRunContext, total, position.get(), "Processing updateRelatedDomainsForShareSpaceMemberTraces ... " + entry.getType() + " : " + entry.getUuid());
 		}
 		SharedSpaceMemberAuditLogEntry node = (SharedSpaceMemberAuditLogEntry) entry;
-		List<String> relatedDomains = Lists.newArrayList();
+		Set<String> relatedDomains = Sets.newHashSet();
 		relatedDomains.add(node.getAuthUser().getDomain().getUuid());
 		relatedDomains.add(node.getActor().getDomain().getUuid());
 
-		List<String> relatedAccounts = Lists.newArrayList();
+		Set<String> relatedAccounts = Sets.newHashSet();
 		Account member = accountRepository.findActivateAndDestroyedByLsUuid(node.getResource().getAccount().getUuid());
 		if (Objects.nonNull(member)) {
 			// add missing information
@@ -394,7 +396,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 		}
 
 		// fixing related domains
-		for (String accountUuid : node.getRelatedAccounts()) {
+		for (String accountUuid : new HashSet<String>(node.getRelatedAccounts())) {
 			Account account = accountRepository.findActivateAndDestroyedByLsUuid(accountUuid);
 			if (Objects.nonNull(account)) {
 				relatedDomains.add(account.getDomainId());
