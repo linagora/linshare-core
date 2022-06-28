@@ -213,7 +213,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 //						AuditLogEntryType.WORKGROUP_FOLDER.toString(), // Handled by a specific case.
 						AuditLogEntryType.RESET_PASSWORD.toString()
 					)).and
-				("relatedDomains").exists(false));;
+				("relatedDomains").exists(false));
 		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
 		console.logInfo(batchRunContext, total, position, "localTotal updateUserTraces found: " + localTotal);
 		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
@@ -232,7 +232,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 						AuditLogEntryType.WORKGROUP.toString(),
 						AuditLogEntryType.WORK_SPACE.toString()
 					)).and
-				("relatedDomains").exists(false));;
+				("relatedDomains").exists(false));
 		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
 		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpacesTraces found: " + localTotal);
 		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
@@ -250,7 +250,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 						AuditLogEntryType.WORKGROUP_MEMBER.toString(),
 						AuditLogEntryType.WORK_SPACE_MEMBER.toString()
 					)).and
-				("relatedDomains").exists(false));;
+				("relatedDomains").exists(false));
 		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
 		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpacesTraces found: " + localTotal);
 		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
