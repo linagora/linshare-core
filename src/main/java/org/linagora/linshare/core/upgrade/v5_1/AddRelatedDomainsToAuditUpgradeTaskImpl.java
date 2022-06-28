@@ -53,6 +53,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.ModeratorAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.EntryMto;
@@ -107,8 +108,10 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 		// Peculiar use case : AuditLogEntryType WORKGROUP and WORKSPACE
 		peculiarUseCaseSharedSpaceNodeTraces(batchRunContext, total, position);
 
-		updateUserTraces(batchRunContext, total, position);
+		// Peculiar use case : AuditLogEntryType WORKGROUP_MEMBER and WORK_SPACE_MEMBER
+		peculiarUseCaseSharedSpaceMemberTraces(batchRunContext, total, position);
 
+		updateUserTraces(batchRunContext, total, position);
 		res.setProcessed(true);
 		return res;
 	}
@@ -240,6 +243,24 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 		);
 	}
 
+	private void peculiarUseCaseSharedSpaceMemberTraces(BatchRunContext batchRunContext, long total, long position) {
+		Query query = Query.query(
+				Criteria.where
+				("type").in(Lists.newArrayList(
+						AuditLogEntryType.WORKGROUP_MEMBER.toString(),
+						AuditLogEntryType.WORK_SPACE_MEMBER.toString()
+					)).and
+				("relatedDomains").exists(false));;
+		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
+		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpacesTraces found: " + localTotal);
+		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
+		AtomicInteger localPosition = new AtomicInteger(0);
+		stream.forEachRemaining(entry -> {
+			updateRelatedDomainsForShareSpaceMemberTraces(batchRunContext, localPosition, localTotal, entry);
+			}
+		);
+	}
+
 	private void updateRelatedDomainsForAdminTraces(BatchRunContext batchRunContext, AtomicInteger position, long total, AuditLogEntryAdmin entry) {
 		if ((position.incrementAndGet() % 100) == 0) {
 			console.logInfo(batchRunContext, total, position.get(), "Processing updateAdminTraces ... " + entry.getType() + " : " + entry.getUuid());
@@ -319,6 +340,46 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 			relatedDomains.add(author.getDomainId());
 			// just in case we need it later.
 			relatedAccounts.add(author.getLsUuid());
+		}
+		if (node.getRelatedAccounts() == null || node.getRelatedAccounts().isEmpty()) {
+			// relatedAccounts field was never initialize :'(
+			// we need to provide a workaround because we can fix it.
+			// there is no way to know which users were member of this wg at the time of the creation of the audit trace.
+
+			// fixing related accounts
+			relatedAccounts.add(node.getAuthUser().getUuid());
+			relatedAccounts.add(node.getActor().getUuid());
+			node.getRelatedAccounts().addAll(relatedAccounts);
+		}
+
+		// fixing related domains
+		for (String accountUuid : node.getRelatedAccounts()) {
+			Account account = accountRepository.findActivateAndDestroyedByLsUuid(accountUuid);
+			if (Objects.nonNull(account)) {
+				relatedDomains.add(account.getDomainId());
+			}
+		}
+		node.getRelatedDomains().addAll(relatedDomains);
+		mongoTemplate.save(entry);
+	}
+
+	private void updateRelatedDomainsForShareSpaceMemberTraces(BatchRunContext batchRunContext, AtomicInteger position, long total, AuditLogEntryUser entry) {
+		if ((position.incrementAndGet() % 100) == 0) {
+			console.logInfo(batchRunContext, total, position.get(), "Processing updateRelatedDomainsForShareSpaceMemberTraces ... " + entry.getType() + " : " + entry.getUuid());
+		}
+		SharedSpaceMemberAuditLogEntry node = (SharedSpaceMemberAuditLogEntry) entry;
+		List<String> relatedDomains = Lists.newArrayList();
+		relatedDomains.add(node.getAuthUser().getDomain().getUuid());
+		relatedDomains.add(node.getActor().getDomain().getUuid());
+
+		List<String> relatedAccounts = Lists.newArrayList();
+		Account member = accountRepository.findActivateAndDestroyedByLsUuid(node.getResource().getAccount().getUuid());
+		if (Objects.nonNull(member)) {
+			// add missing information
+			node.getResource().getAccount().setDomainUuid(member.getDomainId());
+			relatedDomains.add(member.getDomainId());
+			// just in case we need it later.
+			relatedAccounts.add(member.getLsUuid());
 		}
 		if (node.getRelatedAccounts() == null || node.getRelatedAccounts().isEmpty()) {
 			// relatedAccounts field was never initialize :'(
