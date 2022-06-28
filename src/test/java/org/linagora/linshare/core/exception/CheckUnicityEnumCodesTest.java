@@ -48,8 +48,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.beust.jcommander.internal.Lists;
-import com.beust.jcommander.internal.Sets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:springContext-test.xml", })

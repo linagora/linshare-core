@@ -65,17 +65,17 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 @ExtendWith(SpringExtension.class)

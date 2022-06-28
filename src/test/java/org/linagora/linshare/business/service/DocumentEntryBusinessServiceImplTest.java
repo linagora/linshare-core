@@ -77,11 +77,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.beust.jcommander.internal.Sets;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 @ExtendWith(SpringExtension.class)

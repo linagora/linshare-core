@@ -44,7 +44,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
+
 
 public class WorkSpaceWarnNewMemberEmailContext extends WorkGroupWarnNewMemberEmailContext {
 

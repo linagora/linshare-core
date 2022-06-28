@@ -52,8 +52,8 @@ import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.thymeleaf.context.Context;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class WorkGroupWarnNewMemberEmailBuilder extends EmailBuilder {
 

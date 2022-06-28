@@ -91,7 +91,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.subethamail.wiser.Wiser;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
+
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)

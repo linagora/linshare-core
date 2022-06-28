@@ -56,8 +56,8 @@ import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.thymeleaf.context.Context;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class WorkGroupWarnWorkgroupDocumentUpdatedEmailBuilder extends EmailBuilder {
 

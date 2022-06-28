@@ -48,8 +48,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.WorkSpaceWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.WorkSpaceWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -58,8 +58,8 @@ import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.thymeleaf.context.Context;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class WorkSpaceWarnNewMemberEmailBuilder extends EmailBuilder {
 

@@ -64,8 +64,8 @@ import org.linagora.linshare.webservice.adminv5.UserRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

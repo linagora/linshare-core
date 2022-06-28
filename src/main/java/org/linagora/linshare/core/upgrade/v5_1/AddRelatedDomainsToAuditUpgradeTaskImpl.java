@@ -65,6 +65,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.util.CloseableIterator;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 

@@ -56,7 +56,8 @@ import org.linagora.linshare.core.service.DomainPolicyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
+
 
 public class DomainPolicyServiceImpl implements DomainPolicyService {
 
