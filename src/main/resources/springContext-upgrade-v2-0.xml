@@ -195,13 +195,11 @@
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
-					<constructor-arg ref="sharedSpaceMemberMongoRepository" />
 				</bean>
 				<bean class="org.linagora.linshare.core.upgrade.v5_1.AddDomainUuidToSharedSpaceNodeUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
-					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 				</bean>
 				<bean class="org.linagora.linshare.core.upgrade.v5_1.AddDomainUuidToWorkGroupNodeUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />

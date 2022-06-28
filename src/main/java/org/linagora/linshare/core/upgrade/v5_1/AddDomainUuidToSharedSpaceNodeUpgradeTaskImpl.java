@@ -35,6 +35,7 @@ package org.linagora.linshare.core.upgrade.v5_1;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
@@ -46,9 +47,10 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -57,16 +59,12 @@ public class AddDomainUuidToSharedSpaceNodeUpgradeTaskImpl extends GenericUpgrad
 
 	private final MongoTemplate mongoTemplate;
 
-	private final SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
-
 	public AddDomainUuidToSharedSpaceNodeUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
-			MongoTemplate mongoTemplate,
-			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
+			MongoTemplate mongoTemplate) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.mongoTemplate = mongoTemplate;
-		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
 	}
 
 	@Override
@@ -76,57 +74,71 @@ public class AddDomainUuidToSharedSpaceNodeUpgradeTaskImpl extends GenericUpgrad
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		Query query = Query.query(Criteria.where
+		Aggregation aggregation = Aggregation.newAggregation(
+			Aggregation.match(Criteria.where
 				("author").exists(true).and
-				("author.domainUuid").exists(false));
-		List<String> audits = mongoTemplate.findDistinct(query, "uuid", SharedSpaceNode.class, String.class);
-		return audits;
+				("author.domainUuid").exists(false)),
+			Aggregation.group("author"),
+			Aggregation.project(Fields.from(Fields.field("author.uuid"))));
+		return mongoTemplate.aggregate(aggregation, SharedSpaceNode.class, UUID.class)
+			.getMappedResults()
+			.stream()
+			.map(UUID::getUuid)
+			.collect(Collectors.toUnmodifiableList());
+	}
+
+	private static class UUID {
+		private final String uuid;
+
+		public UUID(String uuid) {
+			this.uuid = uuid;
+		}
+
+		public String getUuid() {
+			return uuid;
+		}
 	}
 
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		SharedSpaceNode member = sharedSpaceNodeMongoRepository.findByUuid(identifier);
-		BatchResultContext<SharedSpaceNode> res = new BatchResultContext<>(member);
-		res.setProcessed(false);
-		if (member == null) {
-			return res;
-		}
-		Account account = accountRepository.findActivateAndDestroyedByLsUuid(member.getAuthor().getUuid());
+		Account account = accountRepository.findActivateAndDestroyedByLsUuid(identifier);
+		BatchResultContext<Account> batchResultContext = new BatchResultContext<>(account);
+		batchResultContext.setProcessed(false);
+		batchResultContext.setIdentifier(identifier);
 		if (Objects.nonNull(account)) {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("uuid").is(identifier));
+			query.addCriteria(Criteria.where("author.uuid").is(identifier));
 			Update update = new Update();
 			update.set("author.domainUuid", account.getDomainId());
-			mongoTemplate.findAndModify(query, update, SharedSpaceNode.class);
-			res.setProcessed(true);
+			mongoTemplate.updateMulti(query, update, SharedSpaceNode.class);
+			batchResultContext.setProcessed(true);
 		} else {
-			logger.error("Can not find author with uuid:%s",
-					member.getAuthor().getUuid());
-			res.setProcessed(false);
+			logger.error("Can not find author with uuid:" + identifier);
+			batchResultContext.setProcessed(false);
 		}
-		return res;
+		return batchResultContext;
 	}
 
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<SharedSpaceNode> res = (BatchResultContext<SharedSpaceNode>) context;
-		SharedSpaceNode resource = res.getResource();
+		BatchResultContext<String> batchResultContext = (BatchResultContext<String>) context;
+		String resource = batchResultContext.getResource();
 		if (resource != null) {
-			logInfo(batchRunContext, total, position, "Domain uuid was successfully added to SharedSpaceNode collection: " + resource.toString());
+			logInfo(batchRunContext, total, position, "Domain uuid was successfully added to SharedSpaceNode author: " + resource);
 		} else {
-			logInfo(batchRunContext, total, position, "SharedSpaceNode update was skipped, can not find related resource : " + res.toString());
+			logInfo(batchRunContext, total, position, "SharedSpaceNode update was skipped, can not find related resource : " + batchResultContext);
 		}
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<SharedSpaceNode> res = (BatchResultContext<SharedSpaceNode>) exception.getContext();
-		SharedSpaceNode resource = res.getResource();
+		BatchResultContext<Account> batchResultContext = (BatchResultContext<Account>) exception.getContext();
+		String resource = batchResultContext.getIdentifier();
 		logError(total, position, exception.getMessage(), batchRunContext);
-		logger.error("Error occurred while adding domain uuid to SharedSpaceNode: "
+		logger.error("Error occurred while adding domain uuid to SharedSpaceNode author: "
 				+ resource +
 				". BatchBusinessException", exception);
 	}
