@@ -1022,6 +1022,28 @@ VALUES
      now(),
      now());
 
+-- UPGRADE_5_1_ADD_DOMAIN_UUID_TO_WORK_GROUP_LAST_AUTHOR_IN_NODES
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (61,
+     'UNDEFINED',
+     'UPGRADE_5_1_ADD_DOMAIN_UUID_TO_WORK_GROUP_LAST_AUTHOR_IN_NODES',
+     'UPGRADE_5_1',
+     61,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
+
 INSERT INTO upgrade_task
 (id,
  uuid,

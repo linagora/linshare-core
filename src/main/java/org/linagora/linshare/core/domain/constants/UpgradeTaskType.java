@@ -347,6 +347,10 @@ public enum UpgradeTaskType {
 	 * Add domain uuid to SharedSpaceAccount in SharedSpaceNode
 	 */
 	UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_NODES,
+	/**
+	 * Add domain uuid to LastAuthor in WorkGroupNode
+	 */
+	UPGRADE_5_1_ADD_DOMAIN_UUID_TO_WORK_GROUP_LAST_AUTHOR_IN_NODES,
 
 	/**
 	 * Add related domains collections to all audit traces.
