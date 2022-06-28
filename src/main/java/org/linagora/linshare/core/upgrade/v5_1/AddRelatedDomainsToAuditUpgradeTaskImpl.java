@@ -58,6 +58,7 @@ import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.EntryMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
@@ -113,6 +114,9 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 
 		// Peculiar use case : AuditLogEntryType WORKGROUP_MEMBER and WORK_SPACE_MEMBER
 		peculiarUseCaseSharedSpaceMemberTraces(batchRunContext, total, position);
+
+		// Peculiar use case : AuditLogEntryType WORKGROUP_DOCUMENT WORKGROUP_DOCUMENT_REVISION and WORKGROUP_FOLDER
+		peculiarUseCaseWorkGroupNodeTraces(batchRunContext, total, position);
 
 		updateUserTraces(batchRunContext, total, position);
 		res.setProcessed(true);
@@ -264,6 +268,25 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 		);
 	}
 
+	private void peculiarUseCaseWorkGroupNodeTraces(BatchRunContext batchRunContext, long total, long position) {
+		Query query = Query.query(
+				Criteria.where
+				("type").in(Lists.newArrayList(
+						AuditLogEntryType.WORKGROUP_DOCUMENT.toString(),
+						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION.toString(),
+						AuditLogEntryType.WORKGROUP_FOLDER.toString()
+					)).and
+				("relatedDomains").exists(false));
+		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
+		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpacesTraces found: " + localTotal);
+		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
+		AtomicInteger localPosition = new AtomicInteger(0);
+		stream.forEachRemaining(entry -> {
+			updateRelatedDomainsForWorkGroupNodeTraces(batchRunContext, localPosition, localTotal, entry);
+			}
+		);
+	}
+
 	private void updateRelatedDomainsForAdminTraces(BatchRunContext batchRunContext, AtomicInteger position, long total, AuditLogEntryAdmin entry) {
 		if ((position.incrementAndGet() % 100) == 0) {
 			console.logInfo(batchRunContext, total, position.get(), "Processing updateAdminTraces ... " + entry.getType() + " : " + entry.getUuid());
@@ -394,6 +417,26 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 			relatedAccounts.add(node.getActor().getUuid());
 			node.getRelatedAccounts().addAll(relatedAccounts);
 		}
+
+		// fixing related domains
+		for (String accountUuid : new HashSet<String>(node.getRelatedAccounts())) {
+			Account account = accountRepository.findActivateAndDestroyedByLsUuid(accountUuid);
+			if (Objects.nonNull(account)) {
+				relatedDomains.add(account.getDomainId());
+			}
+		}
+		node.getRelatedDomains().addAll(relatedDomains);
+		mongoTemplate.save(entry);
+	}
+
+	private void updateRelatedDomainsForWorkGroupNodeTraces(BatchRunContext batchRunContext, AtomicInteger position, long total, AuditLogEntryUser entry) {
+		if ((position.incrementAndGet() % 100) == 0) {
+			console.logInfo(batchRunContext, total, position.get(), "Processing updateRelatedDomainsForShareSpaceMemberTraces ... " + entry.getType() + " : " + entry.getUuid());
+		}
+		WorkGroupNodeAuditLogEntry node = (WorkGroupNodeAuditLogEntry) entry;
+		Set<String> relatedDomains = Sets.newHashSet();
+		relatedDomains.add(node.getAuthUser().getDomain().getUuid());
+		relatedDomains.add(node.getActor().getDomain().getUuid());
 
 		// fixing related domains
 		for (String accountUuid : new HashSet<String>(node.getRelatedAccounts())) {
