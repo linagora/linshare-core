@@ -342,11 +342,11 @@ public enum UpgradeTaskType {
 	/**
 	 * Add domain uuid to SharedSpaceAccount in SharedSpaceMember
 	 */
-	UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_MEMBERS,
+	UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARED_SPACE_ACCOUNT_IN_MEMBERS,
 	/**
 	 * Add domain uuid to SharedSpaceAccount in SharedSpaceNode
 	 */
-	UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_NODES,
+	UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARED_SPACE_ACCOUNT_IN_NODES,
 	/**
 	 * Add domain uuid to LastAuthor in WorkGroupNode
 	 */

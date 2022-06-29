@@ -71,7 +71,7 @@ public class AddDomainUuidToSharedSpaceAccountUpgradeTaskImpl extends GenericUpg
 
 	@Override
 	public UpgradeTaskType getUpgradeTaskType() {
-		return UpgradeTaskType.UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARE_SPACE_ACCOUNT_IN_MEMBERS;
+		return UpgradeTaskType.UPGRADE_5_1_ADD_DOMAIN_UUID_TO_SHARED_SPACE_ACCOUNT_IN_MEMBERS;
 	}
 
 	@Override
