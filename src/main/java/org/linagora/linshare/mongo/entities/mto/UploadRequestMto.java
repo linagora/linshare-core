@@ -77,7 +77,7 @@ public class UploadRequestMto {
 
 	private Boolean canEditExpiryDate;
 
-	private Language locale;
+	private String locale;
 
 	private Boolean protectedByPassword;
 
@@ -109,7 +109,7 @@ public class UploadRequestMto {
 		this.protectedByPassword = request.isProtectedByPassword();
 		this.owner = new AccountMto(request.getUploadRequestGroup().getOwner());
 		this.notified = request.isNotified();
-		this.locale = request.getLocale();
+		this.locale = request.getLocale().toString();
 		this.maxDepositSize = request.getMaxDepositSize();
 		this.maxFileSize = request.getMaxFileSize();
 		this.status = request.getStatus();
@@ -136,7 +136,7 @@ public class UploadRequestMto {
 		this.protectedByPassword = request.isProtectedByPassword();
 		this.owner = new AccountMto(request.getUploadRequestGroup().getOwner());
 		this.notified = request.isNotified();
-		this.locale = request.getLocale();
+		this.locale = request.getLocale().toString();
 		this.maxDepositSize = request.getMaxDepositSize();
 		this.maxFileSize = request.getMaxFileSize();
 		this.status = request.getStatus();
@@ -265,12 +265,16 @@ public class UploadRequestMto {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 
-	public Language getLocale() {
+	public String getLocale() {
 		return locale;
 	}
 
-	public void setLocale(Language locale) {
+	public void setLocale(String locale) {
 		this.locale = locale;
+	}
+
+	public void setLocale(Language locale) {
+		this.locale = locale.toString();
 	}
 
 	public Boolean isProtectedByPassword() {
