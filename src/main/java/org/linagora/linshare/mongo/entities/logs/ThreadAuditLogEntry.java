@@ -35,18 +35,13 @@
  */
 package org.linagora.linshare.mongo.entities.logs;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.ThreadMto;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @Deprecated
-@XmlRootElement
-@Document(collection="auditLogEntry")
 public class ThreadAuditLogEntry extends AuditLogEntryUser {
 
 	protected ThreadMto resource;
