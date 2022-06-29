@@ -51,14 +51,18 @@ import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.ModeratorAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.ThreadAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.AnonymousShareEntryMto;
+import org.linagora.linshare.mongo.entities.mto.DomainMto;
 import org.linagora.linshare.mongo.entities.mto.EntryMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
@@ -70,6 +74,7 @@ import org.springframework.data.util.CloseableIterator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+@SuppressWarnings("deprecation")
 public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
@@ -328,24 +333,35 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 			console.logInfo(batchRunContext, total, position.get(), "Processing peculiarUseCaseShareEntries ... " + entry.getType() + " : " + entry.getUuid());
 		}
 		EntryMto resource = ((ShareEntryAuditLogEntry)entry).getResource();
-		ShareEntryMto shareEntry = (ShareEntryMto)resource;
-		entry.addRelatedDomains(
-				entry.getAuthUser().getDomain().getUuid(),
-				entry.getActor().getDomain().getUuid(),
-				shareEntry.getSender().getDomain().getUuid(),
-				shareEntry.getRecipient().getDomain().getUuid()
-		);
+		if (resource instanceof ShareEntryMto) {
+			ShareEntryMto shareEntry = (ShareEntryMto)resource;
+			entry.addRelatedDomains(
+					entry.getAuthUser().getDomain().getUuid(),
+					entry.getActor().getDomain().getUuid(),
+					shareEntry.getSender().getDomain().getUuid(),
+					shareEntry.getRecipient().getDomain().getUuid()
+			);
+		} else {
+			AnonymousShareEntryMto shareEntry = (AnonymousShareEntryMto)resource;
+			entry.addRelatedDomains(
+					entry.getAuthUser().getDomain().getUuid(),
+					entry.getActor().getDomain().getUuid(),
+					shareEntry.getSender().getDomain().getUuid()
+			);
+		}
 		mongoTemplate.save(entry);
+
 	}
 
 	private void updateRelatedDomainsForUserTraces(BatchRunContext batchRunContext, AtomicInteger position, long total, AuditLogEntryUser entry) {
 		if ((position.incrementAndGet() % 100) == 0) {
 			console.logInfo(batchRunContext, total, position.get(), "Processing updateUserTraces ... " + entry.getType() + " : " + entry.getUuid());
 		}
-		entry.addRelatedDomains(
-				entry.getAuthUser().getDomain().getUuid(),
-				entry.getActor().getDomain().getUuid()
-		);
+		entry.addRelatedDomains(entry.getAuthUser().getDomain().getUuid());
+		DomainMto actorDomain = entry.getActor().getDomain();
+		if (actorDomain != null) {
+			entry.addRelatedDomains(actorDomain.getUuid());
+		}
 		mongoTemplate.save(entry);
 	}
 
@@ -353,39 +369,47 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 		if ((position.incrementAndGet() % 100) == 0) {
 			console.logInfo(batchRunContext, total, position.get(), "Processing updateRelatedDomainsForShareSpaceNodeTraces ... " + entry.getType() + " : " + entry.getUuid());
 		}
-		SharedSpaceNodeAuditLogEntry node = (SharedSpaceNodeAuditLogEntry) entry;
 		Set<String> relatedDomains = Sets.newHashSet();
-		relatedDomains.add(node.getAuthUser().getDomain().getUuid());
-		relatedDomains.add(node.getActor().getDomain().getUuid());
+		relatedDomains.add(entry.getAuthUser().getDomain().getUuid());
+		relatedDomains.add(entry.getActor().getDomain().getUuid());
 
 		Set<String> relatedAccounts = Sets.newHashSet();
-		Account author = accountRepository.findActivateAndDestroyedByLsUuid(node.getResource().getAuthor().getUuid());
+		Account author = null;
+		SharedSpaceAccount authorTrace = null;
+		if (!(entry instanceof ThreadAuditLogEntry)) {
+			// we ignore explicitly this old class, otherwise we want to make LinShare crash if it is not the right type.
+			SharedSpaceNodeAuditLogEntry node = (SharedSpaceNodeAuditLogEntry) entry;
+			authorTrace = node.getResource().getAuthor();
+		}
+		if (authorTrace != null) {
+			author = accountRepository.findActivateAndDestroyedByLsUuid(authorTrace.getUuid());
+		}
 		if (Objects.nonNull(author)) {
 			// add missing information
-			node.getResource().getAuthor().setDomainUuid(author.getDomainId());
+			authorTrace.setDomainUuid(author.getDomainId());
 			relatedDomains.add(author.getDomainId());
 			// just in case we need it later.
 			relatedAccounts.add(author.getLsUuid());
 		}
-		if (node.getRelatedAccounts() == null || node.getRelatedAccounts().isEmpty()) {
+		if (entry.getRelatedAccounts() == null || entry.getRelatedAccounts().isEmpty()) {
 			// relatedAccounts field was never initialize :'(
 			// we need to provide a workaround because we can fix it.
 			// there is no way to know which users were member of this wg at the time of the creation of the audit trace.
 
 			// fixing related accounts
-			relatedAccounts.add(node.getAuthUser().getUuid());
-			relatedAccounts.add(node.getActor().getUuid());
-			node.getRelatedAccounts().addAll(relatedAccounts);
+			relatedAccounts.add(entry.getAuthUser().getUuid());
+			relatedAccounts.add(entry.getActor().getUuid());
+			entry.addRelatedAccounts(relatedAccounts);
 		}
 
 		// fixing related domains
-		for (String accountUuid : new HashSet<String>(node.getRelatedAccounts())) {
+		for (String accountUuid : new HashSet<String>(entry.getRelatedAccounts())) {
 			Account account = accountRepository.findActivateAndDestroyedByLsUuid(accountUuid);
 			if (Objects.nonNull(account)) {
 				relatedDomains.add(account.getDomainId());
 			}
 		}
-		node.getRelatedDomains().addAll(relatedDomains);
+		entry.addRelatedDomains(relatedDomains);
 		mongoTemplate.save(entry);
 	}
 
@@ -415,7 +439,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 			// fixing related accounts
 			relatedAccounts.add(node.getAuthUser().getUuid());
 			relatedAccounts.add(node.getActor().getUuid());
-			node.getRelatedAccounts().addAll(relatedAccounts);
+			node.addRelatedAccounts(relatedAccounts);
 		}
 
 		// fixing related domains
@@ -425,7 +449,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 				relatedDomains.add(account.getDomainId());
 			}
 		}
-		node.getRelatedDomains().addAll(relatedDomains);
+		node.addRelatedDomains(relatedDomains);
 		mongoTemplate.save(entry);
 	}
 
@@ -445,7 +469,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 				relatedDomains.add(account.getDomainId());
 			}
 		}
-		node.getRelatedDomains().addAll(relatedDomains);
+		node.addRelatedDomains(relatedDomains);
 		mongoTemplate.save(entry);
 	}
 

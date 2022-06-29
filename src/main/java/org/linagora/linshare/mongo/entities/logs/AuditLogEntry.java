@@ -254,6 +254,13 @@ public class AuditLogEntry {
 		this.relatedDomains.addAll(relatedDomains);
 	}
 
+	public void addRelatedDomains(Set<String> relatedDomains) {
+		if (this.relatedDomains == null) {
+			this.relatedDomains = Sets.newHashSet();
+		}
+		this.relatedDomains.addAll(relatedDomains);
+	}
+
 	@Override
 	public String toString() {
 		return "AuditLogEntry [AuthUser=" + authUser + ", resourceUuid=" + resourceUuid + ", action=" + action + ", type="

@@ -116,6 +116,13 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		this.relatedAccounts.addAll(relatedAccounts);
 	}
 
+	public void addRelatedAccounts(Set<String> relatedAccounts) {
+		if (this.relatedAccounts == null) {
+			this.relatedAccounts = Sets.newHashSet();
+		}
+		this.relatedAccounts.addAll(relatedAccounts);
+	}
+
 	public void addRelatedAccounts(String... relatedAccounts) {
 		if (this.relatedAccounts == null) {
 			this.relatedAccounts = Sets.newHashSet();
