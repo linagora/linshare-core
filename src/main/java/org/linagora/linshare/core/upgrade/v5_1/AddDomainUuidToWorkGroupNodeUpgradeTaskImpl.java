@@ -103,9 +103,9 @@ public class AddDomainUuidToWorkGroupNodeUpgradeTaskImpl extends GenericUpgradeT
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		BatchResultContext batchResultContext = new BatchResultContext<>(identifier);
-		batchResultContext.setProcessed(false);
 		Account account = accountRepository.findActivateAndDestroyedByLsUuid(identifier);
+		BatchResultContext<Account> batchResultContext = new BatchResultContext<Account>(account);
+		batchResultContext.setProcessed(false);
 		if (Objects.nonNull(account)) {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("lastAuthor.uuid").is(identifier));
@@ -114,7 +114,11 @@ public class AddDomainUuidToWorkGroupNodeUpgradeTaskImpl extends GenericUpgradeT
 			mongoTemplate.updateMulti(query, update, WorkGroupNode.class);
 			batchResultContext.setProcessed(true);
 		} else {
-			logger.error("Can not find author with uuid:" + identifier);
+			if (identifier.equals("176718dc-d37b-4d3e-8218-ca77652056f2")) {
+				logger.debug("Account not found be cause it is a fake user (unknown-user@linshare.org): " + identifier);
+			} else {
+				logger.error("Can not find actor with uuid: " + identifier);
+			}
 			batchResultContext.setProcessed(false);
 		}
 		return batchResultContext;
@@ -123,8 +127,8 @@ public class AddDomainUuidToWorkGroupNodeUpgradeTaskImpl extends GenericUpgradeT
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<String> batchResultContext = (BatchResultContext<String>) context;
-		String resource = batchResultContext.getResource();
+		BatchResultContext<Account> batchResultContext = (BatchResultContext<Account>) context;
+		Account resource = batchResultContext.getResource();
 		if (resource != null) {
 			logInfo(batchRunContext, total, position, "Domain uuid was successfully added to WorkGroupNode lastAuthor: " + resource);
 		} else {
@@ -135,8 +139,8 @@ public class AddDomainUuidToWorkGroupNodeUpgradeTaskImpl extends GenericUpgradeT
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<String> batchResultContext = (BatchResultContext<String>) exception.getContext();
-		String resource = batchResultContext.getResource();
+		BatchResultContext<Account> batchResultContext = (BatchResultContext<Account>) exception.getContext();
+		Account resource = batchResultContext.getResource();
 		logError(total, position, exception.getMessage(), batchRunContext);
 		logger.error("Error occurred while adding domain uuid to WorkGroupNode lastAuthor: "
 				+ resource +
