@@ -85,4 +85,10 @@ public class BatchRunContext {
 		return upgradeTaskUuid;
 	}
 
+	@Override
+	public String toString() {
+		return "BatchRunContext [uuid=" + uuid + ", asyncTaskUuid=" + asyncTaskUuid + ", upgradeTaskUuid="
+				+ upgradeTaskUuid + ", actorUuid=" + actorUuid + ", batchHistoryUuid=" + batchHistoryUuid + "]";
+	}
+
 }

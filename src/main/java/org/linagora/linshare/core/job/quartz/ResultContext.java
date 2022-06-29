@@ -57,4 +57,9 @@ public abstract class ResultContext {
 	public void setProcessed(Boolean processed) {
 		this.processed = processed;
 	}
+
+	@Override
+	public String toString() {
+		return "ResultContext [identifier=" + identifier + ", processed=" + processed + "]";
+	}
 }

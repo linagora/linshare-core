@@ -52,4 +52,10 @@ public class BatchResultContext<T> extends ResultContext {
 	public void setResource(T resource) {
 		this.resource = resource;
 	}
+
+	@Override
+	public String toString() {
+		return "BatchResultContext [resource=" + resource + ", identifier=" + identifier + ", processed=" + processed
+				+ "]";
+	}
 }
