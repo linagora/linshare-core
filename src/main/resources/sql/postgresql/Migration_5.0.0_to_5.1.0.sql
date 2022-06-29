@@ -1055,11 +1055,11 @@ INSERT INTO upgrade_task
  creation_date,
  modification_date)
 VALUES
-    (56,
+    (65,
      'UNDEFINED',
      'OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT',
      'OPTIONALS',
-     56,
+     65,
      'NEW',
      'OPTIONAL',
      now(),
