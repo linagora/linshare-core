@@ -53,6 +53,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import com.mongodb.client.result.UpdateResult;
+
 public class AddGuestAccountTypeToSharedSpaceMemberUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
@@ -89,17 +91,14 @@ public class AddGuestAccountTypeToSharedSpaceMemberUpgradeTaskImpl extends Gener
 			res.setIdentifier(identifier);
 			return res;
 		}
-		updateSharedSpaceMember(identifier);
-		res.setProcessed(true);
-		return res;
-	}
-
-	private void updateSharedSpaceMember(String identifier) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("account.uuid").is(identifier));
 		Update update = new Update();
 		update.set("account.accountType", AccountType.GUEST);
-		mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
+		UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
+		console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
+		res.setProcessed(true);
+		return res;
 	}
 
 	@Override

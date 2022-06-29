@@ -200,7 +200,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 		Query query = Query.query(
 				Criteria.where
 				("type").in(Lists.newArrayList(
-//						AuditLogEntryType.AUTHENTICATION.toString(),	// ?
+//						AuditLogEntryType.AUTHENTICATION.toString(), // Handled by a specific case.
 						AuditLogEntryType.DOCUMENT_ENTRY.toString(),
 						AuditLogEntryType.GUEST.toString(),
 						AuditLogEntryType.JWT_PERMANENT_TOKEN.toString(),

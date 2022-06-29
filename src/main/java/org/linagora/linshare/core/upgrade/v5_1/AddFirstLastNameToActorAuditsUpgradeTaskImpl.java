@@ -57,6 +57,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import com.mongodb.client.result.UpdateResult;
+
 public class AddFirstLastNameToActorAuditsUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
@@ -135,7 +137,8 @@ public class AddFirstLastNameToActorAuditsUpgradeTaskImpl extends GenericUpgrade
 			Update update = new Update();
 			update.set("actor.firstName", firstName);
 			update.set("actor.lastName", lastName);
-			mongoTemplate.updateMulti(query, update, AuditLogEntryUser.class);
+			UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, AuditLogEntryUser.class);
+			console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
 			batchResultContext.setProcessed(true);
 			return batchResultContext;
 		} catch (Exception e) {

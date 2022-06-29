@@ -55,6 +55,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import com.mongodb.client.result.UpdateResult;
+
 public class AddDomainUuidToSharedSpaceAccountUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
@@ -112,7 +114,8 @@ public class AddDomainUuidToSharedSpaceAccountUpgradeTaskImpl extends GenericUpg
 			query.addCriteria(Criteria.where("account.uuid").is(identifier));
 			Update update = new Update();
 			update.set("account.domainUuid", account.getDomainId());
-			mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
+			UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
+			console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
 			batchResultContext.setProcessed(true);
 		} else {
 			if (identifier.equals("176718dc-d37b-4d3e-8218-ca77652056f2")) {
@@ -127,8 +130,8 @@ public class AddDomainUuidToSharedSpaceAccountUpgradeTaskImpl extends GenericUpg
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<String> batchResultContext = (BatchResultContext<String>) context;
-		String resource = batchResultContext.getResource();
+		BatchResultContext<Account> batchResultContext = (BatchResultContext<Account>) context;
+		Account resource = batchResultContext.getResource();
 		if (resource != null) {
 			logInfo(batchRunContext, total, position, "Domain uuid was successfully added to SharedSpaceMember account collection: " + resource);
 		} else {

@@ -56,6 +56,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import com.mongodb.client.result.UpdateResult;
+
 public class AddDomainUuidToWorkGroupNodeUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
@@ -91,6 +93,7 @@ public class AddDomainUuidToWorkGroupNodeUpgradeTaskImpl extends GenericUpgradeT
 	private static class UUID {
 		private final String uuid;
 
+		@SuppressWarnings("unused")
 		public UUID(String uuid) {
 			this.uuid = uuid;
 		}
@@ -111,7 +114,8 @@ public class AddDomainUuidToWorkGroupNodeUpgradeTaskImpl extends GenericUpgradeT
 			query.addCriteria(Criteria.where("lastAuthor.uuid").is(identifier));
 			Update update = new Update();
 			update.set("lastAuthor.domain", new DomainMto(account.getDomainId(), account.getDomain().getLabel()));
-			mongoTemplate.updateMulti(query, update, WorkGroupNode.class);
+			UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, WorkGroupNode.class);
+			console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
 			batchResultContext.setProcessed(true);
 		} else {
 			if (identifier.equals("176718dc-d37b-4d3e-8218-ca77652056f2")) {

@@ -54,6 +54,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import com.mongodb.client.result.UpdateResult;
+
 public class AddInternalAccountTypeToSharedSpaceMemberUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
@@ -83,7 +85,8 @@ public class AddInternalAccountTypeToSharedSpaceMemberUpgradeTaskImpl extends Ge
 		query.addCriteria(Criteria.where("account.accountType").exists(false));
 		Update update = new Update();
 		update.set("account.accountType", AccountType.INTERNAL);
-		mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
+		UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, SharedSpaceMember.class);
+		console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
 		BatchResultContext<FakeContext> res = new BatchResultContext<>(new FakeContext(identifier));
 		res.setProcessed(true);
 		return res;

@@ -54,6 +54,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import com.mongodb.client.result.UpdateResult;
+
 public class RenameWorkgroupAuditLogsUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final MongoTemplate mongoTemplate;
@@ -83,8 +85,8 @@ public class RenameWorkgroupAuditLogsUpgradeTaskImpl extends GenericUpgradeTaskI
 
 		Update update = new Update();
 		update.set("type", AuditLogEntryType.WORK_GROUP);
-		mongoTemplate.updateMulti(query, update, SharedSpaceNodeAuditLogEntry.class);
-
+		UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, SharedSpaceNodeAuditLogEntry.class);
+		console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
 		BatchResultContext<FakeContext> res = new BatchResultContext<>(new FakeContext(identifier));
 		res.setProcessed(true);
 		return res;
