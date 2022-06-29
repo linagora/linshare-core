@@ -83,7 +83,7 @@ public class AddGuestAccountTypeToSharedSpaceMemberUpgradeTaskImpl extends Gener
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Account account = accountRepository.findByLsUuid(identifier);
+		Account account = accountRepository.findActivateAndDestroyedByLsUuid(identifier);
 		BatchResultContext<Account> res = new BatchResultContext<Account>(account);
 		if (account == null) {
 			res.setIdentifier(identifier);
