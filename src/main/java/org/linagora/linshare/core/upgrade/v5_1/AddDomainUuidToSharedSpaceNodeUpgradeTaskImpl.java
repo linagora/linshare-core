@@ -90,6 +90,7 @@ public class AddDomainUuidToSharedSpaceNodeUpgradeTaskImpl extends GenericUpgrad
 	private static class UUID {
 		private final String uuid;
 
+		@SuppressWarnings("unused")
 		public UUID(String uuid) {
 			this.uuid = uuid;
 		}
@@ -114,8 +115,11 @@ public class AddDomainUuidToSharedSpaceNodeUpgradeTaskImpl extends GenericUpgrad
 			mongoTemplate.updateMulti(query, update, SharedSpaceNode.class);
 			batchResultContext.setProcessed(true);
 		} else {
-			logger.error("Can not find author with uuid:" + identifier);
-			batchResultContext.setProcessed(false);
+			if (identifier.equals("176718dc-d37b-4d3e-8218-ca77652056f2")) {
+				logger.debug("Author not found be cause it is a fake user (unknown-user@linshare.org): " + identifier);
+			} else {
+				logger.error("Can not find author with uuid: " + identifier);
+			}
 		}
 		return batchResultContext;
 	}
