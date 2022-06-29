@@ -59,8 +59,11 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -127,10 +130,21 @@ public class AddDomainToWorkGroupUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 			return res;
 		}
 		WorkGroup workGroup = threadRepository.findByLsUuid(sharedSpace.getUuid());
-		logger.debug("Workgroup: %s", workGroup);
+		logger.debug("Workgroup: " + workGroup);
 		if (Objects.isNull(workGroup)) {
-			logger.debug("Workgroup not found with uuid: %s, so it will be created with the related quota", sharedSpace.getUuid());
-			Account author = accountRepository.findActivateAndDestroyedByLsUuid(sharedSpace.getAuthor().getUuid());
+			logger.debug("Workgroup not found so it will be created with the related quota: " + sharedSpace.getUuid());
+			Account author;
+			if (Objects.isNull(sharedSpace.getAuthor())) {
+				logger.debug("SharedSpace author not found it will be recovered from audit traces");
+				Query query = new Query();
+				query.addCriteria(Criteria.where("resourceUuid").is(sharedSpace.getUuid()));
+				query.with(Sort.by(Direction.ASC, "creationDate")).limit(1);
+				SharedSpaceNodeAuditLogEntry audit = mongoTemplate.findOne(query, SharedSpaceNodeAuditLogEntry.class);
+				author = accountRepository.findActivateAndDestroyedByLsUuid(audit.getActor().getUuid());
+				logger.debug("SharedSpace author found from audits:" + author);
+			} else {
+				author = accountRepository.findActivateAndDestroyedByLsUuid(sharedSpace.getAuthor().getUuid());
+			}
 			workGroup = new WorkGroup(author.getDomain(), author, sharedSpace.getName());
 			threadRepository.create(workGroup);
 			workGroup.setLsUuid(sharedSpace.getUuid());
@@ -143,7 +157,7 @@ public class AddDomainToWorkGroupUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 			OperationHistory oh = new OperationHistory(workGroup, workGroup.getDomain(), nodeSize,
 					OperationHistoryTypeEnum.CREATE, ContainerQuotaType.WORK_GROUP);
 			operationHistoryBusinessService.create(oh);
-			logger.debug("Workgroup with uuid: %s is created", sharedSpace.getUuid());
+			logger.debug("Workgroup is created" + sharedSpace.getUuid());
 		}
 		sharedSpace.setDomainUuid(workGroup.getDomainId());
 		nodeMongoRepository.save(sharedSpace);
