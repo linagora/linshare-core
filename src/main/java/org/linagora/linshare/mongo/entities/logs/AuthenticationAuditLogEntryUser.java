@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
+@XmlRootElement
 public class AuthenticationAuditLogEntryUser extends AuditLogEntryUser {
 
 	protected String message;
