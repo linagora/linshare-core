@@ -246,7 +246,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 					)).and
 				("relatedDomains").exists(false));
 		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
-		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpacesTraces found: " + localTotal);
+		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpaceNodeTraces found: " + localTotal);
 		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
 		AtomicInteger localPosition = new AtomicInteger(0);
 		stream.forEachRemaining(entry -> {
@@ -264,7 +264,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 					)).and
 				("relatedDomains").exists(false));
 		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
-		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpacesTraces found: " + localTotal);
+		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpaceMemberTraces found: " + localTotal);
 		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
 		AtomicInteger localPosition = new AtomicInteger(0);
 		stream.forEachRemaining(entry -> {
@@ -283,7 +283,7 @@ public class AddRelatedDomainsToAuditUpgradeTaskImpl extends GenericUpgradeTaskI
 					)).and
 				("relatedDomains").exists(false));
 		long localTotal = mongoTemplate.count(query, AuditLogEntryUser.class);
-		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseSharedSpacesTraces found: " + localTotal);
+		console.logInfo(batchRunContext, total, position, "localTotal peculiarUseCaseWorkGroupNodeTraces found: " + localTotal);
 		CloseableIterator<AuditLogEntryUser> stream = mongoTemplate.stream(query, AuditLogEntryUser.class);
 		AtomicInteger localPosition = new AtomicInteger(0);
 		stream.forEachRemaining(entry -> {
