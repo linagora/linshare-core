@@ -50,6 +50,8 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum
 
 public interface GuestBusinessService {
 
+	Guest findByLsUuid2(String lsUuid) throws BusinessException;
+
 	Guest findByLsUuid(String lsUuid) throws BusinessException;
 
 	List<AllowedContact> loadAllowedContacts(User guest) throws BusinessException;

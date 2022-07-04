@@ -85,6 +85,11 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
+	public Guest findByLsUuid2(String lsUuid) throws BusinessException {
+		return guestRepository.findByLsUuid(lsUuid);
+	}
+
+	@Override
 	public Guest findByLsUuid(String lsUuid) throws BusinessException {
 		Guest guest = guestRepository.findByLsUuid(lsUuid);
 		if (guest != null) {

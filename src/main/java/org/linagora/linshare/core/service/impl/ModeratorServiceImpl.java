@@ -134,7 +134,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 	public Optional<Moderator> findByActorAndGuest(Account authUser, Account actor, String guestUuid) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(guestUuid, "Guest uuid must be set.");
-		Guest guest = this.guestBusinessService.findByLsUuid(guestUuid);
+		Guest guest = this.guestBusinessService.findByLsUuid2(guestUuid);
 		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, guest);
 		if (moderator.isPresent()) {
 			checkReadPermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_GET, moderator.get());
