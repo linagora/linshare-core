@@ -68,16 +68,22 @@ public class UtilGuestAuthor {
 		if (Objects.isNull(guestCreationTrace)) {
 			logger.warn(
 					"Guest Audit trace not found a fake owner will be used. Using John DOE unknown-user@linshare.org instead.");
-			owner = new AccountMto();
-			owner.setFirstName("John");
-			owner.setLastName("DOE");
-			owner.setMail("unknown-user@linshare.org");
-			owner.setUuid("7bf2982c-6933-47db-9203-f3b9c543eced");
-			owner.setAccountType(AccountType.INTERNAL);
-			owner.setDomain(new DomainMto("bee08e5a-2fd9-43d1-a4f0-012a0078fec2", "FakeOwnerDomain"));
+			owner = getFakeAuthor();
 		} else {
 			owner = guestCreationTrace.getActor();
 		}
+		return owner;
+	}
+
+	public AccountMto getFakeAuthor() {
+		AccountMto owner;
+		owner = new AccountMto();
+		owner.setFirstName("John");
+		owner.setLastName("DOE");
+		owner.setMail("unknown-user@linshare.org");
+		owner.setUuid("7bf2982c-6933-47db-9203-f3b9c543eced");
+		owner.setAccountType(AccountType.INTERNAL);
+		owner.setDomain(new DomainMto("bee08e5a-2fd9-43d1-a4f0-012a0078fec2", "FakeOwnerDomain"));
 		return owner;
 	}
 }

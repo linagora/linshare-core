@@ -105,7 +105,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	private List<GuestDto> toDtoList(Integer version, Account authUser, Account actor, List<Guest> guests) {
 		List<GuestDto> guestsWithOwners = Lists.newArrayList();
 		for (Guest guest : guests) {
-			GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
+			GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getFakeAuthor());
 			guestsWithOwners.add(
 				addModeratorRoletoGuestDto(version, authUser, actor, guest, dto)
 			);
