@@ -278,7 +278,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	public List<Guest> findAllByModerator(Account actor, ModeratorRole moderatorRole, String pattern) {
 		HibernateCallback<List<Guest>> action = new HibernateCallback<>() {
 			public List<Guest> doInHibernate(final Session session) throws HibernateException {
-				String query = "SELECT g FROM Guest g JOIN Moderator m ON (g.id = m.guest) WHERE (m.account = :actor) AND (:moderatorRole is NULL or m.role = :moderatorRole)";
+				String query = "SELECT g FROM Guest g JOIN Moderator m ON (g.id = m.guest) WHERE destroyed = 0 AND (m.account = :actor) AND (:moderatorRole is NULL or m.role = :moderatorRole)";
 				if (!Strings.isNullOrEmpty(pattern)) {
 					query += " AND ((g.firstName like :pattern) OR (g.lastName like :pattern) OR (g.mail like :pattern))";
 				}
