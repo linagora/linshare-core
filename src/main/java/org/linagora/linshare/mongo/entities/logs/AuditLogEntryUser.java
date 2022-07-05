@@ -78,10 +78,10 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		this.type = type;
 		this.resourceUuid = resourceUuid;
 		initRelatedAccountField();
-		this.addRelatedDomains(
-				authUser.getDomain().getUuid(),
-				actor.getDomain().getUuid()
-		);
+		this.addRelatedDomains(authUser.getDomain().getUuid());
+		if (actor.getDomain() != null) {
+			this.addRelatedDomains(actor.getDomain().getUuid());
+		}
 	}
 
 	protected void initRelatedAccountField() {
