@@ -109,7 +109,7 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 		}
 		EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest, null, true);
 		notifications.add(mailBuildingService.build(ctx));
-		notifierService.sendNotification(notifications);
+		notifierService.sendNotification(notifications, true);
 		context.setProcessed(true);
 		return context;
 	}
