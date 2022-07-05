@@ -245,6 +245,9 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		createQuotaGuest(guest);
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(create);
 		resetGuestPassword.setKind(ResetTokenKind.NEW_PASSWORD);
+		Calendar instance = Calendar.getInstance();
+		instance.add(Calendar.HOUR, 24);
+		resetGuestPassword.setExpirationDate(instance.getTime());
 		resetGuestPasswordMongoRepository.insert(resetGuestPassword);
 		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)actor, create, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
