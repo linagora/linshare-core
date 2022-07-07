@@ -109,7 +109,7 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 		Calendar calMax = Calendar.getInstance();
 		calMax.add(Calendar.DAY_OF_MONTH, date + 1);
 
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		DetachedCriteria criteria = DetachedCriteria.forClass(AnonymousShareEntry.class);
 		criteria.setProjection(Projections.distinct(Projections.property("uuid")))
 				.add(Restrictions.lt("expirationDate", calMax))
 				.add(Restrictions.gt("expirationDate", calMin));
