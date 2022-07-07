@@ -169,7 +169,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 						mailContainers.add(mail);
 					}
 				}
-				notifierService.sendNotification(mailContainers);
+				notifierService.sendNotification(mailContainers, false);
 
 			} else {
 				WorkGroupDocument parentDocument = (WorkGroupDocument) repository
