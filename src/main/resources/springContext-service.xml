@@ -292,6 +292,8 @@
 	</bean>
 	<bean id="statisticService" class="org.linagora.linshare.core.service.impl.StatisticServiceImpl">
 		<constructor-arg ref="statisticBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="timeService" />
 	</bean>
 	<bean id="quotaService" class="org.linagora.linshare.core.service.impl.QuotaServiceImpl">
 		<constructor-arg ref="quotaResourceAccessControl" />

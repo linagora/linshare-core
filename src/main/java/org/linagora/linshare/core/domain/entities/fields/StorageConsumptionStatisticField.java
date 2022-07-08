@@ -31,39 +31,9 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.domain.entities.fields;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
-import java.util.Date;
-
-import org.linagora.linshare.core.service.TimeService;
-
-public class TimeServiceImpl implements TimeService {
-
-	public static final Period ONE_YEAR = Period.ofYears(1);
-
-	@Override
-	public Date dateNow() {
-		return new Date();
-	}
-
-	@Override
-	public LocalDate now() {
-		return LocalDate.now();
-	}
-
-	@Override
-	public Date previousYear() {
-		// Adding one year on instant is failing due to TZ / DST -> have to convert to LocalDate
-		return Date.from(dateNow()
-			.toInstant()
-			.atZone(ZoneId.systemDefault())
-			.toLocalDate()
-			.minus(ONE_YEAR)
-			.atStartOfDay()
-			.atZone(ZoneId.systemDefault())
-			.toInstant());
-	}
+public enum StorageConsumptionStatisticField {
+	creationDate,
+	statisticDate;
 }

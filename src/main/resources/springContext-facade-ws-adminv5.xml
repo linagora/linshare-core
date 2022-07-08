@@ -112,4 +112,9 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="quotaService" />
 	</bean>
+	<bean id="wsAdminV5StorageConsumptionStatisticFacade" class="org.linagora.linshare.core.facade.webservice.adminv5.impl.StorageConsumptionStatisticFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="statisticService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
 </beans>

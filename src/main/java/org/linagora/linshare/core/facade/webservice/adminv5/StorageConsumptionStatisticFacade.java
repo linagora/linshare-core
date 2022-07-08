@@ -1,8 +1,8 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
- *
- * Copyright (C) 2022 LINAGORA
- *
+ * 
+ * Copyright (C) 2015-2022 LINAGORA
+ * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,12 +20,12 @@
  * commercial brands. Other Additional Terms apply, see
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for more
  * details.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -33,36 +33,18 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.adminv5;
 
-package org.linagora.linshare.utils;
+import java.util.Optional;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import org.linagora.linshare.core.domain.constants.StatisticType;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.domain.entities.fields.StorageConsumptionStatisticField;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.StorageConsumptionStatisticDto;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
-import org.linagora.linshare.core.service.TimeService;
+public interface StorageConsumptionStatisticFacade {
 
-public class TestingTimeService implements TimeService {
-
-	private Date reference;
-
-	@Override
-	public Date dateNow() {
-		return reference;
-	}
-
-	@Override
-	public LocalDate now() {
-		return LocalDate.ofInstant(reference.toInstant(), ZoneId.systemDefault());
-	}
-
-	@Override
-	public Date previousYear() {
-		// Not in used in tests now
-		return dateNow();
-	}
-
-	public void setReference(Date reference) {
-		this.reference = reference;
-	}
+	PageContainer<StorageConsumptionStatisticDto> findAll(String domainUuid, Optional<String> accountUuid, SortOrder sortOrder,
+			StorageConsumptionStatisticField sortField, StatisticType statisticType, Optional<String> beginDate, Optional<String> endDate, Integer pageNumber, Integer pageSize);
 }

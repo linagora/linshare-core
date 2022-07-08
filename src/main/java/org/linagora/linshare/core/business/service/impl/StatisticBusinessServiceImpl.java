@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +44,10 @@ import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Statistic;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.domain.entities.fields.StorageConsumptionStatisticField;
 import org.linagora.linshare.core.repository.StatisticRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public class StatisticBusinessServiceImpl implements StatisticBusinessService {
 
@@ -59,5 +63,15 @@ public class StatisticBusinessServiceImpl implements StatisticBusinessService {
 			Date endDate, StatisticType statisticType) {
 		return repository.findBetweenTwoDates(account, domain, parentDomain,
 				beginDate, endDate, statisticType);
+	}
+
+	@Override
+	public PageContainer<Statistic> findAll(
+			Account authUser, AbstractDomain domain, String accountUuid,
+			SortOrder sortOrder, StorageConsumptionStatisticField sortField,
+			StatisticType statisticType,
+			LocalDate beginDate, LocalDate endDate,
+			PageContainer<Statistic> container) {
+		return repository.findAll(domain, accountUuid, sortOrder, sortField, statisticType, beginDate, endDate, container);
 	}
 }

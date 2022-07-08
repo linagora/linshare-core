@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -42,10 +43,17 @@ import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Statistic;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.domain.entities.fields.StorageConsumptionStatisticField;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface StatisticBusinessService {
 
 	List<Statistic> findBetweenTwoDates(Account account, AbstractDomain domain,
 			AbstractDomain parentDomain, Date beginDate, Date endDate,
 			StatisticType statisticType);
+
+	PageContainer<Statistic> findAll(Account authUser, AbstractDomain domain, String accountUuid,
+			SortOrder sortOrder, StorageConsumptionStatisticField sortField, StatisticType statisticType,
+			LocalDate beginDate, LocalDate endDate, PageContainer<Statistic> container);
 }

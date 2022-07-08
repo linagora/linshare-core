@@ -33,11 +33,14 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public interface TimeService {
 
 	Date dateNow();
+
+	LocalDate now();
 
 	Date previousYear();
 

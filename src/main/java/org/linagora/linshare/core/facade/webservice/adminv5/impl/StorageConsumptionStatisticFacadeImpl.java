@@ -33,21 +33,55 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
-import java.time.LocalDate;
+import java.util.Optional;
 
+import org.jsoup.helper.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Statistic;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.StorageConsumptionStatisticField;
+import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
+import org.linagora.linshare.core.facade.webservice.adminv5.StorageConsumptionStatisticFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.StorageConsumptionStatisticDto;
+import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.StatisticService;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
 
-public interface StatisticRepository extends GenericStatisticRepository<Statistic> {
+public class StorageConsumptionStatisticFacadeImpl extends AdminGenericFacadeImpl implements
+		StorageConsumptionStatisticFacade {
 
-	PageContainer<Statistic> findAll(AbstractDomain domain, String accountUuid, SortOrder sortOrder,
-			StorageConsumptionStatisticField sortField, StatisticType statisticType, LocalDate beginDate,
-			LocalDate endDate, PageContainer<Statistic> container);
+	private final StatisticService statisticService;
+	private final AbstractDomainService abstractDomainService;
+	private static PageContainerAdaptor<Statistic, StorageConsumptionStatisticDto> pageContainerAdaptor = new PageContainerAdaptor<>();
 
+	public StorageConsumptionStatisticFacadeImpl(AccountService accountService,
+			StatisticService statisticService,
+			AbstractDomainService abstractDomainService) {
+		super(accountService);
+		this.statisticService = statisticService;
+		this.abstractDomainService = abstractDomainService;
+	}
+
+	@Override
+	public PageContainer<StorageConsumptionStatisticDto> findAll(
+			String domainUuid, Optional<String> accountUuid,
+			SortOrder sortOrder, StorageConsumptionStatisticField sortField,
+			StatisticType statisticType,
+			Optional<String> beginDate, Optional<String> endDate,
+			Integer pageNumber, Integer pageSize) {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		PageContainer<Statistic> container = new PageContainer<>(pageNumber, pageSize);
+		container = statisticService.findAll(authUser, domain, accountUuid, sortOrder, sortField, statisticType, beginDate, endDate, container);
+		PageContainer<StorageConsumptionStatisticDto> dto = pageContainerAdaptor.convert(container, StorageConsumptionStatisticDto.toDto());
+		return dto;
+	}
 }

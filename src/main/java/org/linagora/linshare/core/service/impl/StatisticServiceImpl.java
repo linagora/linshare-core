@@ -37,28 +37,43 @@ package org.linagora.linshare.core.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.StatisticBusinessService;
 import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Statistic;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.domain.entities.fields.StorageConsumptionStatisticField;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.StatisticService;
+import org.linagora.linshare.core.service.TimeService;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public class StatisticServiceImpl implements StatisticService {
 
-	private StatisticBusinessService statisticBusinessService;
+	private final StatisticBusinessService statisticBusinessService;
+	private final DomainPermissionBusinessService permissionService;
+	private final TimeService timeService;
 
-	public StatisticServiceImpl(StatisticBusinessService statisticBusinessService) {
+	public StatisticServiceImpl(
+			StatisticBusinessService statisticBusinessService,
+			TimeService timeService,
+			DomainPermissionBusinessService permissionService) {
 		super();
 		this.statisticBusinessService = statisticBusinessService;
+		this.permissionService = permissionService;
+		this.timeService = timeService;
 	}
 
 	@Override
@@ -86,5 +101,41 @@ public class StatisticServiceImpl implements StatisticService {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, "Can not parse the dates.");
 		}
 		return new ImmutablePair<>(bDate, eDate);
+	}
+
+	@Override
+	public PageContainer<Statistic> findAll(
+			Account authUser, AbstractDomain domain, Optional<String> accountUuid,
+			SortOrder sortOrder, StorageConsumptionStatisticField sortField,
+			StatisticType statisticType,
+			Optional<String> beginDate, Optional<String> endDate,
+			PageContainer<Statistic> container) {
+		Validate.notNull(authUser, "authUser must be set.");
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(
+					BusinessErrorCode.STATISTIC_READ_DOMAIN_ERROR,
+					"You are not allowed to query this domain");
+		}
+		LocalDate begin = timeService.now().minusYears(1);
+		LocalDate end = timeService.now();
+		try {
+			if (beginDate.isPresent()) {
+				begin = LocalDate.parse(beginDate.get());
+			}
+			if (endDate.isPresent()) {
+				end = LocalDate.parse(endDate.get());
+			}
+			// just to be sure that data from current date is included. 
+			end = end.plusDays(1);
+			if (end.isBefore(begin)) {
+				throw new BusinessException(
+					BusinessErrorCode.STATISTIC_DATE_RANGE_ERROR,
+					String.format("begin date (%s) must be before end date (%s)", begin, end)
+				);
+			}
+		} catch (DateTimeParseException e) {
+			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
+		}
+		return statisticBusinessService.findAll(authUser, domain, null, sortOrder, sortField, statisticType, begin, end, container);
 	}
 }

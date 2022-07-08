@@ -83,7 +83,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade {
-	
+
 	private final UserService2 userService2;
 
 	private final UserService userService;
@@ -99,9 +99,9 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private final AccountQuotaService accountQuotaService;
-	
+
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
-	
+
 	private final LogEntryService logEntryService;
 
 
