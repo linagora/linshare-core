@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.webservice.adminv5.impl;
 
+import java.util.Date;
 import java.util.Optional;
 
 import javax.ws.rs.DefaultValue;
@@ -89,28 +90,51 @@ public class StorageConsumptionStatisticRestServiceImpl extends WebserviceBase
 	public Response findAll(
 			@Parameter(description = "domain's uuid")
 				@PathParam("domainUuid") String domainUuid,
-			String accountUuid,
-			@Parameter(description = "The admin can choose the order of sorting the stat's list to retrieve, if not set the ascending order will be applied by default.", required = false)
+			@Parameter(
+					description = "The admin can choose the order of sorting the stat's list to retrieve, if not set the ascending order will be applied by default.",
+					required = false,
+					schema = @Schema(implementation = SortOrder.class, defaultValue = "ASC")
+				)
 				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
-			@Parameter(description = "The admin can choose the field to sort with the stat's list to retrieve, if not set the statisticDate date order will be choosen by default.", required = false)
+			@Parameter(
+					description = "The admin can choose the field to sort with the stat's list to retrieve, if not set the statisticDate date order will be choosen by default.",
+					required = false,
+					schema = @Schema(implementation = StorageConsumptionStatisticField.class, defaultValue = "statisticDate")
+				)
 				@QueryParam("sortField") @DefaultValue("statisticDate") String sortField,
-			@Parameter(description = "The admin can choose the type of statistics to retrieve, if not set the DOMAIN_MONTHLY_STAT type will be choosen by default.", required = false)
+			@Parameter(
+					description = "The admin can choose the type of statistics to retrieve, if not set the DOMAIN_MONTHLY_STAT type will be choosen by default.",
+					required = false,
+					schema = @Schema(implementation = StatisticType.class, defaultValue = "DOMAIN_MONTHLY_STAT")
+				)
 				@QueryParam("type") @DefaultValue("DOMAIN_MONTHLY_STAT") String statisticType,
-			@Parameter(description = "begin statistic creation date. format: yyyy-MM-dd")
+			@Parameter(
+					description = "begin statistic creation date. format: yyyy-MM-dd",
+					schema = @Schema(implementation = Date.class)
+				)
 				@QueryParam("beginDate") String beginDate,
-			@Parameter(description = "end statistic creation date. format: yyyy-MM-dd") 
+			@Parameter(
+					description = "end statistic creation date. format: yyyy-MM-dd",
+					schema = @Schema(implementation = Date.class)
+				)
 				@QueryParam("endDate") String endDate,
-			@Parameter(description = "The admin can choose the page number to get.", required = false)
+			@Parameter(
+					description = "The admin can choose the page number to get.",
+					required = false
+				)
 				@QueryParam("page") Integer pageNumber,
-			@Parameter(description = "The admin can choose the number of elements to get.", required = false)
-				@QueryParam("size") Integer pageSize) {
+			@Parameter(
+					description = "The admin can choose the number of elements to get.",
+					required = false
+				)
+				@QueryParam("size") @DefaultValue("100") Integer pageSize) {
 		PageContainer<StorageConsumptionStatisticDto> container = statisticFacade.findAll(domainUuid,
-				Optional.ofNullable(accountUuid),
 				SortOrder.valueOf(sortOrder),
 				StorageConsumptionStatisticField.valueOf(sortField),
 				StatisticType.valueOf(statisticType),
-				Optional.ofNullable(beginDate), Optional.ofNullable(endDate),
-				pageNumber, pageSize);
+				Optional.ofNullable(beginDate),
+				Optional.ofNullable(endDate), pageNumber,
+				pageSize);
 		return pageResponseBuilder.build(container);
 	}
 }
