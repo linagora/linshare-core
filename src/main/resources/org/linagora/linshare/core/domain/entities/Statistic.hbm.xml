@@ -20,9 +20,10 @@
 		<property name="diffOperationSum" column="diff_operation_sum" type="long" />
 		<property name="actualOperationSum" column="actual_operation_sum" type="long" />
 
-		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" />
-		<many-to-one name="account" column="account_id" class="org.linagora.linshare.core.domain.entities.Account" />
-		<many-to-one name="parentDomain" column="domain_parent_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" />
+		<!--  fetch="select|subselect|join|batch" -->
+		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="false" fetch="join" />
+		<many-to-one name="account" column="account_id" class="org.linagora.linshare.core.domain.entities.Account" lazy="false" fetch="join" />
+		<many-to-one name="parentDomain" column="domain_parent_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="false" fetch="join" />
 
 		<subclass name="org.linagora.linshare.core.domain.entities.UserDailyStat" discriminator-value="USER_DAILY_STAT" lazy="true">
 		</subclass>
