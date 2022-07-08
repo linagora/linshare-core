@@ -84,4 +84,9 @@ public class DomainLightDto {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public String toString() {
+		return "DomainLightDto [uuid=" + uuid + ", name=" + name + "]";
+	}
 }
