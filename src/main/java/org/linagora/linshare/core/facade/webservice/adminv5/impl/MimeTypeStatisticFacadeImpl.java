@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2018-2022 LINAGORA
+ * Copyright (C) 2015-2022 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,29 +33,51 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.Optional;
-import java.util.Set;
 
+import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.domain.constants.AdvancedStatisticType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.MimeTypeStatisticField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
+import org.linagora.linshare.core.facade.webservice.adminv5.MimeTypeStatisticStatisticFacade;
+import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AdvancedStatisticService;
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
-public interface AdvancedStatisticService {
+public class MimeTypeStatisticFacadeImpl extends AdminGenericFacadeImpl implements
+		MimeTypeStatisticStatisticFacade {
 
-	@Deprecated
-	Set<MimeTypeStatistic> findBetweenTwoDates(User authUser, String domainUuid, String beginDate, String endDate,
-			String mimeType);
+	private final AdvancedStatisticService statisticService;
+	private final AbstractDomainService abstractDomainService;
 
-	PageContainer<MimeTypeStatistic> findAll(Account authUser, AbstractDomain domain, Optional<String> accountUuid,
-			SortOrder sortOrder, MimeTypeStatisticField sortField, AdvancedStatisticType statisticType,
+	public MimeTypeStatisticFacadeImpl(AccountService accountService,
+			AdvancedStatisticService statisticService,
+			AbstractDomainService abstractDomainService) {
+		super(accountService);
+		this.statisticService = statisticService;
+		this.abstractDomainService = abstractDomainService;
+	}
+
+	@Override
+	public PageContainer<MimeTypeStatistic> findAll(
+			String domainUuid, SortOrder sortOrder,
+			MimeTypeStatisticField sortField, AdvancedStatisticType statisticType,
 			Optional<String> mimeType,
-			Optional<String> beginDate, Optional<String> endDate, PageContainer<MimeTypeStatistic> container);
-
+			Optional<String> beginDate, Optional<String> endDate,
+			Integer pageNumber, Integer pageSize) {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		PageContainer<MimeTypeStatistic> container = new PageContainer<>(pageNumber, pageSize);
+		container = statisticService.findAll(authUser, domain, Optional.empty(), sortOrder, sortField, statisticType, mimeType, beginDate, endDate, container);
+		return container;
+	}
 }

@@ -76,6 +76,7 @@ public class StatisticServiceImpl implements StatisticService {
 		this.timeService = timeService;
 	}
 
+	@Deprecated
 	@Override
 	public List<Statistic> findBetweenTwoDates(Account authUser, Account actor, AbstractDomain domain, String beginDate,
 			String endDate, StatisticType statisticType) throws BusinessException {
@@ -86,6 +87,7 @@ public class StatisticServiceImpl implements StatisticService {
 		return statisticBusinessService.findBetweenTwoDates(authUser, domain, null, bDate, eDate, statisticType);
 	}
 
+	@Deprecated
 	public Pair<Date, Date> checkDatesInitialization(String beginDate, String endDate) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		Date bDate = null;

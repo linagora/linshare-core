@@ -79,8 +79,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
 @Path("/shared_spaces")
-@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_JSON })
 public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	private final SharedSpaceFacade sharedSpaceFacade;

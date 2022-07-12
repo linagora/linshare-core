@@ -105,7 +105,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	protected final SharedSpaceNodeMongoRepository nodeRepository;
 
 	protected final UserRepository<User> userRepository;
-	
+
 	protected final MongoTemplate mongoTemplate;
 
 	protected final Function<SharedSpaceMember, SharedSpaceNodeNested> convertToSharedSpaceNode = new Function<SharedSpaceMember, SharedSpaceNodeNested>() {

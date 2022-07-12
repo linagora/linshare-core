@@ -421,6 +421,9 @@
 	<bean id="advancedStatisticService"
 		class="org.linagora.linshare.core.service.impl.AdvancedStatisticServiceImpl">
 		<constructor-arg ref="advancedStatisticMongoRepository" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="timeService" />
+		<constructor-arg ref="mongoTemplate" />
 	</bean>
 
 	<bean id="jwtService"

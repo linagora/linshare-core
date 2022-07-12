@@ -78,6 +78,9 @@
 	<bean id="adminV5StorageConsuptionStatisticRestService" class="org.linagora.linshare.webservice.adminv5.impl.StorageConsumptionStatisticRestServiceImpl">
 		<constructor-arg ref="wsAdminV5StorageConsumptionStatisticFacade" />
 	</bean>
+	<bean id="adminV5MimeTypeStatisticRestService" class="org.linagora.linshare.webservice.adminv5.impl.MimeTypeStatisticRestServiceImpl">
+		<constructor-arg ref="wsAdminV5MimeTypeStatisticFacade" />
+	</bean>
 	<jaxrs:server id="restAdminV5Container" address="/rest/admin/v5">
 		<jaxrs:serviceBeans>
 			<ref bean="adminv5UserRestService" />
@@ -103,6 +106,7 @@
 			<ref bean="adminv5ModeratorRestService" />
 			<ref bean="adminv5GuestRestService" />
 			<ref bean="adminV5StorageConsuptionStatisticRestService" />
+			<ref bean="adminV5MimeTypeStatisticRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

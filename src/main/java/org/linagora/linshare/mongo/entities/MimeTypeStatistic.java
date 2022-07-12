@@ -57,7 +57,7 @@ public class MimeTypeStatistic {
 	protected String id;
 
 	protected String uuid;
-	
+
 	protected Long value;
 
 	protected String domainUuid;
