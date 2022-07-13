@@ -50,8 +50,7 @@ import javax.ws.rs.core.Response;
 import org.linagora.linshare.core.domain.constants.AdvancedStatisticType;
 import org.linagora.linshare.core.domain.entities.fields.MimeTypeStatisticField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
-import org.linagora.linshare.core.facade.webservice.adminv5.MimeTypeStatisticStatisticFacade;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.StorageConsumptionStatisticDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.MimeTypeStatisticFacade;
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv5.MimeTypeStatisticRestService;
@@ -71,11 +70,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 public class MimeTypeStatisticRestServiceImpl extends WebserviceBase
 		implements MimeTypeStatisticRestService {
 
-	private final MimeTypeStatisticStatisticFacade statisticFacade;
+	private final MimeTypeStatisticFacade statisticFacade;
 
 	private static PagingResponseBuilder<MimeTypeStatistic> pageResponseBuilder = new PagingResponseBuilder<>();
 
-	public MimeTypeStatisticRestServiceImpl(MimeTypeStatisticStatisticFacade statisticFacade) {
+	public MimeTypeStatisticRestServiceImpl(MimeTypeStatisticFacade statisticFacade) {
 		this.statisticFacade = statisticFacade;
 	}
 
@@ -83,7 +82,7 @@ public class MimeTypeStatisticRestServiceImpl extends WebserviceBase
 	@GET
 	@Operation(summary = "Get storage consumption statistics. By default will be a 12 rolling months.", responses = {
 		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = StorageConsumptionStatisticDto.class))),
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MimeTypeStatistic.class))),
 			responseCode = "200"
 		)
 	})
@@ -115,6 +114,11 @@ public class MimeTypeStatisticRestServiceImpl extends WebserviceBase
 				)
 				@QueryParam("mimeType") String mimeType,
 			@Parameter(
+					description = "Sum 'value' field by mimeType.",
+					schema = @Schema(implementation = Boolean.class)
+				)
+				@QueryParam("sum") @DefaultValue("false") boolean sum,
+			@Parameter(
 						description = "begin statistic creation date. format: yyyy-MM-dd",
 						schema = @Schema(implementation = Date.class)
 						)
@@ -139,9 +143,9 @@ public class MimeTypeStatisticRestServiceImpl extends WebserviceBase
 				MimeTypeStatisticField.valueOf(sortField),
 				AdvancedStatisticType.valueOf(statisticType),
 				Optional.ofNullable(mimeType),
-				Optional.ofNullable(beginDate),
-				Optional.ofNullable(endDate), pageNumber,
-				pageSize);
+				sum,
+				Optional.ofNullable(beginDate), Optional.ofNullable(endDate),
+				pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}
 }

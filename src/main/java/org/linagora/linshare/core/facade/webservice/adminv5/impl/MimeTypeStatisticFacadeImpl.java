@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.MimeTypeStatisticField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
-import org.linagora.linshare.core.facade.webservice.adminv5.MimeTypeStatisticStatisticFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.MimeTypeStatisticFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AdvancedStatisticService;
@@ -53,7 +53,7 @@ import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
 public class MimeTypeStatisticFacadeImpl extends AdminGenericFacadeImpl implements
-		MimeTypeStatisticStatisticFacade {
+		MimeTypeStatisticFacade {
 
 	private final AdvancedStatisticService statisticService;
 	private final AbstractDomainService abstractDomainService;
@@ -71,13 +71,13 @@ public class MimeTypeStatisticFacadeImpl extends AdminGenericFacadeImpl implemen
 			String domainUuid, SortOrder sortOrder,
 			MimeTypeStatisticField sortField, AdvancedStatisticType statisticType,
 			Optional<String> mimeType,
-			Optional<String> beginDate, Optional<String> endDate,
-			Integer pageNumber, Integer pageSize) {
+			boolean sum, Optional<String> beginDate,
+			Optional<String> endDate, Integer pageNumber, Integer pageSize) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
 		PageContainer<MimeTypeStatistic> container = new PageContainer<>(pageNumber, pageSize);
-		container = statisticService.findAll(authUser, domain, Optional.empty(), sortOrder, sortField, statisticType, mimeType, beginDate, endDate, container);
+		container = statisticService.findAll(authUser, domain, Optional.empty(), sortOrder, sortField, statisticType, mimeType, sum, beginDate, endDate, container);
 		return container;
 	}
 }

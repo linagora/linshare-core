@@ -39,6 +39,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -56,6 +57,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AdvancedStatisticService;
 import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
+import org.linagora.linshare.mongo.projections.dto.AggregateNodeCountResult;
 import org.linagora.linshare.mongo.repository.AdvancedStatisticMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
@@ -65,8 +67,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
+import com.google.common.collect.Lists;
 
 public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implements AdvancedStatisticService {
 
@@ -106,8 +113,8 @@ public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implemen
 			Optional<String> accountUuid, SortOrder sortOrder,
 			MimeTypeStatisticField sortField, AdvancedStatisticType statisticType,
 			Optional<String> mimeType,
-			Optional<String> beginDate, Optional<String> endDate,
-			PageContainer<MimeTypeStatistic> container) {
+			boolean sum, Optional<String> beginDate,
+			Optional<String> endDate, PageContainer<MimeTypeStatistic> container) {
 		Validate.notNull(authUser, "authUser must be set.");
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
 			throw new BusinessException(
@@ -134,6 +141,77 @@ public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implemen
 		} catch (DateTimeParseException e) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
+		if(sum) {
+			return findAllWithSum(domain, sortOrder, sortField, mimeType, container, begin, end);
+		}
+		return findAll(domain, sortOrder, sortField, statisticType, mimeType, container, begin, end);
+	}
+
+	private PageContainer<MimeTypeStatistic> findAllWithSum(AbstractDomain domain, SortOrder sortOrder,
+			MimeTypeStatisticField sortField, Optional<String> mimeType, PageContainer<MimeTypeStatistic> container,
+			LocalDate begin, LocalDate end) {
+		List<AggregationOperation> commonOperations = Lists.newArrayList();
+		commonOperations.add(
+			Aggregation.match(
+				Criteria.where("domainUuid").is(domain.getUuid())
+					.and("type").is(AdvancedStatisticType.DAILY)
+					.and("creationDate").gte(begin).lt(end)
+			)
+		);
+		if(mimeType.isPresent()) {
+			commonOperations.add(Aggregation.match(Criteria.where("mimeType").is(mimeType.get())));
+		}
+		commonOperations.add(
+			Aggregation.group(
+				Fields.from(
+					Fields.field("domainUuid", "domainUuid"),
+					Fields.field("mimeType", "mimeType")
+				)
+			).sum("value").as("value")
+		);
+		commonOperations.add(
+			Aggregation.project(
+				Fields.from(
+					Fields.field("domainUuid", "domainUuid"),
+					Fields.field("mimeType", "mimeType"),
+					Fields.field("value", "value")
+				)
+			)
+		);
+		container.validateTotalPagesCount(
+			count(MimeTypeStatistic.class, commonOperations)
+		);
+		if (sortField.equals(MimeTypeStatisticField.creationDate)) {
+			commonOperations.add(Aggregation.sort(Sort.by(SortOrder.getSortDir(sortOrder), MimeTypeStatisticField.mimeType.toString())));
+		} else {
+			commonOperations.add(Aggregation.sort(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString())));
+		}
+		commonOperations.add(Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())));
+		commonOperations.add(Aggregation.limit(Long.valueOf(container.getPageSize())));
+		Aggregation agg = Aggregation.newAggregation(MimeTypeStatistic.class, commonOperations);
+		List<MimeTypeStatistic> results = mongoTemplate.aggregate(agg, MimeTypeStatistic.class, MimeTypeStatistic.class).getMappedResults();
+		Date now = timeService.dateNow();
+		results.stream().forEach(a -> {
+			a.setCreationDate(now);
+		});
+		return container.loadData(results);
+	}
+
+	private Long count(Class<?> type, List<AggregationOperation> operations) {
+		List<AggregationOperation> aggregationOperations = Lists.newArrayList(operations);
+		aggregationOperations.add(Aggregation.count().as("count"));
+		Aggregation countAggregation = Aggregation.newAggregation(type, aggregationOperations);
+		List<AggregateNodeCountResult> countResults = mongoTemplate.aggregate(countAggregation, type, AggregateNodeCountResult.class).getMappedResults();
+		Long count = 0L;
+		if (countResults.size() > 0 && Objects.nonNull(countResults.get(0) != null)) {
+			count = countResults.get(0).getCount();
+		}
+		return count;
+	}
+
+	private PageContainer<MimeTypeStatistic> findAll(AbstractDomain domain, SortOrder sortOrder,
+			MimeTypeStatisticField sortField, AdvancedStatisticType statisticType, Optional<String> mimeType,
+			PageContainer<MimeTypeStatistic> container, LocalDate begin, LocalDate end) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("domainUuid").is(domain.getUuid()));
 		query.addCriteria(Criteria.where("type").is(statisticType));

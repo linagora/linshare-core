@@ -56,6 +56,6 @@ public interface AdvancedStatisticService {
 	PageContainer<MimeTypeStatistic> findAll(Account authUser, AbstractDomain domain, Optional<String> accountUuid,
 			SortOrder sortOrder, MimeTypeStatisticField sortField, AdvancedStatisticType statisticType,
 			Optional<String> mimeType,
-			Optional<String> beginDate, Optional<String> endDate, PageContainer<MimeTypeStatistic> container);
+			boolean sum, Optional<String> beginDate, Optional<String> endDate, PageContainer<MimeTypeStatistic> container);
 
 }

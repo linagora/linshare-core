@@ -43,8 +43,8 @@ import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
-public interface MimeTypeStatisticStatisticFacade {
+public interface MimeTypeStatisticFacade {
 
 	PageContainer<MimeTypeStatistic> findAll(String domainUuid, SortOrder sortOrder, MimeTypeStatisticField sortField,
-			AdvancedStatisticType statisticType, Optional<String> mimeType, Optional<String> beginDate, Optional<String> endDate, Integer pageNumber, Integer pageSize);
+			AdvancedStatisticType statisticType, Optional<String> mimeType, boolean sum, Optional<String> beginDate, Optional<String> endDate, Integer pageNumber, Integer pageSize);
 }

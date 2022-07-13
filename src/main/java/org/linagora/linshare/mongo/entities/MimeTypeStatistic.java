@@ -46,6 +46,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @XmlRootElement(name = "MimeTypeStatistic")
 @Document(collection = "mime_type_statistic")
@@ -56,16 +57,19 @@ public class MimeTypeStatistic {
 	@GeneratedValue
 	protected String id;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String uuid;
 
 	protected Long value;
 
 	protected String domainUuid;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String parentDomainUuid;
 
 	protected Date creationDate;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected AdvancedStatisticType type;
 
 	protected String mimeType;
@@ -148,6 +152,13 @@ public class MimeTypeStatistic {
 
 	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
+	}
+
+	@Override
+	public String toString() {
+		return "MimeTypeStatistic [id=" + id + ", uuid=" + uuid + ", value=" + value + ", domainUuid=" + domainUuid
+				+ ", parentDomainUuid=" + parentDomainUuid + ", creationDate=" + creationDate + ", type=" + type
+				+ ", mimeType=" + mimeType + "]";
 	}
 
 }
