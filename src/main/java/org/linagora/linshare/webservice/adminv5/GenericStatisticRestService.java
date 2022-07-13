@@ -33,47 +33,15 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
 
-import java.util.Date;
+package org.linagora.linshare.webservice.adminv5;
+
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.BasicStatisticType;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.fields.GenericStatisticField;
-import org.linagora.linshare.core.domain.entities.fields.SortOrder;
-import org.linagora.linshare.mongo.entities.BasicStatistic;
-import org.linagora.linshare.webservice.utils.PageContainer;
+import javax.ws.rs.core.Response;
 
-public interface BasicStatisticService {
+public interface GenericStatisticRestService {
 
-	@Deprecated
-	Set<BasicStatistic> findBetweenTwoDates(Account actor, String domainUuid, List<LogAction> actions, String beginDate,
-			String endDate, List<AuditLogEntryType> resourceType, BasicStatisticType type);
-
-	Long countBasicStatistic(String domainUuid, LogAction action, Date beginDate, Date endDate,
-			AuditLogEntryType resourceType, BasicStatisticType type);
-
-	List<BasicStatistic> insert(List<BasicStatistic> basicStatisticList);
-
-	Long countBeforeDate(Date endDate);
-
-	Date getFirstStatisticCreationDate();
-
-	@Deprecated
-	long countValueStatisticBetweenTwoDates(User authUser, String domainUuid, List<LogAction> actions, String beginDate,
-			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type);
-
-	PageContainer<BasicStatistic> findAll(Account authUser, AbstractDomain domain, Optional<String> accountUuid,
-			SortOrder sortOrder, GenericStatisticField sortField, BasicStatisticType statisticType,
-			Set<LogAction> logActions,
-			Set<AuditLogEntryType> resourceTypes,
-			boolean sum,
-			Optional<String> beginDate, Optional<String> endDate, PageContainer<BasicStatistic> container);
+	Response findAll(String domainUuid, String sortOrder, String sortField, String statisticType,
+			List<String> logActions, List<String> resourceTypes, boolean sum, String beginDate, String endDate, Integer pageNumber, Integer pageSize);
 }

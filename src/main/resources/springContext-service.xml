@@ -409,6 +409,8 @@
 	<bean id="basicStatisticService"
 		class="org.linagora.linshare.core.service.impl.BasicStatisticServiceImpl">
 		<constructor-arg ref="basicStatisticMongoRepository" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="timeService" />
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
 

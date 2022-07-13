@@ -49,6 +49,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @XmlRootElement(name = "BasicStatistic")
 @Document(collection = "basic_statistic")
@@ -58,12 +59,14 @@ public class BasicStatistic {
 	@Id @GeneratedValue
 	protected String id;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String uuid;
-	
+
 	protected Long value;
 
 	protected String domainUuid;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String parentDomainUuid;
 
 	protected LogAction action;
@@ -72,6 +75,7 @@ public class BasicStatistic {
 
 	protected AuditLogEntryType resourceType;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected BasicStatisticType type;
 
 	public BasicStatistic() {

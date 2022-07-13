@@ -35,25 +35,46 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.fields.GenericStatisticField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.BasicStatisticService;
+import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
+import org.linagora.linshare.mongo.projections.dto.AggregateNodeCountResult;
 import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Lists;
 
@@ -61,12 +82,20 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 
 	protected BasicStatisticMongoRepository basicStatisticMongoRepository;
 
-	protected MongoTemplate mongoTemplate;
+	protected final DomainPermissionBusinessService permissionService;
 
-	public BasicStatisticServiceImpl(
-			BasicStatisticMongoRepository basicStatisticMongoRepository,
-			MongoTemplate mongoTemplate) {
+	protected final TimeService timeService;
+
+	protected final MongoTemplate mongoTemplate;
+
+	protected static Logger logger = LoggerFactory.getLogger(BasicStatisticServiceImpl.class);
+
+	public BasicStatisticServiceImpl(BasicStatisticMongoRepository basicStatisticMongoRepository,
+			DomainPermissionBusinessService permissionService, TimeService timeService, MongoTemplate mongoTemplate) {
+		super();
 		this.basicStatisticMongoRepository = basicStatisticMongoRepository;
+		this.permissionService = permissionService;
+		this.timeService = timeService;
 		this.mongoTemplate = mongoTemplate;
 	}
 
@@ -132,5 +161,149 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 	@Override
 	public Date getFirstStatisticCreationDate() {
 		return basicStatisticMongoRepository.findCreationDateByOrderByIdAsc().getCreationDate();
+	}
+
+	@Override
+	public PageContainer<BasicStatistic> findAll(Account authUser, AbstractDomain domain, Optional<String> accountUuid,
+			SortOrder sortOrder, GenericStatisticField sortField, BasicStatisticType statisticType,
+			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
+			boolean sum,
+			Optional<String> beginDate, Optional<String> endDate,
+			PageContainer<BasicStatistic> container) {
+		Validate.notNull(authUser, "authUser must be set.");
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(
+					BusinessErrorCode.STATISTIC_READ_DOMAIN_ERROR,
+					"You are not allowed to query this domain");
+		}
+		LocalDate begin = timeService.now().minusYears(1);
+		LocalDate end = timeService.now();
+		try {
+			if (beginDate.isPresent()) {
+				begin = LocalDate.parse(beginDate.get());
+			}
+			if (endDate.isPresent()) {
+				end = LocalDate.parse(endDate.get());
+			}
+			// just to be sure that data from current date is included.
+			end = end.plusDays(1);
+			if (end.isBefore(begin)) {
+				throw new BusinessException(
+					BusinessErrorCode.STATISTIC_DATE_RANGE_ERROR,
+					String.format("begin date (%s) must be before end date (%s)", begin, end)
+				);
+			}
+		} catch (DateTimeParseException e) {
+			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
+		}
+		if(sum) {
+			return findAllWithSum(domain, sortOrder, sortField, logActions, resourceTypes, container, begin, end);
+		}
+		return findAll(domain, sortOrder, sortField, statisticType, logActions, resourceTypes, container, begin, end);
+	}
+
+	private PageContainer<BasicStatistic> findAllWithSum(
+			AbstractDomain domain, SortOrder sortOrder,
+			GenericStatisticField sortField,
+			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
+			PageContainer<BasicStatistic> container,
+			LocalDate begin, LocalDate end) {
+		List<AggregationOperation> commonOperations = Lists.newArrayList();
+		commonOperations.add(
+			Aggregation.match(
+				Criteria.where("domainUuid").is(domain.getUuid())
+					.and("type").is(BasicStatisticType.DAILY)
+					.and("creationDate").gte(begin).lt(end)
+			)
+		);
+		if (!logActions.isEmpty()) {
+			commonOperations.add(
+				Aggregation.match(
+					Criteria.where("action").in(logActions)
+				)
+			);
+		}
+		if (!resourceTypes.isEmpty()) {
+			commonOperations.add(
+				Aggregation.match(
+					Criteria.where("resourceType").in(resourceTypes)
+				)
+			);
+		}
+		commonOperations.add(
+			Aggregation.group(
+				Fields.from(
+					Fields.field("domainUuid", "domainUuid"),
+					Fields.field("action", "action"),
+					Fields.field("resourceType", "resourceType")
+				)
+			).sum("value").as("value")
+		);
+		commonOperations.add(
+			Aggregation.project(
+				Fields.from(
+					Fields.field("domainUuid", "domainUuid"),
+					Fields.field("action", "action"),
+					Fields.field("resourceType", "resourceType"),
+					Fields.field("value", "value")
+				)
+			)
+		);
+		container.validateTotalPagesCount(
+			count(BasicStatistic.class, commonOperations)
+		);
+		if (sortField.equals(GenericStatisticField.creationDate)) {
+			commonOperations.add(Aggregation.sort(Sort.by(SortOrder.getSortDir(sortOrder), GenericStatisticField.domainUuid.toString())));
+		} else {
+			commonOperations.add(Aggregation.sort(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString())));
+		}
+		commonOperations.add(Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())));
+		commonOperations.add(Aggregation.limit(Long.valueOf(container.getPageSize())));
+		Aggregation agg = Aggregation.newAggregation(BasicStatistic.class, commonOperations);
+		List<BasicStatistic> results = mongoTemplate.aggregate(agg, BasicStatistic.class, BasicStatistic.class).getMappedResults();
+		Date now = timeService.dateNow();
+		results.stream().forEach(a -> {
+			a.setCreationDate(now);
+		});
+		return container.loadData(results);
+	}
+
+	private Long count(Class<?> type, List<AggregationOperation> operations) {
+		List<AggregationOperation> aggregationOperations = Lists.newArrayList(operations);
+		aggregationOperations.add(Aggregation.count().as("count"));
+		Aggregation countAggregation = Aggregation.newAggregation(type, aggregationOperations);
+		List<AggregateNodeCountResult> countResults = mongoTemplate.aggregate(countAggregation, type, AggregateNodeCountResult.class).getMappedResults();
+		Long count = 0L;
+		if (countResults.size() > 0 && Objects.nonNull(countResults.get(0) != null)) {
+			count = countResults.get(0).getCount();
+		}
+		return count;
+	}
+
+	private PageContainer<BasicStatistic> findAll(AbstractDomain domain, SortOrder sortOrder,
+			GenericStatisticField sortField, BasicStatisticType statisticType,
+			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
+			PageContainer<BasicStatistic> container, LocalDate begin, LocalDate end) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("domainUuid").is(domain.getUuid()));
+		query.addCriteria(Criteria.where("type").is(statisticType));
+		if (!logActions.isEmpty()) {
+			query.addCriteria(Criteria.where("action").in(logActions));
+		}
+		if (!resourceTypes.isEmpty()) {
+			query.addCriteria(Criteria.where("resourceType").in(resourceTypes));
+		}
+		query.addCriteria(Criteria.where("creationDate").gte(begin).lt(end));
+		long count = mongoTemplate.count(query, BasicStatistic.class);
+		logger.debug("Total of elements returned by the query without pagination: {}", count);
+		if (count == 0) {
+			return new PageContainer<BasicStatistic>();
+		}
+		Pageable paging = PageRequest.of(container.getPageNumber(), container.getPageSize());
+		query.with(paging);
+		query.with(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString()));
+		container.validateTotalPagesCount(count);
+		List<BasicStatistic> data = mongoTemplate.find(query, BasicStatistic.class);
+		return container.loadData(data);
 	}
 }
