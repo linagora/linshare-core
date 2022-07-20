@@ -68,7 +68,8 @@ public class MimeTypeStatisticFacadeImpl extends AdminGenericFacadeImpl implemen
 
 	@Override
 	public PageContainer<MimeTypeStatistic> findAll(
-			String domainUuid, SortOrder sortOrder,
+			String domainUuid, boolean includeNestedDomains,
+			SortOrder sortOrder,
 			MimeTypeStatisticField sortField, AdvancedStatisticType statisticType,
 			Optional<String> mimeType,
 			boolean sum, Optional<String> beginDate,
@@ -77,7 +78,7 @@ public class MimeTypeStatisticFacadeImpl extends AdminGenericFacadeImpl implemen
 		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
 		PageContainer<MimeTypeStatistic> container = new PageContainer<>(pageNumber, pageSize);
-		container = statisticService.findAll(authUser, domain, Optional.empty(), sortOrder, sortField, statisticType, mimeType, sum, beginDate, endDate, container);
+		container = statisticService.findAll(authUser, domain, includeNestedDomains, Optional.empty(), sortOrder, sortField, statisticType, mimeType, sum, beginDate, endDate, container);
 		return container;
 	}
 }

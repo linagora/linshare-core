@@ -53,7 +53,8 @@ public interface AdvancedStatisticService {
 	Set<MimeTypeStatistic> findBetweenTwoDates(User authUser, String domainUuid, String beginDate, String endDate,
 			String mimeType);
 
-	PageContainer<MimeTypeStatistic> findAll(Account authUser, AbstractDomain domain, Optional<String> accountUuid,
+	PageContainer<MimeTypeStatistic> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains,
+			Optional<String> accountUuid,
 			SortOrder sortOrder, MimeTypeStatisticField sortField, AdvancedStatisticType statisticType,
 			Optional<String> mimeType,
 			boolean sum, Optional<String> beginDate, Optional<String> endDate, PageContainer<MimeTypeStatistic> container);

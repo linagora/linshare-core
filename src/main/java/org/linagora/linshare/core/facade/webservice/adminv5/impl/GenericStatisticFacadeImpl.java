@@ -71,7 +71,7 @@ public class GenericStatisticFacadeImpl extends AdminGenericFacadeImpl implement
 
 	@Override
 	public PageContainer<BasicStatistic> findAll(
-			String domainUuid, Boolean isParentDomainUuid, SortOrder sortOrder,
+			String domainUuid, Boolean includeNestedDomains, SortOrder sortOrder,
 			GenericStatisticField sortField,
 			BasicStatisticType statisticType,
 			Set<LogAction> logActions,
@@ -83,7 +83,7 @@ public class GenericStatisticFacadeImpl extends AdminGenericFacadeImpl implement
 		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
 		PageContainer<BasicStatistic> container = new PageContainer<>(pageNumber, pageSize);
-		container = statisticService.findAll(authUser, domain, Optional.empty(),
+		container = statisticService.findAll(authUser, domain, includeNestedDomains, Optional.empty(),
 				sortOrder, sortField, statisticType,
 				logActions,
 				resourceTypes,

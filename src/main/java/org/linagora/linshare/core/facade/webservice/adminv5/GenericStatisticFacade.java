@@ -49,7 +49,7 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 public interface GenericStatisticFacade {
 
 	PageContainer<BasicStatistic> findAll(
-		String domainUuid, Boolean isParentDomainUuid,
+		String domainUuid, Boolean includeNestedDomains,
 		SortOrder sortOrder,
 		GenericStatisticField sortField, BasicStatisticType statisticType,
 		Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,

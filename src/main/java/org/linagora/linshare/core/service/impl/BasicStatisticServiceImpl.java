@@ -164,7 +164,7 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 	}
 
 	@Override
-	public PageContainer<BasicStatistic> findAll(Account authUser, AbstractDomain domain, Optional<String> accountUuid,
+	public PageContainer<BasicStatistic> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains, Optional<String> accountUuid,
 			SortOrder sortOrder, GenericStatisticField sortField, BasicStatisticType statisticType,
 			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
 			boolean sum,
@@ -197,25 +197,41 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
 		if(sum) {
-			return findAllWithSum(domain, sortOrder, sortField, logActions, resourceTypes, container, begin, end);
+			return findAllWithSum(domain, includeNestedDomains, sortOrder, sortField, logActions, resourceTypes, container, begin, end);
 		}
-		return findAll(domain, sortOrder, sortField, statisticType, logActions, resourceTypes, container, begin, end);
+		return findAll(domain, includeNestedDomains, sortOrder, sortField, statisticType, logActions, resourceTypes, container, begin, end);
 	}
 
 	private PageContainer<BasicStatistic> findAllWithSum(
-			AbstractDomain domain, SortOrder sortOrder,
-			GenericStatisticField sortField,
+			AbstractDomain domain, boolean includeNestedDomains,
+			SortOrder sortOrder, GenericStatisticField sortField,
 			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
 			PageContainer<BasicStatistic> container,
 			LocalDate begin, LocalDate end) {
 		List<AggregationOperation> commonOperations = Lists.newArrayList();
+		if (includeNestedDomains) {
+			throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "You can not use Sum and includeNestedDomains at the same time. Not supported yet.");
+//			commonOperations.add(
+//				Aggregation.match(
+//					Criteria.where("").orOperator(
+//							Criteria.where("parentDomainUuid").is(domain.getUuid()),
+//							Criteria.where("domainUuid").is(domain.getUuid())
+//						)
+//				)
+//			);
+		} else {
+			commonOperations.add(
+				Aggregation.match(
+					Criteria.where("domainUuid").is(domain.getUuid())
+				)
+			);
+		}
 		commonOperations.add(
-			Aggregation.match(
-				Criteria.where("domainUuid").is(domain.getUuid())
-					.and("type").is(BasicStatisticType.DAILY)
-					.and("creationDate").gte(begin).lt(end)
-			)
-		);
+				Aggregation.match(
+					Criteria.where("type").is(BasicStatisticType.DAILY)
+						.and("creationDate").gte(begin).lt(end)
+					)
+				);
 		if (!logActions.isEmpty()) {
 			commonOperations.add(
 				Aggregation.match(
@@ -233,7 +249,6 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 		commonOperations.add(
 			Aggregation.group(
 				Fields.from(
-					Fields.field("domainUuid", "domainUuid"),
 					Fields.field("action", "action"),
 					Fields.field("resourceType", "resourceType")
 				)
@@ -242,7 +257,6 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 		commonOperations.add(
 			Aggregation.project(
 				Fields.from(
-					Fields.field("domainUuid", "domainUuid"),
 					Fields.field("action", "action"),
 					Fields.field("resourceType", "resourceType"),
 					Fields.field("value", "value")
@@ -280,12 +294,23 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 		return count;
 	}
 
-	private PageContainer<BasicStatistic> findAll(AbstractDomain domain, SortOrder sortOrder,
-			GenericStatisticField sortField, BasicStatisticType statisticType,
+	private PageContainer<BasicStatistic> findAll(
+			AbstractDomain domain, boolean includeNestedDomains,
+			SortOrder sortOrder, GenericStatisticField sortField,
+			BasicStatisticType statisticType,
 			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
 			PageContainer<BasicStatistic> container, LocalDate begin, LocalDate end) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("domainUuid").is(domain.getUuid()));
+		if (includeNestedDomains) {
+			query.addCriteria(
+				Criteria.where("").orOperator(
+					Criteria.where("parentDomainUuid").is(domain.getUuid()),
+					Criteria.where("domainUuid").is(domain.getUuid())
+				)
+			);
+		} else {
+			query.addCriteria(Criteria.where("domainUuid").is(domain.getUuid()));
+		}
 		query.addCriteria(Criteria.where("type").is(statisticType));
 		if (!logActions.isEmpty()) {
 			query.addCriteria(Criteria.where("action").in(logActions));

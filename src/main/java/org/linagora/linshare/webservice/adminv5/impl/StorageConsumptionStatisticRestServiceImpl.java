@@ -65,7 +65,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-@Path("/statistics/{domainUuid}/storage_consumptions")
+@Path("/{domainUuid}/statistics/storage_consumptions")
 @Produces({ MediaType.APPLICATION_JSON })
 public class StorageConsumptionStatisticRestServiceImpl extends WebserviceBase
 		implements StorageConsumptionStatisticRestService {

@@ -64,6 +64,7 @@ public class BasicStatistic {
 
 	protected Long value;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String domainUuid;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)

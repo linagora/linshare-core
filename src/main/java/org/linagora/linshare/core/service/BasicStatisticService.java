@@ -70,7 +70,8 @@ public interface BasicStatisticService {
 	long countValueStatisticBetweenTwoDates(User authUser, String domainUuid, List<LogAction> actions, String beginDate,
 			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type);
 
-	PageContainer<BasicStatistic> findAll(Account authUser, AbstractDomain domain, Optional<String> accountUuid,
+	PageContainer<BasicStatistic> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains,
+			Optional<String> accountUuid,
 			SortOrder sortOrder, GenericStatisticField sortField, BasicStatisticType statisticType,
 			Set<LogAction> logActions,
 			Set<AuditLogEntryType> resourceTypes,

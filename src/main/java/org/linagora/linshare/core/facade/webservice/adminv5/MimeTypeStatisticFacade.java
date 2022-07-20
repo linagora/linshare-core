@@ -45,6 +45,6 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface MimeTypeStatisticFacade {
 
-	PageContainer<MimeTypeStatistic> findAll(String domainUuid, SortOrder sortOrder, MimeTypeStatisticField sortField,
+	PageContainer<MimeTypeStatistic> findAll(String domainUuid, boolean includeNestedDomains, SortOrder sortOrder, MimeTypeStatisticField sortField,
 			AdvancedStatisticType statisticType, Optional<String> mimeType, boolean sum, Optional<String> beginDate, Optional<String> endDate, Integer pageNumber, Integer pageSize);
 }

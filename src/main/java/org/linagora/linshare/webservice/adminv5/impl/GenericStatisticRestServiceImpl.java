@@ -69,7 +69,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-@Path("/statistics/{domainUuid}/generics")
+@Path("/{domainUuid}/statistics/generics")
 @Produces({ MediaType.APPLICATION_JSON })
 public class GenericStatisticRestServiceImpl extends WebserviceBase
 		implements GenericStatisticRestService {
@@ -94,6 +94,11 @@ public class GenericStatisticRestServiceImpl extends WebserviceBase
 	public Response findAll(
 		@Parameter(description = "domain's uuid")
 			@PathParam("domainUuid") String domainUuid,
+		@Parameter(
+				description = "Include nested domains.",
+				schema = @Schema(implementation = Boolean.class)
+			)
+			@QueryParam("includeNestedDomains") @DefaultValue("false") boolean includeNestedDomains,
 		@Parameter(
 				description = "The admin can choose the order of sorting the stat's list to retrieve, if not set the ascending order will be applied by default.",
 				required = false,
@@ -151,7 +156,7 @@ public class GenericStatisticRestServiceImpl extends WebserviceBase
 			@QueryParam("size") @DefaultValue("100") Integer pageSize) {
 		PageContainer<BasicStatistic> container = statisticFacade.findAll(
 			domainUuid,
-			false,
+			includeNestedDomains,
 			SortOrder.valueOf(sortOrder),
 			GenericStatisticField.valueOf(sortField),
 			BasicStatisticType.valueOf(statisticType),

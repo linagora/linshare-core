@@ -109,7 +109,8 @@ public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implemen
 
 	@Override
 	public PageContainer<MimeTypeStatistic> findAll(
-			Account authUser, AbstractDomain domain,
+			Account authUser,
+			AbstractDomain domain, boolean includeNestedDomains,
 			Optional<String> accountUuid, SortOrder sortOrder,
 			MimeTypeStatisticField sortField, AdvancedStatisticType statisticType,
 			Optional<String> mimeType,
@@ -142,19 +143,38 @@ public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implemen
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
 		if(sum) {
-			return findAllWithSum(domain, sortOrder, sortField, mimeType, container, begin, end);
+			return findAllWithSum(domain, includeNestedDomains, sortOrder, sortField, mimeType, container, begin, end);
 		}
-		return findAll(domain, sortOrder, sortField, statisticType, mimeType, container, begin, end);
+		return findAll(domain, includeNestedDomains, sortOrder, sortField, statisticType, mimeType, container, begin, end);
 	}
 
-	private PageContainer<MimeTypeStatistic> findAllWithSum(AbstractDomain domain, SortOrder sortOrder,
-			MimeTypeStatisticField sortField, Optional<String> mimeType, PageContainer<MimeTypeStatistic> container,
+	private PageContainer<MimeTypeStatistic> findAllWithSum(
+			AbstractDomain domain, boolean includeNestedDomains,
+			SortOrder sortOrder,
+			MimeTypeStatisticField sortField, Optional<String> mimeType,
+			PageContainer<MimeTypeStatistic> container,
 			LocalDate begin, LocalDate end) {
 		List<AggregationOperation> commonOperations = Lists.newArrayList();
+		if (includeNestedDomains) {
+			throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "You can not use Sum and includeNestedDomains at the same time. Not supported yet.");
+//			commonOperations.add(
+//				Aggregation.match(
+//					Criteria.where("").orOperator(
+//							Criteria.where("parentDomainUuid").is(domain.getUuid()),
+//							Criteria.where("domainUuid").is(domain.getUuid())
+//						)
+//				)
+//			);
+		} else {
+			commonOperations.add(
+				Aggregation.match(
+					Criteria.where("domainUuid").is(domain.getUuid())
+				)
+			);
+		}
 		commonOperations.add(
 			Aggregation.match(
-				Criteria.where("domainUuid").is(domain.getUuid())
-					.and("type").is(AdvancedStatisticType.DAILY)
+				Criteria.where("type").is(AdvancedStatisticType.DAILY)
 					.and("creationDate").gte(begin).lt(end)
 			)
 		);
@@ -209,11 +229,20 @@ public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implemen
 		return count;
 	}
 
-	private PageContainer<MimeTypeStatistic> findAll(AbstractDomain domain, SortOrder sortOrder,
+	private PageContainer<MimeTypeStatistic> findAll(AbstractDomain domain, boolean includeNestedDomains, SortOrder sortOrder,
 			MimeTypeStatisticField sortField, AdvancedStatisticType statisticType, Optional<String> mimeType,
 			PageContainer<MimeTypeStatistic> container, LocalDate begin, LocalDate end) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("domainUuid").is(domain.getUuid()));
+		if (includeNestedDomains) {
+			query.addCriteria(
+				Criteria.where("").orOperator(
+					Criteria.where("parentDomainUuid").is(domain.getUuid()),
+					Criteria.where("domainUuid").is(domain.getUuid())
+			)
+		);
+		} else {
+			query.addCriteria(Criteria.where("domainUuid").is(domain.getUuid()));
+		}
 		query.addCriteria(Criteria.where("type").is(statisticType));
 		if(mimeType.isPresent()) {
 			query.addCriteria(Criteria.where("mimeType").is(mimeType.get()));

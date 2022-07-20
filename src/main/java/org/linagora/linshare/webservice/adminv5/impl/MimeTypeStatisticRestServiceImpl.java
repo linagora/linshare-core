@@ -65,7 +65,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-@Path("/statistics/{domainUuid}/mime_types")
+@Path("/{domainUuid}/statistics/mime_types")
 @Produces({ MediaType.APPLICATION_JSON })
 public class MimeTypeStatisticRestServiceImpl extends WebserviceBase
 		implements MimeTypeStatisticRestService {
@@ -90,6 +90,11 @@ public class MimeTypeStatisticRestServiceImpl extends WebserviceBase
 	public Response findAll(
 			@Parameter(description = "domain's uuid")
 				@PathParam("domainUuid") String domainUuid,
+			@Parameter(
+					description = "Include nested domains.",
+					schema = @Schema(implementation = Boolean.class)
+				)
+				@QueryParam("includeNestedDomains") @DefaultValue("false") boolean includeNestedDomains,
 			@Parameter(
 					description = "The admin can choose the order of sorting the stat's list to retrieve, if not set the ascending order will be applied by default.",
 					required = false,
@@ -138,7 +143,9 @@ public class MimeTypeStatisticRestServiceImpl extends WebserviceBase
 					required = false
 				)
 				@QueryParam("size") @DefaultValue("100") Integer pageSize) {
-		PageContainer<MimeTypeStatistic> container = statisticFacade.findAll(domainUuid,
+		PageContainer<MimeTypeStatistic> container = statisticFacade.findAll(
+				domainUuid,
+				includeNestedDomains,
 				SortOrder.valueOf(sortOrder),
 				MimeTypeStatisticField.valueOf(sortField),
 				AdvancedStatisticType.valueOf(statisticType),

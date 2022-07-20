@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response;
 
 public interface MimeTypeStatisticRestService {
 
-	Response findAll(String domainUuid, String sortOrder, String sortField, String statisticType,
+	Response findAll(String domainUuid, boolean includeNestedDomains, String sortOrder, String sortField, String statisticType,
 			String mimeType, boolean sum, String beginDate, String endDate, Integer pageNumber, Integer pageSize);
 
 }
