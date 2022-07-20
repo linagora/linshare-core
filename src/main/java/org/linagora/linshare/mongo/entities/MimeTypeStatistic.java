@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.mongo.entities;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 
@@ -69,6 +71,8 @@ public class MimeTypeStatistic {
 
 	protected Date creationDate;
 
+	protected String statisticDate;
+
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected AdvancedStatisticType type;
 
@@ -86,6 +90,10 @@ public class MimeTypeStatistic {
 		this.domainUuid = domainUuid;
 		this.parentDomainUuid = parentDomainUuid;
 		this.creationDate = new Date();
+		this.statisticDate = LocalDate.ofInstant(
+			creationDate.toInstant(),
+			ZoneId.systemDefault()
+		).toString();
 		this.mimeType = mimeType;
 		this.type = AdvancedStatisticType.DAILY;
 	}
@@ -132,6 +140,14 @@ public class MimeTypeStatistic {
 
 	public Date getCreationDate() {
 		return creationDate;
+	}
+
+	public String getStatisticDate() {
+		return statisticDate;
+	}
+
+	public void setStatisticDate(String statisticDate) {
+		this.statisticDate = statisticDate;
 	}
 
 	public void setCreationDate(Date creationDate) {

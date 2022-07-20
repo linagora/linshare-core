@@ -35,6 +35,8 @@
  */
 package org.linagora.linshare.mongo.entities;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 
@@ -74,6 +76,8 @@ public class BasicStatistic {
 
 	protected Date creationDate;
 
+	protected String statisticDate;
+
 	protected AuditLogEntryType resourceType;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -91,6 +95,10 @@ public class BasicStatistic {
 		this.parentDomainUuid = parentDomainUuid;
 		this.action = entity.getAction();
 		this.creationDate = entity.getCreationDate();
+		this.statisticDate = LocalDate.ofInstant(
+			creationDate.toInstant(),
+			ZoneId.systemDefault()
+		).toString();
 		this.resourceType = entity.getType();
 		this.type = type;
 		this.uuid = UUID.randomUUID().toString();
@@ -104,6 +112,10 @@ public class BasicStatistic {
 		this.parentDomainUuid = parentDomainUuid;
 		this.action = action;
 		this.creationDate = creationDate;
+		this.statisticDate = LocalDate.ofInstant(
+				creationDate.toInstant(),
+				ZoneId.systemDefault()
+			).toString();
 		this.resourceType = resourceType;
 		this.type = type;
 		this.uuid = UUID.randomUUID().toString();
@@ -163,6 +175,14 @@ public class BasicStatistic {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public String getStatisticDate() {
+		return statisticDate;
+	}
+
+	public void setStatisticDate(String statisticDate) {
+		this.statisticDate = statisticDate;
 	}
 
 	public AuditLogEntryType getResourceType() {

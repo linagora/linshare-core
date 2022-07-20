@@ -358,6 +358,12 @@ public enum UpgradeTaskType {
 	UPGRADE_5_1_ADD_RELATED_DOMAIN_FIELD_TO_AUDIT,
 
 	/**
+	 * We only have the creationDate field (date and time),
+	 * we need to have only the date YYYY-MM-DD
+	 */
+	UPGRADE_6_0_ADD_STATISTIC_DATE_TO_EXISTING_STAT_RECORDS,
+
+	/**
 	 * Populating ExternalFavouriteRecipient new table
 	 */
 	OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
