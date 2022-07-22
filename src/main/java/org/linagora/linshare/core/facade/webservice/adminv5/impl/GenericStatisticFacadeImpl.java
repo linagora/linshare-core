@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.GenericStatisticField;
+import org.linagora.linshare.core.domain.entities.fields.GenericStatisticGroupByField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.adminv5.GenericStatisticFacade;
@@ -76,7 +77,7 @@ public class GenericStatisticFacadeImpl extends AdminGenericFacadeImpl implement
 			BasicStatisticType statisticType,
 			Set<LogAction> logActions,
 			Set<AuditLogEntryType> resourceTypes,
-			boolean sum,
+			boolean sum, Set<GenericStatisticGroupByField> sumBy,
 			Optional<String> beginDate, Optional<String> endDate,
 			Integer pageNumber, Integer pageSize) {
 		User authUser = checkAuthentication(Role.ADMIN);
@@ -87,7 +88,7 @@ public class GenericStatisticFacadeImpl extends AdminGenericFacadeImpl implement
 				sortOrder, sortField, statisticType,
 				logActions,
 				resourceTypes,
-				sum,
+				sum, sumBy,
 				beginDate, endDate, container);
 		return container;
 	}

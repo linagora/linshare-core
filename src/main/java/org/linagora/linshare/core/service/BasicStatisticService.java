@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.GenericStatisticField;
+import org.linagora.linshare.core.domain.entities.fields.GenericStatisticGroupByField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
 import org.linagora.linshare.webservice.utils.PageContainer;
@@ -75,6 +76,6 @@ public interface BasicStatisticService {
 			SortOrder sortOrder, GenericStatisticField sortField, BasicStatisticType statisticType,
 			Set<LogAction> logActions,
 			Set<AuditLogEntryType> resourceTypes,
-			boolean sum,
+			boolean sum, Set<GenericStatisticGroupByField> sumBy,
 			Optional<String> beginDate, Optional<String> endDate, PageContainer<BasicStatistic> container);
 }

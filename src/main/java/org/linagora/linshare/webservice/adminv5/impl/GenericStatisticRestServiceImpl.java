@@ -38,6 +38,7 @@ package org.linagora.linshare.webservice.adminv5.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.DefaultValue;
@@ -53,6 +54,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.fields.GenericStatisticField;
+import org.linagora.linshare.core.domain.entities.fields.GenericStatisticGroupByField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.facade.webservice.adminv5.GenericStatisticFacade;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
@@ -106,11 +108,11 @@ public class GenericStatisticRestServiceImpl extends WebserviceBase
 			)
 			@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
 		@Parameter(
-				description = "The admin can choose the field to sort with the stat's list to retrieve, if not set the creationDate date order will be choosen by default.",
+				description = "The admin can choose the field to sort with the stat's list to retrieve, if not set the value filed will be choosen by default.",
 				required = false,
-				schema = @Schema(implementation = GenericStatisticField.class, defaultValue = "creationDate")
+				schema = @Schema(implementation = GenericStatisticField.class, defaultValue = "value")
 			)
-			@QueryParam("sortField") @DefaultValue("creationDate") String sortField,
+			@QueryParam("sortField") @DefaultValue("value") String sortField,
 		@Parameter(
 				description = "The admin can choose the type of statistics to retrieve, if not set the DAILY type will be choosen by default.",
 				required = false,
@@ -135,6 +137,12 @@ public class GenericStatisticRestServiceImpl extends WebserviceBase
 			)
 			@QueryParam("sum") @DefaultValue("false") boolean sum,
 		@Parameter(
+				description = "TODO.",
+				required = false,
+				schema = @Schema(implementation = GenericStatisticGroupByField.class)
+			)
+			@QueryParam("sumBy") List<String> sumBy,
+		@Parameter(
 				description = "begin statistic creation date. format: yyyy-MM-dd",
 				schema = @Schema(implementation = Date.class)
 			)
@@ -154,6 +162,7 @@ public class GenericStatisticRestServiceImpl extends WebserviceBase
 				required = false
 			)
 			@QueryParam("size") @DefaultValue("100") Integer pageSize) {
+		Set<GenericStatisticGroupByField> sumByEnum = sumBy.stream().map(name -> GenericStatisticGroupByField.valueOf(name)).collect(Collectors.toSet());
 		PageContainer<BasicStatistic> container = statisticFacade.findAll(
 			domainUuid,
 			includeNestedDomains,
@@ -162,7 +171,7 @@ public class GenericStatisticRestServiceImpl extends WebserviceBase
 			BasicStatisticType.valueOf(statisticType),
 			logActions.stream().map(name -> LogAction.valueOf(name)).collect(Collectors.toSet()),
 			resourceTypes.stream().map(name -> AuditLogEntryType.valueOf(name)).collect(Collectors.toSet()),
-			sum,
+			sum, sumByEnum,
 			Optional.ofNullable(beginDate),
 			Optional.ofNullable(endDate), pageNumber,
 			pageSize);

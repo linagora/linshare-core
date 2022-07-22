@@ -43,5 +43,5 @@ import javax.ws.rs.core.Response;
 public interface GenericStatisticRestService {
 
 	Response findAll(String domainUuid, boolean includeNestedDomains, String sortOrder, String sortField, String statisticType,
-			List<String> logActions, List<String> resourceTypes, boolean sum, String beginDate, String endDate, Integer pageNumber, Integer pageSize);
+			List<String> logActions, List<String> resourceTypes, boolean sum, List<String> sumBy, String beginDate, String endDate, Integer pageNumber, Integer pageSize);
 }

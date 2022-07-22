@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.fields.GenericStatisticField;
+import org.linagora.linshare.core.domain.entities.fields.GenericStatisticGroupByField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
 import org.linagora.linshare.webservice.utils.PageContainer;
@@ -53,7 +54,7 @@ public interface GenericStatisticFacade {
 		SortOrder sortOrder,
 		GenericStatisticField sortField, BasicStatisticType statisticType,
 		Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
-		boolean sum,
+		boolean sum, Set<GenericStatisticGroupByField> sumBy,
 		Optional<String> beginDate, Optional<String> endDate,
 		Integer pageNumber, Integer pageSize);
 }

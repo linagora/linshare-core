@@ -54,6 +54,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.GenericStatisticField;
+import org.linagora.linshare.core.domain.entities.fields.GenericStatisticGroupByField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -72,6 +73,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.CountOperation.CountOperationBuilder;
 import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -167,7 +169,7 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 	public PageContainer<BasicStatistic> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains, Optional<String> accountUuid,
 			SortOrder sortOrder, GenericStatisticField sortField, BasicStatisticType statisticType,
 			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
-			boolean sum,
+			boolean sum, Set<GenericStatisticGroupByField> sumBy,
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<BasicStatistic> container) {
 		Validate.notNull(authUser, "authUser must be set.");
@@ -197,7 +199,7 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
 		if(sum) {
-			return findAllWithSum(domain, includeNestedDomains, sortOrder, sortField, logActions, resourceTypes, container, begin, end);
+			return findAllWithSum(domain, includeNestedDomains, sortOrder, sortField, logActions, resourceTypes, sumBy, container, begin, end);
 		}
 		return findAll(domain, includeNestedDomains, sortOrder, sortField, statisticType, logActions, resourceTypes, container, begin, end);
 	}
@@ -206,19 +208,19 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 			AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, GenericStatisticField sortField,
 			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
+			Set<GenericStatisticGroupByField> sumBy,
 			PageContainer<BasicStatistic> container,
 			LocalDate begin, LocalDate end) {
 		List<AggregationOperation> commonOperations = Lists.newArrayList();
 		if (includeNestedDomains) {
-			throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "You can not use Sum and includeNestedDomains at the same time. Not supported yet.");
-//			commonOperations.add(
-//				Aggregation.match(
-//					Criteria.where("").orOperator(
-//							Criteria.where("parentDomainUuid").is(domain.getUuid()),
-//							Criteria.where("domainUuid").is(domain.getUuid())
-//						)
-//				)
-//			);
+			commonOperations.add(
+				Aggregation.match(
+					Criteria.where("").orOperator(
+							Criteria.where("parentDomainUuid").is(domain.getUuid()),
+							Criteria.where("domainUuid").is(domain.getUuid())
+						)
+				)
+			);
 		} else {
 			commonOperations.add(
 				Aggregation.match(
@@ -246,39 +248,34 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 				)
 			);
 		}
+		/* I had to add this group by condition, even if the value is always the same.
+		 * Otherwise if I have only one field, ex "action" in the Aggregation.group,
+		 * only value is projected (even if we add the field to the projection.
+		 * Probably a bug, because the generated query returns the proper result in a proper
+		 * format when run with mongo shell.
+		 * Expected result : [ { "action": "CREATE", "type": "DAILY", "value": 76087 } ]
+		 *  Observed result: [ { "action": "null", "type": "DAILY", "value": 76087 } ]
+		 */
+		Fields fields = Fields.from(Fields.field("type", "type"));
+		for (GenericStatisticGroupByField field : sumBy) {
+			fields = fields.and(Fields.field(field.toString(), field.toString()));
+		}
 		commonOperations.add(
-			Aggregation.group(
-				Fields.from(
-					Fields.field("action", "action"),
-					Fields.field("resourceType", "resourceType")
-				)
-			).sum("value").as("value")
+			Aggregation.group(fields).sum("value").as("value")
 		);
 		commonOperations.add(
 			Aggregation.project(
-				Fields.from(
-					Fields.field("action", "action"),
-					Fields.field("resourceType", "resourceType"),
-					Fields.field("value", "value")
-				)
+					fields.and(Fields.field("value", "value"))
 			)
 		);
 		container.validateTotalPagesCount(
 			count(BasicStatistic.class, commonOperations)
 		);
-		if (sortField.equals(GenericStatisticField.creationDate)) {
-			commonOperations.add(Aggregation.sort(Sort.by(SortOrder.getSortDir(sortOrder), GenericStatisticField.domainUuid.toString())));
-		} else {
-			commonOperations.add(Aggregation.sort(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString())));
-		}
+		commonOperations.add(Aggregation.sort(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString())));
 		commonOperations.add(Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())));
 		commonOperations.add(Aggregation.limit(Long.valueOf(container.getPageSize())));
 		Aggregation agg = Aggregation.newAggregation(BasicStatistic.class, commonOperations);
 		List<BasicStatistic> results = mongoTemplate.aggregate(agg, BasicStatistic.class, BasicStatistic.class).getMappedResults();
-		Date now = timeService.dateNow();
-		results.stream().forEach(a -> {
-			a.setCreationDate(now);
-		});
 		return container.loadData(results);
 	}
 

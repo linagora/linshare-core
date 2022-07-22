@@ -33,13 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities.fields;
 
-public enum GenericStatisticField {
-	domainUuid,
-	parentDomainUuid,
+public enum GenericStatisticGroupByField {
 	action,
-	creationDate,
 	statisticDate,
-	resourceType,
-	type,
-	value;
+	resourceType;
 }

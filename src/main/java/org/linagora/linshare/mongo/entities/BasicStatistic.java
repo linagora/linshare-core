@@ -72,12 +72,16 @@ public class BasicStatistic {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String parentDomainUuid;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected LogAction action;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected Date creationDate;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String statisticDate;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected AuditLogEntryType resourceType;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
