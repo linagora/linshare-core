@@ -71,7 +71,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-@Path("/{domainUuid}/statistics/generics")
+@Path("/domains/{domainUuid}/statistics/generics")
 @Produces({ MediaType.APPLICATION_JSON })
 public class GenericStatisticRestServiceImpl extends WebserviceBase
 		implements GenericStatisticRestService {

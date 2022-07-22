@@ -65,7 +65,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-@Path("/{domainUuid}/statistics/mime_types")
+@Path("/domains/{domainUuid}/statistics/mime_types")
 @Produces({ MediaType.APPLICATION_JSON })
 public class MimeTypeStatisticRestServiceImpl extends WebserviceBase
 		implements MimeTypeStatisticRestService {
