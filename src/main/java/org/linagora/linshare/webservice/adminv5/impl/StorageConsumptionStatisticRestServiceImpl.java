@@ -91,6 +91,11 @@ public class StorageConsumptionStatisticRestServiceImpl extends WebserviceBase
 			@Parameter(description = "domain's uuid")
 				@PathParam("domainUuid") String domainUuid,
 			@Parameter(
+					description = "Include nested domains.",
+					schema = @Schema(implementation = Boolean.class)
+				)
+				@QueryParam("includeNestedDomains") @DefaultValue("false") boolean includeNestedDomains,
+			@Parameter(
 					description = "The admin can choose the order of sorting the stat's list to retrieve, if not set the ascending order will be applied by default.",
 					required = false,
 					schema = @Schema(implementation = SortOrder.class, defaultValue = "ASC")
@@ -128,7 +133,8 @@ public class StorageConsumptionStatisticRestServiceImpl extends WebserviceBase
 					required = false
 				)
 				@QueryParam("size") @DefaultValue("100") Integer pageSize) {
-		PageContainer<StorageConsumptionStatisticDto> container = statisticFacade.findAll(domainUuid,
+		PageContainer<StorageConsumptionStatisticDto> container = statisticFacade.findAll(
+				domainUuid, includeNestedDomains,
 				SortOrder.valueOf(sortOrder),
 				StorageConsumptionStatisticField.valueOf(sortField),
 				StatisticType.valueOf(statisticType),

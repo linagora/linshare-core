@@ -53,7 +53,8 @@ public interface StatisticService {
 	List<Statistic> findBetweenTwoDates(Account actor, Account owner, AbstractDomain domain, String beginDate,
 		String endDate, StatisticType statisticType) throws BusinessException;
 
-	PageContainer<Statistic> findAll(Account authUser, AbstractDomain domain, Optional<String> accountUuid,
+	PageContainer<Statistic> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains,
+		Optional<String> accountUuid,
 		SortOrder sortOrder, StorageConsumptionStatisticField sortField, StatisticType statisticType,
 		Optional<String> beginDate, Optional<String> endDate, PageContainer<Statistic> container);
 

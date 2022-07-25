@@ -46,7 +46,8 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface StatisticRepository extends GenericStatisticRepository<Statistic> {
 
-	PageContainer<Statistic> findAll(AbstractDomain domain, String accountUuid, SortOrder sortOrder,
+	PageContainer<Statistic> findAll(AbstractDomain domain, boolean includeNestedDomains, String accountUuid,
+			SortOrder sortOrder,
 			StorageConsumptionStatisticField sortField, StatisticType statisticType, LocalDate beginDate,
 			LocalDate endDate, PageContainer<Statistic> container);
 

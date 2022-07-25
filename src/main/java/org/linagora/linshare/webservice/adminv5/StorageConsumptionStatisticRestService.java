@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response;
 
 public interface StorageConsumptionStatisticRestService {
 
-	Response findAll(String domainUuid, String sortOrder, String sortField, String statisticType,
-			String beginDate, String endDate, Integer pageNumber, Integer pageSize);
+	Response findAll(String domainUuid, boolean includeNestedDomains, String sortOrder, String sortField,
+			String statisticType, String beginDate, String endDate, Integer pageNumber, Integer pageSize);
 
 }

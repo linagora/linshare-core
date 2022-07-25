@@ -71,7 +71,8 @@ public class StorageConsumptionStatisticFacadeImpl extends AdminGenericFacadeImp
 
 	@Override
 	public PageContainer<StorageConsumptionStatisticDto> findAll(
-			String domainUuid, SortOrder sortOrder,
+			String domainUuid, boolean includeNestedDomains,
+			SortOrder sortOrder,
 			StorageConsumptionStatisticField sortField, StatisticType statisticType,
 			Optional<String> beginDate,
 			Optional<String> endDate, Integer pageNumber,
@@ -80,7 +81,7 @@ public class StorageConsumptionStatisticFacadeImpl extends AdminGenericFacadeImp
 		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
 		PageContainer<Statistic> container = new PageContainer<>(pageNumber, pageSize);
-		container = statisticService.findAll(authUser, domain, Optional.empty(), sortOrder, sortField, statisticType, beginDate, endDate, container);
+		container = statisticService.findAll(authUser, domain, includeNestedDomains, Optional.empty(), sortOrder, sortField, statisticType, beginDate, endDate, container);
 		PageContainer<StorageConsumptionStatisticDto> dto = pageContainerAdaptor.convert(container, StorageConsumptionStatisticDto.toDto());
 		return dto;
 	}

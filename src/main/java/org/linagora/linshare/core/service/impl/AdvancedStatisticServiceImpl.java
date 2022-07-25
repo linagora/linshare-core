@@ -157,14 +157,16 @@ public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implemen
 		List<AggregationOperation> commonOperations = Lists.newArrayList();
 		if (includeNestedDomains) {
 			throw new BusinessException(BusinessErrorCode.NOT_IMPLEMENTED_YET, "You can not use Sum and includeNestedDomains at the same time. Not supported yet.");
-//			commonOperations.add(
-//				Aggregation.match(
-//					Criteria.where("").orOperator(
-//							Criteria.where("parentDomainUuid").is(domain.getUuid()),
-//							Criteria.where("domainUuid").is(domain.getUuid())
-//						)
-//				)
-//			);
+//			if (!domain.isRootDomain()) {
+//				commonOperations.add(
+//						Aggregation.match(
+//								Criteria.where("").orOperator(
+//										Criteria.where("parentDomainUuid").is(domain.getUuid()),
+//										Criteria.where("domainUuid").is(domain.getUuid())
+//										)
+//								)
+//						);
+//			}
 		} else {
 			commonOperations.add(
 				Aggregation.match(
@@ -234,12 +236,14 @@ public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implemen
 			PageContainer<MimeTypeStatistic> container, LocalDate begin, LocalDate end) {
 		Query query = new Query();
 		if (includeNestedDomains) {
-			query.addCriteria(
-				Criteria.where("").orOperator(
-					Criteria.where("parentDomainUuid").is(domain.getUuid()),
-					Criteria.where("domainUuid").is(domain.getUuid())
-			)
-		);
+			if (!domain.isRootDomain()) {
+				query.addCriteria(
+						Criteria.where("").orOperator(
+								Criteria.where("parentDomainUuid").is(domain.getUuid()),
+								Criteria.where("domainUuid").is(domain.getUuid())
+						)
+				);
+			}
 		} else {
 			query.addCriteria(Criteria.where("domainUuid").is(domain.getUuid()));
 		}

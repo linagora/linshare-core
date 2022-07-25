@@ -45,6 +45,7 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface StorageConsumptionStatisticFacade {
 
-	PageContainer<StorageConsumptionStatisticDto> findAll(String domainUuid, SortOrder sortOrder, StorageConsumptionStatisticField sortField,
+	PageContainer<StorageConsumptionStatisticDto> findAll(String domainUuid, boolean includeNestedDomains,
+			SortOrder sortOrder, StorageConsumptionStatisticField sortField,
 			StatisticType statisticType, Optional<String> beginDate, Optional<String> endDate, Integer pageNumber, Integer pageSize);
 }

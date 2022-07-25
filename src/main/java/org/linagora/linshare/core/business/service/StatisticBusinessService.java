@@ -53,7 +53,7 @@ public interface StatisticBusinessService {
 			AbstractDomain parentDomain, Date beginDate, Date endDate,
 			StatisticType statisticType);
 
-	PageContainer<Statistic> findAll(Account authUser, AbstractDomain domain, String accountUuid,
+	PageContainer<Statistic> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains, String accountUuid,
 			SortOrder sortOrder, StorageConsumptionStatisticField sortField, StatisticType statisticType,
 			LocalDate beginDate, LocalDate endDate, PageContainer<Statistic> container);
 }

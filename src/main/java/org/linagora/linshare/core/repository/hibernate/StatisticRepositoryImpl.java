@@ -84,28 +84,40 @@ public class StatisticRepositoryImpl extends GenericStatisticRepositoryImpl<Stat
 
 	@Override
 	public PageContainer<Statistic> findAll(
-			AbstractDomain domain, String accountUuid,
+			AbstractDomain domain, boolean includeNestedDomains,
+			String accountUuid,
 			SortOrder sortOrder, StorageConsumptionStatisticField sortField,
 			StatisticType statisticType,
 			LocalDate beginDate, LocalDate endDate,
 			PageContainer<Statistic> container) {
 		// count matched data
-		DetachedCriteria detachedCritCount = getCriteria(domain, beginDate, endDate, statisticType);
+		DetachedCriteria detachedCritCount = getCriteria(domain, includeNestedDomains, beginDate, endDate, statisticType);
 		detachedCritCount.setProjection(Projections.rowCount());
 		Long totalNumberElements = DataAccessUtils.longResult(findByCriteria(detachedCritCount));
 		// retrieve one page.
-		DetachedCriteria detachedCritData = getCriteria(domain, beginDate, endDate, statisticType);
+		DetachedCriteria detachedCritData = getCriteria(domain, includeNestedDomains, beginDate, endDate, statisticType);
 		Order order = SortOrder.ASC.equals(sortOrder) ? Order.asc(sortField.toString()) : Order.desc(sortField.toString());
 		detachedCritData.addOrder(order);
 		PageContainer<Statistic> res = findAll(detachedCritData, totalNumberElements, container);
 		return res;
 	}
 
-	private DetachedCriteria getCriteria(AbstractDomain domain, LocalDate beginDate, LocalDate endDate, StatisticType statisticType) {
+	private DetachedCriteria getCriteria(AbstractDomain domain, boolean includeNestedDomains, LocalDate beginDate, LocalDate endDate, StatisticType statisticType) {
 		DetachedCriteria crit = DetachedCriteria.forClass(classes.get(statisticType));
 		crit.add(Restrictions.ge("statisticDate", Date.valueOf(beginDate)));
 		crit.add(Restrictions.le("statisticDate", Date.valueOf(endDate)));
-		crit.add(Restrictions.eq("domain", domain));
+		if (includeNestedDomains) {
+			if (!domain.isRootDomain()) {
+				crit.add(
+					Restrictions.or(
+						Restrictions.eq("domain", domain),
+						Restrictions.eq("parentDomain", domain)
+					)
+				);
+			}
+		} else {
+			crit.add(Restrictions.eq("domain", domain));
+		}
 		return crit;
 	}
 }

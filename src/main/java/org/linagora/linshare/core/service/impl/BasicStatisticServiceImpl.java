@@ -212,14 +212,16 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 			LocalDate begin, LocalDate end) {
 		List<AggregationOperation> commonOperations = Lists.newArrayList();
 		if (includeNestedDomains) {
-			commonOperations.add(
-				Aggregation.match(
-					Criteria.where("").orOperator(
-							Criteria.where("parentDomainUuid").is(domain.getUuid()),
-							Criteria.where("domainUuid").is(domain.getUuid())
-						)
-				)
-			);
+			if (!domain.isRootDomain()) {
+				commonOperations.add(
+						Aggregation.match(
+								Criteria.where("").orOperator(
+										Criteria.where("parentDomainUuid").is(domain.getUuid()),
+										Criteria.where("domainUuid").is(domain.getUuid())
+										)
+								)
+						);
+			}
 		} else {
 			commonOperations.add(
 				Aggregation.match(
@@ -298,12 +300,14 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 			PageContainer<BasicStatistic> container, LocalDate begin, LocalDate end) {
 		Query query = new Query();
 		if (includeNestedDomains) {
-			query.addCriteria(
-				Criteria.where("").orOperator(
-					Criteria.where("parentDomainUuid").is(domain.getUuid()),
-					Criteria.where("domainUuid").is(domain.getUuid())
-				)
-			);
+			if (!domain.isRootDomain()) {
+				query.addCriteria(
+						Criteria.where("").orOperator(
+								Criteria.where("parentDomainUuid").is(domain.getUuid()),
+								Criteria.where("domainUuid").is(domain.getUuid())
+								)
+						);
+			}
 		} else {
 			query.addCriteria(Criteria.where("domainUuid").is(domain.getUuid()));
 		}

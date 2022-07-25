@@ -67,11 +67,11 @@ public class StatisticBusinessServiceImpl implements StatisticBusinessService {
 
 	@Override
 	public PageContainer<Statistic> findAll(
-			Account authUser, AbstractDomain domain, String accountUuid,
+			Account authUser, AbstractDomain domain, boolean includeNestedDomains, String accountUuid,
 			SortOrder sortOrder, StorageConsumptionStatisticField sortField,
 			StatisticType statisticType,
 			LocalDate beginDate, LocalDate endDate,
 			PageContainer<Statistic> container) {
-		return repository.findAll(domain, accountUuid, sortOrder, sortField, statisticType, beginDate, endDate, container);
+		return repository.findAll(domain, includeNestedDomains, accountUuid, sortOrder, sortField, statisticType, beginDate, endDate, container);
 	}
 }

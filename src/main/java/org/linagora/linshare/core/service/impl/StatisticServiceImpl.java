@@ -107,7 +107,8 @@ public class StatisticServiceImpl implements StatisticService {
 
 	@Override
 	public PageContainer<Statistic> findAll(
-			Account authUser, AbstractDomain domain, Optional<String> accountUuid,
+			Account authUser, AbstractDomain domain,
+			boolean includeNestedDomains, Optional<String> accountUuid,
 			SortOrder sortOrder, StorageConsumptionStatisticField sortField,
 			StatisticType statisticType,
 			Optional<String> beginDate, Optional<String> endDate,
@@ -138,6 +139,6 @@ public class StatisticServiceImpl implements StatisticService {
 		} catch (DateTimeParseException e) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
-		return statisticBusinessService.findAll(authUser, domain, null, sortOrder, sortField, statisticType, begin, end, container);
+		return statisticBusinessService.findAll(authUser, domain, includeNestedDomains, null, sortOrder, sortField, statisticType, begin, end, container);
 	}
 }
