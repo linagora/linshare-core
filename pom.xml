@@ -49,7 +49,6 @@
 		<developer>
 			<id>ysebahi</id>
 			<name>Yazid SEBAHI</name>
-			<email>ysebahi@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
@@ -59,7 +58,6 @@
 		<developer>
 			<id>mjebahi</id>
 			<name>Marwan JEBAHI</name>
-			<email>mjebahi@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
@@ -69,7 +67,6 @@
 		<developer>
 			<id>fbordjah</id>
 			<name>Fayçal BORDJAH</name>
-			<email>fbordjah@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
