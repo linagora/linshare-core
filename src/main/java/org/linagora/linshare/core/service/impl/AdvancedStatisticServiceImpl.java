@@ -119,7 +119,7 @@ public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implemen
 		Validate.notNull(authUser, "authUser must be set.");
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
 			throw new BusinessException(
-					BusinessErrorCode.STATISTIC_READ_DOMAIN_ERROR,
+					BusinessErrorCode.STATISTIC_FORBIDDEN,
 					"You are not allowed to query this domain");
 		}
 		LocalDate begin = timeService.now().minusYears(1);
