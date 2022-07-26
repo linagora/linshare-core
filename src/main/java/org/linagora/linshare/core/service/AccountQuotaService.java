@@ -79,6 +79,7 @@ public interface AccountQuotaService {
 			Account authUser,
 			AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<AccountQuota> container);
 

@@ -46,5 +46,6 @@ public interface AccountQuotaFacade {
 
 	PageContainer<AccountQuotaDto> findAll(String domainUuid, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
 			Optional<String> beginDate, Optional<String> endDate, Integer pageNumber, Integer pageSize);
 }

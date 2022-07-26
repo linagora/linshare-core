@@ -105,14 +105,15 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	public PageContainer<AccountQuota> findAll(
 			AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
 			Optional<LocalDate> beginDate, Optional<LocalDate> endDate,
 			PageContainer<AccountQuota> container) {
 		// count matched data
-		DetachedCriteria detachedCritCount = getCriteria(domain, includeNestedDomains, beginDate, endDate);
+		DetachedCriteria detachedCritCount = getCriteria(domain, includeNestedDomains, beginDate, endDate, greaterThanOrEqualTo, lessThanOrEqualTo);
 		detachedCritCount.setProjection(Projections.rowCount());
 		Long totalNumberElements = DataAccessUtils.longResult(findByCriteria(detachedCritCount));
 		// retrieve one page.
-		DetachedCriteria detachedCritData = getCriteria(domain, includeNestedDomains, beginDate, endDate);
+		DetachedCriteria detachedCritData = getCriteria(domain, includeNestedDomains, beginDate, endDate, greaterThanOrEqualTo, lessThanOrEqualTo);
 		Order order = null;
 		switch (sortField) {
 			case yesterdayUsedSpace:
@@ -130,7 +131,9 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 		return res;
 	}
 
-	private DetachedCriteria getCriteria(AbstractDomain domain, boolean includeNestedDomains, Optional<LocalDate> beginDate, Optional<LocalDate> endDate) {
+	private DetachedCriteria getCriteria(AbstractDomain domain, boolean includeNestedDomains,
+			Optional<LocalDate> beginDate, Optional<LocalDate> endDate,
+			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo) {
 		// only user quota ? not wg quota ?
 		DetachedCriteria crit = DetachedCriteria.forClass(AccountQuota.class);
 		if (beginDate.isPresent()) {
@@ -138,6 +141,12 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 		}
 		if (endDate.isPresent()) {
 			crit.add(Restrictions.le("batchModificationDate", java.sql.Date.valueOf(endDate.get())));
+		}
+		if (greaterThanOrEqualTo.isPresent()) {
+			crit.add(Restrictions.ge("currentValue", greaterThanOrEqualTo.get()));
+		}
+		if (lessThanOrEqualTo.isPresent()) {
+			crit.add(Restrictions.le("currentValue", lessThanOrEqualTo.get()));
 		}
 		if (includeNestedDomains) {
 			if (!domain.isRootDomain()) {

@@ -66,5 +66,6 @@ public interface AccountQuotaBusinessService {
 
 	PageContainer<AccountQuota> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
 			Optional<LocalDate>  beginDate, Optional<LocalDate> endDate, PageContainer<AccountQuota> container);
 }

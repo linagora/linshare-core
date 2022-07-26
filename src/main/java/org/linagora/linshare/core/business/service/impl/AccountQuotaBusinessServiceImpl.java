@@ -152,8 +152,9 @@ public class AccountQuotaBusinessServiceImpl extends GenericQuotaBusinessService
 	public PageContainer<AccountQuota> findAll(
 			Account authUser, AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
 			Optional<LocalDate> beginDate, Optional<LocalDate> endDate,
 			PageContainer<AccountQuota> container) {
-		return repository.findAll(domain, includeNestedDomains, sortOrder, sortField, beginDate, endDate, container);
+		return repository.findAll(domain, includeNestedDomains, sortOrder, sortField, greaterThanOrEqualTo, lessThanOrEqualTo, beginDate, endDate, container);
 	}
 }

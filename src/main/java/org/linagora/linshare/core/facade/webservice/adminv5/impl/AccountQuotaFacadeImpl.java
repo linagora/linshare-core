@@ -74,14 +74,17 @@ public class AccountQuotaFacadeImpl extends AdminGenericFacadeImpl implements Ac
 	}
 
 	@Override
-	public PageContainer<AccountQuotaDto> findAll(String domainUuid, boolean includeNestedDomains, SortOrder sortOrder,
-			AccountQuotaDtoField sortField, Optional<String> beginDate, Optional<String> endDate, Integer pageNumber,
+	public PageContainer<AccountQuotaDto> findAll(
+			String domainUuid, boolean includeNestedDomains,
+			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
+			Optional<String> beginDate, Optional<String> endDate, Integer pageNumber,
 			Integer pageSize) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
 		PageContainer<AccountQuota> container = new PageContainer<>(pageNumber, pageSize);
-		container = service.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, beginDate, endDate, container);
+		container = service.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, greaterThanOrEqualTo, lessThanOrEqualTo, beginDate, endDate, container);
 		PageContainer<AccountQuotaDto> dto = pageContainerAdaptor.convert(container, AccountQuotaDto.toDto());
 		return dto;
 	}

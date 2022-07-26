@@ -54,22 +54,19 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.linagora.linshare.core.service.AccountQuotaService;
-import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
 public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements AccountQuotaService {
 
 	private final AccountQuotaBusinessService business;
 	private final DomainPermissionBusinessService permissionService;
-	private final TimeService timeService;
 
 	public AccountQuotaServiceImpl(AbstractResourceAccessControl<Account, Account, Quota> rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService, AccountQuotaBusinessService business,
-			DomainPermissionBusinessService permissionService, TimeService timeService) {
+			DomainPermissionBusinessService permissionService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.business = business;
 		this.permissionService = permissionService;
-		this.timeService = timeService;
 	}
 
 	@Deprecated
@@ -135,6 +132,7 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 			Account authUser, AbstractDomain domain,
 			boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<AccountQuota> container) {
 		Validate.notNull(authUser, "authUser must be set.");
@@ -163,6 +161,6 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 		} catch (DateTimeParseException e) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
-		return business.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, begin, end, container);
+		return business.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, greaterThanOrEqualTo, lessThanOrEqualTo, begin, end, container);
 	}
 }

@@ -109,6 +109,10 @@ public class AccountQuotaRestServiceImpl extends WebserviceBase implements Accou
 					schema = @Schema(implementation = AccountQuotaDtoField.class, defaultValue = "batchModificationDate")
 				)
 				@QueryParam("sortField") @DefaultValue("batchModificationDate") String sortField,
+			@Parameter(description = "It allows administrator to retrieve sharedSpaces with members number greater than the entered value (Should be more than 1).", required = false)
+				@QueryParam("greaterThanOrEqualTo") Long greaterThanOrEqualTo,
+			@Parameter(description = "It allows administrator to retrieve sharedSpaces with members number less than the entered value (Should be more than 1).", required = false)
+				@QueryParam("lessThanOrEqualTo") Long lessThanOrEqualTo,
 			@Parameter(
 					description = "begin statistic creation date. format: yyyy-MM-dd",
 					schema = @Schema(implementation = Date.class)
@@ -133,6 +137,8 @@ public class AccountQuotaRestServiceImpl extends WebserviceBase implements Accou
 				domainUuid, includeNestedDomains,
 				SortOrder.valueOf(sortOrder),
 				AccountQuotaDtoField.valueOf(sortField),
+				Optional.ofNullable(greaterThanOrEqualTo),
+				Optional.ofNullable(lessThanOrEqualTo),
 				Optional.ofNullable(beginDate),
 				Optional.ofNullable(endDate), pageNumber,
 				pageSize);

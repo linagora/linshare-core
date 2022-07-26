@@ -45,6 +45,7 @@ public interface AccountQuotaRestService {
 	AccountQuotaDto find(String domainUuid, String uuid, boolean realTime) throws BusinessException;
 
 	Response findAll(String domainUuid, boolean includeNestedDomains, String sortOrder, String sortField,
+			Long greaterThanOrEqualTo, Long lessThanOrEqualTo,
 			String beginDate, String endDate, Integer pageNumber, Integer pageSize);
 
 }
