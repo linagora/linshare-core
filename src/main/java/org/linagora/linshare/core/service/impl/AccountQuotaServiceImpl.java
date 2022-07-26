@@ -143,22 +143,22 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 					BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
 					"You are not allowed to query this domain");
 		}
-		LocalDate begin = timeService.now().minusYears(1);
-		LocalDate end = timeService.now();
+		Optional<LocalDate> begin = Optional.empty();
+		Optional<LocalDate> end = Optional.empty();
 		try {
 			if (beginDate.isPresent()) {
-				begin = LocalDate.parse(beginDate.get());
+				begin = Optional.of(LocalDate.parse(beginDate.get()));
 			}
 			if (endDate.isPresent()) {
-				end = LocalDate.parse(endDate.get());
+				end = Optional.of(LocalDate.parse(endDate.get()));
 			}
-			// just to be sure that data from current date is included. 
-			end = end.plusDays(1);
-			if (end.isBefore(begin)) {
-				throw new BusinessException(
-					BusinessErrorCode.STATISTIC_DATE_RANGE_ERROR,
-					String.format("begin date (%s) must be before end date (%s)", begin, end)
-				);
+			if (begin.isPresent() && end.isPresent()) {
+				if (end.get().isBefore(begin.get())) {
+					throw new BusinessException(
+							BusinessErrorCode.STATISTIC_DATE_RANGE_ERROR,
+							String.format("begin date (%s) must be before end date (%s)", begin.get(), end.get())
+					);
+				}
 			}
 		} catch (DateTimeParseException e) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());

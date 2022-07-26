@@ -38,6 +38,7 @@ package org.linagora.linshare.core.business.service;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -65,5 +66,5 @@ public interface AccountQuotaBusinessService {
 
 	PageContainer<AccountQuota> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
-			LocalDate beginDate, LocalDate endDate, PageContainer<AccountQuota> container);
+			Optional<LocalDate>  beginDate, Optional<LocalDate> endDate, PageContainer<AccountQuota> container);
 }

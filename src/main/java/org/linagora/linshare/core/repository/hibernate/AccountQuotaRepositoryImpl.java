@@ -38,6 +38,7 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -104,7 +105,7 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	public PageContainer<AccountQuota> findAll(
 			AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
-			LocalDate beginDate, LocalDate endDate,
+			Optional<LocalDate> beginDate, Optional<LocalDate> endDate,
 			PageContainer<AccountQuota> container) {
 		// count matched data
 		DetachedCriteria detachedCritCount = getCriteria(domain, includeNestedDomains, beginDate, endDate);
@@ -129,11 +130,15 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 		return res;
 	}
 
-	private DetachedCriteria getCriteria(AbstractDomain domain, boolean includeNestedDomains, LocalDate beginDate, LocalDate endDate) {
+	private DetachedCriteria getCriteria(AbstractDomain domain, boolean includeNestedDomains, Optional<LocalDate> beginDate, Optional<LocalDate> endDate) {
 		// only user quota ? not wg quota ?
 		DetachedCriteria crit = DetachedCriteria.forClass(AccountQuota.class);
-		crit.add(Restrictions.ge("batchModificationDate", java.sql.Date.valueOf(beginDate)));
-		crit.add(Restrictions.le("batchModificationDate", java.sql.Date.valueOf(endDate)));
+		if (beginDate.isPresent()) {
+			crit.add(Restrictions.ge("batchModificationDate", java.sql.Date.valueOf(beginDate.get())));
+		}
+		if (endDate.isPresent()) {
+			crit.add(Restrictions.le("batchModificationDate", java.sql.Date.valueOf(endDate.get())));
+		}
 		if (includeNestedDomains) {
 			if (!domain.isRootDomain()) {
 				crit.add(
