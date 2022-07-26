@@ -53,7 +53,7 @@ import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
+import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
 import org.linagora.linshare.core.service.AccountQuotaService;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
@@ -62,7 +62,8 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 	private final AccountQuotaBusinessService business;
 	private final DomainPermissionBusinessService permissionService;
 
-	public AccountQuotaServiceImpl(AbstractResourceAccessControl<Account, Account, Quota> rac,
+	public AccountQuotaServiceImpl(
+			QuotaResourceAccessControl rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService, AccountQuotaBusinessService business,
 			DomainPermissionBusinessService permissionService) {
 		super(rac, sanitizerInputHtmlBusinessService);
@@ -75,11 +76,29 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 	public AccountQuota find(Account actor, String uuid) {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(uuid, "Uuid must be set.");
+		AccountQuota accountQuota = business.find(uuid);
 //		checkReadPermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		if (accountQuota == null) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
+					"Can not found account quota with uuid : " + uuid);
+		}
+		return accountQuota;
+	}
+
+	@Override
+	public AccountQuota find(Account actor, AbstractDomain domain, String uuid) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notEmpty(uuid, "Uuid must be set.");
 		AccountQuota accountQuota = business.find(uuid);
 		if (accountQuota == null) {
 			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
 					"Can not found account quota with uuid : " + uuid);
+		}
+//		checkReadPermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		if (!permissionService.isAdminforThisDomain(actor, domain) || !domain.equals(accountQuota.getDomain())) {
+			throw new BusinessException(
+					BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
+					"You are not allowed to query this domain");
 		}
 		return accountQuota;
 	}

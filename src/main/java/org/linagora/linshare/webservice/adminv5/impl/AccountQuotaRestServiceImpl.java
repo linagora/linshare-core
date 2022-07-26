@@ -99,20 +99,20 @@ public class AccountQuotaRestServiceImpl extends WebserviceBase implements Accou
 				)
 				@QueryParam("includeNestedDomains") @DefaultValue("false") boolean includeNestedDomains,
 			@Parameter(
-					description = "The admin can choose the order of sorting the stat's list to retrieve, if not set the ascending order will be applied by default.",
+					description = "The admin can choose the order of sorting the account quota list to retrieve, if not set the ascending order will be applied by default.",
 					required = false,
 					schema = @Schema(implementation = SortOrder.class, defaultValue = "ASC")
 				)
 				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
 			@Parameter(
-					description = "The admin can choose the field to sort with the stat's list to retrieve, if not set the statisticDate date order will be choosen by default.",
+					description = "The admin can choose the field to sort with the account quota list to retrieve, if not set the batch modification date date order will be choosen by default.",
 					required = false,
 					schema = @Schema(implementation = AccountQuotaDtoField.class, defaultValue = "batchModificationDate")
 				)
 				@QueryParam("sortField") @DefaultValue("batchModificationDate") String sortField,
-			@Parameter(description = "It allows administrator to retrieve sharedSpaces with members number greater than the entered value (Should be more than 1).", required = false)
+			@Parameter(description = "It allows administrator to retrieve account quota with used space greater than the entered value.", required = false)
 				@QueryParam("greaterThanOrEqualTo") Long greaterThanOrEqualTo,
-			@Parameter(description = "It allows administrator to retrieve sharedSpaces with members number less than the entered value (Should be more than 1).", required = false)
+			@Parameter(description = "It allows administrator to retrieve account quota with used space less than the entered value.", required = false)
 				@QueryParam("lessThanOrEqualTo") Long lessThanOrEqualTo,
 			@Parameter(
 					description = "Filter by container type.",
@@ -120,12 +120,12 @@ public class AccountQuotaRestServiceImpl extends WebserviceBase implements Accou
 				)
 				@QueryParam("type") String containerQuotaType,
 			@Parameter(
-					description = "begin statistic creation date. format: yyyy-MM-dd",
+					description = "Filter by account quota modification date. format: yyyy-MM-dd",
 					schema = @Schema(implementation = Date.class)
 				)
 				@QueryParam("beginDate") String beginDate,
 			@Parameter(
-					description = "end statistic creation date. format: yyyy-MM-dd",
+					description = "Filter by account quota modification date. format: yyyy-MM-dd",
 					schema = @Schema(implementation = Date.class)
 				)
 				@QueryParam("endDate") String endDate,
@@ -152,9 +152,23 @@ public class AccountQuotaRestServiceImpl extends WebserviceBase implements Accou
 		return pageResponseBuilder.build(container);
 	}
 
+	@Path("/{uuid}")
+	@GET
+	@Operation(summary = "Find an account quota.", responses = {
+		@ApiResponse(content = @Content(schema = @Schema(implementation = AccountQuotaDto.class)), responseCode = "200")
+	})
 	@Override
-	public AccountQuotaDto find(String domainUuid, String uuid, boolean realTime) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+	public AccountQuotaDto find(
+			@Parameter(description = "domain's uuid.", required = true)
+				@PathParam("domainUuid") String domainUuid,
+			@Parameter(description = "account quota's uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@Parameter(
+					description = "realTime for usedSpace.",
+					schema = @Schema(implementation = Boolean.class)
+				)
+				@QueryParam("realTime") @DefaultValue("false") boolean realTime)
+			throws BusinessException {
+		return accountQuotaFacade.find(domainUuid, uuid, realTime);
 	}
 }

@@ -44,6 +44,8 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface AccountQuotaFacade {
 
+	AccountQuotaDto find(String domainUuid, String uuid, boolean realTime);
+
 	PageContainer<AccountQuotaDto> findAll(String domainUuid, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
 			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,

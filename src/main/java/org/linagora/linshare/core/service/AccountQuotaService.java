@@ -85,4 +85,6 @@ public interface AccountQuotaService {
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<AccountQuota> container);
 
+	AccountQuota find(Account actor, AbstractDomain domain, String uuid);
+
 }

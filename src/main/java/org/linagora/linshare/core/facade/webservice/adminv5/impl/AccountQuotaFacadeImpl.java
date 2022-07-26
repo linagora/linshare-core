@@ -75,6 +75,19 @@ public class AccountQuotaFacadeImpl extends AdminGenericFacadeImpl implements Ac
 	}
 
 	@Override
+	public AccountQuotaDto find(String domainUuid, String uuid, boolean realTime) {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
+		Validate.notEmpty(uuid, "Missing account quota uuid in the path.");
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		AccountQuota quota = service.find(authUser, domain, uuid);
+		if (realTime) {
+			quota.setCurrentValue(quotaService.getRealTimeUsedSpace(authUser, authUser, uuid));
+		}
+		return new AccountQuotaDto(quota);
+	}
+
+	@Override
 	public PageContainer<AccountQuotaDto> findAll(
 			String domainUuid, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
