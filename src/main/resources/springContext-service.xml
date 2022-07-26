@@ -305,6 +305,8 @@
 	<bean id="accountQuotaService" class="org.linagora.linshare.core.service.impl.AccountQuotaServiceImpl">
 		<constructor-arg ref="accountQuotaBusinessService" />
 		<constructor-arg ref="quotaResourceAccessControl" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="timeService" />
 	</bean>
 	<bean id="domainQuotaService" class="org.linagora.linshare.core.service.impl.DomainQuotaServiceImpl">
 		<constructor-arg ref="domainQuotaBusinessService" />

@@ -36,9 +36,14 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface AccountQuotaService {
 
@@ -69,5 +74,12 @@ public interface AccountQuotaService {
 	 * @return {@link AccountQuota}
 	 */
 	AccountQuota update(Account authUser, Account actor, String userUuid, AccountQuota accountQuota);
+
+	PageContainer<AccountQuota> findAll(
+			Account authUser,
+			AbstractDomain domain, boolean includeNestedDomains,
+			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			Optional<String> beginDate, Optional<String> endDate,
+			PageContainer<AccountQuota> container);
 
 }

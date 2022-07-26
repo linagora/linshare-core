@@ -35,16 +35,22 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
@@ -92,5 +98,54 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 			return DataAccessUtils.longResult(list);
 		}
 		return 0L;
+	}
+
+	@Override
+	public PageContainer<AccountQuota> findAll(
+			AbstractDomain domain, boolean includeNestedDomains,
+			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			LocalDate beginDate, LocalDate endDate,
+			PageContainer<AccountQuota> container) {
+		// count matched data
+		DetachedCriteria detachedCritCount = getCriteria(domain, includeNestedDomains, beginDate, endDate);
+		detachedCritCount.setProjection(Projections.rowCount());
+		Long totalNumberElements = DataAccessUtils.longResult(findByCriteria(detachedCritCount));
+		// retrieve one page.
+		DetachedCriteria detachedCritData = getCriteria(domain, includeNestedDomains, beginDate, endDate);
+		Order order = null;
+		switch (sortField) {
+			case yesterdayUsedSpace:
+				order = SortOrder.ASC.equals(sortOrder) ? Order.asc("lastValue") : Order.desc("lastValue");
+				break;
+			case usedSpace:
+				order = SortOrder.ASC.equals(sortOrder) ? Order.asc("currentValue") : Order.desc("currentValue");
+				break;
+			default:
+				order = SortOrder.ASC.equals(sortOrder) ? Order.asc(sortField.toString()) : Order.desc(sortField.toString());
+				break;
+		}
+		detachedCritData.addOrder(order);
+		PageContainer<AccountQuota> res = findAll(detachedCritData, totalNumberElements, container);
+		return res;
+	}
+
+	private DetachedCriteria getCriteria(AbstractDomain domain, boolean includeNestedDomains, LocalDate beginDate, LocalDate endDate) {
+		// only user quota ? not wg quota ?
+		DetachedCriteria crit = DetachedCriteria.forClass(AccountQuota.class);
+		crit.add(Restrictions.ge("batchModificationDate", java.sql.Date.valueOf(beginDate)));
+		crit.add(Restrictions.le("batchModificationDate", java.sql.Date.valueOf(endDate)));
+		if (includeNestedDomains) {
+			if (!domain.isRootDomain()) {
+				crit.add(
+					Restrictions.or(
+						Restrictions.eq("domain", domain),
+						Restrictions.eq("parentDomain", domain)
+					)
+				);
+			}
+		} else {
+			crit.add(Restrictions.eq("domain", domain));
+		}
+		return crit;
 	}
 }

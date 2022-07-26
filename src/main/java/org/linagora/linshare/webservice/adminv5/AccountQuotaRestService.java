@@ -33,40 +33,18 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.webservice.adminv5;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import javax.ws.rs.core.Response;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
-import org.linagora.linshare.core.domain.entities.fields.SortOrder;
-import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AccountQuotaDto;
 
-public interface AccountQuotaRepository extends GenericQuotaRepository<AccountQuota> {
+public interface AccountQuotaRestService {
 
-	AccountQuota find(Account account);
+	AccountQuotaDto find(String domainUuid, String uuid, boolean realTime) throws BusinessException;
 
-	/**
-	 * Return all domain's uuid from all updated quota accounts today (between
-	 * today 00:00:00 and now) Precondition : StatisticDailyUserBatchImpl and
-	 * StatisticDailyThreadBatchImpl batches were run previously to update these
-	 * quota accounts.
-	 * @param startDate TODO
-	 * 
-	 * @return List<String>
-	 */
-	List<String> findDomainUuidByBatchModificationDate(Date startDate);
+	Response findAll(String domainUuid, boolean includeNestedDomains, String sortOrder, String sortField,
+			String beginDate, String endDate, Integer pageNumber, Integer pageSize);
 
-	Long sumOfCurrentValue(ContainerQuota ensembleQuota);
-
-	PageContainer<AccountQuota> findAll(AbstractDomain domain, boolean includeNestedDomains,
-			SortOrder sortOrder,
-			AccountQuotaDtoField sortField,
-			LocalDate beginDate, LocalDate endDate,
-			PageContainer<AccountQuota> container);
 }

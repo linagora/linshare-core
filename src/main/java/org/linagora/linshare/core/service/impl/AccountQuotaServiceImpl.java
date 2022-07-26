@@ -35,29 +35,41 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
+import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.linagora.linshare.core.service.AccountQuotaService;
+import org.linagora.linshare.core.service.TimeService;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements AccountQuotaService {
 
-	private AccountQuotaBusinessService business;
+	private final AccountQuotaBusinessService business;
+	private final DomainPermissionBusinessService permissionService;
+	private final TimeService timeService;
 
-	public AccountQuotaServiceImpl(QuotaResourceAccessControl rac,
-			AccountQuotaBusinessService accountQuotaBusinessService,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService
-			) {
+	public AccountQuotaServiceImpl(AbstractResourceAccessControl<Account, Account, Quota> rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService, AccountQuotaBusinessService business,
+			DomainPermissionBusinessService permissionService, TimeService timeService) {
 		super(rac, sanitizerInputHtmlBusinessService);
-		this.business = accountQuotaBusinessService;
+		this.business = business;
+		this.permissionService = permissionService;
+		this.timeService = timeService;
 	}
 
 	@Deprecated
@@ -118,4 +130,39 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 		return business.update(entity, accountQuota);
 	}
 
+	@Override
+	public PageContainer<AccountQuota> findAll(
+			Account authUser, AbstractDomain domain,
+			boolean includeNestedDomains,
+			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			Optional<String> beginDate, Optional<String> endDate,
+			PageContainer<AccountQuota> container) {
+		Validate.notNull(authUser, "authUser must be set.");
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(
+					BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
+					"You are not allowed to query this domain");
+		}
+		LocalDate begin = timeService.now().minusYears(1);
+		LocalDate end = timeService.now();
+		try {
+			if (beginDate.isPresent()) {
+				begin = LocalDate.parse(beginDate.get());
+			}
+			if (endDate.isPresent()) {
+				end = LocalDate.parse(endDate.get());
+			}
+			// just to be sure that data from current date is included. 
+			end = end.plusDays(1);
+			if (end.isBefore(begin)) {
+				throw new BusinessException(
+					BusinessErrorCode.STATISTIC_DATE_RANGE_ERROR,
+					String.format("begin date (%s) must be before end date (%s)", begin, end)
+				);
+			}
+		} catch (DateTimeParseException e) {
+			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
+		}
+		return business.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, begin, end, container);
+	}
 }

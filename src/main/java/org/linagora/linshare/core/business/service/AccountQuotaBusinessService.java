@@ -35,12 +35,17 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface AccountQuotaBusinessService {
 
@@ -57,4 +62,8 @@ public interface AccountQuotaBusinessService {
 	AccountQuota update(AccountQuota entity, AccountQuota dto) throws BusinessException;
 
 	List<String> findDomainUuidByBatchModificationDate(Date startDate);
+
+	PageContainer<AccountQuota> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains,
+			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			LocalDate beginDate, LocalDate endDate, PageContainer<AccountQuota> container);
 }

@@ -35,17 +35,22 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,5 +145,14 @@ public class AccountQuotaBusinessServiceImpl extends GenericQuotaBusinessService
 	@Override
 	public List<AccountQuota> findAll() throws BusinessException {
 		return repository.findAll();
+	}
+
+	@Override
+	public PageContainer<AccountQuota> findAll(
+			Account authUser, AbstractDomain domain, boolean includeNestedDomains,
+			SortOrder sortOrder, AccountQuotaDtoField sortField,
+			LocalDate beginDate, LocalDate endDate,
+			PageContainer<AccountQuota> container) {
+		return repository.findAll(domain, includeNestedDomains, sortOrder, sortField, beginDate, endDate, container);
 	}
 }

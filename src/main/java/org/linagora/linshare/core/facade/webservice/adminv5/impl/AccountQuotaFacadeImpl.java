@@ -33,40 +33,56 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.util.Optional;
 
+import org.jsoup.helper.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
+import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
+import org.linagora.linshare.core.facade.webservice.adminv5.AccountQuotaFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AccountQuotaDto;
+import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountQuotaService;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
 
-public interface AccountQuotaRepository extends GenericQuotaRepository<AccountQuota> {
+public class AccountQuotaFacadeImpl extends AdminGenericFacadeImpl implements AccountQuotaFacade {
 
-	AccountQuota find(Account account);
+	private static PageContainerAdaptor<AccountQuota, AccountQuotaDto> pageContainerAdaptor = new PageContainerAdaptor<>();
 
-	/**
-	 * Return all domain's uuid from all updated quota accounts today (between
-	 * today 00:00:00 and now) Precondition : StatisticDailyUserBatchImpl and
-	 * StatisticDailyThreadBatchImpl batches were run previously to update these
-	 * quota accounts.
-	 * @param startDate TODO
-	 * 
-	 * @return List<String>
-	 */
-	List<String> findDomainUuidByBatchModificationDate(Date startDate);
+	private final AbstractDomainService abstractDomainService;
+	private final AccountQuotaService service;
+	private final QuotaService quotaService;
 
-	Long sumOfCurrentValue(ContainerQuota ensembleQuota);
+	public AccountQuotaFacadeImpl(
+			AccountService accountService,
+			AbstractDomainService abstractDomainService,
+			AccountQuotaService service,
+			QuotaService quotaService) {
+		super(accountService);
+		this.abstractDomainService = abstractDomainService;
+		this.service = service;
+		this.quotaService = quotaService;
+	}
 
-	PageContainer<AccountQuota> findAll(AbstractDomain domain, boolean includeNestedDomains,
-			SortOrder sortOrder,
-			AccountQuotaDtoField sortField,
-			LocalDate beginDate, LocalDate endDate,
-			PageContainer<AccountQuota> container);
+	@Override
+	public PageContainer<AccountQuotaDto> findAll(String domainUuid, boolean includeNestedDomains, SortOrder sortOrder,
+			AccountQuotaDtoField sortField, Optional<String> beginDate, Optional<String> endDate, Integer pageNumber,
+			Integer pageSize) {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		PageContainer<AccountQuota> container = new PageContainer<>(pageNumber, pageSize);
+		container = service.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, beginDate, endDate, container);
+		PageContainer<AccountQuotaDto> dto = pageContainerAdaptor.convert(container, AccountQuotaDto.toDto());
+		return dto;
+	}
 }
