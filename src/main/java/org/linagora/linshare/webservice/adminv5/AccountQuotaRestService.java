@@ -46,6 +46,7 @@ public interface AccountQuotaRestService {
 
 	Response findAll(String domainUuid, boolean includeNestedDomains, String sortOrder, String sortField,
 			Long greaterThanOrEqualTo, Long lessThanOrEqualTo,
+			String containerQuotaType,
 			String beginDate, String endDate, Integer pageNumber, Integer pageSize);
 
 }

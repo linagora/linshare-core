@@ -48,6 +48,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -114,6 +115,11 @@ public class AccountQuotaRestServiceImpl extends WebserviceBase implements Accou
 			@Parameter(description = "It allows administrator to retrieve sharedSpaces with members number less than the entered value (Should be more than 1).", required = false)
 				@QueryParam("lessThanOrEqualTo") Long lessThanOrEqualTo,
 			@Parameter(
+					description = "Filter by container type.",
+					schema = @Schema(implementation = ContainerQuotaType.class)
+				)
+				@QueryParam("type") String containerQuotaType,
+			@Parameter(
 					description = "begin statistic creation date. format: yyyy-MM-dd",
 					schema = @Schema(implementation = Date.class)
 				)
@@ -139,6 +145,7 @@ public class AccountQuotaRestServiceImpl extends WebserviceBase implements Accou
 				AccountQuotaDtoField.valueOf(sortField),
 				Optional.ofNullable(greaterThanOrEqualTo),
 				Optional.ofNullable(lessThanOrEqualTo),
+				Optional.ofNullable(containerQuotaType),
 				Optional.ofNullable(beginDate),
 				Optional.ofNullable(endDate), pageNumber,
 				pageSize);

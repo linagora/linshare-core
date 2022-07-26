@@ -44,6 +44,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
@@ -133,6 +134,7 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 			boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
 			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
+			Optional<ContainerQuotaType> containerQuotaType,
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<AccountQuota> container) {
 		Validate.notNull(authUser, "authUser must be set.");
@@ -161,6 +163,6 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 		} catch (DateTimeParseException e) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
-		return business.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, greaterThanOrEqualTo, lessThanOrEqualTo, begin, end, container);
+		return business.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, greaterThanOrEqualTo, lessThanOrEqualTo, containerQuotaType, begin, end, container);
 	}
 }

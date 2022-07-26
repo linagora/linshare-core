@@ -38,6 +38,7 @@ package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 import java.util.Optional;
 
 import org.jsoup.helper.Validate;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
@@ -78,13 +79,19 @@ public class AccountQuotaFacadeImpl extends AdminGenericFacadeImpl implements Ac
 			String domainUuid, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
 			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
+			Optional<String> containerQuotaType,
 			Optional<String> beginDate, Optional<String> endDate, Integer pageNumber,
 			Integer pageSize) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainUuid, "Missing domain uuid in the path.");
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
 		PageContainer<AccountQuota> container = new PageContainer<>(pageNumber, pageSize);
-		container = service.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, greaterThanOrEqualTo, lessThanOrEqualTo, beginDate, endDate, container);
+		Optional<ContainerQuotaType> containerQuotaTypeEnum = Optional.empty();
+		if (containerQuotaType.isPresent()) {
+			containerQuotaTypeEnum = Optional.of(ContainerQuotaType.valueOf(containerQuotaType.get()));
+		}
+		container = service.findAll(authUser, domain, includeNestedDomains, sortOrder, sortField, greaterThanOrEqualTo, lessThanOrEqualTo,
+				containerQuotaTypeEnum, beginDate, endDate, container);
 		PageContainer<AccountQuotaDto> dto = pageContainerAdaptor.convert(container, AccountQuotaDto.toDto());
 		return dto;
 	}

@@ -38,6 +38,7 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
@@ -80,6 +81,7 @@ public interface AccountQuotaService {
 			AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
 			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
+			Optional<ContainerQuotaType> containerQuotaType,
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<AccountQuota> container);
 

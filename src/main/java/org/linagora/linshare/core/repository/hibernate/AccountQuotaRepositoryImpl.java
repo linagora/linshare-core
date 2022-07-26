@@ -44,6 +44,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
@@ -106,14 +107,15 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 			AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
 			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
+			Optional<ContainerQuotaType> containerQuotaType,
 			Optional<LocalDate> beginDate, Optional<LocalDate> endDate,
 			PageContainer<AccountQuota> container) {
 		// count matched data
-		DetachedCriteria detachedCritCount = getCriteria(domain, includeNestedDomains, beginDate, endDate, greaterThanOrEqualTo, lessThanOrEqualTo);
+		DetachedCriteria detachedCritCount = getCriteria(domain, includeNestedDomains, beginDate, endDate, greaterThanOrEqualTo, lessThanOrEqualTo, containerQuotaType);
 		detachedCritCount.setProjection(Projections.rowCount());
 		Long totalNumberElements = DataAccessUtils.longResult(findByCriteria(detachedCritCount));
 		// retrieve one page.
-		DetachedCriteria detachedCritData = getCriteria(domain, includeNestedDomains, beginDate, endDate, greaterThanOrEqualTo, lessThanOrEqualTo);
+		DetachedCriteria detachedCritData = getCriteria(domain, includeNestedDomains, beginDate, endDate, greaterThanOrEqualTo, lessThanOrEqualTo, containerQuotaType);
 		Order order = null;
 		switch (sortField) {
 			case yesterdayUsedSpace:
@@ -133,7 +135,8 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 
 	private DetachedCriteria getCriteria(AbstractDomain domain, boolean includeNestedDomains,
 			Optional<LocalDate> beginDate, Optional<LocalDate> endDate,
-			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo) {
+			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
+			Optional<ContainerQuotaType> containerQuotaType) {
 		// only user quota ? not wg quota ?
 		DetachedCriteria crit = DetachedCriteria.forClass(AccountQuota.class);
 		if (beginDate.isPresent()) {
@@ -147,6 +150,10 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 		}
 		if (lessThanOrEqualTo.isPresent()) {
 			crit.add(Restrictions.le("currentValue", lessThanOrEqualTo.get()));
+		}
+		if (containerQuotaType.isPresent()) {
+			crit.createAlias("containerQuota", "containerQuota");
+			crit.add(Restrictions.eq("containerQuota.containerQuotaType", containerQuotaType.get()));
 		}
 		if (includeNestedDomains) {
 			if (!domain.isRootDomain()) {

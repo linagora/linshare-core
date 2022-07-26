@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
@@ -67,5 +68,6 @@ public interface AccountQuotaBusinessService {
 	PageContainer<AccountQuota> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, AccountQuotaDtoField sortField,
 			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
+			Optional<ContainerQuotaType> containerQuotaType,
 			Optional<LocalDate>  beginDate, Optional<LocalDate> endDate, PageContainer<AccountQuota> container);
 }
