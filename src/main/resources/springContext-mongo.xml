@@ -1,60 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-          xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="
           http://www.springframework.org/schema/data/mongo
-          http://www.springframework.org/schema/data/mongo/spring-mongo-2.0.xsd
+          http://www.springframework.org/schema/data/mongo/spring-mongo-3.0.xsd
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-	<!-- com.mongodb.MongoClient -->
-	<mongo:mongo-client
-		id="mongoClientDefault"
-		replica-set="${linshare.mongo.data.replicaset}"
-		credentials="${linshare.mongo.data.credentials}">
-		<mongo:client-options connections-per-host="8"
-			threads-allowed-to-block-for-connection-multiplier="4"
-			connect-timeout="${linshare.mongo.connect.timeout}"
-			max-wait-time="1500" socket-keep-alive="true"
-			socket-timeout="${linshare.mongo.socket.timeout}"
-			write-concern="${linshare.mongo.write.concern}" />
-	</mongo:mongo-client>
-	<!-- 	org.springframework.data.mongodb.core.SimpleMongoDbFactory  -->
-	<mongo:db-factory
-		id="mongoDbFactoryDefault"
-		mongo-ref="mongoClientDefault"
-		dbname="${linshare.mongo.data.database}"
-		write-concern="${linshare.mongo.write.concern}"
+	<mongo:mongo-client id="mongoClientDefault"
+		credential="${linshare.mongo.data.credentials}">
+		<mongo:client-settings
+			cluster-hosts="${linshare.mongo.data.replicaset}"
+			write-concern="${linshare.mongo.write.concern}"
+			socket-connect-timeout="${linshare.mongo.connect.timeout}"
+			socket-read-timeout="${linshare.mongo.socket.timeout}"
 		/>
-	<!--  This template is the default instance used by every mongo repositories -->
-	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-		<constructor-arg name="mongoDbFactory" ref="mongoDbFactoryDefault" />
+	</mongo:mongo-client>
+	<!-- org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory -->
+	<mongo:db-factory id="mongoDbFactoryDefault"
+		mongo-client-ref="mongoClientDefault"
+		dbname="${linshare.mongo.data.database}"
+		write-concern="${linshare.mongo.write.concern}" />
+	<!-- This template is the default instance used by every mongo repositories -->
+	<bean id="mongoTemplate"
+		class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongoDbFactory"
+			ref="mongoDbFactoryDefault" />
 	</bean>
-	<mongo:repositories base-package="org.linagora.linshare.mongo" />
+	<mongo:repositories
+		base-package="org.linagora.linshare.mongo" />
 
-	<!-- another client to initialize gridfs instance for little files like thumbnails. -->
+	<!-- another client to initialize gridfs instance for little files like 
+		thumbnails. -->
 	<mongo:mongo-client
 		id="mongoClientSmall"
-		replica-set="${linshare.mongo.smallfiles.replicaset}"
-		credentials="${linshare.mongo.smallfiles.credentials}">
-		<mongo:client-options
-			connections-per-host="8"
-			threads-allowed-to-block-for-connection-multiplier="4"
-			connect-timeout="${linshare.mongo.connect.timeout}"
-			max-wait-time="1500"
-			socket-keep-alive="true"
-			socket-timeout="${linshare.mongo.socket.timeout}"
+		credential="${linshare.mongo.smallfiles.credentials}">
+		<mongo:client-settings
+			cluster-hosts="${linshare.mongo.smallfiles.replicaset}"
 			write-concern="${linshare.mongo.write.concern}"
+			socket-connect-timeout="${linshare.mongo.connect.timeout}"
+			socket-read-timeout="${linshare.mongo.socket.timeout}"
 		/>
 	</mongo:mongo-client>
-	<mongo:db-factory
-		id="mongoDbFactoryForSmallFiles"
-		mongo-ref="mongoClientSmall"
+	<mongo:db-factory id="mongoDbFactoryForSmallFiles"
+		mongo-client-ref="mongoClientSmall"
 		dbname="${linshare.mongo.smallfiles.database}"
 		write-concern="${linshare.mongo.write.concern}" />
-	<mongo:mapping-converter id="converterSmallFiles" db-factory-ref="mongoDbFactoryForSmallFiles"/>
-	<bean id="gridFsTemplateForSmallFiles" class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
+	<mongo:mapping-converter
+		id="converterSmallFiles" db-factory-ref="mongoDbFactoryForSmallFiles" />
+	<bean id="gridFsTemplateForSmallFiles"
+		class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
 		<constructor-arg ref="mongoDbFactoryForSmallFiles" />
 		<constructor-arg ref="converterSmallFiles" />
 	</bean>

@@ -3,29 +3,25 @@
 	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 	http://www.springframework.org/schema/data/mongo
-	http://www.springframework.org/schema/data/mongo/spring-mongo-2.0.xsd"
+	http://www.springframework.org/schema/data/mongo/spring-mongo-3.0.xsd"
 	profile="gridfs">
 
 	<!-- another client to initialize gridfs instance for big files like thumbnails. -->
 	<mongo:mongo-client
 		id="mongoClientBig"
-		replica-set="${linshare.mongo.bigfiles.replicaset}"
-		credentials="${linshare.mongo.bigfiles.credentials}">
-		<mongo:client-options
-			connections-per-host="8"
-			threads-allowed-to-block-for-connection-multiplier="4"
-			connect-timeout="${linshare.mongo.connect.timeout}"
-			max-wait-time="1500"
-			socket-keep-alive="true"
-			socket-timeout="${linshare.mongo.socket.timeout}"
+		credential="${linshare.mongo.bigfiles.credentials}">
+		<mongo:client-settings
+			cluster-hosts="${linshare.mongo.bigfiles.replicaset}"
 			write-concern="${linshare.mongo.write.concern}"
+			socket-connect-timeout="${linshare.mongo.connect.timeout}"
+			socket-read-timeout="${linshare.mongo.socket.timeout}"
 		/>
 	</mongo:mongo-client>
 	<mongo:db-factory
 		id="mongoDbFactoryForBigFiles"
-		mongo-ref="mongoClientBig"
+		mongo-client-ref="mongoClientBig"
 		dbname="${linshare.mongo.bigfiles.database}"
 		write-concern="${linshare.mongo.write.concern}" />
 	<mongo:mapping-converter id="converterBigFiles" db-factory-ref="mongoDbFactoryForBigFiles"/>

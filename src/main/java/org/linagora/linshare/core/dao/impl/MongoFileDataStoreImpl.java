@@ -46,7 +46,7 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
@@ -69,10 +69,10 @@ public class MongoFileDataStoreImpl implements FileDataStore {
 
 	private GridFsOperations gridOperations;
 
-	private MongoDbFactory mongoDbFactory;
+	private SimpleMongoClientDatabaseFactory mongoDbFactory;
 
 	public MongoFileDataStoreImpl(GridFsOperations gridOperations,
-				MongoDbFactory mongoDbFactory) {
+			SimpleMongoClientDatabaseFactory mongoDbFactory) {
 		super();
 		this.gridOperations = gridOperations;
 		this.mongoDbFactory = mongoDbFactory;
@@ -148,7 +148,7 @@ public class MongoFileDataStoreImpl implements FileDataStore {
 	}
 
 	private GridFSBucket getGridFs() {
-		MongoDatabase db = mongoDbFactory.getDb();
+		MongoDatabase db = mongoDbFactory.getMongoDatabase();
 		return GridFSBuckets.create(db);
 	}
 }

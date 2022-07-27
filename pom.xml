@@ -134,13 +134,6 @@
 				<type>pom</type>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.data</groupId>
-				<artifactId>spring-data-releasetrain</artifactId>
-				<version>${spring-data.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
 				<version>1.4.18</version>
@@ -148,7 +141,7 @@
 			<dependency>
 				<groupId>io.netty</groupId>
 				<artifactId>netty</artifactId>
-				<version>3.5.13.Final</version>
+				<version>3.10.6.Final</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -415,7 +408,14 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
+			<version>${spring-data.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-sync</artifactId>
+			<version>4.6.1</version>
+		</dependency>
+
 		<!-- spring data - end -->
 
 		<!--  LDAP Query Language integration - begin -->
@@ -1725,6 +1725,7 @@
 				<dependency>
 					<groupId>org.springframework.data</groupId>
 					<artifactId>spring-data-mongodb</artifactId>
+					<version>${spring-data.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -1889,8 +1890,8 @@
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<slf4j-release-version>1.7.32</slf4j-release-version>
 		<log4j-release-version>2.18.0</log4j-release-version>
-		<spring-data.version>Moore-SR13</spring-data.version>
 		<spring-security-release-version>5.7.2</spring-security-release-version>
+		<spring-data.version>3.4.2</spring-data.version>
 		<sql.driver.postgresql>42.4.0</sql.driver.postgresql>
 		<thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
 	</properties>
