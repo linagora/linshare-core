@@ -153,14 +153,10 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	public Response fakeBuildHtml(String mailContentUuid, String language, String mailConfigUuid, boolean subject, Integer flavor) {
 		MailContainerDto fakeBuild = fakeBuild(mailContentUuid, language, mailConfigUuid, flavor);
 		InputStream stream = null;
-		try {
-			if (subject) {
-				stream = IOUtils.toInputStream(fakeBuild.getSubject(), "UTF-8");
-			} else {
-				stream = IOUtils.toInputStream(fakeBuild.getContent(), "UTF-8");
-			}
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
+		if (subject) {
+			stream = IOUtils.toInputStream(fakeBuild.getSubject(), "UTF-8");
+		} else {
+			stream = IOUtils.toInputStream(fakeBuild.getContent(), "UTF-8");
 		}
 		ResponseBuilder response = Response.ok(stream);
 		response.header("Content-Type", "text/html; charset=UTF-8");
