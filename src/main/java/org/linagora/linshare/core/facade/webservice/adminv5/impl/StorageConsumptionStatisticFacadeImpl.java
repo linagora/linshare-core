@@ -37,7 +37,7 @@ package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.Optional;
 
-import org.jsoup.helper.Validate;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
