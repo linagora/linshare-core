@@ -435,14 +435,16 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 			commonOperations.add(Aggregation.match(Criteria.where("node.name").regex("(?i).*" + name + ".*")));
 		}
 		commonOperations.add(Aggregation.group("node"));
+		// using _id instead of node since using the latest spring data version.
+		// cf https://github.com/spring-projects/spring-data-mongodb/issues/3458#issuecomment-752678298
 		ProjectionOperation projections = Aggregation.project(
 				Fields.from(
-						Fields.field("uuid", "node.uuid"),
-						Fields.field("name", "node.name"),
-						Fields.field("parentUuid", "node.parentUuid"),
-						Fields.field("creationDate", "node.creationDate"),
-						Fields.field("modificationDate", "node.modificationDate"),
-						Fields.field("nodeType", "node.nodeType")
+						Fields.field("uuid", "_id.uuid"),
+						Fields.field("name", "_id.name"),
+						Fields.field("domainUuid", "_id.domainUuid"),
+						Fields.field("creationDate", "_id.creationDate"),
+						Fields.field("modificationDate", "_id.modificationDate"),
+						Fields.field("nodeType", "_id.nodeType")
 						)
 				);
 		commonOperations.add(projections);
@@ -557,12 +559,12 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		}
 		ProjectionOperation projections = Aggregation.project(
 				Fields.from(
-						Fields.field("uuid", "node.uuid"),
-						Fields.field("name", "node.name"),
-						Fields.field("parentUuid", "node.parentUuid"),
-						Fields.field("creationDate", "node.creationDate"),
-						Fields.field("modificationDate", "node.modificationDate"),
-						Fields.field("nodeType", "node.nodeType")
+						Fields.field("uuid", "_id.uuid"),
+						Fields.field("name", "_id.name"),
+						Fields.field("domainUuid", "_id.domainUuid"),
+						Fields.field("creationDate", "_id.creationDate"),
+						Fields.field("modificationDate", "_id.modificationDate"),
+						Fields.field("nodeType", "_id.nodeType")
 						)
 				);
 		commonOperations.add(projections);
@@ -627,7 +629,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		Aggregation memberAggregation = Aggregation.newAggregation(
 				Aggregation.match(Criteria.where("node.parentUuid").exists(false)),
 				Aggregation.group("node"),
-				Aggregation.project("node.uuid")
+				Aggregation.project("_id.uuid")
 			);
 		List<AggregateNestedNodeUuidResult> sharedSpaces = mongoTemplate.aggregate(memberAggregation, SharedSpaceMember.class, AggregateNestedNodeUuidResult.class).getMappedResults();
 		Set<String> sharedSpacesUuids = sharedSpaces.stream().map(node -> node.getUuid()).collect(Collectors.toSet());
