@@ -89,7 +89,10 @@ build:
   tags:
     - docker
   variables:
-    DOCKER_HOST: "tcp://docker-dind"
+    DOCKER_HOST: "tcp://docker-dind:2375"
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+
   script:
     - echo "FROM maven:3.6-jdk-11" > Dockerfile
     - echo "RUN useradd -ms /bin/bash maven" >> Dockerfile
