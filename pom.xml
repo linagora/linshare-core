@@ -413,7 +413,7 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver-sync</artifactId>
-			<version>4.6.1</version>
+			<version>${spring-data.driver.version}</version>
 		</dependency>
 
 		<!-- spring data - end -->
@@ -1891,7 +1891,8 @@
 		<slf4j-release-version>1.7.32</slf4j-release-version>
 		<log4j-release-version>2.18.0</log4j-release-version>
 		<spring-security-release-version>5.7.2</spring-security-release-version>
-		<spring-data.version>3.4.2</spring-data.version>
+		<spring-data.version>3.3.6</spring-data.version>
+		<spring-data.driver.version>4.4.2</spring-data.driver.version>
 		<sql.driver.postgresql>42.4.0</sql.driver.postgresql>
 		<thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
 	</properties>
