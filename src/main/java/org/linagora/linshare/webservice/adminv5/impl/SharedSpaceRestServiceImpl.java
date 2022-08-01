@@ -180,9 +180,15 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("domains") List<String> domainUuids,
 			@Parameter(description = "The admin can choose the order of sorting the sharedSpace's list to retrieve, if not set the ascending order will be applied by default.", required = false)
 				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
-			@Parameter(description = "The admin can choose the field to sort with the sharedSpace's list to retrieve, if not set the modification date order will be choosen by default.", required = false)
+			@Parameter(description = "The admin can choose the field to sort with the sharedSpace's list to retrieve, if not set the modification date order will be choosen by default.",
+					required = false,
+					schema = @Schema(implementation = SharedSpaceField.class, defaultValue = "modificationDate")
+				)
 				@QueryParam("sortField") @DefaultValue("modificationDate") String sortField,
-			@Parameter(description = "Filter the returned sharedSpaces by their types(WORK_GROUP/WORK_SPACE).", required = false)
+			@Parameter(description = "Filter the returned sharedSpaces by their types(WORK_GROUP/WORK_SPACE).",
+					required = false,
+					schema = @Schema(implementation = NodeType.class)
+				)
 				@QueryParam("nodeType") Set<String> nodeTypes,
 			@Parameter(description = "Filter the returned sharedSpaces by member roles.", required = false)
 				@QueryParam("role") Set<String> sharedSpaceRoles,

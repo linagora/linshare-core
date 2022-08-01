@@ -458,15 +458,15 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		if (results.size() > 0 && Objects.nonNull(results.get(0) != null)) {
 			count = results.get(0).getCount();
 		}
-
+		container.validateTotalPagesCount(count);
 		// second query to get matched elements
 		aggregationOperations = Lists.newArrayList(commonOperations);
 		aggregationOperations.add(Aggregation.sort(sort));
 		aggregationOperations.add(Aggregation.skip(Long.valueOf(container.getPageNumber() * container.getPageSize())));
 		aggregationOperations.add(Aggregation.limit(Long.valueOf(container.getPageSize())));
 		Aggregation aggregation = Aggregation.newAggregation(SharedSpaceMember.class, aggregationOperations);
-		container.validateTotalPagesCount(count);
-		List<SharedSpaceNodeNested> sharedSpaces = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class)
+		AggregationResults<SharedSpaceNodeNested> aggregateResults = mongoTemplate.aggregate(aggregation, SharedSpaceMember.class, SharedSpaceNodeNested.class);
+		List<SharedSpaceNodeNested> sharedSpaces = aggregateResults
 				.getMappedResults();
 		return container.loadData(sharedSpaces);
 	}
