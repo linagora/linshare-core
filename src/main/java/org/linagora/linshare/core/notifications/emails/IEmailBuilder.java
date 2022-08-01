@@ -51,7 +51,7 @@ public interface IEmailBuilder {
 
 	MailContainerWithRecipient build(EmailContext context) throws BusinessException;
 
-	MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language, Integer flavor) throws BusinessException;
+	MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language, Integer flavor, boolean doNotEncodeAttachments) throws BusinessException;
 
 	List<ContextMetadata> getAvailableVariables();
 }

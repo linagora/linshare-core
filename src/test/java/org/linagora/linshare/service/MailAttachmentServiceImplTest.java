@@ -243,7 +243,7 @@ public class MailAttachmentServiceImplTest {
 		List<TestMailResult> findErrors = Lists.newArrayList();
 		List<ContextMetadata> contexts = buildingService.getAvailableVariables(type);
 		for (int flavor = 0; flavor < contexts.size(); flavor++) {
-			MailContainerWithRecipient build = buildingService.fakeBuild(type, cfg, Language.ENGLISH, flavor);
+			MailContainerWithRecipient build = buildingService.fakeBuild(type, cfg, Language.ENGLISH, flavor, false);
 			Assertions.assertAll("Failure in mail attachment insertion", () -> {
 				Assertions.assertTrue(build.getAttachments().containsKey(defaultMailAttachmentCid));
 				Assertions.assertFalse(build.getAttachments().containsKey(attachment.getCid()));

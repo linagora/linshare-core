@@ -329,7 +329,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	}
 
 	@Override
-	public MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language, Integer flavor)
+	public MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language, Integer flavor, boolean doNotEncodeAttachments)
 			throws BusinessException {
 		List<Context> contexts = getContextForFakeBuild(language);
 		EmailContext emailContext = new FakeBuildEmailContext(language);
@@ -342,7 +342,9 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			ctx = contexts.get(flavor);
 		}
 		MailContainerWithRecipient container = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx, emailContext);
-		encodetMailAttachment(container);
+		if (!doNotEncodeAttachments) {
+			encodetMailAttachment(container);
+		}
 		return container;
 	}
 

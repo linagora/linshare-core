@@ -52,7 +52,7 @@ public interface MailBuildingService {
 
 	boolean fakeBuildIsSupported(MailContentType type) throws BusinessException;
 
-	MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language, Integer flavor) throws BusinessException;
+	MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language, Integer flavor, boolean doNotEncodeAttachments) throws BusinessException;
 
 	List<ContextMetadata> getAvailableVariables(MailContentType type);
 

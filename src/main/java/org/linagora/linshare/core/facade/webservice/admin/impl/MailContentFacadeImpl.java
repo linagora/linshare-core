@@ -199,7 +199,7 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		Language languageEnum = getLanguage(language);
 		MailContentType type = content.getType();
 		config.replaceMailContent(languageEnum, type, content);
-		MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, config, languageEnum, flavor);
+		MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, config, languageEnum, flavor, false);
 		return new MailContainerDto(build, type);
 	}
 

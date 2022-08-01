@@ -104,7 +104,7 @@ public class MailContentBuildingServiceImplTest {
 					logger.info("Building mail {} with language {}", type, lang);
 					List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
 					for (int flavor = 0; flavor < contexts.size(); flavor++) {
-						MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, lang, flavor);
+						MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, lang, flavor, true);
 						findErrors.addAll(testMailGenerate(type, build));
 						String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + lang + " : ";
 						build.setSubject(subject + build.getSubject());
@@ -139,7 +139,7 @@ public class MailContentBuildingServiceImplTest {
 		List<TestMailResult> findErrors = Lists.newArrayList();
 		List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
 		for (int flavor = 0; flavor < contexts.size(); flavor++) {
-			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.FRENCH, flavor);
+			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.FRENCH, flavor, true);
 			String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + Language.FRENCH + " : ";
 			build.setSubject(subject + build.getSubject());
 			findErrors.addAll(testMailGenerate(type, build));
@@ -168,7 +168,7 @@ public class MailContentBuildingServiceImplTest {
 		List<TestMailResult> findErrors = Lists.newArrayList();
 		List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
 		for (int flavor = 0; flavor < contexts.size(); flavor++) {
-			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.FRENCH, flavor);
+			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.FRENCH, flavor, true);
 			String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + Language.FRENCH + " : ";
 			build.setSubject(subject + build.getSubject());
 			findErrors.addAll(testMailGenerate(type, build));

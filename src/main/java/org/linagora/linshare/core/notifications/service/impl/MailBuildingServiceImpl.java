@@ -288,7 +288,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	@Override
-	public MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language, Integer flavor) throws BusinessException {
+	public MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language, Integer flavor, boolean doNotEncodeAttachments) throws BusinessException {
 		Validate.notNull(type, "MailContentType can't be null");
 		if (cfg == null) {
 			cfg = this.domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
@@ -299,7 +299,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		EmailBuilder builder = emailBuilders.get(type);
 		MailContent content = cfg.findContent(language, type);
 		Validate.notNull(content);
-		return builder.fakeBuild(cfg, language, flavor);
+		return builder.fakeBuild(cfg, language, flavor, doNotEncodeAttachments);
 	}
 
 	@Override
