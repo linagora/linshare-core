@@ -195,7 +195,7 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 			List<LogAction> actions) {
 		AbstractDomain domain = domainService.findById(domainUuid);
 		checkAdminFor(authUser, domain);
-		List<String> domains = domainPermissionService.getAdministredDomainsIdentifiers(authUser, domainUuid);
+		List<String> domains = domainPermissionService.getAdministratedDomainsIdentifiers(authUser, domainUuid);
 		return auditLogEntryService.findAllAuditsByDomain(authUser, domains, actions);
 	}
 

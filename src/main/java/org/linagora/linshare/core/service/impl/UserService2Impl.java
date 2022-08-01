@@ -106,7 +106,7 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 		checkListPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null, domains);
 		if (actor.hasAdminRole()) {
 			if (domains.isEmpty()) {
-				domains = permissionService.getMyAdministredDomains(actor);
+				domains = permissionService.getMyAdministratedDomains(actor);
 			}
 		}
 		Role checkedRole = Strings.isNullOrEmpty(role) ? null : Role.valueOf(role);

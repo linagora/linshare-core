@@ -335,7 +335,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 					"Min date limit after max date limit");
 		}
 		List<AbstractDomain> myAdministredDomains = domainPermissionBusinessService
-				.getMyAdministredDomains(actor);
+				.getMyAdministratedDomains(actor);
 		return new HashSet<UploadRequest>(uploadRequestBusinessService.findAll(
 				myAdministredDomains, status, afterDate, beforeDate));
 	}

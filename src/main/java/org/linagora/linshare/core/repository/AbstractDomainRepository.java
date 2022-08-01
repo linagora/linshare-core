@@ -36,16 +36,21 @@
 package org.linagora.linshare.core.repository;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.TwakeConnection;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.fields.DomainField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface AbstractDomainRepository extends AbstractRepository<AbstractDomain> {
 	
@@ -145,4 +150,11 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 
 	List<AbstractDomain> findAllDomainsByWorkSpaceFilter(LdapWorkSpaceFilter domainWorkSpaceFilter);
 
+	PageContainer<AbstractDomain> findAll(
+			Optional<DomainType> domainType,
+			Optional<AbstractDomain> parentUuid,
+			Optional<AbstractDomain> from,
+			SortOrder sortOrder,
+			DomainField sortField,
+			PageContainer<AbstractDomain> container);
 }

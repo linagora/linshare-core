@@ -35,6 +35,7 @@
  */
 package org.linagora.linshare.webservice.adminv5.impl;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -48,12 +49,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.entities.fields.DomainField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.facade.webservice.adminv5.DomainFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv5.DomainRestService;
+import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -63,12 +69,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/domains")
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_JSON })
 public class DomainRestServiceImpl extends WebserviceBase implements
 		DomainRestService {
 
 	private final DomainFacade domainFacade;
+
+	private static PagingResponseBuilder<DomainDto> pageResponseBuilder = new PagingResponseBuilder<>();
 
 	public DomainRestServiceImpl(final DomainFacade domainFacade) {
 		this.domainFacade = domainFacade;
@@ -88,6 +96,50 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 					+ "Parent domains and children domains will be also provided as a tree.")
 				@QueryParam("tree") @DefaultValue("false") boolean tree) {
 		return domainFacade.findAll(tree);
+	}
+
+	@Path("/r2/")
+	@GET
+	@Override
+	public Response findAll(
+			@Parameter(
+					description = "Filter the type of domains to retrieve.",
+					required = false,
+					schema = @Schema(implementation = DomainType.class)
+				)
+				@QueryParam("type") String domainType,
+			@Parameter(description = "parent domain's uuid")
+				@QueryParam("parent") String parentUuid,
+			@Parameter(
+					description = "The admin can choose the order of sorting the domain's list to retrieve, if not set the ascending order will be applied by default.",
+					required = false,
+					schema = @Schema(implementation = SortOrder.class, defaultValue = "ASC")
+				)
+				@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
+			@Parameter(
+					description = "The admin can choose the field to sort with the domain's list to retrieve, if not set the name order will be choosen by default.",
+					required = false,
+					schema = @Schema(implementation = DomainField.class, defaultValue = "name")
+				)
+				@QueryParam("sortField") @DefaultValue("name") String sortField,
+			@Parameter(
+					description = "The admin can choose the page number to get.",
+					required = false
+				)
+				@QueryParam("page") Integer pageNumber,
+			@Parameter(
+					description = "The admin can choose the number of elements to get.",
+					required = false
+				)
+				@QueryParam("size") @DefaultValue("50") Integer pageSize
+			) {
+		PageContainer<DomainDto> container = domainFacade.findAll(
+				Optional.ofNullable(domainType),
+				Optional.ofNullable(parentUuid),
+				SortOrder.valueOf(sortOrder),
+				DomainField.valueOf(sortField),
+				pageNumber, pageSize);
+		return pageResponseBuilder.build(container);
 	}
 
 	@Path("/{uuid}")

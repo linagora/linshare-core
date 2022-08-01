@@ -36,17 +36,29 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Statistic;
+import org.linagora.linshare.core.domain.entities.fields.DomainField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface DomainService {
 
 	AbstractDomain find(Account actor, String uuid) throws BusinessException;
 
 	List<AbstractDomain> findAll(Account actor);
+
+	PageContainer<AbstractDomain> findAll(
+			Account authUser,
+			Optional<String> domainType,
+			Optional<String> parentUuid,
+			SortOrder sortOrder, DomainField sortField,
+			PageContainer<AbstractDomain> container);
 
 	List<AbstractDomain> getSubDomainsByDomain(Account actor, String uuid) throws BusinessException;
 

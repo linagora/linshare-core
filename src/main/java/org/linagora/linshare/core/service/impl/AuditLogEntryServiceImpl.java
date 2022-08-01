@@ -136,7 +136,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 				return auditMongoRepository.findAll(actions, types, begin, end);
 			}
 		} else {
-			List<String> domains = permissionService.getAdministredDomainsIdentifiers(actor, actor.getDomainId());
+			List<String> domains = permissionService.getAdministratedDomainsIdentifiers(actor, actor.getDomainId());
 			Date end = getEndDate(endDate);
 			Date begin = getBeginDate(beginDate, end);
 			return auditMongoRepository.findAll(actions, types, begin, end, domains);

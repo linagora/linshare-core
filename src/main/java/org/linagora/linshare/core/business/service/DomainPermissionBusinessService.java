@@ -48,9 +48,9 @@ public interface DomainPermissionBusinessService {
 
 	boolean isAdminForThisUploadRequest(Account actor, UploadRequest request);
 
-	List<AbstractDomain> getMyAdministredDomains(Account actor);
+	List<AbstractDomain> getMyAdministratedDomains(Account actor);
 
-	List<String> getAdministredDomainsIdentifiers(Account actor, String domainUuid);
+	List<String> getAdministratedDomainsIdentifiers(Account actor, String domainUuid);
 
 	List<String> checkDomainAdministrationForListingSharedSpaces(Account actor, List<String> domains);
 }

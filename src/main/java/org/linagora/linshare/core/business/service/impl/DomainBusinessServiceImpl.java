@@ -38,14 +38,19 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.fields.DomainField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public class DomainBusinessServiceImpl implements DomainBusinessService {
 
@@ -153,4 +158,13 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 		return repository.create(domain);
 	}
 
+	@Override
+	public PageContainer<AbstractDomain> findAll(
+			Optional<DomainType> domainType,
+			Optional<AbstractDomain> parent,
+			Optional<AbstractDomain> from,
+			SortOrder sortOrder, DomainField sortField,
+			PageContainer<AbstractDomain> container) {
+		return repository.findAll(domainType, parent, from, sortOrder, sortField, container);
+	}
 }

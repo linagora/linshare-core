@@ -36,7 +36,9 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.lang3.Validate;
@@ -45,30 +47,44 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.LdapWorkSpaceFilter;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.TwakeConnection;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.fields.DomainField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
+
+import com.google.common.collect.Maps;
 
 public class AbstractDomainRepositoryImpl extends
 		AbstractRepositoryImpl<AbstractDomain> implements
 		AbstractDomainRepository {
 
+	@SuppressWarnings("rawtypes")
+	private static HashMap<DomainType, Class> classes = Maps.newHashMap();
+
 	public AbstractDomainRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
+		classes.put(DomainType.GUESTDOMAIN, GuestDomain.class);
+		classes.put(DomainType.ROOTDOMAIN, RootDomain.class);
+		classes.put(DomainType.SUBDOMAIN, SubDomain.class);
+		classes.put(DomainType.TOPDOMAIN, TopDomain.class);
 	}
 
 	@Override
@@ -85,6 +101,59 @@ public class AbstractDomainRepositoryImpl extends
 				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE))
 				.addOrder(Order.asc("label"))
 			);
+	}
+
+	@Override
+	public PageContainer<AbstractDomain> findAll(
+			Optional<DomainType> domainType,
+			Optional<AbstractDomain> parent,
+			Optional<AbstractDomain> from,
+			SortOrder sortOrder, DomainField sortField,
+			PageContainer<AbstractDomain> container) {
+		// count matched data
+		DetachedCriteria detachedCritCount = getCriteria(domainType, parent, from);
+		detachedCritCount.setProjection(Projections.rowCount());
+		Long totalNumberElements = DataAccessUtils.longResult(findByCriteria(detachedCritCount));
+		// retrieve one page.
+		DetachedCriteria detachedCritData = getCriteria(domainType, parent, from);
+		Order order = null;
+		switch (sortField) {
+			case name:
+				order = SortOrder.ASC.equals(sortOrder) ? Order.asc("label") : Order.desc("label");
+				break;
+			default:
+				order = SortOrder.ASC.equals(sortOrder) ? Order.asc(sortField.toString()) : Order.desc(sortField.toString());
+				break;
+		}
+		detachedCritData.addOrder(order);
+		PageContainer<AbstractDomain> res = findAll(detachedCritData, totalNumberElements, container);
+		return res;
+	}
+
+	private DetachedCriteria getCriteria(
+			Optional<DomainType> domainType,
+			Optional<AbstractDomain> parent,
+			Optional<AbstractDomain> from) {
+		DetachedCriteria crit = null;
+		if (domainType.isPresent()) {
+			crit = DetachedCriteria.forClass(classes.get(domainType.get()));
+		} else {
+			crit = DetachedCriteria.forClass(getPersistentClass());
+		}
+		crit.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
+		if (parent.isPresent()) {
+			crit.add(Restrictions.eq("parentDomain", parent.get()));
+		}
+		if (from.isPresent()) {
+			// nested administrators must only see their domain and their nested domains.
+			crit.add(
+				Restrictions.or(
+					Restrictions.eq("persistenceId", from.get().getPersistenceId()),
+					Restrictions.eq("parentDomain", from.get())
+				)
+			);
+		}
+		return crit;
 	}
 
 	@Override

@@ -36,6 +36,7 @@
 package org.linagora.linshare.core.facade.webservice.adminv5.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -46,6 +47,8 @@ import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.fields.DomainField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
@@ -55,6 +58,8 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.DomainService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.webservice.utils.PageContainerAdaptor;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -66,6 +71,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 	private final DomainPolicyService domainPolicyService;
 
 	private final UserService userService;
+
+	private static PageContainerAdaptor<AbstractDomain, DomainDto> pageContainerAdaptor = new PageContainerAdaptor<>();
 
 	public DomainFacadeImpl(
 			AccountService accountService,
@@ -101,6 +108,18 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 			}
 		}
 		return domainDtos;
+	}
+
+	@Override
+	public PageContainer<DomainDto> findAll(
+			Optional<String> domainType, Optional<String> parentUuid,
+			SortOrder sortOrder, DomainField sortField,
+			Integer pageNumber, Integer pageSize) {
+		User authUser = checkAuthentication(Role.ADMIN);
+		PageContainer<AbstractDomain> container = new PageContainer<>(pageNumber, pageSize);
+		container = domainService.findAll(authUser, domainType, parentUuid, sortOrder, sortField, container);
+		PageContainer<DomainDto> dto = pageContainerAdaptor.convert(container, DomainDto.toDto());
+		return dto;
 	}
 
 	@Override

@@ -37,11 +37,13 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MailContentBusinessService;
@@ -60,19 +62,22 @@ import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.fields.DomainField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.DomainService;
-import org.linagora.linshare.core.service.WorkSpaceProviderService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.service.WorkSpaceProviderService;
 import org.linagora.linshare.mongo.entities.logs.DomainAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 import com.google.common.collect.Lists;
 
@@ -80,6 +85,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 
 	protected final AbstractDomainService abstractDomainService;
 	protected final DomainBusinessService businessService;
+	protected final DomainPermissionBusinessService permissionService;
 	protected final DomainPolicyService domainPolicyService;
 	protected final AbstractDomainRepository abstractDomainRepository;
 	protected final AuditAdminMongoRepository auditMongoRepository;
@@ -101,6 +107,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			AbstractDomainService abstractDomainService,
 			DomainBusinessService businessService,
+			DomainPermissionBusinessService permissionService,
 			DomainPolicyService domainPolicyService,
 			AbstractDomainRepository abstractDomainRepository,
 			AuditAdminMongoRepository auditMongoRepository,
@@ -122,6 +129,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 		this.abstractDomainService = abstractDomainService;
 		this.businessService = businessService;
 		this.domainPolicyService = domainPolicyService;
+		this.permissionService = permissionService;
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.auditMongoRepository = auditMongoRepository;
 		this.welcomeMessagesBusinessService = welcomeMessagesBusinessService;
@@ -159,6 +167,34 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 							actor.getDomain().getUuid()));
 			return domainList;
 		}
+	}
+
+	@Override
+	public PageContainer<AbstractDomain> findAll(
+			Account authUser,
+			Optional<String> domainType,
+			Optional<String> parentUuid,
+			SortOrder sortOrder, DomainField sortField,
+			PageContainer<AbstractDomain> container) {
+		Validate.notNull(authUser, "authUser must be set.");
+		Optional<DomainType> domainTypeEnum = Optional.empty();
+		if (domainType.isPresent()) {
+			domainTypeEnum = Optional.of(DomainType.valueOf(domainType.get()));
+		}
+		Optional<AbstractDomain> parent = Optional.empty();
+		if (parentUuid.isPresent()) {
+			parent = Optional.of(businessService.findById(parentUuid.get()));
+			boolean adminforThisDomain = permissionService.isAdminforThisDomain(authUser, parent.get());
+			if (!adminforThisDomain) {
+				throw new BusinessException(
+					BusinessErrorCode.STATISTIC_FORBIDDEN,
+						"You are not allowed to query this domain");
+			}
+		}
+		if (authUser.hasSuperAdminRole()) {
+			return businessService.findAll(domainTypeEnum, parent, Optional.empty(), sortOrder, sortField, container);
+		}
+		return businessService.findAll(domainTypeEnum, parent, Optional.of(authUser.getDomain()), sortOrder, sortField, container);
 	}
 
 	@Override

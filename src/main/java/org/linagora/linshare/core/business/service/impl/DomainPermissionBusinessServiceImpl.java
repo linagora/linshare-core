@@ -87,7 +87,7 @@ public class DomainPermissionBusinessServiceImpl implements
 			}
 		} else {
 			if (CollectionUtils.isEmpty(domains)) {
-				allowedDomainUuids = getAdministredDomainsIdentifiers(actor, actor.getDomainId());
+				allowedDomainUuids = getAdministratedDomainsIdentifiers(actor, actor.getDomainId());
 			} else {
 				for (String uuid : domains) {
 					AbstractDomain domain = domainBusinessService.findById(uuid);
@@ -111,7 +111,7 @@ public class DomainPermissionBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<String> getAdministredDomainsIdentifiers(Account actor, String domainUuid) {
+	public List<String> getAdministratedDomainsIdentifiers(Account actor, String domainUuid) {
 		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
 			return Lists.newArrayList();
 		}
@@ -129,7 +129,7 @@ public class DomainPermissionBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<AbstractDomain> getMyAdministredDomains(Account actor) {
+	public List<AbstractDomain> getMyAdministratedDomains(Account actor) {
 		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
 			return Lists.newArrayList();
 		}
