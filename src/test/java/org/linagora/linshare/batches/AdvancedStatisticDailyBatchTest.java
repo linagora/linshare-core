@@ -36,6 +36,7 @@
 package org.linagora.linshare.batches;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -111,7 +112,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class AdvancedStatisticBatchTest {
+public class AdvancedStatisticDailyBatchTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -156,7 +157,7 @@ public class AdvancedStatisticBatchTest {
 
 	private User jane;
 
-	public AdvancedStatisticBatchTest() {
+	public AdvancedStatisticDailyBatchTest() {
 		super();
 	}
 
@@ -186,14 +187,27 @@ public class AdvancedStatisticBatchTest {
 	private void createWorkgroupDocument() throws IOException {
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		tempFile.deleteOnExit();
-		InputStream stream = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("linshare-default.properties");
-		IOUtils.copy(stream, new FileOutputStream(tempFile));
 		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		createSharedSpaceNode(jane, workGroup.getName(), workGroup.getLsUuid());
 		AccountMto author = new AccountMto(jane);
 		WorkGroupNode workGroupFolder = new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid());
 		workGroupNodeService.create(jane, jane, workGroup, workGroupFolder, false, false);
+		addDocument(tempFile, workGroup, workGroupFolder, "linshare-default.properties");
+		addDocument(tempFile, workGroup, workGroupFolder, "fichier.test.1.docx");
+		addDocument(tempFile, workGroup, workGroupFolder, "fichier.test.1.ods");
+		addDocument(tempFile, workGroup, workGroupFolder, "fichier.test.1.pdf");
+		addDocument(tempFile, workGroup, workGroupFolder, "fichier.test.1.pdf");
+		addDocument(tempFile, workGroup, workGroupFolder, "fichier.test.1.pdf");
+		addDocument(tempFile, workGroup, workGroupFolder, "fichier.test.1.png");
+		addDocument(tempFile, workGroup, workGroupFolder, "fichier.test.1.png");
+		addDocument(tempFile, workGroup, workGroupFolder, "fichier.test.1.py");
+	}
+
+	private void addDocument(File tempFile, WorkGroup workGroup, WorkGroupNode workGroupFolder, String fileName)
+			throws IOException, FileNotFoundException {
+		InputStream stream = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream(fileName);
+		IOUtils.copy(stream, new FileOutputStream(tempFile));
 		workGroupNodeService.create(jane, jane, workGroup, tempFile, "tempFile", workGroupFolder.getUuid(), false);
 	}
 
