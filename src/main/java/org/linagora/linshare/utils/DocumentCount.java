@@ -65,4 +65,9 @@ public class DocumentCount {
 	public void setTotal(long total) {
 		this.total = total;
 	}
+
+	@Override
+	public String toString() {
+		return "DocumentCount [total=" + total + ", mimeType=" + mimeType + "]";
+	}
 }
