@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -93,7 +94,7 @@ public interface UserService {
 	 * This method create a new user entity from a valid user object, or update an existing one. 
 	 * @return user entity created or updated.
 	 */
-	User saveOrUpdateUser(User user) throws TechnicalException ;
+	User saveOrUpdateUser(User user, Optional<Account> actor) throws TechnicalException ;
 	
 	/** Find a  user (based on mail address).
 	 * Search first in database, then on ldap if not found.
@@ -125,10 +126,11 @@ public interface UserService {
 	 * @param mail user mail.
 	 * @param actorDomainId domain identifier, it is useful to determine which domains we are authorized to search in. 
 	 * if this parameter is null, domainId is used as starting point for the research.
+	 * @param actor TODO
 	 * @return founded user.
 	 * @throws BusinessException if the user could not be found
 	 */
-	User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId) throws BusinessException ;
+	User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId, Optional<Account> actor) throws BusinessException ;
 
 	User findByLsUuid(String lsUuid);
 

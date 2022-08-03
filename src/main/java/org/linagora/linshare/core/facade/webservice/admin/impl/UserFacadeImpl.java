@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -420,7 +421,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		String domain = userDto.getDomain();
 		Validate.notEmpty(mail, "User mail must be set.");
 		Validate.notEmpty(domain, "User domain identifier must be set.");
-		User user = userService.findOrCreateUserWithDomainPolicies(domain, mail, authUser.getDomainId());
+		User user = userService.findOrCreateUserWithDomainPolicies(domain, mail, authUser.getDomainId(), Optional.of(authUser));
 		return UserDto.getFull(user);
 	}
 

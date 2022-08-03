@@ -39,6 +39,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -343,7 +344,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 					+ domain + " : " + mail);
 			try {
 				User user = userService.findOrCreateUserWithDomainPolicies(
-						domain, mail, owner.getDomainId());
+						domain, mail, owner.getDomainId(), Optional.empty());
 				logger.debug("step2:user found : "
 						+ user.getAccountRepresentation());
 				shareContainer.addShareRecipient(user);

@@ -193,19 +193,19 @@ public class GuestServiceImplTest {
 		owner1.setDomain(subDomain);
 		owner1.setRole(Role.ADMIN);
 		owner1.setCanCreateGuest(true);
-		owner1 = userService.saveOrUpdateUser(owner1);
+		owner1 = userService.saveOrUpdateUser(owner1, Optional.empty());
 
 		owner2 = new Internal("Jane", "Smith", "user2@linshare.org", null);
 		owner2.setDomain(subDomain);
 		owner2.setCanCreateGuest(true);
 		owner2.setRole(Role.SIMPLE);
-		owner2 = userService.saveOrUpdateUser(owner2);
+		owner2 = userService.saveOrUpdateUser(owner2, Optional.empty());
 		
 		owner3 = new Internal("Jane", "Smith", "user4@linshare.org", null);
 		owner3.setDomain(subDomain);
 		owner3.setCanCreateGuest(true);
 		owner3.setRole(Role.SIMPLE);
-		owner3 = userService.saveOrUpdateUser(owner3);
+		owner3 = userService.saveOrUpdateUser(owner3, Optional.empty());
 
 		Functionality functionality = functionalityService.find(
 				root, LoadingServiceTestDatas.sqlSubDomain,

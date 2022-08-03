@@ -36,6 +36,7 @@
 package org.linagora.linshare.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -239,13 +240,13 @@ public class FunctionalityServiceImplTest {
 		Functionality func1 = functionalityService.find(john, "UPLOAD_REQUEST");
 		Assertions.assertNotNull(func1);
 		john.setRole(Role.ADMIN);
-		userService.saveOrUpdateUser(john);
+		userService.saveOrUpdateUser(john, Optional.empty());
 		Assertions.assertEquals(Role.ADMIN, john.getRole());
 		Functionality func2 = functionalityService.find(john, "UPLOAD_REQUEST");
 		Assertions.assertNotNull(func2);
 		// Reset to initial value
 		john.setRole(Role.SIMPLE);
-		userService.saveOrUpdateUser(john);
+		userService.saveOrUpdateUser(john, Optional.empty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

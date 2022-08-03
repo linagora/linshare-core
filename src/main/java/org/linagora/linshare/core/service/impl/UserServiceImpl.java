@@ -747,7 +747,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User saveOrUpdateUser(User user) throws TechnicalException {
+	public User saveOrUpdateUser(User user, Optional<Account> actor) throws TechnicalException {
 		// User object should be an new entity, or an existing one
 		logger.debug("Begin saveOrUpdateUser");
 		if (user != null && user.getDomain() != null) {
@@ -779,6 +779,11 @@ public class UserServiceImpl implements UserService {
 				user.setCmisLocale(SupportedLanguage.ENGLISH.toString());
 				user = userRepository.create(user);
 				createQuotaUser(user);
+				UserAuditLogEntry log = new UserAuditLogEntry(
+						actor.orElse(user),
+						actor.orElse(user),
+						LogAction.CREATE, AuditLogEntryType.USER, user);
+				logEntryService.insert(log);
 			}
 			return user;
 		} else {
@@ -808,7 +813,7 @@ public class UserServiceImpl implements UserService {
 	 * @throws BusinessException
 	 */
 	private User findOrCreateUserWithoutRestriction(
-			AbstractDomain abstractDomain, String mail)
+			AbstractDomain abstractDomain, String mail, Optional<Account> actor)
 			throws BusinessException {
 		User user = userRepository.findByMailAndDomain(
 				abstractDomain.getUuid(), mail);
@@ -818,7 +823,7 @@ public class UserServiceImpl implements UserService {
 			user = abstractDomainService.findUserWithoutRestriction(
 					abstractDomain, mail);
 			if (user != null) {
-				user = saveOrUpdateUser(user);
+				user = saveOrUpdateUser(user, actor);
 			}
 		}
 		return user;
@@ -826,7 +831,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findOrCreateUserWithDomainPolicies(String domainId,
-			String mail, String actorDomainId) throws BusinessException {
+			String mail, String actorDomainId, Optional<Account> actor) throws BusinessException {
 		Validate.notEmpty(mail, "domainmail is required");
 		Validate.notEmpty(domainId, "domainId is required");
 		User user = null;
@@ -839,7 +844,7 @@ public class UserServiceImpl implements UserService {
 		AbstractDomain domain = abstractDomainService.findById(domainId);
 
 		if (allAuthorizedDomains.contains(domain)) {
-			user = findOrCreateUserWithoutRestriction(domain, mail);
+			user = findOrCreateUserWithoutRestriction(domain, mail, actor);
 		}
 
 		// test if user was found
@@ -851,7 +856,7 @@ public class UserServiceImpl implements UserService {
 					// no need to search, already done.
 					continue;
 				}
-				user = findOrCreateUserWithoutRestriction(abstractDomain, mail);
+				user = findOrCreateUserWithoutRestriction(abstractDomain, mail, actor);
 				if (user != null) {
 					// We don't need to continue
 					break;
@@ -871,7 +876,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findOrCreateUserWithDomainPolicies(String mail, String domainId)
 			throws BusinessException {
-		return findOrCreateUserWithDomainPolicies(domainId, mail, null);
+		return findOrCreateUserWithDomainPolicies(domainId, mail, null, Optional.empty());
 	}
 
 	@Override
@@ -885,7 +890,7 @@ public class UserServiceImpl implements UserService {
 					.searchUserRecursivelyWithoutRestriction(domainId, mail);
 			if (users != null && users.size() == 1) {
 				user = users.get(0);
-				user = saveOrUpdateUser(user);
+				user = saveOrUpdateUser(user, Optional.empty());
 			} else {
 				logger.error("Could not find the user " + mail
 						+ " in the database nor in the LDAP");

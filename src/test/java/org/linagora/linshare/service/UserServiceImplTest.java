@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -221,7 +222,7 @@ public class UserServiceImplTest {
 		user.setDomain(domain);
 		user.setCanCreateGuest(true);
 		user.setCmisLocale("en");
-		userService.saveOrUpdateUser(user);
+		userService.saveOrUpdateUser(user, Optional.empty());
 
 		try {
 			List <String> restricted = new ArrayList<>();
@@ -245,7 +246,7 @@ public class UserServiceImplTest {
 		user.setDomain(domain);
 		user.setCmisLocale("en");
 		logger.info("Save user in DB");
-		userService.saveOrUpdateUser(user);
+		userService.saveOrUpdateUser(user, Optional.empty());
 
 		Assertions.assertNotNull(userService.findUserInDB(
 				LoadingServiceTestDatas.sqlSubDomain, "user1@linshare.org"));
@@ -262,7 +263,7 @@ public class UserServiceImplTest {
 		user.setDomain(domain);
 		user.setCmisLocale("en");
 		logger.info("Save user in DB");
-		userService.saveOrUpdateUser(user);
+		userService.saveOrUpdateUser(user, Optional.empty());
 
 		Assertions.assertTrue(userService.findUsersInDB(
 				LoadingServiceTestDatas.sqlSubDomain).contains(user));
@@ -284,12 +285,12 @@ public class UserServiceImplTest {
 		user1.setCmisLocale("en");
 		user2.setCmisLocale("en");
 		logger.info("Save users in DB");
-		user1 = userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1, Optional.empty());
 		// weird
 		user1.setRole(Role.ADMIN);
 		user1 = (User)userRepository.update(user1);
 
-		user2 = userService.saveOrUpdateUser(user2);
+		user2 = userService.saveOrUpdateUser(user2, Optional.empty());
 
 		try {
 			logger.info("John Doe trying to delete Jane Smith");
@@ -325,9 +326,9 @@ public class UserServiceImplTest {
 		user2.setCmisLocale("en");
 		user3.setCmisLocale("en");
 		logger.info("Save users in DB");
-		user1 = userService.saveOrUpdateUser(user1);
-		user2 = userService.saveOrUpdateUser(user2);
-		user3 = userService.saveOrUpdateUser(user3);
+		user1 = userService.saveOrUpdateUser(user1, Optional.empty());
+		user2 = userService.saveOrUpdateUser(user2, Optional.empty());
+		user3 = userService.saveOrUpdateUser(user3, Optional.empty());
 		// weird
 		user1.setRole(Role.ADMIN);
 		user1 = (User)userRepository.update(user1);
@@ -384,8 +385,8 @@ public class UserServiceImplTest {
 		user2.setDomain(subDomain);
 		user1.setCmisLocale("en");
 		user2.setCmisLocale("en");
-		userService.saveOrUpdateUser(user1);
-		userService.saveOrUpdateUser(user2);
+		userService.saveOrUpdateUser(user1, Optional.empty());
+		userService.saveOrUpdateUser(user2, Optional.empty());
 		List<User> searchUser = userService
 				.searchUser(user2.getMail(), user2.getFirstName(),
 						user2.getLastName(), AccountType.INTERNAL, user1);
@@ -413,7 +414,7 @@ public class UserServiceImplTest {
 		user2.setCanCreateGuest(true);
 		user2.setRole(Role.SYSTEM);
 		user2.setCmisLocale("en");
-		user2 = userService.saveOrUpdateUser(user2);
+		user2 = userService.saveOrUpdateUser(user2, Optional.empty());
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -456,8 +457,8 @@ public class UserServiceImplTest {
 		
 		user1.setCmisLocale("en");
 		user2.setCmisLocale("en");
-		userService.saveOrUpdateUser(user1);
-		userService.saveOrUpdateUser(user2);
+		userService.saveOrUpdateUser(user1, Optional.empty());
+		userService.saveOrUpdateUser(user2, Optional.empty());
 
 
 		Assertions.assertTrue(user2.getRole() == Role.SIMPLE);
@@ -476,7 +477,7 @@ public class UserServiceImplTest {
 		user1.setDomain(topDomain);
 		user1.setCanCreateGuest(true);
 		user1.setCmisLocale("en");
-		user1 = userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1, Optional.empty());
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -512,7 +513,7 @@ public class UserServiceImplTest {
 		user1.setDomain(rootDomain);
 		user1.setCanCreateGuest(true);
 		user1.setCmisLocale("en");
-		user1 = userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1, Optional.empty());
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -554,7 +555,7 @@ public class UserServiceImplTest {
 		user1.setDomain(subDomain);
 		user1.setCanCreateGuest(true);
 		user1.setCmisLocale("en");
-		user1 = userService.saveOrUpdateUser(user1);
+		user1 = userService.saveOrUpdateUser(user1, Optional.empty());
 
 		AbstractDomain guestDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlGuestDomain);
@@ -768,12 +769,12 @@ public class UserServiceImplTest {
 		user1.setDomain(subDomain);
 		user1.setRole(Role.SUPERADMIN);
 		user1.setCmisLocale("en");
-		userService.saveOrUpdateUser(user1);
+		userService.saveOrUpdateUser(user1, Optional.empty());
 
 		Internal user2 = new Internal("Jane", "Smith", "user2@linshare.org", null);
 		user2.setDomain(subDomain);
 		user2.setCmisLocale("en");
-		userService.saveOrUpdateUser(user2);
+		userService.saveOrUpdateUser(user2, Optional.empty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -787,14 +788,14 @@ public class UserServiceImplTest {
 		Internal user1 = new Internal("John", "Doe", "user1@linshare.org", null);
 		user1.setDomain(topDomain);
 		user1.setCmisLocale("en");
-		userService.saveOrUpdateUser(user1);
+		userService.saveOrUpdateUser(user1, Optional.empty());
 
 		AbstractDomain subDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlSubDomain);
 		Internal user2 = new Internal("Jane", "Smith", "user2@linshare.org", null);
 		user2.setDomain(subDomain);
 		user2.setCmisLocale("en");
-		userService.saveOrUpdateUser(user2);
+		userService.saveOrUpdateUser(user2, Optional.empty());
 
 		DomainAccessPolicy accessPolicy = new DomainAccessPolicy();
 		domainAccessRepository.create(accessPolicy);
@@ -813,7 +814,7 @@ public class UserServiceImplTest {
 		try {
 			userService.findOrCreateUserWithDomainPolicies(
 					LoadingServiceTestDatas.sqlDomain, "user1@linshare.org",
-					LoadingServiceTestDatas.sqlSubDomain);
+					LoadingServiceTestDatas.sqlSubDomain, Optional.empty());
 
 			logger.error("Test shouldn't go here because findOrCreateUserWithDomainPolicies should rise a exception");
 			Assertions.fail();
@@ -887,7 +888,7 @@ public class UserServiceImplTest {
 		user.setCmisLocale("en");
 		logger.info("Trying to create a user without domain : should fail.");
 		try {
-			userService.saveOrUpdateUser(user);
+			userService.saveOrUpdateUser(user, Optional.empty());
 			Assertions.fail("It should fail before this message.");
 		} catch (TechnicalException e) {
 			logger.debug("TechnicalException raise as planned.");
@@ -895,11 +896,11 @@ public class UserServiceImplTest {
 		logger.info("Trying to create a user : .");
 		logger.debug("user id : " + user.getId());
 		user.setDomain(domain);
-		userService.saveOrUpdateUser(user);
+		userService.saveOrUpdateUser(user, Optional.empty());
 		logger.debug("user id : " + user.getId());
 		Assertions.assertTrue(user.isCanUpload());
 		user.setCanUpload(false);
-		userService.saveOrUpdateUser(user);
+		userService.saveOrUpdateUser(user, Optional.empty());
 		Assertions.assertFalse(user.isCanUpload());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
