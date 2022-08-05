@@ -566,6 +566,10 @@
 					<groupId>org.apache.pdfbox</groupId>
 					<artifactId>pdfbox-tools</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.beust</groupId>
+					<artifactId>jcommander</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
