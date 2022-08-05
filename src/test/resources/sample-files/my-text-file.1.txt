@@ -1,0 +1,75 @@
+# Useless since 0.9
+
+#ldap.auth.url=ldap://localhost:33389
+#ldap.auth.base=dc=linshare,dc=org
+#ldap.auth.baseDN=ou=People
+#ldap.auth.attribute=mail
+#ldap.auth.key=${ldap.auth.attribute}={0}
+#ldap.hash.algo=SHA
+## Strategy is SIMPLE, DEFAULT_TLS, or EXTERNAL_TLS for SASL connection. TLS is not supported at this time by linShare
+#ldap.auth.strategy=SIMPLE
+##Leave ldap ssl configuration empty if not used. Give path to a java trustore.
+#ldap.auth.ssl.trustore.file=
+#ldap.auth.ssl.trustore.password=
+#ldap.pageSize=0
+#ldap.auth.userDN=cn=Directory Manager
+#ldap.auth.password=secret
+
+#Wiser smtp
+
+mail.smtp.host=
+mail.smtp.port=2525
+mail.smtp.auth.needed=false
+
+
+#These mails are using for unit testing about sharing in order to the mail sending
+linshare.test.mail.sender=mailSender@mailSender.test
+linshare.test.mail.recipient=mailRecipient@mailRecipient.test
+
+#ClamAv
+test.virusscanner.clamav.host=localhost
+test.virusscanner.clamav.port=3310
+test.virusscanner.clamav.filetocheck=/path/to/the/file/to/check
+
+#Avoid warning on h2 db close
+linshare.db-repository.url=jdbc:h2:file:${LINSHARE_HOME}/var/lib/linshare/db/linshare_data;DB_CLOSE_ON_EXIT=FALSE
+linshare.db.url=jdbc:h2:file:${LINSHARE_HOME}/var/lib/linshare/db/linshare;DB_CLOSE_ON_EXIT=FALSE
+
+linshare.db-repository.url=jdbc:h2:file:./target/var/lib/linshare/db/linshare_data;DB_CLOSE_ON_EXIT=FALSE
+linshare.db.url=jdbc:h2:file:./target/var/lib/linshare/db/linshare;DB_CLOSE_ON_EXIT=FALSE
+
+linshare.gdpr.enable=true
+
+#******** LinThumbnail configuration
+linshare.linthumbnail.dropwizard.server=http://0.0.0.0:8090/linthumbnail?mimeType=%1$s
+# key to disable thumbnail generation
+linshare.documents.thumbnail.pdf.enable=true
+linshare.documents.thumbnail.enable=false
+
+#linshare.db.username=linshare
+#linshare.db.password=linshare
+#linshare.db.driver.class=org.postgresql.Driver
+#linshare.db.url=jdbc:postgresql://192.168.56.101:5432/test
+#linshare.db.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+
+
+#linshare.db.username=linshare
+#linshare.db.password=linshare
+#linshare.db.driver.class=com.mysql.jdbc.Driver
+#linshare.db.url=jdbc:mysql://192.168.56.101:3306/linshare
+#linshare.db.dialect=org.hibernate.dialect.MySQL5Dialect
+
+
+
+#Pool
+linshare.db.pool.maxactive=100
+linshare.db.pool.maxwait=10000
+
+linshare.encipherment.tmp.dir=${LINSHARE_HOME}/var/lib/linshare/tmp
+
+linshare.db.show_sql=false
+linshare.db.format_sql=false
+
+jwt.global.key.private.path=src/test/resources/sshkeys/id_rsa
+jwt.global.key.public.path=src/test/resources/sshkeys/id_rsa.pub

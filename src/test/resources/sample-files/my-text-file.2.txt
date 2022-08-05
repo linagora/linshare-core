@@ -1,0 +1,343 @@
+dn: dc=linshare,dc=org
+dc: linshare
+objectClass: dcObject
+objectClass: top
+description: linshare naming context
+
+dn: ou=People,dc=linshare,dc=org
+ou: People
+objectClass: organizationalUnit
+objectClass: top
+description: People subtree
+
+dn: uid=user1,ou=People,dc=linshare,dc=org
+uid: user1
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Doe
+givenName: John
+cn: Doe, John
+userPassword: password1
+mail: user1@linshare.org
+
+dn: uid=user2,ou=People,dc=linshare,dc=org
+uid: user2
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Smith
+givenName: Jane
+cn: Smith, Jane
+userPassword: password2
+mail: user2@linshare.org
+
+dn: uid=user3,ou=People,dc=linshare,dc=org
+uid: user3
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Foo
+givenName: Bar
+cn: Foo, Bar
+userPassword: password3
+mail: user3@linshare.org
+
+dn: uid=user4,ou=People,dc=linshare,dc=org
+uid: user4
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Foo2
+givenName: Bar2
+cn: Foo2, Bar2
+userPassword: password4
+mail: user4@linshare.org
+
+dn: uid=user5,ou=People,dc=linshare,dc=org
+uid: user5
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Peter
+givenName: Parker
+cn: Peter, Parker
+userPassword: password5
+mail: user5@linshare.org
+
+dn: uid=user6,ou=People,dc=linshare,dc=org
+uid: user6
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Bruce
+givenName: Wane
+cn: Bruce, Wane
+userPassword: password6
+mail: user6@linshare.org
+
+dn: uid=user7,ou=People,dc=linshare,dc=org
+uid: user7
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Oliver
+givenName: Twist
+cn: Oliver, Twist
+userPassword: password7
+mail: user7@linshare.org
+
+dn: uid=test1,ou=People,dc=linshare,dc=org
+uid: test1
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Test1
+cn: Test, Test1
+userPassword: password1
+mail: test1@linshare.org
+
+dn: uid=test2,ou=People,dc=linshare,dc=org
+uid: test2
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Test2
+cn: Test, Test2
+userPassword: password2
+mail: test2@linshare.org
+
+dn: ou=Groups,dc=linshare,dc=org
+ou: Groups
+objectClass: organizationalUnit
+objectClass: top
+description: Groups subtree
+
+dn: cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org
+cn: workgroup-wg-1
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: ou=Groups2,dc=linshare,dc=org
+ou: Groups2
+objectClass: organizationalUnit
+objectClass: top
+description: Groups2 subtree
+
+dn: cn=workgroup-wg-2,ou=Groups2,dc=linshare,dc=org
+cn: workgroup-wg-2
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: ou=Groups3,dc=linshare,dc=org
+ou: Groups3
+objectClass: organizationalUnit
+objectClass: top
+description: Groups3 subtree
+
+dn: cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
+cn: workgroup-wg-3
+objectClass: groupOfNames
+member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: cn=contributors,cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
+cn: contributors
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: cn=writers,cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
+cn: writers
+objectClass: groupofUniqueNames
+member: uid=user3,ou=People,dc=linshare,dc=org
+
+dn: ou=Groups4,dc=linshare,dc=org
+ou: Groups4
+objectClass: organizationalUnit
+objectClass: top
+description: Groups4 subtree
+
+dn: cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
+cn: workgroup-wg-4
+objectClass: groupOfNames
+
+dn: cn=contributors,cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
+cn: contributors
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: cn=writers,cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
+cn: writers
+objectClass: groupOfNames
+member: uid=user3,ou=People,dc=linshare,dc=org
+
+dn: ou=Groups5,dc=linshare,dc=org
+ou: Groups5
+objectClass: organizationalUnit
+objectClass: top
+description: Groups5 subtree
+
+dn: cn=workgroup-wg-5,ou=Groups5,dc=linshare,dc=org
+cn: workgroup-wg-5
+objectClass: groupOfNames
+member: uid=user2,ou=People,dc=linshare,dc=org
+member: uid=user3,ou=People,dc=linshare,dc=org
+
+dn: cn=contributors,cn=workgroup-wg-5,ou=Groups5,dc=linshare,dc=org
+cn: contributors
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: cn=writers,cn=workgroup-wg-5,ou=Groups5,dc=linshare,dc=org
+cn: writers
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+member: uid=user3,ou=People,dc=linshare,dc=org
+
+dn: cn=workspace-workspace-1,ou=Groups,dc=linshare,dc=org
+cn: workspace-workspace-1
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: cn=workspace-workspace-2,ou=Groups2,dc=linshare,dc=org
+cn: workspace-workspace-2
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: cn=contributors,cn=workspace-workspace-2,ou=Groups2,dc=linshare,dc=org
+cn: contributors
+objectClass: groupOfNames
+member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: cn=workspace-workspace-3,ou=Groups3,dc=linshare,dc=org
+cn: workspace-workspace-3
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: cn=workspace_writers,cn=workspace-workspace-3,ou=Groups3,dc=linshare,dc=org
+cn: workspace_writers
+objectClass: groupOfNames
+member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: cn=workspace-workspace-4,ou=Groups4,dc=linshare,dc=org
+cn: workspace-workspace-4
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: cn=workspace_writers,cn=workspace-workspace-4,ou=Groups4,dc=linshare,dc=org
+cn: workspace_writers
+objectClass: groupOfNames
+member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: cn=writers,cn=workspace-workspace-4,ou=Groups4,dc=linshare,dc=org
+cn: writers
+objectClass: groupOfNames
+member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: ou=People2,dc=linshare,dc=org
+ou: People2
+objectClass: organizationalUnit
+objectClass: top
+description: People2 subtree
+
+dn: uid=amy.wolsh,ou=People2,dc=linshare,dc=org
+uid: amy.wolsh
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: WOLSH
+givenName: Amy
+cn: Amy WOLSH
+userPassword: secret
+mail: amy.wolsh@linshare.org
+
+dn: uid=peter.wilson,ou=People2,dc=linshare,dc=org
+uid: peter.wilson
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: WILSON
+givenName: Peter
+cn: Smith, Peter WILSON
+userPassword: secret
+mail: peter.wilson@linshare.org
+
+dn: uid=cornell.able,ou=People2,dc=linshare,dc=org
+uid: cornell.able
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: ABLE
+givenName: Cornell
+cn: Cornell ABLE
+userPassword: secret
+mail: cornell.able@linshare.org
+
+dn: uid=abbey.curry,ou=People2,dc=linshare,dc=org
+uid: abbey.curry
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: CURRY
+givenName: Abbey
+cn: Abbey CURRY
+userPassword: secret
+mail: abbey.curry@linshare.org
+
+dn: uid=anderson.waxman,ou=People2,dc=linshare,dc=org
+uid: anderson.waxman
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: WAXMAN
+givenName: Anderson
+cn: Anderson WAXMAN
+userPassword: secret
+mail: anderson.waxman@linshare.org
+
+dn: uid=dawson.waterfield,ou=People2,dc=linshare,dc=org
+uid: dawson.waterfield
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: WATERFIELD
+givenName: Dawson
+cn: Dawson WATERFIELD
+userPassword: secret
+mail: dawson.waterfield@linshare.org
+
+dn: cn=regular-users,ou=Groups,dc=linshare,dc=org
+ou: Groups
+objectClass: organizationalUnit
+objectClass: top
+description: Regular users
+member: uid=amy.wolsh,ou=People2,dc=linshare,dc=org
+member: uid=peter.wilson,ou=People2,dc=linshare,dc=org
+member: uid=cornell.able,ou=People2,dc=linshare,dc=org
+
+dn: cn=vip-users,ou=Groups,dc=linshare,dc=org
+ou: Groups
+objectClass: organizationalUnit
+objectClass: top
+description: Vip users
+member: uid=abbey.curry,ou=People2,dc=linshare,dc=org
+member: uid=anderson.waxman,ou=People2,dc=linshare,dc=org
+member: uid=dawson.waterfield,ou=People2,dc=linshare,dc=org
+
+

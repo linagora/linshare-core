@@ -37,13 +37,13 @@ package org.linagora.linshare.core.repository;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.utils.DocumentCount;
 
 public interface UploadRequestEntryRepository extends
 		AbstractRepository<UploadRequestEntry> {
@@ -56,7 +56,7 @@ public interface UploadRequestEntryRepository extends
 	 */
 	UploadRequestEntry findByUuid(String uuid);
 
-	Map<String, Long> findByDomainsBetweenTwoDates(AbstractDomain domain, Calendar beginDate, Calendar endDate);
+	List<DocumentCount> findByDomainsBetweenTwoDates(AbstractDomain domain, Calendar beginDate, Calendar endDate);
 
 	List<UploadRequestEntry> findAllExtEntries(UploadRequestUrl uploadRequestUrl);
 

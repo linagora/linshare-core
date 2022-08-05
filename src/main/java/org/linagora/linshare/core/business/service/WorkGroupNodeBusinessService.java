@@ -49,11 +49,12 @@ import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
+import org.linagora.linshare.utils.DocumentCount;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface WorkGroupNodeBusinessService {
 
-	Map<String, Long> findTotalOccurenceOfMimeTypeByDomain(List<String> workgroupsByDomains, Date bDate, Date eDate);
+	List<DocumentCount> findTotalOccurenceOfMimeTypeByDomain(List<String> workgroupsByDomains, Date bDate, Date eDate);
 
 	Long computeNodeSize(WorkGroup workGroup, String pattern, WorkGroupNodeType type);
 

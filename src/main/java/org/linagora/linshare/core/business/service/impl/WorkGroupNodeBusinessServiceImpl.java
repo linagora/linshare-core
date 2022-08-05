@@ -82,12 +82,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 
 public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessService {
@@ -116,22 +118,16 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 	}
 
 	@Override
-	public Map<String, Long> findTotalOccurenceOfMimeTypeByDomain(List<String> workgroupsByDomains, Date bDate, Date eDate) {
-		Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(
-				Criteria.where("workGroup").in(workgroupsByDomains)
-				.and("uploadDate").gte(bDate).lt(eDate)),
-				Aggregation.group("mimeType").count().as("total"),
-				Aggregation.project("total").and("mimeType").previousOperation());
-		List<DocumentCount> results = mongoTemplate.aggregate(aggregation, "work_group_nodes", DocumentCount.class).getMappedResults();
-		return documentCountToMap(results);
-	}
-
-	private Map<String, Long> documentCountToMap(List<DocumentCount> results) {
-		Map<String, Long> map = Maps.newHashMap();
-		for (DocumentCount documentCount : results) {
-			map.put(documentCount.getMimetype(), documentCount.getTotal());
-		}
-		return map;
+	public List<DocumentCount> findTotalOccurenceOfMimeTypeByDomain(List<String> workgroupsByDomains, Date bDate, Date eDate) {
+		MatchOperation match = Aggregation.match(
+			Criteria.where("workGroup").in(workgroupsByDomains)
+				.and("nodeType").is(WorkGroupNodeType.DOCUMENT_REVISION)
+				.and("uploadDate").gte(bDate).lt(eDate));
+		GroupOperation group = Aggregation.group("mimeType").count().as("total").sum("size").as("totalSize");
+		ProjectionOperation project = Aggregation.project("total", "totalSize").and("mimeType").previousOperation();
+		Aggregation aggregation = Aggregation.newAggregation(match, group, project);
+		List<DocumentCount> results = mongoTemplate.aggregate(aggregation, WorkGroupNode.class, DocumentCount.class).getMappedResults();
+		return results;
 	}
 
 	@Override

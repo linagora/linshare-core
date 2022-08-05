@@ -37,13 +37,13 @@ package org.linagora.linshare.core.repository;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.utils.DocumentCount;
 
 public interface DocumentEntryRepository extends
 		AbstractRepository<DocumentEntry> {
@@ -73,7 +73,7 @@ public interface DocumentEntryRepository extends
 
 	void syncUniqueDocument(Account owner, String fileName) throws BusinessException;
 
-	Map<String, Long> countAndGroupByMimeType(AbstractDomain domain, Calendar bDate, Calendar eDate);
+	List<DocumentCount> countAndGroupByMimeType(AbstractDomain domain, Calendar bDate, Calendar eDate);
 
 	/**
 	 * find unshared documents with a null expiration date due to a legacy bug  

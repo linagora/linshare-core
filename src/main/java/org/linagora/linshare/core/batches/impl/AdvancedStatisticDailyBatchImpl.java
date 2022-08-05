@@ -60,8 +60,9 @@ import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 import org.linagora.linshare.mongo.repository.AdvancedStatisticMongoRepository;
+import org.linagora.linshare.utils.DocumentCount;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class AdvancedStatisticDailyBatchImpl extends GenericBatchWithHistoryImpl {
 
@@ -113,6 +114,7 @@ public class AdvancedStatisticDailyBatchImpl extends GenericBatchWithHistoryImpl
 		AbstractDomain domain = abstractDomainRepository.findById(identifier);
 		ResultContext context = new DomainBatchResultContext(domain);
 		context.setProcessed(false);
+		Map<String, MimeTypeStatistic> mimeTypeStatistics = Maps.newHashMap();
 		String parentDomainUuid = null;
 		AbstractDomain parentDomain = domain.getParentDomain();
 		if (parentDomain != null) {
@@ -120,27 +122,44 @@ public class AdvancedStatisticDailyBatchImpl extends GenericBatchWithHistoryImpl
 		}
 		console.logInfo(batchRunContext, total, position, "processing domain : " + domain.toString());
 		// Find total occurence of each mimeType on documentEntry
-		Map<String, Long> documentEntryMap = documentEntryRepository.countAndGroupByMimeType(domain, getBeginDate(),
-				getEndDate());
-		// Find total occurence of each mimeType on workGroupDocument
+		List<DocumentCount> documents = documentEntryRepository.countAndGroupByMimeType(domain, getBeginDate(), getEndDate());
+		addMimeTypes(domain, parentDomainUuid, documents, mimeTypeStatistics);
+
+		// Find total occurrences of each mimeType on workGroupDocument
 		List<String> workgroupsByDomains = threadRepository.findByDomainUuid(identifier);
-		Map<String, Long> workGroupDocumentMap = workGroupNodeBusinessService.findTotalOccurenceOfMimeTypeByDomain(
+		documents = workGroupNodeBusinessService.findTotalOccurenceOfMimeTypeByDomain(
 				workgroupsByDomains, getBeginDate().getTime(), getEndDate().getTime());
-		// Find total occurence of each mimeType on uploadRequestEntry
-		Map<String, Long> uploadRequestEntryMap = uploadRequestEntryRepository.findByDomainsBetweenTwoDates(domain, getBeginDate(), getEndDate());
-		@SuppressWarnings("unchecked")
-		Map<String, Long> totalMerged = mergeMaps(workGroupDocumentMap, documentEntryMap, uploadRequestEntryMap);
-		List<MimeTypeStatistic> mimeTypeStatistics = Lists.newArrayList();
-		for (Map.Entry<String, Long> entry : totalMerged.entrySet()) {
-			MimeTypeStatistic mimeTypeStatistic = new MimeTypeStatistic(entry.getValue(), parentDomainUuid,
-					domain.getUuid(), entry.getKey());
-			mimeTypeStatistics.add(mimeTypeStatistic);
-		}
+		addMimeTypes(domain, parentDomainUuid, documents, mimeTypeStatistics);
+
+		// Find total occurrences of each mimeType on uploadRequestEntry
+		documents = uploadRequestEntryRepository.findByDomainsBetweenTwoDates(domain, getBeginDate(), getEndDate());
+		addMimeTypes(domain, parentDomainUuid, documents, mimeTypeStatistics);
+
 		if (!mimeTypeStatistics.isEmpty()) {
-			advancedStatisticMongoRepository.insert(mimeTypeStatistics);
+			advancedStatisticMongoRepository.insert(mimeTypeStatistics.values());
 		}
 		context.setProcessed(true);
 		return context;
+	}
+
+	private void addMimeTypes(AbstractDomain domain, String parentDomainUuid,
+			List<DocumentCount> documents, Map<String, MimeTypeStatistic> mimeTypeStatistics) {
+		for (DocumentCount document : documents) {
+			if (mimeTypeStatistics.containsKey(document.getMimeType())) {
+				MimeTypeStatistic mimeTypeStatistic = mimeTypeStatistics.get(document.getMimeType());
+				mimeTypeStatistic.addValue(document.getTotal());
+				mimeTypeStatistic.addTotalSize(document.getTotalSize());
+			}
+			else {
+				MimeTypeStatistic mimeTypeStatistic = new MimeTypeStatistic(
+						document.getTotal(),
+						document.getTotalSize(),
+						parentDomainUuid,
+						domain.getUuid(),
+						document.getMimeType());
+				mimeTypeStatistics.put(document.getMimeType(), mimeTypeStatistic);
+			}
+		}
 	}
 
 	@Override

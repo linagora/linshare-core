@@ -50,6 +50,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+/**
+ * @author fmartin
+ *
+ */
 @XmlRootElement(name = "MimeTypeStatistic")
 @Document(collection = "mime_type_statistic")
 public class MimeTypeStatistic {
@@ -78,15 +82,24 @@ public class MimeTypeStatistic {
 
 	protected String mimeType;
 
+	protected Long totalSize;
+
+	protected String humanMimeType;
+
 	public MimeTypeStatistic() {
 		super();
 	}
 
-	public MimeTypeStatistic(Long value, String parentDomainUuid,
-			String domainUuid, String mimeType) {
+	public MimeTypeStatistic(
+			Long value,
+			Long size,
+			String parentDomainUuid,
+			String domainUuid,
+			String mimeType) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.value = value;
+		this.totalSize = size;
 		this.domainUuid = domainUuid;
 		this.parentDomainUuid = parentDomainUuid;
 		this.creationDate = new Date();
@@ -170,11 +183,35 @@ public class MimeTypeStatistic {
 		this.mimeType = mimeType;
 	}
 
+	public Long getTotalSize() {
+		return totalSize;
+	}
+
+	public void setTotalSize(Long totalSize) {
+		this.totalSize = totalSize;
+	}
+
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
+	}
+
 	@Override
 	public String toString() {
-		return "MimeTypeStatistic [id=" + id + ", uuid=" + uuid + ", value=" + value + ", domainUuid=" + domainUuid
-				+ ", parentDomainUuid=" + parentDomainUuid + ", creationDate=" + creationDate + ", type=" + type
-				+ ", mimeType=" + mimeType + "]";
+		return "MimeTypeStatistic [id=" + id + ", value=" + value + ", totalSize=" + totalSize + ", mimeType="
+				+ mimeType + ", statisticDate=" + statisticDate + ", type=" + type + ", humanMimeType=" + humanMimeType
+				+ ", domainUuid=" + domainUuid + "]";
+	}
+
+	public void addValue(Long value) {
+		this.value += value;
+	}
+
+	public void addTotalSize(Long size) {
+		this.totalSize += size;
 	}
 
 }

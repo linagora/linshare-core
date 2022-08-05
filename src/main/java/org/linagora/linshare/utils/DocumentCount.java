@@ -41,21 +41,16 @@ public class DocumentCount {
 
 	protected long total;
 
+	protected long totalSize;
+
 	public DocumentCount() {
 	}
 
-	public DocumentCount(String mimetype, long total) {
+	public DocumentCount(String mimetype, long total, long totalSize) {
 		super();
 		this.mimeType = mimetype;
 		this.total = total;
-	}
-
-	public String getMimetype() {
-		return mimeType;
-	}
-
-	public void setMimetype(String mimetype) {
-		this.mimeType = mimetype;
+		this.totalSize = totalSize;
 	}
 
 	public long getTotal() {
@@ -66,8 +61,24 @@ public class DocumentCount {
 		this.total = total;
 	}
 
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
+	}
+
+	public long getTotalSize() {
+		return totalSize;
+	}
+
+	public void setTotalSize(long totalSize) {
+		this.totalSize = totalSize;
+	}
+
 	@Override
 	public String toString() {
-		return "DocumentCount [total=" + total + ", mimeType=" + mimeType + "]";
+		return "DocumentCount [total=" + total + ", totalSize=" + totalSize + ", mimeType=" + mimeType + "]";
 	}
 }

@@ -1570,6 +1570,9 @@
 				<directory>src/test/resources</directory>
 			</testResource>
 			<testResource>
+				<directory>src/test/resources/sample-files</directory>
+			</testResource>
+			<testResource>
 				<directory>src/mongo-java-server/resources</directory>
 			</testResource>
 		</testResources>

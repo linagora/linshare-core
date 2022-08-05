@@ -38,7 +38,7 @@ package org.linagora.linshare.repository.hibernate;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Map;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -59,6 +59,7 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.linagora.linshare.utils.DocumentCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,8 +149,8 @@ public class DocumentEntryRepositoryImplTest  {
 		bDate.add(GregorianCalendar.DATE, -1);
 		Calendar eDate = Calendar.getInstance();
 		eDate.add(GregorianCalendar.DATE, +7);
-		Map<String, Long> mimetypeValue = documentEntryRepository.countAndGroupByMimeType(rootDomain, bDate, eDate);
-		Assertions.assertEquals(1, mimetypeValue.entrySet().size());
+		List<DocumentCount> mimeTypes = documentEntryRepository.countAndGroupByMimeType(rootDomain, bDate, eDate);
+		Assertions.assertEquals(1, mimeTypes.size());
 		documentEntryRepository.delete(d);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
