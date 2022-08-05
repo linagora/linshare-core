@@ -205,37 +205,44 @@ public class AdvancedStatisticDailyBatchTest {
 		Assertions.assertTrue(mimeTypeStatistics.containsKey(mimeType));
 		Assertions.assertEquals(4, mimeTypeStatistics.get(mimeType).getValue());
 		Assertions.assertEquals(196420, mimeTypeStatistics.get(mimeType).getTotalSize());
+		Assertions.assertEquals("image", mimeTypeStatistics.get(mimeType).getHumanMimeType());
 
 		mimeType = "application/pdf";
 		Assertions.assertTrue(mimeTypeStatistics.containsKey(mimeType));
 		Assertions.assertEquals(4, mimeTypeStatistics.get(mimeType).getValue());
 		Assertions.assertEquals(1567052, mimeTypeStatistics.get(mimeType).getTotalSize());
+		Assertions.assertEquals("pdf", mimeTypeStatistics.get(mimeType).getHumanMimeType());
 
 		mimeType = "text/x-python";
 		Assertions.assertTrue(mimeTypeStatistics.containsKey(mimeType));
 		Assertions.assertEquals(1, mimeTypeStatistics.get(mimeType).getValue());
 		Assertions.assertEquals(46, mimeTypeStatistics.get(mimeType).getTotalSize());
+		Assertions.assertEquals("text", mimeTypeStatistics.get(mimeType).getHumanMimeType());
+
+		mimeType = "text/plain";
+		Assertions.assertTrue(mimeTypeStatistics.containsKey(mimeType));
+		Assertions.assertEquals(5, mimeTypeStatistics.get(mimeType).getValue());
+		Assertions.assertEquals(24480, mimeTypeStatistics.get(mimeType).getTotalSize());
+		Assertions.assertEquals("text", mimeTypeStatistics.get(mimeType).getHumanMimeType());
 
 		// cf import-tests-document-entry-setup.sql
 		mimeType = "data";
 		Assertions.assertTrue(mimeTypeStatistics.containsKey(mimeType));
 		Assertions.assertEquals(3, mimeTypeStatistics.get(mimeType).getValue());
 		Assertions.assertEquals(3072, mimeTypeStatistics.get(mimeType).getTotalSize());
+		Assertions.assertEquals("others", mimeTypeStatistics.get(mimeType).getHumanMimeType());
 
 		mimeType = "application/vnd.oasis.opendocument.spreadsheet";
 		Assertions.assertTrue(mimeTypeStatistics.containsKey(mimeType));
 		Assertions.assertEquals(2, mimeTypeStatistics.get(mimeType).getValue());
 		Assertions.assertEquals(17602, mimeTypeStatistics.get(mimeType).getTotalSize());
+		Assertions.assertEquals("document", mimeTypeStatistics.get(mimeType).getHumanMimeType());
 
 		mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 		Assertions.assertTrue(mimeTypeStatistics.containsKey(mimeType));
 		Assertions.assertEquals(2, mimeTypeStatistics.get(mimeType).getValue());
 		Assertions.assertEquals(7030, mimeTypeStatistics.get(mimeType).getTotalSize());
-
-		mimeType = "text/plain";
-		Assertions.assertTrue(mimeTypeStatistics.containsKey(mimeType));
-		Assertions.assertEquals(5, mimeTypeStatistics.get(mimeType).getValue());
-		Assertions.assertEquals(24480, mimeTypeStatistics.get(mimeType).getTotalSize());
+		Assertions.assertEquals("document", mimeTypeStatistics.get(mimeType).getHumanMimeType());
 	}
 
 	private void createWorkgroupDocument() throws IOException {

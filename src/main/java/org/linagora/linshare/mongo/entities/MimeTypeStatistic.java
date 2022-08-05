@@ -95,7 +95,8 @@ public class MimeTypeStatistic {
 			Long size,
 			String parentDomainUuid,
 			String domainUuid,
-			String mimeType) {
+			String mimeType,
+			String humanMimeType) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.value = value;
@@ -108,6 +109,7 @@ public class MimeTypeStatistic {
 			ZoneId.systemDefault()
 		).toString();
 		this.mimeType = mimeType;
+		this.humanMimeType = humanMimeType;
 		this.type = AdvancedStatisticType.DAILY;
 	}
 
