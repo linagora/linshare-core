@@ -37,23 +37,30 @@ package org.linagora.linshare.core.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.fields.AuditEntryField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
+import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
@@ -61,9 +68,15 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -75,21 +88,32 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 
 	private static final String CREATION_DATE = "creationDate";
 
-	protected final AuditAdminMongoRepository auditMongoRepository;
+	protected final AuditAdminMongoRepository adminMongoRepository;
 
 	protected final AuditUserMongoRepository userMongoRepository;
 
 	protected final DomainPermissionBusinessService permissionService;
 
+	protected final AbstractDomainService domainService;
+
+	protected final TimeService timeService;
+
+	protected final MongoTemplate mongoTemplate;
+
 	public AuditLogEntryServiceImpl(AuditAdminMongoRepository auditMongoRepository,
 			AuditUserMongoRepository userMongoRepository,
 			UserService userService,
 			DomainPermissionBusinessService permissionService,
+			TimeService timeService,
+			MongoTemplate mongoTemplate,
 			AbstractDomainService domainService) {
 		super();
-		this.auditMongoRepository = auditMongoRepository;
+		this.adminMongoRepository = auditMongoRepository;
 		this.userMongoRepository = userMongoRepository;
 		this.permissionService = permissionService;
+		this.timeService = timeService;
+		this.mongoTemplate = mongoTemplate;
+		this.domainService = domainService;
 	}
 
 	/**
@@ -129,17 +153,17 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		List<AuditLogEntryType> types = getEntryTypes(type, null, true);
 		if (actor.hasSuperAdminRole()) {
 			if (forceAll) {
-				return auditMongoRepository.findAll(actions, types);
+				return adminMongoRepository.findAll(actions, types);
 			} else {
 				Date end = getEndDate(endDate);
 				Date begin = getBeginDate(beginDate, end);
-				return auditMongoRepository.findAll(actions, types, begin, end);
+				return adminMongoRepository.findAll(actions, types, begin, end);
 			}
 		} else {
 			List<String> domains = permissionService.getAdministratedDomainsIdentifiers(actor, actor.getDomainId());
 			Date end = getEndDate(endDate);
 			Date begin = getBeginDate(beginDate, end);
-			return auditMongoRepository.findAll(actions, types, begin, end, domains);
+			return adminMongoRepository.findAll(actions, types, begin, end, domains);
 		}
 	}
 
@@ -308,7 +332,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			action.add(LogAction.CREATE);
 			action.add(LogAction.DELETE);
 		}
-		return auditMongoRepository.findAll(domainUuid, action, AuditLogEntryType.PUBLIC_KEY,
+		return adminMongoRepository.findAll(domainUuid, action, AuditLogEntryType.PUBLIC_KEY,
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
@@ -325,7 +349,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	public Set<MailAttachmentAuditLogEntry> findAllAudits(Account authUser, String uuid,
 			List<LogAction> actions) {
 		List<LogAction> actionsList = getCreateUpdateDeletetActions(actions);
-		return auditMongoRepository.findAllAudits(uuid, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
+		return adminMongoRepository.findAllAudits(uuid, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
@@ -333,7 +357,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	public Set<MailAttachmentAuditLogEntry> findAllAuditsByDomain(Account authUser, List<String> domains,
 			List<LogAction> actions) {
 		List<LogAction> actionsList = getCreateUpdateDeletetActions(actions);
-		return auditMongoRepository.findAllAuditsByDomain(domains, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
+		return adminMongoRepository.findAllAuditsByDomain(domains, actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
@@ -344,7 +368,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not allowed to use this api.");
 		}
 		List<LogAction> actionsList = getCreateUpdateDeletetActions(actions);
-		return auditMongoRepository.findAllAuditsByRoot(actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
+		return adminMongoRepository.findAllAuditsByRoot(actionsList, AuditLogEntryType.MAIL_ATTACHMENT,
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 	}
 
@@ -376,5 +400,147 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 				getCreateUpdateDeletetActions(actions), getEntryTypes(types, supportedTypes, true),
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
 		return audits;
+	}
+
+	@Override
+	public AuditLogEntry find(Account authUser, AbstractDomain domain, String uuid) {
+		Validate.notNull(authUser, "authUser must be set.");
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(
+					BusinessErrorCode.FORBIDDEN,
+					"You are not allowed to query this domain");
+		}
+		Query query = new Query();
+		query.addCriteria(Criteria.where("uuid").is(uuid));
+		if (!domain.isRootDomain()) {
+			List<String> domainUuids = permissionService.getAdministratedDomainsIdentifiers(authUser, domain.getUuid());
+			query.addCriteria(Criteria.where("relatedDomains").in(domainUuids));
+		}
+		AuditLogEntry trace = mongoTemplate.findOne(query, AuditLogEntry.class, "audit_log_entries");
+		if (trace == null) {
+			throw new BusinessException(
+					BusinessErrorCode.AUDIT_LOG_ENTRY_DO_NOT_EXIST,
+					"Not found");
+		}
+		return trace;
+	}
+
+	@Override
+	public PageContainer<AuditLogEntry> findAll(
+			Account authUser,
+			AbstractDomain domain, boolean includeNestedDomains, Set<String> domains,
+			SortOrder sortOrder, AuditEntryField sortField,
+			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
+			Set<AuditLogEntryType> excludedTypes,
+			Optional<String> authUserUuid, Optional<String> actorUuid,
+			Optional<String> relatedAccount,
+			Optional<String> resource,
+			Optional<String> relatedResource,
+			Optional<String> resourceName,
+			Optional<String> beginDate, Optional<String> endDate,
+			PageContainer<AuditLogEntry> container) {
+		Validate.notNull(authUser, "authUser must be set.");
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(
+					BusinessErrorCode.FORBIDDEN,
+					"You are not allowed to query this domain");
+		}
+		if (!domains.isEmpty()) {
+			for (String domainUuid : domains) {
+				AbstractDomain d = domainService.findById(domainUuid);
+				if (!permissionService.isAdminforThisDomain(authUser, d)) {
+					throw new BusinessException(
+							BusinessErrorCode.FORBIDDEN,
+							"You are not allowed to query this domain: " + domainUuid);
+				}
+			}
+		}
+		Optional<LocalDate> begin = Optional.empty();
+		Optional<LocalDate> end = Optional.empty();
+		try {
+			if (beginDate.isPresent()) {
+				begin = Optional.of(LocalDate.parse(beginDate.get()));
+			}
+			if (endDate.isPresent()) {
+				end = Optional.of(LocalDate.parse(endDate.get()));
+			}
+			if (begin.isPresent() && end.isPresent()) {
+				if (end.get().isBefore(begin.get())) {
+					throw new BusinessException(
+							BusinessErrorCode.STATISTIC_DATE_RANGE_ERROR,
+							String.format("begin date (%s) must be before end date (%s)", begin.get(), end.get())
+					);
+				}
+			}
+		} catch (DateTimeParseException e) {
+			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
+		}
+		Query query = new Query();
+		if (includeNestedDomains) {
+			if (!domain.isRootDomain()) {
+				List<String> domainUuids = permissionService.getAdministratedDomainsIdentifiers(authUser, domain.getUuid());
+				query.addCriteria(Criteria.where("relatedDomains").in(domainUuids));
+			}
+		} else {
+			if (!domains.isEmpty()) {
+				query.addCriteria(Criteria.where("relatedDomains").in(domains));
+			} else {
+				query.addCriteria(Criteria.where("relatedDomains").is(domain.getUuid()));
+			}
+		}
+		if (!logActions.isEmpty()) {
+			query.addCriteria(Criteria.where("action").in(logActions));
+		}
+		if (!resourceTypes.isEmpty()) {
+			query.addCriteria(Criteria.where("type").in(resourceTypes));
+		} else {
+			if (!excludedTypes.isEmpty()) {
+				query.addCriteria(Criteria.where("type").nin(excludedTypes));
+			}
+		}
+		if (authUserUuid.isPresent()) {
+			query.addCriteria(Criteria.where("authUser.uuid").is(authUserUuid.get()));
+		}
+		if (actorUuid.isPresent()) {
+			query.addCriteria(Criteria.where("actor.uuid").is(actorUuid.get()));
+		}
+		if (begin.isPresent() && end.isPresent() ) {
+			query.addCriteria(Criteria.where("creationDate").gte(begin.get()).lt(end.get()));
+		} else if (begin.isPresent()) {
+			query.addCriteria(Criteria.where("creationDate").gte(begin.get()));
+		} else if (end.isPresent()) {
+			query.addCriteria(Criteria.where("creationDate").lt(end.get()));
+		}
+		if (relatedAccount.isPresent()) {
+			query.addCriteria(Criteria.where("relatedAccounts").in(relatedAccount.get()));
+		}
+		if (resource.isPresent()) {
+			query.addCriteria(Criteria.where("resourceUuid").is(resource.get()));
+		}
+		if (relatedResource.isPresent()) {
+			String uuid = relatedResource.get();
+			query.addCriteria(new Criteria().orOperator(
+					Criteria.where("relatedResources").in(uuid),
+					Criteria.where("resourceUuid").is(uuid)
+					)
+			);
+		}
+		if (resourceName.isPresent()) {
+			query.addCriteria(Criteria.where("resource.name").regex(resourceName.get(), "i"));
+		}
+		long count = mongoTemplate.count(query, AuditLogEntry.class);
+		logger.debug("Total of elements returned by the query without pagination: {}", count);
+		if (count == 0) {
+			return new PageContainer<AuditLogEntry>();
+		}
+		Pageable paging = PageRequest.of(container.getPageNumber(), container.getPageSize());
+		query.with(paging);
+		query.with(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString()));
+		container.validateTotalPagesCount(count);
+		long startTime = System.currentTimeMillis();
+		List<AuditLogEntry> data = mongoTemplate.find(query, AuditLogEntry.class);
+		long elapsed = System.currentTimeMillis() - startTime;
+		logger.debug("audit query duration : {} ms.", elapsed);
+		return container.loadData(data);
 	}
 }

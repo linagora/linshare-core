@@ -64,6 +64,8 @@ public class TimingOutInterceptor extends AbstractPhaseInterceptor<Message> {
 			logger.trace(String.format("%s:%s:%s: Request time: %d ms", method, response_code, url, elapsed));
 		} else if (url.endsWith("webservice/rest/user/v4/flow.json")) {
 			logger.trace(String.format("%s:%s:%s: Request time: %d ms", method, response_code, url, elapsed));
+		} else if (url.endsWith("webservice/rest/user/v5/flow.json")) {
+			logger.trace(String.format("%s:%s:%s: Request time: %d ms", method, response_code, url, elapsed));
 		} else {
 			logger.debug(String.format("%s:%s:%s: Request time: %d ms", method, response_code, url, elapsed));
 		}

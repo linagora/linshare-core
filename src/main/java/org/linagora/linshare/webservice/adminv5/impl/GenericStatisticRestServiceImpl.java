@@ -108,7 +108,7 @@ public class GenericStatisticRestServiceImpl extends WebserviceBase
 			)
 			@QueryParam("sortOrder") @DefaultValue("ASC") String sortOrder,
 		@Parameter(
-				description = "The admin can choose the field to sort with the stat's list to retrieve, if not set the value filed will be choosen by default.",
+				description = "The admin can choose the field to sort with the stat's list to retrieve, if not set the value field will be choosen by default.",
 				required = false,
 				schema = @Schema(implementation = GenericStatisticField.class, defaultValue = "value")
 			)

@@ -135,7 +135,7 @@ public class DomainQuotaServiceImplTest {
 			// the same domain
 			domainQuotaService.update(jane, dq);
 		});
-		Assertions.assertEquals("The default_quota filed can't be over quota in the same domain", exception.getMessage());
+		Assertions.assertEquals("The default_quota field can't be over quota in the same domain", exception.getMessage());
 	}
 
 }

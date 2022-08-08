@@ -53,7 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class GenericExceptionMapper implements ExceptionMapper<Exception> {
-	
+
 	@Autowired
 	protected ExceptionStatisticAdminFacade exceptionStatisticFacade;
 

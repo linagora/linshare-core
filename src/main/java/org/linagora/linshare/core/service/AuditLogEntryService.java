@@ -36,16 +36,21 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.fields.AuditEntryField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface AuditLogEntryService {
 
@@ -82,4 +87,22 @@ public interface AuditLogEntryService {
 
 	Set<AuditLogEntryUser> findAllModeratorAudits(Account authUser, Account actor, String ModeratorUuid, List<LogAction> actions,
 			List<AuditLogEntryType> types, String beginDate, String endDate);
+
+	AuditLogEntry find(Account authUser, AbstractDomain domain, String uuid);
+
+	PageContainer<AuditLogEntry> findAll(
+			Account authUser,
+			AbstractDomain domain, boolean includeNestedDomains,
+			Set<String> domains,
+			SortOrder sortOrder, AuditEntryField sortField,
+			Set<LogAction> logActions,
+			Set<AuditLogEntryType> resourceTypes,
+			Set<AuditLogEntryType> excludedTypes,
+			Optional<String> authUserUuid, Optional<String> actorUuid,
+			Optional<String> relatedAccount,
+			Optional<String> resource,
+			Optional<String> relatedResource,
+			Optional<String> resourceName,
+			Optional<String> beginDate, Optional<String> endDate,
+			PageContainer<AuditLogEntry> container);
 }

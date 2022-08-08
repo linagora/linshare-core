@@ -99,7 +99,7 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> i
 		DomainQuota entity = find(actor, dq.getUuid());
 		if (dq.getDefaultQuota() != null) {
 			boolean validateDefaultQuota = dq.getDefaultQuota() <= dq.getQuota();
-			Validate.isTrue(validateDefaultQuota, "The default_quota filed can't be over quota in the same domain");
+			Validate.isTrue(validateDefaultQuota, "The default_quota field can't be over quota in the same domain");
 		}
 		return business.update(entity, dq);
 	}

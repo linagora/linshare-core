@@ -35,9 +35,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
-import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
 
 public interface AdminGenericFacade extends GenericFacade {

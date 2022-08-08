@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2022 LINAGORA
+ * Copyright (C) 2022 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,42 +33,32 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
 
-import java.time.LocalDate;
-import java.util.Date;
+package org.linagora.linshare.webservice.adminv5;
+
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.fields.AccountQuotaDtoField;
-import org.linagora.linshare.core.domain.entities.fields.SortOrder;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.utils.PageContainer;
+import javax.ws.rs.core.Response;
 
-public interface AccountQuotaBusinessService {
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 
-	AccountQuota find(String uuid) throws BusinessException;
+public interface AuditLogEntryRestService {
 
-	AccountQuota find(Account account) throws BusinessException;
+	AuditLogEntry find(String domainUuid, String uuid);
 
-	List<AccountQuota> findAll() throws BusinessException;
-
-	AccountQuota createOrUpdate(Account account, Date today) throws BusinessException;
-
-	AccountQuota create(AccountQuota entity) throws BusinessException;
-
-	AccountQuota update(AccountQuota entity, AccountQuota dto) throws BusinessException;
-
-	List<String> findDomainUuidByBatchModificationDate(Date startDate);
-
-	PageContainer<AccountQuota> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains,
-			SortOrder sortOrder, AccountQuotaDtoField sortField,
-			Optional<Long> greaterThanOrEqualTo, Optional<Long> lessThanOrEqualTo,
-			Optional<ContainerQuotaType> containerQuotaType,
-			Optional<LocalDate> beginDate, Optional<LocalDate> endDate,
-			PageContainer<AccountQuota> container);
+	Response findAll(
+			String domainUuid, boolean includeNestedDomains,
+			Set<String> domains,
+			String sortOrder, String sortField,
+			List<String> logActions,
+			List<String> types,
+			List<String> excludedTypes,
+			String authUser, String actor,
+			String relatedAccount,
+			String resource,
+			String relatedResource,
+			String resourceName,
+			String beginDate, String endDate,
+			Integer pageNumber, Integer pageSize);
 }
