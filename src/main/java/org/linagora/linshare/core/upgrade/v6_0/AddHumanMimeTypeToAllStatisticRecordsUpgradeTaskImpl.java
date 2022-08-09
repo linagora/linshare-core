@@ -40,6 +40,7 @@ import java.util.List;
 import org.bson.Document;
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.batches.utils.FakeContext;
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BatchBusinessException;
@@ -50,6 +51,7 @@ import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -89,10 +91,18 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 			throws BatchBusinessException, BusinessException {
 		BatchResultContext<FakeContext> res = new BatchResultContext<>(new FakeContext(identifier));
 		res.setProcessed(false);
+
 		updateAllMimeTypeStatistics(batchRunContext, total, position);
 		updateHumanMimeTypeStatistics(batchRunContext);
+
 		updateAllWorkGroupNodes(batchRunContext, total, position);
 		updateHumanWorkGroupNodes(batchRunContext);
+
+		updateAllAuditLogEntries(batchRunContext, total, position);
+		updateHumanAuditLogEntries(batchRunContext);
+		updateAllAuditLogEntries2(batchRunContext, total, position);
+		updateHumanAuditLogEntries2(batchRunContext);
+
 		res.setProcessed(true);
 		return res;
 	}
@@ -116,8 +126,8 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 				update.set("humanMimeType", humanMimeType);
 				UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, MimeTypeStatistic.class);
 				console.logInfo(batchRunContext, mimeTypeSize, position, "updateMulti: humanMimeType: " + updateMulti);
-				position++;
 			}
+			position++;
 		}
 	}
 
@@ -163,8 +173,88 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 				update.set("humanMimeType", humanMimeType);
 				UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, WorkGroupNode.class);
 				console.logInfo(batchRunContext, mimeTypeSize, position, "updateMulti: humanMimeType: " + updateMulti);
-				position++;
 			}
+			position++;
+		}
+	}
+
+	private void updateAllAuditLogEntries(BatchRunContext batchRunContext, long total, long position) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("resource.humanMimeType").exists(false));
+		query.addCriteria(Criteria.where("resource.mimeType").exists(true));
+		long localTotal = mongoTemplate.count(query, AuditLogEntry.class);
+		console.logInfo(batchRunContext, total, position, "Missing humanMimeType in AuditLogEntry found: " + localTotal);
+		Update update = new Update();
+		update.set("resource.humanMimeType", "others");
+		UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, AuditLogEntry.class);
+		console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
+	}
+
+	private void updateHumanAuditLogEntries(BatchRunContext batchRunContext) {
+		MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(AuditLogEntry.class));
+		DistinctIterable<String> distincts = collection.distinct("resource.mimeType", String.class);
+		ArrayList<String> mimeTypes = Lists.newArrayList(distincts);
+		int mimeTypeSize = mimeTypes.size();
+		logger.debug("resource.mimeType:size:" + mimeTypeSize);
+		long position = 0;
+		for (String mimeType : distincts) {
+			logger.debug("resource.mimeType:" + mimeType);
+			String humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
+			if (!humanMimeType.equals("others")) {
+				Query query = new Query();
+				query.addCriteria(Criteria.where("resource.mimeType").is(mimeType));
+				long localTotal = mongoTemplate.count(query, AuditLogEntry.class);
+				console.logInfo(batchRunContext, mimeTypeSize, position, "Nb elements for resource.mimeType '" + mimeType + "' in AuditLogEntry found: " + localTotal);
+				Update update = new Update();
+				update.set("resource.humanMimeType", humanMimeType);
+				UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, AuditLogEntry.class);
+				console.logInfo(batchRunContext, mimeTypeSize, position, "updateMulti: resource.humanMimeType: " + updateMulti);
+			}
+			position++;
+		}
+	}
+
+	private void updateAllAuditLogEntries2(BatchRunContext batchRunContext, long total, long position) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("resource.humanMimeType").exists(false));
+		query.addCriteria(Criteria.where("resource.type").exists(true));
+		// just to be sure that we are going to add the field to the proper resources.
+		query.addCriteria(
+			Criteria.where("type").in(
+				AuditGroupLogEntryType.toAuditLogEntryTypes.get(AuditGroupLogEntryType.MY_SPACE)));
+		long localTotal = mongoTemplate.count(query, AuditLogEntry.class);
+		console.logInfo(batchRunContext, total, position, "Missing humanMimeType in AuditLogEntry found: " + localTotal);
+		Update update = new Update();
+		update.set("resource.humanMimeType", "others");
+		UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, AuditLogEntry.class);
+		console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
+	}
+
+	private void updateHumanAuditLogEntries2(BatchRunContext batchRunContext) {
+		MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(AuditLogEntry.class));
+		DistinctIterable<String> distincts = collection.distinct("resource.type", String.class);
+		ArrayList<String> mimeTypes = Lists.newArrayList(distincts);
+		int mimeTypeSize = mimeTypes.size();
+		logger.debug("resource.type:size:" + mimeTypeSize);
+		long position = 0;
+		for (String mimeType : distincts) {
+			logger.debug("resource.mimeType:" + mimeType);
+			String humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
+			if (!humanMimeType.equals("others")) {
+				Query query = new Query();
+				query.addCriteria(Criteria.where("resource.type").is(mimeType));
+				// just to be sure that we are going to add the field to the proper resources.
+				query.addCriteria(
+					Criteria.where("type").in(
+						AuditGroupLogEntryType.toAuditLogEntryTypes.get(AuditGroupLogEntryType.MY_SPACE)));
+				long localTotal = mongoTemplate.count(query, AuditLogEntry.class);
+				console.logInfo(batchRunContext, mimeTypeSize, position, "Nb elements for resource.type '" + mimeType + "' in AuditLogEntry found: " + localTotal);
+				Update update = new Update();
+				update.set("resource.humanMimeType", humanMimeType);
+				UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, AuditLogEntry.class);
+				console.logInfo(batchRunContext, mimeTypeSize, position, "updateMulti: resource.humanMimeType: " + updateMulti);
+			}
+			position++;
 		}
 	}
 
