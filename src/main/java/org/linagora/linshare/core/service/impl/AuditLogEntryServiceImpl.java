@@ -49,6 +49,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -431,6 +432,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			AbstractDomain domain, boolean includeNestedDomains, Set<String> domains,
 			SortOrder sortOrder, AuditEntryField sortField,
 			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
+			Set<AuditGroupLogEntryType> resourceGroups,
 			Set<AuditLogEntryType> excludedTypes,
 			Optional<String> authUserUuid, Optional<String> actorUuid,
 			Optional<String> relatedAccount,
@@ -490,6 +492,11 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		}
 		if (!logActions.isEmpty()) {
 			query.addCriteria(Criteria.where("action").in(logActions));
+		}
+		if (!resourceGroups.isEmpty()) {
+			for (AuditGroupLogEntryType type : resourceGroups) {
+				resourceTypes.addAll(AuditGroupLogEntryType.toAuditLogEntryTypes.get(type));
+			}
 		}
 		if (!resourceTypes.isEmpty()) {
 			query.addCriteria(Criteria.where("type").in(resourceTypes));

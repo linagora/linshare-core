@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -81,7 +82,8 @@ public class AuditLogEntryFacadeImpl extends AdminGenericFacadeImpl implements A
 	public PageContainer<AuditLogEntry> findAll(
 			String domainUuid, Boolean includeNestedDomains, Set<String> domains,
 			SortOrder sortOrder, AuditEntryField sortField,
-			Set<LogAction> logActions, Set<AuditLogEntryType> types, Set<AuditLogEntryType> excludedTypes,
+			Set<LogAction> logActions, Set<AuditLogEntryType> types,
+			Set<AuditGroupLogEntryType> resourceGroups, Set<AuditLogEntryType> excludedTypes,
 			Optional<String> authUserUuid, Optional<String> actorUuid,
 			Optional<String> relatedAccountUuid,
 			Optional<String> resourceUuid,
@@ -97,7 +99,9 @@ public class AuditLogEntryFacadeImpl extends AdminGenericFacadeImpl implements A
 			authUser,
 			domain, includeNestedDomains, domains,
 			sortOrder, sortField,
-			logActions, types, excludedTypes,
+			logActions, types,
+			resourceGroups,
+			excludedTypes,
 			authUserUuid, actorUuid,
 			relatedAccountUuid,
 			resourceUuid,

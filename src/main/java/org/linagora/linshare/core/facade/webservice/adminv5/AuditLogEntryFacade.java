@@ -38,6 +38,7 @@ package org.linagora.linshare.core.facade.webservice.adminv5;
 import java.util.Optional;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.fields.AuditEntryField;
@@ -55,6 +56,7 @@ public interface AuditLogEntryFacade extends AdminGenericFacade {
 			Set<String> domains,
 			SortOrder sortOrder, AuditEntryField sortField,
 			Set<LogAction> logActions, Set<AuditLogEntryType> types,
+			Set<AuditGroupLogEntryType> resourceGroups,
 			Set<AuditLogEntryType> excludedTypes,
 			Optional<String> authUserUuid, Optional<String> actorUuid,
 			Optional<String> relatedAccount,

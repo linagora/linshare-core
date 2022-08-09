@@ -53,6 +53,7 @@ public interface AuditLogEntryRestService {
 			String sortOrder, String sortField,
 			List<String> logActions,
 			List<String> types,
+			List<String> resourceGroups,
 			List<String> excludedTypes,
 			String authUser, String actor,
 			String relatedAccount,

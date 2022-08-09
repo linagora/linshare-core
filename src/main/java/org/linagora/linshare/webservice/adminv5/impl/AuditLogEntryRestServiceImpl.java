@@ -52,6 +52,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.fields.AuditEntryField;
@@ -147,8 +148,14 @@ public class AuditLogEntryRestServiceImpl implements AuditLogEntryRestService {
 					description = "The admin can choose the type of resources to retrieve.",
 					required = false,
 					schema = @Schema(implementation = AuditLogEntryType.class)
-				)
+					)
 				@QueryParam("type") List<String> types,
+			@Parameter(
+					description = "The admin can choose the type of resources to retrieve.",
+					required = false,
+					schema = @Schema(implementation = AuditGroupLogEntryType.class)
+				)
+				@QueryParam("resourceGroups") List<String> resourceGroups,
 			@Parameter(
 					description = "The admin can choose the type of resources to exclude."
 							+ "NB: query param not used if query param 'type' is provided.",
@@ -225,6 +232,7 @@ public class AuditLogEntryRestServiceImpl implements AuditLogEntryRestService {
 				AuditEntryField.valueOf(sortField),
 				logActions.stream().map(name -> LogAction.valueOf(name)).collect(Collectors.toSet()),
 				types.stream().map(name -> AuditLogEntryType.valueOf(name)).collect(Collectors.toSet()),
+				resourceGroups.stream().map(name -> AuditGroupLogEntryType.valueOf(name)).collect(Collectors.toSet()),
 				excludedTypes.stream().map(name -> AuditLogEntryType.valueOf(name)).collect(Collectors.toSet()),
 				Optional.ofNullable(authUser),
 				Optional.ofNullable(actor),

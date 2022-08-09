@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -97,6 +98,7 @@ public interface AuditLogEntryService {
 			SortOrder sortOrder, AuditEntryField sortField,
 			Set<LogAction> logActions,
 			Set<AuditLogEntryType> resourceTypes,
+			Set<AuditGroupLogEntryType> resourceGroups,
 			Set<AuditLogEntryType> excludedTypes,
 			Optional<String> authUserUuid, Optional<String> actorUuid,
 			Optional<String> relatedAccount,
