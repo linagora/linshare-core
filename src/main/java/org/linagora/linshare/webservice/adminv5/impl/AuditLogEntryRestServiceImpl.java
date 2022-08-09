@@ -155,7 +155,7 @@ public class AuditLogEntryRestServiceImpl implements AuditLogEntryRestService {
 					required = false,
 					schema = @Schema(implementation = AuditGroupLogEntryType.class)
 				)
-				@QueryParam("resourceGroups") List<String> resourceGroups,
+				@QueryParam("resourceGroup") List<String> resourceGroups,
 			@Parameter(
 					description = "The admin can choose the type of resources to exclude."
 							+ "NB: query param not used if query param 'type' is provided.",
