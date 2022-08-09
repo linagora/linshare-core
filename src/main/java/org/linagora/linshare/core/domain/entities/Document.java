@@ -46,7 +46,6 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.utils.DocumentUtils;
-import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 
 public class Document implements Serializable {
 
@@ -122,7 +121,7 @@ public class Document implements Serializable {
 		this.uuid=uuid;
 		this.creationDate = creationDate;
 		this.type = type;
-		this.humanMimeType = StatisticServiceUtils.getHumanMimeType(type);
+		this.humanMimeType = DocumentUtils.getHumanMimeType(type);
 		this.size = size;
 		this.timeStamp = null;
 		this.checkMimeType = false;
@@ -143,7 +142,7 @@ public class Document implements Serializable {
 		super();
 		this.uuid = metadata.getUuid();
 		this.type = metadata.getMimeType();
-		this.humanMimeType = StatisticServiceUtils.getHumanMimeType(type);
+		this.humanMimeType = DocumentUtils.getHumanMimeType(type);
 		this.creationDate = new GregorianCalendar();
 		this.size = metadata.getSize();
 		this.timeStamp = null;

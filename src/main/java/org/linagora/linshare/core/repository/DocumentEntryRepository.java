@@ -81,4 +81,5 @@ public interface DocumentEntryRepository extends
 	 * @throws BusinessException
 	 */
 	List<String> findDocumentsWithNullExpiration(List<AbstractDomain> domains) throws BusinessException;
+
 }

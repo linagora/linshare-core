@@ -218,7 +218,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		List<DocumentCount> mimeTypes = listByCriteria(criteria);
 		return mimeTypes;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findDocumentsWithNullExpiration(List<AbstractDomain> domains) throws BusinessException {

@@ -58,10 +58,10 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
+import org.linagora.linshare.core.utils.DocumentUtils;
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 import org.linagora.linshare.mongo.repository.AdvancedStatisticMongoRepository;
 import org.linagora.linshare.utils.DocumentCount;
-import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 
 import com.google.common.collect.Maps;
 
@@ -152,7 +152,7 @@ public class AdvancedStatisticDailyBatchImpl extends GenericBatchWithHistoryImpl
 				mimeTypeStatistic.addTotalSize(document.getTotalSize());
 			}
 			else {
-				String humanMimeType = StatisticServiceUtils.getHumanMimeType(document.getMimeType());
+				String humanMimeType = DocumentUtils.getHumanMimeType(document.getMimeType());
 				logger.debug("mimeType: " + document.getMimeType());
 				logger.debug("humanMimeType: " + humanMimeType);
 				MimeTypeStatistic mimeTypeStatistic = new MimeTypeStatistic(

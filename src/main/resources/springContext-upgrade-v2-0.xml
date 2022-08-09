@@ -219,6 +219,7 @@
 				<bean class="org.linagora.linshare.core.upgrade.v6_0.AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="hibernateTemplate" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
 			</list>

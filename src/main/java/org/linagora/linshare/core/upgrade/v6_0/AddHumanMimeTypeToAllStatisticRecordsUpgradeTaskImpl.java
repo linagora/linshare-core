@@ -37,27 +37,37 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Root;
+
 import org.bson.Document;
+import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.batches.utils.FakeContext;
 import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.utils.DocumentUtils;
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
-import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 import com.google.common.collect.Lists;
 import com.mongodb.client.DistinctIterable;
@@ -68,12 +78,16 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 
 	private final MongoTemplate mongoTemplate;
 
+	public final HibernateTemplate hibernateTemplate;
+
 	public AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
+			HibernateTemplate hibernateTemplate,
 			MongoTemplate mongoTemplate) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.mongoTemplate = mongoTemplate;
+		this.hibernateTemplate = hibernateTemplate;
 	}
 
 	@Override
@@ -103,6 +117,10 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 		updateAllAuditLogEntries2(batchRunContext, total, position);
 		updateHumanAuditLogEntries2(batchRunContext);
 
+		bulkUpdatesOfHumanMimeTypesForDocuments();
+		bulkUpdatesOfHumanMimeTypesForDocumentEntries();
+		bulkUpdatesOfHumanMimeTypesForUploadRequestEntries();
+
 		res.setProcessed(true);
 		return res;
 	}
@@ -116,7 +134,7 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 		long position = 0;
 		for (String mimeType : distincts) {
 			logger.debug("mimeType:" + mimeType);
-			String humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
+			String humanMimeType = DocumentUtils.getHumanMimeType(mimeType);
 			if (!humanMimeType.equals("others")) {
 				Query query = new Query();
 				query.addCriteria(Criteria.where("mimeType").is(mimeType));
@@ -163,7 +181,7 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 		long position = 0;
 		for (String mimeType : distincts) {
 			logger.debug("mimeType:" + mimeType);
-			String humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
+			String humanMimeType = DocumentUtils.getHumanMimeType(mimeType);
 			if (!humanMimeType.equals("others")) {
 				Query query = new Query();
 				query.addCriteria(Criteria.where("mimeType").is(mimeType));
@@ -199,7 +217,7 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 		long position = 0;
 		for (String mimeType : distincts) {
 			logger.debug("resource.mimeType:" + mimeType);
-			String humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
+			String humanMimeType = DocumentUtils.getHumanMimeType(mimeType);
 			if (!humanMimeType.equals("others")) {
 				Query query = new Query();
 				query.addCriteria(Criteria.where("resource.mimeType").is(mimeType));
@@ -239,7 +257,7 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 		long position = 0;
 		for (String mimeType : distincts) {
 			logger.debug("resource.mimeType:" + mimeType);
-			String humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
+			String humanMimeType = DocumentUtils.getHumanMimeType(mimeType);
 			if (!humanMimeType.equals("others")) {
 				Query query = new Query();
 				query.addCriteria(Criteria.where("resource.type").is(mimeType));
@@ -255,6 +273,71 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 				console.logInfo(batchRunContext, mimeTypeSize, position, "updateMulti: resource.humanMimeType: " + updateMulti);
 			}
 			position++;
+		}
+	}
+
+	public List<String> getMimeTypes(Class<?> clazz) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(clazz);
+		criteria.setProjection(Projections.distinct(Projections.property("type")));
+		@SuppressWarnings("unchecked")
+		List<String> mimeTypes = (List<String>) hibernateTemplate.findByCriteria(criteria);
+		return mimeTypes;
+	}
+
+	public void bulkUpdatesOfHumanMimeTypesForDocuments() {
+		Class<Document> clazz = Document.class;
+		Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
+		for (String mimeType : getMimeTypes(clazz)) {
+			logger.debug("mimeType:" + mimeType);
+			String humanMimeType = DocumentUtils.getHumanMimeType(mimeType);
+			logger.debug("humanMimeType:" + humanMimeType);
+			if (!humanMimeType.equals("others")) {
+				CriteriaBuilder cb = currentSession.getCriteriaBuilder();
+				CriteriaUpdate<Document> criteriaUpdate = cb.createCriteriaUpdate(clazz);
+				Root<Document> root = criteriaUpdate.from(clazz);
+				criteriaUpdate.set("humanMimeType", humanMimeType);
+				criteriaUpdate.where(cb.equal(root.get("type"), mimeType));
+				int executeUpdate = currentSession.createQuery(criteriaUpdate).executeUpdate();
+				logger.debug("executeUpdate:" + executeUpdate);
+			}
+		}
+	}
+
+	public void bulkUpdatesOfHumanMimeTypesForDocumentEntries() {
+		Class<DocumentEntry> clazz = DocumentEntry.class;
+		Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
+		for (String mimeType : getMimeTypes(clazz)) {
+			logger.debug("mimeType:" + mimeType);
+			String humanMimeType = DocumentUtils.getHumanMimeType(mimeType);
+			logger.debug("humanMimeType:" + humanMimeType);
+			if (!humanMimeType.equals("others")) {
+				CriteriaBuilder cb = currentSession.getCriteriaBuilder();
+				CriteriaUpdate<DocumentEntry> criteriaUpdate = cb.createCriteriaUpdate(clazz);
+				Root<DocumentEntry> root = criteriaUpdate.from(clazz);
+				criteriaUpdate.set("humanMimeType", humanMimeType);
+				criteriaUpdate.where(cb.equal(root.get("type"), mimeType));
+				int executeUpdate = currentSession.createQuery(criteriaUpdate).executeUpdate();
+				logger.debug("executeUpdate:" + executeUpdate);
+			}
+		}
+	}
+
+	public void bulkUpdatesOfHumanMimeTypesForUploadRequestEntries() {
+		Class<UploadRequestEntry> clazz = UploadRequestEntry.class;
+		Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
+		for (String mimeType : getMimeTypes(clazz)) {
+			logger.debug("mimeType:" + mimeType);
+			String humanMimeType = DocumentUtils.getHumanMimeType(mimeType);
+			logger.debug("humanMimeType:" + humanMimeType);
+			if (!humanMimeType.equals("others")) {
+				CriteriaBuilder cb = currentSession.getCriteriaBuilder();
+				CriteriaUpdate<UploadRequestEntry> criteriaUpdate = cb.createCriteriaUpdate(clazz);
+				Root<UploadRequestEntry> root = criteriaUpdate.from(clazz);
+				criteriaUpdate.set("humanMimeType", humanMimeType);
+				criteriaUpdate.where(cb.equal(root.get("type"), mimeType));
+				int executeUpdate = currentSession.createQuery(criteriaUpdate).executeUpdate();
+				logger.debug("executeUpdate:" + executeUpdate);
+			}
 		}
 	}
 
