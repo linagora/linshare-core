@@ -70,6 +70,7 @@ CREATE TABLE document (
   bucket_uuid       varchar(255),
   creation_date     timestamp NOT NULL,
   type              varchar(255) NOT NULL,
+  human_mime_type   varchar(255) NOT NULL,
   ls_size           int8 NOT NULL,
   thmb_uuid         varchar(255),
   timestamp         bytea,
@@ -86,6 +87,7 @@ CREATE TABLE document_entry (
   document_id   int8 NOT NULL,
   ciphered      bool NOT NULL,
   type          varchar(255) NOT NULL,
+  human_mime_type varchar(255) NOT NULL,
   ls_size       int8 NOT NULL,
   sha256sum     varchar(255) NOT NULL,
   has_thumbnail bool NOT NULL,
@@ -318,6 +320,7 @@ CREATE TABLE thread_entry (
   document_id   int8 NOT NULL,
   ciphered      bool NOT NULL,
   type          varchar(255) NOT NULL,
+  human_mime_type   varchar(255) NOT NULL,
   ls_size       int8 NOT NULL,
   sha256sum     varchar(255) NOT NULL,
   has_thumbnail bool NOT NULL,
@@ -559,6 +562,7 @@ CREATE TABLE upload_request_entry (
   copied                  bool DEFAULT 'false' NOT NULL,
   ciphered                bool NOT NULL,
   ls_type                 varchar(255),
+  human_mime_type         varchar(255),
   sha256sum               varchar(255),
   PRIMARY KEY (entry_id));
 CREATE TABLE contact_list (

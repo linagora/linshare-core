@@ -52,6 +52,8 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	protected String type;
 
+	protected String humanMimeType;
+
 	protected String sha256sum;
 
 	protected Boolean copied;
@@ -77,6 +79,7 @@ public class UploadRequestEntry extends Entry implements Serializable {
 		this.sha256sum = document.getSha256sum();
 		this.size = document.getSize();
 		this.type = document.getType();
+		this.humanMimeType = document.getHumanMimeType();
 		this.hasThumbnail = document.getHasThumbnail();
 		this.copied = false;
 		this.ciphered = false;
@@ -153,5 +156,13 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	public void setHasThumbnail(boolean hasThumbnail) {
 		this.hasThumbnail = hasThumbnail;
+	}
+
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
 	}
 }

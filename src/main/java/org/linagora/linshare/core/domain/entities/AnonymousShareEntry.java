@@ -116,9 +116,13 @@ public class AnonymousShareEntry extends Entry{
 	public long getSize() {
 		return documentEntry.getSize();
 	}
-	
+
 	public String getType() {
 		return documentEntry.getType();
+	}
+
+	public String getHumanMimeType() {
+		return documentEntry.getHumanMimeType();
 	}
 	
 }

@@ -85,6 +85,11 @@ SET client_min_messages = warning;
 
 ---- Here your queries
 
+ALTER TABLE document ADD COLUMN human_mime_type varchar(255) NOT NULL DEFAULT 'others';
+ALTER TABLE document_entry ADD COLUMN human_mime_type varchar(255) NOT NULL DEFAULT 'others';
+ALTER TABLE upload_request_entry ADD COLUMN human_mime_type varchar(255) NOT NULL DEFAULT 'others';
+ALTER TABLE thread_entry ADD COLUMN human_mime_type varchar(255) NOT NULL DEFAULT 'others';
+
 
 
 -- UPGRADE_5_2_ADD_STATISTIC_DATE_TO_EXISTING_STAT_RECORDS

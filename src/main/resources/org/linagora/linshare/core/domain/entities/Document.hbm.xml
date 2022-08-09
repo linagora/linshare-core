@@ -11,6 +11,7 @@
 		<property name="bucketUuid" column="bucket_uuid" type="string" length="255" lazy="false" />
 		<property name="creationDate" column="creation_date" type="calendar" not-null="true" lazy="false" />
 		<property name="type" column="type" type="string" length="255" not-null="true" lazy="false" />
+		<property name="humanMimeType" column="human_mime_type" type="string" length="255" not-null="true" lazy="false" />
 		<property name="checkMimeType" column="check_mime_type" type="boolean" not-null="true" lazy="false" />
 		<property name="size" column="ls_size" type="long" not-null="true" lazy="false" />
 		<property name="thmbUuid" column="thmb_uuid" type="string" length="255" not-null="false" lazy="false" />

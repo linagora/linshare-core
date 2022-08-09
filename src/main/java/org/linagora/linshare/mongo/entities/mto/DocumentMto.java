@@ -42,6 +42,8 @@ public class DocumentMto extends EntryMto {
 
 	protected String type;
 
+	protected String humanMimeType;
+
 	protected Long size;
 
 	protected String sha256Sum;
@@ -53,6 +55,7 @@ public class DocumentMto extends EntryMto {
 	public DocumentMto(DocumentEntry entry) {
 		super(entry);
 		this.type = entry.getType();
+		this.humanMimeType = entry.getHumanMimeType();
 		this.sha256Sum = entry.getSha256sum();
 		this.size = entry.getSize();
 	}
@@ -60,6 +63,7 @@ public class DocumentMto extends EntryMto {
 	public DocumentMto(UploadRequestEntry entry) {
 		super(entry);
 		this.type = entry.getType();
+		this.humanMimeType = entry.getHumanMimeType();
 		this.sha256Sum = entry.getSha256sum();
 		this.size = entry.getSize();
 	}
@@ -86,5 +90,13 @@ public class DocumentMto extends EntryMto {
 
 	public String getSha256Sum() {
 		return sha256Sum;
+	}
+
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
 	}
 }

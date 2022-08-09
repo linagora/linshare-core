@@ -51,6 +51,8 @@ public class ThreadEntry extends Entry implements Serializable {
 
 	protected String type;
 
+	protected String humanMimeType;
+
 	protected Long size;
 
 	protected String sha256sum;
@@ -68,6 +70,7 @@ public class ThreadEntry extends Entry implements Serializable {
 		this.sha256sum = document.getSha256sum();
 		this.size = document.getSize();
 		this.type = document.getType();
+		this.humanMimeType= document.getHumanMimeType();
 		this.hasThumbnail = document.getThumbnails() != null;
 	}
 
@@ -138,5 +141,13 @@ public class ThreadEntry extends Entry implements Serializable {
 
 	public void setHasThumbnail(boolean hasThumbnail) {
 		this.hasThumbnail = hasThumbnail;
+	}
+
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
 	}
 }

@@ -49,6 +49,8 @@ public class ShareEntryMto extends EntryMto {
 
 	protected String type;
 
+	protected String humanMimeType;
+
 	protected Long size;
 
 	protected String sha256Sum;
@@ -62,6 +64,7 @@ public class ShareEntryMto extends EntryMto {
 		this.recipient = new AccountMto(entry.getRecipient());
 		this.sender = new AccountMto(entry.getEntryOwner());
 		this.type = entry.getType();
+		this.humanMimeType = entry.getHumanMimeType();
 		this.size = entry.getSize();
 		this.sha256Sum = entry.getDocumentEntry().getSha256sum();
 		this.downloaded = entry.getDownloaded();
@@ -98,4 +101,37 @@ public class ShareEntryMto extends EntryMto {
 	public void setShareUuid(String shareUuid) {
 		this.shareUuid = shareUuid;
 	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
+	}
+
+	public String getSha256Sum() {
+		return sha256Sum;
+	}
+
+	public void setSha256Sum(String sha256Sum) {
+		this.sha256Sum = sha256Sum;
+	}
+
 }

@@ -47,6 +47,8 @@ public class AnonymousShareEntryMto extends EntryMto {
 
 	protected Long size;
 
+	protected String humanMimeType;
+
 	protected String sha256Sum;
 
 	public AnonymousShareEntryMto() {
@@ -57,6 +59,7 @@ public class AnonymousShareEntryMto extends EntryMto {
 		super(entry);
 		this.downloaded = entry.getDownloaded();
 		this.type = entry.getType();
+		this.humanMimeType = entry.getHumanMimeType();
 		this.size = entry.getSize();
 		this.sha256Sum = entry.getDocumentEntry().getSha256sum();
 		this.sender = new AccountMto(entry.getEntryOwner());
@@ -76,5 +79,37 @@ public class AnonymousShareEntryMto extends EntryMto {
 
 	public void setSender(AccountMto sender) {
 		this.sender = sender;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
+	}
+
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
+	}
+
+	public String getSha256Sum() {
+		return sha256Sum;
+	}
+
+	public void setSha256Sum(String sha256Sum) {
+		this.sha256Sum = sha256Sum;
 	}
 }

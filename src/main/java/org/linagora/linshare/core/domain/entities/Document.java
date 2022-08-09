@@ -46,6 +46,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.utils.DocumentUtils;
+import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 
 public class Document implements Serializable {
 
@@ -67,6 +68,8 @@ public class Document implements Serializable {
 	 * the document mime type.
 	 */
 	private String type;
+
+	protected String humanMimeType;
 
 	/**
 	 * technical field, used by detection mime type batch.
@@ -119,6 +122,7 @@ public class Document implements Serializable {
 		this.uuid=uuid;
 		this.creationDate = creationDate;
 		this.type = type;
+		this.humanMimeType = StatisticServiceUtils.getHumanMimeType(type);
 		this.size = size;
 		this.timeStamp = null;
 		this.checkMimeType = false;
@@ -139,6 +143,7 @@ public class Document implements Serializable {
 		super();
 		this.uuid = metadata.getUuid();
 		this.type = metadata.getMimeType();
+		this.humanMimeType = StatisticServiceUtils.getHumanMimeType(type);
 		this.creationDate = new GregorianCalendar();
 		this.size = metadata.getSize();
 		this.timeStamp = null;
@@ -329,5 +334,13 @@ public class Document implements Serializable {
 
 	public void setThmbUuid(String thmbUuid) {
 		this.thmbUuid = thmbUuid;
+	}
+
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
 	}
 }

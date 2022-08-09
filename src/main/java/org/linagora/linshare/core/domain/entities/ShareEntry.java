@@ -124,6 +124,10 @@ public class ShareEntry extends Entry {
 		return documentEntry.getType();
 	}
 
+	public String getHumanMimeType() {
+		return documentEntry.getHumanMimeType();
+	}
+
 	/*
 	 * helpers
 	 */

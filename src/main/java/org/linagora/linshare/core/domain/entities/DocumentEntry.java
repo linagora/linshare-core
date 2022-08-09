@@ -55,6 +55,8 @@ public class DocumentEntry extends Entry implements Serializable {
 
 	protected String type;
 
+	protected String humanMimeType;
+
 	protected Long size;
 
 	protected String sha256sum;
@@ -78,6 +80,7 @@ public class DocumentEntry extends Entry implements Serializable {
 		this.sha256sum = document.getSha256sum();
 		this.size = document.getSize();
 		this.type = document.getType();
+		this.humanMimeType= document.getHumanMimeType();
 		this.hasThumbnail = document.getHasThumbnail();
 		this.shared = 0;
 	}
@@ -89,6 +92,7 @@ public class DocumentEntry extends Entry implements Serializable {
 		this.sha256sum = document.getSha256sum();
 		this.size = document.getSize();
 		this.type = document.getType();
+		this.humanMimeType= document.getHumanMimeType();
 		this.hasThumbnail = document.getHasThumbnail();
 		this.shared = 0;
 	}
@@ -164,6 +168,14 @@ public class DocumentEntry extends Entry implements Serializable {
 
 	public void setShared(long shared) {
 		this.shared = shared;
+	}
+
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
 	}
 
 	public void incrementShared() {
