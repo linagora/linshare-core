@@ -1900,7 +1900,7 @@
 		<spring-security-release-version>5.7.2</spring-security-release-version>
 		<spring-data.version>3.3.6</spring-data.version>
 		<spring-data.driver.version>4.4.2</spring-data.driver.version>
-		<sql.driver.postgresql>42.4.0</sql.driver.postgresql>
+		<sql.driver.postgresql>42.4.1</sql.driver.postgresql>
 		<thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
 	</properties>
 </project>
