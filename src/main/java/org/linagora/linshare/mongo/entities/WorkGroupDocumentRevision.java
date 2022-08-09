@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 
 @XmlRootElement(name = "SharedSpaceDocumentRevision")
 public class WorkGroupDocumentRevision extends WorkGroupDocument {
@@ -57,6 +58,7 @@ public class WorkGroupDocumentRevision extends WorkGroupDocument {
 		super(author, name, document, workGroup, nodeParent);
 		this.size = document.getSize();
 		this.mimeType = document.getType();
+		this.humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
 		this.documentUuid = document.getUuid();
 		this.uploadDate = new Date();
 		this.sha256sum = document.getSha256sum();

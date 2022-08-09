@@ -49,6 +49,7 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -90,6 +91,8 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 		res.setProcessed(false);
 		updateAllMimeTypeStatistics(batchRunContext, total, position);
 		updateHumanMimeTypeStatistics(batchRunContext);
+		updateAllWorkGroupNodes(batchRunContext, total, position);
+		updateHumanWorkGroupNodes(batchRunContext);
 		res.setProcessed(true);
 		return res;
 	}
@@ -116,8 +119,8 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 				position++;
 			}
 		}
-
 	}
+
 	private void updateAllMimeTypeStatistics(BatchRunContext batchRunContext, long total, long position) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("humanMimeType").exists(false));
@@ -128,6 +131,41 @@ public class AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl extends Generi
 		update.set("totalSize", 0);
 		UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, MimeTypeStatistic.class);
 		console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
+	}
+
+	private void updateAllWorkGroupNodes(BatchRunContext batchRunContext, long total, long position) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("humanMimeType").exists(false));
+		long localTotal = mongoTemplate.count(query, WorkGroupNode.class);
+		console.logInfo(batchRunContext, total, position, "Missing humanMimeType in WorkGroupNode found: " + localTotal);
+		Update update = new Update();
+		update.set("humanMimeType", "others");
+		UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, WorkGroupNode.class);
+		console.logInfo(batchRunContext, total, position, "updateMulti: " + updateMulti);
+	}
+
+	private void updateHumanWorkGroupNodes(BatchRunContext batchRunContext) {
+		MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(WorkGroupNode.class));
+		DistinctIterable<String> distincts = collection.distinct("mimeType", String.class);
+		ArrayList<String> mimeTypes = Lists.newArrayList(distincts);
+		int mimeTypeSize = mimeTypes.size();
+		logger.debug("mimeType:size:" + mimeTypeSize);
+		long position = 0;
+		for (String mimeType : distincts) {
+			logger.debug("mimeType:" + mimeType);
+			String humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
+			if (!humanMimeType.equals("others")) {
+				Query query = new Query();
+				query.addCriteria(Criteria.where("mimeType").is(mimeType));
+				long localTotal = mongoTemplate.count(query, MimeTypeStatistic.class);
+				console.logInfo(batchRunContext, mimeTypeSize, position, "Nb elements for mimeType '" + mimeType + "' in WorkGroupNode found: " + localTotal);
+				Update update = new Update();
+				update.set("humanMimeType", humanMimeType);
+				UpdateResult updateMulti = mongoTemplate.updateMulti(query, update, WorkGroupNode.class);
+				console.logInfo(batchRunContext, mimeTypeSize, position, "updateMulti: humanMimeType: " + updateMulti);
+				position++;
+			}
+		}
 	}
 
 	@Override

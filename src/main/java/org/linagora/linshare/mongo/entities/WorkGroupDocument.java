@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -54,6 +55,8 @@ public class WorkGroupDocument extends WorkGroupNode {
 	protected Long size;
 
 	protected String mimeType;
+
+	protected String humanMimeType;
 
 	@JsonIgnore
 	protected String documentUuid;
@@ -82,6 +85,7 @@ public class WorkGroupDocument extends WorkGroupNode {
 		super(new AccountMto(author, true), name, nodeParent.getUuid(), workGroup.getLsUuid());
 		this.size = document.getSize();
 		this.mimeType = document.getType();
+		this.humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
 		this.hasRevision = false;
 		this.lastRevision = 0L;
 		this.uploadDate = new Date();
@@ -96,6 +100,7 @@ public class WorkGroupDocument extends WorkGroupNode {
 		super(new AccountMto(author, true), name, nodeParent.getUuid(), workGroup.getLsUuid());
 		this.size = size;
 		this.mimeType = mimeType;
+		this.humanMimeType = StatisticServiceUtils.getHumanMimeType(mimeType);
 		this.hasRevision = false;
 		this.lastRevision = 0L;
 		this.uploadDate = new Date();
@@ -176,6 +181,14 @@ public class WorkGroupDocument extends WorkGroupNode {
 
 	public void setHasThumbnail(Boolean hasThumbnail) {
 		this.hasThumbnail = hasThumbnail;
+	}
+
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
 	}
 
 	@Override
