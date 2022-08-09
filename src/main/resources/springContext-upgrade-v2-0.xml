@@ -211,7 +211,12 @@
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
-				<bean class="org.linagora.linshare.core.upgrade.v5_2.AddStatisticDateToAllStatisticRecordsUpgradeTaskImpl">
+				<bean class="org.linagora.linshare.core.upgrade.v6_0.AddStatisticDateToAllStatisticRecordsUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v6_0.AddHumanMimeTypeToAllStatisticRecordsUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />

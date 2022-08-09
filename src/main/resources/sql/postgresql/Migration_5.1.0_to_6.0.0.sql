@@ -108,6 +108,27 @@ VALUES
      now(),
      now());
 
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (67,
+     'UNDEFINED',
+     'UPGRADE_6_0_ADD_HUMAN_MIME_TYPE_TO_EXISTING_STAT_RECORDS',
+     'UPGRADE_6_0',
+     67,
+     'NEW',
+     'REQUIRED',
+     now(),
+     now());
+
 
 ---- End of your queries
 

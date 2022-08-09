@@ -49,7 +49,65 @@ import org.linagora.linshare.core.exception.BusinessException;
 public class StatisticServiceUtils {
 
 	public StatisticServiceUtils() {
-		
+	}
+
+	public static String getHumanMimeType(String mimeType) {
+		if (mimeType.matches("^audio.*")
+				|| mimeType.equals("application/ogg")
+				) {
+			return "audio";
+		}
+		if (mimeType.matches("^video.*")
+				|| mimeType.matches(".*mp4.*")
+				|| mimeType.matches(".*mpeg.*")
+				|| mimeType.equals("application/x-matroska")
+				|| mimeType.equals("application/quicktime")
+				) {
+			return "video";
+		}
+		if (mimeType.matches("^text.*")) {
+			return "text";
+		}
+		if (mimeType.matches("^image.*")) {
+			return "image";
+		}
+		if (mimeType.equals("application/pdf")
+				|| mimeType.equals("application/vnd.cups-pdf")
+				|| mimeType.equals("application/vnd.sealedmedia.softseal.pdf")
+				) {
+			return "pdf";
+		}
+		if (mimeType.equals("application/zip")
+				|| mimeType.equals("application/gzip")
+				|| mimeType.equals("application/bzip")
+				|| mimeType.equals("application/bzip2")
+				|| mimeType.equals("application/x-7z-compressed")
+				|| mimeType.equals("application/x-gtar")
+				|| mimeType.equals("application/x-lz4")
+				|| mimeType.equals("application/x-lzip")
+				|| mimeType.equals("application/x-lzma")
+				|| mimeType.equals("application/x-archive")
+				|| mimeType.equals("application/x-tar")
+				|| mimeType.equals("application/x-xz")
+				|| mimeType.matches("^application/.*zip.*")
+				|| mimeType.matches("^application/x-rar-compressed.*")
+				) {
+			return "archive";
+		}
+		if (mimeType.equals("application/encrypted")
+				|| mimeType.equals("application/pgp-encrypted")
+				|| mimeType.equals("application/x-axcrypt")
+				) {
+			return "encrypted";
+		}
+		if (mimeType.matches("^application/msword.*")
+				|| mimeType.matches("application/vnd.ms-.*")
+				|| mimeType.matches("application/vnd.openxmlformats-officedocument.*")
+				|| mimeType.matches("application/vnd.oasis.opendocument.*")
+				) {
+			return "document";
+		}
+		return "others";
 	}
 
 	protected Pair<Date, Date> checkDatesInitialization(String beginDate, String endDate) {

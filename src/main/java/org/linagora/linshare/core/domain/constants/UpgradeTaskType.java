@@ -364,6 +364,11 @@ public enum UpgradeTaskType {
 	UPGRADE_6_0_ADD_STATISTIC_DATE_TO_EXISTING_STAT_RECORDS,
 
 	/**
+	 * We only had mimeTypes, we need to add human mimetypes.
+	 */
+	UPGRADE_6_0_ADD_HUMAN_MIME_TYPE_TO_EXISTING_STAT_RECORDS,
+
+	/**
 	 * Populating ExternalFavouriteRecipient new table
 	 */
 	OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
