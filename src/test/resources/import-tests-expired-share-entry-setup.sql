@@ -1,12 +1,12 @@
 
 INSERT INTO contact(id, mail) VALUES (2, 'yoda@linshare.org');
-INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail, compute_thumbnail)
-	VALUES (1, '92ce81a8-3e87-413b-82c6-8ae9940aae9e', now(), 'data', 1024, false, false, false);
+INSERT INTO document (id, uuid, creation_date, type, human_mime_type, ls_size, check_mime_type, has_thumbnail, compute_thumbnail)
+	VALUES (1, '92ce81a8-3e87-413b-82c6-8ae9940aae9e', now(), 'data', 'others', 1024, false, false, false);
 
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (1, 10, now(), now(), 'DE test doc entry name 1', '', 'bfaf3fea-c64a-4ee0-bae8-b1482f1f6401', false);
-INSERT INTO document_entry (entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)
-	VALUES (1, 1, false, 'data', 1024, 'plop', false, 2);
+INSERT INTO document_entry (entry_id, document_id, ciphered, type, human_mime_type, ls_size, sha256sum, has_thumbnail, shared)
+	VALUES (1, 1, false, 'data', 'others', 1024, 'plop', false, 2);
 -- DE
 
 INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed, external_mail_locale)
