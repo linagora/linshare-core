@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -76,6 +77,7 @@ public interface BasicStatisticService {
 			SortOrder sortOrder, GenericStatisticField sortField, BasicStatisticType statisticType,
 			Set<LogAction> logActions,
 			Set<AuditLogEntryType> resourceTypes,
+			Set<AuditGroupLogEntryType> resourceGroups,
 			boolean sum, Set<GenericStatisticGroupByField> sumBy,
 			Optional<String> beginDate, Optional<String> endDate, PageContainer<BasicStatistic> container);
 }

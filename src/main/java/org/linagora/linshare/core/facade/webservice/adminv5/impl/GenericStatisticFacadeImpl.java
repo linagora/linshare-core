@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -77,6 +78,7 @@ public class GenericStatisticFacadeImpl extends AdminGenericFacadeImpl implement
 			BasicStatisticType statisticType,
 			Set<LogAction> logActions,
 			Set<AuditLogEntryType> resourceTypes,
+			Set<AuditGroupLogEntryType> resourceGroups,
 			boolean sum, Set<GenericStatisticGroupByField> sumBy,
 			Optional<String> beginDate, Optional<String> endDate,
 			Integer pageNumber, Integer pageSize) {
@@ -88,6 +90,7 @@ public class GenericStatisticFacadeImpl extends AdminGenericFacadeImpl implement
 				sortOrder, sortField, statisticType,
 				logActions,
 				resourceTypes,
+				resourceGroups,
 				sum, sumBy,
 				beginDate, endDate, container);
 		return container;

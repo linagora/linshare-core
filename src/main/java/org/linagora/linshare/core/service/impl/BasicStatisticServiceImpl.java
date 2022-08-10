@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -168,6 +169,7 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 	public PageContainer<BasicStatistic> findAll(Account authUser, AbstractDomain domain, boolean includeNestedDomains, Optional<String> accountUuid,
 			SortOrder sortOrder, GenericStatisticField sortField, BasicStatisticType statisticType,
 			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
+			Set<AuditGroupLogEntryType> resourceGroups,
 			boolean sum, Set<GenericStatisticGroupByField> sumBy,
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<BasicStatistic> container) {
@@ -198,15 +200,16 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
 		if(sum) {
-			return findAllWithSum(domain, includeNestedDomains, sortOrder, sortField, logActions, resourceTypes, sumBy, container, begin, end);
+			return findAllWithSum(domain, includeNestedDomains, sortOrder, sortField, logActions, resourceTypes, resourceGroups, sumBy, container, begin, end);
 		}
-		return findAll(domain, includeNestedDomains, sortOrder, sortField, statisticType, logActions, resourceTypes, container, begin, end);
+		return findAll(domain, includeNestedDomains, sortOrder, sortField, statisticType, logActions, resourceTypes, resourceGroups, container, begin, end);
 	}
 
 	private PageContainer<BasicStatistic> findAllWithSum(
 			AbstractDomain domain, boolean includeNestedDomains,
 			SortOrder sortOrder, GenericStatisticField sortField,
 			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
+			Set<AuditGroupLogEntryType> resourceGroups,
 			Set<GenericStatisticGroupByField> sumBy,
 			PageContainer<BasicStatistic> container,
 			LocalDate begin, LocalDate end) {
@@ -241,6 +244,11 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 					Criteria.where("action").in(logActions)
 				)
 			);
+		}
+		if (!resourceGroups.isEmpty()) {
+			for (AuditGroupLogEntryType type : resourceGroups) {
+				resourceTypes.addAll(AuditGroupLogEntryType.toAuditLogEntryTypes.get(type));
+			}
 		}
 		if (!resourceTypes.isEmpty()) {
 			commonOperations.add(
@@ -297,6 +305,7 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 			SortOrder sortOrder, GenericStatisticField sortField,
 			BasicStatisticType statisticType,
 			Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes,
+			Set<AuditGroupLogEntryType> resourceGroups,
 			PageContainer<BasicStatistic> container, LocalDate begin, LocalDate end) {
 		Query query = new Query();
 		if (includeNestedDomains) {
@@ -314,6 +323,11 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 		query.addCriteria(Criteria.where("type").is(statisticType));
 		if (!logActions.isEmpty()) {
 			query.addCriteria(Criteria.where("action").in(logActions));
+		}
+		if (!resourceGroups.isEmpty()) {
+			for (AuditGroupLogEntryType type : resourceGroups) {
+				resourceTypes.addAll(AuditGroupLogEntryType.toAuditLogEntryTypes.get(type));
+			}
 		}
 		if (!resourceTypes.isEmpty()) {
 			query.addCriteria(Criteria.where("resourceType").in(resourceTypes));

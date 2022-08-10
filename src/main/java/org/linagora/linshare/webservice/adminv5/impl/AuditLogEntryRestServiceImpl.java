@@ -151,7 +151,7 @@ public class AuditLogEntryRestServiceImpl implements AuditLogEntryRestService {
 					)
 				@QueryParam("type") List<String> types,
 			@Parameter(
-					description = "The admin can choose the type of resources to retrieve.",
+					description = "The admin can choose the group of resources to retrieve.",
 					required = false,
 					schema = @Schema(implementation = AuditGroupLogEntryType.class)
 				)

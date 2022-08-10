@@ -50,6 +50,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -132,6 +133,12 @@ public class GenericStatisticRestServiceImpl extends WebserviceBase
 			)
 			@QueryParam("resourceType") List<String> resourceTypes,
 		@Parameter(
+				description = "The admin can choose the group of resources to retrieve.",
+				required = false,
+				schema = @Schema(implementation = AuditGroupLogEntryType.class)
+			)
+			@QueryParam("resourceGroup") List<String> resourceGroups,
+		@Parameter(
 				description = "Sum 'value' field by mimeType.",
 				schema = @Schema(implementation = Boolean.class)
 			)
@@ -171,6 +178,7 @@ public class GenericStatisticRestServiceImpl extends WebserviceBase
 			BasicStatisticType.valueOf(statisticType),
 			logActions.stream().map(name -> LogAction.valueOf(name)).collect(Collectors.toSet()),
 			resourceTypes.stream().map(name -> AuditLogEntryType.valueOf(name)).collect(Collectors.toSet()),
+			resourceGroups.stream().map(name -> AuditGroupLogEntryType.valueOf(name)).collect(Collectors.toSet()),
 			sum, sumByEnum,
 			Optional.ofNullable(beginDate),
 			Optional.ofNullable(endDate), pageNumber,
