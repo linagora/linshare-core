@@ -135,14 +135,14 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 	}
 
 	@Override
-	public List<UploadRequestEntryDto> findAllEntries(String actorUuid, String uuid) {
+	public List<UploadRequestEntryDto> findAllEntries(Integer version, String actorUuid, String uuid) {
 		Validate.notEmpty(uuid, "Upload request uuid must be set.");
 		Account authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequest uploadRequest = uploadRequestService.find(authUser, actor, uuid);
 		List<UploadRequestEntry> uploadRequestEntries = uploadRequestService.findAllEntries(authUser, actor,
 				uploadRequest);
-		return ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto()));
+		return ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto(version)));
 	}
 
 	@Override

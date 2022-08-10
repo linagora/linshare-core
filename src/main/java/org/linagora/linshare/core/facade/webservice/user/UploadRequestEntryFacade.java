@@ -51,7 +51,7 @@ import com.google.common.io.ByteSource;
 
 public interface UploadRequestEntryFacade {
 
-	UploadRequestEntryDto find(String actorUuid, String uuid) throws BusinessException;
+	UploadRequestEntryDto find(Integer version, String actorUuid, String uuid) throws BusinessException;
 
 	ByteSource download(String actorUuid, String uuid) throws BusinessException;
 

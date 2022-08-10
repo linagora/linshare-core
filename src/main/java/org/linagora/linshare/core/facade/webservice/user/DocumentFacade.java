@@ -54,9 +54,9 @@ import com.google.common.io.ByteSource;
 
 public interface DocumentFacade extends GenericFacade {
 
-	List<DocumentDto> findAll() throws BusinessException;
+	List<DocumentDto> findAll(Integer version) throws BusinessException;
 
-	DocumentDto find(String uuid, boolean withShares) throws BusinessException;
+	DocumentDto find(Integer version, String uuid, boolean withShares) throws BusinessException;
 
 	DocumentDto addDocumentXop(DocumentAttachement doca)
 			throws BusinessException;

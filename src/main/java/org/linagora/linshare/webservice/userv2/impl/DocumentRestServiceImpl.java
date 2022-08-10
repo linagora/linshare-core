@@ -102,19 +102,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Path("/documents")
 public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
 
-	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private final DocumentFacade documentFacade;
+	protected final DocumentFacade documentFacade;
 
-	private final DocumentAsyncFacade documentAsyncFacade;
+	protected final DocumentAsyncFacade documentAsyncFacade;
 
-	private final AsyncTaskFacade asyncTaskFacade;
+	protected final AsyncTaskFacade asyncTaskFacade;
 
-	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
+	protected org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
-	private final AccountQuotaFacade accountQuotaFacade;
+	protected final AccountQuotaFacade accountQuotaFacade;
 
-	private boolean sizeValidation;
+	protected boolean sizeValidation;
 
 	public DocumentRestServiceImpl(DocumentFacade documentFacade, DocumentAsyncFacade documentAsyncFacade,
 			ThreadPoolTaskExecutor taskExecutor, AsyncTaskFacade asyncTaskFacade, AccountQuotaFacade accountQuotaFacade,
@@ -212,7 +212,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	public DocumentDto find(@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@Parameter(description = "If you want document shares too.", required = false) @QueryParam("withShares") @DefaultValue("false") boolean withShares)
 			throws BusinessException {
-		return documentFacade.find(uuid, withShares);
+		return documentFacade.find(2, uuid, withShares);
 	}
 
 	@Path("/{uuid}")
@@ -221,7 +221,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Override
 	public void head(@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		documentFacade.find(uuid, false);
+		documentFacade.find(2, uuid, false);
 	}
 
 	@NoCache
@@ -236,7 +236,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	})
 	@Override
 	public List<DocumentDto> findAll() throws BusinessException {
-		return documentFacade.findAll();
+		return documentFacade.findAll(2);
 	}
 
 	@DELETE
@@ -296,7 +296,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	})
 	@Override
 	public Response download(@PathParam("uuid") String uuid) throws BusinessException {
-		DocumentDto documentDto = documentFacade.find(uuid, false);
+		DocumentDto documentDto = documentFacade.find(2, uuid, false);
 		ByteSource byteSource = documentFacade.getByteSource(uuid);
 		FileAndMetaData data = new FileAndMetaData(byteSource, documentDto.getSize(),
 				documentDto.getName(), documentDto.getType());
@@ -317,7 +317,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@Parameter(description = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType,
 			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 			throws BusinessException {
-		DocumentDto documentDto = documentFacade.find(documentUuid, false);
+		DocumentDto documentDto = documentFacade.find(2, documentUuid, false);
 		ByteSource byteSource = documentFacade.getThumbnailByteSource(documentUuid, thumbnailType);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(byteSource,
 				documentDto.getName() + ThumbnailType.getFileType(thumbnailType), base64, thumbnailType);

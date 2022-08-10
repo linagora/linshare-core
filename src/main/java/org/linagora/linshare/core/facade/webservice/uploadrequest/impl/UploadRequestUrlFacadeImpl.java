@@ -140,11 +140,11 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 	}
 
 	@Override
-	public List<UploadRequestEntryDto> findAllExtEntries(String uuid, String password) {
+	public List<UploadRequestEntryDto> findAllExtEntries(Integer version, String uuid, String password) {
 		Validate.notEmpty(uuid, "Upload request url uuid must be set.");
 		UploadRequestUrl requestUrl = uploadRequestUrlService.find(uuid, password);
 		List<UploadRequestEntry> uploadRequestEntries = uploadRequestService.findAllExtEntries(requestUrl);
-		return ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto()));
+		return ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto(version)));
 	}
 
 

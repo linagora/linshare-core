@@ -82,6 +82,10 @@ public class UploadRequestEntryDto {
 	@Schema(description = "Type")
 	protected String type;
 
+	@Schema(description = "humanMimeType. Only on api v5, since LinShare v6.")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected String humanMimeType;
+
 	@Schema(description = "Sha256sum")
 	protected String sha256sum;
 
@@ -96,6 +100,10 @@ public class UploadRequestEntryDto {
 	}
 
 	public UploadRequestEntryDto(UploadRequestEntry entry) {
+		this(entry, 2);
+	}
+
+	public UploadRequestEntryDto(UploadRequestEntry entry, Integer version) {
 		super();
 		this.entryOwner = new AccountDto(entry.getEntryOwner(), false);
 		this.recipient = new ContactDto(entry.getUploadRequestUrl().getContact());
@@ -108,6 +116,9 @@ public class UploadRequestEntryDto {
 		this.cmisSync = entry.isCmisSync();
 		this.size = entry.getSize();
 		this.type = entry.getType();
+		if (version >= 5) {
+			this.humanMimeType = entry.getHumanMimeType();
+		}
 		this.copied = entry.getCopied();
 	}
 
@@ -223,10 +234,18 @@ public class UploadRequestEntryDto {
 		this.recipient = recipient;
 	}
 
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
+	}
+
 	/*
 	 * Transformers
 	 */
-	public static Function<UploadRequestEntry, UploadRequestEntryDto> toDto() {
-		return ure -> new UploadRequestEntryDto(ure);
+	public static Function<UploadRequestEntry, UploadRequestEntryDto> toDto(Integer version) {
+		return ure -> new UploadRequestEntryDto(ure, version);
 	}
 }

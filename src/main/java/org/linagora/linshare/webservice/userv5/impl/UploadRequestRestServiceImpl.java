@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2022 LINAGORA
+ * Copyright (C) 2022 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,38 +33,57 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.uploadrequest;
 
-import java.io.File;
+package org.linagora.linshare.webservice.userv5.impl;
+
 import java.util.List;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
-import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
+import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
+import org.linagora.linshare.webservice.userv2.UploadRequestRestService;
 
-public interface UploadRequestUrlFacade {
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-	UploadRequestDto find(String uploadRequestUrlUuid, String password)
-			throws BusinessException;
 
-	UploadRequestDto close(String uuid, String password)
-			throws BusinessException;
+@Path("/upload_requests")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class UploadRequestRestServiceImpl
+		extends org.linagora.linshare.webservice.userv2.impl.UploadRequestRestServiceImpl
+		implements UploadRequestRestService {
 
-	void addUploadRequestEntry(String uploadRequestUrlUuid, String password, File tempFile, String fileName) throws BusinessException;
+	public UploadRequestRestServiceImpl(UploadRequestFacade uploadRequestFacade) {
+		super(uploadRequestFacade);
+	}
 
-	UploadRequestEntryDto deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid,
-			EntryDto entry) throws BusinessException;
+	@Path("/{uuid}/entries")
+	@GET
+	@Operation(summary = "Find documents of an upload request.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public List<UploadRequestEntryDto> findAllEntries(
+			@Parameter(description = "Find all documents.", required = false)
+				@PathParam("uuid") String uploadRequestuuid)
+			throws BusinessException {
+		return uploadRequestFacade.findAllEntries(5, null, uploadRequestuuid);
+	}
 
-	List<UploadRequestEntryDto> findAllExtEntries(Integer version, String uuid, String password);
-
-	void changePassword(String uuid, ChangeUploadRequestUrlPassword reset);
-
-	Response thumbnail(String uploadRequestUrlUuid,  String password, String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType);
-
-	Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid);
 }

@@ -119,7 +119,8 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 				@PathParam(value = "uuid") String uuid,
 			@HeaderParam("linshare-uploadrequest-password") String password)
 			throws BusinessException {
-		return uploadRequestUrlFacade.findAllExtEntries(uuid, password);
+		// endpoint upload_request/v5 was never created.
+		return uploadRequestUrlFacade.findAllExtEntries(4, uuid, password);
 	}
 
 	@PUT

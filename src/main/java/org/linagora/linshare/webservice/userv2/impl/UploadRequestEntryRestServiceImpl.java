@@ -99,7 +99,7 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 	public Response download(
 			@Parameter(description = "Upload request entry uuid.", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
-		UploadRequestEntryDto uploadRequestEntryDto = uploadRequestEntryFacade.find(null, uuid);
+		UploadRequestEntryDto uploadRequestEntryDto = uploadRequestEntryFacade.find(2, null, uuid);
 		ByteSource documentStream = uploadRequestEntryFacade.download(null, uuid);
 		FileAndMetaData data = new FileAndMetaData(documentStream, uploadRequestEntryDto.getSize(), uploadRequestEntryDto.getName(), uploadRequestEntryDto.getType());
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);

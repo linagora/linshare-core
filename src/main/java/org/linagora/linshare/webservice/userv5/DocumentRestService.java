@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2022 LINAGORA
+ * Copyright (C) 2022 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,38 +33,59 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.uploadrequest;
 
-import java.io.File;
+package org.linagora.linshare.webservice.userv5;
+
+import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
-import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
-public interface UploadRequestUrlFacade {
+public interface DocumentRestService {
 
-	UploadRequestDto find(String uploadRequestUrlUuid, String password)
+	DocumentDto create(InputStream file, String description,
+			String givenFileName, InputStream theSignature,
+			String signatureFileName, InputStream x509certificate,
+			String metaData, boolean async,
+			Long fileSize,
+			MultipartBody body)
 			throws BusinessException;
 
-	UploadRequestDto close(String uuid, String password)
-			throws BusinessException;
+	List<DocumentDto> copy(CopyDto copy, boolean deleteShare) throws BusinessException;
 
-	void addUploadRequestEntry(String uploadRequestUrlUuid, String password, File tempFile, String fileName) throws BusinessException;
+	DocumentDto find(String uuid, boolean withShares) throws BusinessException;
 
-	UploadRequestEntryDto deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid,
-			EntryDto entry) throws BusinessException;
+	void head(String uuid) throws BusinessException;
 
-	List<UploadRequestEntryDto> findAllExtEntries(Integer version, String uuid, String password);
+	List<DocumentDto> findAll() throws BusinessException;
 
-	void changePassword(String uuid, ChangeUploadRequestUrlPassword reset);
+	DocumentDto delete(String uuid) throws BusinessException;
 
-	Response thumbnail(String uploadRequestUrlUuid,  String password, String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType);
+	DocumentDto delete(DocumentDto documentDto) throws BusinessException;
 
-	Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid);
+	Response download(String uuid) throws BusinessException;
+
+	Response thumbnail(String uuid, ThumbnailType thumbnailType, boolean base64) throws BusinessException;
+
+	DocumentDto update(String uuid, DocumentDto documentDto) throws BusinessException;
+
+	AsyncTaskDto findAsync(String uuid) throws BusinessException;
+
+	Set<AuditLogEntryUser> findAll(String uuid, List<LogAction> actions, List<AuditLogEntryType> types,
+			String beginDate, String endDate);
+
+	DocumentDto createFromURL(DocumentURLDto documentURLDto, boolean async) throws BusinessException;
+
 }

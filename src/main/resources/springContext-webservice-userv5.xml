@@ -47,11 +47,23 @@
 	<bean id="userv5GuestRestService" class="org.linagora.linshare.webservice.userv5.impl.GuestRestServiceImpl">
 		<constructor-arg ref="wsGuestFacade" />
 	</bean>
+	<bean id="userv5DocumentRestService" class="org.linagora.linshare.webservice.userv5.impl.DocumentRestServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsDocumentAsyncFacade" />
+		<constructor-arg ref="wsAsyncTaskFacade" />
+		<constructor-arg ref="taskExecutor" />
+		<constructor-arg ref="wsAccountQuotaFacade" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
+	</bean>
+	<bean id="userv5UploadRequestRestService"
+		class="org.linagora.linshare.webservice.userv5.impl.UploadRequestRestServiceImpl">
+		<constructor-arg ref="wsUploadRequestFacade" />
+	</bean>
 	<jaxrs:server id="userv5RestContainer" address="/rest/user/v5">
 		<jaxrs:serviceBeans>
 			<ref bean="userv2EnumRestService" />
 			<ref bean="userv5AuthenticationRestService" />
-			<ref bean="userv2DocumentRestService" />
+			<ref bean="userv5DocumentRestService" />
 			<ref bean="userv2MailingListRestService" />
 			<ref bean="userv2ShareRestService" />
 			<ref bean="userv2RestService" />
@@ -63,7 +75,7 @@
 			<ref bean="userv2ContactListRestService" />
 			<ref bean="userv2MimeTypeRestService" />
 			<ref bean="userv2AutoCompleteRestService" />
-			<ref bean="userv2UploadRequestRestService" />
+			<ref bean="userv5UploadRequestRestService" />
 			<ref bean="userv2AuditLogEntryUserRestService" />
 			<ref bean="userv2StatisticRestService" />
 			<ref bean="userv2AccountQuotaRestService" />

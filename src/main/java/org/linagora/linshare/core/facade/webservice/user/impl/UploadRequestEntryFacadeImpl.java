@@ -74,12 +74,12 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public UploadRequestEntryDto find(String actorUuid, String uuid) throws BusinessException {
+	public UploadRequestEntryDto find(Integer version, String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Upload request entry uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestEntry uploadRequestEntry =  uploadRequestEntryService.find(authUser, actor, uuid);
-		return new UploadRequestEntryDto(uploadRequestEntry);
+		return new UploadRequestEntryDto(uploadRequestEntry, version);
 	}
 
 	@Override

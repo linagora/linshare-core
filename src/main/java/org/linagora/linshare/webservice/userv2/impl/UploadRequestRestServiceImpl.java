@@ -149,7 +149,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@Parameter(description = "Find all documents.", required = false)
 				@PathParam("uuid") String uploadRequestuuid)
 			throws BusinessException {
-		return uploadRequestFacade.findAllEntries(null, uploadRequestuuid);
+		return uploadRequestFacade.findAllEntries(2, null, uploadRequestuuid);
 	}
 
 	@GET

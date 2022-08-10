@@ -140,18 +140,18 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 	}
 
 	@Override
-	public List<DocumentDto> findAll() throws BusinessException {
+	public List<DocumentDto> findAll(Integer version) throws BusinessException {
 		User authUser = checkAuthentication();
 		List<DocumentEntry> docs = documentEntryService.findAll(authUser, authUser);
-		return ImmutableList.copyOf(Lists.transform(docs, DocumentDto.toDto()));
+		return ImmutableList.copyOf(Lists.transform(docs, DocumentDto.toDto(version)));
 	}
 
 	@Override
-	public DocumentDto find(String uuid, boolean withShares) throws BusinessException {
+	public DocumentDto find(Integer version, String uuid, boolean withShares) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required document uuid");
 		User authUser = checkAuthentication();
 		DocumentEntry entry = documentEntryService.find(authUser, authUser, uuid);
-		DocumentDto documentDto = new DocumentDto(entry);
+		DocumentDto documentDto = new DocumentDto(entry, version);
 		List<ShareDto> shares = Lists.newArrayList();
 		if (withShares) {
 			for (AnonymousShareEntry share : entryBusinessService.findAllMyAnonymousShareEntries(authUser, entry)) {

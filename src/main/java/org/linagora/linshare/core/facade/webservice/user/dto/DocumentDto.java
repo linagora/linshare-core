@@ -41,15 +41,14 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
-import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Document")
@@ -73,6 +72,10 @@ public class DocumentDto extends EntryDto {
 
 	@Schema(description = "Type")
 	protected String type;
+
+	@Schema(description = "humanMimeType. Only on api v5, since LinShare v6.")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected String humanMimeType;
 
 	@Schema(description = "Size")
 	protected Long size;
@@ -103,6 +106,10 @@ public class DocumentDto extends EntryDto {
 	}
 
 	public DocumentDto(DocumentEntry de) {
+		this(de, 2);
+	}
+
+	public DocumentDto(DocumentEntry de, Integer version) {
 		if (de == null)
 			return;
 		this.uuid = de.getUuid();
@@ -115,48 +122,18 @@ public class DocumentDto extends EntryDto {
 		this.description = de.getComment();
 		this.ciphered = de.getCiphered();
 		this.type = de.getType();
+		if (version >= 5) {
+			this.humanMimeType = de.getHumanMimeType();
+		}
 		this.size = de.getSize();
 		this.metaData = de.getMetaData();
 		this.sha256sum = de.getSha256sum();
 		this.hasThumbnail = de.isHasThumbnail();
 		this.shared = de.getShared();
 	}
-	
-	public DocumentDto(UploadRequestEntry de) {
-		if (de == null)
-			return;
-		this.uuid = de.getUuid();
-		this.name = de.getName();
-		this.creationDate = de.getCreationDate().getTime();
-		this.modificationDate = de.getModificationDate().getTime();
-		if (de.getExpirationDate() != null) {
-			this.expirationDate = de.getExpirationDate().getTime();
-		}
-		this.description = de.getComment();
-		this.ciphered = de.getCiphered();
-		this.type = de.getType();
-		this.size = de.getSize();
-		this.metaData = de.getMetaData();
-		this.sha256sum = de.getSha256sum();
-	}
 
 	public DocumentDto() {
 		super();
-	}
-
-	public DocumentDto(WorkGroupDocument de) {
-		this.uuid = de.getUuid();
-		this.name = de.getName();
-		this.creationDate = de.getCreationDate();
-		this.modificationDate = de.getModificationDate();
-		this.description = de.getDescription();
-		this.ciphered = de.getCiphered();
-		this.type = de.getMimeType();
-		this.size = de.getSize();
-		this.metaData = de.getMetaData();
-		this.sha256sum = de.getSha256sum();
-		this.hasThumbnail = de.getHasThumbnail();
-		this.shared = 0L;
 	}
 
 	public String getType() {
@@ -277,6 +254,14 @@ public class DocumentDto extends EntryDto {
 		this.async = async;
 	}
 
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
+	}
+
 	@Override
 	public String toString() {
 		return "Document [id=" + uuid + ", name=" + name + ", creation="
@@ -286,11 +271,11 @@ public class DocumentDto extends EntryDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<DocumentEntry, DocumentDto> toDto() {
+	public static Function<DocumentEntry, DocumentDto> toDto(Integer version) {
 		return new Function<DocumentEntry, DocumentDto>() {
 			@Override
 			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
+				return new DocumentDto(arg0, version);
 			}
 		};
 	}

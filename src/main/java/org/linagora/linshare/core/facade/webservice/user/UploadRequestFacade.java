@@ -59,7 +59,7 @@ public interface UploadRequestFacade {
 
 	UploadRequestDto update(String actorUuid, UploadRequestDto uploadRequestDto, String uuid) throws BusinessException;
 
-	List<UploadRequestEntryDto> findAllEntries(String actorUuid, String uuid);
+	List<UploadRequestEntryDto> findAllEntries(Integer version, String actorUuid, String uuid);
 
 	Set<AuditLogEntryUser> findAllAudits(String actorUuid, String uuid, List<LogAction> actions, List<AuditLogEntryType> types);
 }
