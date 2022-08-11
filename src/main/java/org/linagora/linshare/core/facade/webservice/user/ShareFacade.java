@@ -45,6 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.io.ByteSource;
 
@@ -59,13 +60,13 @@ public interface ShareFacade extends GenericFacade {
 
 	void multiplesharedocuments(List<ShareDto> shares, boolean secured, String message) throws BusinessException;
 
-	public List<ShareDto> getReceivedShares(Integer version) throws BusinessException;
+	public List<ShareDto> getReceivedShares(Version version) throws BusinessException;
 
-	public ShareDto getReceivedShare(Integer version, String shareEntryUuid) throws BusinessException;
+	public ShareDto getReceivedShare(Version version, String shareEntryUuid) throws BusinessException;
 
-	public List<ShareDto> getShares(Integer version) throws BusinessException;
+	public List<ShareDto> getShares(Version version) throws BusinessException;
 
-	public ShareDto getShare(Integer version, String shareUuid) throws BusinessException;
+	public ShareDto getShare(Version version, String shareUuid) throws BusinessException;
 
 	public ByteSource getDocumentByteSource(String shareEntryUuid) throws BusinessException;
 

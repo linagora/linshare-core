@@ -51,6 +51,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.SecondFactorAuthenticationFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv4.AuthenticationRestService;
 
@@ -101,7 +102,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	)
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return userFacade.isAuthorized(Role.ADMIN, 4);
+		return userFacade.isAuthorized(Role.ADMIN, Version.V4);
 	}
 
 	@Path("/change_password")

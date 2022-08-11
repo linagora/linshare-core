@@ -52,6 +52,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.TechnicalAccountFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.TechnicalAccountRestService;
 
@@ -135,7 +136,7 @@ public class TechnicalAccountRestServiceImpl extends WebserviceBase implements
 	@Override
 	public TechnicalAccountDto create(TechnicalAccountDto account)
 			throws BusinessException {
-		return technicalAccountFacade.create(account, 1);
+		return technicalAccountFacade.create(account, Version.V1);
 	}
 
 	@Path("/{uuid}/change_password")

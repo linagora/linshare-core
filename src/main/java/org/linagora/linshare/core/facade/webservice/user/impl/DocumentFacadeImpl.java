@@ -88,6 +88,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -140,14 +141,14 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 	}
 
 	@Override
-	public List<DocumentDto> findAll(Integer version) throws BusinessException {
+	public List<DocumentDto> findAll(Version version) throws BusinessException {
 		User authUser = checkAuthentication();
 		List<DocumentEntry> docs = documentEntryService.findAll(authUser, authUser);
 		return ImmutableList.copyOf(Lists.transform(docs, DocumentDto.toDto(version)));
 	}
 
 	@Override
-	public DocumentDto find(Integer version, String uuid, boolean withShares) throws BusinessException {
+	public DocumentDto find(Version version, String uuid, boolean withShares) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required document uuid");
 		User authUser = checkAuthentication();
 		DocumentEntry entry = documentEntryService.find(authUser, authUser, uuid);
@@ -155,10 +156,10 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		List<ShareDto> shares = Lists.newArrayList();
 		if (withShares) {
 			for (AnonymousShareEntry share : entryBusinessService.findAllMyAnonymousShareEntries(authUser, entry)) {
-				shares.add(ShareDto.getSentShare(2, share, false));
+				shares.add(ShareDto.getSentShare(Version.V2, share, false));
 			}
 			for (ShareEntry share : entryBusinessService.findAllMyShareEntries(authUser, entry)) {
-				shares.add(ShareDto.getSentShare(2, share, false));
+				shares.add(ShareDto.getSentShare(Version.V2, share, false));
 			}
 		}
 		Collections.sort(shares);

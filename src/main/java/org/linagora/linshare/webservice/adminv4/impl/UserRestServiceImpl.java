@@ -44,6 +44,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.adminv4.UserRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,7 +73,7 @@ public class UserRestServiceImpl extends org.linagora.linshare.webservice.admin.
 	public UserDto find(
 			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return userFacade.findUser(uuid, 4);
+		return userFacade.findUser(uuid, Version.V4);
 	}
 
 	@Path("/")
@@ -82,6 +83,6 @@ public class UserRestServiceImpl extends org.linagora.linshare.webservice.admin.
 	public UserDto update(
 			@Parameter(description = "User to update", required = true) UserDto userDto)
 			throws BusinessException {
-		return userFacade.update(userDto, 4);
+		return userFacade.update(userDto, Version.V4);
 	}
 }

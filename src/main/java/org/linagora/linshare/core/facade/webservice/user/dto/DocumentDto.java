@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -106,10 +107,10 @@ public class DocumentDto extends EntryDto {
 	}
 
 	public DocumentDto(DocumentEntry de) {
-		this(de, 2);
+		this(de, Version.V2);
 	}
 
-	public DocumentDto(DocumentEntry de, Integer version) {
+	public DocumentDto(DocumentEntry de, Version version) {
 		if (de == null)
 			return;
 		this.uuid = de.getUuid();
@@ -122,7 +123,7 @@ public class DocumentDto extends EntryDto {
 		this.description = de.getComment();
 		this.ciphered = de.getCiphered();
 		this.type = de.getType();
-		if (version >= 5) {
+		if (version.isGreaterThanOrEquals(Version.V5)) {
 			this.humanMimeType = de.getHumanMimeType();
 		}
 		this.size = de.getSize();
@@ -271,7 +272,7 @@ public class DocumentDto extends EntryDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<DocumentEntry, DocumentDto> toDto(Integer version) {
+	public static Function<DocumentEntry, DocumentDto> toDto(Version version) {
 		return new Function<DocumentEntry, DocumentDto>() {
 			@Override
 			public DocumentDto apply(DocumentEntry arg0) {

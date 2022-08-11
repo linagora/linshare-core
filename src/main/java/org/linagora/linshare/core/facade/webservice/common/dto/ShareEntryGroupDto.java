@@ -45,6 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -93,7 +94,7 @@ public class ShareEntryGroupDto {
 		this.setSubject(subject);
 	}
 
-	public ShareEntryGroupDto(Integer version, ShareEntryGroup shareEntryGroup, boolean full) {
+	public ShareEntryGroupDto(Version version, ShareEntryGroup shareEntryGroup, boolean full) {
 		super();
 		this.setOwner(new AccountDto(shareEntryGroup.getOwner(), false));
 		this.setCreationDate(shareEntryGroup.getCreationDate());
@@ -209,7 +210,7 @@ public class ShareEntryGroupDto {
 	 * Transformers
 	 */
 
-	public static Function<ShareEntryGroup, ShareEntryGroupDto> toDto(Integer version, final boolean full) {
+	public static Function<ShareEntryGroup, ShareEntryGroupDto> toDto(Version version, final boolean full) {
 		return new Function<ShareEntryGroup, ShareEntryGroupDto>() {
 			@Override
 			public ShareEntryGroupDto apply(ShareEntryGroup arg0) {

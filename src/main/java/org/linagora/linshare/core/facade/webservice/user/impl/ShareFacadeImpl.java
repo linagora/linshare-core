@@ -63,6 +63,7 @@ import org.linagora.linshare.core.service.ContactListService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -102,7 +103,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public List<ShareDto> getReceivedShares(Integer version) throws BusinessException {
+	public List<ShareDto> getReceivedShares(Version version) throws BusinessException {
 		User authUser = checkAuthentication();
 		List<ShareEntry> shares = shareEntryService.findAllMyRecievedShareEntries(
 				authUser, authUser);
@@ -112,7 +113,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public List<ShareDto> getShares(Integer version) throws BusinessException {
+	public List<ShareDto> getShares(Version version) throws BusinessException {
 		User authUser = checkAuthentication();
 		List<Entry> shares = entryBusinessService
 				.findAllMyShareEntries(authUser);
@@ -182,7 +183,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public ShareDto getReceivedShare(Integer version, String shareEntryUuid)
+	public ShareDto getReceivedShare(Version version, String shareEntryUuid)
 			throws BusinessException {
 		User authUser = checkAuthentication();
 		return ShareDto.getReceivedShare(version, shareEntryService.find(authUser, authUser, shareEntryUuid));
@@ -239,7 +240,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		Set<ShareDto> sharesDto = Sets.newHashSet();
 		List<String> uuids = Lists.newArrayList();
 		for (Entry entry : shares) {
-			sharesDto.add(ShareDto.getSentShare(2, entry));
+			sharesDto.add(ShareDto.getSentShare(Version.V2, entry));
 			uuids.add(entry.getUuid());
 		}
 		return sharesDto;
@@ -252,15 +253,15 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		Entry entry = shareService.delete(authUser, authUser, shareUuid);
 		ShareDto dto;
 		if (received) {
-			dto = ShareDto.getReceivedShare(2, entry);
+			dto = ShareDto.getReceivedShare(Version.V2, entry);
 		} else {
-			dto = ShareDto.getSentShare(2, entry);
+			dto = ShareDto.getSentShare(Version.V2, entry);
 		}
 		return dto;
 	}
 
 	@Override
-	public ShareDto getShare(Integer version, String shareUuid) throws BusinessException {
+	public ShareDto getShare(Version version, String shareUuid) throws BusinessException {
 		Validate.notEmpty(shareUuid, "Missing required share uuid");
 		User authUser = checkAuthentication();
 		return ShareDto.getSentShare(version, shareEntryService.find(authUser, authUser, shareUuid));

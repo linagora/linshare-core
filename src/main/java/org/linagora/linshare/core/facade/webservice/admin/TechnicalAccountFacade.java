@@ -40,10 +40,11 @@ import java.util.Set;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
+import org.linagora.linshare.utils.Version;
 
 public interface TechnicalAccountFacade extends AdminGenericFacade {
 
-	TechnicalAccountDto create(TechnicalAccountDto dto, Integer version)
+	TechnicalAccountDto create(TechnicalAccountDto dto, Version version)
 			throws BusinessException;
 
 	TechnicalAccountDto find(String uuid) throws BusinessException;

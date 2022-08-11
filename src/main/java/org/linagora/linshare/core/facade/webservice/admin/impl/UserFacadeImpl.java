@@ -72,6 +72,7 @@ import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -186,7 +187,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public UserDto update(UserDto userDto, Integer version) throws BusinessException {
+	public UserDto update(UserDto userDto, Version version) throws BusinessException {
 		Validate.notNull(userDto, "user must be set.");
 		Validate.notEmpty(userDto.getUuid(), "uuid must be set.");
 		Validate.notNull(userDto.getLocale(), "locale must be set.");
@@ -196,7 +197,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Can not find user");
 		}
 		User userToUpdate = userDto.toUserObject(entity.isGuest());
-		if (version >= 4) {
+		if (version.isGreaterThanOrEquals(Version.V4)) {
 			Validate.notNull(userDto.isLocked(), "isLocked parameter should be set");
 			if (!userDto.isLocked() && entity.isLocked()) {
 				entity = userService.unlockUser(authUser, entity);
@@ -218,7 +219,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 					userDto.getDomain());
 		}
 		UserDto updatedDto = UserDto.getFull(update);
-		if (version >= 4) {
+		if (version.isGreaterThanOrEquals(Version.V4)) {
 			updatedDto.setLocked(update.isLocked());
 		}
 		return updatedDto;
@@ -298,7 +299,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public void updateInconsistent(UserDto userDto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		update(userDto, 1);
+		update(userDto, Version.V1);
 		inconsistentUserService.updateDomain(authUser, userDto.getUuid(), userDto.getDomain());
 	}
 
@@ -370,7 +371,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public UserDto findUser(String uuid, Integer version) throws BusinessException {
+	public UserDto findUser(String uuid, Version version) throws BusinessException {
 		User currentUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "User uuid must be set.");
 		UserDto userDto = null;
@@ -385,7 +386,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		// get the quota for the current user.
 		AccountQuota quota = quotaService.findByRelatedAccount(user);
 		userDto.setQuotaUuid(quota.getUuid());
-		if (version >= 4) {
+		if (version.isGreaterThanOrEquals(Version.V4)) {
 			userDto.setLocked(user.isLocked());
 			BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(user.getDomain());
 			if (twofaFunc.getActivationPolicy().getStatus()) {
@@ -443,10 +444,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public UserDto isAuthorized(Role role, Integer version) throws BusinessException {
+	public UserDto isAuthorized(Role role, Version version) throws BusinessException {
 		User authUser = checkAuthentication(role);
 		UserDto dto = UserDto.getFull(authUser);
-		if (version >= 4) {
+		if (version.isGreaterThanOrEquals(Version.V4)) {
 			BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
 			if (twofaFunc.getActivationPolicy().getStatus()) {
 				dto.setSecondFAUuid(authUser.getLsUuid());

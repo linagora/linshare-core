@@ -52,6 +52,7 @@ import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.annotations.NoCache;
 import org.linagora.linshare.webservice.userv2.DocumentRestService;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -88,7 +89,7 @@ public class DocumentRestServiceImpl extends org.linagora.linshare.webservice.us
 	public DocumentDto find(@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@Parameter(description = "If you want document shares too.", required = false) @QueryParam("withShares") @DefaultValue("false") boolean withShares)
 			throws BusinessException {
-		return documentFacade.find(5, uuid, withShares);
+		return documentFacade.find(Version.V5, uuid, withShares);
 	}
 
 	@NoCache
@@ -103,6 +104,6 @@ public class DocumentRestServiceImpl extends org.linagora.linshare.webservice.us
 	})
 	@Override
 	public List<DocumentDto> findAll() throws BusinessException {
-		return documentFacade.findAll(5);
+		return documentFacade.findAll(Version.V5);
 	}
 }

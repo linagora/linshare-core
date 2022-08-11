@@ -60,6 +60,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.userv2.ReceivedShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
@@ -96,7 +97,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
-		return shareFacade.getReceivedShares(2);
+		return shareFacade.getReceivedShares(Version.V2);
 	}
 
 	@Path("/{uuid}")
@@ -112,7 +113,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	public ShareDto getReceivedShare(
 			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
 					throws BusinessException {
-		return shareFacade.getReceivedShare(2, receivedShareUuid);
+		return shareFacade.getReceivedShare(Version.V2, receivedShareUuid);
 	}
 
 	@Path("/{uuid}")
@@ -120,7 +121,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	@Operation(summary = "Find a received share entry.")
 	@Override
 	public void head(@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid) throws BusinessException {
-		shareFacade.getReceivedShare(2, receivedShareUuid);
+		shareFacade.getReceivedShare(Version.V2, receivedShareUuid);
 	}
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
@@ -136,7 +137,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64,
 			@Parameter(description = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType
 			) throws BusinessException {
-		ShareDto receivedShareDto = shareFacade.getReceivedShare(2, receivedShareUuid);
+		ShareDto receivedShareDto = shareFacade.getReceivedShare(Version.V2, receivedShareUuid);
 		ByteSource receivedShareStream = shareFacade.getThumbnailByteSource(receivedShareUuid, thumbnailType);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(receivedShareStream,
 				receivedShareDto.getName() + ThumbnailType.getFileType(thumbnailType), base64, thumbnailType);
@@ -185,7 +186,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	public Response download(
 			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		ShareDto receivedShareDto = shareFacade.getReceivedShare(2, uuid);
+		ShareDto receivedShareDto = shareFacade.getReceivedShare(Version.V2, uuid);
 		ByteSource receivedShareStream = shareFacade.getDocumentByteSource(uuid);
 		FileAndMetaData data = new FileAndMetaData(receivedShareStream, receivedShareDto.getSize(),
 				receivedShareDto.getName(), receivedShareDto.getType());

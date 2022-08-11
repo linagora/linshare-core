@@ -40,12 +40,13 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareEntryGroupDto;
+import org.linagora.linshare.utils.Version;
 
 public interface ShareEntryGroupFacade {
 
-	List<ShareEntryGroupDto> findAll(Integer version, String actorUuid, boolean full) throws BusinessException;
+	List<ShareEntryGroupDto> findAll(Version version, String actorUuid, boolean full) throws BusinessException;
 
-	ShareEntryGroupDto find(Integer version, String actorUuid, String uuid, boolean full) throws BusinessException;
+	ShareEntryGroupDto find(Version version, String actorUuid, String uuid, boolean full) throws BusinessException;
 
 	ShareEntryGroupDto update(String actorUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
 

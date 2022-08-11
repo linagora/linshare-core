@@ -1,8 +1,8 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
- * 
- * Copyright (C) 2015-2022 LINAGORA
- * 
+ *
+ * Copyright (C) 2022 LINAGORA
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,12 +20,12 @@
  * commercial brands. Other Additional Terms apply, see
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for more
  * details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -33,40 +33,22 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
+package org.linagora.linshare.utils;
 
-package org.linagora.linshare.core.facade.webservice.user;
+public enum Version {
+	V1(1), V2(2), V3(3), V4(4), V5(5), V6(6);
 
-import java.util.List;
-import java.util.Map;
+	private int value;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
-import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
-import org.linagora.linshare.utils.Version;
+	private Version(int value) {
+		this.value = value;
+	}
 
-public interface GuestFacade extends GenericFacade {
+	public boolean isGreaterThanOrEquals(Version version) {
+		return this.value >= version.value;
+	}
 
-	List<GuestDto> findAll(Version version, String pattern, ModeratorRoleEnum moderatorRole) throws BusinessException;
-
-	List<GuestDto> findAll(String actorUuid) throws BusinessException;
-
-	List<GuestDto> search(Version version, UserSearchDto userSearchDto) throws BusinessException;
-
-	GuestDto find(Version version, String actorUuid, String uuid) throws BusinessException;
-
-	GuestDto find(String actorUuid, String domain, String mail) throws BusinessException;
-
-	GuestDto create(Version version, String actorUuid, GuestDto dto) throws BusinessException;
-
-	GuestDto update(Version version, String actorUuid, GuestDto dto, String uuid) throws BusinessException;
-
-	GuestDto delete(Version version, String actorUuid, GuestDto dto, String uuid) throws BusinessException;
-
-	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
-
-	void changePassword(PasswordDto password);
-
-	Map<String, Integer> getPasswordRules() throws BusinessException;
+	public boolean isLessThan(Version version) {
+		return this.value < version.value;
+	}
 }

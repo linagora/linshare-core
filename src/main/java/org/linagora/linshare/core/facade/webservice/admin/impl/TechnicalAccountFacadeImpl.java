@@ -48,6 +48,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.collect.Sets;
 
@@ -63,11 +64,11 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public TechnicalAccountDto create(TechnicalAccountDto dto, Integer version) throws BusinessException {
+	public TechnicalAccountDto create(TechnicalAccountDto dto, Version version) throws BusinessException {
 		User authUser = checkAuth();
 		Validate.notNull(dto);
 		Validate.notEmpty(dto.getName(), "name must be set.");
-		if (version == 1) {
+		if (version.equals(Version.V1)) {
 			// In Admin API V1 we never use 'mail' attribute so we force it to null
 			dto.setMail(null);
 		} else {

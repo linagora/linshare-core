@@ -62,6 +62,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalitySizeDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityTimeDto;
+import org.linagora.linshare.utils.Version;
 
 public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
@@ -223,7 +224,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(Integer version, FunctionalityAdminDto functionalityDto) {
+	public void updateFunctionalityValuesOnlyFromDto(Version version, FunctionalityAdminDto functionalityDto) {
 		List<ParameterDto> parameters = functionalityDto.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
@@ -231,7 +232,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		}
 	}
 
-	protected void updateFunctionality(Integer version, String type, ParameterDto parameterDto) {
+	protected void updateFunctionality(Version version, String type, ParameterDto parameterDto) {
 		if (this.getValueUsed()) {
 			this.value = parameterDto.getInteger();
 			String unit = parameterDto.getString().trim().toUpperCase();
@@ -243,7 +244,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				timeUnit.setUnitValue(TimeUnit.valueOf(unit));
 			}
 		}
-		if (version >= 4) {
+		if (version.isGreaterThanOrEquals(Version.V4)) {
 			if (this.getMaxValueUsed()) {
 				if (!this.getUnlimitedUsed() && parameterDto.getMaxInteger() == -1) {
 					logger.error("This functionality does not support unlimited value using -1 as max value: %s",
@@ -274,7 +275,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public List<ParameterDto> getParameters(Integer version) {
+	public List<ParameterDto> getParameters(Version version) {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		String unitType = null;
 		String currentUnit = null;
@@ -300,7 +301,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			}
 		}
 		ParameterDto parameterDto = new ParameterDto(unitType, units);
-		if (version >= 4) {
+		if (version.isGreaterThanOrEquals(Version.V4)) {
 			if (this.getValueUsed()) {
 				parameterDto.setString(currentUnit);
 				parameterDto.setInteger(this.getValue());
@@ -334,13 +335,13 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
+	protected FunctionalityDto getUserDto(boolean enable, Version version) {
 		if (getUnit() instanceof FileSizeUnitClass && getMaxUnit() instanceof FileSizeUnitClass) {
 			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
 			FileSizeUnitClass sizeMaxUnit = (FileSizeUnitClass) getMaxUnit();
 			FunctionalitySizeDto f = new FunctionalitySizeDto();
 			if (enable) {
-				if (version >= 4) {
+				if (version.isGreaterThanOrEquals(Version.V4)) {
 					f.setUnlimited(false);
 					if (this.getMaxValueUsed()) {
 						f.setUnlimited(this.unlimited);
@@ -359,7 +360,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
 			TimeUnitClass maxTimeUnit = (TimeUnitClass) getMaxUnit();
 			if (enable) {
-				if (version >= 4) {
+				if (version.isGreaterThanOrEquals(Version.V4)) {
 					f.setUnlimited(false);
 					if (this.getMaxValueUsed()) {
 						f.setUnlimited(this.unlimited);

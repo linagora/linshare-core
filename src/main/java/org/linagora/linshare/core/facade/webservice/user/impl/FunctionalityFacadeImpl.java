@@ -45,6 +45,7 @@ import org.linagora.linshare.core.facade.webservice.user.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.collect.Lists;
 
@@ -60,11 +61,11 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public FunctionalityDto find(String identifier, Integer version) throws BusinessException {
+	public FunctionalityDto find(String identifier, Version version) throws BusinessException {
 		User authUser = checkAuthentication();
 		Functionality functionality = functionalityService.find(authUser, identifier);
 		FunctionalityDto dto = functionality.toUserDto(version);
-		if (version < 5) {
+		if (version.isLessThan(Version.V5)) {
 			if(dto.getIdentifier().equals(FunctionalityNames.WORK_SPACE__CREATION_RIGHT.toString())) {
 				dto.setIdentifier(FunctionalityNames.DRIVE__CREATION_RIGHT.toString());
 			}
@@ -73,12 +74,12 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public List<FunctionalityDto> findAll(Integer version) throws BusinessException {
+	public List<FunctionalityDto> findAll(Version version) throws BusinessException {
 		User authUser = checkAuthentication();
 		List<FunctionalityDto> res = Lists.newArrayList();
 		for (Functionality functionality : functionalityService.findAll(authUser)) {
 			FunctionalityDto dto = functionality.toUserDto(version);
-			if (version < 5) {
+			if (version.isLessThan(Version.V5)) {
 				if(dto.getIdentifier().equals(FunctionalityNames.WORK_SPACE__CREATION_RIGHT.toString())) {
 					dto.setIdentifier(FunctionalityNames.DRIVE__CREATION_RIGHT.toString());
 				}

@@ -70,6 +70,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.UpdateUsersEmailSt
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRestService;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
@@ -228,7 +229,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public UserDto find(
 			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return userFacade.findUser(uuid, 2);
+		return userFacade.findUser(uuid, Version.V2);
 	}
 
 	@Path("/{uuid}")
@@ -238,7 +239,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public void head(
 			@Parameter(description = "User uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		userFacade.findUser(uuid, 2);
+		userFacade.findUser(uuid, Version.V2);
 	}
 
 	@Path("/{uuid}")
@@ -266,7 +267,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	public UserDto update(
 			@Parameter(description = "User to update", required = true) UserDto userDto)
 			throws BusinessException {
-		return userFacade.update(userDto, 1);
+		return userFacade.update(userDto, Version.V1);
 	}
 
 	@Path("/")

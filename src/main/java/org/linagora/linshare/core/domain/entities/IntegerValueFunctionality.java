@@ -53,6 +53,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.neste
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityIntegerDto;
+import org.linagora.linshare.utils.Version;
 
 public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 
@@ -159,14 +160,14 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(Integer version, FunctionalityAdminDto functionality) {
+	public void updateFunctionalityValuesOnlyFromDto(Version version, FunctionalityAdminDto functionality) {
 		List<ParameterDto> parameters = functionality.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
 			if (this.getValueUsed()) {
 				this.value = parameterDto.getInteger();
 			}
-			if (version >= 4 && this.getMaxValueUsed()) {
+			if (version.isGreaterThanOrEquals(Version.V4) && this.getMaxValueUsed()) {
 				if (this.getUnlimitedUsed()) {
 					if(parameterDto.getMaxInteger() == -1) {
 						this.setUnlimited(true);
@@ -182,14 +183,14 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	public List<ParameterDto> getParameters(Integer version) {
+	public List<ParameterDto> getParameters(Version version) {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		ParameterDto parameterDto = new ParameterDto();
 		parameterDto.setType("INTEGER");
 		if (this.getValueUsed()) {
 			parameterDto.setInteger(this.getValue());
 		}
-		if (version >= 4) {
+		if (version.isGreaterThanOrEquals(Version.V4)) {
 			if (this.getMaxValueUsed()) {
 				parameterDto.setMaxValueUsed(this.getMaxValueUsed());
 				if (this.getUnlimitedUsed()) {
@@ -209,10 +210,10 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
+	protected FunctionalityDto getUserDto(boolean enable, Version version) {
 		FunctionalityIntegerDto f = new FunctionalityIntegerDto();
 		if (enable) {
-			if (version >= 4 && this.getMaxValueUsed()) {
+			if (version.isGreaterThanOrEquals(Version.V4) && this.getMaxValueUsed()) {
 				f.setMaxValue(maxValue);
 			}
 			if (this.getValueUsed()) {

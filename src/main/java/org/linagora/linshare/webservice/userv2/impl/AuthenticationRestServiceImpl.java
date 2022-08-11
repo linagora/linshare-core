@@ -55,6 +55,7 @@ import org.linagora.linshare.core.facade.webservice.user.SecondFactorAuthenticat
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.AuthenticationRestService;
 
@@ -104,7 +105,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	})
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return userFacade.isAuthorized(2);
+		return userFacade.isAuthorized(Version.V2);
 	}
 
 	@Path("/logout")

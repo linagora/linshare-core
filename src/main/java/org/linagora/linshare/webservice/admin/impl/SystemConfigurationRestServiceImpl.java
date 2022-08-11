@@ -48,6 +48,7 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.LoggerStatus;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.admin.SystemConfigurationRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,7 @@ public class SystemConfigurationRestServiceImpl implements
 	public LoggerStatus changeLogLevel(
 			@PathParam(value = "loggerName") String loggerName,
 			@PathParam(value = "level") String levelStr) {
-		userFacade.isAuthorized(Role.SUPERADMIN, 1);
+		userFacade.isAuthorized(Role.SUPERADMIN, Version.V1);
 		logger.warn("Trying to update log level at runtime using logger name : "
 				+ loggerName);
 		org.apache.logging.log4j.Logger currLogger = LogManager.getLogger(loggerName);
@@ -90,7 +91,7 @@ public class SystemConfigurationRestServiceImpl implements
 	@Override
 	public LoggerStatus getLogLevel(
 			@PathParam(value = "loggerName") String loggerName) {
-		userFacade.isAuthorized(Role.SUPERADMIN, 1);
+		userFacade.isAuthorized(Role.SUPERADMIN, Version.V1);
 		org.apache.logging.log4j.Logger currLogger = LogManager.getLogger(loggerName);
 		return new LoggerStatus(currLogger, currLogger.getLevel());
 	}

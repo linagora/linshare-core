@@ -49,14 +49,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttacheme
 import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.io.ByteSource;
 
 public interface DocumentFacade extends GenericFacade {
 
-	List<DocumentDto> findAll(Integer version) throws BusinessException;
+	List<DocumentDto> findAll(Version version) throws BusinessException;
 
-	DocumentDto find(Integer version, String uuid, boolean withShares) throws BusinessException;
+	DocumentDto find(Version version, String uuid, boolean withShares) throws BusinessException;
 
 	DocumentDto addDocumentXop(DocumentAttachement doca)
 			throws BusinessException;

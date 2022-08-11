@@ -41,6 +41,7 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.TechnicalAccountFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.TechnicalAccountDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.admin.TechnicalAccountRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,7 +68,7 @@ public class TechnicalAccountRestServiceImpl extends org.linagora.linshare.webse
 	@Override
 	public TechnicalAccountDto create(TechnicalAccountDto account)
 			throws BusinessException {
-		return technicalAccountFacade.create(account, 4);
+		return technicalAccountFacade.create(account, Version.V4);
 	}
 
 }

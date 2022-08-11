@@ -48,6 +48,7 @@ import javax.ws.rs.QueryParam;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.adminv4.FunctionalityRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -78,7 +79,7 @@ public class FunctionalityRestServiceImpl extends
 			@QueryParam("tree") @DefaultValue("false") boolean tree,
 			@QueryParam("subs") @DefaultValue("false") boolean withSubFunctionalities)
 			throws BusinessException {
-		return functionalityFacade.findAll(4, domainId, parentId, tree, withSubFunctionalities);
+		return functionalityFacade.findAll(Version.V4, domainId, parentId, tree, withSubFunctionalities);
 	}
 
 	@Path("/{funcId}")
@@ -95,7 +96,7 @@ public class FunctionalityRestServiceImpl extends
 			@PathParam(value = "funcId") String funcId,
 			@QueryParam("tree") @DefaultValue("false") boolean tree)
 			throws BusinessException {
-		return functionalityFacade.find(4, domainId, funcId, tree);
+		return functionalityFacade.find(Version.V4, domainId, funcId, tree);
 	}
 
 	@Path("/")
@@ -104,7 +105,7 @@ public class FunctionalityRestServiceImpl extends
 	@Override
 	public FunctionalityAdminDto update(FunctionalityAdminDto func)
 			throws BusinessException {
-		return functionalityFacade.update(4, func);
+		return functionalityFacade.update(Version.V4, func);
 	}
 
 	@Path("/")
@@ -112,6 +113,6 @@ public class FunctionalityRestServiceImpl extends
 	@Operation(summary = "Delete a domain's functionality.")
 	@Override
 	public void delete(FunctionalityAdminDto func) throws BusinessException {
-		functionalityFacade.delete(4, func);
+		functionalityFacade.delete(Version.V4, func);
 	}
 }

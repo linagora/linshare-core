@@ -57,6 +57,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.userv5.GuestRestService;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -90,7 +91,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 			@Parameter(description = "The list of returned guests will be filtered by the entered patten if not null.", required = false)
 				@QueryParam("pattern") String pattern)
 			throws BusinessException {
-		return guestFacade.findAll(5, pattern, role);
+		return guestFacade.findAll(Version.V5, pattern, role);
 	}
 
 	@Path("/search")
@@ -105,7 +106,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 				!(lessThan3Char(userSearchDto.getFirstName()) && lessThan3Char(userSearchDto.getLastName())
 						&& lessThan3Char(userSearchDto.getMail())),
 				"One pattern is required, pattern must be greater than 3 characters");
-		return guestFacade.search(5, userSearchDto);
+		return guestFacade.search(Version.V5, userSearchDto);
 	}
 
 	@Path("/{uuid}")
@@ -115,7 +116,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Override
 	public GuestDto find(@Parameter(description = "Guest's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return guestFacade.find(5, null, uuid);
+		return guestFacade.find(Version.V5, null, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -124,7 +125,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Override
 	public void head(@Parameter(description = "Guest's uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		guestFacade.find(5, null, uuid);
+		guestFacade.find(Version.V5, null, uuid);
 	}
 
 	@Path("/")
@@ -134,7 +135,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	@Override
 	public GuestDto create(@Parameter(description = "Guest to create.", required = true) GuestDto guest)
 			throws BusinessException {
-		return guestFacade.create(5, null, guest);
+		return guestFacade.create(Version.V5, null, guest);
 	}
 
 	@Path("/{uuid : .*}")
@@ -145,7 +146,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	public GuestDto update(@Parameter(description = "Guest to update.", required = true) GuestDto guest,
 			@Parameter(description = "Guest uuid, if null dto.uuid is used.", required = false) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return guestFacade.update(5, null, guest, uuid);
+		return guestFacade.update(Version.V5, null, guest, uuid);
 
 	}
 
@@ -157,7 +158,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 	public GuestDto delete(@Parameter(description = "Guest to delete.", required = true) GuestDto guest,
 			@Parameter(description = "Guest's uuid to delete.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return guestFacade.delete(5, null, guest, uuid);
+		return guestFacade.delete(Version.V5, null, guest, uuid);
 	}
 
 	@Path("/{uuid}/reset")

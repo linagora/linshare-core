@@ -44,6 +44,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv5.GuestRestService;
 
@@ -73,6 +74,6 @@ public class GuestRestServiceImpl extends WebserviceBase implements
 	@Override
 	public GuestDto create(
 				@Parameter(description = "Guest to create.", required = true) GuestDto guest) throws BusinessException {
-		return guestFacade.create(5, null, guest);
+		return guestFacade.create(Version.V5, null, guest);
 	}
 }

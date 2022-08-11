@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.utils.Version;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
@@ -121,7 +122,7 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 	 * 
 	 * @param entry
 	 */
-	protected ShareDto(Integer version, Entry entry, boolean receivedShare, boolean withDocument) {
+	protected ShareDto(Version version, Entry entry, boolean receivedShare, boolean withDocument) {
 		this.uuid = entry.getUuid();
 		this.name = entry.getName();
 		this.creationDate = entry.getCreationDate().getTime();
@@ -137,7 +138,7 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 				if (withDocument) {
 					this.size = sa.getDocumentEntry().getSize();
 					this.type = sa.getDocumentEntry().getType();
-					if (version >= 5) {
+					if (version.isGreaterThanOrEquals(Version.V5)) {
 						this.humanMimeType= sa.getDocumentEntry().getHumanMimeType();
 					}
 					this.ciphered = sa.getDocumentEntry().getCiphered();
@@ -164,15 +165,15 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 		super();
 	}
 
-	public static ShareDto getReceivedShare(Integer version, Entry entry) {
+	public static ShareDto getReceivedShare(Version version, Entry entry) {
 		return new ShareDto(version, entry, true, true);
 	}
 
-	public static ShareDto getSentShare(Integer version, Entry entry, boolean withDocument) {
+	public static ShareDto getSentShare(Version version, Entry entry, boolean withDocument) {
 		return new ShareDto(version, entry, false, withDocument);
 	}
 
-	public static ShareDto getSentShare(Integer version, Entry entry) {
+	public static ShareDto getSentShare(Version version, Entry entry) {
 		return new ShareDto(version, entry, false, true);
 	}
 
@@ -312,7 +313,7 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 	/*
 	 * Transformers
 	 */
-	public static Function<ShareEntry, ShareDto> toDto(Integer version) {
+	public static Function<ShareEntry, ShareDto> toDto(Version version) {
 		return new Function<ShareEntry, ShareDto>() {
 			@Override
 			public ShareDto apply(ShareEntry arg0) {
@@ -321,7 +322,7 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 		};
 	}
 
-	public static Function<Entry, ShareDto> EntrytoDto(Integer version) {
+	public static Function<Entry, ShareDto> EntrytoDto(Version version) {
 		return new Function<Entry, ShareDto>() {
 			@Override
 			public ShareDto apply(Entry arg0) {

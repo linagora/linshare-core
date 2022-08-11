@@ -46,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.neste
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityBooleanDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.utils.Version;
 
 public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 
@@ -91,7 +92,7 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 	}
 
 	@Override
-	public void updateFunctionalityValuesOnlyFromDto(Integer version, FunctionalityAdminDto functionality) {
+	public void updateFunctionalityValuesOnlyFromDto(Version version, FunctionalityAdminDto functionality) {
 		List<ParameterDto> parameters = functionality.getParameters();
 		if (parameters != null && !parameters.isEmpty()) {
 			ParameterDto parameterDto = parameters.get(0);
@@ -100,14 +101,14 @@ public class BooleanValueFunctionality extends OneValueFunctionality<Boolean> {
 	}
 
 	@Override
-	public List<ParameterDto> getParameters(Integer version) {
+	public List<ParameterDto> getParameters(Version version) {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		res.add(new ParameterDto(this.getValue()));
 		return res;
 	}
 
 	@Override
-	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
+	protected FunctionalityDto getUserDto(boolean enable, Version version) {
 		FunctionalityBooleanDto f = new FunctionalityBooleanDto();
 		if (enable) {
 			f.setValue(value);

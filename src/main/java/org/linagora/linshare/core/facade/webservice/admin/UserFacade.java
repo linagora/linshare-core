@@ -46,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
+import org.linagora.linshare.utils.Version;
 
 public interface UserFacade extends AdminGenericFacade {
 
@@ -55,7 +56,7 @@ public interface UserFacade extends AdminGenericFacade {
 
 	Set<UserDto> searchGuests(String pattern) throws BusinessException;
 
-	UserDto update(UserDto userDto, Integer version) throws BusinessException;
+	UserDto update(UserDto userDto, Version version) throws BusinessException;
 
 	UserDto delete(UserDto userDto) throws BusinessException;
 
@@ -65,7 +66,7 @@ public interface UserFacade extends AdminGenericFacade {
 
 	void changePassword(PasswordDto password) throws BusinessException;
 
-	UserDto findUser(String uuid, Integer version) throws BusinessException;
+	UserDto findUser(String uuid, Version version) throws BusinessException;
 
 	boolean exist(String uuid) throws BusinessException;
 
@@ -81,5 +82,5 @@ public interface UserFacade extends AdminGenericFacade {
 
 	SecondFactorDto find2FA(String userUuid, String secondFactorUuid) throws BusinessException;
 
-	UserDto isAuthorized(Role role, Integer version) throws BusinessException;
+	UserDto isAuthorized(Role role, Version version) throws BusinessException;
 }

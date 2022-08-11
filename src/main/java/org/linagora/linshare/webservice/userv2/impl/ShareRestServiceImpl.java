@@ -60,6 +60,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.utils.FileAndMetaData;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.ShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
@@ -99,7 +100,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	})
 	@Override
 	public List<ShareDto> getShares() throws BusinessException {
-		return webServiceShareFacade.getShares(2);
+		return webServiceShareFacade.getShares(Version.V2);
 	}
 
 	@Path("/{uuid}")
@@ -114,7 +115,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Override
 	public ShareDto getShare(
 			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid) {
-		return webServiceShareFacade.getShare(2, shareUuid);
+		return webServiceShareFacade.getShare(Version.V2, shareUuid);
 	}
 
 	@Path("/{uuid}")
@@ -123,14 +124,14 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Override
 	public void head(@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid)
 			throws BusinessException {
-		webServiceShareFacade.getShare(2, shareUuid);
+		webServiceShareFacade.getShare(Version.V2, shareUuid);
 	}
 
 	@Path("/{uuid}/download")
 	@GET
 	@Override
 	public Response getDocumentStream(@PathParam("uuid") String shareUuid) throws BusinessException {
-		ShareDto shareDto = webServiceShareFacade.getReceivedShare(2, shareUuid);
+		ShareDto shareDto = webServiceShareFacade.getReceivedShare(Version.V2, shareUuid);
 		ByteSource documentStream = webServiceShareFacade.getDocumentByteSource(shareUuid);
 		FileAndMetaData data = new FileAndMetaData(documentStream, shareDto.getSize(),
 				shareDto.getName(), shareDto.getType());
@@ -144,7 +145,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	public Response getThumbnailStream(@PathParam("uuid") String shareUuid,
 			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		ShareDto shareDto = webServiceShareFacade.getShare(2, shareUuid);
+		ShareDto shareDto = webServiceShareFacade.getShare(Version.V2, shareUuid);
 		ByteSource documentStream = webServiceShareFacade.getThumbnailByteSource(shareUuid, ThumbnailType.MEDIUM);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
 				shareDto.getName() + "_thumb.png", base64, ThumbnailType.MEDIUM);

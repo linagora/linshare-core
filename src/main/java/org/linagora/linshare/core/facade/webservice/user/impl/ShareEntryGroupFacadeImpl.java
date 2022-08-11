@@ -46,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ShareEntryGroupDt
 import org.linagora.linshare.core.facade.webservice.user.ShareEntryGroupFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -63,7 +64,7 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 	public List<ShareEntryGroupDto> findAll(boolean full) {
 		User authUser = checkAuthentication();
 		List<ShareEntryGroup> list = service.findAll(authUser, authUser);
-		return ImmutableList.copyOf(Lists.transform(list, ShareEntryGroupDto.toDto(2, full)));
+		return ImmutableList.copyOf(Lists.transform(list, ShareEntryGroupDto.toDto(Version.V2, full)));
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 		Validate.notEmpty(uuid, "Share entry group uuid must be set.");
 		User authUser = checkAuthentication();
 		ShareEntryGroup seg = service.find(authUser, authUser, uuid);
-		return new ShareEntryGroupDto(2, seg, full);
+		return new ShareEntryGroupDto(Version.V2, seg, full);
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 		User authUser = checkAuthentication();
 		ShareEntryGroup seg = shareEntryGroupDto.toObject();
 		seg = service.update(authUser, authUser, shareEntryGroupDto.getUuid(), seg);
-		return new ShareEntryGroupDto(2, seg, false);
+		return new ShareEntryGroupDto(Version.V2, seg, false);
 	}
 
 	@Override
@@ -89,6 +90,6 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 		Validate.notEmpty(uuid, "Share entry group uuid must be set.");
 		User authUser = checkAuthentication();
 		ShareEntryGroup seg = service.delete(authUser, authUser, uuid);
-		return new ShareEntryGroupDto(2, seg, false);
+		return new ShareEntryGroupDto(Version.V2, seg, false);
 	}
 }

@@ -78,6 +78,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.annotations.NoCache;
 import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
@@ -212,7 +213,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	public DocumentDto find(@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@Parameter(description = "If you want document shares too.", required = false) @QueryParam("withShares") @DefaultValue("false") boolean withShares)
 			throws BusinessException {
-		return documentFacade.find(2, uuid, withShares);
+		return documentFacade.find(Version.V2, uuid, withShares);
 	}
 
 	@Path("/{uuid}")
@@ -221,7 +222,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Override
 	public void head(@Parameter(description = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		documentFacade.find(2, uuid, false);
+		documentFacade.find(Version.V2, uuid, false);
 	}
 
 	@NoCache
@@ -236,7 +237,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	})
 	@Override
 	public List<DocumentDto> findAll() throws BusinessException {
-		return documentFacade.findAll(2);
+		return documentFacade.findAll(Version.V2);
 	}
 
 	@DELETE
@@ -296,7 +297,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	})
 	@Override
 	public Response download(@PathParam("uuid") String uuid) throws BusinessException {
-		DocumentDto documentDto = documentFacade.find(2, uuid, false);
+		DocumentDto documentDto = documentFacade.find(Version.V2, uuid, false);
 		ByteSource byteSource = documentFacade.getByteSource(uuid);
 		FileAndMetaData data = new FileAndMetaData(byteSource, documentDto.getSize(),
 				documentDto.getName(), documentDto.getType());
@@ -317,7 +318,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@Parameter(description = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType,
 			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 			throws BusinessException {
-		DocumentDto documentDto = documentFacade.find(2, documentUuid, false);
+		DocumentDto documentDto = documentFacade.find(Version.V2, documentUuid, false);
 		ByteSource byteSource = documentFacade.getThumbnailByteSource(documentUuid, thumbnailType);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(byteSource,
 				documentDto.getName() + ThumbnailType.getFileType(thumbnailType), base64, thumbnailType);

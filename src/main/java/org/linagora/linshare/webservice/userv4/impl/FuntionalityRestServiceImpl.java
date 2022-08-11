@@ -43,6 +43,7 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.userv2.impl.FunctionalityRestServiceImpl;
 import org.linagora.linshare.webservice.userv4.FunctionalityRestService;
 
@@ -70,12 +71,12 @@ public class FuntionalityRestServiceImpl extends FunctionalityRestServiceImpl im
 	})
 	@Override
 	public List<FunctionalityDto> findAll() throws BusinessException {
-		return functionalityFacade.findAll(4);
+		return functionalityFacade.findAll(Version.V4);
 	}
 
 	@Override
 	public FunctionalityDto find(String funcId) throws BusinessException {
-		return functionalityFacade.find(funcId, 4);
+		return functionalityFacade.find(funcId, Version.V4);
 	}
 	
 	

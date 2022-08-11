@@ -40,16 +40,17 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
+import org.linagora.linshare.utils.Version;
 
 public interface FunctionalityFacade extends AdminGenericFacade {
 
-	FunctionalityAdminDto find(Integer version, String domainId, String funcId, boolean tree)
+	FunctionalityAdminDto find(Version version, String domainId, String funcId, boolean tree)
 			throws BusinessException;
 
-	List<FunctionalityAdminDto> findAll(Integer version, String domainId, String parentId, boolean tree, boolean withSubFunctionalities) throws BusinessException;
+	List<FunctionalityAdminDto> findAll(Version version, String domainId, String parentId, boolean tree, boolean withSubFunctionalities) throws BusinessException;
 
-	FunctionalityAdminDto update(Integer version, FunctionalityAdminDto func) throws BusinessException;
+	FunctionalityAdminDto update(Version version, FunctionalityAdminDto func) throws BusinessException;
 
-	void delete(Integer version, FunctionalityAdminDto func) throws BusinessException;
+	void delete(Version version, FunctionalityAdminDto func) throws BusinessException;
 
 }

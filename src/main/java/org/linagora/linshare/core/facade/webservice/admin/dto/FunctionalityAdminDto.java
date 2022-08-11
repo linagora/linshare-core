@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.AbstractFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PolicyDto;
+import org.linagora.linshare.utils.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Function;
@@ -102,7 +103,7 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 		super();
 	}
 
-	public FunctionalityAdminDto(Integer version, Functionality f) {
+	public FunctionalityAdminDto(Version version, Functionality f) {
 		super();
 		// System returned only for development purpose.
 		this.system = f.isSystem();
@@ -254,7 +255,7 @@ public class FunctionalityAdminDto implements Comparable<FunctionalityAdminDto> 
 	/**
 	 * Transformers
 	 */
-	public static Function<Functionality, FunctionalityAdminDto> toDto(Integer version) {
+	public static Function<Functionality, FunctionalityAdminDto> toDto(Version version) {
 		return new Function<Functionality, FunctionalityAdminDto>() {
 			@Override
 			public FunctionalityAdminDto apply(Functionality arg0) {

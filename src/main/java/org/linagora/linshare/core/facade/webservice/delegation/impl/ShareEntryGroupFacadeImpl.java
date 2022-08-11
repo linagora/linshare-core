@@ -47,6 +47,7 @@ import org.linagora.linshare.core.facade.webservice.delegation.ShareEntryGroupFa
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -62,7 +63,7 @@ public class ShareEntryGroupFacadeImpl extends DelegationGenericFacadeImpl imple
 	}
 
 	@Override
-	public List<ShareEntryGroupDto> findAll(Integer version, String actorUuid, boolean full) throws BusinessException {
+	public List<ShareEntryGroupDto> findAll(Version version, String actorUuid, boolean full) throws BusinessException {
 		Validate.notEmpty(actorUuid, "actor uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
@@ -72,7 +73,7 @@ public class ShareEntryGroupFacadeImpl extends DelegationGenericFacadeImpl imple
 	}
 
 	@Override
-	public ShareEntryGroupDto find(Integer version, String actorUuid, String uuid, boolean full) throws BusinessException {
+	public ShareEntryGroupDto find(Version version, String actorUuid, String uuid, boolean full) throws BusinessException {
 		Validate.notEmpty(actorUuid, "actor uuid must be set.");
 		Validate.notEmpty(uuid, "Shar entry group's uuid must be set.");
 		User authUser = checkAuthentication();
@@ -90,7 +91,7 @@ public class ShareEntryGroupFacadeImpl extends DelegationGenericFacadeImpl imple
 		User actor = getActor(actorUuid);
 		ShareEntryGroup seg = shareEntryGroupDto.toObject();
 		seg = shareEntryGroupService.update(authUser, actor, shareEntryGroupDto.getUuid(), seg);
-		return new ShareEntryGroupDto(2, seg, false);
+		return new ShareEntryGroupDto(Version.V2, seg, false);
 	}
 
 	@Override
@@ -100,6 +101,6 @@ public class ShareEntryGroupFacadeImpl extends DelegationGenericFacadeImpl imple
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		ShareEntryGroup seg = shareEntryGroupService.delete(authUser, actor, uuid);
-		return new ShareEntryGroupDto(2, seg, false);
+		return new ShareEntryGroupDto(Version.V2, seg, false);
 	}
 }

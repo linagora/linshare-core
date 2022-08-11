@@ -39,12 +39,13 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.utils.Version;
 
 public interface UserFacade extends GenericFacade {
 
 	List<UserDto> findAll() throws BusinessException;
 
-	UserDto isAuthorized(Integer version) throws BusinessException;
+	UserDto isAuthorized(Version version) throws BusinessException;
 
 	String generateToken() throws BusinessException;
 }

@@ -47,6 +47,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.FunctionalityRestService;
 
@@ -79,7 +80,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements Func
 	})
 	@Override
 	public List<FunctionalityDto> findAll() throws BusinessException {
-		return functionalityFacade.findAll(2);
+		return functionalityFacade.findAll(Version.V2);
 	}
 
 	@Path("/{funcId}")
@@ -92,7 +93,7 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements Func
 	})
 	@Override
 	public FunctionalityDto find(@PathParam(value = "funcId") String funcId) throws BusinessException {
-		return functionalityFacade.find(funcId, 2);
+		return functionalityFacade.find(funcId, Version.V2);
 	}
 
 	@Path("/{funcId}")
@@ -100,6 +101,6 @@ public class FunctionalityRestServiceImpl extends WebserviceBase implements Func
 	@Operation(summary = "Find a functionality.")
 	@Override
 	public void head(@PathParam(value = "funcId") String identifier) throws BusinessException {
-		functionalityFacade.find(identifier, 2);
+		functionalityFacade.find(identifier, Version.V2);
 	}
 }

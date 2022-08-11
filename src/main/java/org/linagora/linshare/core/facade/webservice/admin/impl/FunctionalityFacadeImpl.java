@@ -48,6 +48,7 @@ import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
@@ -64,7 +65,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public FunctionalityAdminDto find(Integer version, String domainId, String funcId, boolean tree)
+	public FunctionalityAdminDto find(Version version, String domainId, String funcId, boolean tree)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
@@ -74,7 +75,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<FunctionalityAdminDto> findAll(Integer version, String domainId, String parentId, boolean tree, boolean withSubFunctionalities)
+	public List<FunctionalityAdminDto> findAll(Version version, String domainId, String parentId, boolean tree, boolean withSubFunctionalities)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
@@ -85,7 +86,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public FunctionalityAdminDto update(Integer version, FunctionalityAdminDto func)
+	public FunctionalityAdminDto update(Version version, FunctionalityAdminDto func)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 
@@ -125,7 +126,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void delete(Integer version, FunctionalityAdminDto func) throws BusinessException {
+	public void delete(Version version, FunctionalityAdminDto func) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),

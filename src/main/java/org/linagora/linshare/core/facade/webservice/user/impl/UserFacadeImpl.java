@@ -51,6 +51,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.utils.Version;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -99,13 +100,13 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 	}
 
 	@Override
-	public UserDto isAuthorized(Integer version) throws BusinessException {
+	public UserDto isAuthorized(Version version) throws BusinessException {
 		User authUser = checkAuthentication();
 		UserDto dto = UserDto.getFull(authUser);
 		// get the quota for the current logged in user.
 		AccountQuota quota = quotaService.findByRelatedAccount(authUser);
 		dto.setQuotaUuid(quota.getUuid());
-		if (version >= 4) {
+		if (version.isGreaterThanOrEquals(Version.V4)) {
 			BooleanValueFunctionality twofaFunc = functionalityReadOnlyService.getSecondFactorAuthenticationFunctionality(authUser.getDomain());
 			if (twofaFunc.getActivationPolicy().getStatus()) {
 				dto.setSecondFAUuid(authUser.getLsUuid());

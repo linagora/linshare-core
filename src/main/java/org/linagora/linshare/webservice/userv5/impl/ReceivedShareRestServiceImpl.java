@@ -48,6 +48,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.userv2.ReceivedShareRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,7 +80,7 @@ public class ReceivedShareRestServiceImpl extends org.linagora.linshare.webservi
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
-		return shareFacade.getReceivedShares(5);
+		return shareFacade.getReceivedShares(Version.V5);
 	}
 
 	@Path("/{uuid}")
@@ -95,7 +96,7 @@ public class ReceivedShareRestServiceImpl extends org.linagora.linshare.webservi
 	public ShareDto getReceivedShare(
 			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid)
 					throws BusinessException {
-		return shareFacade.getReceivedShare(5, receivedShareUuid);
+		return shareFacade.getReceivedShare(Version.V5, receivedShareUuid);
 	}
 
 	@Path("/{uuid}")
@@ -103,6 +104,6 @@ public class ReceivedShareRestServiceImpl extends org.linagora.linshare.webservi
 	@Operation(summary = "Find a received share entry.")
 	@Override
 	public void head(@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String receivedShareUuid) throws BusinessException {
-		shareFacade.getReceivedShare(5, receivedShareUuid);
+		shareFacade.getReceivedShare(Version.V5, receivedShareUuid);
 	}
 }

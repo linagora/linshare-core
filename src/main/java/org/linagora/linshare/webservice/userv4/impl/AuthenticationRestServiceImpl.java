@@ -46,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.facade.webservice.user.SecondFactorAuthenticationFacade;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
+import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.userv4.AuthenticationRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,7 +76,7 @@ public class AuthenticationRestServiceImpl extends org.linagora.linshare.webserv
 	})
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return userFacade.isAuthorized(4);
+		return userFacade.isAuthorized(Version.V4);
 	}
 
 }

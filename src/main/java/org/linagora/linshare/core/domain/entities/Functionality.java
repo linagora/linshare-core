@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.FunctionalityAdminDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.utils.Version;
 
 
 public class Functionality extends AbstractFunctionality {
@@ -81,7 +82,7 @@ public class Functionality extends AbstractFunctionality {
 		return FunctionalityType.DEFAULT;
 	}
 
-	public List<ParameterDto> getParameters(Integer version) {
+	public List<ParameterDto> getParameters(Version version) {
 		return new ArrayList<ParameterDto>();
 	}
 
@@ -134,7 +135,7 @@ public class Functionality extends AbstractFunctionality {
 		this.param = param;
 	}
 
-	public void updateFunctionalityValuesOnlyFromDto(Integer version, FunctionalityAdminDto functionality) {
+	public void updateFunctionalityValuesOnlyFromDto(Version version, FunctionalityAdminDto functionality) {
 		// no data in this class.
 	}
 
@@ -147,7 +148,7 @@ public class Functionality extends AbstractFunctionality {
 	 * @param enable TODO
 	 * @return FunctionalityDto
 	 */
-	protected FunctionalityDto getUserDto(boolean enable, Integer version) {
+	protected FunctionalityDto getUserDto(boolean enable, Version version) {
 		return new FunctionalityDto();
 	}
 
@@ -155,7 +156,7 @@ public class Functionality extends AbstractFunctionality {
 	 * Call it to transform your entity to a DTO.
 	 * @return FunctionalityDto
 	 */
-	public FunctionalityDto toUserDto(Integer version) {
+	public FunctionalityDto toUserDto(Version version) {
 		boolean enable = activationPolicy.getStatus();
 		FunctionalityDto f = getUserDto(enable, version);
 		f.setIdentifier(identifier);

@@ -39,11 +39,12 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.utils.Version;
 
 public interface FunctionalityFacade extends GenericFacade {
 
-	FunctionalityDto find(String identifier, Integer version) throws BusinessException;
+	FunctionalityDto find(String identifier, Version version) throws BusinessException;
 
-	List<FunctionalityDto> findAll(Integer version) throws BusinessException;
+	List<FunctionalityDto> findAll(Version version) throws BusinessException;
 
 }
