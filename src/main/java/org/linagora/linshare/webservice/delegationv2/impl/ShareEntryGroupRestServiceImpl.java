@@ -87,7 +87,7 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 	public List<ShareEntryGroupDto> findAll(
 			@Parameter(description = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@QueryParam("full") @DefaultValue("false") boolean full) throws BusinessException {
-		return shareEntryGroupFacade.findAll(actorUuid, full);
+		return shareEntryGroupFacade.findAll(2, actorUuid, full);
 	}
 
 	@Path("/{uuid}")
@@ -103,7 +103,7 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 			@Parameter(description = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@Parameter(description = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid,
 			@QueryParam("full") @DefaultValue("false") boolean full) throws BusinessException {
-		return shareEntryGroupFacade.find(actorUuid, uuid, full);
+		return shareEntryGroupFacade.find(2, actorUuid, uuid, full);
 	}
 
 	@Path("/{uuid}")
@@ -119,7 +119,7 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 			@Parameter(description = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@Parameter(description = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		shareEntryGroupFacade.find(actorUuid, uuid, false);
+		shareEntryGroupFacade.find(2, actorUuid, uuid, false);
 	}
 
 	@Path("/{uuid}")

@@ -63,7 +63,7 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 	public List<ShareEntryGroupDto> findAll(boolean full) {
 		User authUser = checkAuthentication();
 		List<ShareEntryGroup> list = service.findAll(authUser, authUser);
-		return ImmutableList.copyOf(Lists.transform(list, ShareEntryGroupDto.toDto(full)));
+		return ImmutableList.copyOf(Lists.transform(list, ShareEntryGroupDto.toDto(2, full)));
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 		Validate.notEmpty(uuid, "Share entry group uuid must be set.");
 		User authUser = checkAuthentication();
 		ShareEntryGroup seg = service.find(authUser, authUser, uuid);
-		return new ShareEntryGroupDto(seg, full);
+		return new ShareEntryGroupDto(2, seg, full);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 		User authUser = checkAuthentication();
 		ShareEntryGroup seg = shareEntryGroupDto.toObject();
 		seg = service.update(authUser, authUser, shareEntryGroupDto.getUuid(), seg);
-		return new ShareEntryGroupDto(seg, false);
+		return new ShareEntryGroupDto(2, seg, false);
 	}
 
 	@Override
@@ -89,6 +89,6 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 		Validate.notEmpty(uuid, "Share entry group uuid must be set.");
 		User authUser = checkAuthentication();
 		ShareEntryGroup seg = service.delete(authUser, authUser, uuid);
-		return new ShareEntryGroupDto(seg, false);
+		return new ShareEntryGroupDto(2, seg, false);
 	}
 }

@@ -103,6 +103,10 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 	@Schema(description = "Type")
 	protected String type;
 
+	@Schema(description = "humanMimeType. Only on api v5, since LinShare v6.")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected String humanMimeType;
+
 	@Schema(description = "Ciphered")
 	protected Boolean ciphered;
 
@@ -117,7 +121,7 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 	 * 
 	 * @param entry
 	 */
-	protected ShareDto(Entry entry, boolean receivedShare, boolean withDocument) {
+	protected ShareDto(Integer version, Entry entry, boolean receivedShare, boolean withDocument) {
 		this.uuid = entry.getUuid();
 		this.name = entry.getName();
 		this.creationDate = entry.getCreationDate().getTime();
@@ -133,13 +137,16 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 				if (withDocument) {
 					this.size = sa.getDocumentEntry().getSize();
 					this.type = sa.getDocumentEntry().getType();
+					if (version >= 5) {
+						this.humanMimeType= sa.getDocumentEntry().getHumanMimeType();
+					}
 					this.ciphered = sa.getDocumentEntry().getCiphered();
 					this.hasThumbnail = sa.getDocumentEntry().isHasThumbnail();
 				}
 			} else {
 				// sent share.
 				if (withDocument) {
-					this.document = new DocumentDto(((ShareEntry) entry).getDocumentEntry());
+					this.document = new DocumentDto(((ShareEntry) entry).getDocumentEntry(), version);
 				}
 				this.recipient = new GenericUserDto(sa.getRecipient());
 			}
@@ -147,7 +154,7 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 			AnonymousShareEntry a = (AnonymousShareEntry) entry;
 			this.downloaded = a.getDownloaded();
 			if (withDocument) {
-				this.document = new DocumentDto(a.getDocumentEntry());
+				this.document = new DocumentDto(a.getDocumentEntry(), version);
 			}
 			this.recipient = new GenericUserDto(a.getAnonymousUrl().getContact());
 		}
@@ -157,16 +164,16 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 		super();
 	}
 
-	public static ShareDto getReceivedShare(Entry entry) {
-		return new ShareDto(entry, true, true);
+	public static ShareDto getReceivedShare(Integer version, Entry entry) {
+		return new ShareDto(version, entry, true, true);
 	}
 
-	public static ShareDto getSentShare(Entry entry, boolean withDocument) {
-		return new ShareDto(entry, false, withDocument);
+	public static ShareDto getSentShare(Integer version, Entry entry, boolean withDocument) {
+		return new ShareDto(version, entry, false, withDocument);
 	}
 
-	public static ShareDto getSentShare(Entry entry) {
-		return new ShareDto(entry, false, true);
+	public static ShareDto getSentShare(Integer version, Entry entry) {
+		return new ShareDto(version, entry, false, true);
 	}
 
 	public String getUuid() {
@@ -294,23 +301,31 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 		return this.modificationDate.compareTo(o.getModificationDate());
 	}
 
+	public String getHumanMimeType() {
+		return humanMimeType;
+	}
+
+	public void setHumanMimeType(String humanMimeType) {
+		this.humanMimeType = humanMimeType;
+	}
+
 	/*
 	 * Transformers
 	 */
-	public static Function<ShareEntry, ShareDto> toDto() {
+	public static Function<ShareEntry, ShareDto> toDto(Integer version) {
 		return new Function<ShareEntry, ShareDto>() {
 			@Override
 			public ShareDto apply(ShareEntry arg0) {
-				return ShareDto.getReceivedShare(arg0);
+				return ShareDto.getReceivedShare(version, arg0);
 			}
 		};
 	}
 
-	public static Function<Entry, ShareDto> EntrytoDto() {
+	public static Function<Entry, ShareDto> EntrytoDto(Integer version) {
 		return new Function<Entry, ShareDto>() {
 			@Override
 			public ShareDto apply(Entry arg0) {
-				return ShareDto.getSentShare(arg0);
+				return ShareDto.getSentShare(version, arg0);
 			}
 		};
 	}

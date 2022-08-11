@@ -62,23 +62,23 @@ public class ShareEntryGroupFacadeImpl extends DelegationGenericFacadeImpl imple
 	}
 
 	@Override
-	public List<ShareEntryGroupDto> findAll(String actorUuid, boolean full) throws BusinessException {
+	public List<ShareEntryGroupDto> findAll(Integer version, String actorUuid, boolean full) throws BusinessException {
 		Validate.notEmpty(actorUuid, "actor uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		List<ShareEntryGroup> list = shareEntryGroupService.findAll(authUser, actor);
 		return	ImmutableList.copyOf(Lists.transform(list,
-						ShareEntryGroupDto.toDto(full)));
+						ShareEntryGroupDto.toDto(version, full)));
 	}
 
 	@Override
-	public ShareEntryGroupDto find(String actorUuid, String uuid, boolean full) throws BusinessException {
+	public ShareEntryGroupDto find(Integer version, String actorUuid, String uuid, boolean full) throws BusinessException {
 		Validate.notEmpty(actorUuid, "actor uuid must be set.");
 		Validate.notEmpty(uuid, "Shar entry group's uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		ShareEntryGroup seg = shareEntryGroupService.find(authUser, actor, uuid);
-		return new ShareEntryGroupDto(seg, full);
+		return new ShareEntryGroupDto(version, seg, full);
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class ShareEntryGroupFacadeImpl extends DelegationGenericFacadeImpl imple
 		User actor = getActor(actorUuid);
 		ShareEntryGroup seg = shareEntryGroupDto.toObject();
 		seg = shareEntryGroupService.update(authUser, actor, shareEntryGroupDto.getUuid(), seg);
-		return new ShareEntryGroupDto(seg, false);
+		return new ShareEntryGroupDto(2, seg, false);
 	}
 
 	@Override
@@ -100,6 +100,6 @@ public class ShareEntryGroupFacadeImpl extends DelegationGenericFacadeImpl imple
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		ShareEntryGroup seg = shareEntryGroupService.delete(authUser, actor, uuid);
-		return new ShareEntryGroupDto(seg, false);
+		return new ShareEntryGroupDto(2, seg, false);
 	}
 }

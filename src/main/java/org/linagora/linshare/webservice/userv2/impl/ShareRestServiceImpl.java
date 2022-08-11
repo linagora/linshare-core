@@ -99,7 +99,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	})
 	@Override
 	public List<ShareDto> getShares() throws BusinessException {
-		return webServiceShareFacade.getShares();
+		return webServiceShareFacade.getShares(2);
 	}
 
 	@Path("/{uuid}")
@@ -114,7 +114,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Override
 	public ShareDto getShare(
 			@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid) {
-		return webServiceShareFacade.getShare(shareUuid);
+		return webServiceShareFacade.getShare(2, shareUuid);
 	}
 
 	@Path("/{uuid}")
@@ -123,14 +123,14 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Override
 	public void head(@Parameter(description = "The received share uuid.", required = true) @PathParam("uuid") String shareUuid)
 			throws BusinessException {
-		webServiceShareFacade.getShare(shareUuid);
+		webServiceShareFacade.getShare(2, shareUuid);
 	}
 
 	@Path("/{uuid}/download")
 	@GET
 	@Override
 	public Response getDocumentStream(@PathParam("uuid") String shareUuid) throws BusinessException {
-		ShareDto shareDto = webServiceShareFacade.getReceivedShare(shareUuid);
+		ShareDto shareDto = webServiceShareFacade.getReceivedShare(2, shareUuid);
 		ByteSource documentStream = webServiceShareFacade.getDocumentByteSource(shareUuid);
 		FileAndMetaData data = new FileAndMetaData(documentStream, shareDto.getSize(),
 				shareDto.getName(), shareDto.getType());
@@ -144,7 +144,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	public Response getThumbnailStream(@PathParam("uuid") String shareUuid,
 			@Parameter(description = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		ShareDto shareDto = webServiceShareFacade.getShare(shareUuid);
+		ShareDto shareDto = webServiceShareFacade.getShare(2, shareUuid);
 		ByteSource documentStream = webServiceShareFacade.getThumbnailByteSource(shareUuid, ThumbnailType.MEDIUM);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
 				shareDto.getName() + "_thumb.png", base64, ThumbnailType.MEDIUM);

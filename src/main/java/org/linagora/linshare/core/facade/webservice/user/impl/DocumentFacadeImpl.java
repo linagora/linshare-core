@@ -155,10 +155,10 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		List<ShareDto> shares = Lists.newArrayList();
 		if (withShares) {
 			for (AnonymousShareEntry share : entryBusinessService.findAllMyAnonymousShareEntries(authUser, entry)) {
-				shares.add(ShareDto.getSentShare(share, false));
+				shares.add(ShareDto.getSentShare(2, share, false));
 			}
 			for (ShareEntry share : entryBusinessService.findAllMyShareEntries(authUser, entry)) {
-				shares.add(ShareDto.getSentShare(share, false));
+				shares.add(ShareDto.getSentShare(2, share, false));
 			}
 		}
 		Collections.sort(shares);

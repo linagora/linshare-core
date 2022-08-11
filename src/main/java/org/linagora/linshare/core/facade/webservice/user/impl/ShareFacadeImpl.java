@@ -102,21 +102,21 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public List<ShareDto> getReceivedShares() throws BusinessException {
+	public List<ShareDto> getReceivedShares(Integer version) throws BusinessException {
 		User authUser = checkAuthentication();
 		List<ShareEntry> shares = shareEntryService.findAllMyRecievedShareEntries(
 				authUser, authUser);
 
 		return ImmutableList.copyOf(Lists.transform(shares,
-				ShareDto.toDto()));
+				ShareDto.toDto(version)));
 	}
 
 	@Override
-	public List<ShareDto> getShares() throws BusinessException {
+	public List<ShareDto> getShares(Integer version) throws BusinessException {
 		User authUser = checkAuthentication();
 		List<Entry> shares = entryBusinessService
 				.findAllMyShareEntries(authUser);
-		return ImmutableList.copyOf(Lists.transform(shares, ShareDto.EntrytoDto()));
+		return ImmutableList.copyOf(Lists.transform(shares, ShareDto.EntrytoDto(version)));
 	}
 
 	@Override
@@ -182,10 +182,10 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public ShareDto getReceivedShare(String shareEntryUuid)
+	public ShareDto getReceivedShare(Integer version, String shareEntryUuid)
 			throws BusinessException {
 		User authUser = checkAuthentication();
-		return ShareDto.getReceivedShare(shareEntryService.find(authUser, authUser, shareEntryUuid));
+		return ShareDto.getReceivedShare(version, shareEntryService.find(authUser, authUser, shareEntryUuid));
 	}
 
 	@Override
@@ -239,7 +239,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		Set<ShareDto> sharesDto = Sets.newHashSet();
 		List<String> uuids = Lists.newArrayList();
 		for (Entry entry : shares) {
-			sharesDto.add(ShareDto.getSentShare(entry));
+			sharesDto.add(ShareDto.getSentShare(2, entry));
 			uuids.add(entry.getUuid());
 		}
 		return sharesDto;
@@ -252,18 +252,18 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		Entry entry = shareService.delete(authUser, authUser, shareUuid);
 		ShareDto dto;
 		if (received) {
-			dto = ShareDto.getReceivedShare(entry);
+			dto = ShareDto.getReceivedShare(2, entry);
 		} else {
-			dto = ShareDto.getSentShare(entry);
+			dto = ShareDto.getSentShare(2, entry);
 		}
 		return dto;
 	}
 
 	@Override
-	public ShareDto getShare(String shareUuid) throws BusinessException {
+	public ShareDto getShare(Integer version, String shareUuid) throws BusinessException {
 		Validate.notEmpty(shareUuid, "Missing required share uuid");
 		User authUser = checkAuthentication();
-		return ShareDto.getSentShare(shareEntryService.find(authUser, authUser, shareUuid));
+		return ShareDto.getSentShare(version, shareEntryService.find(authUser, authUser, shareUuid));
 	}
 
 	@Override

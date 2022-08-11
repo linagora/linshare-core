@@ -59,13 +59,13 @@ public interface ShareFacade extends GenericFacade {
 
 	void multiplesharedocuments(List<ShareDto> shares, boolean secured, String message) throws BusinessException;
 
-	public List<ShareDto> getReceivedShares() throws BusinessException;
+	public List<ShareDto> getReceivedShares(Integer version) throws BusinessException;
 
-	public ShareDto getReceivedShare(String shareEntryUuid) throws BusinessException;
+	public ShareDto getReceivedShare(Integer version, String shareEntryUuid) throws BusinessException;
 
-	public List<ShareDto> getShares() throws BusinessException;
+	public List<ShareDto> getShares(Integer version) throws BusinessException;
 
-	public ShareDto getShare(String shareUuid) throws BusinessException;
+	public ShareDto getShare(Integer version, String shareUuid) throws BusinessException;
 
 	public ByteSource getDocumentByteSource(String shareEntryUuid) throws BusinessException;
 

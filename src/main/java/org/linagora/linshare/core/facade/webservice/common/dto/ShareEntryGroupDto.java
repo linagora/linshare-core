@@ -93,7 +93,7 @@ public class ShareEntryGroupDto {
 		this.setSubject(subject);
 	}
 
-	public ShareEntryGroupDto(ShareEntryGroup shareEntryGroup, boolean full) {
+	public ShareEntryGroupDto(Integer version, ShareEntryGroup shareEntryGroup, boolean full) {
 		super();
 		this.setOwner(new AccountDto(shareEntryGroup.getOwner(), false));
 		this.setCreationDate(shareEntryGroup.getCreationDate());
@@ -106,10 +106,10 @@ public class ShareEntryGroupDto {
 		List<ShareDto> seDto = new ArrayList<ShareDto>();
 		if (full) {
 			for (ShareEntry se : shareEntryGroup.getShareEntries()) {
-				seDto.add(ShareDto.getSentShare(se));
+				seDto.add(ShareDto.getSentShare(version, se));
 			}
 			for (AnonymousShareEntry ase : shareEntryGroup.getAnonymousShareEntries()) {
-				seDto.add(ShareDto.getReceivedShare(ase));
+				seDto.add(ShareDto.getReceivedShare(version, ase));
 			}
 			this.setShareEntriesDto(seDto);
 		}
@@ -209,11 +209,11 @@ public class ShareEntryGroupDto {
 	 * Transformers
 	 */
 
-	public static Function<ShareEntryGroup, ShareEntryGroupDto> toDto(final boolean full) {
+	public static Function<ShareEntryGroup, ShareEntryGroupDto> toDto(Integer version, final boolean full) {
 		return new Function<ShareEntryGroup, ShareEntryGroupDto>() {
 			@Override
 			public ShareEntryGroupDto apply(ShareEntryGroup arg0) {
-				return new ShareEntryGroupDto(arg0, full);
+				return new ShareEntryGroupDto(version, arg0, full);
 			}
 		};
 	}

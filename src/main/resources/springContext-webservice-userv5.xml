@@ -59,6 +59,9 @@
 		class="org.linagora.linshare.webservice.userv5.impl.UploadRequestRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestFacade" />
 	</bean>
+	<bean id="userv5ReceivedShareRestService" class="org.linagora.linshare.webservice.userv5.impl.ReceivedShareRestServiceImpl">
+		<constructor-arg ref="wsShareFacade" />
+	</bean>
 	<jaxrs:server id="userv5RestContainer" address="/rest/user/v5">
 		<jaxrs:serviceBeans>
 			<ref bean="userv2EnumRestService" />
@@ -67,7 +70,7 @@
 			<ref bean="userv2MailingListRestService" />
 			<ref bean="userv2ShareRestService" />
 			<ref bean="userv2RestService" />
-			<ref bean="userv2ReceivedShareRestService" />
+			<ref bean="userv5ReceivedShareRestService" />
 			<ref bean="userv2LogRestService" />
 			<ref bean="userv5FunctionalityRestService" />
 			<ref bean="userv2FlowDocumentUploaderRestService" />
