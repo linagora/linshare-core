@@ -101,6 +101,7 @@ public interface AuditLogEntryService {
 			Set<AuditGroupLogEntryType> resourceGroups,
 			Set<AuditLogEntryType> excludedTypes,
 			Optional<String> authUserUuid, Optional<String> actorUuid,
+			Optional<String> actorEmail,
 			Optional<String> relatedAccount,
 			Optional<String> resource,
 			Optional<String> relatedResource,

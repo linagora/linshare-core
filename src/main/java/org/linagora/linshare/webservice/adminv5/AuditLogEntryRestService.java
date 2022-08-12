@@ -56,6 +56,7 @@ public interface AuditLogEntryRestService {
 			List<String> resourceGroups,
 			List<String> excludedTypes,
 			String authUser, String actor,
+			String actorEmail,
 			String relatedAccount,
 			String resource,
 			String relatedResource,

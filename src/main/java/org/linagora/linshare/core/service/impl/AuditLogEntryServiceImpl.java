@@ -435,6 +435,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			Set<AuditGroupLogEntryType> resourceGroups,
 			Set<AuditLogEntryType> excludedTypes,
 			Optional<String> authUserUuid, Optional<String> actorUuid,
+			Optional<String> actorEmail,
 			Optional<String> relatedAccount,
 			Optional<String> resource,
 			Optional<String> relatedResource,
@@ -510,6 +511,9 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		}
 		if (actorUuid.isPresent()) {
 			query.addCriteria(Criteria.where("actor.uuid").is(actorUuid.get()));
+		}
+		if (actorEmail.isPresent()) {
+			query.addCriteria(Criteria.where("actor.mail").regex(actorEmail.get(), "i"));
 		}
 		if (begin.isPresent() && end.isPresent() ) {
 			query.addCriteria(Criteria.where("creationDate").gte(begin.get()).lt(end.get()));
