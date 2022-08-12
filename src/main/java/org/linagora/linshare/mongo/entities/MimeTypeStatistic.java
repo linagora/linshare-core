@@ -75,6 +75,7 @@ public class MimeTypeStatistic {
 
 	protected Date creationDate;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String statisticDate;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)

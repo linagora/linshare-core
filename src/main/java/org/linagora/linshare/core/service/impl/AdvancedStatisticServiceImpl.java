@@ -187,15 +187,18 @@ public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implemen
 			Aggregation.group(
 				Fields.from(
 					Fields.field("domainUuid", "domainUuid"),
+					Fields.field("humanMimeType", "humanMimeType"),
 					Fields.field("mimeType", "mimeType")
 				)
-			).sum("value").as("value")
+			).sum("value").as("value").sum("totalSize").as("totalSize")
 		);
 		commonOperations.add(
 			Aggregation.project(
 				Fields.from(
 					Fields.field("domainUuid", "domainUuid"),
+					Fields.field("humanMimeType", "humanMimeType"),
 					Fields.field("mimeType", "mimeType"),
+					Fields.field("totalSize", "totalSize"),
 					Fields.field("value", "value")
 				)
 			)
