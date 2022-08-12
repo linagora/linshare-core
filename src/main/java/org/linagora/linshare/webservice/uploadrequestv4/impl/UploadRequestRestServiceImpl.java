@@ -79,7 +79,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	protected final Logger logger = LoggerFactory
 			.getLogger(UploadRequestRestServiceImpl.class);
 
-	private final UploadRequestUrlFacade uploadRequestUrlFacade;
+	protected final UploadRequestUrlFacade uploadRequestUrlFacade;
 
 	public UploadRequestRestServiceImpl(
 			UploadRequestUrlFacade uploadRequestUrlFacade) {

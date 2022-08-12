@@ -1,0 +1,21 @@
+{
+	"resourcePackages": [
+		"org.linagora.linshare.webservice.uploadrequestv5",
+		"org.linagora.linshare.webservice.uploadrequestv5.impl"
+	],
+	"prettyPrint": true,
+	"cacheTTL": 0,
+	"openAPI": {
+		"info": {
+			"version": "${project.version}",
+			"title": "Uploadrequest v5 API",
+			"description": "Uploadrequest v5 API"
+		},
+		"servers": [
+			{
+				"url": "/linshare/webservice/rest/uploadrequest/v5/",
+				"description": "The uploadrequest API server"
+			}
+		]
+	}
+}

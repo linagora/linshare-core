@@ -14,5 +14,6 @@
 		<constructor-arg ref="mimePolicyService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="uploadRequestEntryService" />
+		<constructor-arg ref="passwordService" />
 	</bean>
 </beans>

@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2022 LINAGORA
+ * Copyright (C) 2022 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,47 +33,91 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.uploadrequest;
+package org.linagora.linshare.webservice.uploadrequestv5.dto;
 
-import java.io.File;
-import java.util.List;
+import java.util.Date;
 
-import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailType;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
-import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
-import org.linagora.linshare.webservice.uploadrequestv5.dto.OneTimePasswordDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import com.google.common.base.Optional;
+/**
+ * @author fmartin
+ *
+ */
+public class OneTimePasswordDto {
 
-public interface UploadRequestUrlFacade {
+	@Schema(description = "requestUrlUuid", required = true)
+	protected String requestUrlUuid;
 
-	UploadRequestDto find(String uploadRequestUrlUuid, String password)
-			throws BusinessException;
+	@Schema(description = "entryUuid", required = true)
+	protected String entryUuid;
 
-	UploadRequestDto close(String uuid, String password)
-			throws BusinessException;
+	@JsonIgnore
+	protected String password;
 
-	void addUploadRequestEntry(String uploadRequestUrlUuid, String password, File tempFile, String fileName) throws BusinessException;
+	@Schema(description = "OTP Password")
+	protected String otpPassword;
 
-	UploadRequestEntryDto deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid,
-			EntryDto entry) throws BusinessException;
+	@Schema(description = "creation date")
+	protected Date creationDate;
 
-	List<UploadRequestEntryDto> findAllExtEntries(Integer version, String uuid, String password);
+	public OneTimePasswordDto() {
+		super();
+	}
 
-	void changePassword(String uuid, ChangeUploadRequestUrlPassword reset);
+	public OneTimePasswordDto(String requestUrlUuid, String entryUuid, String password, String otpPassword) {
+		super();
+		this.requestUrlUuid = requestUrlUuid;
+		this.entryUuid = entryUuid;
+		this.password = password;
+		this.otpPassword = otpPassword;
+		this.creationDate = new Date();
+	}
 
-	Response thumbnail(String uploadRequestUrlUuid,  String password, String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType);
+	public String getPassword() {
+		return password;
+	}
 
-	Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid);
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-	// since LinShare 6.0
-	Response download(String uploadRequestUrlUuid, Optional<String> otpPassword, String uploadRequestEntryUuid);
+	public String getRequestUrlUuid() {
+		return requestUrlUuid;
+	}
 
-	// since LinShare 6.0
-	OneTimePasswordDto create(String password, OneTimePasswordDto otp) throws BusinessException;
+	public void setRequestUrlUuid(String requestUrlUuid) {
+		this.requestUrlUuid = requestUrlUuid;
+	}
+
+	public String getEntryUuid() {
+		return entryUuid;
+	}
+
+	public void setEntryUuid(String entryUuid) {
+		this.entryUuid = entryUuid;
+	}
+
+	public String getOtpPassword() {
+		return otpPassword;
+	}
+
+	public void setOtpPassword(String otpPassword) {
+		this.otpPassword = otpPassword;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	@Override
+	public String toString() {
+		return "OneTimePasswordDto [requestUrlUuid=" + requestUrlUuid + ", entryUuid=" + entryUuid + ", password="
+				+ password + ", otpPassword=" + otpPassword + ", creationDate=" + creationDate + "]";
+	}
 }

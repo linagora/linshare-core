@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2015-2022 LINAGORA
+ * Copyright (C) 2022 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,47 +33,13 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.uploadrequest;
 
-import java.io.File;
-import java.util.List;
+package org.linagora.linshare.webservice.uploadrequestv5;
 
-import javax.ws.rs.core.Response;
-
-import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
-import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
 import org.linagora.linshare.webservice.uploadrequestv5.dto.OneTimePasswordDto;
 
-import com.google.common.base.Optional;
+public interface OneTimePasswordRestService {
 
-public interface UploadRequestUrlFacade {
-
-	UploadRequestDto find(String uploadRequestUrlUuid, String password)
-			throws BusinessException;
-
-	UploadRequestDto close(String uuid, String password)
-			throws BusinessException;
-
-	void addUploadRequestEntry(String uploadRequestUrlUuid, String password, File tempFile, String fileName) throws BusinessException;
-
-	UploadRequestEntryDto deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid,
-			EntryDto entry) throws BusinessException;
-
-	List<UploadRequestEntryDto> findAllExtEntries(Integer version, String uuid, String password);
-
-	void changePassword(String uuid, ChangeUploadRequestUrlPassword reset);
-
-	Response thumbnail(String uploadRequestUrlUuid,  String password, String uploadRequestEntryUuid, boolean base64, ThumbnailType thumbnailType);
-
-	Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid);
-
-	// since LinShare 6.0
-	Response download(String uploadRequestUrlUuid, Optional<String> otpPassword, String uploadRequestEntryUuid);
-
-	// since LinShare 6.0
 	OneTimePasswordDto create(String password, OneTimePasswordDto otp) throws BusinessException;
 }

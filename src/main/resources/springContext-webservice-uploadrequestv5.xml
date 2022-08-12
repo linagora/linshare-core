@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://cxf.apache.org/jaxrs
+	http://cxf.apache.org/schemas/jaxrs.xsd
+	http://cxf.apache.org/core
+	http://cxf.apache.org/schemas/core.xsd">
+
+	<description>Upload Request API exposed on /webservice/rest/uploadrequest/v5 </description>
+
+	<bean id="uploadRequestv5FlowUploaderRestService" class="org.linagora.linshare.webservice.uploadrequestv5.impl.FlowUploaderRestServiceImpl">
+		<constructor-arg ref="wsUploadRequestUrlFacade" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
+	</bean>
+	<bean id="uploadRequestv5RestService" class="org.linagora.linshare.webservice.uploadrequestv5.impl.UploadRequestRestServiceImpl">
+		<constructor-arg ref="wsUploadRequestUrlFacade" />
+	</bean>
+	<bean id="uploadRequestv5OneTimePasswordRestService" class="org.linagora.linshare.webservice.uploadrequestv5.impl.OneTimePasswordRestServiceImpl">
+		<constructor-arg ref="wsUploadRequestUrlFacade" />
+	</bean>
+	<!--  fix it -->
+	<bean id="changeUploadRequestUrlPwdv5RestService" class="org.linagora.linshare.webservice.external.impl.ChangeUploadRequestUrlPasswordRestServiceImpl">
+		<constructor-arg ref="wsUploadRequestUrlFacade" />
+	</bean>
+	<jaxrs:server id="restUploadRequestV5Container" address="/rest/uploadrequest/v5">
+		<jaxrs:serviceBeans>
+			<ref bean="uploadRequestv5FlowUploaderRestService"/>
+			<ref bean="changeUploadRequestUrlPwdv5RestService"/>
+			<ref bean="uploadRequestv5RestService"/>
+			<ref bean="uploadRequestv5OneTimePasswordRestService"/>
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<!-- ExceptionMappers. -->
+			<ref bean="illegalArgumentExceptionMapper" />
+			<ref bean="businessExceptionMapper" />
+			<ref bean="genericExceptionMapper" />
+			<ref bean="webApplicationExceptionMapper" />
+			<ref bean="jsonParseExceptionMapper" />
+			<ref bean="unrecognizedPropertyExceptionMapper" />
+			<ref bean="dataIntegrityViolationExceptionMapper" />
+			<ref bean="mismatchedInputExceptionMapper" />
+			<ref bean="nullPointerExceptionMapper" />
+			<!-- Json provider for serialisation -->
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:features>
+			<bean class="org.apache.cxf.jaxrs.openapi.OpenApiFeature">
+				<property name="useContextBasedConfig" value="true" />
+				<property name="scan" value="false" />
+				<property name="scanKnownConfigLocations" value="false" />
+				<property name="configLocation"
+					value="openapi-configuration-uploadrequestv5.json" />
+				<property name="supportSwaggerUi" value="true" />
+			</bean>
+			<!-- <cxf:logging /> -->
+		</jaxrs:features>
+		<jaxrs:inInterceptors>
+			<!-- For debug only : print input message -->
+<!-- 			<ref bean="logInbound" /> -->
+			<ref bean="contentTypeInterceptor" />
+			<!-- This interceptor is designed to store some context properties in 
+				message exchange context for timingOutInterceptor -->
+			<!-- This interceptor is designed compute request execution time. -->
+			<ref bean="timingInInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<!-- For debug only : print output message -->
+<!-- 			<ref bean="logOutbound" /> -->
+			<!-- This interceptor is designed compute request execution time. -->
+			<ref bean="timingOutInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+</beans>

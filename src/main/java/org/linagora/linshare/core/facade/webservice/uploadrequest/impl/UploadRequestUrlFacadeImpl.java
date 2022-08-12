@@ -39,11 +39,13 @@ package org.linagora.linshare.core.facade.webservice.uploadrequest.impl;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -66,9 +68,13 @@ import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
+import org.linagora.linshare.webservice.uploadrequestv5.dto.OneTimePasswordDto;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
@@ -85,11 +91,16 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 
 	private final UploadRequestEntryService uploadRequestEntryService;
 
+	private final PasswordService passwordService;
+
+	private Cache<String, OneTimePasswordDto> oneTimePasswordCache;
+
 	public UploadRequestUrlFacadeImpl(final AccountService accountService,
 			final UploadRequestService uploadRequestService,
 			final UploadRequestUrlService uploadRequestUrlService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MimePolicyService mimePolicyService,
+			final PasswordService passwordService,
 			UploadRequestEntryService uploadRequestEntryService) {
 		super(accountService);
 		this.uploadRequestService = uploadRequestService;
@@ -97,6 +108,10 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 		this.mimePolicyService = mimePolicyService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
+		this.passwordService = passwordService;
+		oneTimePasswordCache = CacheBuilder.newBuilder()
+				.expireAfterAccess(60, TimeUnit.SECONDS)
+				.build();
 	}
 
 	@Override
@@ -146,7 +161,6 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 		List<UploadRequestEntry> uploadRequestEntries = uploadRequestService.findAllExtEntries(requestUrl);
 		return ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto(version)));
 	}
-
 
 	@Override
 	public void changePassword(String uuid, ChangeUploadRequestUrlPassword reset) {
@@ -202,6 +216,35 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 	}
 
 	@Override
+	public Response download(String uploadRequestUrlUuid, Optional<String> otpPassword, String uploadRequestEntryUuid) {
+		Validate.notEmpty(uploadRequestUrlUuid, "Missing required uploadRequestUrlUuid");
+		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntryUuid");
+		SystemAccount authUser = uploadRequestUrlService.getUploadRequestSystemAccount();
+		Optional<String> password = Optional.absent();
+		if (otpPassword.isPresent()) {
+			Optional<OneTimePasswordDto> cachedOTP = Optional
+					.fromNullable(oneTimePasswordCache.getIfPresent(uploadRequestEntryUuid));
+			if (!cachedOTP.isPresent()) {
+				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN,
+						"Invalid OTP password for uploadRequestEntry with uuid: " + uploadRequestEntryUuid);
+			}
+			if (!cachedOTP.get().getOtpPassword().equals(otpPassword.get())) {
+				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN,
+						"Invalid OTP password for uploadRequestEntry with uuid: " + uploadRequestEntryUuid);
+			}
+			password = Optional.of(cachedOTP.get().getPassword());
+			oneTimePasswordCache.invalidate(uploadRequestEntryUuid);
+		}
+		UploadRequestEntry uploadRequestEntry = checkUploadRequestUrlAndGetEntry(authUser, uploadRequestUrlUuid, password.orNull(),
+				uploadRequestEntryUuid);
+		ByteSource documentStream = uploadRequestEntryService.download(authUser, authUser, uploadRequestEntry.getUuid());
+		FileAndMetaData data = new FileAndMetaData(documentStream, uploadRequestEntry.getSize(),
+				uploadRequestEntry.getName(), uploadRequestEntry.getType());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
+		return response.build();
+	}
+
+	@Override
 	public Response download(String uploadRequestUrlUuid, String password, String uploadRequestEntryUuid) {
 		Validate.notEmpty(uploadRequestUrlUuid, "Missing required uploadRequestUrlUuid");
 		Validate.notEmpty(uploadRequestEntryUuid, "Missing required uploadRequestEntryUuid");
@@ -226,5 +269,21 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 							+ " does not contain the uploadRequestEntry with uuid: " + uploadRequestEntry.getUuid());
 		}
 		return uploadRequestEntry;
+	}
+
+	@Override
+	public OneTimePasswordDto create(String password, OneTimePasswordDto otp)
+			throws BusinessException {
+		Validate.notNull(otp, "Missing required otp");
+		Validate.notEmpty(otp.getRequestUrlUuid(), "Missing required uploadRequestUrlUuid");
+		Validate.notEmpty(otp.getEntryUuid(), "Missing required uploadRequestEntryUuid");
+		SystemAccount authUser = uploadRequestUrlService.getUploadRequestSystemAccount();
+		UploadRequestEntry uploadRequestEntry = checkUploadRequestUrlAndGetEntry(authUser, otp.getRequestUrlUuid(), password,
+				otp.getEntryUuid());
+		OneTimePasswordDto res = new OneTimePasswordDto(
+				uploadRequestEntry.getUploadRequestUrl().getUuid(),
+				uploadRequestEntry.getUuid(), password, passwordService.generatePassword());
+		oneTimePasswordCache.put(uploadRequestEntry.getUuid(), res);
+		return res;
 	}
 }
