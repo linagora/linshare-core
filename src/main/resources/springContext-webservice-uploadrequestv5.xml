@@ -24,7 +24,7 @@
 		<constructor-arg ref="wsUploadRequestUrlFacade" />
 	</bean>
 	<!--  fix it -->
-	<bean id="changeUploadRequestUrlPwdv5RestService" class="org.linagora.linshare.webservice.external.impl.ChangeUploadRequestUrlPasswordRestServiceImpl">
+	<bean id="changeUploadRequestUrlPwdv5RestService" class="org.linagora.linshare.webservice.uploadrequestv5.impl.ChangeUploadRequestUrlPasswordRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestUrlFacade" />
 	</bean>
 	<jaxrs:server id="restUploadRequestV5Container" address="/rest/uploadrequest/v5">

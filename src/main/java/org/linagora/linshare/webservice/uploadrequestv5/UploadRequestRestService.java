@@ -1,7 +1,7 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
  * 
- * Copyright (C) 2022 LINAGORA
+ * Copyright (C) 2015-2022 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,45 +33,14 @@
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for the
  * Additional Terms applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.uploadrequestv5.impl;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+package org.linagora.linshare.webservice.uploadrequestv5;
+
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
-import org.linagora.linshare.webservice.uploadrequestv5.OneTimePasswordRestService;
-import org.linagora.linshare.webservice.uploadrequestv5.dto.OneTimePasswordDto;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+public interface UploadRequestRestService extends org.linagora.linshare.webservice.uploadrequestv4.UploadRequestRestService {
 
-@Path("/otp")
-@Produces({ MediaType.APPLICATION_JSON })
-@Consumes({ MediaType.APPLICATION_JSON })
-public class OneTimePasswordRestServiceImpl implements OneTimePasswordRestService {
-
-	protected final UploadRequestUrlFacade uploadRequestUrlFacade;
-
-	public OneTimePasswordRestServiceImpl(UploadRequestUrlFacade uploadRequestUrlFacade) {
-		super();
-		this.uploadRequestUrlFacade = uploadRequestUrlFacade;
-	}
-
-	@POST
-	@Path("/")
-	@Operation(summary = "Create a one time password to download an upload request entry.")
-	@Override
-	public OneTimePasswordDto create(
-			@Parameter(description = "the password that protect this upload request.", required = false)
-				@HeaderParam("linshare-uploadrequest-password") String password,
-			OneTimePasswordDto otp
-			) throws BusinessException {
-		return uploadRequestUrlFacade.create(password, otp);
-	}
-
+	Response download(String uploadRequestUrlUuid, String otpPassword, String uploadRequestEntryUuid) throws BusinessException;
 }
