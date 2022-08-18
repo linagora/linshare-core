@@ -491,7 +491,9 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 					workGroupNode.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION);
 			log.addRelatedResources(getListUuid(revisions));
 			log.addAuditLightEntities(transformToAuditLightEntity(revisions));
-			revisionService.deleteAll(actor, owner, workGroup, revisions);
+			if (!revisions.isEmpty()) {
+				revisionService.deleteAll(actor, owner, workGroup, revisions);
+			}
 //			Delete the document.
 			workGroupDocumentService.delete(actor, owner, workGroup, workGroupNode);
 			if (moveDocument) {
