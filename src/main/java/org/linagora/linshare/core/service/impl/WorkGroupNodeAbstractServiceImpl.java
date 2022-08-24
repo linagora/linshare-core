@@ -194,6 +194,10 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 
 	@Override
 	public String computeFileName(WorkGroupDocument document, WorkGroupDocumentRevision revision, boolean isDocument) {
+		if (revision == null) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_NOT_FOUND,
+					"The underlying revision/document was not found. can not process request.");
+		}
 		try {
 			MimeTypes types = MimeTypes.getDefaultMimeTypes();
 			MimeType revisionType;
