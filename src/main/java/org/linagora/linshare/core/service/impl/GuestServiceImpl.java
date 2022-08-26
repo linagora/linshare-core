@@ -66,7 +66,6 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.notifications.context.GuestAccountNewCreationEmailContext;
 import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -216,7 +215,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		try {
 			user = userService.findOrCreateUser(guest.getMail(), actor.getDomainId());
 		} catch (BusinessException e) {
-			logger.error("User is null");
+			logger.debug("can not find a internal user with this guest email. we are fine.");
 		}
 		if (user != null) {
 			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
@@ -495,17 +494,21 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> findAll(Account authUser, User actor, Optional<User> userToFilterBy, String pattern, ModeratorRoleEnum moderatorRole) {
+	public List<Guest> findAll(Account authUser, User actor, Optional<User> userToFilterBy, Optional<String> pattern, Optional<ModeratorRole> moderatorRole) {
 		preChecks(authUser, actor);
-		checkListPermission(authUser, actor, Guest.class, BusinessErrorCode.GUEST_FORBIDDEN, null);
-		actor = userToFilterBy.orElse(actor);
-		List<Guest> guests = Lists.newArrayList();
-		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
-		if (Strings.isNullOrEmpty(pattern)) {
-			guests = guestBusinessService.findAll(actor, authorizedDomains, moderatorRole);
-		} else {
-			guests = guestBusinessService.search(actor, authorizedDomains, pattern, moderatorRole);
+		if (pattern.isPresent()) {
+			// just to ensure that we do not have an empty string.
+			pattern = Optional.ofNullable(Strings.emptyToNull(pattern.get()));
 		}
+		checkListPermission(authUser, actor, Guest.class, BusinessErrorCode.GUEST_FORBIDDEN, null);
+		List<AbstractDomain> authorizedDomains = Lists.newArrayList();
+		if (!actor.isRoot()) {
+			authorizedDomains = abstractDomainService.getAllAuthorizedDomains(actor.getDomain());
+			if (authorizedDomains.isEmpty()) {
+				return Lists.newArrayList();
+			}
+		}
+		List<Guest> guests = guestBusinessService.findAll(authorizedDomains, moderatorRole, userToFilterBy, pattern);
 		return guests;
 	}
 }

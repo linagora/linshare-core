@@ -37,12 +37,13 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -51,7 +52,6 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
@@ -115,21 +115,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	@Override
 	public Guest findByMail(String mail) throws BusinessException {
 		return guestRepository.findByMail(mail);
-	}
-
-	@Override
-	public List<Guest> findAllMyGuests(Account owner) {
-		return guestRepository.findAllMyGuests(owner);
-	}
-
-	@Override
-	public List<Guest> findAllOthersGuests(List<AbstractDomain> authorizedDomains, Account owner) {
-		return guestRepository.findAllOthersGuests(authorizedDomains, owner);
-	}
-
-	@Override
-	public List<Guest> findAll(List<AbstractDomain> authorizedDomains) {
-		return guestRepository.findAll(authorizedDomains);
 	}
 
 	@Override
@@ -268,11 +253,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern) throws BusinessException {
-		return guestRepository.search(authorizedDomains, pattern);
-	}
-
-	@Override
 	public SystemAccount getGuestSystemAccount() {
 		// TODO create a dedicated guest account.
 		return guestRepository.getBatchSystemAccount();
@@ -304,32 +284,19 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public List<Guest> findAll(Account actor, List<AbstractDomain> authorizedDomains, ModeratorRoleEnum moderatorRole) {
-		if (Objects.isNull(moderatorRole)) {
-			// return all guests
-			return guestRepository.findAll(authorizedDomains);
-		} else {
-			if (ModeratorRoleEnum.ALL.equals(moderatorRole)) {
-				// return all actor's guests where he has SIMPLE and ADMIN role
-				return guestRepository.findAllByModerator(actor, null, null);
+	public List<Guest> findAll(List<AbstractDomain> authorizedDomains,
+			Optional<ModeratorRole> moderatorRole, Optional<User> moderatorAccount,
+			Optional<String> pattern) {
+		if (moderatorAccount.isEmpty()) {
+			if (moderatorRole.isEmpty()) {
+				return guestRepository.findAll(authorizedDomains, pattern);
+			} else {
+				// no possible
+				throw new BusinessException(BusinessErrorCode.GUEST_INVALID_SEARCH_INPUT, "You can not search by role if you do not provide a related account.");
 			}
-			// return all actor's guests filtered by moderatorRole (SIMPLE/ADMIN)
-			return guestRepository.findAllByModerator(actor, ModeratorRoleEnum.toModeratorRole(moderatorRole), null);
-		}
-	}
-
-	@Override
-	public List<Guest> search(Account actor, List<AbstractDomain> authorizedDomains, String pattern,
-			ModeratorRoleEnum moderatorRole) {
-		if (Objects.isNull(moderatorRole)) {
-			return guestRepository.search(authorizedDomains, pattern);
 		} else {
-			if (ModeratorRoleEnum.ALL.equals(moderatorRole)) {
-				// return all actor's guests where he has SIMPLE and ADMIN role
-				return guestRepository.findAllByModerator(actor, null, pattern);
-			}
-			// return all actor's guests filtered by moderatorRole (SIMPLE/ADMIN)
-			return guestRepository.findAllByModerator(actor, ModeratorRoleEnum.toModeratorRole(moderatorRole), pattern);
+			// no need to filter by domains since we want only guests which moderatorAccount is moderator.
+			return guestRepository.findAll(authorizedDomains, moderatorAccount.get(), moderatorRole, pattern);
 		}
 	}
 }

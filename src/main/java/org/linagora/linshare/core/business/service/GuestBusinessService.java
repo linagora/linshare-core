@@ -37,8 +37,10 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -46,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 
 public interface GuestBusinessService {
 
@@ -59,12 +60,6 @@ public interface GuestBusinessService {
 	Guest find(AbstractDomain domain, String mail) throws BusinessException;
 
 	Guest findByMail(String mail) throws BusinessException;
-
-	List<Guest> findAll(List<AbstractDomain> authorizedDomains);
-
-	List<Guest> findAllMyGuests(Account owner);
-
-	List<Guest> findAllOthersGuests(List<AbstractDomain> domains, Account owner);
 
 	List<String> findOutdatedGuestIdentifiers();
 
@@ -83,19 +78,9 @@ public interface GuestBusinessService {
 
 	void evict(Guest entity);
 
-	/**
-	 * search a guest using input pattern as fragment of firstName or lastName or mail.
-	 * @param authorizedDomains
-	 * @param pattern
-	 * @return List<Guest>
-	 * @throws BusinessException
-	 */
-	List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern) throws BusinessException;
-
 	SystemAccount getGuestSystemAccount();
 
-	List<Guest> findAll(Account actor, List<AbstractDomain> authorizedDomains, ModeratorRoleEnum moderatorRole);
-
-	List<Guest> search(Account actor, List<AbstractDomain> authorizedDomains, String pattern,
-			ModeratorRoleEnum moderatorRole);
+	List<Guest> findAll(List<AbstractDomain> authorizedDomains,
+			Optional<ModeratorRole> moderatorRole, Optional<User> moderatorAccount,
+			Optional<String> pattern);
 }

@@ -42,6 +42,7 @@ import org.linagora.linshare.core.business.service.DomainPermissionBusinessServi
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -364,7 +365,16 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		User actor = getActor(authUser, actorUuid);
 		Validate.notEmpty(uuid, "User's uuid should be set.");
 		User userToFilterBy = userService2.find(authUser, actor, uuid);
-		List<Guest> guests = guestService.findAll(authUser, actor, Optional.ofNullable(userToFilterBy), pattern, role);
+		Optional<User> moderator = Optional.ofNullable(userToFilterBy);
+		Optional<ModeratorRole> moderatorRole = Optional.empty();
+		if (role != null) {
+			if(!role.equals(ModeratorRoleEnum.ALL)) {
+				// Here we at least always filter by the "owner", so ModeratorRoleEnum.ALL does not have any meaning.
+				moderatorRole = Optional.of(ModeratorRoleEnum.toModeratorRole(role));
+			}
+		}
+		List<Guest> guests = guestService.findAll(authUser, actor, moderator, Optional.ofNullable(pattern), moderatorRole);
+		// FIXME:FMA addModeratorRoletoGuestDto
 		return guests
 				.stream()
 				.map(GuestDto.toDto())

@@ -270,14 +270,16 @@ public class GuestServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Guest guest = new Guest("Guest", "Doe", "user4@linshare.org");
 		guest.setCmisLocale("en");
-		List<Guest> findAll = guestService.findAll(owner1, owner1, Optional.empty(), null, null);
+		Optional<String> pattern = Optional.empty();
+		Optional<ModeratorRole> role = Optional.empty();
+		List<Guest> findAll = guestService.findAll(owner1, owner1, Optional.empty(), pattern, role);
 		int size = findAll.size();
 		try {
 			guest = guestService.create(owner1, owner1, guest, null);
 		} catch (BusinessException e) {
 			logger.debug("Can not create an internal user as guest");
 		}
-		Assertions.assertEquals(size, guestService.findAll(owner1, owner1, Optional.empty(), null, null).size());
+		Assertions.assertEquals(size, guestService.findAll(owner1, owner1, Optional.empty(), pattern, role).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

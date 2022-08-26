@@ -49,7 +49,7 @@ public interface GuestRestService {
 
 	void head(String uuid) throws BusinessException;
 
-	List<GuestDto> findAll(ModeratorRoleEnum moderatorRole, String pattern) throws BusinessException;
+	List<GuestDto> findAll(String moderatorRole, String pattern) throws BusinessException;
 
 	GuestDto create(GuestDto guest) throws BusinessException;
 

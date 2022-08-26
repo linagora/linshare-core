@@ -48,7 +48,7 @@ import org.linagora.linshare.utils.Version;
 
 public interface GuestFacade extends GenericFacade {
 
-	List<GuestDto> findAll(Version version, String pattern, ModeratorRoleEnum moderatorRole) throws BusinessException;
+	List<GuestDto> findAll(Version version, String pattern, String moderatorRole) throws BusinessException;
 
 	List<GuestDto> findAll(String actorUuid) throws BusinessException;
 

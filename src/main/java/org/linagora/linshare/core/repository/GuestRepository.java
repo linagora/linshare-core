@@ -36,12 +36,12 @@
 package org.linagora.linshare.core.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.exception.BusinessException;
 
 
 public interface GuestRepository extends UserRepository<Guest> {
@@ -68,19 +68,16 @@ public interface GuestRepository extends UserRepository<Guest> {
 
 	void evict(Guest entity);
 
-	List<Guest> search(List<AbstractDomain> domains, String pattern) throws BusinessException;
-
-	List<Guest> findAll(List<AbstractDomain> domains);
-
-	List<Guest> findAllMyGuests(Account owner);
-
-	List<Guest> findAllOthersGuests(List<AbstractDomain> domains, Account owner);
-
 	Guest findByDomainAndMail(AbstractDomain domain, String mail);
 
 	List<String> findAllWithDeprecatedPasswordEncoding();
 
 	List<String> findAllGuestsUuids();
 
-	List<Guest> findAllByModerator(Account actor, ModeratorRole moderatorRole, String pattern);
+	List<Guest> findAll(Account moderator, Optional<ModeratorRole> moderatorRole,
+			Optional<String> pattern);
+	List<Guest> findAll(List<AbstractDomain> domains,
+			Optional<String> pattern);
+	List<Guest> findAll(List<AbstractDomain> domains, Account moderator, Optional<ModeratorRole> moderatorRole,
+			Optional<String> pattern);
 }

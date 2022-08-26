@@ -38,26 +38,23 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.HibernateTemplate;
-
-import com.google.common.base.Strings;
 
 public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implements GuestRepository {
 	
@@ -191,35 +188,6 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		return super.findByMailAndDomain(domain, login);
 	}
 
-	@Override
-	public List<Guest> search(List<AbstractDomain> domains, String pattern) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", 0L));
-		Disjunction or = Restrictions.disjunction();
-		criteria.add(or);
-		or.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
-		or.add(Restrictions.ilike("firstName", pattern, MatchMode.ANYWHERE));
-		or.add(Restrictions.ilike("lastName", pattern, MatchMode.ANYWHERE));
-		Disjunction or2 = Restrictions.disjunction();
-		for (AbstractDomain domain : domains) {
-			or2.add(Restrictions.eq("domain", domain));
-		}
-		criteria.add(or);
-		return findByCriteria(criteria);
-	}
-
-	@Override
-	public List<Guest> findAll(List<AbstractDomain> domains) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", 0L));
-		Disjunction or = Restrictions.disjunction();
-		for (AbstractDomain domain : domains) {
-			or.add(Restrictions.eq("domain", domain));
-		}
-		criteria.add(or);
-		return findByCriteria(criteria);
-	}
-
 	/**
 	 * Find all guests mails, those passwords are encoded in not bcrypt
 	 * @return {@link List} mails of guests
@@ -233,27 +201,6 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 				.add(Restrictions.eq("destroyed", 0L))
 				.setProjection(Projections.property("lsUuid"));
 		return listByCriteria(crit);
-	}
-	
-	@Override
-	public List<Guest> findAllMyGuests(Account owner) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", 0L));
-		criteria.add(Restrictions.eq("owner", owner));
-		return findByCriteria(criteria);
-	}
-
-	@Override
-	public List<Guest> findAllOthersGuests(List<AbstractDomain> domains, Account owner) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("destroyed", 0L));
-		criteria.add(Restrictions.ne("owner", owner));
-		Disjunction or = Restrictions.disjunction();
-		for (AbstractDomain domain : domains) {
-			or.add(Restrictions.eq("domain", domain));
-		}
-		criteria.add(or);
-		return findByCriteria(criteria);
 	}
 
 	@Override
@@ -275,25 +222,76 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	}
 
 	@Override
-	public List<Guest> findAllByModerator(Account actor, ModeratorRole moderatorRole, String pattern) {
-		HibernateCallback<List<Guest>> action = new HibernateCallback<>() {
-			public List<Guest> doInHibernate(final Session session) throws HibernateException {
-				String query = "SELECT g FROM Guest g JOIN Moderator m ON (g.id = m.guest) WHERE destroyed = 0 AND (m.account = :actor) AND (:moderatorRole is NULL or m.role = :moderatorRole)";
-				if (!Strings.isNullOrEmpty(pattern)) {
-					query += " AND ((g.firstName like :pattern) OR (g.lastName like :pattern) OR (g.mail like :pattern))";
-				}
-				@SuppressWarnings("unchecked")
-				Query<Guest> createQuery = session.createQuery(query);
-				createQuery.setParameter("actor", actor);
-				createQuery.setParameter("moderatorRole", moderatorRole);
-				if (!Strings.isNullOrEmpty(pattern)) {
-					createQuery.setParameter("pattern", "%" + pattern + "%");
-				}
-				List<Guest> guests = createQuery.getResultList();
-				return guests;
-			}
-		};
-		List<Guest> guests = getHibernateTemplate().execute(action);
-		return guests;
+	public List<Guest> findAll(Account moderator, Optional<ModeratorRole> moderatorRole, Optional<String> pattern) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Moderator.class);
+		criteria.setProjection(Projections.property("guest"));
+		criteria.setFetchMode("guest", FetchMode.JOIN);
+		criteria.createAlias("guest", "guest");
+		criteria.add(Restrictions.eq("guest.destroyed", 0L));
+
+		criteria.setFetchMode("account", FetchMode.JOIN);
+		criteria.createAlias("account", "account");
+		criteria.add(Restrictions.eq("account", moderator));
+		if (moderatorRole.isPresent()) {
+			criteria.add(Restrictions.eq("role", moderatorRole.get()));
+		}
+		if (pattern.isPresent()) {
+			Disjunction or = Restrictions.disjunction();
+			or.add(Restrictions.ilike("guest.mail", pattern.get(), MatchMode.ANYWHERE));
+			or.add(Restrictions.ilike("guest.firstName", pattern.get(), MatchMode.ANYWHERE));
+			or.add(Restrictions.ilike("guest.lastName", pattern.get(), MatchMode.ANYWHERE));
+			criteria.add(or);
+		}
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<Guest> findAll(List<AbstractDomain> domains, Account moderator,  Optional<ModeratorRole> moderatorRole,
+			Optional<String> pattern) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Moderator.class);
+		criteria.setProjection(Projections.distinct(Projections.property("guest")));
+		criteria.setFetchMode("guest", FetchMode.JOIN);
+		criteria.createAlias("guest", "guest");
+		criteria.add(Restrictions.eq("guest.destroyed", 0L));
+
+		criteria.setFetchMode("account", FetchMode.JOIN);
+		criteria.createAlias("account", "account");
+		criteria.add(Restrictions.eq("account", moderator));
+
+		Disjunction orDomain = Restrictions.disjunction();
+		for (AbstractDomain domain : domains) {
+			orDomain.add(Restrictions.eq("guest.domain", domain));
+		}
+		criteria.add(orDomain);
+		if (moderatorRole.isPresent()) {
+			criteria.add(Restrictions.eq("role", moderatorRole.get()));
+		}
+		if (pattern.isPresent()) {
+			Disjunction or = Restrictions.disjunction();
+			or.add(Restrictions.ilike("guest.mail", pattern.get(), MatchMode.ANYWHERE));
+			or.add(Restrictions.ilike("guest.firstName", pattern.get(), MatchMode.ANYWHERE));
+			or.add(Restrictions.ilike("guest.lastName", pattern.get(), MatchMode.ANYWHERE));
+			criteria.add(or);
+		}
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<Guest> findAll(List<AbstractDomain> domains, Optional<String> pattern) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		Disjunction or = Restrictions.disjunction();
+		for (AbstractDomain domain : domains) {
+			or.add(Restrictions.eq("domain", domain));
+		}
+		criteria.add(or);
+		if (pattern.isPresent()) {
+			Disjunction orPattern = Restrictions.disjunction();
+			orPattern.add(Restrictions.ilike("mail", pattern.get(), MatchMode.ANYWHERE));
+			orPattern.add(Restrictions.ilike("firstName", pattern.get(), MatchMode.ANYWHERE));
+			orPattern.add(Restrictions.ilike("lastName", pattern.get(), MatchMode.ANYWHERE));
+			criteria.add(orPattern);
+		}
+		return findByCriteria(criteria);
 	}
 }

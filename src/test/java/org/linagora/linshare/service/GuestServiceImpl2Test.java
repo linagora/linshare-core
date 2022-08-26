@@ -53,7 +53,6 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
@@ -172,9 +171,10 @@ public class GuestServiceImpl2Test {
 	public void testFindAllGuests() throws BusinessException {
 		// We will return all guests
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		String pattern = null;
-		ModeratorRoleEnum role = null;
-		List<Guest> guests = guestService.findAll(root, root, Optional.ofNullable(john), pattern, role);
+		Optional<String> pattern = Optional.empty();
+		Optional<ModeratorRole> role = Optional.empty();
+		Optional<User> moderator = Optional.empty();
+		List<Guest> guests = guestService.findAll(root, root, moderator, pattern, role);
 		assertThat(guests.containsAll(Lists.newArrayList(johnGuest, janeGuest, fooGuest)));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -183,9 +183,10 @@ public class GuestServiceImpl2Test {
 	public void testFindAllGuestsWhereModeratorOf() throws BusinessException {
 		// We will return all guests where john is moderator of with ADMIN and SIMPLE role
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		String pattern = null;
-		ModeratorRoleEnum role = ModeratorRoleEnum.ALL;
-		List<Guest> johnGuests = guestService.findAll(root, root, Optional.ofNullable(john), pattern, role);
+		Optional<String> pattern = Optional.empty();
+		Optional<ModeratorRole> role = Optional.empty();
+		Optional<User> moderator = Optional.ofNullable(john);
+		List<Guest> johnGuests = guestService.findAll(root, root, moderator, pattern, role);
 		assertThat(johnGuests.size()).isEqualTo(2);
 		assertThat(johnGuests.containsAll(Lists.newArrayList(johnGuest, janeGuest)));
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -195,9 +196,10 @@ public class GuestServiceImpl2Test {
 	public void testFindAllGuestsByAdminRole() throws BusinessException {
 		// We will return guests where John is moderator of with ADMIN role
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		String pattern = null;
-		ModeratorRoleEnum role = ModeratorRoleEnum.ADMIN;
-		List<Guest> johnGuests = guestService.findAll(root, root, Optional.ofNullable(john), pattern, role);
+		Optional<String> pattern = Optional.empty();
+		Optional<ModeratorRole> role = Optional.ofNullable(ModeratorRole.ADMIN);
+		Optional<User> moderator = Optional.ofNullable(john);
+		List<Guest> johnGuests = guestService.findAll(root, root, moderator, pattern, role);
 		assertThat(johnGuests.size()).isEqualTo(1);
 		assertThat(johnGuests.get(0)).isEqualTo(johnGuest);
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -207,9 +209,10 @@ public class GuestServiceImpl2Test {
 	public void testFindAllGuestsBySimpleRole() throws BusinessException {
 		// We will return guests where John is moderator of with SIMPLE role
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		String pattern = null;
-		ModeratorRoleEnum role = ModeratorRoleEnum.SIMPLE;
-		List<Guest> johnGuests = guestService.findAll(root, root, Optional.ofNullable(john), pattern, role);
+		Optional<String> pattern = Optional.empty();
+		Optional<ModeratorRole> role = Optional.ofNullable(ModeratorRole.SIMPLE);
+		Optional<User> moderator = Optional.ofNullable(john);
+		List<Guest> johnGuests = guestService.findAll(root, root, moderator, pattern, role);
 		assertThat(johnGuests.size()).isEqualTo(1);
 		assertThat(johnGuests.get(0)).isEqualTo(janeGuest);
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -218,14 +221,15 @@ public class GuestServiceImpl2Test {
 	@Test
 	public void testSearchAllGuestsByPattern() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		String pattern = null;
-		ModeratorRoleEnum role = null;
+		Optional<String> pattern = Optional.empty();
+		Optional<ModeratorRole> role = Optional.empty();
+		Optional<User> moderator = Optional.empty();
 		// We will return all guests
-		List<Guest> guests = guestService.findAll(root, root, Optional.ofNullable(john), pattern, role);
+		List<Guest> guests = guestService.findAll(root, root, moderator, pattern, role);
 		assertThat(guests.containsAll(Lists.newArrayList(johnGuest, janeGuest, fooGuest)));
 		// Filter returned guests by pattern
-		pattern = "Bar";
-		List<Guest> johnGuests = guestService.findAll(root, root, Optional.ofNullable(john), pattern, role);
+		pattern = Optional.of("Bar");
+		List<Guest> johnGuests = guestService.findAll(root, root, moderator, pattern, role);
 		assertThat(johnGuests.size()).isEqualTo(1);
 		assertThat(johnGuests.get(0)).isEqualTo(fooGuest);
 		logger.debug(LinShareTestConstants.END_TEST);

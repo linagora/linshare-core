@@ -60,12 +60,12 @@ import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.utils.Version;
 import org.linagora.linshare.webservice.userv5.GuestRestService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.Operation;
 
 
 @Path("/guests")
@@ -86,8 +86,12 @@ public class GuestRestServiceImpl implements GuestRestService {
 			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GuestDto.class))), responseCode = "200") })
 	@Override
 	public List<GuestDto> findAll(
-			@Parameter(description = "If value is SIMPLE/ADMIN the guests where a user is moderator of by role will be returned, if value is `ALL` all user's guests, if null all guests of user's authorized domains will be returned.", required = false)
-				@QueryParam("role") ModeratorRoleEnum role,
+			@Parameter(
+					description = "If value is SIMPLE/ADMIN the guests where a user is moderator of by role will be returned, if value is `ALL` all user's guests, if null all guests of user's authorized domains will be returned.",
+					required = false,
+					schema = @Schema(implementation = ModeratorRoleEnum.class)
+				)
+				@QueryParam("role") String role,
 			@Parameter(description = "The list of returned guests will be filtered by the entered patten if not null.", required = false)
 				@QueryParam("pattern") String pattern)
 			throws BusinessException {

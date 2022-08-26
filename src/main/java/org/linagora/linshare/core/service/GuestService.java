@@ -40,13 +40,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 
 public interface GuestService {
 
@@ -154,6 +154,6 @@ public interface GuestService {
 	 * @param moderatorRole
 	 * @return List<Guest>
 	 */
-	List<Guest> findAll(Account authUser, User actor, Optional<User> userToFilterBy, String pattern,
-			ModeratorRoleEnum moderatorRole);
+	List<Guest> findAll(Account authUser, User actor, Optional<User> userToFilterBy, Optional<String> pattern,
+			Optional<ModeratorRole> moderatorRole);
 }

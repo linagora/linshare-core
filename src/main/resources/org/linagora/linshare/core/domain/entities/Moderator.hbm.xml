@@ -7,12 +7,12 @@
 			</generator>
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
-		<property name="role" column="role" type="ModeratorRole" not-null="true" lazy="false"/>
+		<property name="role" column="role" type="moderatorRoleType" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
-		<many-to-one name="account" column="account_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="false">
+		<many-to-one name="account" column="account_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="proxy">
 		</many-to-one>
-		<many-to-one name="guest" column="guest_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="false">
+		<many-to-one name="guest" column="guest_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="proxy">
 		</many-to-one>
 	</class>
 </hibernate-mapping>

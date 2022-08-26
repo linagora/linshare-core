@@ -82,6 +82,7 @@ public class GuestDto extends AccountDto {
 	@Schema(description = "RestrictedContacts")
 	protected List<GenericUserDto> restrictedContacts = Lists.newArrayList();
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@Schema(description = "Owner")
 	protected GenericUserDto owner;
 

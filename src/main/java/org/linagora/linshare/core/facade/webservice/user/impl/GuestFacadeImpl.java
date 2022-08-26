@@ -43,6 +43,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
@@ -95,11 +96,21 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	}
 
 	@Override
-	public List<GuestDto> findAll(Version version, String pattern, ModeratorRoleEnum moderatorRole)
+	public List<GuestDto> findAll(Version version, String pattern, String role)
 			throws BusinessException {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, null);
-		List<Guest> guests = guestService.findAll(authUser, actor, Optional.empty(), pattern, moderatorRole);
+		Optional<User> moderator = Optional.empty();
+		Optional<ModeratorRole> moderatorRole = Optional.empty();
+		if (!Strings.isNullOrEmpty(role)) {
+			ModeratorRoleEnum roleEnum = ModeratorRoleEnum.fromString(role);
+			moderator = Optional.of(actor);
+			if(!roleEnum.equals(ModeratorRoleEnum.ALL)) {
+				moderatorRole = Optional.of(ModeratorRoleEnum.toModeratorRole(roleEnum));
+			}
+		}
+		List<Guest> guests = guestService.findAll(authUser, actor, moderator,
+				Optional.ofNullable(pattern), moderatorRole);
 		return toDtoList(version, authUser, actor, guests);
 	}
 
@@ -138,9 +149,11 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	public List<GuestDto> findAll(String actorUuid) throws BusinessException {
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		User authUser = checkAuthentication();
-		User actor = getActor(actorUuid);
+		User actor = getActor(authUser, actorUuid);
 		List<GuestDto> res = Lists.newArrayList();
-		List<Guest> guests = guestService.findAll(authUser, actor, Optional.empty(), null, null);
+		// Here we assume that we need to filter actor own guest (since delegation api is design to act like user api)
+		Optional<User> moderator = Optional.of(actor);
+		List<Guest> guests = guestService.findAll(authUser, actor, moderator, Optional.empty(), Optional.empty());
 		for (Guest guest : guests) {
 			res.add(GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid())));
 		}
@@ -156,7 +169,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 			pattern = Optional.ofNullable(userSearchDto.getFirstName());
 		}
 		String patternStr = pattern.orElse(userSearchDto.getLastName());
-		List<Guest> guests = guestService.findAll(authUser, actor, Optional.empty(), patternStr, null);
+		List<Guest> guests = guestService.findAll(authUser, actor, Optional.empty(), Optional.ofNullable(patternStr), Optional.empty());
 		return toDtoList(version, authUser, actor, guests);
 	}
 
