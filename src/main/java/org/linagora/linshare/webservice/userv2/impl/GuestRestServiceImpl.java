@@ -93,8 +93,8 @@ public class GuestRestServiceImpl implements GuestRestService {
 	public List<GuestDto> findAll(
 			@QueryParam("mine") Boolean mine,
 			@QueryParam("pattern") String pattern) throws BusinessException {
-		ModeratorRoleEnum moderatorRole = (Objects.nonNull(mine) && mine) ? ModeratorRoleEnum.ALL : null;
-		return guestFacade.findAll(Version.V4, pattern, moderatorRole.toString());
+		String moderatorRole = (Objects.nonNull(mine) && mine) ? ModeratorRoleEnum.ALL.name() : null;
+		return guestFacade.findAll(Version.V4, pattern, moderatorRole);
 	}
 
 	@Path("/search")
