@@ -108,6 +108,14 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 					schema = @Schema(implementation = DomainType.class)
 				)
 				@QueryParam("type") String domainType,
+			@Parameter(
+					description = "It is an optional parameter to filter the domains by the given name.",
+					required = false)
+				@QueryParam("name") String name,
+			@Parameter(
+					description = "It is an optional parameter to filter the domains by the given description.",
+					required = false)
+				@QueryParam("description") String description,
 			@Parameter(description = "parent domain's uuid")
 				@QueryParam("parent") String parentUuid,
 			@Parameter(
@@ -131,10 +139,11 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 					description = "The admin can choose the number of elements to get.",
 					required = false
 				)
-				@QueryParam("size") @DefaultValue("50") Integer pageSize
-			) {
+				@QueryParam("size") @DefaultValue("50") Integer pageSize) {
 		PageContainer<DomainDto> container = domainFacade.findAll(
 				Optional.ofNullable(domainType),
+				Optional.ofNullable(name),
+				Optional.ofNullable(description),
 				Optional.ofNullable(parentUuid),
 				SortOrder.valueOf(sortOrder),
 				DomainField.valueOf(sortField),

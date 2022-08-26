@@ -38,6 +38,7 @@ package org.linagora.linshare.core.facade.webservice.adminv5;
 import java.util.Optional;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.fields.DomainField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
@@ -48,7 +49,9 @@ public interface DomainFacade {
 	Set<DomainDto> findAll(boolean tree);
 
 	PageContainer<DomainDto> findAll(
-			Optional<String> domainType, Optional<String> parentUuid,
+			Optional<String> domainType,
+			Optional<String> name, Optional<String> description,
+			Optional<String> parentUuid,
 			SortOrder sortOrder, DomainField sortField,
 			Integer pageNumber, Integer pageSize);
 

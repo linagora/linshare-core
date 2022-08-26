@@ -72,6 +72,8 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
 
 import com.google.common.collect.Maps;
 
+import static org.hibernate.criterion.MatchMode.ANYWHERE;
+
 public class AbstractDomainRepositoryImpl extends
 		AbstractRepositoryImpl<AbstractDomain> implements
 		AbstractDomainRepository {
@@ -106,16 +108,17 @@ public class AbstractDomainRepositoryImpl extends
 	@Override
 	public PageContainer<AbstractDomain> findAll(
 			Optional<DomainType> domainType,
+			Optional<String> name, Optional<String> description,
 			Optional<AbstractDomain> parent,
 			Optional<AbstractDomain> from,
 			SortOrder sortOrder, DomainField sortField,
 			PageContainer<AbstractDomain> container) {
 		// count matched data
-		DetachedCriteria detachedCritCount = getCriteria(domainType, parent, from);
+		DetachedCriteria detachedCritCount = getCriteria(domainType, name, description, parent, from);
 		detachedCritCount.setProjection(Projections.rowCount());
 		Long totalNumberElements = DataAccessUtils.longResult(findByCriteria(detachedCritCount));
 		// retrieve one page.
-		DetachedCriteria detachedCritData = getCriteria(domainType, parent, from);
+		DetachedCriteria detachedCritData = getCriteria(domainType, name, description, parent, from);
 		Order order = null;
 		switch (sortField) {
 			case name:
@@ -132,6 +135,7 @@ public class AbstractDomainRepositoryImpl extends
 
 	private DetachedCriteria getCriteria(
 			Optional<DomainType> domainType,
+			Optional<String> name, Optional<String> description,
 			Optional<AbstractDomain> parent,
 			Optional<AbstractDomain> from) {
 		DetachedCriteria crit = null;
@@ -143,6 +147,12 @@ public class AbstractDomainRepositoryImpl extends
 		crit.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
 		if (parent.isPresent()) {
 			crit.add(Restrictions.eq("parentDomain", parent.get()));
+		}
+		if (name.isPresent()) {
+			crit.add(Restrictions.ilike("label", name.get(), ANYWHERE));
+		}
+		if (description.isPresent()) {
+			crit.add(Restrictions.ilike("description", description.get(), ANYWHERE));
 		}
 		if (from.isPresent()) {
 			// nested administrators must only see their domain and their nested domains.

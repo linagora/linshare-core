@@ -152,6 +152,7 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 
 	PageContainer<AbstractDomain> findAll(
 			Optional<DomainType> domainType,
+			Optional<String> name, Optional<String> description,
 			Optional<AbstractDomain> parentUuid,
 			Optional<AbstractDomain> from,
 			SortOrder sortOrder,

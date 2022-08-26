@@ -37,6 +37,7 @@ package org.linagora.linshare.repository.hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -51,10 +52,13 @@ import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.fields.DomainField;
+import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,6 +184,26 @@ public class AbstractDomainRepositoryImplTest {
 		List<AbstractDomain> list = abstractDomainRepository.findAllTopDomain();
 		// one by default + 2 topdomain for tests.
 		Assertions.assertEquals(4, list.size());
+	}
+
+	@Test
+	public void testFindAllByName() throws BusinessException{
+		PageContainer<AbstractDomain> list = abstractDomainRepository.findAll(
+				Optional.empty(), Optional.of("omain-0-1"), Optional.empty(),
+				Optional.empty(), Optional.empty(), SortOrder.ASC, DomainField.creationDate,
+				new PageContainer<>(0, 10)
+		);
+		Assertions.assertEquals(3, list.getList().size());
+	}
+
+	@Test
+	public void testFindAllByDescription() throws BusinessException{
+		PageContainer<AbstractDomain> list = abstractDomainRepository.findAll(
+				Optional.empty(), Optional.empty(), Optional.of("DESCRIPTION 0"),
+				Optional.empty(), Optional.empty(), SortOrder.ASC, DomainField.creationDate,
+				new PageContainer<>(0, 10)
+		);
+		Assertions.assertEquals(1, list.getList().size());
 	}
 
 	@Test

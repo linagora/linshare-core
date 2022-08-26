@@ -16,7 +16,7 @@ INSERT INTO domain_abstract(id, type , uuid, label, enable, template, descriptio
 
 -- topDomainName
 -- id : 100002
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id, creation_date, modification_date) VALUES (100002, 1, 'TEST_Domain-0-1', 'TEST_Domain-0-1 (Topdomain)', true, false, 'a simple description', 0, 'en','IN_USE', null, 100001, 100001, 2, 1, now(), now());
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id, creation_date, modification_date) VALUES (100002, 1, 'TEST_Domain-0-1', 'TEST_Domain-0-1 (Topdomain)', true, false, 'a simple description 0-1', 0, 'en','IN_USE', null, 100001, 100001, 2, 1, now(), now());
 
 -- topDomainName2
 -- id : 100003

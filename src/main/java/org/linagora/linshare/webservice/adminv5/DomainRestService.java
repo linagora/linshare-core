@@ -39,6 +39,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 
 public interface DomainRestService {
@@ -46,9 +47,12 @@ public interface DomainRestService {
 	Set<DomainDto> findAll(boolean tree);
 
 	Response findAll(
-		String domainType, String parentUuid,
+		String domainType,
+		String name,
+		String description,
+		String parentUuid,
 		String sortOrder, String sortField,
-		Integer pageNumber, Integer pageSize);
+		Integer pageNumber, Integer pageSizess);
 
 	DomainDto find(String uuid, boolean tree, boolean detail);
 

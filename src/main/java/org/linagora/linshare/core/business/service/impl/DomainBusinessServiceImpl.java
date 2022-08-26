@@ -161,10 +161,11 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 	@Override
 	public PageContainer<AbstractDomain> findAll(
 			Optional<DomainType> domainType,
+			Optional<String> name, Optional<String> description,
 			Optional<AbstractDomain> parent,
 			Optional<AbstractDomain> from,
 			SortOrder sortOrder, DomainField sortField,
 			PageContainer<AbstractDomain> container) {
-		return repository.findAll(domainType, parent, from, sortOrder, sortField, container);
+		return repository.findAll(domainType, name, description, parent, from, sortOrder, sortField, container);
 	}
 }

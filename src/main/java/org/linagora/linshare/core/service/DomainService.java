@@ -56,6 +56,7 @@ public interface DomainService {
 	PageContainer<AbstractDomain> findAll(
 			Account authUser,
 			Optional<String> domainType,
+			Optional<String> name, Optional<String> description,
 			Optional<String> parentUuid,
 			SortOrder sortOrder, DomainField sortField,
 			PageContainer<AbstractDomain> container);

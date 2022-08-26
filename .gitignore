@@ -22,3 +22,4 @@ src/test/resources/linshare-test.extra.properties
 snyk-error.log
 snyk-result.json
 snyk_report.html
+/home/**

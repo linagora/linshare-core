@@ -84,6 +84,7 @@ public interface DomainBusinessService {
 
 	PageContainer<AbstractDomain> findAll(
 			Optional<DomainType> domainType,
+			Optional<String> name, Optional<String> description,
 			Optional<AbstractDomain> parent,
 			Optional<AbstractDomain> from,
 			SortOrder sortOrder,

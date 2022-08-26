@@ -40,6 +40,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -112,12 +113,14 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 
 	@Override
 	public PageContainer<DomainDto> findAll(
-			Optional<String> domainType, Optional<String> parentUuid,
+			Optional<String> domainType,
+			Optional<String> name, Optional<String> description,
+			Optional<String> parentUuid,
 			SortOrder sortOrder, DomainField sortField,
 			Integer pageNumber, Integer pageSize) {
 		User authUser = checkAuthentication(Role.ADMIN);
 		PageContainer<AbstractDomain> container = new PageContainer<>(pageNumber, pageSize);
-		container = domainService.findAll(authUser, domainType, parentUuid, sortOrder, sortField, container);
+		container = domainService.findAll(authUser, domainType, name, description, parentUuid, sortOrder, sortField, container);
 		PageContainer<DomainDto> dto = pageContainerAdaptor.convert(container, DomainDto.toDto());
 		return dto;
 	}

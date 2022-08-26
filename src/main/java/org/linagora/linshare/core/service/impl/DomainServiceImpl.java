@@ -173,6 +173,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 	public PageContainer<AbstractDomain> findAll(
 			Account authUser,
 			Optional<String> domainType,
+			Optional<String> name, Optional<String> description,
 			Optional<String> parentUuid,
 			SortOrder sortOrder, DomainField sortField,
 			PageContainer<AbstractDomain> container) {
@@ -192,9 +193,9 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			}
 		}
 		if (authUser.hasSuperAdminRole()) {
-			return businessService.findAll(domainTypeEnum, parent, Optional.empty(), sortOrder, sortField, container);
+			return businessService.findAll(domainTypeEnum, name, description, parent, Optional.empty(), sortOrder, sortField, container);
 		}
-		return businessService.findAll(domainTypeEnum, parent, Optional.of(authUser.getDomain()), sortOrder, sortField, container);
+		return businessService.findAll(domainTypeEnum, name, description, parent, Optional.of(authUser.getDomain()), sortOrder, sortField, container);
 	}
 
 	@Override
