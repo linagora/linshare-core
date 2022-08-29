@@ -38,6 +38,7 @@ package org.linagora.linshare.core.service.impl;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -250,14 +251,13 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	@Override
 	public List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup,
 			List<WorkGroupNode> revisions) throws BusinessException {
+		Optional<WorkGroupNode> firstRevision = revisions.stream().findFirst();
+		if (firstRevision.isPresent()) {
+			workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(firstRevision.get(), timeService.dateNow());
+		}
 		for (WorkGroupNode rev : revisions) {
 			deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) rev);
 		}
-		// Since all revisions have the same parent and same workGroup we can use just one revision to update related resources
-		WorkGroupNode firstRevision = revisions.stream()
-				.findFirst()
-				.orElseThrow(() -> new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND, "The first revision has not been found."));
-		workGroupNodeBusinessService.updateRelatedWorkGroupNodeResources(firstRevision, timeService.dateNow());
 		return revisions;
 	}
 
