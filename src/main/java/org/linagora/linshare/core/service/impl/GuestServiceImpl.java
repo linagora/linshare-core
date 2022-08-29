@@ -224,7 +224,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		if (!guestBusinessService.exist(guestDomain.getUuid(),
 				guest.getMail())) {
 			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
-					"Pair mail/domain already exist");
+					"Can not create guest ! Pair mail/domain already exists: " + guest.getMail());
 		}
 		guest.setRole(Role.SIMPLE);
 		guest.setFirstName(sanitize(guest.getFirstName()));
