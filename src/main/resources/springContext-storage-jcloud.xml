@@ -5,10 +5,9 @@
 	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd"
 	profile="jcloud">
 
-	<import resource="OPTIONAL-springContext-jcloud.xml" />
+	<import resource="OPTIONAL-springContext-storage-jcloud.xml" />
 
-	<bean id="fileDataStore"
-		class="org.linagora.linshare.core.dao.impl.DataKindBalancerFileDataStoreImpl">
+	<bean id="fileDataStore" class="org.linagora.linshare.core.dao.impl.DataKindBalancerFileDataStoreImpl">
 		<constructor-arg ref="jcloudFileDataStore" />
 		<constructor-arg>
 			<bean class="org.linagora.linshare.core.dao.impl.MongoFileDataStoreImpl">

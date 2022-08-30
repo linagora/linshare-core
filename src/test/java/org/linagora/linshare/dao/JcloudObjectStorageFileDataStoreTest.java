@@ -63,7 +63,7 @@ import com.google.common.io.Files;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
 		"classpath:springContext-test.xml",
-		"classpath:OPTIONAL-springContext-jcloud.xml" })
+		"classpath:OPTIONAL-springContext-storage-jcloud.xml" })
 //@TestPropertySource("/linshare-storage-swift.properties")
 public class JcloudObjectStorageFileDataStoreTest {
 

@@ -20,7 +20,14 @@
 # Available file data store profiles :
 #	* jcloud : Using jcloud as file data store : Amazon S3, Swift, Ceph, filesystem.
 #	* gridfs : Using gridfs (mongodb) as file data store.
+#	* migration-gridfs-to-jcloud : Using jcloud as primary file data store and using gridfs (mongodb) as secondary file data store.
 #	Recommended profile for production is jcloud with Swift.
+
+#	For migration-* profiles:
+#		* files are retrieved from primary, then if not found , they are retrieved from secondary.
+#		* files are removed from primary and secondary
+#		* new files are removed only added to the primary
+
 
 # Additional profiles :
 #	* batches : if this profile is enable (by default it should be), it will enable all Quartz jobs (cron tasks).

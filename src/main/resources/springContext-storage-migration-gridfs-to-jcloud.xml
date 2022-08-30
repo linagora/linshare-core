@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	http://www.springframework.org/schema/data/mongo
+	http://www.springframework.org/schema/data/mongo/spring-mongo-3.0.xsd"
+	profile="migration-gridfs-to-jcloud">
+
+	<import resource="OPTIONAL-springContext-storage-jcloud.xml" />
+	<import resource="OPTIONAL-springContext-storage-gridfs.xml" />
+
+	<bean id="jcloudDataBalancerFileDataStore" class="org.linagora.linshare.core.dao.impl.DataKindBalancerFileDataStoreImpl">
+		<!-- Same as default jcloud profile -->
+		<constructor-arg ref="jcloudFileDataStore" />
+		<constructor-arg>
+			<bean class="org.linagora.linshare.core.dao.impl.MongoFileDataStoreImpl">
+				<constructor-arg ref="gridFsTemplateForSmallFiles" />
+				<constructor-arg ref="mongoDbFactoryForSmallFiles" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="fileDataStore" class="org.linagora.linshare.core.dao.impl.MigrationFileDataStoreImpl">
+		<constructor-arg ref="jcloudDataBalancerFileDataStore" />
+		<constructor-arg ref="gridfsFileDataStore" />
+	</bean>
+
+</beans>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	http://www.springframework.org/schema/data/mongo
+	http://www.springframework.org/schema/data/mongo/spring-mongo-3.0.xsd">
+
+	<!-- another client to initialize gridfs instance for big files. -->
+	<mongo:mongo-client
+		id="mongoClientBig"
+		credential="${linshare.mongo.bigfiles.credentials}">
+		<mongo:client-settings
+			cluster-hosts="${linshare.mongo.bigfiles.replicaset}"
+			write-concern="${linshare.mongo.write.concern}"
+			socket-connect-timeout="${linshare.mongo.connect.timeout}"
+			socket-read-timeout="${linshare.mongo.socket.timeout}"
+		/>
+	</mongo:mongo-client>
+	<mongo:db-factory
+		id="mongoDbFactoryForBigFiles"
+		mongo-client-ref="mongoClientBig"
+		dbname="${linshare.mongo.bigfiles.database}"
+		write-concern="${linshare.mongo.write.concern}" />
+	<mongo:mapping-converter id="converterBigFiles" db-factory-ref="mongoDbFactoryForBigFiles"/>
+	<bean id="gridFsTemplateForBigFiles" class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
+		<constructor-arg ref="mongoDbFactoryForBigFiles" />
+		<constructor-arg ref="converterBigFiles" />
+	</bean>
+
+	<bean id="gridfsFileDataStore" class="org.linagora.linshare.core.dao.impl.DataKindBalancerFileDataStoreImpl">
+		<constructor-arg>
+			<bean class="org.linagora.linshare.core.dao.impl.MongoFileDataStoreImpl">
+				<constructor-arg ref="gridFsTemplateForBigFiles" />
+				<constructor-arg ref="mongoDbFactoryForBigFiles" />
+			</bean>
+		</constructor-arg>
+		<constructor-arg>
+			<bean class="org.linagora.linshare.core.dao.impl.MongoFileDataStoreImpl">
+				<constructor-arg ref="gridFsTemplateForSmallFiles" />
+				<constructor-arg ref="mongoDbFactoryForSmallFiles" />
+			</bean>
+		</constructor-arg>
+	</bean>
+</beans>

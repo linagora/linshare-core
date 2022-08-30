@@ -4,11 +4,10 @@
 	xsi:schemaLocation=" http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-	<import resource="OPTIONAL-springContext-jcloud.xml" />
+	<import resource="OPTIONAL-springContext-storage-jcloud.xml" />
 
 	<bean id="fileDataStore"
-		class="org.linagora.linshare.core.dao.impl.DataKindBalancerFileDataStoreImpl">
-		<constructor-arg ref="jcloudFileDataStore" />
+		class="org.linagora.linshare.core.dao.impl.WrapperFileDataStoreImpl">
 		<constructor-arg ref="jcloudFileDataStore" />
 	</bean>
 

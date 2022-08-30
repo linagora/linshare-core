@@ -8,41 +8,10 @@
 	http://www.springframework.org/schema/data/mongo/spring-mongo-3.0.xsd"
 	profile="gridfs">
 
-	<!-- another client to initialize gridfs instance for big files like thumbnails. -->
-	<mongo:mongo-client
-		id="mongoClientBig"
-		credential="${linshare.mongo.bigfiles.credentials}">
-		<mongo:client-settings
-			cluster-hosts="${linshare.mongo.bigfiles.replicaset}"
-			write-concern="${linshare.mongo.write.concern}"
-			socket-connect-timeout="${linshare.mongo.connect.timeout}"
-			socket-read-timeout="${linshare.mongo.socket.timeout}"
-		/>
-	</mongo:mongo-client>
-	<mongo:db-factory
-		id="mongoDbFactoryForBigFiles"
-		mongo-client-ref="mongoClientBig"
-		dbname="${linshare.mongo.bigfiles.database}"
-		write-concern="${linshare.mongo.write.concern}" />
-	<mongo:mapping-converter id="converterBigFiles" db-factory-ref="mongoDbFactoryForBigFiles"/>
-	<bean id="gridFsTemplateForBigFiles" class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
-		<constructor-arg ref="mongoDbFactoryForBigFiles" />
-		<constructor-arg ref="converterBigFiles" />
+	<import resource="OPTIONAL-springContext-storage-gridfs.xml" />
+
+	<bean id="fileDataStore" class="org.linagora.linshare.core.dao.impl.WrapperFileDataStoreImpl">
+		<constructor-arg ref="gridfsFileDataStore" />
 	</bean>
 
-	<bean id="fileDataStore"
-		class="org.linagora.linshare.core.dao.impl.DataKindBalancerFileDataStoreImpl">
-		<constructor-arg>
-			<bean class="org.linagora.linshare.core.dao.impl.MongoFileDataStoreImpl">
-				<constructor-arg ref="gridFsTemplateForBigFiles" />
-				<constructor-arg ref="mongoDbFactoryForBigFiles" />
-			</bean>
-		</constructor-arg>
-		<constructor-arg>
-			<bean class="org.linagora.linshare.core.dao.impl.MongoFileDataStoreImpl">
-				<constructor-arg ref="gridFsTemplateForSmallFiles" />
-				<constructor-arg ref="mongoDbFactoryForSmallFiles" />
-			</bean>
-		</constructor-arg>
-	</bean>
 </beans>
