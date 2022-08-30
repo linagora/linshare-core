@@ -111,6 +111,10 @@ public class Document implements Serializable {
 	 */
 	protected Boolean computeThumbnail;
 
+	/**
+	 * See thumbnails
+	 */
+	@Deprecated
 	protected String thmbUuid;
 
 	/* Constructor for tests */
@@ -327,10 +331,12 @@ public class Document implements Serializable {
 		this.computeThumbnail = computeThumbnail;
 	}
 
+	@Deprecated
 	public String getThmbUuid() {
 		return thmbUuid;
 	}
 
+	@Deprecated
 	public void setThmbUuid(String thmbUuid) {
 		this.thmbUuid = thmbUuid;
 	}
