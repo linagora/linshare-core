@@ -135,6 +135,27 @@ VALUES
      now(),
      now());
 
+UPDATE document SET to_upgrade = true;
+INSERT INTO upgrade_task
+(id,
+ uuid,
+ identifier,
+ task_group,
+ task_order,
+ status,
+ priority,
+ creation_date,
+ modification_date)
+VALUES
+    (68,
+     'UNDEFINED',
+     'OPTIONAL_MIGRATE_FILE_DATA_STORAGE_TO_A_NEW_ONE',
+     'OPTIONALS',
+     68,
+     'NEW',
+     'OPTIONAL',
+     now(),
+     now());
 
 UPDATE mail_layout SET messages_french='common.availableUntil = Expire le
 common.byYou= | Par vous

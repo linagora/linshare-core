@@ -67,7 +67,10 @@ public class MigrationFileDataStoreImpl implements FileDataStore {
 
 	@Override
 	public FileMetaData add(ByteSource byteSource, FileMetaData metadata) throws IOException {
-		return newDataStore.add(byteSource, metadata);
+		if (!newDataStore.exists(metadata)) {
+			return newDataStore.add(byteSource, metadata);
+		}
+		return metadata;
 	}
 
 	@Override

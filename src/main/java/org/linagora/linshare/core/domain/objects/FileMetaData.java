@@ -80,9 +80,12 @@ public class FileMetaData {
 		this.bucketUuid = null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public FileMetaData(FileMetaDataKind kind, Document document) {
 		super();
 		this.uuid = document.getUuid();
+		// this code is f**** ugly.
+		// ThumbnailType.getThumbnailType(kind) will null if kind == DATA
 		if (document.getHasThumbnail() && ThumbnailType.getThumbnailType(kind) != null) {
 			this.uuid = document.getThumbnails().get(ThumbnailType.getThumbnailType(kind)).getThumbnailUuid();
 		} else if (kind.equals(FileMetaDataKind.THUMBNAIL)) {

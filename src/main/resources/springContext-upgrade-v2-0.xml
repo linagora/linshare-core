@@ -222,6 +222,12 @@
 					<constructor-arg ref="hibernateTemplate" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v6_0.FileDataStoreMigrationUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="documentRepository" />
+					<constructor-arg ref="fileDataStore" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

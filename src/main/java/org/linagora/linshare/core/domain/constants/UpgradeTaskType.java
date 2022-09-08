@@ -371,7 +371,12 @@ public enum UpgradeTaskType {
 	/**
 	 * Populating ExternalFavouriteRecipient new table
 	 */
-	OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT;
+	OPTIONAL_POPULATE_EXTERNAL_FAVOURITE_RECIPIENT,
+
+	/**
+	 * Read files and thumbnails from old backend and copy them to new backend.
+	 */
+	OPTIONAL_MIGRATE_FILE_DATA_STORAGE_TO_A_NEW_ONE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
