@@ -33,9 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +42,7 @@ import org.hibernate.criterion.Order;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -95,8 +94,17 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 
 	@Override
 	public PageContainer<User> findAll(Account authUser, Account actor, List<String> domainsUuids, SortOrder sortOrder,
+									   UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
+									   Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container) {
+		return this.findAll(authUser, actor, domainsUuids, sortOrder, sortField, mail, firstName, lastName, restricted,
+				canCreateGuest, canUpload,role, type, null, null, null, container);
+	}
+
+	@Override
+	public PageContainer<User> findAll(Account authUser, Account actor, List<String> domainsUuids, SortOrder sortOrder,
 			UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
-			Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container) {
+			Boolean canCreateGuest, Boolean canUpload, String role, String type, String moderatorRole, Optional<Integer> greaterThan,
+			Optional<Integer> lowerThan, PageContainer<User> container) {
 		preChecks(authUser, actor);
 		List<AbstractDomain> domains = Lists.newArrayList();
 		for (String domainUuid : domainsUuids) {
@@ -112,8 +120,16 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 		Role checkedRole = Strings.isNullOrEmpty(role) ? null : Role.valueOf(role);
 		AccountType checkedAccountType = Strings.isNullOrEmpty(type) ? null : AccountType.valueOf(type);
 		Order order = checkSortOrderAndField(sortOrder, sortField);
-		return userRepository.findAll(domains, order, mail, firstName, lastName, restricted, canCreateGuest, canUpload,
-				checkedRole, checkedAccountType, container);
+		ModeratorRole modRole = Strings.isNullOrEmpty(moderatorRole) ? null : ModeratorRole.valueOf(moderatorRole);
+
+		if ((lowerThan == null || lowerThan.isEmpty()) && (greaterThan == null || greaterThan.isEmpty())) {
+			return userRepository.findAll(domains, order, mail, firstName, lastName, restricted, canCreateGuest,
+					canUpload, checkedRole, checkedAccountType, null, container);
+		} else {
+			Set<Long> guests = userRepository.findGuestWithModerators(greaterThan, lowerThan, modRole);
+			return userRepository.findAll(domains, order, mail, firstName, lastName, restricted,
+					canCreateGuest, canUpload, checkedRole, checkedAccountType, guests, container);
+		}
 	}
 
 	@Override

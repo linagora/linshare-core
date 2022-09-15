@@ -58,6 +58,11 @@
 			class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="false" lazy="proxy">
 		</many-to-one>
 
+		<set name="moderators" lazy="true" inverse="true">
+			<key column="guest_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.Moderator"/>
+		</set>
+
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">
 			<set name="myWorkgroupMembers" lazy="true" cascade="save-update,lock" inverse="true">
 				<key column="user_id" not-null="true"/>

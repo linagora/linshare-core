@@ -50,8 +50,8 @@ import org.linagora.linshare.core.facade.webservice.user.dto.SecondFactorDto;
 public interface UserRestService {
 
 	Response findAll(List<String> domainsUuids, String domainUuid, String sortOrder, String sortField, String mail,
-			String firstName, String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, String role,
-			String type, Integer pageNumber, Integer pageSize) throws BusinessException;
+					 String firstName, String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, String role,
+					 String type, String moderatorRole, Integer greaterThan, Integer lowerThan, Integer pageNumber, Integer pageSize) throws BusinessException;
 
 	UserDto find(String uuid) throws BusinessException;
 

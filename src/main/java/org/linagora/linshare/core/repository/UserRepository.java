@@ -37,9 +37,12 @@ package org.linagora.linshare.core.repository;
 
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import org.hibernate.criterion.Order;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
@@ -77,10 +80,12 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
 	T findByLoginAndDomain(String domain, String login);
 
 	PageContainer<T> findAll(List<AbstractDomain> domains, Order sortOrder, String mail, String firstName, String lastName,
-			Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,
-			PageContainer<T> container);
+							 Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,
+							 Set<Long> subset, PageContainer<T> container);
 
 	List<T> autoCompleteUser(List<AbstractDomain> domains, String mail);
 
 	List<T> autoCompleteUser(List<AbstractDomain> domains, String firstName, String lastName);
+
+	Set<Long> findGuestWithModerators(Optional<Integer> greaterThan, Optional<Integer> lessThan, ModeratorRole role);
 } 

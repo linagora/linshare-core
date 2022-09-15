@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- * 
+ *
  * Copyright (C) 2021-2022 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,12 +19,12 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.facade.webservice.adminv5;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
@@ -51,8 +52,9 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 public interface UserFacade extends AdminGenericFacade {
 
 	PageContainer<UserDto> findAll(String actorUuid, List<String> domainsUuids, SortOrder sortOrder, UserFields sortField,
-			String mail, String firstName, String lastName, Boolean restricted, Boolean canCreateGuest,
-			Boolean canUpload, String role, String type, Integer pageNumber, Integer pageSize);
+		String mail, String firstName, String lastName, Boolean restricted, Boolean canCreateGuest,
+		Boolean canUpload, String role, String type, String moderatorRole,
+		Optional<Integer> greaterThan, Optional<Integer> lowerThan, Integer pageNumber, Integer pageSize);
 
 	UserDto find(String actorUuid, String uuid);
 
@@ -61,14 +63,14 @@ public interface UserFacade extends AdminGenericFacade {
 	UserDto delete(String actorUuid, UserDto userDto, String uuid) throws BusinessException;
 
 	List<RestrictedContactDto> findAllRestrictedContacts(String actorUuid, String userUuid, String mail,
-			String firstName, String lastName);
+		 String firstName, String lastName);
 
 	RestrictedContactDto findRestrictedContact(String actorUuid, String ownerUuid, String restrictedContactUuid);
 
 	RestrictedContactDto createRestrictedContact(String actorUuid, String ownerUuid, RestrictedContactDto restrictedContactDto);
 
 	RestrictedContactDto deleteRestrictedContact(String actorUuid, String ownerUuid,
-			RestrictedContactDto restrictedContactDto, String restrictedContactUuid);
+		 RestrictedContactDto restrictedContactDto, String restrictedContactUuid);
 
 	UserDto isAuthorized();
 

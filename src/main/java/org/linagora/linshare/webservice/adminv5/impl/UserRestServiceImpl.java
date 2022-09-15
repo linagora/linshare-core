@@ -36,6 +36,7 @@
 package org.linagora.linshare.webservice.adminv5.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -118,10 +119,16 @@ public class UserRestServiceImpl implements UserRestService {
 				@QueryParam("canCreateGuest") Boolean canCreateGuest,
 			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users whose can upload.", required = false)
 				@QueryParam("canUpload") Boolean canUpload,
-			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users with a choosen role.", required = false)
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users with a chosen role.", required = false)
 				@QueryParam("role") String role,
-			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users with a choosen type.", required = false)
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users with a chosen type.", required = false)
 				@QueryParam("type") String type,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the users with a chosen moderator role.", required = false)
+				@QueryParam("moderatorRole") String moderatorRole,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the guest users with a number of moderators greater than.", required = false)
+				@QueryParam("greaterThan") Integer greaterThan,
+			@Parameter(description = "It is an optional parameter if it is indicated the admin will be able to retrieve the guest users with a number of moderators lower than.", required = false)
+				@QueryParam("lowerThan") Integer lowerThan,
 			@Parameter(description = "The admin can choose the page number to get.", required = false)
 				@QueryParam("page") Integer pageNumber, @Parameter(description = "The admin can choose the number of elements to get.", required = false)
 				@QueryParam("size") Integer pageSize) throws BusinessException {
@@ -130,7 +137,7 @@ public class UserRestServiceImpl implements UserRestService {
 		}
 		PageContainer<UserDto> container = userFacade.findAll(null, domainsUuids, SortOrder.valueOf(sortOrder),
 				UserFields.valueOf(sortField), mail, firstName, lastName, restricted, canCreateGuest, canUpload, role,
-				type, pageNumber, pageSize);
+				type, moderatorRole, Optional.ofNullable(greaterThan), Optional.ofNullable(lowerThan), pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
 	}
 

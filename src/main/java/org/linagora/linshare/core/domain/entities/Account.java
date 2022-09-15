@@ -98,6 +98,8 @@ public abstract class Account {
 
 	protected Integer authenticationFailureCount;
 
+	protected Set<Moderator> moderators;
+
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
@@ -441,5 +443,13 @@ public abstract class Account {
 
 	public void setExternalMailLocale(Language externalMailLocale) {
 		this.externalMailLocale = externalMailLocale;
+	}
+
+	public Set<Moderator> getModerators() {
+		return moderators;
+	}
+
+	public void setModerators(Set<Moderator> moderators) {
+		this.moderators = moderators;
 	}
 }

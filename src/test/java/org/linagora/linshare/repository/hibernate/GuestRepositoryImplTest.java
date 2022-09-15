@@ -35,21 +35,24 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.compress.utils.Lists;
+import org.hibernate.criterion.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.PasswordService;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
@@ -58,11 +61,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
@@ -80,6 +86,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
+@Sql(value = { "/import-tests-guests.sql" }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@DirtiesContext
 public class GuestRepositoryImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(GuestRepositoryImplTest.class);
@@ -272,6 +280,17 @@ public class GuestRepositoryImplTest {
 		assertEquals(results.size(), 1);
 		assertEquals(u.getLsUuid(), results.get(0));
 		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testFindUsersInSubset() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PageContainer<Guest> actual = guestRepository.findAll(Lists.newArrayList(), Order.asc("mail"), null, null,
+				null, null, null, null, null, AccountType.GUEST,
+				Set.of(100_003L, 100_004L, 100_005L, 100_006L, 100_007L),
+				new PageContainer<>(0, 20));
+		assertTrue(actual != null);
+		assertEquals(3, actual.getTotalElements());
 	}
 
 }

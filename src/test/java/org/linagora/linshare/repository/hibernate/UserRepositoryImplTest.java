@@ -55,8 +55,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
@@ -73,6 +82,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
+@DirtiesContext
 public class UserRepositoryImplTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -158,6 +168,7 @@ public class UserRepositoryImplTest {
 		Assertions.assertNotNull(userFound);
 		Assertions.assertEquals(FIRST_NAME4,userFound.getFirstName());
 	}
+
 	
 //	@Test
 //	public void testShares() throws IllegalArgumentException, BusinessException{

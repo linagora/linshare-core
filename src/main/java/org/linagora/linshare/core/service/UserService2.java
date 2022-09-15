@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -45,9 +46,14 @@ import org.linagora.linshare.webservice.utils.PageContainer;
 
 public interface UserService2 {
 
-	public PageContainer<User> findAll(Account authUser, Account actor, List<String> domainsUuids, SortOrder sortOrder,
+	PageContainer<User> findAll(Account authUser, Account actor, List<String> domainsUuids, SortOrder sortOrder,
 			UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
-			Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container);
+			Boolean canCreateGuest, Boolean canUpload, String role, String type, String moderatorRole, Optional<Integer> greaterThan,
+			Optional<Integer> lowerThan, PageContainer<User> container);
+
+	PageContainer<User> findAll(Account authUser, Account actor, List<String> domainsUuids, SortOrder sortOrder,
+								UserFields sortField, String mail, String firstName, String lastName, Boolean restricted,
+								Boolean canCreateGuest, Boolean canUpload, String role, String type, PageContainer<User> container);
 
 	List<User> autoCompleteUser(Account authUser, Account actor, String pattern) throws BusinessException;
 

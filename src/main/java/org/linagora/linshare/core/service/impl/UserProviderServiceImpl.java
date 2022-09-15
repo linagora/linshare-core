@@ -36,10 +36,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.naming.NamingException;
 
@@ -84,6 +81,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.google.common.collect.Lists;
+
+import static java.util.Optional.empty;
 
 public class UserProviderServiceImpl extends GenericAdminServiceImpl implements UserProviderService {
 
@@ -409,7 +408,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				PageContainer<User> container = new PageContainer<>(0,50);
 				container = userRepository.findAll(Lists.newArrayList(domain), Order.asc("modificationDate"), mail, firstName,
-						lastName, null, null, null, null, null, container);
+						lastName, null, null, null, null, null, Set.of(), container);
 				List<User> users = container.getPageResponse().getContent();
 				return users;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
@@ -447,7 +446,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				PageContainer<User> container = new PageContainer<>(0,50);
 				container = userRepository.findAll(Lists.newArrayList(domain), Order.asc("modificationDate"), pattern, null,
-						null, null, null, null, null, null, container);
+						null, null, null, null, null, null, Set.of(), container);
 				List<User> users = container.getPageResponse().getContent();
 				return users;
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
@@ -485,7 +484,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				PageContainer<User> container = new PageContainer<>(0,50);
 				container = userRepository.findAll(Lists.newArrayList(domain), Order.asc("modificationDate"), null, firstName,
-						lastName, null, null, null, null, null,
+						lastName, null, null, null, null, null, Set.of(),
 						container);
 				List<User> users = container.getPageResponse().getContent();
 				return users;

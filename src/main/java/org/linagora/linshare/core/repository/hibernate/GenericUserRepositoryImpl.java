@@ -35,20 +35,23 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -58,6 +61,9 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+
+import javax.persistence.Tuple;
+import javax.persistence.criteria.*;
 
 abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountRepositoryImpl<U> implements UserRepository<U> {
 
@@ -133,28 +139,50 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		return listByCriteria(crit);
 	}
 
+
+	@Override
+	public Set<Long> findGuestWithModerators(Optional<Integer> greaterThan, Optional<Integer> lessThan, ModeratorRole role) {
+		Session session = getHibernateTemplate().getSessionFactory().getCurrentSession();
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Tuple> query = cb.createQuery(Tuple.class);
+		Root<Account> account = query.from(Account.class);
+		Join moderators = account.join("moderators", JoinType.LEFT);
+		query.multiselect(account.get("id"), cb.count(moderators.get("id")).alias("cnt"));
+		if (role != null) {
+			query.where(cb.equal(moderators.get("role"), role));
+		}
+		query.groupBy(account.get("id"));
+		query.having(
+				cb.and(
+						cb.greaterThan(cb.count(moderators.get("id")), greaterThan.orElse(-1).longValue()),
+						cb.lessThan(cb.count(moderators.get("id")), lessThan.orElse(Integer.MAX_VALUE).longValue())));
+		List<Tuple> resultList = session.createQuery(query).getResultList();
+		return resultList.stream().map(r -> (Long)r.get(0)).collect(Collectors.toSet());
+	}
+
 	@Override
 	public PageContainer<U> findAll(List<AbstractDomain> domains, Order sortOrder, String mail, String firstName,
-			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,
-			PageContainer<U> container) {
+									String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role,
+									AccountType type, Set<Long> subset, PageContainer<U> container) {
 		DetachedCriteria detachedCrit = getAllCriteria(domains, mail, firstName, lastName, restricted, canCreateGuest,
-				canUpload, role, type);
+				canUpload, role, type, subset);
 		detachedCrit.addOrder(sortOrder);
 		Long totalNumberElements = count(domains, mail, firstName, lastName, restricted, canCreateGuest, canUpload, role,
-				type);
+				type, subset);
 		return findAll(detachedCrit, totalNumberElements, container);
 	}
 
 	private Long count(List<AbstractDomain> domains, String mail, String firstName, String lastName, Boolean restricted,
-			Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type) {
+			Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type, Set<Long> subset) {
 		DetachedCriteria detachedCrit = getAllCriteria(domains, mail, firstName, lastName, restricted, canCreateGuest,
-				canUpload, role, type);
+				canUpload, role, type, subset);
 		detachedCrit.setProjection(Projections.rowCount());
 		return (Long) detachedCrit.getExecutableCriteria(getCurrentSession()).uniqueResult();
 	}
 
 	private DetachedCriteria getAllCriteria(List<AbstractDomain> domains, String mail, String firstName,
-			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type) {
+			String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,
+											Set<Long> subset) {
 		DetachedCriteria detachedCrit = DetachedCriteria.forClass(getPersistentClass());
 		detachedCrit.createAlias("domain", "d");
 		detachedCrit.add(Restrictions.eq("destroyed", 0L));
@@ -183,6 +211,9 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		}
 		if (Objects.nonNull(role)) {
 			detachedCrit.add(Restrictions.eq("role", role));
+		}
+		if (Objects.nonNull(subset) && subset.size() > 0) {
+			detachedCrit.add(Restrictions.in("id", subset));
 		}
 		if (Objects.nonNull(type)) {
 			detachedCrit.add(Restrictions.in("class", type.toInt()));
