@@ -9,6 +9,10 @@ variables:
   DOCKER_IMAGE_CORE_TEST: "docker-registry.linagora.com:5000/linshare-snapshots/linshare-core-test"
   GIT_DEPTH: "1"
   FF_NETWORK_PER_BUILD: "true"
+  SNYK_IMAGE: snyk/snyk-cli:maven-3.6.3_java11
+  SNYK_URL: "https://app.snyk.io/org/linshare/projects"
+  SNYK_OPENSOURCE: "yes"
+  SNYK_CODE: "yes"
 
 .cache-tpl: &cache-tpl
   key: "$CI_COMMIT_REF_SLUG"
@@ -30,46 +34,10 @@ variables:
     - name: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
       alias: docker-dind
 
-.snyk: &snyk
-  stage: test
-  needs: []
-  image:
-    name: snyk/snyk-cli:maven-3.6.3_java11
-    entrypoint: [""]
-  tags:
-    - docker
-  before_script:
-    - snyk --version
-  allow_failure: true
-  after_script:
-    - |
-      echo "=== Snyk Ignore Policy ==="
-      echo "It is possible to ignore security issues but:"
-      echo "- Must be via commit then will be public information"
-      echo "- Must provide a technical reason"
-      echo "- Must have a reasonable expiration date"
-      echo "Documentation:"
-      echo "- https://docs.snyk.io/features/snyk-cli/fix-vulnerabilities-from-the-cli/ignore-vulnerabilities-using-snyk-cli"
-      echo "- https://docs.snyk.io/features/fixing-and-prioritizing-issues/policies/the-.snyk-file"
-
-snyk_open_source:
-  <<: *snyk
-  script:
-    - |
-      echo "=== Snyk OpenSource Scan ==="
-      echo "Find vulnerabilities in open source dependencies"
-      echo "Read more: https://snyk.io/product/open-source-security-management/"
-    - snyk test --all-projects --severity-threshold=high --fail-on=all
-
-snyk_code:
-  <<: *snyk
-  script:
-    # snyk code docs don't have --all-projects nor --fail-on but it "works"
-    - |
-      echo "=== Snyk Code Scan ==="
-      echo "Static Application Security Testing (SAST)"
-      echo "Read more: https://snyk.io/learn/application-security/static-application-security-testing/"
-    - snyk code test --all-projects --severity-threshold=high --fail-on=all
+include:
+  - project: 'publicgroup/templates/gitlab-ci-yml'
+    ref: master
+    file: 'ci-snyk.yml'
 
 check_author:
   image: docker-registry.linagora.com:5000/lgs-releases/gitlab-integrity-checks:latest
