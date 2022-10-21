@@ -162,6 +162,6 @@ public class Moderator {
 	}
 
 	public boolean isSimpleModerator() {
-		return ModeratorRole.ADMIN.equals(this.getRole());
+		return ModeratorRole.SIMPLE.equals(this.getRole());
 	}
 }
