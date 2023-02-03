@@ -133,6 +133,7 @@
 			<b:ref bean="rememberMeAuthenticationProvider" />
 			<b:ref bean="jwtAuthenticationProvider" />
 			<b:ref bean="oidcOpaqueAuthenticationProvider" />
+			<b:ref bean="oidcJwtAuthenticationProvider" />
 			<b:ref bean="databaseAuthenticationProvider" />
 			<b:ref bean="ldapAuthenticationProvider" />
 		</b:list>

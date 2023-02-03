@@ -136,13 +136,23 @@
 		<b:property name="useOIDC" value="${oidc.on}" />
 	</b:bean>
 
-	<b:bean id="oidcOpaqueAuthenticationProvider" class="org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationProvider">
+	<b:bean id="oidcAuthenticationTokenDetailsFactory" class="org.linagora.linshare.auth.oidc.OidcAuthenticationTokenDetailsFactory">
 		<b:constructor-arg ref="authentificationFacade" />
+		<b:constructor-arg value="${oidc.access.claim.value}"/>
+	</b:bean>
+
+	<b:bean id="oidcOpaqueAuthenticationProvider" class="org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationProvider">
+		<b:constructor-arg ref="oidcAuthenticationTokenDetailsFactory" />
 		<b:constructor-arg value="${oidc.on}"/>
 		<b:constructor-arg value="${oidc.issuerUri}"/>
 		<b:constructor-arg value="${oidc.client.id}"/>
 		<b:constructor-arg value="${oidc.client.secret}"/>
-		<b:constructor-arg value="${oidc.access.claim.value}"/>
+	</b:bean>
+
+	<b:bean id="oidcJwtAuthenticationProvider" class="org.linagora.linshare.auth.oidc.OIdcJwtAuthenticationProvider">
+		<b:constructor-arg ref="oidcAuthenticationTokenDetailsFactory" />
+		<b:constructor-arg value="${oidc.issuerUri}"/>
+		<b:constructor-arg value="${oidc.on}"/>
 	</b:bean>
 
 	<b:bean id="jwtAuthenticationProvider"

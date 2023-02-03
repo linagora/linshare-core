@@ -35,13 +35,8 @@
  */
 package org.linagora.linshare.auth.jwt;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.lang3.StringUtils;
+import org.linagora.linshare.auth.oidc.OidcJwtAuthenticationToken;
 import org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +46,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+import static org.apache.commons.lang3.StringUtils.trim;
+
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private static Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
 	private static final String AUTH_HEADER = "Authorization";
+	private static final String CLIENT_APP_HEADER = "X-LinShare-Client-App";
+	private static final String ID_TOKEN_HEADER = "X-LinShare-ID-Token";
+	private static final String LINSHARE_WEB_APP_NAME = "Linshare-Web";
 
 	// Do not remove trailer space.
 	private static final String AUTH_METHOD = "Bearer ";
@@ -83,8 +89,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		if (authenticationIsRequired(token, currentAuthentication)) {
 			AbstractAuthenticationToken authentication = null;
 			// FIXME: it is a very dirty workaround to differentiate Opaque Token for JWT token. 
-			if (useOIDC && token.length() <= opaqueTokenThreshold) {
-				authentication = new OidcOpaqueAuthenticationToken(token);
+			if (useOIDC) {
+				String appNAme = request.getHeader(CLIENT_APP_HEADER);
+				if (token.length() <= opaqueTokenThreshold) {
+					authentication = new OidcOpaqueAuthenticationToken(token);
+				} else if (LINSHARE_WEB_APP_NAME.equalsIgnoreCase(trim(appNAme))){
+					String idToken = request.getHeader(ID_TOKEN_HEADER);
+					if(StringUtils.isNotEmpty(idToken)) {
+						authentication = new OidcJwtAuthenticationToken(token, idToken);
+					}
+				}
 			} else {
 				authentication = new JwtAuthenticationToken(token);
 			}

@@ -1,8 +1,8 @@
 /*
  * LinShare is an open source filesharing software developed by LINAGORA.
- * 
+ *
  * Copyright (C) 2021-2022 LINAGORA
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,12 +20,12 @@
  * commercial brands. Other Additional Terms apply, see
  * <http://www.linshare.org/licenses/LinShare-License_AfferoGPL-v3.pdf> for more
  * details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -35,29 +35,12 @@
  */
 package org.linagora.linshare.auth.oidc;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.commons.lang3.Validate;
-import org.linagora.linshare.auth.AuthRole;
-import org.linagora.linshare.auth.RoleProvider;
-import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
-import org.linagora.linshare.auth.exceptions.LinShareAuthenticationExceptionCode;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration.Builder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrations;
@@ -76,8 +59,6 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private AuthentificationFacade authentificationFacade;
-
 	private OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
 
 	private String clientId;
@@ -86,13 +67,12 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 
 	private String issuerUri;
 
-	private String linshareAccessClaimValue;
+	private OidcAuthenticationTokenDetailsFactory oidcAuthenticationTokenDetailsFactory;
 
-	public OidcOpaqueAuthenticationProvider(AuthentificationFacade authentificationFacade, Boolean useOIDC,
-			String issuerUri, String clientId, String clientSecret, String linshareAccessClaimValue) {
+	public OidcOpaqueAuthenticationProvider(OidcAuthenticationTokenDetailsFactory oidcAuthenticationTokenDataFabric,
+											Boolean useOIDC, String issuerUri, String clientId, String clientSecret) {
 		super();
-		this.authentificationFacade = authentificationFacade;
-		this.linshareAccessClaimValue = linshareAccessClaimValue;
+		this.oidcAuthenticationTokenDetailsFactory = oidcAuthenticationTokenDataFabric;
 		if (useOIDC) {
 			Validate.notEmpty(clientId, "Missing OIDC client ID");
 			Validate.notEmpty(clientSecret, "Missing OIDC client secret");
@@ -119,8 +99,7 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 		if (issuerUri.endsWith("/")) {
 			logger.warn("'issuerUri' ends with '/' character, might leads to connection issue !");
 		}
-		OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
-		final String token = jwtAuthentication.getToken();
+		final String token = ((OidcOpaqueAuthenticationToken) authentication).getToken();
 		BearerTokenAuthenticationToken authToken = new BearerTokenAuthenticationToken(token);
 
 		ClientRegistration clientRegistration = getClientRegistration();
@@ -137,114 +116,10 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 		OAuth2User loadUser = oAuth2UserService.loadUser(req);
 		logger.trace("sub: {}", authenticate.getName());
 		logger.trace("claims: {}", loadUser.getAttributes().toString());
-		User foundUser = null;
-		String email = loadUser.getAttribute("email");
-		try {
-			Validate.notEmpty(email, "Missing email claim.");
-			jwtAuthentication.put("email", email);
-			Optional<List<String>> domainDiscriminator = Optional.ofNullable(loadUser.getAttribute("domain_discriminator"));
-			String externalUid = loadUser.getAttribute("external_uid");
-			if (domainDiscriminator.isPresent()) {
-				OIDCUserProviderDto providerDto = authentificationFacade.findOidcProvider(domainDiscriminator.get());
-				jwtAuthentication.put("domain_discriminator", providerDto.getDomainDiscriminator());
-				if (providerDto.getCheckExternalUserID() ) {
-					Validate.notEmpty(externalUid, "Missing external_uid claim.");
-				}
-				if (providerDto.getUseAccessClaim() ) {
-					String allowed = loadUser.getAttribute("linshare_access");
-					Validate.notEmpty(allowed, "Missing linshare_access claim.");
-					if (!allowed.toLowerCase().equals(linshareAccessClaimValue)) {
-						String msg = "Unauthorized access attempt : " + email;
-						logger.warn(msg);
-						throw new LinShareAuthenticationException(msg) {
-							private static final long serialVersionUID = 3890006776875100561L;
-							@Override
-							public LinShareAuthenticationExceptionCode getErrorCode() {
-								return LinShareAuthenticationExceptionCode.ACCESS_NOT_GRANTED;
-							}
-						};
-					}
-				}
-				// looking in the db first.
-				foundUser = authentificationFacade.findByLoginAndDomain(providerDto.getDomain().getUuid(), email);
-				if (foundUser == null) {
-					// looking through user provider.
-					foundUser = authentificationFacade.ldapSearchForAuth(providerDto.getDomain().getUuid(), email);
-				}
-				if (foundUser == null) {
-					logger.error("User not found: " + token);
-					throw new UsernameNotFoundException("Could not find user account : " + authenticate.getTokenAttributes().toString());
-				}
-				try {
-					// It means we are using a OIDC user provider, so we need to provide some extra properties to allow on-the-fly creation.
-					// It won't be use if the profile already exists.
-					jwtAuthentication.put("first_name", loadUser.getAttribute("given_name"));
-					jwtAuthentication.put("last_name", loadUser.getAttribute("family_name"));
-					jwtAuthentication.put("external_uid", externalUid);
-					jwtAuthentication.put("linshare_locale", loadUser.getAttribute("linshare_locale"));
-					jwtAuthentication.put("linshare_role", loadUser.getAttribute("linshare_role"));
-					// loading/creating the real entity
-					foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
-					if (!foundUser.getLdapUid().equals(externalUid)) {
-						if (providerDto.getCheckExternalUserID() ) {
-							logger.error("External uid has changed, same email but probably a different user. external_uid={}, {}", externalUid, foundUser);
-							throw new UsernameNotFoundException("Access rejected, external uid does not match with existing profile");
-						} else {
-							logger.debug("External uid has changed, same email but probably a different user. {}, {}", externalUid, foundUser);
-						}
-					}
-				} catch (BusinessException e2) {
-					logger.error(e2.getMessage(), e2);
-					throw new AuthenticationServiceException(
-							"Could not create user account : "
-							+ foundUser.getDomainId() + " : "
-							+ foundUser.getMail(), e2);
-				}
-			} else {
-				foundUser = authentificationFacade.findByLogin(email);
-				if (foundUser == null) {
-					// looking through user providers.
-					List<String> domains = authentificationFacade.getAllDomains();
-					for (String domain : domains) {
-						logger.trace("searching into domain: {}", domain);
-						foundUser = authentificationFacade.ldapSearchForAuth(domain, email);
-						if (foundUser != null) {
-							break;
-						}
-					}
-				}
-				if (foundUser == null) {
-					logger.error("User not found: " + token);
-					throw new UsernameNotFoundException("Could not find user account : " + authenticate.getTokenAttributes().toString());
-				}
-				try {
-					// loading/creating the real entity
-					foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
-				} catch (BusinessException e) {
-					logger.error(e.getMessage(), e);
-					throw new AuthenticationServiceException(
-							"Could not create user account : "
-							+ foundUser.getDomainId() + " : "
-							+ foundUser.getMail(), e);
-				}
-			}
-		} catch (NullPointerException|IllegalArgumentException e) {
-			logger.error(e.getMessage(), e);
-			throw new LinShareAuthenticationException("Missing some claim values: " + e.getMessage()) {
-						private static final long serialVersionUID = -2805671638935042756L;
-						@Override
-						public LinShareAuthenticationExceptionCode getErrorCode() {
-							return LinShareAuthenticationExceptionCode.DOMAIN_NOT_FOUND;
-						}
-					};
-		}
-		logger.info(String.format("Successful authentication of  %1$s with OIDC opaque token : %2$s", foundUser.getLsUuid(), authenticate.getTokenAttributes().toString()));
-		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
-		grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_AUTH_OIDC));
-		UserDetails userDetail = new org.springframework.security.core.userdetails.User(foundUser.getLsUuid(), "", true,
-				true, true, true, grantedAuthorities);
 
-		return new UsernamePasswordAuthenticationToken(userDetail, jwtAuthentication.getCredentials(), grantedAuthorities);
+		OidcLinShareUserClaims claims = OidcLinShareUserClaims.fromOAuth2User(loadUser);
+
+		return oidcAuthenticationTokenDetailsFactory.getAuthenticationToken(claims);
 	}
 
 	private ClientRegistration getClientRegistration() {

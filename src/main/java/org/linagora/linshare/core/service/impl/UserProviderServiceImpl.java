@@ -42,7 +42,8 @@ import javax.naming.NamingException;
 
 import org.apache.commons.lang3.Validate;
 import org.hibernate.criterion.Order;
-import org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationToken;
+import org.linagora.linshare.auth.oidc.OidcLinShareUserClaims;
+import org.linagora.linshare.auth.oidc.OidcTokenWithClaims;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -81,8 +82,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.google.common.collect.Lists;
-
-import static java.util.Optional.empty;
 
 public class UserProviderServiceImpl extends GenericAdminServiceImpl implements UserProviderService {
 
@@ -341,18 +340,18 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				if (!authentication.isAuthenticated()) {
 					// it means we are trying to find/create this profile during authentication process.
 					// This code is ugly, it is a quick workaround.
-					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())) {
-						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
+					if ((OidcTokenWithClaims.class).isAssignableFrom(authentication.getClass())) {
+						OidcLinShareUserClaims claims = ((OidcTokenWithClaims) authentication).getClaims();
 						OIDCUserProvider oidcUp = (OIDCUserProvider) userProvider;
-						String domainDiscriminator = jwtAuthentication.get("domain_discriminator");
+						String domainDiscriminator = claims.getDomainDiscriminator();
 						if (oidcUp.getDomainDiscriminator().equals(domainDiscriminator)) {
-							String email = jwtAuthentication.get("email");
+							String email = claims.getEmail();
 							Validate.notEmpty(email, "Missing required attribute for email.");
-							String firstName = jwtAuthentication.get("first_name");
+							String firstName = claims.getFirstName();
 							Validate.notEmpty(firstName, "Missing required attribute for first name.");
-							String lastName = jwtAuthentication.get("last_name");
+							String lastName = claims.getLastName();
 							Validate.notEmpty(lastName, "Missing required attribute for last name.");
-							Optional<String> externalUuid = Optional.ofNullable(jwtAuthentication.get("external_uid"));
+							Optional<String> externalUuid = Optional.ofNullable(claims.getExternalUid());
 							Internal internal = new Internal(firstName, lastName, email, externalUuid.orElse(email));
 							internal.setDomain(domain);
 							internal.setRole(domain.getDefaultRole());
@@ -361,12 +360,12 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 							if (oidcUp.getUseRoleClaim()) {
 								internal.setRole(Role.toDefaultRole(
 									domain.getDefaultRole(),
-									jwtAuthentication.get("linshare_role")));
+									claims.getRole()));
 							}
 							if (oidcUp.getUseEmailLocaleClaim()) {
 								Language language = Language.toDefaultLanguage(
 									domain.getExternalMailLocale(),
-									jwtAuthentication.get("linshare_locale"));
+									claims.getLocale());
 								internal.setMailLocale(language);
 								internal.setExternalMailLocale(language);
 							} else {
@@ -585,14 +584,14 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					// It means we are trying to find this profile during authentication process.
 					// It was the auto discover feature of LDAP, but it does not exist for OIDC.
 					// This code is ugly workaround
-					if ((OidcOpaqueAuthenticationToken.class).isAssignableFrom(authentication.getClass())){
-						OidcOpaqueAuthenticationToken jwtAuthentication = (OidcOpaqueAuthenticationToken) authentication;
+					if ((OidcTokenWithClaims.class).isAssignableFrom(authentication.getClass())){
+						OidcTokenWithClaims jwtAuthentication = (OidcTokenWithClaims) authentication;
 						OIDCUserProvider oidcUp = (OIDCUserProvider) userProvider;
-						String domainDiscriminator = jwtAuthentication.get("domain_discriminator");
+						String domainDiscriminator = jwtAuthentication.getClaims().getDomainDiscriminator();
 						logger.trace("domainDiscriminator : {}", domainDiscriminator);
 						// if this user does not belong to this domain, we ignore him.
 						if (oidcUp.getDomainDiscriminator().equals(domainDiscriminator)) {
-							String email = jwtAuthentication.get("email");
+							String email = jwtAuthentication.getClaims().getEmail();
 							Validate.notEmpty(email, "Missing required attribute for email.");
 							Internal internal = new Internal(null, null, email, null);
 							internal.setDomain(domain);
