@@ -906,7 +906,35 @@
 	</dependencies>
 	<build>
 		<finalName>linshare-core</finalName>
+
+			<!-- Change licence -->
+			<!-- To update the license run mvn license:format -->
 			<plugins>
+				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>4.1</version>
+					<configuration>
+						<properties>
+							<owner>Anton Shepilov</owner>
+							<email>ashepilov@linagora.com</email>
+						</properties>
+						<licenseSets>
+							<licenseSet>
+								<header>LICENSE_INLINE</header>
+								<excludes>
+									<exclude>**/*.yml</exclude>
+									<exclude>**/*.xml</exclude>
+									<exclude>**/*.properties</exclude>
+									<exclude>**/README</exclude>
+									<exclude>src/test/resources/**</exclude>
+									<exclude>src/main/resources/**</exclude>
+								</excludes>
+							</licenseSet>
+						</licenseSets>
+					</configuration>
+				</plugin>
+
 			<!-- maven-compiler-plugin -->
 			<plugin>
 				<!-- https://github.com/openapi-tools/swagger-maven-plugin -->
