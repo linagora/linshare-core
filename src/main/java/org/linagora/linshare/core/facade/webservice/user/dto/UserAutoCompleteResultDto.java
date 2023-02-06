@@ -33,9 +33,6 @@ public class UserAutoCompleteResultDto extends AutoCompleteResultDto {
 
 	private String mail;
 
-	public UserAutoCompleteResultDto() {
-	}
-
 	public UserAutoCompleteResultDto(UserDto user) {
 		super(user.getUuid(), user.getMail());
 		this.firstName = user.getFirstName();
@@ -84,24 +81,8 @@ public class UserAutoCompleteResultDto extends AutoCompleteResultDto {
 		this.mail = mail;
 	}
 
-	/*
-	 * Transformers
-	 */
 	public static Function<UserDto, UserAutoCompleteResultDto> toDto() {
-		return new Function<UserDto, UserAutoCompleteResultDto>() {
-			@Override
-			public UserAutoCompleteResultDto apply(UserDto arg0) {
-				return new UserAutoCompleteResultDto(arg0);
-			}
-		};
+		return UserAutoCompleteResultDto::new;
 	}
 
-	public static Function<User, UserAutoCompleteResultDto> toDtoV2() {
-		return new Function<User, UserAutoCompleteResultDto>() {
-			@Override
-			public UserAutoCompleteResultDto apply(User arg0) {
-				return new UserAutoCompleteResultDto(arg0);
-			}
-		};
-	}
 }

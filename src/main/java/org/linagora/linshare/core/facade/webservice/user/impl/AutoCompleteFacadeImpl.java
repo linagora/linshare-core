@@ -18,6 +18,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.SearchType;
@@ -189,8 +190,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 	}
 
 	private List<AutoCompleteResultDto> searchUsers(Account authUser, Account actor, String pattern) {
-		List<User> users = userService2.autoCompleteUser(authUser, actor, pattern);
-		return Lists.transform(users, UserAutoCompleteResultDto.toDtoV2());
+		return findUser(pattern).stream().map(UserAutoCompleteResultDto::new).collect(Collectors.toList());
 	}
 
 	private List<AutoCompleteResultDto> searchForSharing(String pattern, User authUser) {
