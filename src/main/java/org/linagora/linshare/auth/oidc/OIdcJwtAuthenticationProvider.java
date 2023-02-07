@@ -16,21 +16,15 @@
 package org.linagora.linshare.auth.oidc;
 
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.proc.BadJOSEException;
-import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
-import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
@@ -41,26 +35,11 @@ public class OIdcJwtAuthenticationProvider implements AuthenticationProvider {
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private OidcAuthenticationTokenDetailsFactory oidcAuthenticationTokenDataFactory;
+	OidcAuthenticationTokenDetailsFactory oidcAuthenticationTokenDataFactory;
 
 	private String issuerUri;
 
-	private JwtAuthenticationProvider jwtAuthenticationProvider;
-
-	private NimbusJwtDecoder jwtDecoder;
-
-	//TODO hack until we fix sertificate validation for Microsoft Azure. Not for Prod!!!
-	public static class DummyJWTProcessor extends DefaultJWTProcessor {
-		@Override
-		public JWTClaimsSet process(SignedJWT signedJWT, SecurityContext context) throws BadJOSEException, JOSEException {
-			try {
-				return signedJWT.getJWTClaimsSet();
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-	}
+	JwtDecoder jwtDecoder;
 
 	public OIdcJwtAuthenticationProvider(OidcAuthenticationTokenDetailsFactory oidcAuthenticationTokenDataFactory,
 										 String issuerUri,
@@ -68,10 +47,7 @@ public class OIdcJwtAuthenticationProvider implements AuthenticationProvider {
 		this.issuerUri = issuerUri;
 		if (useOIDC) {
 			this.oidcAuthenticationTokenDataFactory = oidcAuthenticationTokenDataFactory;
-			jwtDecoder = new NimbusJwtDecoder(new DummyJWTProcessor());
-			jwtDecoder.setJwtValidator((OAuth2TokenValidator) token -> OAuth2TokenValidatorResult.success());
-//			JwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
-			jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
+			this.jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
 		}
 	}
 
@@ -88,20 +64,20 @@ public class OIdcJwtAuthenticationProvider implements AuthenticationProvider {
 		if (issuerUri.endsWith("/")) {
 			logger.warn("'issuerUri' ends with '/' character, might leads to connection issue !");
 		}
-		final String token = ((OidcJwtAuthenticationToken) authentication).getAuthToken();
-		BearerTokenAuthenticationToken authToken = new BearerTokenAuthenticationToken(token);
+		//check that auth token is valid, and as far we don't use eny custom scopes except the default one, do nothing
+		OidcJwtAuthenticationToken jwtAuthenticationToken = (OidcJwtAuthenticationToken) authentication;
 
-		Authentication authenticate = jwtAuthenticationProvider.authenticate(authToken);
-
-		Jwt idToken = jwtDecoder.decode(((OidcJwtAuthenticationToken) authentication).getIdToken());
-
-		logger.debug("OIDC opaque access token seems to be good. Processing authentication...");
-		logger.trace("sub: {}", authenticate.getName());
+		jwtDecoder.decode(jwtAuthenticationToken.getAuthToken());
+		Jwt idToken = jwtDecoder.decode(jwtAuthenticationToken.getIdToken());
+		logger.debug("OIDC JWT access token seems to be good. Processing authentication...");
 
 		OidcLinShareUserClaims claims = OidcLinShareUserClaims.fromAttributes(idToken.getClaims());
 		logger.trace("claims: {}", claims);
 
-		((OidcJwtAuthenticationToken) authentication).setClaims(claims);
+		//not very clean why we are doing it, but we need to pass this attributes to SecurityContext
+		// ot use them for example here org.linagora.linshare.core.service.impl.UserProviderServiceImpl
+		//TODO[ASH] refactor this, and and just spring authorities and remove all isAssignableFrom logic
+		jwtAuthenticationToken.setClaims(claims);
 
 		UsernamePasswordAuthenticationToken authenticationToken = oidcAuthenticationTokenDataFactory.getAuthenticationToken(claims);
 		return authenticationToken;
