@@ -122,7 +122,7 @@ VALUES
 	'Test', true, '', false, 
 	true, false, 0),
 	-- amy wolsh topDomain2
-	(50, 'amy.wolsh@linshare.org', 2, 'aebe1b64-39c0-11e5-9fa8-080027b8254j', 
+	(50, 'amy.wolsh@linshare.org', 2, 'aebe1b64-39c0-11e5-9fa8-080027b8254j',
 	now(), now(), 0,
 	'en', 'en', 'en', true, null, 
 	0, @second_domain_id , 'IN_USE', 'Foo2', 

@@ -128,4 +128,9 @@ public class LinShareTestConstants {
 	 * Abbey account, on topDomain2
 	 */
 	public static final String ABBEY_CURRY_ACCOUNT = "abbey.curry@linshare.org";
+
+	/**
+	 * oidc dude, on OidcDomain
+	 */
+	public static final String OIDC_DUDE_ACCOUNT = "oidc.dude@linshare.org";
 }

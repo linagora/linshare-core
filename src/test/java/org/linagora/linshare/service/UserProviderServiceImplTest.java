@@ -18,6 +18,7 @@ package org.linagora.linshare.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -27,21 +28,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.UserProviderRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@ExtendWith(LdapServerRule.class)
+@Sql({ "/import-test-user-synchronization.sql" })
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -72,6 +83,14 @@ public class UserProviderServiceImplTest {
 	
 	@Autowired
 	private AccountService accountService;
+
+	@Autowired
+	@Qualifier("userRepository")
+	private UserRepository<User> userRepository;
+
+	@Autowired
+	private UserProviderRepository userProviderRepository;
+
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -217,6 +236,232 @@ public class UserProviderServiceImplTest {
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assertions.fail("Can't update pattern.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCompleteWithPatternUserLdap() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User user = userRepository.findByMail(LinShareTestConstants.AMY_WOLSH_ACCOUNT);
+		AbstractDomain domain = user.getDomain();
+		UserProvider userProvider = domain.getUserProvider();
+		String pattern = "Dude";
+
+		try {
+			List<User> usersList = userProviderService.autoCompleteUser(domain, userProvider, pattern);
+
+			//"standard.dude@linshare.org" from db is not fetched with ldap user provider
+			Assertions.assertEquals(
+					List.of("ldap.dude@linshare.org"),
+					usersList.stream().map(Account::getMail).collect(Collectors.toList()));
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assertions.fail("Can't search users.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCompleteWithPatternUserOidc() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User user = userRepository.findByMail(LinShareTestConstants.OIDC_DUDE_ACCOUNT);
+		AbstractDomain domain = user.getDomain();
+		UserProvider userProvider = domain.getUserProvider();
+		String pattern = "Dude";
+
+		try {
+			List<User> usersList = userProviderService.autoCompleteUser(domain, userProvider, pattern);
+
+			//Both db and ldap users are returned with oidc user provider
+			Assertions.assertEquals(
+					List.of("oidc.dude@linshare.org",
+							"oidcldap.dude@linshare.org",
+							"other.dude@linshare.org"),
+					usersList.stream().map(Account::getMail).sorted().collect(Collectors.toList()));
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assertions.fail("Can't search users.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCompleteWithNameUserLdap() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User user = userRepository.findByMail(LinShareTestConstants.AMY_WOLSH_ACCOUNT);
+		AbstractDomain domain = user.getDomain();
+		UserProvider userProvider = domain.getUserProvider();
+		String firstName = "a";
+		String lastName = "u";
+
+		try {
+			List<User> usersList = userProviderService.autoCompleteUser(domain, userProvider, firstName, lastName);
+
+			//"standard.dude@linshare.org" from db is not fetched with ldap user provider
+			Assertions.assertEquals(
+					List.of("abbey.curry@linshare.org",
+							"ldap.dude@linshare.org"),
+					usersList.stream().map(Account::getMail).sorted().collect(Collectors.toList()));
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assertions.fail("Can't search users.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCompleteWithNameUserOidc() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User user = userRepository.findByMail(LinShareTestConstants.OIDC_DUDE_ACCOUNT);
+		AbstractDomain domain = user.getDomain();
+		UserProvider userProvider = domain.getUserProvider();
+		String firstName = "d";
+		String lastName = "u";
+
+		try {
+			List<User> usersList = userProviderService.autoCompleteUser(domain, userProvider, firstName, lastName);
+
+			//Both db and ldap users are returned with oidc user provider
+			Assertions.assertEquals(
+					List.of("oidc.dude@linshare.org",
+							"oidcldap.dude@linshare.org"),
+					usersList.stream().map(Account::getMail).sorted().collect(Collectors.toList()));
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assertions.fail("Can't search users.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSearchWithNameUserLdap() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User user = userRepository.findByMail(LinShareTestConstants.AMY_WOLSH_ACCOUNT);
+		AbstractDomain domain = user.getDomain();
+		UserProvider userProvider = domain.getUserProvider();
+		String mail = "a";
+		String firstName = "a";
+		String lastName = "u";
+
+		try {
+			List<User> usersList = userProviderService.searchUser(domain, userProvider, mail, firstName, lastName);
+
+			//"standard.dude@linshare.org" from db is not fetched with ldap user provider
+			Assertions.assertEquals(
+					List.of("abbey.curry@linshare.org",
+							"ldap.dude@linshare.org"),
+					usersList.stream().map(Account::getMail).sorted().collect(Collectors.toList()));
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assertions.fail("Can't search users.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSearchWithNameUserOidc() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User user = userRepository.findByMail(LinShareTestConstants.OIDC_DUDE_ACCOUNT);
+		AbstractDomain domain = user.getDomain();
+		UserProvider userProvider = domain.getUserProvider();
+		String mail = "u";
+		String firstName = "d";
+		String lastName = "u";
+
+		try {
+			List<User> usersList = userProviderService.searchUser(domain, userProvider, mail, firstName, lastName);
+
+			//Both db and ldap users are returned with oidc user provider
+			Assertions.assertEquals(
+					List.of("oidc.dude@linshare.org",
+							"oidcldap.dude@linshare.org"),
+					usersList.stream().map(Account::getMail).sorted().collect(Collectors.toList()));
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assertions.fail("Can't search users.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSearchWithNameUserOidcNoMail() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User user = userRepository.findByMail(LinShareTestConstants.OIDC_DUDE_ACCOUNT);
+		AbstractDomain domain = user.getDomain();
+		UserProvider userProvider = domain.getUserProvider();
+		String mail = null;
+		String firstName = "oidc";
+		String lastName = "dude";
+
+		try {
+			List<User> usersList = userProviderService.searchUser(domain, userProvider, mail, firstName, lastName);
+
+			//Both db and ldap users are returned with oidc user provider
+			Assertions.assertEquals(
+					List.of("oidc.dude@linshare.org",
+							"oidcldap.dude@linshare.org"),
+					usersList.stream().map(Account::getMail).sorted().collect(Collectors.toList()));
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assertions.fail("Can't search users.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSearchWithNameUserOidcOnlyMail() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User user = userRepository.findByMail(LinShareTestConstants.OIDC_DUDE_ACCOUNT);
+		AbstractDomain domain = user.getDomain();
+		UserProvider userProvider = domain.getUserProvider();
+		String mail = "oidcldap.dude@linshare.org";
+		String firstName = null;
+		String lastName = "";
+
+		try {
+			List<User> usersList = userProviderService.searchUser(domain, userProvider, mail, firstName, lastName);
+
+			//Both db and ldap users are returned with oidc user provider
+			Assertions.assertEquals(
+					List.of("oidcldap.dude@linshare.org"),
+					usersList.stream().map(Account::getMail).sorted().collect(Collectors.toList()));
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assertions.fail("Can't search users.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSearchWithNameUserOidcOnlyLastName() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User user = userRepository.findByMail(LinShareTestConstants.OIDC_DUDE_ACCOUNT);
+		AbstractDomain domain = user.getDomain();
+		UserProvider userProvider = domain.getUserProvider();
+		String mail = null;
+		String firstName = "ldap";
+		String lastName = null;
+
+		try {
+			List<User> usersList = userProviderService.searchUser(domain, userProvider, mail, firstName, lastName);
+
+			//Both db and ldap users are returned with oidc user provider
+			Assertions.assertEquals(
+					List.of("oidcldap.dude@linshare.org"),
+					usersList.stream().map(Account::getMail).sorted().collect(Collectors.toList()));
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assertions.fail("Can't search users.");
 		}
 
 		logger.debug(LinShareTestConstants.END_TEST);

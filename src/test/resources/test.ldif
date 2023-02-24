@@ -322,6 +322,18 @@ cn: Dawson WATERFIELD
 userPassword: secret
 mail: dawson.waterfield@linshare.org
 
+dn: uid=ldap.dude,ou=People2,dc=linshare,dc=org
+uid: ldap.dude
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Dude
+givenName: Ldap
+cn: Ldap, Dude
+userPassword: password2
+mail: ldap.dude@linshare.org
+
 dn: cn=regular-users,ou=Groups,dc=linshare,dc=org
 ou: Groups
 objectClass: organizationalUnit
@@ -339,5 +351,23 @@ description: Vip users
 member: uid=abbey.curry,ou=People2,dc=linshare,dc=org
 member: uid=anderson.waxman,ou=People2,dc=linshare,dc=org
 member: uid=dawson.waterfield,ou=People2,dc=linshare,dc=org
+
+dn: ou=OidcDomain,dc=linshare,dc=org
+ou: OidcDomain
+objectClass: organizationalUnit
+objectClass: top
+description: OidcDomain subtree
+
+dn: uid=oidcldap.dude,ou=OidcDomain,dc=linshare,dc=org
+uid: oidcldap.dude
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Dude
+givenName: Oidcldap
+cn: Oidcldap, Dude
+userPassword: password2
+mail: oidcldap.dude@linshare.org
 
 

@@ -111,6 +111,9 @@
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="twakeUserProviderService" />
 		<constructor-arg ref="twakeGuestUserProviderService" />
+		<constructor-arg ref="ldapConnectionRepository" />
+		<constructor-arg value="${oidc.ldap.connectionUuid}"/>
+		<constructor-arg value="${oidc.ldap.provider.patternUuid}"/>
 	</bean>
 
 	<bean id="mimePolicyService"
