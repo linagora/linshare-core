@@ -42,6 +42,8 @@ public interface UserRestService {
 
 	UserDto delete(UserDto userDto, String uuid) throws BusinessException;
 
+	UserDto create(UserDto userDto) throws BusinessException;
+
 	List<RestrictedContactDto> findAllRestrictedContacts(String userUuid, String mail, String firstName,
 			String lastName) throws BusinessException;
 

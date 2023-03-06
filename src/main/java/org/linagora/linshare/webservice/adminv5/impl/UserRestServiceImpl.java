@@ -338,4 +338,19 @@ public class UserRestServiceImpl implements UserRestService {
 			throws BusinessException {
 		return userFacade.findAllUserGuests(null, uuid, role, pattern);
 	}
+
+	@Path("/")
+	@POST
+	@Operation(summary = "Create a user.", responses = {
+			@ApiResponse(
+					content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+					responseCode = "200"
+			)
+	})
+	@Override
+	public UserDto create(
+			@Parameter(description = "User to create", required = true) UserDto userDto)
+			throws BusinessException {
+		return userFacade.create(userDto);
+	}
 }

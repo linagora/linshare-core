@@ -19,6 +19,8 @@ import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import java.util.Objects;
+
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.mongo.entities.mto.DomainMto;
 

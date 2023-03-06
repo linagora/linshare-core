@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -150,6 +151,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 		}
 		Validate.notEmpty(userDto.getUuid(), "user uuid must be set");
 		Validate.notNull(userDto.isLocked(), "isLocked parameter should be set");
+		Validate.notNull(userDto.getDomain(), "domain parameter should be set");
 		User entity = userService2.find(authUser, actor, userDto.getUuid());
 		User userToUpdate = userDto.toUserObject(entity.isGuest());
 		if (!userDto.isLocked() && entity.isLocked()) {
@@ -372,5 +374,23 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements UserFacade
 			userDto = UserDto.toDtoV5(user, null);
 		}
 		return userDto;
+	}
+
+	@Override
+	public UserDto create(UserDto userDto) throws BusinessException {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		if (userDto.getDomain() == null || StringUtils.isBlank(userDto.getDomain().getUuid())
+				|| StringUtils.isBlank(userDto.getMail())
+				|| userDto.getRole() == null) {
+			throw new BusinessException("Domain, mail and role are mandatory to create an user.");
+		}
+		AbstractDomain targetDomain = abstractDomainService.findById(userDto.getDomain().getUuid());
+		if (!authUser.hasSuperAdminRole() && !authUser.getDomain().equals(targetDomain)) {
+			throw new BusinessException("As admin you can only create on your own domain : " + authUser.getDomain().getLabel());
+		}
+
+		User userToUpdate = userDto.toUserObject(userDto.isGuest());
+		userToUpdate.setDomain(targetDomain);
+		return toDtoV5(userService.saveOrUpdateUser(userToUpdate, Optional.of(authUser)));
 	}
 }

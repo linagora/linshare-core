@@ -44,6 +44,8 @@ public interface UserFacade extends AdminGenericFacade {
 
 	UserDto delete(String actorUuid, UserDto userDto, String uuid) throws BusinessException;
 
+	UserDto create(UserDto userDto);
+
 	List<RestrictedContactDto> findAllRestrictedContacts(String actorUuid, String userUuid, String mail,
 		 String firstName, String lastName);
 
