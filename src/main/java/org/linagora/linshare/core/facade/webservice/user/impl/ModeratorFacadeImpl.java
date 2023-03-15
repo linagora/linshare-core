@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -32,12 +33,14 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.AccountLightDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 import org.linagora.linshare.core.facade.webservice.user.ModeratorFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.ModeratorService;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements ModeratorFacade {
@@ -48,15 +51,19 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 
 	private GuestService guestService;
 
+	private UserService userService;
+
 	public ModeratorFacadeImpl(
 			AccountService accountService,
 			ModeratorService moderatorService,
 			AuditLogEntryService auditLogEntryService,
-			GuestService guestService) {
+			GuestService guestService,
+			UserService userService) {
 		super(accountService);
 		this.moderatorService = moderatorService;
 		this.auditLogEntryService = auditLogEntryService;
 		this.guestService = guestService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -69,12 +76,25 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 		Validate.notNull(dto.getGuest(), "Moderator's guest should be set.");
 		Validate.notEmpty(dto.getGuest().getUuid(), "Moderator's guest uuid should be set");
 		Validate.notNull(dto.getRole(), "Moderator's role should be set.");
-		Account account = accountService.findAccountByLsUuid(dto.getAccount().getUuid());
+		Account account = findOrCreateAccount(dto);
 		Guest guest = (Guest) accountService.findAccountByLsUuid(dto.getGuest().getUuid());
 		checkGuest(guestUuid, guest.getLsUuid());
 		boolean onGuestCreation = false;
 		Moderator moderator = moderatorService.create(authUser, actor, dto.toModeratorObject(dto, account, guest), onGuestCreation);
 		return ModeratorDto.from(moderator);
+	}
+
+	private Account findOrCreateAccount(ModeratorDto dto) {
+		AccountLightDto accountDto = dto.getAccount();
+		Account account = accountService.findByLsUuid(accountDto.getUuid());
+
+		if (account == null
+				&& accountDto.getDomain() != null
+				&& !StringUtils.isBlank(accountDto.getDomain().getUuid())
+				&& !StringUtils.isBlank(accountDto.getEmail())) {
+			account = userService.findOrCreateUserWithDomainPolicies(accountDto.getEmail(), accountDto.getDomain().getUuid());
+		}
+		return account;
 	}
 
 	private void checkGuest(String guestInPath, String guestInDto) {

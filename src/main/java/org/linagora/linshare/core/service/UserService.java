@@ -107,7 +107,7 @@ public interface UserService {
 	 * @param actorDomainId domain identifier, it is useful to determine which domains we are authorized to search in. 
 	 * if this parameter is null, domainId is used as starting point for the research.
 	 * @param actor TODO
-	 * @return founded user.
+	 * @return found user.
 	 * @throws BusinessException if the user could not be found
 	 */
 	User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId, Optional<Account> actor) throws BusinessException ;
