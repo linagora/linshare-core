@@ -95,6 +95,11 @@ public class LinShareTestConstants {
 	public static final String FOO_ACCOUNT = "user3@linshare.org";
 
 	/**
+	 * Foo2 Bar2 account, on Top domain, only in LDAP
+	 */
+	public static final String FOO2_LDAP_ACCOUNT = "user4@linshare.org";
+
+	/**
 	 * Guest account, on guest domain
 	 */
 	public static final String GUEST_ACCOUNT = "guest@linshare.org";
