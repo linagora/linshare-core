@@ -39,6 +39,9 @@ public class MimePolicyDto {
 	@Schema(description = "DomainId")
 	private String domainId;
 
+	@Schema(description = "DomainName")
+	private String domainName;
+
 	@Schema(description = "Creation date")
 	private Date creationDate;
 
@@ -54,6 +57,7 @@ public class MimePolicyDto {
 		this.creationDate = m.getCreationDate();
 		this.modificationDate = m.getModificationDate();
 		this.domainId = m.getDomain().getUuid();
+		this.domainName = m.getDomain().getLabel();
 		if (full) {
 			mimeTypes = Sets.newHashSet();
 			for (MimeType mimeType : m.getMimeTypes()) {
@@ -116,5 +120,13 @@ public class MimePolicyDto {
 
 	public void setDomainId(String domainId) {
 		this.domainId = domainId;
+	}
+
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 }
