@@ -114,7 +114,22 @@ public class ModeratorFacadeImplTest {
 
 	@Test
 	@WithMockUser(LinShareTestConstants.ROOT_ACCOUNT)
-	public void testSuperAdminCreateAdminModeratorFromUuidOnly() throws BusinessException {
+	public void testEitherModeratorUuidOrEmailAndDomainAreRequired() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		ModeratorDto moderatorDto = getTestSimpleModeratorDto(new AccountLightDto());
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+			testee.create(simpleUser.getLsUuid(), guest.getLsUuid(), moderatorDto);
+		});
+
+		assertThat("Either moderator's account uuid or moderator's email and domain uuid pair should be set")
+				.isEqualTo(exception.getMessage());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	@WithMockUser(LinShareTestConstants.ROOT_ACCOUNT)
+	public void testCreateModeratorFromUuidOnly() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		assertThat(guest.getModerators()).size().isEqualTo(0);
 		AccountLightDto johnDto = new AccountLightDto();
@@ -125,6 +140,48 @@ public class ModeratorFacadeImplTest {
 
 		assertThat(moderator).isNotNull();
 		assertThat(moderator.getAccount()).isEqualTo(new AccountLightDto(simpleUser));
+		assertThat(moderator.getGuest()).isEqualTo(new AccountLightDto(guest));
+		assertThat(guestRepository.findByLsUuid(moderator.getGuest().getUuid()).getModerators()).size()
+				.isEqualTo(1);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	@WithMockUser(LinShareTestConstants.ROOT_ACCOUNT)
+	public void testCreateModeratorFromMailAndDomainOnExistingDbUser() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		assertThat(guest.getModerators()).size().isEqualTo(0);
+		AccountLightDto johnDto = new AccountLightDto(simpleUser);
+		johnDto.setUuid(null);
+		ModeratorDto moderatorDto = getTestSimpleModeratorDto(johnDto);
+
+		ModeratorDto moderator = testee.create(root.getLsUuid(), guest.getLsUuid(), moderatorDto);
+
+		assertThat(moderator).isNotNull();
+		assertThat(moderator.getAccount()).isEqualTo(new AccountLightDto(simpleUser));
+		assertThat(moderator.getGuest()).isEqualTo(new AccountLightDto(guest));
+		assertThat(guestRepository.findByLsUuid(moderator.getGuest().getUuid()).getModerators()).size()
+				.isEqualTo(1);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	@WithMockUser(LinShareTestConstants.ROOT_ACCOUNT)
+	public void testCreateModeratorFromMailAndDomain() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		assertThat(userRepository.findByMail(LinShareTestConstants.FOO2_LDAP_ACCOUNT)).isNull();
+		assertThat(guest.getModerators()).size().isEqualTo(0);
+		AccountLightDto foo2AccountDto = new AccountLightDto();
+		foo2AccountDto.setEmail(LinShareTestConstants.FOO2_LDAP_ACCOUNT);
+		foo2AccountDto.setDomain(new DomainLightDto(simpleUser.getDomain()));
+		ModeratorDto moderatorDto = getTestSimpleModeratorDto(foo2AccountDto);
+
+		ModeratorDto moderator = testee.create(root.getLsUuid(), guest.getLsUuid(), moderatorDto);
+
+		User createdUser = userRepository.findByMail(LinShareTestConstants.FOO2_LDAP_ACCOUNT);
+		assertThat(createdUser).isNotNull();
+		assertThat(moderator).isNotNull();
+		assertThat(moderator.getAccount()).isEqualTo(new AccountLightDto(createdUser));
 		assertThat(moderator.getGuest()).isEqualTo(new AccountLightDto(guest));
 		assertThat(guestRepository.findByLsUuid(moderator.getGuest().getUuid()).getModerators()).size()
 				.isEqualTo(1);

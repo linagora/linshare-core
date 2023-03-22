@@ -71,11 +71,15 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(dto, "Moderator to create should be set.");
-		Validate.notNull(dto.getAccount(), "Moderator's account should be set.");
-		Validate.notEmpty(dto.getAccount().getUuid(), "Moderator's account uuid should be set");
 		Validate.notNull(dto.getGuest(), "Moderator's guest should be set.");
 		Validate.notEmpty(dto.getGuest().getUuid(), "Moderator's guest uuid should be set");
 		Validate.notNull(dto.getRole(), "Moderator's role should be set.");
+		Validate.notNull(dto.getAccount(), "Moderator's account should be set.");
+		Validate.isTrue(!StringUtils.isBlank(dto.getAccount().getUuid())
+						|| (!StringUtils.isBlank(dto.getAccount().getEmail())
+						&& dto.getAccount().getDomain() != null
+						&& !StringUtils.isBlank(dto.getAccount().getDomain().getUuid()))
+				, "Either moderator's account uuid or moderator's email and domain uuid pair should be set");
 		Account account = findOrCreateAccount(dto);
 		Guest guest = (Guest) accountService.findAccountByLsUuid(dto.getGuest().getUuid());
 		checkGuest(guestUuid, guest.getLsUuid());
@@ -86,7 +90,11 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 
 	private Account findOrCreateAccount(ModeratorDto dto) {
 		AccountLightDto accountDto = dto.getAccount();
-		Account account = accountService.findByLsUuid(accountDto.getUuid());
+		Account account = null;
+
+		if (!StringUtils.isBlank(accountDto.getUuid())) {
+			account = accountService.findByLsUuid(accountDto.getUuid());
+		}
 
 		if (account == null
 				&& accountDto.getDomain() != null
