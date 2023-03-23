@@ -100,7 +100,7 @@ public class ModeratorFacadeImpl extends AdminGenericFacadeImpl implements Moder
 				&& accountDto.getDomain() != null
 				&& !StringUtils.isBlank(accountDto.getDomain().getUuid())
 				&& !StringUtils.isBlank(accountDto.getEmail())) {
-			account = userService.findOrCreateUserWithDomainPolicies(accountDto.getEmail(), accountDto.getDomain().getUuid());
+			account = userService.findOrCreateUser(accountDto.getEmail(), accountDto.getDomain().getUuid());
 		}
 		return account;
 	}
