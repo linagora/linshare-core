@@ -16,6 +16,7 @@
 package org.linagora.linshare.webservice.adminv5;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
@@ -32,6 +33,8 @@ public interface UserRestService {
 	Response findAll(List<String> domainsUuids, String domainUuid, String sortOrder, String sortField, String mail,
 					 String firstName, String lastName, Boolean restricted, Boolean canCreateGuest, Boolean canUpload, String role,
 					 String type, String moderatorRole, Integer greaterThan, Integer lowerThan, Integer pageNumber, Integer pageSize) throws BusinessException;
+
+	Set<UserDto> autocomplete(String pattern, String accountType, String domain) throws BusinessException;
 
 	UserDto find(String uuid) throws BusinessException;
 

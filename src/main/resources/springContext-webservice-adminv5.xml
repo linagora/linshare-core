@@ -24,6 +24,7 @@
 	</bean>
 	<bean id="adminv5UserRestService" class="org.linagora.linshare.webservice.adminv5.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsAdminV5UserFacade" />
+		<constructor-arg ref="wsAdminAutocompleteFacade" />
 	</bean>
 	<bean id="adminv5EnumRestService" class="org.linagora.linshare.webservice.adminv5.impl.EnumRestServiceImpl">
 	</bean>

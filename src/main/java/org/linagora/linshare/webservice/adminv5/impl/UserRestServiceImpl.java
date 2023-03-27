@@ -17,6 +17,8 @@ package org.linagora.linshare.webservice.adminv5.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -34,6 +36,7 @@ import javax.ws.rs.core.Response;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.domain.entities.fields.UserFields;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.UserFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
@@ -62,11 +65,15 @@ public class UserRestServiceImpl implements UserRestService {
 
 	private final UserFacade userFacade;
 
+	protected final AutocompleteFacade autocompleteFacade;
+
 	private PagingResponseBuilder<UserDto> pageResponseBuilder= new PagingResponseBuilder<>();
 
 	public UserRestServiceImpl(
-			UserFacade userFacade) {
+			UserFacade userFacade,
+			AutocompleteFacade autocompleteFacade) {
 		this.userFacade = userFacade;
+		this.autocompleteFacade = autocompleteFacade;
 	}
 
 	@Path("/")
@@ -119,6 +126,23 @@ public class UserRestServiceImpl implements UserRestService {
 				UserFields.valueOf(sortField), mail, firstName, lastName, restricted, canCreateGuest, canUpload, role,
 				type, moderatorRole, Optional.ofNullable(greaterThan), Optional.ofNullable(lowerThan), pageNumber, pageSize);
 		return pageResponseBuilder.build(container);
+	}
+
+	@Path("/autocomplete/{pattern}")
+	@GET
+	@Operation(summary = "Provide user autocompletion.", responses = {
+			@ApiResponse(
+					content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))),
+					responseCode = "200"
+			)
+	})
+	@Override
+	public Set<UserDto> autocomplete(
+			@Parameter(description = "Pattern to complete.", required = true) @PathParam("pattern") String pattern,
+			@Parameter(description = "Account type to look for.", required = false) @QueryParam("accountType") String accountType,
+			@Parameter(description = "Domain to look into.", required = false) @QueryParam("domain") String domain)
+			throws BusinessException {
+		return autocompleteFacade.findUserV5(pattern, accountType, domain);
 	}
 
 	@Path("/{uuid}")

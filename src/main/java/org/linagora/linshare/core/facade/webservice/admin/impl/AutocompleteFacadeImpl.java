@@ -17,28 +17,89 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AutocompleteFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl;
+
+import com.ctc.wstx.util.StringUtil;
+import com.google.common.base.Strings;
 
 public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements AutocompleteFacade {
 
 	final private static int AUTO_COMPLETE_LIMIT = 20;
 
 	private final UserService userService;
+	private final AbstractDomainService domainService;
 
 	public AutocompleteFacadeImpl(
 			final AccountService accountService,
-			final UserService userService) {
+			final UserService userService,
+			final AbstractDomainService domainService
+	) {
 		super(accountService);
 		this.userService = userService;
+		this.domainService = domainService;
+	}
+
+	@Override
+	public Set<org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto>
+	findUserV5(String pattern, String accountType, String domainId)
+			throws BusinessException {
+		User authUser = checkAuthentication(Role.ADMIN);
+		List<User> users = userService.autoCompleteUser(authUser, pattern);
+		logger.debug("nb result for completion : " + users.size());
+
+		Optional<AccountType> checkedAccountType = getCheckedAccountType(accountType);
+		Optional<AbstractDomain> topDomain = getTopDomain(domainId);
+
+		// TODO : FMA : Use database configuration for auto complete limit
+		return users.stream()
+				.filter(user -> checkedAccountType.isEmpty() || checkedAccountType.get().equals(user.getAccountType()))
+				.filter(user -> topDomain.isEmpty() || user.getDomain().isAncestry(topDomain.get().getUuid()))
+				.limit(AUTO_COMPLETE_LIMIT)
+				.map(org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto.toDto())
+				.collect(Collectors.toSet());
+	}
+
+	@NotNull
+	private static Optional<AccountType> getCheckedAccountType(String accountType) {
+		try {
+			return Strings.isNullOrEmpty(accountType)
+					? Optional.empty()
+					: Optional.of(AccountType.valueOf(accountType));
+		} catch (IllegalArgumentException e) {
+			throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Unknown account type", e);
+		}
+	}
+
+	private Optional<AbstractDomain> getTopDomain(String domainId) {
+		if (Strings.isNullOrEmpty(domainId)){
+			return Optional.empty();
+		}
+		AbstractDomain domain = domainService.findById(domainId);
+		if (domain.isTopDomain()){
+			return Optional.of(domain);
+		}
+		if (domain.isSubDomain()){
+			return Optional.of(domain.getParentDomain());
+		}
+		return Optional.empty();
 	}
 
 	@Override
@@ -64,7 +125,7 @@ public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements Au
 		HashSet<UserDto> hashSet = new HashSet<UserDto>();
 		int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
 		for (User user : users.subList(0, range)) {
-			hashSet.add(UserDto.getSimple(user));
+				hashSet.add(UserDto.getSimple(user));
 		}
 		return hashSet;
 	}

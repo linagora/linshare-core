@@ -23,6 +23,9 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public interface AutocompleteFacade {
 
+	Set<org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto> findUserV5(String pattern, String accountType, String domain)
+			throws BusinessException;
+
 	Set<UserDto> findUser(String pattern)
 			throws BusinessException;
 
