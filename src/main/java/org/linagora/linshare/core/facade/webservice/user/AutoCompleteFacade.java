@@ -24,9 +24,11 @@ import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultD
 
 public interface AutoCompleteFacade {
 
+	Set<UserDto> findUser(String pattern, String accountType) throws BusinessException;
+
 	Set<UserDto> findUser(String pattern) throws BusinessException;
 
 	Set<String> getMail(String pattern) throws BusinessException;
 
-	List<AutoCompleteResultDto> search(String pattern, String type, String threadUuid) throws BusinessException;
+	List<AutoCompleteResultDto> search(String pattern, String type, String threadUuid, String accountType) throws BusinessException;
 }

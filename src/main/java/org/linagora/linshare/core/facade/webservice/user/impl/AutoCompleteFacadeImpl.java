@@ -17,10 +17,13 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.SearchType;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -44,6 +47,7 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.UserService2;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -80,11 +84,34 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	@Override
 	public Set<UserDto> findUser(String pattern) throws BusinessException {
+		return findUser(pattern, null);
+	}
+
+	@Override
+	public Set<UserDto> findUser(String pattern, String accountType) throws BusinessException {
 		User authUser = checkAuthentication();
 		List<User> users = userService.autoCompleteUser(authUser, pattern);
-		logger.debug("nb result for completion : " + users.size());
+		Optional<AccountType> checkedAccountType = getCheckedAccountType(accountType);
+
 		// TODO : FMA : Use database configuration for auto complete limit
-		return getUserDtoList(users);
+		Set<UserDto> userSet = users.stream()
+				.filter(user -> checkedAccountType.isEmpty() || checkedAccountType.get().equals(user.getAccountType()))
+				.limit(AUTO_COMPLETE_LIMIT)
+				.map(UserDto::getCompletionUser)
+				.collect(Collectors.toSet());
+		logger.debug("nb result for completion : " + userSet.size());
+		return userSet;
+	}
+
+	@NotNull
+	private static Optional<AccountType> getCheckedAccountType(String accountType) {
+		try {
+			return Strings.isNullOrEmpty(accountType)
+					? Optional.empty()
+					: Optional.of(AccountType.valueOf(accountType));
+		} catch (IllegalArgumentException e) {
+			throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Unknown account type", e);
+		}
 	}
 
 	@Override
@@ -97,15 +124,6 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 		return getMailList(users, AUTO_COMPLETE_LIMIT);
 	}
 
-	private Set<UserDto> getUserDtoList(List<User> users) {
-		HashSet<UserDto> hashSet = new HashSet<UserDto>();
-		int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
-		for (User user : users.subList(0, range)) {
-			hashSet.add(UserDto.getCompletionUser(user));
-		}
-		return hashSet;
-	}
-
 	private Set<String> getMailList(List<User> users, int limit) {
 		Set<String> res = new HashSet<String>();
 		for (User user : users) {
@@ -115,7 +133,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 	}
 
 	@Override
-	public List<AutoCompleteResultDto> search(String pattern, String type, String threadUuid) throws BusinessException {
+	public List<AutoCompleteResultDto> search(String pattern, String type, String threadUuid, String accountType) throws BusinessException {
 		User authUser = checkAuthentication();
 		User actor = this.getActor(authUser, null);
 		if (pattern.length() < 3) {
@@ -126,7 +144,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 			case SHARING:
 				return searchForSharing(pattern, authUser);
 			case USERS:
-				return searchUsers(authUser, actor, pattern);
+				return searchUsers(pattern, accountType);
 			case THREAD_MEMBERS:
 				return searchForThreadMembers(pattern, threadUuid, authUser);
 			case UPLOAD_REQUESTS:
@@ -189,8 +207,8 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 		return result;
 	}
 
-	private List<AutoCompleteResultDto> searchUsers(Account authUser, Account actor, String pattern) {
-		return findUser(pattern).stream().map(UserAutoCompleteResultDto::new).collect(Collectors.toList());
+	private List<AutoCompleteResultDto> searchUsers(String pattern, String accountType) {
+		return findUser(pattern, accountType).stream().map(UserAutoCompleteResultDto::new).collect(Collectors.toList());
 	}
 
 	private List<AutoCompleteResultDto> searchForSharing(String pattern, User authUser) {
