@@ -37,4 +37,5 @@ public interface MimePolicyFacade extends AdminGenericFacade {
 
 	MimePolicyDto disableAllMimeTypes(String uuid) throws BusinessException;
 
+    void assign(String domainUuid, String mimePolicyUuid);
 }

@@ -15,6 +15,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import static org.linagora.linshare.core.exception.BusinessErrorCode.DOMAIN_FORBIDDEN;
+
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -201,5 +203,23 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 		}
 		mimePolicyBusinessService.disableAll(mimePolicy);
 		return mimePolicy;
+	}
+
+	@Override
+	public void assign(Account actor, String domainUuid, String mimePolicyUuid) {
+		Validate.notEmpty(domainUuid, "Domain uuid must be set.");
+		Validate.notEmpty(mimePolicyUuid, "MimePolicy uuid must be set.");
+
+		AbstractDomain domain = domainBusinessService.find(domainUuid);
+		if (!domain.isManagedBy(actor)) {
+			throw new BusinessException(DOMAIN_FORBIDDEN, "You are not allowed to manage domain " + domainUuid);
+		}
+		MimePolicy mimePolicy = mimePolicyBusinessService.find(mimePolicyUuid);
+		if (!domain.isAncestry(mimePolicy.getDomain().getUuid())){
+			throw new BusinessException("Mime policy " + mimePolicyUuid + " cannot be added to domain " + domainUuid);
+		}
+
+		domain.setMimePolicy(mimePolicy);
+		domainBusinessService.update(domain);
 	}
 }

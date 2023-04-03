@@ -39,4 +39,6 @@ public interface MimePolicyService {
 	public MimePolicy enableAllMimeTypes(Account actor, String uuid) throws BusinessException;
 
 	public MimePolicy disableAllMimeTypes(Account actor, String uuid) throws BusinessException;
+
+	void assign(Account actor, String domainUuid, String mimePolicyUuid);
 }
