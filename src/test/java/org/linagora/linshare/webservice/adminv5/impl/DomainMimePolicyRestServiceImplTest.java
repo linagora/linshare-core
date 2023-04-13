@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Sql({ "/import-tests-make-user2-admin.sql" })
-@Sql({ "/import-mime-policies.sql" })
+@Sql({ "/import-test-mime-policies.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 	"classpath:springContext-dao.xml",
 	"classpath:springContext-ldap.xml",
