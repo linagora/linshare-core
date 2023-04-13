@@ -188,4 +188,13 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	private boolean getOverrideReadonly() {
 		return mailConfigService.isTemplatingOverrideReadonlyMode();
 	}
+
+
+	@Override
+	public void assign(String domainUuid, String mailConfigUuid) {
+		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid, "Domain uuid must be set.");
+		Validate.notEmpty(mailConfigUuid, "Mail config uuid must be set.");
+		mailConfigService.assign(actor, domainUuid, mailConfigUuid);
+	}
 }

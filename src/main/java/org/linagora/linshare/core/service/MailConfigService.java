@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
@@ -361,4 +362,6 @@ public interface MailConfigService {
 	boolean hasRights(User actor, MailLayout layout);
 
 	boolean isTemplatingOverrideReadonlyMode();
+
+	void assign(Account actor, String domainUuid, String mailConfigUuid);
 }

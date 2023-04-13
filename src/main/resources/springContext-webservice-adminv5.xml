@@ -43,6 +43,9 @@
 	<bean id="adminv5DomainMimePolicyRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainMimePolicyRestServiceImpl">
 		<constructor-arg ref="wsAdminMimePolicyFacade" />
 	</bean>
+	<bean id="adminv5DomainMailConfigRestService" class="org.linagora.linshare.webservice.adminv5.impl.DomainMailConfigRestServiceImpl">
+		<constructor-arg ref="wsAdminMailConfigFacade" />
+	</bean>
 	<bean id="adminv5UserProviderRestService" class="org.linagora.linshare.webservice.adminv5.impl.UserProviderRestServiceImpl">
 		<constructor-arg ref="wsAdminV5userProviderFacade" />
 	</bean>
@@ -107,6 +110,7 @@
 			<ref bean="adminv5DomainUserFilterRestService"/>
 			<ref bean="adminv5DomainGroupFilterRestService"/>
 			<ref bean="adminv5DomainMimePolicyRestService"/>
+			<ref bean="adminv5DomainMailConfigRestService"/>
 			<ref bean="adminv5UserProviderRestService"/>
 			<ref bean="adminv5DomainWorkSpaceFilterRestService"/>
 			<ref bean="adminv5FunctionalityRestService"/>

@@ -39,4 +39,6 @@ public interface MailConfigFacade extends AdminGenericFacade {
 
 	Set<MailFooterDto> findAllFooters(String mailConfigUuid)
 			throws BusinessException;
+
+	void assign(String domainUuid, String mailConfigUuid);
 }

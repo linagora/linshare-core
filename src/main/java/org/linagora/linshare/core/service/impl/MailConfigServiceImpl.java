@@ -15,10 +15,13 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import static org.linagora.linshare.core.exception.BusinessErrorCode.DOMAIN_FORBIDDEN;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
@@ -29,12 +32,14 @@ import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessSer
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.domain.entities.MailLayout;
+import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -546,4 +551,21 @@ public class MailConfigServiceImpl implements MailConfigService {
 		return forbidden;
 	}
 
+	@Override
+	public void assign(Account actor, String domainUuid, String mailConfigUuid) {
+		Validate.notEmpty(domainUuid, "Domain uuid must be set.");
+		Validate.notEmpty(mailConfigUuid, "Mail config uuid must be set.");
+
+		AbstractDomain domain = domainBusinessService.find(domainUuid);
+		if (!domain.isManagedBy(actor)) {
+			throw new BusinessException(DOMAIN_FORBIDDEN, "You are not allowed to manage domain " + domainUuid);
+		}
+		MailConfig mailConfig = mailConfigBusinessService.findByUuid(mailConfigUuid);
+		if (!domain.isAncestry(mailConfig.getDomain().getUuid())){
+			throw new BusinessException("Mail config " + mailConfigUuid + " cannot be added to domain " + domainUuid);
+		}
+
+		domain.setCurrentMailConfiguration(mailConfig);
+		domainBusinessService.update(domain);
+	}
 }
