@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -47,12 +48,16 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final AbstractDomainService abstractDomainService;
 
+	final private DomainPermissionBusinessService domainPermissionService;
+
 	public MailConfigFacadeImpl(final AccountService accountService,
 			final MailConfigService mailConfigService,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final DomainPermissionBusinessService domainPermissionService) {
 		super(accountService);
 		this.mailConfigService = mailConfigService;
 		this.abstractDomainService = abstractDomainService;
+		this.domainPermissionService = domainPermissionService;
 	}
 
 	@Override
@@ -64,8 +69,10 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
-		// TODO : check if the current user has the right to get MailConfig of
-		// this domain
+		if (!domainPermissionService.isAdminforThisDomain(user, domain)){
+			throw new BusinessException("You are not allowed to manage this domain.");
+		}
+
 		Set<MailConfigDto> mailConfigsDto = new HashSet<MailConfigDto>();
 		Iterable<MailConfig> configs = only ? domain.getMailConfigs()
 				: mailConfigService.findAllConfigs(user, domainId);

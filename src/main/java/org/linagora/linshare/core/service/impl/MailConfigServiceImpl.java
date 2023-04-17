@@ -20,7 +20,9 @@ import static org.linagora.linshare.core.exception.BusinessErrorCode.DOMAIN_FORB
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -93,20 +95,11 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public List<MailConfig> findAllConfigs(User actor, String domainId)
 			throws BusinessException {
-		List<MailConfig> configs = Lists.newArrayList();
-
-		for (AbstractDomain d : getParentDomains(domainId)) {
-			if (d.getUuid().equals(actor.getDomainId())) {
-				configs.addAll(d.getMailConfigs());
-			} else {
-				for (MailConfig c : d.getMailConfigs()) {
-					if (c.isVisible()) {
-						configs.add(c);
-					}
-				}
-			}
-		}
-		return configs;
+		return getParentDomains(domainId).stream()
+				.flatMap(domain -> domain.getMailConfigs().stream())
+				.filter(config -> config.isVisible()
+						|| StringUtils.equals(domainId, config.getDomain().getUuid()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
