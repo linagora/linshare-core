@@ -85,6 +85,7 @@ public class DomainMailConfigRestServiceImplTest {
 
 	private final String newMailConfig = "f8313520-da11-11ed-afa1-0242ac120002";
 	private final String newSubMailConfig = "08c1c3c8-da12-11ed-afa1-0242ac120002";
+	private final String rootPrivateConfig = "90553b64-dd2b-11ed-afa1-0242ac120002";
 
 	@BeforeEach
 	public void setUp() {
@@ -164,6 +165,26 @@ public class DomainMailConfigRestServiceImplTest {
 		assertThatThrownBy(() -> testee.assign(topDomain.getUuid(), newSubMailConfig))
 				.isInstanceOf(BusinessException.class)
 				.hasMessage("Mail config 08c1c3c8-da12-11ed-afa1-0242ac120002 cannot be added to domain MyDomain");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void assignPrivateDomainToOtherDomainForbidden() {
+		assertThatThrownBy(() -> testee.assign(topDomain.getUuid(), rootPrivateConfig))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("Mail config 90553b64-dd2b-11ed-afa1-0242ac120002 is private thus cannot be assigned to MyDomain");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void assignPrivateDomainToOwnDomain() {
+		String originalMailConfig = rootDomain.getCurrentMailConfiguration().getUuid();
+		assertThat(originalMailConfig).isNotEqualTo(rootPrivateConfig);
+
+		testee.assign(rootDomain.getUuid(), rootPrivateConfig);
+
+		String assignedMailConfig = domainService.find(root, rootDomain.getUuid()).getCurrentMailConfiguration().getUuid();
+		assertThat(assignedMailConfig).isEqualTo(rootPrivateConfig);
 	}
 
 }

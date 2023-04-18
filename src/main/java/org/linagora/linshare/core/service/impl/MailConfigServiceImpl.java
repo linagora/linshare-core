@@ -548,6 +548,9 @@ public class MailConfigServiceImpl implements MailConfigService {
 		if (!domain.isAncestry(mailConfig.getDomain().getUuid())){
 			throw new BusinessException("Mail config " + mailConfigUuid + " cannot be added to domain " + domainUuid);
 		}
+		if (!mailConfig.isVisible() && !StringUtils.equals(domainUuid,mailConfig.getDomain().getUuid())){
+			throw new BusinessException("Mail config " + mailConfigUuid + " is private thus cannot be assigned to " + domainUuid);
+		}
 
 		domain.setCurrentMailConfiguration(mailConfig);
 		domainBusinessService.update(domain);
