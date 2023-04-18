@@ -107,7 +107,7 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private void transform(MailLayout layout, MailLayoutDto dto)
 			throws BusinessException {
-		layout.setDomain(findDomain(dto.getDomain()));
+		layout.setDomain(findDomain(dto.getDomain().getUuid()));
 		layout.setDescription(dto.getDescription());
 		layout.setVisible(dto.isVisible());
 		layout.setLayout(dto.getLayout());

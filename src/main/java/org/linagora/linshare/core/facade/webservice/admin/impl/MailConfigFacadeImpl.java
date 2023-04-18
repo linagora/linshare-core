@@ -156,7 +156,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private void transform(MailConfig config, MailConfigDto dto)
 			throws BusinessException {
-		config.setDomain(findDomain(dto.getDomain()));
+		config.setDomain(findDomain(dto.getDomain().getUuid()));
 		config.setName(dto.getName());
 		config.setVisible(dto.isVisible());
 	}

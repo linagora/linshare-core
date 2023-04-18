@@ -20,6 +20,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.MailLayout;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainLightDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -31,7 +32,7 @@ public class MailLayoutDto {
 	private String uuid;
 
 	@Schema(description = "Domain")
-	private String domain;
+	private DomainLightDto domain;
 
 	@Schema(description = "Name")
 	private String description;
@@ -69,7 +70,7 @@ public class MailLayoutDto {
 
 	public MailLayoutDto(MailLayout ml, boolean overrideReadonly) {
 		this.uuid = ml.getUuid();
-		this.domain = ml.getDomain().getUuid();
+		this.domain = new DomainLightDto(ml.getDomain());
 		this.description = ml.getDescription();
 		this.layout = ml.getLayout();
 		this.visible = ml.isVisible();
@@ -92,11 +93,11 @@ public class MailLayoutDto {
 		this.uuid = uuid;
 	}
 
-	public String getDomain() {
+	public DomainLightDto getDomain() {
 		return domain;
 	}
 
-	public void setDomain(String domain) {
+	public void setDomain(DomainLightDto domain) {
 		this.domain = domain;
 	}
 

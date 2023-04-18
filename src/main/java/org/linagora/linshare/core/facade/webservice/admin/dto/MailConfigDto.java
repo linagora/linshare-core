@@ -26,6 +26,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainLightDto;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -39,7 +40,7 @@ public class MailConfigDto {
 	private String uuid;
 
 	@Schema(description = "Domain")
-	private String domain;
+	private DomainLightDto domain;
 
 	@Schema(description = "Name")
 	private String name;
@@ -75,7 +76,7 @@ public class MailConfigDto {
 	public MailConfigDto(MailConfig config, boolean overrideReadonly) {
 		super();
 		this.uuid = config.getUuid();
-		this.domain = config.getDomain().getUuid();
+		this.domain = new DomainLightDto(config.getDomain());
 		this.name = config.getName();
 		this.visible = config.isVisible();
 		this.readonly = config.isReadonly();
@@ -106,11 +107,11 @@ public class MailConfigDto {
 		this.uuid = uuid;
 	}
 
-	public String getDomain() {
+	public DomainLightDto getDomain() {
 		return domain;
 	}
 
-	public void setDomain(String domain) {
+	public void setDomain(DomainLightDto domain) {
 		this.domain = domain;
 	}
 

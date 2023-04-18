@@ -32,6 +32,7 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailLayoutDto;
 import org.linagora.linshare.core.service.impl.DomainServiceImpl;
 import org.linagora.linshare.core.service.impl.UserServiceImpl;
@@ -107,6 +108,16 @@ public class MailLayoutRestServiceImplTest {
         adminUser = userService.findUserInDB(topDomain.getUuid(), LinShareTestConstants.JANE_ACCOUNT);
         simpleUser = userService.findUserInDB(topDomain.getUuid(), LinShareTestConstants.JOHN_ACCOUNT);
     }
+
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getLayoutReturnDomainName() {
+		MailLayoutDto config = testee.find(rootPrivateLayout);
+
+		assertThat(config.getDomain().getName()).isEqualTo(rootDomain.getLabel());
+		assertThat(config.getDomain().getUuid()).isEqualTo(rootDomain.getUuid());
+	}
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
