@@ -130,6 +130,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="mailConfigService" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 	<bean id="wsAdminMimePolicyFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.MimePolicyFacadeImpl">

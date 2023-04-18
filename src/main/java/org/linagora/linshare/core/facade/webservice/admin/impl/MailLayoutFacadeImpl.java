@@ -18,6 +18,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailLayout;
@@ -37,12 +38,16 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final AbstractDomainService abstractDomainService;
 
+	final private DomainPermissionBusinessService domainPermissionService;
+
 	public MailLayoutFacadeImpl(final AccountService accountService,
 			final MailConfigService mailConfigService,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final DomainPermissionBusinessService domainPermissionService) {
 		super(accountService);
 		this.mailConfigService = mailConfigService;
 		this.abstractDomainService = abstractDomainService;
+		this.domainPermissionService = domainPermissionService;
 	}
 
 	@Override
@@ -82,10 +87,10 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 			domainIdentifier = user.getDomainId();
 		}
 
-		AbstractDomain domain = abstractDomainService
-				.retrieveDomain(domainIdentifier);
-		// TODO : check if the current user has the right to get MailContent of
-		// this domain
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+		if (!domainPermissionService.isAdminforThisDomain(user, domain)) {
+			throw new BusinessException("You are not allowed to manage this domain.");
+		}
 
 		Set<MailLayoutDto> mailLayoutsDto = new HashSet<MailLayoutDto>();
 		Iterable<MailLayout> layouts = only ? domain.getMailLayouts()

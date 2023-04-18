@@ -391,20 +391,11 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public List<MailLayout> findAllLayouts(User actor, String domainId)
 			throws BusinessException {
-		List<MailLayout> layouts = Lists.newArrayList();
-
-		for (AbstractDomain d : getParentDomains(domainId)) {
-			if (d.getUuid().equals(actor.getDomainId())) {
-				layouts.addAll(d.getMailLayouts());
-			} else {
-				for (MailLayout c : d.getMailLayouts()) {
-					if (c.isVisible()) {
-						layouts.add(c);
-					}
-				}
-			}
-		}
-		return layouts;
+		return getParentDomains(domainId).stream()
+				.flatMap(domain -> domain.getMailLayouts().stream())
+				.filter(config -> config.isVisible()
+						|| StringUtils.equals(domainId, config.getDomain().getUuid()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
