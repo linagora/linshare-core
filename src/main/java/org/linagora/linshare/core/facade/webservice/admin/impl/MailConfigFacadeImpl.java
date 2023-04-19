@@ -18,6 +18,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -35,6 +36,7 @@ import org.linagora.linshare.core.facade.webservice.admin.MailConfigFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
@@ -203,5 +205,20 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(domainUuid, "Domain uuid must be set.");
 		Validate.notEmpty(mailConfigUuid, "Mail config uuid must be set.");
 		mailConfigService.assign(actor, domainUuid, mailConfigUuid);
+	}
+
+	@Override
+	public Set<DomainDto> findAllAssociatedDomains(String mailConfigUuid) {
+		User actor = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(mailConfigUuid, "Mail config uuid must be set.");
+
+		MailConfig mailConfig = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+		if (!domainPermissionService.isAdminforThisDomain(actor, mailConfig.getDomain())){
+			throw new BusinessException("You are not allowed to manage this mail configuration");
+		}
+
+		return mailConfigService.findAllAssociatedDomains(mailConfig).stream()
+				.map(DomainDto::getLight)
+				.collect(Collectors.toSet());
 	}
 }

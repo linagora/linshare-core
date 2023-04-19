@@ -24,6 +24,7 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.fields.DomainField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
@@ -72,6 +73,12 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 	public List<AbstractDomain> loadRelativeDomains(WelcomeMessages welcomeMessage)
 			throws BusinessException {
 		return repository.loadDomainsForAWelcomeMessage(welcomeMessage);
+	}
+
+	@Override
+	public List<AbstractDomain> loadRelativeDomains(MailConfig mailConfig)
+			throws BusinessException {
+		return repository.loadDomainsForAMailConfiguration(mailConfig);
 	}
 
 	@Override

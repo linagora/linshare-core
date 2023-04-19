@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.fields.DomainField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
@@ -45,8 +46,9 @@ public interface DomainBusinessService {
 	 * @return a set of domains which use the welcome message.
 	 * @throws BusinessException
 	 */
-	List<AbstractDomain> loadRelativeDomains(WelcomeMessages welcomeMessage)
-			throws BusinessException;
+	List<AbstractDomain> loadRelativeDomains(WelcomeMessages welcomeMessage) throws BusinessException;
+
+	List<AbstractDomain> loadRelativeDomains(MailConfig mailConfig) throws BusinessException;
 
 	AbstractDomain findGuestDomain(AbstractDomain domain) throws BusinessException;
 

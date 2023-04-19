@@ -178,10 +178,11 @@ public class SharedSpaceMemberServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
+	@Test
 	public void testFind() {
-		SharedSpaceMember toCreate = service.create(john, john, node, adminRole, accountJane);
-		SharedSpaceMember tofound = service.find(john, john, toCreate.getUuid());
-		Assertions.assertEquals(toCreate.getUuid(), tofound.getUuid());
+		SharedSpaceMember created = service.create(john, john, node, adminRole, accountJane);
+		SharedSpaceMember found = service.find(john, john, created.getUuid());
+		Assertions.assertEquals(created.getUuid(), found.getUuid());
 	}
 
 	@Test

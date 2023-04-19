@@ -38,6 +38,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailConfigRestService;
 
@@ -78,22 +79,6 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 	public Set<MailConfigDto> findAll(@QueryParam(value = "domainId") String domainId,
 			@QueryParam("onlyCurrentDomain") @DefaultValue("false") boolean onlyCurrentDomain) throws BusinessException {
 		return mailConfigFacade.findAll(domainId, onlyCurrentDomain);
-	}
-
-	@Path("/{uuid}/mail_attachments")
-	@GET
-	@Operation(summary = "Find a mail configuration.", responses = {
-		@ApiResponse(
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailConfigDto.class))),
-			responseCode = "200"
-		)
-	})
-	@Override
-	public List<MailAttachmentDto> findAllMailAttachments(
-			@Parameter(description = "Mail configuration's uuid.", required = true)
-				@PathParam("uuid") String uuid)
-			throws BusinessException {
-		return mailAttachmentFacade.findAll(uuid);
 	}
 
 	@Path("/{uuid}")
@@ -195,5 +180,37 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 			@Parameter(description = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid)
 			throws BusinessException {
 		return mailConfigFacade.findAllFooters(mailConfigUuid);
+	}
+
+	@Path("/{uuid}/mail_attachments")
+	@GET
+	@Operation(summary = "Find a mail configuration.", responses = {
+			@ApiResponse(
+					content = @Content(array = @ArraySchema(schema = @Schema(implementation = MailConfigDto.class))),
+					responseCode = "200"
+			)
+	})
+	@Override
+	public List<MailAttachmentDto> findAllMailAttachments(
+			@Parameter(description = "Mail configuration's uuid.", required = true)
+			@PathParam("uuid") String uuid)
+			throws BusinessException {
+		return mailAttachmentFacade.findAll(uuid);
+	}
+
+	@Path("/{uuid}/associated_domains")
+	@GET
+	@Operation(summary = "Find domain with this configuration currently assigned.", responses = {
+			@ApiResponse(
+					content = @Content(array = @ArraySchema(schema = @Schema(implementation = DomainDto.class))),
+					responseCode = "200"
+			)
+	})
+	@Override
+	public Set<DomainDto> findAllAssociatedDomains(
+			@Parameter(description = "Mail configuration's uuid.", required = true)
+			@PathParam("uuid") String mailConfigUuid)
+			throws BusinessException {
+		return mailConfigFacade.findAllAssociatedDomains(mailConfigUuid);
 	}
 }

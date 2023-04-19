@@ -241,6 +241,11 @@ public class AbstractDomainRepositoryImpl extends
 				welcomeMessage));
 	}
 
+	@Override
+	public List<AbstractDomain> loadDomainsForAMailConfiguration(MailConfig mailConfig) throws BusinessException {
+		return findByCriteria(Restrictions.eq("currentMailConfiguration", mailConfig));
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAllSubDomainIdentifiers(String domain) {

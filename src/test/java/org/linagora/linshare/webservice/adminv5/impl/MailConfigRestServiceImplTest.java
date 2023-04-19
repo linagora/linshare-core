@@ -27,13 +27,16 @@ import javax.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.service.impl.DomainServiceImpl;
+import org.linagora.linshare.core.service.impl.MailConfigServiceImpl;
 import org.linagora.linshare.core.service.impl.UserServiceImpl;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.linagora.linshare.webservice.admin.impl.MailConfigRestServiceImpl;
@@ -78,6 +81,9 @@ public class MailConfigRestServiceImplTest {
 
     @Autowired
     private UserServiceImpl userService;
+
+    @Autowired
+    private MailConfigServiceImpl configService;
 
     @Autowired
     private MailConfigRestServiceImpl testee;
@@ -231,6 +237,55 @@ public class MailConfigRestServiceImplTest {
 
 		assertThat(configs.stream().map(MailConfigDto::getUuid).collect(Collectors.toList()))
 				.containsExactlyInAnyOrder(rootPublicConfig, rootPublicConfig2,rootPrivateConfig);
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getAllAssociatedDomains() {
+		Set<DomainDto> domains = testee.findAllAssociatedDomains(rootPublicConfig);
+
+		assertThat(domains.stream().map(DomainDto::getUuid).collect(Collectors.toList()))
+				.containsExactlyInAnyOrder("TopDomain2", "MySubDomain", "LinShareRootDomain", "MyDomain", "GuestDomain");
+	}
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void getAllAssociatedDomainsForbiddenForHigherConfig() {
+		assertThatThrownBy(() -> testee.findAllAssociatedDomains(rootPublicConfig))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("You are not allowed to manage this mail configuration");
+	}
+
+	@Test
+	@WithMockUser("aebe1b64-39c0-11e5-9fa8-080027b8254j") //Amy's uuid (simple user)
+	public void getAllAssociatedDomainsForbiddenForSimpleUser() {
+		assertThatThrownBy(() -> testee.findAllAssociatedDomains(rootPublicConfig))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("You are not authorized to use this service");
+	}
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void getAllAssociatedDomainsAdminOnHisDomain() {
+		configService.assign(root, topDomain.getUuid(), topPublicConfig);
+		configService.assign(root, subDomain.getUuid(), topPublicConfig);
+		Set<DomainDto> domains = testee.findAllAssociatedDomains(topPublicConfig);
+
+		assertThat(domains.stream().map(DomainDto::getUuid).collect(Collectors.toList()))
+				.containsExactlyInAnyOrder("MySubDomain", "MyDomain");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getAllAssociatedDomainsReturnValues() {
+		configService.assign(root, topDomain.getUuid(), topPublicConfig);
+		Set<DomainDto> domains = testee.findAllAssociatedDomains(topPublicConfig);
+
+		assertThat(domains.size()).isEqualTo(1);
+		DomainDto domain = domains.stream().findFirst().get();
+		assertThat(domain.getName()).isEqualTo("MyDomain");
+		assertThat(domain.getUuid()).isEqualTo("MyDomain");
+		assertThat(domain.getType()).isEqualTo(DomainType.TOPDOMAIN);
 	}
 
 	@Test

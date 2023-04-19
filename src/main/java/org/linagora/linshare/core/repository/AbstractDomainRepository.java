@@ -96,6 +96,8 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 
 	List<AbstractDomain> loadDomainsForAWelcomeMessage(WelcomeMessages welcomeMessage) throws BusinessException;
 
+	List<AbstractDomain> loadDomainsForAMailConfiguration(MailConfig mailConfig) throws BusinessException;
+
 	List<String> getAllSubDomainIdentifiers(String domain);
 	
 	void markToPurge(AbstractDomain abstractDomain);

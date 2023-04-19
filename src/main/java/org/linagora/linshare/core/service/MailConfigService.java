@@ -16,9 +16,11 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
@@ -364,4 +366,6 @@ public interface MailConfigService {
 	boolean isTemplatingOverrideReadonlyMode();
 
 	void assign(Account actor, String domainUuid, String mailConfigUuid);
+
+    Set<AbstractDomain> findAllAssociatedDomains(MailConfig mailConfigUuid);
 }

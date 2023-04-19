@@ -21,6 +21,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 
 public interface MailConfigFacade extends AdminGenericFacade {
 
@@ -41,4 +42,6 @@ public interface MailConfigFacade extends AdminGenericFacade {
 			throws BusinessException;
 
 	void assign(String domainUuid, String mailConfigUuid);
+
+	Set<DomainDto> findAllAssociatedDomains(String mailConfigUuid);
 }

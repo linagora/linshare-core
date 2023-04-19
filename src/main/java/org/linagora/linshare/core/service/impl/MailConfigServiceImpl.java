@@ -18,6 +18,7 @@ package org.linagora.linshare.core.service.impl;
 import static org.linagora.linshare.core.exception.BusinessErrorCode.DOMAIN_FORBIDDEN;
 
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +42,6 @@ import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.domain.entities.MailLayout;
-import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -49,6 +49,7 @@ import org.linagora.linshare.core.service.MailConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 public class MailConfigServiceImpl implements MailConfigService {
@@ -554,5 +555,12 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 		domain.setCurrentMailConfiguration(mailConfig);
 		domainBusinessService.update(domain);
+	}
+
+	@Override
+	public Set<AbstractDomain> findAllAssociatedDomains(MailConfig mailConfigUuid) {
+		Validate.notNull(mailConfigUuid, "Mail config uuid must be set.");
+
+		return ImmutableSet.copyOf(domainBusinessService.loadRelativeDomains(mailConfigUuid));
 	}
 }

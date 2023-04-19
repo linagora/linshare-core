@@ -23,13 +23,14 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 
 public interface MailConfigRestService {
 
 	Set<MailConfigDto> findAll(String domainId, boolean onlyCurrentDomain)
 			throws BusinessException;
 
-	MailConfigDto find(String uuid) throws BusinessException;
+    MailConfigDto find(String uuid) throws BusinessException;
 
 	void head(String uuid) throws BusinessException;
 
@@ -39,12 +40,12 @@ public interface MailConfigRestService {
 
 	MailConfigDto delete(MailConfigDto dto) throws BusinessException;
 
-	Set<MailFooterDto> findAllFooters(String mailConfigUuid)
-			throws BusinessException;
+	Set<MailFooterDto> findAllFooters(String mailConfigUuid)throws BusinessException;
 
-	Set<MailContentDto> findAllContents(String mailConfigUuid,
-			String mailContentType) throws BusinessException;
+	Set<MailContentDto> findAllContents(String mailConfigUuid, String mailContentType) throws BusinessException;
 
 	List<MailAttachmentDto> findAllMailAttachments(String uuid) throws BusinessException;
+
+	Set<DomainDto> findAllAssociatedDomains(String mailConfigUuid) throws BusinessException;
 
 }
