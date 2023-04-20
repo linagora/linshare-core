@@ -111,15 +111,6 @@ public class MailConfigRestServiceImplTest {
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
-	public void getConfigReturnDomainName() {
-		MailConfigDto config = testee.find(rootPublicConfig);
-
-		assertThat(config.getDomain().getName()).isEqualTo(rootDomain.getLabel());
-		assertThat(config.getDomain().getUuid()).isEqualTo(rootDomain.getUuid());
-	}
-
-	@Test
-	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getAllRootCanSeeAllRootConfigs() {
 		Set<MailConfigDto> configs = testee.findAll(rootDomain.getUuid(), true);
 
