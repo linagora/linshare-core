@@ -41,6 +41,9 @@ public class MailConfigDto {
 	@Schema(description = "Domain")
 	private String domain;
 
+	@Schema(description = "DomainName")
+	private String domainName;
+
 	@Schema(description = "Name")
 	private String name;
 
@@ -76,6 +79,7 @@ public class MailConfigDto {
 		super();
 		this.uuid = config.getUuid();
 		this.domain = config.getDomain().getUuid();
+		this.domainName = config.getDomain().getLabel();
 		this.name = config.getName();
 		this.visible = config.isVisible();
 		this.readonly = config.isReadonly();
@@ -112,6 +116,14 @@ public class MailConfigDto {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 
 	public String getName() {

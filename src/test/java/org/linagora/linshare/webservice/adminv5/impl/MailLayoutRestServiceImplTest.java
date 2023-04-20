@@ -231,4 +231,15 @@ public class MailLayoutRestServiceImplTest {
 		assertThat(layouts.stream().map(MailLayoutDto::getUuid).collect(Collectors.toList()))
 				.containsExactlyInAnyOrder(rootPublicLayout, rootPublicLayout2,rootPrivateLayout);
 	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getLayoutReturnDomainName() {
+		MailLayoutDto layout = testee.find(rootPrivateLayout);
+
+		assertThat(layout.getDomainName()).isEqualTo(rootDomain.getLabel());
+		assertThat(layout.getDomain()).isEqualTo(rootDomain.getUuid());
+	}
+
+
 }

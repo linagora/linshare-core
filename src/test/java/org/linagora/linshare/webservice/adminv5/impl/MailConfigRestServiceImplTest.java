@@ -232,4 +232,14 @@ public class MailConfigRestServiceImplTest {
 		assertThat(configs.stream().map(MailConfigDto::getUuid).collect(Collectors.toList()))
 				.containsExactlyInAnyOrder(rootPublicConfig, rootPublicConfig2,rootPrivateConfig);
 	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getConfigReturnDomainName() {
+		MailConfigDto config = testee.find(rootPublicConfig);
+
+		assertThat(config.getDomainName()).isEqualTo(rootDomain.getLabel());
+		assertThat(config.getDomain()).isEqualTo(rootDomain.getUuid());
+	}
+
 }

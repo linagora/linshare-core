@@ -33,6 +33,9 @@ public class MailLayoutDto {
 	@Schema(description = "Domain")
 	private String domain;
 
+	@Schema(description = "DomainName")
+	private String domainName;
+
 	@Schema(description = "Name")
 	private String description;
 
@@ -70,6 +73,7 @@ public class MailLayoutDto {
 	public MailLayoutDto(MailLayout ml, boolean overrideReadonly) {
 		this.uuid = ml.getUuid();
 		this.domain = ml.getDomain().getUuid();
+		this.domainName = ml.getDomain().getLabel();
 		this.description = ml.getDescription();
 		this.layout = ml.getLayout();
 		this.visible = ml.isVisible();
@@ -98,6 +102,14 @@ public class MailLayoutDto {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 
 	public String getDescription() {
