@@ -126,6 +126,7 @@
 	<bean id="wsAuditLogEntryUserFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AuditLogEntryUserFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="auditLogEntryService"/>
+		<constructor-arg ref="userService"/>
 	</bean>
 
 	<bean id="wsWorkGroupNodeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.WorkGroupNodeFacadeImpl">
