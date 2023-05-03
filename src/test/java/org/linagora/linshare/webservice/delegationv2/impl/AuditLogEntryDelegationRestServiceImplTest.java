@@ -18,6 +18,8 @@ package org.linagora.linshare.webservice.delegationv2.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Calendar;
+import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -31,16 +33,21 @@ import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.impl.DomainServiceImpl;
 import org.linagora.linshare.core.service.impl.LogEntryServiceImpl;
 import org.linagora.linshare.core.service.impl.UserServiceImpl;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -79,26 +86,42 @@ public class AuditLogEntryDelegationRestServiceImplTest {
 
     @Autowired
     private AuditLogEntryDelegationRestServiceImpl testee;
-
     @Autowired
     private DomainServiceImpl domainService;
-
     @Autowired
     private UserServiceImpl userService;
-
-    private User root;
-
     @Autowired
     LogEntryServiceImpl logEntryService;
+    @Autowired
+    @Qualifier("basicStatisticMongoRepository")
+    private BasicStatisticMongoRepository basicStatisticMongoRepository;
+    @Autowired
+    @Qualifier("auditUserMongoRepository")
+    private AuditUserMongoRepository auditUserMongoRepository;
+
+    private User root;
+    private User john;
+
 
     @BeforeEach
     public void setUp() {
         root = userService.findByLsUuid(LinShareConstants.defaultRootMailAddress);
         AbstractDomain topDomain = domainService.find(root, LinShareTestConstants.TOP_DOMAIN);
-        User john = userService.findUserInDB(topDomain.getUuid(), LinShareTestConstants.JOHN_ACCOUNT);
+        john = userService.findUserInDB(topDomain.getUuid(), LinShareTestConstants.JOHN_ACCOUNT);
+
+        //TODO: Mongo DB should be cleaned between each test instead of having to do it manually
+        // and better still, we should insert test data into mongo directly
+        basicStatisticMongoRepository.deleteAll();
+        auditUserMongoRepository.deleteAll();
 
         logEntryService.insert(new UserAuditLogEntry(root, john, LogAction.CREATE, AuditLogEntryType.USER, john));
         logEntryService.insert(new UserAuditLogEntry(john, john, LogAction.UPDATE, AuditLogEntryType.USER, john));
+        logEntryService.insert(new UserAuditLogEntry(john, john, LogAction.UPDATE, AuditLogEntryType.USER, john));
+
+        DocumentEntry documentEntry = generateFakeDocument();
+        logEntryService.insert(new DocumentEntryAuditLogEntry(john, john, documentEntry, LogAction.CREATE));
+        logEntryService.insert(new DocumentEntryAuditLogEntry(john, john, documentEntry, LogAction.DOWNLOAD));
+        logEntryService.insert(new DocumentEntryAuditLogEntry(john, john, documentEntry, LogAction.DOWNLOAD));
     }
 
     @Test
@@ -131,5 +154,46 @@ public class AuditLogEntryDelegationRestServiceImplTest {
         Set<AuditLogEntryUser> rootLogs = testee.findAll(root.getLsUuid(), null, null, true, null, null);
         assertThat(rootLogs).isNotNull();
         assertThat(rootLogs.size()).isEqualTo(1);
+    }
+
+	@Test
+    @WithMockUser(TECHNICAL_USER_AUDIT)
+	public void findAllSpecificUserAudits() {
+        Set<AuditLogEntryUser> rootLogs = testee.findAll(john.getLsUuid(), null, null, true, null, null);
+        assertThat(rootLogs).isNotNull();
+        assertThat(rootLogs.size()).isEqualTo(6);
+    }
+
+	@Test
+    @WithMockUser(TECHNICAL_USER_AUDIT)
+	public void findAllFilterOnAuditActions() {
+        Set<AuditLogEntryUser> rootLogs = testee.findAll(john.getLsUuid(), List.of(LogAction.DOWNLOAD, LogAction.UPDATE), null, true, null, null);
+        assertThat(rootLogs).isNotNull();
+        assertThat(rootLogs.size()).isEqualTo(4);
+    }
+
+	@Test
+    @WithMockUser(TECHNICAL_USER_AUDIT)
+	public void findAllFilterOnAuditType() {
+        Set<AuditLogEntryUser> rootLogs = testee.findAll(john.getLsUuid(), null, List.of(AuditLogEntryType.USER), true, null, null);
+        assertThat(rootLogs).isNotNull();
+        assertThat(rootLogs.size()).isEqualTo(3);
+    }
+
+	@Test
+    @WithMockUser(TECHNICAL_USER_AUDIT)
+	public void findAllFilterOnAuditTypeAndAction() {
+        Set<AuditLogEntryUser> rootLogs = testee.findAll(john.getLsUuid(), List.of(LogAction.DOWNLOAD, LogAction.UPDATE), List.of(AuditLogEntryType.USER), true, null, null);
+        assertThat(rootLogs).isNotNull();
+        assertThat(rootLogs.size()).isEqualTo(2);
+    }
+
+    @NotNull
+    private DocumentEntry generateFakeDocument() {
+        Document aDocument = new Document("fakeZip", "fake.zip", "application/zip", Calendar.getInstance(), null, john, false, false, 10000L);
+        DocumentEntry documentEntry = new DocumentEntry(john, "test", "test", aDocument);
+        documentEntry.setCreationDate(Calendar.getInstance());
+        documentEntry.setModificationDate(Calendar.getInstance());
+        return documentEntry;
     }
 }
