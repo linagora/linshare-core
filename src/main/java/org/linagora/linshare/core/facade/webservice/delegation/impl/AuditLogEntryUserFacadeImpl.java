@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.linagora.linshare.core.facade.webservice.user.impl;
+package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
 import java.util.List;
 import java.util.Set;
@@ -22,19 +22,18 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.delegation.impl.DelegationGenericFacadeImpl;
-import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.AuditLogEntryUserFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
-public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements AuditLogEntryUserFacade {
+public class AuditLogEntryUserFacadeImpl extends DelegationGenericFacadeImpl implements AuditLogEntryUserFacade {
 
 	protected final AuditLogEntryService service;
 
-	public AuditLogEntryUserFacadeImpl(AccountService accountService, final AuditLogEntryService service) {
-		super(accountService);
+	public AuditLogEntryUserFacadeImpl(AccountService accountService, final AuditLogEntryService service, UserService userService) {
+		super(accountService, userService);
 		this.service = service;
 	}
 

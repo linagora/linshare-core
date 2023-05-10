@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -39,10 +40,10 @@ import org.linagora.linshare.core.domain.entities.fields.AuditEntryField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.TimeService;
-import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -62,7 +63,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public class AuditLogEntryServiceImpl implements AuditLogEntryService {
+public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditLogEntry> implements AuditLogEntryService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AuditLogEntryServiceImpl.class);
@@ -81,14 +82,16 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 
 	protected final MongoTemplate mongoTemplate;
 
-	public AuditLogEntryServiceImpl(AuditAdminMongoRepository auditMongoRepository,
+	public AuditLogEntryServiceImpl(
+			AuditAdminMongoRepository auditMongoRepository,
 			AuditUserMongoRepository userMongoRepository,
-			UserService userService,
 			DomainPermissionBusinessService permissionService,
 			TimeService timeService,
 			MongoTemplate mongoTemplate,
-			AbstractDomainService domainService) {
-		super();
+			AbstractDomainService domainService,
+			AuditLogEntryResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.adminMongoRepository = auditMongoRepository;
 		this.userMongoRepository = userMongoRepository;
 		this.permissionService = permissionService;
@@ -115,8 +118,8 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			Date begin = getBeginDate(beginDate, end);
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, begin, end);
 		}
-//		checkListPermission(actor, owner, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
-//				res.iterator().next());
+		checkListPermission(authUser, actor, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
+				res.iterator().next());
 		return res;
 	}
 

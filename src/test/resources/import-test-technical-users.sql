@@ -2,17 +2,19 @@
 INSERT INTO TECHNICAL_ACCOUNT_PERMISSION
     (ID, UUID, CREATION_DATE, MODIFICATION_DATE)
 VALUES
-    (1, 'technicalAccountPermissionUuid1', now(), now());
+    (1, 'technicalAccountPermissionUuid1', now(), now()),
+    (2, 'technicalAccountPermissionUuid2', now(), now());
 
 INSERT INTO account_permission
     (id, technical_account_permission_id, permission)
 VALUES
-	(1, 1, 'AUDIT');
+	(1, 1, 'AUDIT_LIST');
 
 INSERT INTO TECHNICAL_ACCOUNT_PERMISSION_DOMAIN_ABSTRACT
     (TECHNICAL_ACCOUNT_PERMISSION_ID, DOMAIN_ABSTRACT_ID)
 VALUES
-    (1, 1);
+    (1, 1),
+    (2, 1);
 
 -- LinShare Users
 INSERT INTO account
@@ -27,7 +29,7 @@ VALUES
 	0, 1, 'IN_USE', 'audit', 'technical', true, '', false,
 	true, false, 0),
 	-- technical user with no permissions
-	(101, 'technical.none@linshare.org', 2, 'technical.none@linshare.org', null,
+	(101, 'technical.none@linshare.org', 2, 'technical.none@linshare.org', 2,
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
 	true, false, 0);

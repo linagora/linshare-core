@@ -83,6 +83,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class AuditLogEntryDelegationRestServiceImplTest {
 
     public static final String TECHNICAL_USER_AUDIT = "technical.audit@linshare.org";
+    public static final String TECHNICAL_USER_NONE = "technical.none@linshare.org";
 
     @Autowired
     private AuditLogEntryDelegationRestServiceImpl testee;
@@ -150,10 +151,18 @@ public class AuditLogEntryDelegationRestServiceImplTest {
 
 	@Test
     @WithMockUser(TECHNICAL_USER_AUDIT)
-	public void technicalUserCanGetAudits() {
+	public void technicalUserCanGetAuditsWithPermissions() {
         Set<AuditLogEntryUser> rootLogs = testee.findAll(root.getLsUuid(), null, null, true, null, null);
         assertThat(rootLogs).isNotNull();
         assertThat(rootLogs.size()).isEqualTo(1);
+    }
+
+	@Test
+    @WithMockUser(TECHNICAL_USER_NONE)
+	public void technicalUserCannotGetAuditsWithoutPermissions() {
+        assertThatThrownBy(() -> testee.findAll(root.getLsUuid(), null, null, true, null, null))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to list all entries.");
     }
 
 	@Test

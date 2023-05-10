@@ -29,7 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.AuditLogEntryUserFacade;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.delegationv2.AuditLogEntryDelegationRestService;
 

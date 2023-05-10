@@ -109,4 +109,8 @@
 	<bean name="moderatorResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ModeratorResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
+
+	<bean name="auditLogEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AuditLogEntryResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 </beans>

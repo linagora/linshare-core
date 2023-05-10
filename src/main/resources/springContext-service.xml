@@ -286,11 +286,12 @@
 	<bean id="auditLogEntryService" class="org.linagora.linshare.core.service.impl.AuditLogEntryServiceImpl">
 		<constructor-arg ref="auditAdminMongoRepository" />
 		<constructor-arg ref="auditUserMongoRepository" />
-		<constructor-arg ref="userService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="timeService" />
 		<constructor-arg ref="mongoTemplate" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="auditLogEntryResourceAccessControl" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 	</bean>
 	<bean id="statisticService" class="org.linagora.linshare.core.service.impl.StatisticServiceImpl">
 		<constructor-arg ref="statisticBusinessService" />
