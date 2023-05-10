@@ -28,6 +28,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.math3.util.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
@@ -426,21 +428,108 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<AuditLogEntry> container) {
 		Validate.notNull(authUser, "authUser must be set.");
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
-			throw new BusinessException(
-					BusinessErrorCode.FORBIDDEN,
-					"You are not allowed to query this domain");
+		checkDomainPermissions(authUser, domain, domains);
+
+		Pair<Optional<LocalDate>, Optional<LocalDate>> period = getPeriod(beginDate, endDate);
+		Query query = getQuery(
+				authUser, domain, includeNestedDomains, domains, logActions, resourceTypes, resourceGroups,
+				excludedTypes, authUserUuid, actorUuid, actorEmail, relatedAccount, resource, relatedResource,
+				resourceName, period.getFirst(), period.getSecond());
+
+		long count = mongoTemplate.count(query, AuditLogEntry.class);
+		logger.debug("Total of elements returned by the query without pagination: {}", count);
+		if (count == 0) {
+			return new PageContainer<AuditLogEntry>();
 		}
-		if (!domains.isEmpty()) {
-			for (String domainUuid : domains) {
-				AbstractDomain d = domainService.findById(domainUuid);
-				if (!permissionService.isAdminforThisDomain(authUser, d)) {
-					throw new BusinessException(
-							BusinessErrorCode.FORBIDDEN,
-							"You are not allowed to query this domain: " + domainUuid);
-				}
+
+		paginateQuery(sortOrder, sortField, container, query, count);
+		return container.loadData(performQuery(query));
+	}
+
+	@NotNull
+	private List<AuditLogEntry> performQuery(Query query) {
+		long startTime = System.currentTimeMillis();
+		List<AuditLogEntry> data = mongoTemplate.find(query, AuditLogEntry.class);
+		long elapsed = System.currentTimeMillis() - startTime;
+		logger.debug("audit query duration : {} ms.", elapsed);
+		return data;
+	}
+
+	private static void paginateQuery(SortOrder sortOrder, AuditEntryField sortField, PageContainer<AuditLogEntry> container, Query query, long count) {
+		Pageable paging = PageRequest.of(container.getPageNumber(), container.getPageSize());
+		query.with(paging);
+		query.with(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString()));
+		container.validateTotalPagesCount(count);
+	}
+
+	@NotNull
+	private Query getQuery(Account authUser, AbstractDomain domain, boolean includeNestedDomains, Set<String> domains,
+						   Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes, Set<AuditGroupLogEntryType> resourceGroups,
+						   Set<AuditLogEntryType> excludedTypes, Optional<String> authUserUuid, Optional<String> actorUuid,
+						   Optional<String> actorEmail, Optional<String> relatedAccount, Optional<String> resource, Optional<String> relatedResource,
+						   Optional<String> resourceName, Optional<LocalDate> begin, Optional<LocalDate> end) {
+		Query query = new Query();
+		//Domains
+		if (includeNestedDomains) {
+			if (!domain.isRootDomain()) {
+				List<String> domainUuids = permissionService.getAdministratedDomainsIdentifiers(authUser, domain.getUuid());
+				query.addCriteria(Criteria.where("relatedDomains").in(domainUuids));
+			}
+		} else {
+			if (!domains.isEmpty()) {
+				query.addCriteria(Criteria.where("relatedDomains").in(domains));
+			} else {
+				query.addCriteria(Criteria.where("relatedDomains").is(domain.getUuid()));
 			}
 		}
+
+		//Log type
+		if (!logActions.isEmpty()) {
+			query.addCriteria(Criteria.where("action").in(logActions));
+		}
+		if (!resourceGroups.isEmpty()) {
+			for (AuditGroupLogEntryType type : resourceGroups) {
+				resourceTypes.addAll(AuditGroupLogEntryType.toAuditLogEntryTypes.get(type));
+			}
+		}
+		if (!resourceTypes.isEmpty()) {
+			query.addCriteria(Criteria.where("type").in(resourceTypes));
+		} else {
+			if (!excludedTypes.isEmpty()) {
+				query.addCriteria(Criteria.where("type").nin(excludedTypes));
+			}
+		}
+
+		// Users
+		authUserUuid.ifPresent(s -> query.addCriteria(Criteria.where("authUser.uuid").is(s)));
+		actorUuid.ifPresent(s -> query.addCriteria(Criteria.where("actor.uuid").is(s)));
+		actorEmail.ifPresent(s -> query.addCriteria(Criteria.where("actor.mail").regex(s, "i")));
+
+		// Period
+		if (begin.isPresent() && end.isPresent() ) {
+			query.addCriteria(Criteria.where("creationDate").gte(begin.get()).lt(end.get()));
+		} else {
+			end.ifPresent(localDate -> query.addCriteria(Criteria.where("creationDate").lt(localDate)));
+			begin.ifPresent(localDate -> query.addCriteria(Criteria.where("creationDate").gte(localDate)));
+		}
+
+		// Resource
+		relatedAccount.ifPresent(s -> query.addCriteria(Criteria.where("relatedAccounts").in(s)));
+		resource.ifPresent(s -> query.addCriteria(Criteria.where("resourceUuid").is(s)));
+		if (relatedResource.isPresent()) {
+			String uuid = relatedResource.get();
+			query.addCriteria(new Criteria().orOperator(
+					Criteria.where("relatedResources").in(uuid),
+					Criteria.where("resourceUuid").is(uuid)
+					)
+			);
+		}
+		resourceName.ifPresent(s -> query.addCriteria(Criteria.where("resource.name").regex(s, "i")));
+		return query;
+	}
+
+	@NotNull
+	private static Pair<Optional<LocalDate>, Optional<LocalDate>> getPeriod(Optional<String> beginDate, Optional<String> endDate) {
 		Optional<LocalDate> begin = Optional.empty();
 		Optional<LocalDate> end = Optional.empty();
 		try {
@@ -461,80 +550,24 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		} catch (DateTimeParseException e) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
-		Query query = new Query();
-		if (includeNestedDomains) {
-			if (!domain.isRootDomain()) {
-				List<String> domainUuids = permissionService.getAdministratedDomainsIdentifiers(authUser, domain.getUuid());
-				query.addCriteria(Criteria.where("relatedDomains").in(domainUuids));
-			}
-		} else {
-			if (!domains.isEmpty()) {
-				query.addCriteria(Criteria.where("relatedDomains").in(domains));
-			} else {
-				query.addCriteria(Criteria.where("relatedDomains").is(domain.getUuid()));
-			}
+		return new Pair<>(begin, end);
+	}
+
+	private void checkDomainPermissions(Account authUser, AbstractDomain domain, Set<String> domains) {
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(
+					BusinessErrorCode.FORBIDDEN,
+					"You are not allowed to query this domain");
 		}
-		if (!logActions.isEmpty()) {
-			query.addCriteria(Criteria.where("action").in(logActions));
-		}
-		if (!resourceGroups.isEmpty()) {
-			for (AuditGroupLogEntryType type : resourceGroups) {
-				resourceTypes.addAll(AuditGroupLogEntryType.toAuditLogEntryTypes.get(type));
+		if (!domains.isEmpty()) {
+			for (String domainUuid : domains) {
+				AbstractDomain d = domainService.findById(domainUuid);
+				if (!permissionService.isAdminforThisDomain(authUser, d)) {
+					throw new BusinessException(
+							BusinessErrorCode.FORBIDDEN,
+							"You are not allowed to query this domain: " + domainUuid);
+				}
 			}
 		}
-		if (!resourceTypes.isEmpty()) {
-			query.addCriteria(Criteria.where("type").in(resourceTypes));
-		} else {
-			if (!excludedTypes.isEmpty()) {
-				query.addCriteria(Criteria.where("type").nin(excludedTypes));
-			}
-		}
-		if (authUserUuid.isPresent()) {
-			query.addCriteria(Criteria.where("authUser.uuid").is(authUserUuid.get()));
-		}
-		if (actorUuid.isPresent()) {
-			query.addCriteria(Criteria.where("actor.uuid").is(actorUuid.get()));
-		}
-		if (actorEmail.isPresent()) {
-			query.addCriteria(Criteria.where("actor.mail").regex(actorEmail.get(), "i"));
-		}
-		if (begin.isPresent() && end.isPresent() ) {
-			query.addCriteria(Criteria.where("creationDate").gte(begin.get()).lt(end.get()));
-		} else if (begin.isPresent()) {
-			query.addCriteria(Criteria.where("creationDate").gte(begin.get()));
-		} else if (end.isPresent()) {
-			query.addCriteria(Criteria.where("creationDate").lt(end.get()));
-		}
-		if (relatedAccount.isPresent()) {
-			query.addCriteria(Criteria.where("relatedAccounts").in(relatedAccount.get()));
-		}
-		if (resource.isPresent()) {
-			query.addCriteria(Criteria.where("resourceUuid").is(resource.get()));
-		}
-		if (relatedResource.isPresent()) {
-			String uuid = relatedResource.get();
-			query.addCriteria(new Criteria().orOperator(
-					Criteria.where("relatedResources").in(uuid),
-					Criteria.where("resourceUuid").is(uuid)
-					)
-			);
-		}
-		if (resourceName.isPresent()) {
-			query.addCriteria(Criteria.where("resource.name").regex(resourceName.get(), "i"));
-		}
-		long count = mongoTemplate.count(query, AuditLogEntry.class);
-		logger.debug("Total of elements returned by the query without pagination: {}", count);
-		if (count == 0) {
-			return new PageContainer<AuditLogEntry>();
-		}
-		Pageable paging = PageRequest.of(container.getPageNumber(), container.getPageSize());
-		query.with(paging);
-		query.with(Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString()));
-		container.validateTotalPagesCount(count);
-		long startTime = System.currentTimeMillis();
-		List<AuditLogEntry> data = mongoTemplate.find(query, AuditLogEntry.class);
-		long elapsed = System.currentTimeMillis() - startTime;
-		logger.debug("audit query duration : {} ms.", elapsed);
-		return container.loadData(data);
 	}
 }
