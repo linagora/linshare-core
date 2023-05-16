@@ -757,6 +757,9 @@ public class UserServiceImpl implements UserService {
 					user.setExternalMailLocale(Language.ENGLISH);
 				}
 				user.setCmisLocale(SupportedLanguage.ENGLISH.toString());
+				if (user.getLdapUid() == null){
+					user.setLdapUid(user.getMail());
+				}
 				user = userRepository.create(user);
 				createQuotaUser(user);
 				UserAuditLogEntry log = new UserAuditLogEntry(

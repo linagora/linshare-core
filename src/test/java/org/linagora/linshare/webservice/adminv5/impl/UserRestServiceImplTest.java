@@ -318,6 +318,22 @@ public class UserRestServiceImplTest {
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void createUserShouldSetLdapUuidToEmail() {
+		assertThat(userService.findUserInDB(topDomain2Dto.getUuid(), "rob.test@linshare.org")).isNull();
+		UserDto userDto = new UserDto();
+		userDto.setMail("rob.test@linshare.org");
+		userDto.setDomain(topDomain2Dto);
+		userDto.setRole(Role.SIMPLE);
+
+		testee.create(userDto);
+		User userInDB = userService.findUserInDB(topDomain2Dto.getUuid(), "rob.test@linshare.org");
+
+		assertThat(userInDB).isNotNull();
+		assertThat(userInDB.getLdapUid()).isEqualTo("rob.test@linshare.org");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void createExistingUserDoesNotUpdate() {
 		// Given
 		User userInDBBefore = userService.findUserInDB(topDomain2Dto.getUuid(), "amy.wolsh@linshare.org");
