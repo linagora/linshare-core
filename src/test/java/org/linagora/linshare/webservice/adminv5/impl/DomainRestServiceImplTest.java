@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -140,5 +141,24 @@ public class DomainRestServiceImplTest {
 		assertThat(deletedDomain.getPurgeStep()).isEqualTo(DomainPurgeStepEnum.WAIT_FOR_PURGE);
 
 		assertThat(policyRepository.findAll()).hasSize(initialNumberOfPolicies);
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void createShouldCreateLanguage() {
+		// Given
+		User root = userService.findByLsUuid(LinShareConstants.defaultRootMailAddress);
+		AbstractDomain rootDomain = domainService.find(root, LinShareConstants.rootDomainIdentifier);
+		DomainDto domainDto = DomainDto.getUltraLight(rootDomain);
+		domainDto.setUuid(null);
+		domainDto.setName("new domain");
+		domainDto.setType(DomainType.TOPDOMAIN);
+		domainDto.setParent(DomainDto.getLight(rootDomain));
+		domainDto.setDefaultEmailLanguage(Language.FRENCH);
+
+		DomainDto newDomainDto = testee.create(false, null, domainDto);
+
+		assertThat(newDomainDto).isNotNull();
+		assertThat(newDomainDto.getDefaultEmailLanguage()).isEqualTo(Language.FRENCH);
 	}
 }

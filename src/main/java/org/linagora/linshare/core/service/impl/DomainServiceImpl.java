@@ -33,6 +33,7 @@ import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessSer
 import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -183,7 +184,12 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 	}
 
 	@Override
-	public AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent)
+	public AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent){
+		return create(actor, name, description, type, parent, null);
+	}
+
+	@Override
+	public AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent, Language defaultEmailLanguage)
 			throws BusinessException {
 		preChecks(actor);
 		if (!actor.hasSuperAdminRole()) {
@@ -197,6 +203,10 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 			domain.setDescription("");
 		} else {
 			domain.setDescription(sanitizerInputHtmlBusinessService.strictClean(description));
+		}
+
+		if (defaultEmailLanguage != null){
+			domain.setExternalMailLocale(defaultEmailLanguage);
 		}
 
 		// Default domain policy 

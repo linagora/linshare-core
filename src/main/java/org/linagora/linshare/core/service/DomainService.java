@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Statistic;
 import org.linagora.linshare.core.domain.entities.fields.DomainField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -44,6 +44,8 @@ public interface DomainService {
 	List<AbstractDomain> getSubDomainsByDomain(Account actor, String uuid) throws BusinessException;
 
 	AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent) throws BusinessException;
+
+	AbstractDomain create(Account actor, String name, String description, DomainType type, AbstractDomain parent, Language defaultEmailLanguage) throws BusinessException;
 
 	AbstractDomain update(Account actor, String domainUuid, AbstractDomain dto) throws BusinessException;
 

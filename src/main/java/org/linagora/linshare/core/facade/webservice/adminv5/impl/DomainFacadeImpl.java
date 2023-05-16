@@ -134,7 +134,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements DomainFa
 		String parentUuid = dto.getParent().getUuid();
 		Validate.notEmpty(parentUuid, "Domain parent must be set.");
 		AbstractDomain parentDomain = domainService.find(authUser, parentUuid);
-		AbstractDomain created = domainService.create(authUser, dto.getName(), dto.getDescription(), dto.getType(), parentDomain);
+		AbstractDomain created = domainService.create(authUser, dto.getName(), dto.getDescription(), dto.getType(), parentDomain, dto.getDefaultEmailLanguage());
 		if(dedicatedDomainPolicy) {
 			DomainPolicy policy = new DomainPolicy(dto.getName());
 			DomainPolicy domainPolicy = domainPolicyService.create(policy);
