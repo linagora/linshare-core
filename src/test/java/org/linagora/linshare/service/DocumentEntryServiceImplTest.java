@@ -176,6 +176,27 @@ public class DocumentEntryServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testCreateDocumentEntryAcceptedSpecialCharacters() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		aDocumentEntry = documentEntryService.create(actor, actor, tempFile,
+				"@!'&+", comment, false, null);
+		Assertions.assertNotNull(documentEntryRepository.findById(aDocumentEntry.getUuid()));
+		Assertions.assertEquals(aDocumentEntry.getName(), "@!'&+");
+		Document aDocument = aDocumentEntry.getDocument();
+		documentEntryRepository.delete(aDocumentEntry);
+		jane.getEntries().clear();
+		userRepository.update(jane);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
+		metadata.setUuid(aDocument.getUuid());
+		fileDataStore.remove(metadata);
+		documentRepository.delete(aDocument);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	/**
 	 * We need this method because all the functionalities are check when we create
 	 * a DocumentEntry

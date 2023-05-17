@@ -230,6 +230,16 @@ public class WorkGroupNodeServiceImplTest {
 		Assertions.assertEquals(groupNode.getName(), "EP_TEST_v233_script_alert(document.cookie)__script_");
 	}
 
+	@Test
+	public void createFolderAcceptedSpecialCharactersTest() {
+		WorkGroupNode groupNode = new WorkGroupNode(new AccountMto(john),
+				"@!'&+", rootFolder.getUuid(), workGroup.getLsUuid());
+		groupNode.setNodeType(WorkGroupNodeType.FOLDER);
+		groupNode = workGroupNodeService.create(john, john, workGroup, groupNode, false, false);
+		Assertions.assertNotNull(groupNode, "Folder is null");
+		Assertions.assertEquals(groupNode.getName(), "@!'&+");
+	}
+
 	/**
 	 * 
 	 * @throws IOException

@@ -198,6 +198,17 @@ public class SharedSpaceNodeServiceImplTest {
 	}
 
 	@Test
+	public void createWithSpecialChars() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode node = new SharedSpaceNode("@!'&+<script>alert(document.cookie)</script>", NodeType.WORK_GROUP);
+		SharedSpaceNode expectedNode = service.create(john, john, node);
+		Assertions.assertNotNull(expectedNode, "node not created");
+		Assertions.assertEquals("@!'&+", expectedNode.getName());
+		service.delete(john, john, expectedNode);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void createWorkgroupWithSaasLimitation() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account root = rootUserRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);

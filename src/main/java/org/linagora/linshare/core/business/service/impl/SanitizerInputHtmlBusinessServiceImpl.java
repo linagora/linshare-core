@@ -40,7 +40,7 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 	 * 
 	 * @param entry It can contains untrusted HTML elements.
 	 * @return String cleaned from all HTML and trimmed.
-	 * @throws IllegalArgumentException.
+	 * @throws IllegalArgumentException
 	 */
 	@Override
 	public String strictClean(String entry) throws IllegalArgumentException {
@@ -48,7 +48,7 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 		if (entry.isEmpty()) {
 			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after been sanitized");
 		}
-		return entry;
+		return unsanitizeSpecialChar(entry);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 	 */
 	@Override
 	public String clean(String entry) throws IllegalArgumentException {
-		return policyFactory.sanitize(entry).trim();
+		return unsanitizeSpecialChar(policyFactory.sanitize(entry).trim());
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtml
 	 * 
 	 * @param fileName contains untrusted HTML elements.
 	 * @return String cleaned from all untrusted HTML and trimmed.
-	 * @throws IllegalArgumentException.
+	 * @throws IllegalArgumentException
 	 */
 	@Override
 	public String sanitizeFileName(String fileName) throws BusinessException {
