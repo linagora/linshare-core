@@ -73,7 +73,7 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 	@Override
 	public List<SharedSpaceRole> findAll(Account authUser, Account actor) {
 		preChecks(authUser, actor);
-		checkListPermission(actor, authUser, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
+		checkListPermission(authUser, actor, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
 				null);
 		List<SharedSpaceRole> foundRoles = sharedSpaceRoleBusinessService.findAll();
 		return foundRoles;
@@ -94,7 +94,7 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 	public List<SharedSpaceRole> findRolesByNodeType(Account authUser, Account actor, NodeType type) {
 		preChecks(authUser, actor);
 		Validate.notNull(type, "Missing required shared space role.");
-		checkListPermission(actor, authUser, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
+		checkListPermission(authUser, actor, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
 				null);
 		return sharedSpaceRoleBusinessService.findRolesByNodeType(type);
 	}

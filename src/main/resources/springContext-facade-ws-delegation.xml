@@ -73,4 +73,10 @@
 		<constructor-arg ref="userService"/>
 	</bean>
 
+	<bean id="wsDelegationSharedSpaceNodeFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.SharedSpaceNodeFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="auditLogEntryService"/>
+		<constructor-arg ref="userService"/>
+	</bean>
+
 </beans>
