@@ -279,8 +279,31 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public void updateInconsistent(UserDto userDto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
+		checkTargetDomainForInconsistentUser(userDto);
 		update(userDto, Version.V1);
 		inconsistentUserService.updateDomain(authUser, userDto.getUuid(), userDto.getDomain());
+	}
+
+	private void checkTargetDomainForInconsistentUser(UserDto userDto) {
+		Validate.notNull(userDto, "user must be set.");
+		Validate.notEmpty(userDto.getUuid(), "uuid must be set.");
+		Validate.notEmpty(userDto.getDomain(), "domain must be set.");
+		AbstractDomain domain = abstractDomainService.findById(userDto.getDomain());
+		User user = userService.findByLsUuid(userDto.getUuid());
+
+		if (user == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Cannot find user");
+		}
+		if (domain == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST, "Cannot find domain");
+		}
+
+		if (domain.isGuestDomain() && !user.isGuest()) {
+			throw new BusinessException(BusinessErrorCode.CONFLICT, "Cannot move internal to guest domain");
+		}
+		if (!domain.isGuestDomain() && user.isGuest()) {
+			throw new BusinessException(BusinessErrorCode.CONFLICT, "Cannot move guest outside guest domain");
+		}
 	}
 
 	@Override
