@@ -164,7 +164,7 @@ public class TimeStampingServiceImpl implements TimeStampingService {
 		MessageDigest dig;
 		
 		try {
-			dig = MessageDigest.getInstance("SHA-256");
+			dig = MessageDigest.getInstance("SHA-1");
 			byte[] bytes = new byte[2048];
 			int numBytes;
 

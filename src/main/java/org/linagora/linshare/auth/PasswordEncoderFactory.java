@@ -39,7 +39,7 @@ public class PasswordEncoderFactory {
 	private Map<String, PasswordEncoder> getSupportedEncoders() {
 		Map<String, PasswordEncoder> encoders = Maps.newHashMap();
 		encoders.put("bcrypt", new BCryptPasswordEncoder());
-		MessageDigestPasswordEncoder shaEncoder = new MessageDigestPasswordEncoder("SHA-256");
+		MessageDigestPasswordEncoder shaEncoder = new MessageDigestPasswordEncoder("SHA-1");
 		shaEncoder.setEncodeHashAsBase64(true);
 		encoders.put("sha", shaEncoder);
 		return encoders;
