@@ -15,12 +15,16 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.commons.util.StringUtils;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -36,7 +40,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
 @Transactional
-@Sql({ "/import-tests-make-user2-admin.sql"})
+@Sql({ "/import-tests-check-inconsistent.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
         "classpath:springContext-dao.xml",
         "classpath:springContext-ldap.xml",
@@ -87,5 +91,16 @@ public class UserRestServiceImplTest {
 		assertThatThrownBy(() -> testee.updateInconsistent(userDto))
 				.isInstanceOf(BusinessException.class)
 				.hasMessage("Cannot move internal to guest domain");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getInconsistentUserShouldReturnDomainName() {
+		Set<UserDto> allInconsistent = testee.findAllInconsistent();
+		assertThat(allInconsistent).isNotNull();
+		assertThat(allInconsistent).isNotEmpty();
+		assertThat(allInconsistent)
+				.withFailMessage("Incorrect or absent domain name")
+				.allMatch(user -> StringUtils.isNotBlank(user.getDomainName()) && user.getDomainName().equals("MySubDomain"));
 	}
 }

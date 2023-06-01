@@ -49,6 +49,9 @@ public class AccountDto {
 	@Schema(description = "Domain")
 	protected String domain;
 
+	@Schema(description = "DomainName")
+	protected String domainName;
+
 	@Schema(description = " 2FA uuid")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String secondFAUuid;
@@ -72,6 +75,7 @@ public class AccountDto {
 	public AccountDto(Account a, boolean full) {
 		this.uuid = a.getLsUuid();
 		this.domain = a.getDomainId();
+		this.domainName = a.getDomain().getLabel();
 		this.creationDate = a.getCreationDate();
 		this.modificationDate = a.getModificationDate();
 		if (full) {
@@ -126,6 +130,14 @@ public class AccountDto {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 
 	public Boolean getSecondFAEnabled() {
