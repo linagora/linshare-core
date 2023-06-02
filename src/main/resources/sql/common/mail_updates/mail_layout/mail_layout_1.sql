@@ -44,9 +44,9 @@ workGroupRightAdminTitle = Администратор
 workGroupRightWirteTitle = Автор
 workGroupRightContributeTitle = Редактор
 workGroupRightReadTitle = Читатель
-workSpaceRoleAdminTitle = WorkSpace: Administrator
-workSpaceRoleWriteTitle = WorkSpace: Writer
-workSpaceRoleReadTitle = WorkSpace: Reader
+workSpaceRoleAdminTitle = WorkSpace: Администратор
+workSpaceRoleWriteTitle = WorkSpace: Автор
+workSpaceRoleReadTitle = WorkSpace: Читатель
 welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
