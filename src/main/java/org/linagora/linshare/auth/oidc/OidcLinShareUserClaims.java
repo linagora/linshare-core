@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.auth.oidc;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -31,8 +32,10 @@ public class OidcLinShareUserClaims {
 	private static final String EMAIL = "email";
 
 	private static final String FIRST_NAME = "first_name";
+	private static final String ALT_FIRST_NAME = "name";
 
 	private static final String LAST_NAME = "last_name";
+	private static final String ALT_LAST_NAME = "family_name";
 
 	private static final String ROLE = "linshare_role";
 
@@ -64,8 +67,8 @@ public class OidcLinShareUserClaims {
 		claims.externalUid = getAttribute(attributes, EXTERNAL_UID);
 		claims.email = getAttribute(attributes, EMAIL);
 		claims.linshareAccess = getAttribute(attributes, LINSHARE_ACCESS);
-		claims.lastName = getAttribute(attributes, LAST_NAME);
-		claims.firstName = getAttribute(attributes, FIRST_NAME);
+		claims.lastName = !StringUtils.isBlank(getAttribute(attributes, LAST_NAME)) ? getAttribute(attributes, LAST_NAME) : getAttribute(attributes, ALT_LAST_NAME);
+		claims.firstName = !StringUtils.isBlank(getAttribute(attributes, FIRST_NAME)) ? getAttribute(attributes, FIRST_NAME) : getAttribute(attributes, ALT_FIRST_NAME);
 		claims.locale = getAttribute(attributes, LOCALE);
 		claims.role = getAttribute(attributes, ROLE);
 		return claims;
@@ -79,8 +82,8 @@ public class OidcLinShareUserClaims {
 		claims.externalUid = user.getAttribute(EXTERNAL_UID);
 		claims.email = user.getAttribute(EMAIL);
 		claims.linshareAccess = user.getAttribute(LINSHARE_ACCESS);
-		claims.firstName = user.getAttribute(FIRST_NAME);
-		claims.lastName = user.getAttribute(LAST_NAME);
+		claims.firstName = !StringUtils.isBlank(user.getAttribute(FIRST_NAME)) ? user.getAttribute(FIRST_NAME) : user.getAttribute(ALT_FIRST_NAME);
+		claims.lastName = !StringUtils.isBlank(user.getAttribute(LAST_NAME)) ? user.getAttribute(LAST_NAME) : user.getAttribute(ALT_LAST_NAME);
 		claims.locale = user.getAttribute(LOCALE);
 		claims.role = user.getAttribute(ROLE);
 		return claims;

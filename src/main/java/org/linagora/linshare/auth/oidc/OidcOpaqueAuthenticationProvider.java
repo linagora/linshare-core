@@ -80,8 +80,11 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 		if (issuerUri.endsWith("/")) {
 			logger.warn("'issuerUri' ends with '/' character, might leads to connection issue !");
 		}
-		final String token = ((OidcOpaqueAuthenticationToken) authentication).getToken();
-		OidcLinShareUserClaims claims = getOidcLinShareUserClaims(token);
+		OidcOpaqueAuthenticationToken opaqueAuthenticationToken = (OidcOpaqueAuthenticationToken) authentication;
+		OidcLinShareUserClaims claims = getOidcLinShareUserClaims(opaqueAuthenticationToken.getToken());
+		//TODO: this should be refactored along other token claim usage,
+		// see org.linagora.linshare.auth.oidc.OIdcJwtAuthenticationProvider.authenticate
+		opaqueAuthenticationToken.setClaims(claims);
 		return oidcAuthenticationTokenDetailsFactory.getAuthenticationToken(claims);
 	}
 

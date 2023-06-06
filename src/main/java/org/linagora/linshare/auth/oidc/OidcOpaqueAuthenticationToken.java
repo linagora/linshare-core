@@ -21,13 +21,15 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import com.google.common.collect.Maps;
 
-public class OidcOpaqueAuthenticationToken extends AbstractAuthenticationToken {
+public class OidcOpaqueAuthenticationToken extends AbstractAuthenticationToken implements OidcTokenWithClaims {
 
 	private static final long serialVersionUID = 9181838390481593863L;
 
 	private final String token;
 
 	private Map<String, Object> attributes = Maps.newConcurrentMap();
+
+	private OidcLinShareUserClaims claims;
 
 	public OidcOpaqueAuthenticationToken(String token) {
 		super(null);
@@ -54,6 +56,7 @@ public class OidcOpaqueAuthenticationToken extends AbstractAuthenticationToken {
 
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
+		this.claims = OidcLinShareUserClaims.fromAttributes(attributes);
 	}
 
 	public String get(String key) {
@@ -64,5 +67,16 @@ public class OidcOpaqueAuthenticationToken extends AbstractAuthenticationToken {
 		if (value != null) {
 			attributes.put(key, value);
 		}
+		this.claims = OidcLinShareUserClaims.fromAttributes(attributes);
+	}
+
+	@Override
+	public OidcLinShareUserClaims getClaims() {
+		return claims;
+	}
+
+	@Override
+	public void setClaims(OidcLinShareUserClaims claims) {
+		this.claims = claims;
 	}
 }

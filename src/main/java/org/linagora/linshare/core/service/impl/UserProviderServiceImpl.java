@@ -61,7 +61,6 @@ import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.util.Pair;
 import org.springframework.ldap.CommunicationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -314,75 +313,87 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	@Override
 	public User findUser(AbstractDomain domain, UserProvider up, String mail)
 			throws BusinessException {
-		if (up != null) {
-			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
-			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
-				User user = null;
-				try {
-					user = ldapQueryService.getUser(ldapUserProvider.getLdapConnection(),
-							ldapUserProvider.getBaseDn(), ldapUserProvider.getPattern(), mail);
-					if (user != null) {
-						user.setDomain(domain);
-						user.setRole(domain.getDefaultRole());
-						user.setMailLocale(user.getDomain().getExternalMailLocale());
-						user.setExternalMailLocale(user.getDomain().getExternalMailLocale());
-					}
-				} catch (NamingException | IOException | CommunicationException e) {
-					logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
-				}
-				return user;
-			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
-				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-				if (!authentication.isAuthenticated()) {
-					// it means we are trying to find/create this profile during authentication process.
-					// This code is ugly, it is a quick workaround.
-					if ((OidcTokenWithClaims.class).isAssignableFrom(authentication.getClass())) {
-						OidcLinShareUserClaims claims = ((OidcTokenWithClaims) authentication).getClaims();
-						OIDCUserProvider oidcUp = (OIDCUserProvider) userProvider;
-						String domainDiscriminator = claims.getDomainDiscriminator();
-						if (oidcUp.getDomainDiscriminator().equals(domainDiscriminator)) {
-							String email = claims.getEmail();
-							Validate.notEmpty(email, "Missing required attribute for email.");
-							String firstName = claims.getFirstName();
-							Validate.notEmpty(firstName, "Missing required attribute for first name.");
-							String lastName = claims.getLastName();
-							Validate.notEmpty(lastName, "Missing required attribute for last name.");
-							Optional<String> externalUuid = Optional.ofNullable(claims.getExternalUid());
-							Internal internal = new Internal(firstName, lastName, email, externalUuid.orElse(email));
-							internal.setDomain(domain);
-							internal.setRole(domain.getDefaultRole());
-							internal.setMailLocale(domain.getExternalMailLocale());
-							internal.setExternalMailLocale(domain.getExternalMailLocale());
-							if (oidcUp.getUseRoleClaim()) {
-								internal.setRole(Role.toDefaultRole(
-									domain.getDefaultRole(),
-									claims.getRole()));
-							}
-							if (oidcUp.getUseEmailLocaleClaim()) {
-								Language language = Language.toDefaultLanguage(
-									domain.getExternalMailLocale(),
-									claims.getLocale());
-								internal.setMailLocale(language);
-								internal.setExternalMailLocale(language);
-							} else {
-							}
-							return internal;
-						}
-					}
-				} else {
-					// probably trying to discover a user.
-					logger.debug("UserProviderType.OIDC provider does not supported discovering new user.");
-				}
-			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
-				return twakeUserProviderService.findUser(domain, (TwakeUserProvider) userProvider, mail);
-			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.findUser(domain, (TwakeGuestUserProvider) userProvider, mail);
-			} else {
-				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
-			}
+		if (up == null) {
+			return null;
 		}
+		UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
+
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			return getUserFromLdap(domain, mail, (LdapUserProvider) userProvider);
+
+		} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			if (!authentication.isAuthenticated()) {
+				// it means we are trying to find/create this profile during authentication process.
+				if ((OidcTokenWithClaims.class).isAssignableFrom(authentication.getClass())) {
+					return buildUserFromClaims(domain, (OIDCUserProvider) userProvider, ((OidcTokenWithClaims) authentication).getClaims());
+				}
+			} else {
+				// probably trying to discover a user.
+				logger.debug("UserProviderType.OIDC provider does not supported discovering new user.");
+			}
+		} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+			return twakeUserProviderService.findUser(domain, (TwakeUserProvider) userProvider, mail);
+		} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+			return twakeGuestUserProviderService.findUser(domain, (TwakeGuestUserProvider) userProvider, mail);
+		}
+		logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
 		return null;
+	}
+
+
+	@Nullable
+	private static Internal buildUserFromClaims(AbstractDomain domain, OIDCUserProvider userProvider, OidcLinShareUserClaims claims) {
+		// This code is ugly, it is a quick workaround.
+		String domainDiscriminator = claims.getDomainDiscriminator();
+		if (!userProvider.getDomainDiscriminator().equals(domainDiscriminator)) {
+			return null;
+		}
+
+		String email = claims.getEmail();
+		Validate.notEmpty(email, "Missing required attribute for email.");
+		String firstName = claims.getFirstName();
+		Validate.notEmpty(firstName, "Missing required attribute for first name.");
+		String lastName = claims.getLastName();
+		Validate.notEmpty(lastName, "Missing required attribute for last name.");
+		Optional<String> externalUuid = Optional.ofNullable(claims.getExternalUid());
+		Internal internal = new Internal(firstName, lastName, email, externalUuid.orElse(email));
+		internal.setDomain(domain);
+		internal.setRole(domain.getDefaultRole());
+		internal.setMailLocale(domain.getExternalMailLocale());
+		internal.setExternalMailLocale(domain.getExternalMailLocale());
+		if (userProvider.getUseRoleClaim()) {
+			internal.setRole(Role.toDefaultRole(
+					domain.getDefaultRole(),
+					claims.getRole()));
+		}
+		if (userProvider.getUseEmailLocaleClaim()) {
+			Language language = Language.toDefaultLanguage(
+					domain.getExternalMailLocale(),
+					claims.getLocale());
+			internal.setMailLocale(language);
+			internal.setExternalMailLocale(language);
+		}
+		return internal;
+	}
+
+	@Nullable
+	private User getUserFromLdap(AbstractDomain domain, String mail, LdapUserProvider userProvider) {
+		LdapUserProvider ldapUserProvider = userProvider;
+		User user = null;
+		try {
+			user = ldapQueryService.getUser(ldapUserProvider.getLdapConnection(),
+					ldapUserProvider.getBaseDn(), ldapUserProvider.getPattern(), mail);
+			if (user != null) {
+				user.setDomain(domain);
+				user.setRole(domain.getDefaultRole());
+				user.setMailLocale(user.getDomain().getExternalMailLocale());
+				user.setExternalMailLocale(user.getDomain().getExternalMailLocale());
+			}
+		} catch (NamingException | IOException | CommunicationException e) {
+			logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
+		}
+		return user;
 	}
 
 	@Override
@@ -631,48 +642,20 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			throws BusinessException {
 		if (up != null) {
 			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
+
 			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
-				User user = null;
-				try {
-					user = ldapQueryService.searchForAuth(ldapUserProvider.getLdapConnection(),
-							ldapUserProvider.getBaseDn(),
-							ldapUserProvider.getPattern(), login);
-				} catch (NamingException | IOException | CommunicationException e) {
-					logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
-				}
-				if (user != null) {
-					user.setDomain(domain);
-				}
-				return user;
+				return ldapSearchForAuth(domain, login, (LdapUserProvider) userProvider);
+
 			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 				if(authentication != null && !authentication.isAuthenticated()) {
 					// It means we are trying to find this profile during authentication process.
-					// It was the auto discover feature of LDAP, but it does not exist for OIDC.
-					// This code is ugly workaround
-					if ((OidcTokenWithClaims.class).isAssignableFrom(authentication.getClass())){
-						OidcTokenWithClaims jwtAuthentication = (OidcTokenWithClaims) authentication;
-						OIDCUserProvider oidcUp = (OIDCUserProvider) userProvider;
-						String domainDiscriminator = jwtAuthentication.getClaims().getDomainDiscriminator();
-						logger.trace("domainDiscriminator : {}", domainDiscriminator);
-						// if this user does not belong to this domain, we ignore him.
-						if (oidcUp.getDomainDiscriminator().equals(domainDiscriminator)) {
-							String email = jwtAuthentication.getClaims().getEmail();
-							Validate.notEmpty(email, "Missing required attribute for email.");
-							Internal internal = new Internal(null, null, email, null);
-							internal.setDomain(domain);
-							return internal;
-						} else {
-							logger.trace("Skipped. Provided oidcDomainIdentifier does not match current domain: domainDiscriminator={}, domain={}", domainDiscriminator, domain.getUuid());
-						}
-					} else {
-						logger.trace("It is not a OidcOpaqueAuthenticationToken class: {}", authentication.getClass());
-					}
+					return oidcSearchForAuth(domain, (OIDCUserProvider) userProvider, authentication);
 				} else {
 					logger.debug("Using UserProviderType.OIDC provider outside authentication is not supported.");
 					logger.debug("authentication context is null or account is not authenticated.");
 				}
+
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.searchForAuth(domain, (TwakeUserProvider) userProvider, login);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
@@ -683,7 +666,48 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		}
 		return null;
 	}
-	
+
+	@Nullable
+	private User ldapSearchForAuth(AbstractDomain domain, String login, LdapUserProvider ldapUserProvider) {
+		try {
+			User user = ldapQueryService.searchForAuth(ldapUserProvider.getLdapConnection(),
+					ldapUserProvider.getBaseDn(),
+					ldapUserProvider.getPattern(), login);
+			if (user != null) {
+				user.setDomain(domain);
+			}
+			return user;
+		} catch (NamingException | IOException | CommunicationException e) {
+			logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
+			return null;
+		}
+	}
+
+	@Nullable
+	private static Internal oidcSearchForAuth(AbstractDomain domain, OIDCUserProvider userProvider, Authentication authentication) {
+		// It was the auto discover feature of LDAP, but it does not exist for OIDC.
+		// This code is ugly workaround
+		if (!(OidcTokenWithClaims.class).isAssignableFrom(authentication.getClass())) {
+			logger.trace("It is not a OidcOpaqueAuthenticationToken or OidcTokenWithClaims class: {}", authentication.getClass());
+			return null;
+		}
+
+		OidcTokenWithClaims jwtAuthentication = (OidcTokenWithClaims) authentication;
+		String domainDiscriminator = jwtAuthentication.getClaims().getDomainDiscriminator();
+		logger.trace("domainDiscriminator : {}", domainDiscriminator);
+		if (!userProvider.getDomainDiscriminator().equals(domainDiscriminator)) {
+			// if this user does not belong to this domain, we ignore him.
+			logger.trace("Skipped. Provided oidcDomainIdentifier does not match current domain: domainDiscriminator={}, domain={}", domainDiscriminator, domain.getUuid());
+			return null;
+		}
+
+		String email = jwtAuthentication.getClaims().getEmail();
+		Validate.notEmpty(email, "Missing required attribute for email.");
+		Internal internal = new Internal(null, null, email, null);
+		internal.setDomain(domain);
+		return internal;
+	}
+
 	private void throwError(LdapConnection ldap, Exception e)
 			throws BusinessException {
 		logger.error(
