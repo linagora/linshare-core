@@ -121,7 +121,7 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 				}
 				if (foundUser == null) {
 					for (String domainUuid : domains) {
-						foundUser = authentificationFacade.ldapSearchForAuth(domainUuid, authenticationHeader);
+						foundUser = authentificationFacade.userProviderSearchForAuth(domainUuid, authenticationHeader);
 						if (foundUser != null) {
 							try {
 								foundUser = authentificationFacade.findOrCreateUser(domainUuid, foundUser.getMail());

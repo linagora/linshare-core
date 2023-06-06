@@ -22,21 +22,21 @@ import java.util.Map;
 
 public class OidcLinShareUserClaims {
 
-	private static String DOMAIN_DISCRIMINATOR = "domain_discriminator";
+	private static final String DOMAIN_DISCRIMINATOR = "domain_discriminator";
 
-	private static String EXTERNAL_UID = "external_uid";
+	private static final String EXTERNAL_UID = "external_uid";
 
-	private static String LINSHARE_ACCESS = "linshare_access";
+	private static final String LINSHARE_ACCESS = "linshare_access";
 
-	private static String EMAIL = "email";
+	private static final String EMAIL = "email";
 
-	private static String FIRST_NAME = "first_name";
+	private static final String FIRST_NAME = "first_name";
 
-	private static String LAST_NAME = "last_name";
+	private static final String LAST_NAME = "last_name";
 
-	private static String ROLE = "linshare_role";
+	private static final String ROLE = "linshare_role";
 
-	private static String LOCALE = "linshare_locale";
+	private static final String LOCALE = "linshare_locale";
 
 	private String domainDiscriminator;
 

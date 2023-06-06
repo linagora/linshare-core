@@ -153,7 +153,7 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
-	public User ldapSearchForAuth(String domainIdentifier, String login)
+	public User userProviderSearchForAuth(String domainIdentifier, String login)
 			throws BusinessException {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
 		User user = userProviderService.searchForAuth(domain, domain.getUserProvider(), login);
@@ -187,7 +187,7 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 				+ user.getAccountRepresentation());
 		logger.debug("The user domain stored in DB was : "
 				+ user.getDomainId());
-		if(ldapSearchForAuth(
+		if(userProviderSearchForAuth(
 				user.getDomainId(), login) == null) {
 			// The previous user found into the database does not exists anymore into the LDAP directory.
 			// We must not use him.

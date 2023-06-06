@@ -52,7 +52,7 @@ public interface AuthentificationFacade {
 
 	public User ldapAuth(String domainIdentifier,	String login, String userPasswd) throws BusinessException;
 
-	public User ldapSearchForAuth(String domainIdentifier, String login) throws BusinessException;
+	public User userProviderSearchForAuth(String domainIdentifier, String login) throws BusinessException;
 
 	public User checkStillInLdap(User user, String login) throws BusinessException;
 

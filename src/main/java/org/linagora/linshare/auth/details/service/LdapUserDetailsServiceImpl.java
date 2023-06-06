@@ -56,7 +56,7 @@ public class LdapUserDetailsServiceImpl implements UserDetailsService {
 		User transientUser = null;
 		String transientDomainUuid = null;
 		for (String domainUuid : authentificationFacade.getAllDomains()) {
-			transientUser = authentificationFacade.ldapSearchForAuth(domainUuid, username);
+			transientUser = authentificationFacade.userProviderSearchForAuth(domainUuid, username);
 			if (transientUser != null) {
 				transientDomainUuid = domainUuid;
 				logger.debug("User found in domain " + transientDomainUuid);

@@ -16,6 +16,7 @@
 package org.linagora.linshare.auth.oidc;
 
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -80,6 +81,12 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 			logger.warn("'issuerUri' ends with '/' character, might leads to connection issue !");
 		}
 		final String token = ((OidcOpaqueAuthenticationToken) authentication).getToken();
+		OidcLinShareUserClaims claims = getOidcLinShareUserClaims(token);
+		return oidcAuthenticationTokenDetailsFactory.getAuthenticationToken(claims);
+	}
+
+	@NotNull
+	private OidcLinShareUserClaims getOidcLinShareUserClaims(String token) {
 		BearerTokenAuthenticationToken authToken = new BearerTokenAuthenticationToken(token);
 
 		ClientRegistration clientRegistration = getClientRegistration();
@@ -97,9 +104,7 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 		logger.trace("sub: {}", authenticate.getName());
 		logger.trace("claims: {}", loadUser.getAttributes().toString());
 
-		OidcLinShareUserClaims claims = OidcLinShareUserClaims.fromOAuth2User(loadUser);
-
-		return oidcAuthenticationTokenDetailsFactory.getAuthenticationToken(claims);
+		return OidcLinShareUserClaims.fromOAuth2User(loadUser);
 	}
 
 	private ClientRegistration getClientRegistration() {

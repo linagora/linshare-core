@@ -139,7 +139,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		}
 		if (foundUser == null) {
 			for (String domain : domains) {
-				foundUser = authentificationFacade.ldapSearchForAuth(domain, email);
+				foundUser = authentificationFacade.userProviderSearchForAuth(domain, email);
 				if (foundUser != null) {
 					break;
 				}
