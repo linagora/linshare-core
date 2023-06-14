@@ -22,10 +22,12 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.text.ParseException;
 
 // Only for researching purpose
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class OIdcJwtAuthenticationProviderDebugTest {
 
 	OidcAuthenticationTokenDetailsFactory oidcAuthenticationTokenDetailsFactoryMock = Mockito.mock(OidcAuthenticationTokenDetailsFactory.class);

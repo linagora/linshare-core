@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.auth.oidc;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({ MockitoExtension.class })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class OIdcJwtAuthenticationProviderTest {
 
 	OidcAuthenticationTokenDetailsFactory oidcAuthenticationTokenDetailsFactoryMock = mock(OidcAuthenticationTokenDetailsFactory.class);
@@ -50,6 +53,11 @@ class OIdcJwtAuthenticationProviderTest {
 	void init() {
 		subj.oidcAuthenticationTokenDataFactory = oidcAuthenticationTokenDetailsFactoryMock;
 		subj.jwtDecoder = mock(JwtDecoder.class);
+	}
+
+	@AfterAll
+	static void cleanMockito(){
+		claimsMockedStatic.close();
 	}
 
 	@Test

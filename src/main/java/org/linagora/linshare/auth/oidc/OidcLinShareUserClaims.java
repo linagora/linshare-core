@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.util.Iterator;
 import java.util.Map;
 
 public class OidcLinShareUserClaims {
@@ -63,7 +64,7 @@ public class OidcLinShareUserClaims {
 	public static OidcLinShareUserClaims fromAttributes(Map<String, Object> attributes) {
 		Validate.notNull(attributes, "Attributes for the token should exist");
 		OidcLinShareUserClaims claims = new OidcLinShareUserClaims();
-		claims.domainDiscriminator = getAttribute(attributes, DOMAIN_DISCRIMINATOR);
+		claims.domainDiscriminator = getFirstAttribute(attributes, DOMAIN_DISCRIMINATOR);
 		claims.externalUid = getAttribute(attributes, EXTERNAL_UID);
 		claims.email = getAttribute(attributes, EMAIL);
 		claims.linshareAccess = getAttribute(attributes, LINSHARE_ACCESS);
@@ -77,20 +78,20 @@ public class OidcLinShareUserClaims {
 	public static OidcLinShareUserClaims fromOAuth2User(OAuth2User user) {
 		Validate.notNull(user, "The user shoud not be null");
 		Validate.notNull(user.getAttributes(), "The user shoud not be null");
-		OidcLinShareUserClaims claims = new OidcLinShareUserClaims();
-		claims.domainDiscriminator = user.getAttribute(DOMAIN_DISCRIMINATOR);
-		claims.externalUid = user.getAttribute(EXTERNAL_UID);
-		claims.email = user.getAttribute(EMAIL);
-		claims.linshareAccess = user.getAttribute(LINSHARE_ACCESS);
-		claims.firstName = !StringUtils.isBlank(user.getAttribute(FIRST_NAME)) ? user.getAttribute(FIRST_NAME) : user.getAttribute(ALT_FIRST_NAME);
-		claims.lastName = !StringUtils.isBlank(user.getAttribute(LAST_NAME)) ? user.getAttribute(LAST_NAME) : user.getAttribute(ALT_LAST_NAME);
-		claims.locale = user.getAttribute(LOCALE);
-		claims.role = user.getAttribute(ROLE);
-		return claims;
+		return fromAttributes(user.getAttributes());
 	}
 
 	private static String getAttribute(Map<String, Object> attributes, String name) {
 		Object value = attributes.get(name);
+		return value != null ? value.toString() : null;
+	}
+
+	private static String getFirstAttribute(Map<String, Object> attributes, String name) {
+		Object value = attributes.get(name);
+		if (value instanceof Iterable) {
+			Iterator<?> iterator = ((Iterable<?>) value).iterator();
+			value = iterator.hasNext() ? iterator.next() : null;
+		}
 		return value != null ? value.toString() : null;
 	}
 
