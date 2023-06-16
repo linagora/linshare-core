@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -37,6 +38,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailFooterDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainLightDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
@@ -79,7 +81,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		Iterable<MailConfig> configs = only ? domain.getMailConfigs()
 				: mailConfigService.findAllConfigs(user, domainId);
 		for (MailConfig mailConfig : configs) {
-			mailConfigsDto.add(new MailConfigDto(mailConfig, getOverrideReadonly()));
+			mailConfigsDto.add(new MailConfigDto(mailConfig, getOverrideReadonly(), getAssociatedDomainsLightDto(mailConfig)));
 		}
 		return mailConfigsDto;
 	}
@@ -87,7 +89,14 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailConfigDto find(String uuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
-		return new MailConfigDto(findConfig(authUser, uuid), getOverrideReadonly());
+		MailConfig config = findConfig(authUser, uuid);
+		return new MailConfigDto(config, getOverrideReadonly(), getAssociatedDomainsLightDto(config));
+	}
+
+	@NotNull
+	private Set<DomainLightDto> getAssociatedDomainsLightDto(MailConfig config) {
+		return mailConfigService.findAllAssociatedDomains(config)
+				.stream().map(DomainLightDto::new).collect(Collectors.toSet());
 	}
 
 	@Override

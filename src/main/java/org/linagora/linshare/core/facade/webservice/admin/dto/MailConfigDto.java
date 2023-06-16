@@ -26,6 +26,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainLightDto;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -68,6 +69,9 @@ public class MailConfigDto {
 	@Schema(description = "MailContentLangs")
 	private Set<MailContentLangDto> mailContentLangs = Sets.newHashSet();
 
+	@Schema(description = "AssociatedDomains")
+	private Set<DomainLightDto> associatedDomains = Sets.newHashSet();
+
 	public MailConfigDto() {
 	}
 
@@ -76,6 +80,9 @@ public class MailConfigDto {
 	}
 
 	public MailConfigDto(MailConfig config, boolean overrideReadonly) {
+	this(config, overrideReadonly, Sets.newHashSet());
+	}
+	public MailConfigDto(MailConfig config, boolean overrideReadonly, Set<DomainLightDto> associatedDomains) {
 		super();
 		this.uuid = config.getUuid();
 		this.domain = config.getDomain().getUuid();
@@ -89,6 +96,7 @@ public class MailConfigDto {
 		this.creationDate = new Date(config.getCreationDate().getTime());
 		this.modificationDate = new Date(config.getModificationDate().getTime());
 		this.mailLayout = config.getMailLayoutHtml().getUuid();
+		this.associatedDomains = associatedDomains;
 
 		Set<MailContentLang> mcls = config.getMailContentLangs();
 		Map<Integer, MailFooterLang> mfls = config.getMailFooters();
@@ -188,5 +196,13 @@ public class MailConfigDto {
 
 	public void setMailContentLangs(Set<MailContentLangDto> mailContentLangs) {
 		this.mailContentLangs = mailContentLangs;
+	}
+
+	public Set<DomainLightDto> getAssociatedDomains() {
+		return associatedDomains;
+	}
+
+	public void setAssociatedDomains(Set<DomainLightDto> associatedDomains) {
+		this.associatedDomains = associatedDomains;
 	}
 }

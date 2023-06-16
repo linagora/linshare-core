@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +36,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainLightDto;
 import org.linagora.linshare.core.service.impl.DomainServiceImpl;
 import org.linagora.linshare.core.service.impl.MailConfigServiceImpl;
 import org.linagora.linshare.core.service.impl.UserServiceImpl;
@@ -45,6 +47,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 
 
 @ExtendWith(SpringExtension.class)
@@ -295,6 +298,39 @@ public class MailConfigRestServiceImplTest {
 
 		assertThat(config.getDomainName()).isEqualTo(rootDomain.getLabel());
 		assertThat(config.getDomain()).isEqualTo(rootDomain.getUuid());
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getConfigReturnAssociatedDomains() {
+		MailConfigDto config = testee.find(rootPublicConfig);
+
+		assertThat(config.getAssociatedDomains().size()).isEqualTo(5);
+		assertThat(config.getAssociatedDomains().stream().map(DomainLightDto::getUuid)
+				.collect(Collectors.toList())).allMatch(StringUtils::isNotBlank);
+		assertThat(config.getAssociatedDomains().stream().map(DomainLightDto::getName)
+				.collect(Collectors.toList())).containsExactlyInAnyOrder(
+						"MySubDomain", "TopDomain2", "MyDomain", "GuestDomain", "LinShareRootDomain");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getAllConfigReturnAssociatedDomains() {
+		Set<MailConfigDto> configs = testee.findAll(rootDomain.getUuid(), true);
+
+		assertThat(configs.size()).isEqualTo(3);
+		for (MailConfigDto config : configs){
+			if ("Default mail config".equals(config.getName())){
+				assertThat(config.getAssociatedDomains().size()).isEqualTo(5);
+				assertThat(config.getAssociatedDomains().stream().map(DomainLightDto::getUuid)
+						.collect(Collectors.toList())).allMatch(StringUtils::isNotBlank);
+				assertThat(config.getAssociatedDomains().stream().map(DomainLightDto::getName)
+						.collect(Collectors.toList())).containsExactlyInAnyOrder(
+								"MySubDomain", "TopDomain2", "MyDomain", "GuestDomain", "LinShareRootDomain");
+			} else {
+				assertThat(config.getAssociatedDomains().size()).isEqualTo(0);
+			}
+		}
 	}
 
 }

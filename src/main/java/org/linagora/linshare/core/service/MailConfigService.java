@@ -367,5 +367,5 @@ public interface MailConfigService {
 
 	void assign(Account actor, String domainUuid, String mailConfigUuid);
 
-    Set<AbstractDomain> findAllAssociatedDomains(MailConfig mailConfigUuid);
+    Set<AbstractDomain> findAllAssociatedDomains(MailConfig mailConfig);
 }

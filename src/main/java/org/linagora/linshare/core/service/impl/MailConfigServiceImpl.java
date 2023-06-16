@@ -558,9 +558,9 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public Set<AbstractDomain> findAllAssociatedDomains(MailConfig mailConfigUuid) {
-		Validate.notNull(mailConfigUuid, "Mail config uuid must be set.");
+	public Set<AbstractDomain> findAllAssociatedDomains(MailConfig mailConfig) {
+		Validate.notNull(mailConfig, "Mail config uuid must be set.");
 
-		return ImmutableSet.copyOf(domainBusinessService.loadRelativeDomains(mailConfigUuid));
+		return ImmutableSet.copyOf(domainBusinessService.loadRelativeDomains(mailConfig));
 	}
 }
