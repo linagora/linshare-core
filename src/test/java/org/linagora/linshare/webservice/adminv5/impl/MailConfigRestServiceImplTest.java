@@ -333,4 +333,53 @@ public class MailConfigRestServiceImplTest {
 		}
 	}
 
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void updateConfigToPrivateAllowedWhenUnused() {
+		MailConfigDto config = new MailConfigDto(configService.findConfigByUuid(root, rootPublicConfig2));
+		config.setVisible(false);
+
+		MailConfigDto updated = testee.update(config);
+
+		assertThat(updated.isVisible()).isFalse();
+		assertThat(configService.findConfigByUuid(root, rootPublicConfig2).isVisible()).isFalse();
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void updateConfigToPrivateForbiddenWhenAssignedToSubdomain() {
+		configService.assign(root, topDomain.getUuid(), rootPublicConfig2);
+		MailConfigDto config = new MailConfigDto(configService.findConfigByUuid(root, rootPublicConfig2));
+		config.setVisible(false);
+
+		assertThatThrownBy(() -> testee.update(config))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("You cannot set to private a mail configuration assigned to other domains");
+
+		assertThat(configService.findConfigByUuid(root, rootPublicConfig2).isVisible()).isTrue();
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void updateConfigToPublicAllowedWhenUnused() {
+		MailConfigDto config = new MailConfigDto(configService.findConfigByUuid(root, rootPrivateConfig));
+		config.setVisible(true);
+
+		MailConfigDto updated = testee.update(config);
+
+		assertThat(updated.isVisible()).isTrue();
+		assertThat(configService.findConfigByUuid(root, rootPrivateConfig).isVisible()).isTrue();
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void updateConfigToPublicAllowedWhenUsed() {
+		configService.assign(root, rootDomain.getUuid(), rootPrivateConfig);
+		MailConfigDto config = new MailConfigDto(configService.findConfigByUuid(root, rootPrivateConfig));
+		config.setVisible(true);
+		MailConfigDto updated = testee.update(config);
+
+		assertThat(updated.isVisible()).isTrue();
+		assertThat(configService.findConfigByUuid(root, rootPrivateConfig).isVisible()).isTrue();
+	}
 }

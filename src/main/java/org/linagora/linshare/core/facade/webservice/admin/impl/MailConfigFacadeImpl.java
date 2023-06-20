@@ -111,9 +111,18 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	public MailConfigDto update(MailConfigDto dto) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		MailConfig config = findConfig(authUser, dto.getUuid());
+		if (config.isVisible() && !dto.isVisible() && isAssignedToOtherDomain(config)) {
+			throw new BusinessException("You cannot set to private a mail configuration assigned to other domains");
+		}
+
 		transform(config, dto);
 		config.setMailLayoutHtml(findLayout(authUser, dto.getMailLayout()));
 		return new MailConfigDto(mailConfigService.updateConfig(authUser, config));
+	}
+
+	private boolean isAssignedToOtherDomain(MailConfig config){
+		return mailConfigService.findAllAssociatedDomains(config).stream()
+				.anyMatch(domain -> !domain.getUuid().equals(config.getDomain().getUuid()));
 	}
 
 	@Override
