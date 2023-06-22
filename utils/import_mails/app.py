@@ -48,7 +48,7 @@ update_file_folder = update_file_location + separator
 structure_file_name = path_folder + "import_mail_structure.sql"
 #import_mails_file_name = path_folder + "import-mail.sql"
 update_file_name = path_folder + "import_mail_update.sql"
-columns_to_update = ["subject", "body", "messages_french", "messages_english", "messages_russian", "layout", "footer"]
+columns_to_update = ["subject", "body", "messages_french", "messages_english", "messages_russian",  "messages_vietnamese", "layout", "footer"]
 tables_to_export = ['mail_layout', 'mail_config', 'mail_content', 'mail_content_lang', 'mail_footer', 'mail_footer_lang']
 tables_to_extract_content = ['mail_layout', 'mail_content', 'mail_footer']
 

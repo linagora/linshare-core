@@ -45,6 +45,8 @@ public class MailLayout implements Cloneable {
 
 	private String messagesRussian;
 
+	private String messagesVietnamese;
+
 	public MailLayout() {
 	}
 
@@ -144,6 +146,14 @@ public class MailLayout implements Cloneable {
 		this.messagesRussian = messagesRussian;
 	}
 
+	public String getMessagesVietnamese() {
+		return messagesVietnamese;
+	}
+
+	public void setMessagesVietnamese(String messagesVietnamese) {
+		this.messagesVietnamese = messagesVietnamese;
+	}
+
 	@Override
 	public MailLayout clone() {
 		MailLayout p = null;
@@ -164,6 +174,8 @@ public class MailLayout implements Cloneable {
 			return getMessagesFrench();
 		} else if (lang.equals(Language.RUSSIAN)) {
 			return getMessagesRussian();
+		} else if (lang.equals(Language.VIETNAMESE)) {
+			return getMessagesVietnamese();
 		} else {
 			return getMessagesEnglish();
 		}

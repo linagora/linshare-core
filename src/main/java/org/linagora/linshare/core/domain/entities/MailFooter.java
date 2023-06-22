@@ -45,6 +45,8 @@ public class MailFooter implements Cloneable {
 
 	private String messagesRussian;
 
+	private String messagesVietnamese;
+
 	public MailFooter() {
 	}
 
@@ -144,6 +146,14 @@ public class MailFooter implements Cloneable {
 		this.messagesRussian = messagesRussian;
 	}
 
+	public String getMessagesVietnamese() {
+		return messagesVietnamese;
+	}
+
+	public void setMessagesVietnamese(String messagesVietnamese) {
+		this.messagesVietnamese = messagesVietnamese;
+	}
+
 	@Override
 	public String toString() {
 		return "MailFooter [id=" + id + ", name=" + description + ", domain=" + domain + ", visible=" + visible
@@ -171,6 +181,8 @@ public class MailFooter implements Cloneable {
 			return getMessagesFrench();
 		} else if (lang.equals(Language.RUSSIAN)) {
 			return getMessagesRussian();
+		} else if (lang.equals(Language.VIETNAMESE)) {
+			return getMessagesVietnamese();
 		} else {
 			return getMessagesEnglish();
 		}
