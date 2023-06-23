@@ -42,4 +42,9 @@ accountExpiryDateTitle = Срок действия аккаунта
 activationLinkTitle = Ссылка активации
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> создал гостевой аккаунт <b>{2}</b>  для вас, который позволяет надежно обмениваться файлами. <br/>Для входа в ваш аккаунт, завершите процесс регистрации, используя ссылку
 subject = {0}  {1} пригласил вас активировать ваш {2} аккаунт
-userNameTitle = Имя пользователя' WHERE id=8;
+userNameTitle = Имя пользователя',messages_vietnamese='accessToLinshareBTn = Kích hoạt tài khoản
+accountExpiryDateTitle = Ngày hết hạn tài khoản 
+activationLinkTitle = Đường dẫn
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã tạo một <b>{2}</b> tài khoản khách cho bạn, điều này cho phép bạn trao đổi tài liệu bảo mật hơn. <br/> Để đăng nhập tài khoản của bạn, bạn cần phải tạo mật khẩu bằng đường dẫn dưới đây. 
+subject = {0}  {1} đã mời bạn kích hoạt {2} tài khoản
+userNameTitle = Tên đăng nhập' WHERE id=8;

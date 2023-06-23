@@ -34,4 +34,8 @@ guestNameTitle = Guest',
 messages_russian='accessToLinshareBTn = Access
 subject = {0} {1} deleted you from guest moderator''s list
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> deleted you from moderators list of <b>{2}</b> <b>{3}</b>.
-guestNameTitle = Guest' WHERE id=43;
+guestNameTitle = Guest',
+messages_vietnamese='accessToLinshareBTn = Truy cập
+subject = {0} {1} đã xóa bạn khỏi danh sách quản trị 
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã xóa bạn khỏi danh sách quản trị của <b>{2}</b> <b>{3}</b>.
+guestNameTitle = Khách' WHERE id=43;

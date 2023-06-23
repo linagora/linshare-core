@@ -81,4 +81,13 @@ workSpaceRight = WorkSpace right
 workGroupRight = Workgroup right
 workSpaceNameTitle = WorkSpace Name
 nestedWorkGroupsList = Workgroups list
-nbrWorkgoups = Number of updated workGroups' WHERE id=35;
+nbrWorkgoups = Number of updated workGroups' ,messages_vietnamese='workSpaceMemberUpdatedDateTitle = NGaỳ cập nhật 
+mainMsg = Quyền của bạn trong workspace 
+mainMsgNext= và các workgroup bên trong đã được cập nhật 
+mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Quyền của bạn trong WorkSpace {0} đã được cập nhật 
+workSpaceRight = Quyền trong WorkSpace 
+workGroupRight = Quyền trong Workgroup
+workSpaceNameTitle = Tên WorkSpace
+nestedWorkGroupsList = Danh sách Workgroups 
+nbrWorkgoups = Số workgroup được cập nhật' WHERE id=35;

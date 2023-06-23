@@ -34,4 +34,7 @@ mainMsg = The password of the account {0} <b>{1}</b> was modified.
 subject = Your password has been modified',messages_russian='accountCreationDateTitle = Дата создания аккаунта
 accountExpiryDateTitle = Дата окончания действия аккаунта
 mainMsg = Пароль аккаунта {0} <b>{1}</b> был изменен.
-subject = Ваш пароль был изменен' WHERE id=31;
+subject = Ваш пароль был изменен',messages_vietnamese='accountCreationDateTitle = Ngày tạo tài khoản 
+accountExpiryDateTitle = Ngày tài khoản hết hạn 
+mainMsg = Mật khẩu của tài khoản {0} <b>{1}</b> đã được thay đổi. 
+subject = Mật khẩu của bạn đã được thay đổi' WHERE id=31;

@@ -56,5 +56,13 @@ changePasswordBtn = Change password
 mainTitle = In order to enhance the security of your account, you must change your password to your LinShare account. Any connection will be forbidden until this step is not carried out.
 resetLinkTitle = LinShare reset password link
 subject =  Security update
-userNameTitle = Username'
+userNameTitle = Username',
+messages_vietnamese= 'urlExpiryDateTitle = URL ngày hết hạn 
+additionalMsg = Bạn cũng có thể dùng form đổi mật khẩu để thực hiện việc này. 
+noteMsg = Đường dẫn này chỉ được dùng một ngày và có giá trị trong 1 tuần. 
+changePasswordBtn = Đổi mật khẩu 
+mainTitle = Để nâng cao bảo bật cho tài khoản LinShare của bạn, bạn cần phải đổi mật khẩu tài khoản. Bất cứ kết nối nào cũng sẽ bị chặn cho đến khi bạn hoàn thành bước này. 
+resetLinkTitle = Đường dẫn đổi mật khẩu LinShare. 
+subject =  Cập nhật bảo mật 
+userNameTitle = Tên người dùng '
 WHERE id= 37;

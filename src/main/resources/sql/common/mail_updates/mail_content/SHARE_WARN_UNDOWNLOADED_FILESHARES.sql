@@ -48,4 +48,8 @@ subjectSingular = Undownloaded shared files alert : {0} file have not been downl
 mainMsgplural = Некоторые получатели рассылки не скачали <b>{0} файлов</b>. Вы можете найти детали о получателях рассылки ниже.
 mainMsgSingular = Некоторые получатели рассылки не скачали <b>{0} файлов</b>. Вы можете найти детали о получателях рассылки ниже.
 subjectPlural = Уведомдение о не скачанных файлах: {0} файлов были не скачанны.
-subjectSingular = Уведомдение о не скачанных файлах: {0} файлов были не скачанны.' WHERE id=7;
+subjectSingular = Уведомдение о не скачанных файлах: {0} файлов были не скачанны.',messages_vietnamese='downloadStatesTile = Hiện trạng tải xuống 
+mainMsgplural = Một vài người nhận đã không tải  <b>{0} files</b>. Bạn có thể xem thông tin chi tiết hơn về việc tải xuống của người nhận dưới đây. 
+mainMsgSingular = Some recipients have not downloaded <b>{0} file</b>. Bạn có thể xem thông tin chi tiết hơn về việc tải xuống của người nhận dưới đây. 
+subjectPlural = Thông báo chưa tải xuống file chia sẻ : {0} files vẫn chưa được người nhận tải xuống. 
+subjectSingular = Thông báo chưa tải xuống file chia sẻ : {0} file vẫn chưa được người nhận tải xuống.'WHERE id=7;

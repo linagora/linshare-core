@@ -60,5 +60,14 @@ messages_russian= '
 	downloadBtn= Download
 	passwordMessageTitle= Here is the new password:
 	downloadLinkTit= Download link:
+	',
+messages_vietnamese= '
+	subject=LinShare Tạo Mật khẩu mới
+	mainTitle= Một mật khẩu mới đã được tạo bởi {0} {1} 
+	beginingMainMsg= Vì mục đích bảo mật một mật khẩu mới đã được tạo
+	otherMsg= Bạn có thể bấm vào đường dẫn dưới đây để tải về file chia sẻ và nhập mật khẩu mới dưới đây 
+	downloadBtn= Tải xuống 
+	passwordMessageTitle= Đây là mật khẩu mới:
+	downloadLinkTit= Link tải:
 	'
 WHERE id= 38;

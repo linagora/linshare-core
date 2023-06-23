@@ -55,4 +55,9 @@ closureDate = Дата закрытия загрузки
 mainMsg = <b>{0} {1}</b> изменил пароль к загрузке {2}
 msgProtected = Новый пароль и доступ к загрузке доступны ниже.
 password = Пароль
-subject = {0} {1} отправил вам новый пароль к загрузке {2}' WHERE id=19;
+subject = {0} {1} отправил вам новый пароль к загрузке {2}',messages_vietnamese='buttonMsg = Truy cập 
+closureDate = Ngày đóng 
+mainMsg = <b>{0} {1}</b> đã thay đổi mật khẩu của yêu cầu tải lên  : {2}
+msgProtected = Bạn có thể sử dụng mật khẩu mới dưới đây khi truy cập đường dẫn.
+password = Mật khẩu
+subject = {0} {1} đã gửi cho bạn mật khẩu mới cho yêu cầu tải lên: {2}' WHERE id=19;

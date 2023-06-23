@@ -53,4 +53,9 @@ DocumentSize = Document size
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> uploaded a new document<br>
 folderMsg = into the folder
 workgroupMsg = of the workgroup
-subject = The document {0} was uploaded in the workgroup {1}' WHERE id=44;
+subject = The document {0} was uploaded in the workgroup {1}',messages_vietnamese='workGroupCreationDateTitle = Ngày tạo
+DocumentSize = Kích cỡ tài liệu
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã tảu liên một tài liệu mới<br>
+folderMsg = vào thư mục 
+workgroupMsg = trong workgroup
+subject = Tài liệu {0} đã được tải lên workgroup {1}' WHERE id=44;

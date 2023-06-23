@@ -35,4 +35,7 @@ simpleMsg =  Your access to the workspace <b>{0}</b> was withdrawn.
 workGroupNameTitle = Workspace Name',messages_russian='subject = Your access to the workspace {0}  and its workgroups was withdrawn
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the workspace  <b>{2}</b>
 simpleMsg =  Your access to the workspace <b>{0}</b> was withdrawn.
-workGroupNameTitle = Workspace Name' WHERE id=36;
+workGroupNameTitle = Workspace Name', messages_vietnamese='subject = Quyền truy cập của bạn đối với workspace {0} và các workgroups bên trong đã bị thu hồi
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã xóa bạn khỏi workspace <b>{2}</b>
+simpleMsg =  Quyền truy cập của bạn đối với workspace <b>{0}</b> đã bị thu hồi.
+workGroupNameTitle = Tên workspace ' WHERE id=36;

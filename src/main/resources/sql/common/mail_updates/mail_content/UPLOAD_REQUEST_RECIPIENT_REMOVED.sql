@@ -40,4 +40,6 @@ subject = {0} {1} a supprimé votre accès au dépôt : {2}',messages_english='d
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has removed your access to the Upload Request : {2}.
 subject = {0} {1} has removed your access to the Upload Request : {2}',messages_russian='deletionDate = Дата удаления
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> закрыл ваш доступ к загрузке {2}.
-subject = {0} {1} закрыл ваш доступ к загрузке {2}' WHERE id=22;
+subject = {0} {1} закрыл ваш доступ к загрузке {2}',messages_vietnamese='deletionDate = Ngày xóa 
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> đã xóa quyền truy cập của bạn đến yêu cầu tải : {2}.
+subject = {0} {1} đã xóa quyền truy cập của bạn đến yêu cầu tải : {2}' WHERE id=22;

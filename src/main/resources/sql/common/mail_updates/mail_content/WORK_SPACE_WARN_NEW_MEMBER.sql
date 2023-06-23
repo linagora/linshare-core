@@ -66,4 +66,11 @@ subject = You have been added to the WorkSpace {0}
 workSpaceRight = Default right
 workSpaceNameTitle = WorkSpace Name
 nestedWorkGroupsList=You have been automatically added to the following workgroups:
-displayWorkSpaceAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role' WHERE id=34;
+displayWorkSpaceAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_vietnamese='workSpaceMemberCreationDateTitle = Ngày tạo 
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã thêm bạn vào WorkSpace: <br>
+simpleMainMsg = Bạn đã được thêm vào WorkSpace
+subject = Bạn đã đươcj thêm vào Workspace {0}
+workSpaceRight = Quyền mặc định 
+workSpaceNameTitle = Tên WorkSpace 
+nestedWorkGroupsList=Bạn đã được tự động thêm vào các workgroup sau:
+displayWorkSpaceAndRole ={0} với <span style="text-transform:uppercase">{1}</span> quyền' WHERE id=34;

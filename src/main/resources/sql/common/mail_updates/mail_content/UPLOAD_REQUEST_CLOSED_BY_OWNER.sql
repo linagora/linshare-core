@@ -52,4 +52,8 @@ subject = {0} {1} has closed his upload request : {2}',messages_russian='closure
 filesInURDepot = Файлы
 mainMsg = <b>{0} {1}</b> закрыл запрос загрузки {2}.
 recipientsOfDepot = Получатели
-subject = {0} {1} закрыл запрос загрузки {2}' WHERE id=21;
+subject = {0} {1} закрыл запрос загрузки {2}',messages_vietnamese='closureDate = Ngày đóng 
+filesInURDepot = Files
+mainMsg = <b>{0} {1}</b> đã đóng yêu cầu tải được dán nhãn : {2}.
+recipientsOfDepot = Recipients
+subject = {0} {1} đã đóng yêu cầu tải của anh  : {2}' WHERE id=21;

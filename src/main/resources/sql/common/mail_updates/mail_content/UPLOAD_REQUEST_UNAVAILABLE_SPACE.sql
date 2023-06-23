@@ -49,4 +49,10 @@ mainMsg =  <b>{0}</b> не может загрузить файлы, так ка
 mainMsgTitle = Недостаточно свободного места.
 maxUploadDepotSize = Максимальный размер загрузки
 recipientsURequest = Получатели
-subject =  {0} не может загрузить файл, так как недостаточно свободного места' WHERE id=11;
+subject =  {0} не может загрузить файл, так как недостаточно свободного места' ,messages_vietnamese='invitationClosureDate = Ngày đóng 
+invitationCreationDate = Ngày kích hoạt 
+mainMsg =  <b>{0}</b> không thể tải lên file bởi vì không còn dung lượng trống trong Personal Space của bạn. Hãy thêm dung lượng. 
+mainMsgTitle = Không còn dung lượng trống 
+maxUploadDepotSize = Dung lượng tối đa của yêu cầu tải lên. 
+recipientsURequest = Người nhận
+subject =  {0} không thể tải file lên vì không còn dung lượng trống'WHERE id=11;

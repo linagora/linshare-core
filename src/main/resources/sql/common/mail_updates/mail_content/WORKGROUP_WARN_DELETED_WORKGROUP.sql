@@ -31,4 +31,6 @@ workGroupNameTitle = Nom du groupe de travail',messages_english='subject = The w
 mainMsg = The workgroup {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 workGroupNameTitle = Workgroup Name',messages_russian='subject = The workgroup {0} has been deleted.
 mainMsg = The workgroup {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-workGroupNameTitle = Workgroup Name' WHERE id=39;
+workGroupNameTitle = Workgroup Name' ,messages_vietnamese='subject = Workgroup {0} đã bị xóa.
+mainMsg = Workgroup {0} đã bị xóa bởi <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+workGroupNameTitle = Tên Workgroup' WHERE id=39;

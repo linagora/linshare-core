@@ -71,4 +71,11 @@ tokenCreationDate = Дата создания
 endMsg = You can review the active tokens tied to your account
 tokenLinkEndOfLine = here
 tokenLabel = Имя
-tokenDescription = Описание' WHERE id=33;
+tokenDescription = Описание',messages_vietnamese='subject = Xóa mã xác thực vĩnh viễn.
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã xóa mã xác thực vĩnh viễn: {2}, cho tài khoản của bạn.
+mainMsgOwner = Bạn đã xóa mã xác thực vĩnh viễn: {2}, cho tài khoản của bạn.
+tokenCreationDate = Ngày tạo
+endMsg = Bạn có thể xem và kích hoạt các mã của tài khoản của bạn
+tokenLinkEndOfLine = tại đây 
+tokenLabel = Tên
+tokenDescription = Mô tả' WHERE id=33;

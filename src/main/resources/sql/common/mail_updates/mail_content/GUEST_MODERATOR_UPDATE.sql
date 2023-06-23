@@ -36,4 +36,8 @@ role = Role',
 messages_russian='accessToLinshareBTn = Access
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> updated your moderator role on the guest <b>{2}</b> <b>{3}.
 subject = {0} {1} updated your moderator role
-role = Role' WHERE id=42;
+role = Role' ,
+messages_vietnamese='accessToLinshareBTn = Truy cập 
+subject = {0} {1} cập nhật quyền quản trị của bạn 
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã cập nhật quyền quản trị của bạn đối với khách <b>{2}</b> <b>{3}</b>.
+role = Quyền'WHERE id=42;
