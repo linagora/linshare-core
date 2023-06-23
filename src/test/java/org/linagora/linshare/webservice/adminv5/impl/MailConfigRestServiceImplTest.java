@@ -35,6 +35,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailConfigDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentLangDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainLightDto;
 import org.linagora.linshare.core.service.impl.DomainServiceImpl;
@@ -311,6 +312,20 @@ public class MailConfigRestServiceImplTest {
 		assertThat(config.getAssociatedDomains().stream().map(DomainLightDto::getName)
 				.collect(Collectors.toList())).containsExactlyInAnyOrder(
 						"MySubDomain", "TopDomain2", "MyDomain", "GuestDomain", "LinShareRootDomain");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getConfigReturnMailContentLangAdditionalInfo() {
+		MailConfigDto config = testee.find(rootPublicConfig);
+
+		assertThat(config.getMailContentLangs().stream().map(MailContentLangDto::getMailContentDomainName)
+				.collect(Collectors.toList())).allMatch(StringUtils::isNotBlank);
+		//TODO Default production mail content inserted in DB have null or blank names, so nothing to test...
+//		assertThat(config.getMailContentLangs().stream().map(MailContentLangDto::getMailContentName)
+//				.collect(Collectors.toList())).allMatch(Objects::nonNull);
+		assertThat(config.getMailContentLangs().stream().map(MailContentLangDto::getMailContentModificationDate)
+				.collect(Collectors.toList())).allMatch(date -> date != null && date.getTime() > 0);
 	}
 
 	@Test

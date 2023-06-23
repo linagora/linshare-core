@@ -15,6 +15,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.dto;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.Language;
@@ -48,6 +50,12 @@ public class MailContentLangDto {
 	@Schema(description = "MailContentName")
 	private String mailContentName;
 
+	@Schema(description = "MailContentModificationDate")
+	private Date mailContentModificationDate;
+
+	@Schema(description = "mailContentDomainName")
+	private String mailContentDomainName;
+
 	public MailContentLangDto() {
 	}
 
@@ -67,6 +75,8 @@ public class MailContentLangDto {
 		mailContentType = MailContentType.fromInt(
 				contentLang.getMailContentType()).toString();
 		mailContentName = contentLang.getMailContent().getDescription();
+		mailContentDomainName = contentLang.getMailConfig().getDomain().getLabel();
+		mailContentModificationDate = contentLang.getMailConfig().getModificationDate();
 	}
 
 	public String getMailContentType() {
@@ -123,5 +133,21 @@ public class MailContentLangDto {
 
 	public void setMailContentName(String mailContentName) {
 		this.mailContentName = mailContentName;
+	}
+
+	public Date getMailContentModificationDate() {
+		return mailContentModificationDate;
+	}
+
+	public void setMailContentModificationDate(Date mailContentModificationDate) {
+		this.mailContentModificationDate = mailContentModificationDate;
+	}
+
+	public String getMailContentDomainName() {
+		return mailContentDomainName;
+	}
+
+	public void setMailContentDomainName(String mailContentDomainName) {
+		this.mailContentDomainName = mailContentDomainName;
 	}
 }
