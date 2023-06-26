@@ -34,6 +34,7 @@ public class GuestAccountResetPasswordFor4_0_EmailContext extends GuestAccountRe
 			Date urlExpirationDate) {
 		super(guest, resetPasswordTokenUuid);
 		this.urlExpirationDate = urlExpirationDate;
+		this.language = guest.getMailLocale();
 	}
 
 	public Date getUrlExpirationDate() {

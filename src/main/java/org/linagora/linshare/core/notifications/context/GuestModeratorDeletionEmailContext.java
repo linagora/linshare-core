@@ -31,6 +31,7 @@ public class GuestModeratorDeletionEmailContext extends EmailContext {
 		super(moderator.getAccount().getDomain(), false);
 		this.actor = actor;
 		this.moderator = moderator;
+		this.language = moderator.getAccount().getMailLocale();
 	}
 
 	public Moderator getModerator() {

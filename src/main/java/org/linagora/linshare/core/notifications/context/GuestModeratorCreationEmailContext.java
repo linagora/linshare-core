@@ -31,6 +31,7 @@ public class GuestModeratorCreationEmailContext extends EmailContext {
 		super(moderator.getAccount().getDomain(), false);
 		this.actor = actor;
 		this.moderator = moderator;
+		this.language = moderator.getAccount().getMailLocale();
 	}
 
 	

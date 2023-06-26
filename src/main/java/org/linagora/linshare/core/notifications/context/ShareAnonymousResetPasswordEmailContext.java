@@ -26,6 +26,7 @@ public class ShareAnonymousResetPasswordEmailContext extends ShareNewShareEmailC
 	public ShareAnonymousResetPasswordEmailContext(User shareOwner, AnonymousUrl anonymousUrl,
 			ShareContainer shareContainer) {
 		super(shareOwner, anonymousUrl, shareContainer);
+		this.language = shareOwner.getMailLocale();
 	}
 
 	@Override

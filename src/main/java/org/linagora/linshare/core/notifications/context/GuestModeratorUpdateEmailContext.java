@@ -35,6 +35,7 @@ public class GuestModeratorUpdateEmailContext extends EmailContext {
 		this.actor = actor;
 		this.moderator = moderator;
 		this.oldRole = oldRole;
+		this.language = moderator.getAccount().getMailLocale();
 	}
 
 	public Moderator getModerator() {
