@@ -162,8 +162,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		MailConfig cfg = mailConfigService.findConfigByUuid(authUser, mailConfigUuid);
 		Set<MailFooterDto> ret = Sets.newHashSet();
 
-		List<MailFooter> all = mailConfigService.findAllFooters(authUser, cfg
-				.getDomain().getUuid());
+		List<MailFooter> all = mailConfigService.findAllVisibleFooters(cfg.getDomain().getUuid());
 		for (MailFooter footer : all) {
 			ret.add(new MailFooterDto(footer, getOverrideReadonly()));
 		}

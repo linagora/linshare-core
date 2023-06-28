@@ -195,7 +195,7 @@ public interface MailConfigService {
 	 * @param domainId
 	 * @return List<MailFooter>
 	 */
-	List<MailFooter> findAllFooters(User actor, String domainId)
+	List<MailFooter> findAllVisibleFooters(String domainId)
 			throws BusinessException;
 
 	/**

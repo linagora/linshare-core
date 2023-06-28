@@ -123,7 +123,7 @@ public class MailFooterRestServiceImplTest {
 		Set<MailFooterDto> footers = testee.findAll(rootDomain.getUuid(), true);
 
 		assertThat(footers.stream().map(MailFooterDto::getUuid).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder(rootPublicFooter, rootPublicFooter2,rootPrivateFooter);
+				.containsExactlyInAnyOrder(rootPublicFooter, rootPublicFooter2, rootPrivateFooter);
 	}
 
 	@Test
@@ -215,6 +215,15 @@ public class MailFooterRestServiceImplTest {
 	}
 
 	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void getAllAdminCanSeePrivateTopFootersWithOnlyCurrentDomainFalse() {
+		Set<MailFooterDto> footers = testee.findAll(topDomain.getUuid(), false);
+
+		assertThat(footers.stream().map(MailFooterDto::getUuid).collect(Collectors.toList()))
+				.containsExactlyInAnyOrder(rootPublicFooter, rootPublicFooter2, topPublicFooter, topPrivateFooter);
+	}
+
+	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getAllDoesNotReturnPrivateParentFooters() {
 		Set<MailFooterDto> footers = testee.findAll(subDomain.getUuid(), false);
@@ -229,7 +238,7 @@ public class MailFooterRestServiceImplTest {
 		Set<MailFooterDto> footers = testee.findAll(topDomain.getUuid(), false);
 
 		assertThat(footers.stream().map(MailFooterDto::getUuid).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder(rootPublicFooter, rootPublicFooter2,topPublicFooter, topPrivateFooter);
+				.containsExactlyInAnyOrder(rootPublicFooter, rootPublicFooter2, topPublicFooter, topPrivateFooter);
 	}
 
 	@Test

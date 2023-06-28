@@ -275,23 +275,12 @@ public class MailConfigServiceImpl implements MailConfigService {
 		mailConfigBusinessService.deleteContentLang(contentLang);
 	}
 
-	@Override
-	public List<MailFooter> findAllFooters(User actor, String domainId)
+	public List<MailFooter> findAllVisibleFooters(String domainId)
 			throws BusinessException {
-		List<MailFooter> footers = Lists.newArrayList();
-
-		for (AbstractDomain d : getParentDomains(domainId)) {
-			if (d.getUuid().equals(actor.getDomainId())) {
-				footers.addAll(d.getMailFooters());
-			} else {
-				for (MailFooter c : d.getMailFooters()) {
-					if (c.getVisible()) {
-						footers.add(c);
-					}
-				}
-			}
-		}
-		return footers;
+		return getParentDomains(domainId).stream()
+				.flatMap(domain -> domain.getMailFooters().stream())
+				.filter(footer -> footer.getVisible() || footer.getDomain().getUuid().equals(domainId))
+				.collect(Collectors.toList());
 	}
 
 	@Override
