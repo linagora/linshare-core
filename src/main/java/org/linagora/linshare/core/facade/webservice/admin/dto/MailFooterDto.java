@@ -33,6 +33,9 @@ public class MailFooterDto {
 	@Schema(description = "Domain")
 	private String domain;
 
+	@Schema(description = "DomainName")
+	private String domainName;
+
 	@Schema(description = "Visible")
 	private boolean visible;
 
@@ -73,6 +76,7 @@ public class MailFooterDto {
 	public MailFooterDto(MailFooter footer, boolean overrideReadonly) {
 		this.uuid = footer.getUuid();
 		this.domain = footer.getDomain().getUuid();
+		this.domainName = footer.getDomain().getLabel();
 		this.description = footer.getDescription();
 		this.footer = footer.getFooter();
 		this.visible = footer.getVisible();
@@ -101,6 +105,14 @@ public class MailFooterDto {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 
 	public void setVisible(boolean value) {
