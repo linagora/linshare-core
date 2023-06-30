@@ -63,7 +63,7 @@ subject =  {0}  has uploaded {1}  in your Upload Request
 uploadedOverTotal = {0} / {1} files
 totalUploaded = {0} files',messages_russian='endingMainMsg = в вашем запросе загрузки
 fileSize = Размер файла
-buttonLabel = View
+buttonLabel = Просмотр
 fileUploadedThe = Дата загрузки
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации

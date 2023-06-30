@@ -99,9 +99,9 @@ invitationClosureDate = Closure date
 recipientsURequest = Recipients
 subjectForOwner =  Your invitation is about to be closed.
 subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
-uploadFileBtn = Upload a file',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s upload Request:  <b>{2}</b> is about to reach it''''s end date in <b>{3} days</b>
-beginningMainMsgCollective = Your collective upload request: {0}, is about to be closed in  <b>{1} days</b>.
-beginningMainMsgIndividual =  Your individual upload request: {0}, is about to be closed in <b>{1} days</b>.
+uploadFileBtn = Upload a file',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s запрос на загрузку:  <b>{2}</b> приближается к окончанию срока действия через <b>{3} дня</b>
+beginningMainMsgCollective = Ваш коллективный запрос на загрузку: {0}, закроется через  <b>{1} дня</b>.
+beginningMainMsgIndividual =  Ваш индивидуальный запрос на загрузку: {0}, закроется через <b>{1} дня</b>.
 endingMainMsgPlural = Всего загрузка содержит <b> {0} файлов </b>.
 endingMainMsgPluralForRecipient = вы отправили <b> {0} файлов </b> в загрузку.
 endingMainMsgSingular = Всего в репозитории of <b>1 файл </b>.

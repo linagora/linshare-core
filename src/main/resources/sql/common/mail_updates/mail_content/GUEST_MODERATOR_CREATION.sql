@@ -33,10 +33,10 @@ messages_english='accessToLinshareBTn = Access
 subject = {0} {1} added you as guest moderator
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you as a guest moderator for <b>{2}</b> <b>{3}</b> with <b>{4}</b> role.
 guestNameTitle = Guest',
-messages_russian='accessToLinshareBTn = Access
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you as a guest moderator for <b>{2}</b> <b>{3}</b> with <b>{4}</b> role.
-subject = {0} {1} added you as guest moderator
-guestNameTitle = Guest',
+messages_russian='accessToLinshareBTn = Доступ
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> добавил вас в качестве приглашенного модератора в <b>{2}</b> <b>{3}</b> с ролью <b>{4}</b>.
+subject = {0} {1} добавил вас в качестве приглашенного модератора
+guestNameTitle = Гость',
 messages_vietnamese='accessToLinshareBTn = Truy cập 
 subject = {0} {1} đã thêm bạn làm người giám sát tài khoản khách
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã thêm bạn làm quản trị viên của khách <b>{2}</b> <b>{3}</b> với <b>{4}</b> quyền.

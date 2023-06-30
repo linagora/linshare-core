@@ -29,8 +29,8 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
 mainMsg = Le groupe de travail {0} a été supprimé par <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 workGroupNameTitle = Nom du groupe de travail',messages_english='subject = The workgroup {0} has been deleted.
 mainMsg = The workgroup {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-workGroupNameTitle = Workgroup Name',messages_russian='subject = The workgroup {0} has been deleted.
-mainMsg = The workgroup {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-workGroupNameTitle = Workgroup Name' ,messages_vietnamese='subject = Workgroup {0} đã bị xóa.
+workGroupNameTitle = Workgroup Name',messages_russian='subject = Рабочая группа {0} была удалена.
+mainMsg = Рабочая группа {0} была удалена <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+workGroupNameTitle = Название рабочей группы' ,messages_vietnamese='subject = Workgroup {0} đã bị xóa.
 mainMsg = Workgroup {0} đã bị xóa bởi <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 workGroupNameTitle = Tên Workgroup' WHERE id=39;

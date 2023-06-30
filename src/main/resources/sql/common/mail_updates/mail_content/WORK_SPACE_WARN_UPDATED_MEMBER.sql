@@ -72,16 +72,16 @@ workSpaceRight = WorkSpace right
 workGroupRight = Workgroup right
 workSpaceNameTitle = WorkSpace Name
 nestedWorkGroupsList = Workgroups list
-nbrWorkgoups = Number of updated workGroups',messages_russian='workSpaceMemberUpdatedDateTitle = Updated date
-mainMsg = Your roles on the WorkSpace
-mainMsgNext= and workgroups inside it, have been updated
+nbrWorkgoups = Number of updated workGroups',messages_russian='workSpaceMemberUpdatedDateTitle = Дата обновления
+mainMsg = Ваши роли в рабочем пространстве
+mainMsgNext= и рабочих группах внутри него были обновлены
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Your roles on the WorkSpace {0} was updated.
-workSpaceRight = WorkSpace right
-workGroupRight = Workgroup right
-workSpaceNameTitle = WorkSpace Name
-nestedWorkGroupsList = Workgroups list
-nbrWorkgoups = Number of updated workGroups' ,messages_vietnamese='workSpaceMemberUpdatedDateTitle = NGaỳ cập nhật 
+subject =  Ваши роли в рабочем пространстве {0} обновлены.
+workSpaceRight = Права в рабочем пространстве
+workGroupRight = Права в рабочей группе
+workSpaceNameTitle = Название рабочего пространства
+nestedWorkGroupsList = Список рабочих групп
+nbrWorkgoups = Количество обновленных рабочих групп',messages_vietnamese='workSpaceMemberUpdatedDateTitle = NGaỳ cập nhật
 mainMsg = Quyền của bạn trong workspace 
 mainMsgNext= và các workgroup bên trong đã được cập nhật 
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.

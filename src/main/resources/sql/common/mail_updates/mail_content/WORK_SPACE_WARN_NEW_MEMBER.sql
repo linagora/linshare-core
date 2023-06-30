@@ -59,14 +59,14 @@ subject = You have been added to the WorkSpace {0}
 workSpaceRight = Default right
 workSpaceNameTitle = WorkSpace Name
 nestedWorkGroupsList=You have been automatically added to the following workgroups:
-displayWorkSpaceAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_russian='workSpaceMemberCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the WorkSpace: <br>
-simpleMainMsg = You have been added to the WorkSpace
-subject = You have been added to the WorkSpace {0}
-workSpaceRight = Default right
-workSpaceNameTitle = WorkSpace Name
-nestedWorkGroupsList=You have been automatically added to the following workgroups:
-displayWorkSpaceAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_vietnamese='workSpaceMemberCreationDateTitle = Ngày tạo 
+displayWorkSpaceAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role',messages_russian='workSpaceMemberCreationDateTitle = Дата создания
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> добавил вас в рабочее пространство: <br>
+simpleMainMsg = Вы были добавлены в рабочее пространство
+subject = Вы были добавлены в рабочее пространство {0}
+workSpaceRight = Права по умолчанию
+workSpaceNameTitle = Название рабочего пространства
+nestedWorkGroupsList= Вы были автоматически добавлены в следующие рабочие группы:
+displayWorkSpaceAndRole ={0} с ролью <span style="text-transform:uppercase">{1}</span>',messages_vietnamese='workSpaceMemberCreationDateTitle = Ngày tạo
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã thêm bạn vào WorkSpace: <br>
 simpleMainMsg = Bạn đã được thêm vào WorkSpace
 subject = Bạn đã đươcj thêm vào Workspace {0}
