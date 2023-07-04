@@ -40,11 +40,7 @@ displayNestedNodeName:{0}',messages_english='subject = The Workspace {0} has bee
 mainMsg = The Workspace {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 nestedWorkGroupsList=You have been automatically removed from the following workgroups:
 workGroupNameTitle = Workgroup Name
-displayNestedNodeName:{0}',messages_russian='subject = Рабочее пространство {0} было удалено.
-mainMsg = Рабочее пространство {0} было удалено <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-nestedWorkGroupsList= Вы были автоматически удалены из следующих рабочих групп:
-displayNestedNodeName:{0}',messages_vietnamese='subject = Workspace {0} đã bị xóa 
-mainMsg = Workspace {0} đã được xóa bởi <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-nestedWorkGroupsList=Bạn đã được tự động xóa khỏi các workgroup sau:
-workGroupNameTitle = Tên Workgroup
+displayNestedNodeName:{0}',messages_russian='subject = The Workspace {0} has been deleted.
+mainMsg = The Workspace {0} has been deleted by <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+nestedWorkGroupsList=You have been automatically removed from the following workgroups:
 displayNestedNodeName:{0}' WHERE id=40;

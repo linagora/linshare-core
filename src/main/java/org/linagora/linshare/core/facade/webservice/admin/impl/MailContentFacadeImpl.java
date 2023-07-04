@@ -161,7 +161,6 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		content.setMessagesEnglish(dto.getMessagesEnglish());
 		content.setMessagesFrench(dto.getMessagesFrench());
 		content.setMessagesRussian(dto.getMessagesRussian());
-		content.setMessagesVietnamese(dto.getMessagesVietnamese());
 		return content;
 	}
 
@@ -219,7 +218,6 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		content.setMessagesEnglish(dto.getMessagesEnglish());
 		content.setMessagesFrench(dto.getMessagesFrench());
 		content.setMessagesRussian(dto.getMessagesRussian());
-		content.setMessagesVietnamese(dto.getMessagesVietnamese());
 	}
 
 	private MailContent findContent(User authUser, String uuid)

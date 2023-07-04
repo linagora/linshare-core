@@ -78,9 +78,4 @@ recipientCountMsgPlural =   с <b>{1} recipients</b>. Срок действия 
 recipientCountMsgSingular =   с <b>{1} recipient</b>. Срок действия рассылки закончится: {0}.
 subjectPlural =  Вы поделились некоторыми файлами 
 subjectSingular =Вы поделились файлом
-msgFor = Ваше сообщение рассылки',messages_vietnamese='numFilesMsgPlural = Bạn đã chia sẻ <b>{0} files</b>
-numFilesMsgSingular = Bạn đã chia sẻ <b>{0} file</b>
-recipientCountMsgPlural = tới <b>{1} recipients</b>. Tài liệu chia sẻ sẽ hết hạn vào : {0}.
-recipientCountMsgSingular =   tới <b>{1} recipient</b>. Tài liệu chia sẻ sẽ hết hạn vào : {0}.
-subjectPlural = Bạn đã chia sẻ một số tìa liệu 
-subjectSingular = Bạn đã chia sẻ 1 tài liệu' WHERE id=3;
+msgFor = Ваше сообщение рассылки' WHERE id=3;

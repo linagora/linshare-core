@@ -65,17 +65,10 @@ endMsg = You can review the active tokens tied to your account
 tokenLinkEndOfLine = here
 tokenLabel = Name
 tokenDescription = Description',messages_russian='subject = Удаление постоянного токена аутентификации
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> удалил постоянный токен аутентификации: {2}, для вашего аккаунта.
-mainMsgOwner = Вы удалили постоянный токен аутентификации: {2}, для вашего аккаунта.
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent authentication token: {2}, for your account.
+mainMsgOwner = You have deleted a permanent authentication token: {2}, for your account.
 tokenCreationDate = Дата создания
-endMsg = Вы можете просмотреть все активные токены вашего аккаунта
-tokenLinkEndOfLine = здесь
+endMsg = You can review the active tokens tied to your account
+tokenLinkEndOfLine = here
 tokenLabel = Имя
-tokenDescription = Описание',messages_vietnamese='subject = Xóa mã xác thực vĩnh viễn.
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã xóa mã xác thực vĩnh viễn: {2}, cho tài khoản của bạn.
-mainMsgOwner = Bạn đã xóa mã xác thực vĩnh viễn: {2}, cho tài khoản của bạn.
-tokenCreationDate = Ngày tạo
-endMsg = Bạn có thể xem và kích hoạt các mã của tài khoản của bạn
-tokenLinkEndOfLine = tại đây 
-tokenLabel = Tên
-tokenDescription = Mô tả' WHERE id=33;
+tokenDescription = Описание' WHERE id=33;

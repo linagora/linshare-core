@@ -64,16 +64,9 @@ tokenLinkEndOfLine = here
 tokenLabel = Name
 tokenDescription = Description',messages_russian='subject = Создание постоянного токена аутентификации
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> создал постоянный токен аутентификации: {2},для вашей учетной записи.
-mainMsgOwner = Вы создали постоянный токен аутентификации: {2}, для своего аккаунта.
+mainMsgOwner = You have created a permanent authentication token: {2}, for your account.
 tokenCreationDate = Дата создания
-endMsg = Вы можете просмотреть все активные токены вашего аккаунта
-tokenLinkEndOfLine = здесь
+endMsg = You can review the active tokens tied to your account
+tokenLinkEndOfLine = here
 tokenLabel = Имя
-tokenDescription = Описание' ,messages_vietnamese='subject = Tạo một mã xác thực vĩnh viễn. 
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã tạo một mã xác thực vĩnh viễn: {2}, cho tài khoản của bạn.
-mainMsgOwner = Bạn đã tạo một mã xác thực vĩnh viễn: {2}, cho tài khoản của bạn.
-tokenCreationDate = Ngày tạo 
-endMsg = Bạn có thể xem lại và kích hoạt các mã xác thực của tài khoản của bạn 
-tokenLinkEndOfLine = ở đây 
-tokenLabel = Tên 
-tokenDescription = Mô tả' WHERE id=32;
+tokenDescription = Описание' WHERE id=32;

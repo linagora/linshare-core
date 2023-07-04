@@ -62,10 +62,4 @@ depotSize = Допустимый размер
 mainMsg = Ваш запрос загрузки <b>{0}</b> активен.
 msgLink = Получите доступ к нему, перейдя по ссылке ниже.
 recipientsOfDepot = Получатель
-subject = Ваш запрос загрузки {0} активен',messages_vietnamese='buttonMsg = Truy cập 
-closureDate = Ngày đóng 
-depotSize = Dung lượng cho phép 
-mainMsg = Yêu cầu tải của bạn với tên <b>{0}</b> được kích hoạt bây giờ.
-msgLink = Truy cập bằng cách mở đường dẫn dưới đây.
-recipientsOfDepot = Người nhận 
-subject = Yêu cầu tải của bạn: {0}, được kích hoạt ' WHERE id=17;
+subject = Ваш запрос загрузки {0} активен' WHERE id=17;

@@ -46,7 +46,4 @@ mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has de
 subject = {0} {1} has deleted {2} from the upload request',messages_russian='closureDate = Срок действия загрузки
 deletionDate = Дата удаления
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> удалил файл <b>{2} </b> из хранилища {3}.
-subject = {0} {1} удалил файл {2} из хранилища',messages_vietnamese='closureDate = Ngày đóng 
-deletionDate = Ngày xóa file 
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> đã xóa file <b>{2} </b>từ yêu cầu tải lên  : {3}.
-subject = {0} {1} đã xóa {2} từ yêu cầu tải lên' WHERE id=24;
+subject = {0} {1} удалил файл {2} из хранилища' WHERE id=24;

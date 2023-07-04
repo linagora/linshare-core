@@ -60,9 +60,4 @@ mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> доба
 simpleMainMsg = Вас добавили в рабочую группу
 subject = Вас добавили в рабочую группу {0}
 workGroupRight = Права по умолчанию
-workGroupNameTitle = Название рабочей группы',messages_vietnamese='workGroupCreationDateTitle = Ngày tạo
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã thêm bạn vào workgroup <br>
-simpleMainMsg = Bạn đã được thêm vào workgroup 
-subject =Bạn đã được thêm vào workgroup {0}
-workGroupRight = Quyền mặc định 
-workGroupNameTitle = Tên Workgroup' WHERE id=28;
+workGroupNameTitle = Название рабочей группы' WHERE id=28;

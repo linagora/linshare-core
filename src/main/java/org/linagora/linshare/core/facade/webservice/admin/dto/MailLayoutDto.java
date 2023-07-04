@@ -63,9 +63,6 @@ public class MailLayoutDto {
 	@Schema(description = "messagesRussian")
 	private String messagesRussian;
 
-	@Schema(description = "messagesVietnamese")
-	private String messagesVietnamese;
-
 	public MailLayoutDto() {
 	}
 
@@ -89,7 +86,6 @@ public class MailLayoutDto {
 		this.messagesFrench = ml.getMessagesFrench();
 		this.messagesEnglish = ml.getMessagesEnglish();
 		this.messagesRussian = ml.getMessagesRussian();
-		this.messagesVietnamese = ml.getMessagesVietnamese();
 	}
 
 	public String getUuid() {
@@ -186,13 +182,5 @@ public class MailLayoutDto {
 
 	public void setMessagesRussian(String messagesRussian) {
 		this.messagesRussian = messagesRussian;
-	}
-
-	public String getMessagesVietnamese() {
-		return messagesVietnamese;
-	}
-
-	public void setMessagesVietnamese(String messagesVietnamese) {
-		this.messagesVietnamese = messagesVietnamese;
 	}
 }

@@ -67,9 +67,6 @@ public class MailContentDto {
 	@Schema(description = "messagesRussian")
 	private String messagesRussian;
 
-	@Schema(description = "messagesVietnamese")
-	private String messagesVietnamese;
-
 	public MailContentDto() {
 	}
 
@@ -95,7 +92,6 @@ public class MailContentDto {
 		this.messagesFrench = cont.getMessagesFrench();
 		this.messagesEnglish = cont.getMessagesEnglish();
 		this.messagesRussian = cont.getMessagesRussian();
-		this.messagesVietnamese = cont.getMessagesVietnamese();
 	}
 
 	public String getDescription() {
@@ -200,13 +196,5 @@ public class MailContentDto {
 
 	public void setMessagesRussian(String messagesRussian) {
 		this.messagesRussian = messagesRussian;
-	}
-
-	public String getMessagesVietnamese() {
-		return messagesVietnamese;
-	}
-
-	public void setMessagesVietnamese(String messagesVietnamese) {
-		this.messagesVietnamese = messagesVietnamese;
 	}
 }
