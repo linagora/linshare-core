@@ -78,4 +78,16 @@ recipientsURequest = Получатели
 subject =  {0} закрыл ваше хранилище для файлов запроса загрузки {1}
 individualBeginningMainMsg  = <b>{0}</b> закрыл ваше хранилище для файлов запроса загрузки <b>{1}</b>.
 uploadedOverTotal = {0} / {1} файлов
-totalUploaded = {0} файлов' WHERE id=14;
+totalUploaded = {0} файлов' ,messages_vietnamese='endingMainMsgPlural = Có tổng số <b> {0} files </b> trong yêu cầu tải lên.
+endingMainMsgSingular = Có <b>1 file </b> in trong yêu cầu tải lên. 
+filesInURDepot = Files được tải lên 
+fileSize =  Tổng dung lượng file. 
+collectiveBeginningMainMsg = <b>{0}</b> đã đóng yêu cầu tải lên chung của bạn <b>{1}</b>.
+invitationClosureDate = Ngày đóng 
+invitationCreationDate = Ngày kích hoạt
+numFilesInDepot = Tổng số file đã tải lên 
+recipientsURequest = Người nhận 
+subject =  {0} đã đóng yêu cầu tải của bạn: {1}
+individualBeginningMainMsg  = <b>{0}</b> đã đóng yêu cầu tải của bạn <b>{1}</b>.
+uploadedOverTotal = {0} / {1} files
+totalUploaded = {0} files' WHERE id=14;

@@ -139,18 +139,46 @@ name = {0} {1}
 nameOfDepot: Название загрузки
 secondaryMsg = Список обновленных настроек доступен ниже.
 subject = Обновленные настройки для запроса загрузки {0}
-buttonMsg = Access
-maxFileSizeParamAdded = Max File size parameter added
-maxFileSizeParamDeleted = Max File size parameter canceled, last value
-maxFileNumParamAdded = Max File number parameter added
-maxFileNumParamDeleted = Max File number parameter deleted, last value
-totalMaxDepotSizeParamAdded = Max total deposite size parameter added
-totalMaxDepotSizeParamDeleted = Max total deposite size parameter, last value
-deletionRightParamAdded = Deletion rights parameter added
-deletionRightParamDeleted = Deletion rights parameter canceled
-closureRightParamAdded = Closure right parameter added
-closureRightParamDeleted = Closure right parameter added, last value
-activationDateParamAdded = Activation date parameter added
-activationDateParamDeleted = Activation date parameter added, last value
-expiryDateParamAdded = Expiration parameter added
-expiryDateParamDeleted = Expiration parameter canceled, last value' WHERE id=23;
+buttonMsg = Доступ
+maxFileSizeParamAdded = Добавлен параметр максимального размера файла
+maxFileSizeParamDeleted = Параметр максимального размера файла удален, последнее значение
+maxFileNumParamAdded = Добавлен параметр максимального количества файлов
+maxFileNumParamDeleted = Параметр максимального количества файлов удален, последнее значение
+totalMaxDepotSizeParamAdded = Добавлен параметр максимального общего размера депозита
+totalMaxDepotSizeParamDeleted = Параметр максимального общего размера депозита удален, последнее значение
+deletionRightParamAdded = Добавлен параметр прав на удаление
+deletionRightParamDeleted = Параметр прав на удаление отменен
+closureRightParamAdded = Добавлен параметр прав на закрытие
+closureRightParamDeleted = Параметр прав на закрытие удален
+activationDateParamAdded = Добавлен параметр даты активации
+activationDateParamDeleted = Добавлен параметр даты активации, последнее значение
+expiryDateParamAdded = Добавлен параметр срока действия
+expiryDateParamDeleted = Параметр срока действия удален, последнее значение ',messages_vietnamese='activationDate = Ngày kích hoạt
+closureRight = Quyền đóng 
+deletionRight = Quyền xóa 
+depotSize = kích cỡ thư mục 
+expiryDate = NGày đóng 
+enableNotification = Bật thông báo 
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  đã cập nhật một số cài đặt liên quan đến yêu cầu tải  <b>{2}</b>.
+maxFileNum = Số filte 
+maxFileSize = Khích thước size 
+msgFrom =  Tin nhắn mới từ 
+name = {0} {1}
+nameOfDepot: Tên yêu cầu tải
+secondaryMsg = Các chỉnh sửa cài đặt được liệt kê dưới đây. 
+subject = Các cài đặt của yêu cầu tải đã được chỉnh sửa: {0}
+buttonMsg = Truy cập
+maxFileSizeParamAdded = Tham số dung lượng file tối đa đã được thêm vào 
+maxFileSizeParamDeleted = Tham số dung lượng file tối đa đa bị hủy, giá trị cuối cùng
+maxFileNumParamAdded = Tham số số lượng file tối đa đã được thêm vào 
+maxFileNumParamDeleted = Tham số số lượng file tối đa đã bị hủy, giá trị cuối cùng
+totalMaxDepotSizeParamAdded = Tham số tổng dung lượng file tối đa đã được thêm vào 
+totalMaxDepotSizeParamDeleted = Tham số tổng dung lượng file tối đa đã bị hủy, giá trị cuối cùng
+deletionRightParamAdded = Tham số quyền xóa đã được thêm vào 
+deletionRightParamDeleted = Tham số quyền xóa đã bị hủy 
+closureRightParamAdded = Tham số quyền đóng đã được thêm vào 
+closureRightParamDeleted = Tham số quyền đóng đã bị hủy, last value
+activationDateParamAdded = Tham số ngày kích hoạt đã được thêm vào 
+activationDateParamDeleted = Tham số ngày kích hoạt đã bị hủy, giá trị cuối cùng 
+expiryDateParamAdded = Tham số ngày hết hạn đã được thêm vào
+expiryDateParamDeleted = Tham số ngày hết hạn đã bị hủy, giá trị cuối cùng' WHERE id=23;

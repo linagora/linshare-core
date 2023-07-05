@@ -65,4 +65,9 @@ endingMainMsgInt = отправленного <b> {0} <span style="text-transfor
 mainMsgExt = Срок действия файла рассылки <b>{0}</b> sent by <b> {1} <span style="text-transform:uppercase">{2}</span></b>,  закончится через <b>{3} дней</b>.
 name = {0} {1}
 sharedBy = Отправлено
-subject = Срок действия файла рассылки {0} заканчивается' WHERE id=6;
+subject = Срок действия файла рассылки {0} заканчивается',messages_vietnamese='beginningMainMsgInt = Tài liệu chia sẻ 
+endingMainMsgInt = được gửi bởi <b> {0} <span style="text-transform:uppercase">{1}</span></b>,  sẽ hết hạn trong <b>{2} ngày </b>.
+mainMsgExt = Tài liệu chia sẻ <b>{0}</b> được gửi bởi <b> {1} <span style="text-transform:uppercase">{2}</span></b>,  sẽ hết hạn trong <b>{3} ngày </b>.
+name = {0} {1}
+sharedBy = Được chia sẻ bởi 
+subject = Tài liệu chia sẻ cho {0} sắp hết hạn' WHERE id=6;

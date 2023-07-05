@@ -99,9 +99,9 @@ invitationClosureDate = Closure date
 recipientsURequest = Recipients
 subjectForOwner =  Your invitation is about to be closed.
 subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
-uploadFileBtn = Upload a file',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s upload Request:  <b>{2}</b> is about to reach it''''s end date in <b>{3} days</b>
-beginningMainMsgCollective = Your collective upload request: {0}, is about to be closed in  <b>{1} days</b>.
-beginningMainMsgIndividual =  Your individual upload request: {0}, is about to be closed in <b>{1} days</b>.
+uploadFileBtn = Upload a file',messages_russian='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s запрос на загрузку:  <b>{2}</b> приближается к окончанию срока действия через <b>{3} дня</b>
+beginningMainMsgCollective = Ваш коллективный запрос на загрузку: {0}, закроется через  <b>{1} дня</b>.
+beginningMainMsgIndividual =  Ваш индивидуальный запрос на загрузку: {0}, закроется через <b>{1} дня</b>.
 endingMainMsgPlural = Всего загрузка содержит <b> {0} файлов </b>.
 endingMainMsgPluralForRecipient = вы отправили <b> {0} файлов </b> в загрузку.
 endingMainMsgSingular = Всего в репозитории of <b>1 файл </b>.
@@ -113,4 +113,18 @@ invitationClosureDate = Дата закрытия
 recipientsURequest = Получатели
 subjectForOwner =  Срок действия вашего приглашения заканчивается.
 subjectForRecipient =  {0} {1}''''s срок действия вашего приглашения заканчивается.
-uploadFileBtn = Загрузить файл' WHERE id=12;
+uploadFileBtn = Загрузить файл',messages_vietnamese='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s yêu cầu tải lên:  <b>{2}</b> sắp tới ngày kết thúc trong <b>{3} ngày</b>
+beginningMainMsgCollective = Yêu cầu tải lên chung của bạn: {0}, sắp được đóng trong  <b>{1} ngày</b>.
+beginningMainMsgIndividual =  Yêu cầu tải lên cá nhân của bạn: {0}, sắp được đóng trong <b>{1} ngày</b>.
+endingMainMsgPlural = Có tổng cộng <b> {0} files </b> trong yêu cầu tải lên. 
+endingMainMsgPluralForRecipient = và tính đến hiện tại bạn đã gửi <b> {0} files </b> trong yêu cầu tải lên.
+endingMainMsgSingular = Có tổng cộng <b>1 file </b> trong yêu cầu tải lên.  
+endingMainMsgSingularForRecipient = và hiện tại bạn đã taỉ lên <b>1 file </b>trong thư mục.
+filesInURDepot = Files được tải lên
+formatMailSubject = : {0}
+invitationActivationDate = Ngày kích hoạt 
+invitationClosureDate = Ngày đóng 
+recipientsURequest = Người nhận
+subjectForOwner =  Lời mời của bạn sắp được đóng. 
+subjectForRecipient =  Lời mời của {0} {1}''''s sắp được đóng 
+uploadFileBtn = Tải lên 1 file' WHERE id=12;

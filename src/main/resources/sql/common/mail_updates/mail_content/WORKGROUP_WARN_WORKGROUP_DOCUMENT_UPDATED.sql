@@ -53,10 +53,16 @@ mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> updated 
 folderMsg = into the folder
 workgroupMsg = on the workgroup
 revisionMsg = by adding a new document revision 
-subject = The document {0} was updated in the workgroup {1}',messages_russian='workGroupModificationDateTitle = Modification date
-DocumentSize = Document size
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> updated the document<br>
-folderMsg = into the folder
-workgroupMsg = on the workgroup
-revisionMsg = by adding a new document revision 
-subject = The document {0} was updated in the workgroup {1}' WHERE id=45;
+subject = The document {0} was updated in the workgroup {1}',messages_russian='workGroupModificationDateTitle = Дата изменения
+DocumentSize = Размер документа
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> обновил документ<br>
+folderMsg = в папке
+workgroupMsg = рабочей группы
+revisionMsg = путем добавления новой редакции документа
+subject = Документ {0} был обновлен в рабочей группе {1}',messages_vietnamese='workGroupModificationDateTitle = NGày chỉnh sửa
+DocumentSize = Kích cỡ tài liệu 
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã chỉnh sửa tài liệu<br>
+folderMsg = trong thư mục 
+workgroupMsg = trong workgroup
+revisionMsg = bới thêm một phiên bản mới của tài liệu 
+subject = Tài liệu {0} đã được cập nhật tron workgroup {1}' WHERE id=45;

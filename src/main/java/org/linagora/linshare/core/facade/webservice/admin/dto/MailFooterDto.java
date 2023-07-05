@@ -66,6 +66,9 @@ public class MailFooterDto {
 	@Schema(description = "messagesRussian")
 	private String messagesRussian;
 
+	@Schema(description = "messagesVietnamese")
+	private String messagesVietnamese;
+
 	public MailFooterDto() {
 	}
 
@@ -89,6 +92,7 @@ public class MailFooterDto {
 		this.messagesFrench = footer.getMessagesFrench();
 		this.messagesEnglish = footer.getMessagesEnglish();
 		this.messagesRussian = footer.getMessagesRussian();
+		this.messagesVietnamese = footer.getMessagesVietnamese();
 	}
 
 	public void setDescription(String value) {
@@ -193,5 +197,13 @@ public class MailFooterDto {
 
 	public void setMessagesRussian(String messagesRussian) {
 		this.messagesRussian = messagesRussian;
+	}
+
+	public String getMessagesVietnamese() {
+		return messagesVietnamese;
+	}
+
+	public void setMessagesVietnamese(String messagesVietnamese) {
+		this.messagesVietnamese = messagesVietnamese;
 	}
 }

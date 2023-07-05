@@ -403,6 +403,7 @@ CREATE TABLE mail_layout (
   messages_french    text NOT NULL,
   messages_english   text NOT NULL,
   messages_russian   text NOT NULL,
+  messages_vietnamese   text NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_footer (
   id                  int8 NOT NULL,
@@ -417,6 +418,7 @@ CREATE TABLE mail_footer (
   messages_french    text NOT NULL,
   messages_english   text NOT NULL,
   messages_russian   text NOT NULL,
+  messages_vietnamese   text NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_footer_lang (
   id              int8 NOT NULL,
@@ -441,6 +443,7 @@ CREATE TABLE mail_content (
   messages_french    text NOT NULL,
   messages_english   text NOT NULL,
   messages_russian   text NOT NULL,
+  messages_vietnamese   text NOT NULL,
   PRIMARY KEY (id));
   CREATE TABLE mail_attachment (
   id                  int8 NOT NULL,

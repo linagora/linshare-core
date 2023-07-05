@@ -116,6 +116,7 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 		footer.setMessagesEnglish(dto.getMessagesEnglish());
 		footer.setMessagesFrench(dto.getMessagesFrench());
 		footer.setMessagesRussian(dto.getMessagesRussian());
+		footer.setMessagesVietnamese(dto.getMessagesVietnamese());
 	}
 
 	private MailFooter findFooter(User authUser, String uuid)
