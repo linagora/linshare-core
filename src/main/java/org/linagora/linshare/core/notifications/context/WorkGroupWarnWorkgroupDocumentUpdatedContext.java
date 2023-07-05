@@ -45,6 +45,7 @@ public class WorkGroupWarnWorkgroupDocumentUpdatedContext extends EmailContext {
 	this.document = document;
 	this.documentRevision = documentRevision;
 	this.folder = folder;
+	this.language = owner.getMailLocale();
 }
 
 	public Account getOwner() {

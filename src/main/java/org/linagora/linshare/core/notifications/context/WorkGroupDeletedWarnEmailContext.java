@@ -32,6 +32,7 @@ public class WorkGroupDeletedWarnEmailContext extends EmailContext {
 		super(workgroupMemberDomain, false);
 		this.sharedSpaceMember = workgroupMember;
 		this.actor = actor;
+		this.language = actor.getMailLocale();
 	}
 
 	@Override

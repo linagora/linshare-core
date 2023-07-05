@@ -39,6 +39,7 @@ public class WorkSpaceDeletedWarnEmailContext extends EmailContext {
 		this.actor = actor;
 		this.sharedSpaceMember = sharedSpaceMember;
 		this.nestedNodes = nestedNodes;
+		this.language = actor.getMailLocale();
 	}
 
 	@Override
