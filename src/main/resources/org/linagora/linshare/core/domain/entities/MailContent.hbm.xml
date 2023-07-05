@@ -20,6 +20,5 @@
 		<property name="messagesFrench" column="messages_french" type="text" not-null="false" lazy="false"/>
 		<property name="messagesEnglish" column="messages_english" type="text" not-null="false" lazy="false"/>
 		<property name="messagesRussian" column="messages_russian" type="text" not-null="false" lazy="false"/>
-		<property name="messagesVietnamese" column="messages_vietnamese" type="text" not-null="false" lazy="false"/>
 	</class>
 </hibernate-mapping>

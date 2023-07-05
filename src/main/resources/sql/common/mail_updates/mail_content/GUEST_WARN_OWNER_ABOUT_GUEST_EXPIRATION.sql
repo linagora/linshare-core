@@ -44,10 +44,4 @@ accountExpiryDateTitle = Дата истечения срока действия
 activationLinkTitle = Ссылка активации
 mainMsg = Срок действия гостевого аккаунта <b> {0} <span style="text-transform:uppercase">{1}</span></b> заканчивается через {2} дня. Если вам все еще нужен аккаунт, продлите срок его действия.
 subject = {0}  {1} срок действия гостевого аккакунта скоро закончится.
-userEmailTitle = Электронная почта',messages_vietnamese='accessToLinshareBTn = Tài khoản hết hạn 
-accountCreationDateTitle = Ngày tạo tài khoản 
-accountExpiryDateTitle = Ngày tài khoản hết hạn 
-activationLinkTitle = Đường dẫn 
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> Tài khoản khách sắp hết hạn trong {2} ngày. Nếu tài khoản này vẫn cần thiết, bạn có thể gia hạn.
-subject = {0}  {1} tài khoản khách sắp hết hạn 
-userEmailTitle = Email' WHERE id=25;
+userEmailTitle = Электронная почта' WHERE id=25;

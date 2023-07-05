@@ -144,19 +144,4 @@ subjectCustomAlt =by {0} {1}
 subjectPlural = {0} {1} поделился с вами файлами
 subjectSingular = {0} {1} поделился с вами файлами
 click = Перейдите по
-link = ссылке' ,messages_vietnamese='downloadBtn = Tải xuống 
-downloadLink = Đường dẫn tải xuống 
-helpMsgPlural = để truy cập tất cả tài liệu được chia sẻ 
-helpMsgSingular = để truy cập tất cả tài liệu được chia sẻ. 
-helpPasswordMsgSingular = Bấm vào đường link dưới đây để tải và nhập mật khẩu được cung cấp trước đó.
-helpPasswordMsgPlural = Bấm vào đường link dưới đây để tải và nhập mật khẩu được cung cấp trước đó. 
-mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> đã chia sẻ <b>{2} files</b> với bạn .
-mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> đã chia sẻ <b>{2} file</b> với bạn.
-msgFrom = Bạn có 1 tin nhắn từ 
-name = {0} {1}
-password = Mật khẩu
-subjectCustomAlt =by {0} {1}
-subjectPlural = {0} {1} đã chia sẻ một vài tài liệu với bạn.
-subjectSingular = {0} {1} đã chia sẻ một tài liệu với bạn. 
-click = Bấm vào 
-link = link' WHERE id=2;
+link = ссылке' WHERE id=2;

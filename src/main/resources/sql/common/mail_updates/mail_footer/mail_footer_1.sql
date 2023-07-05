@@ -1,7 +1,6 @@
 UPDATE mail_footer SET messages_french='learnMoreAbout=En savoir plus sur
 productOfficialWebsite=http://www.linshare.org/',messages_english='learnMoreAbout=Learn more about
 productOfficialWebsite=http://www.linshare.org/',messages_russian='learnMoreAbout=Узнать больше
-productOfficialWebsite=http://www.linshare.org/',messages_vietnamese='learnMoreAbout=Tìm hiểu chi tiết về
 productOfficialWebsite=http://www.linshare.org/',footer='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <body>

@@ -90,13 +90,4 @@ msgFrom = Сообщение от
 msgUnProtected = Для того, чтобы загрузить ваши файлы, пожалуйста, перейдите по ссылке ниже.
 name = {0} {1}
 recipientsOfDepot = Получатели
-subject = {0} {1} ожидает ваши файлы' ,messages_vietnamese='buttonMsg = Truy cập 
-closureDate = Ngày đóng 
-depotSize = Dung lượng 
-mainMsg = <b>{0} {1}</b> nhắc bạn hãy tải file của bạn lên: <b>{2}</b>.
-mainMsgEnd =
-msgFrom = Tin nhắn từ 
-msgUnProtected = Để tải file của bạn, mở link dưới đây
-name = {0} {1}
-recipientsOfDepot = Người nhận 
-subject = {0} {1} đang đợi tài liệu của bạn' WHERE id=18;
+subject = {0} {1} ожидает ваши файлы' WHERE id=18;

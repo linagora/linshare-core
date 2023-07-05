@@ -62,9 +62,4 @@ fileNameEndOfLine = {0}.
 mainMsgExt = Внешний пользователь <b>{0}</b> скачал(а) ваш файл
 mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> скачал(а) ваш файл
 subject = {0} {1} был скачан {2}
-subjectAnonymous = {0} был скачан {1}' ,messages_vietnamese='downloadDate = Ngày tải 
-fileNameEndOfLine = {0}.
-mainMsgExt = Người nhận ngoài <b>{0}</b> đã tải xuống file của bạn
-mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> đã tải xuống file của bạn
-subject = {0} {1} đã tải xuống {2}
-subjectAnonymous = {0} đã tải xuống {1}' WHERE id=4;
+subjectAnonymous = {0} был скачан {1}' WHERE id=4;

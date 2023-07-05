@@ -49,11 +49,4 @@ activationLinkTitle = Ссылка активации
 beginningMainMsg =  У файла рассылки
 endingMainMsg = отправленного <b> {0} <span style="text-transform:uppercase">{1}</span></b> истек срок действия и он был удален <b>system</b>.
 subject = Срок действия файла рассылки {0} истек
-fileNameEndOfLine = {0}' ,messages_vietnamese='shareFileTitle = Tài liệu chia sẻ 
-shareCreationDateTitle = Ngày tạo 
-shareExpiryDateTitle = NGày hết hạn 
-activationLinkTitle = Đường dẫn 
-beginningMainMsg =  Tài liệu chia sẻ 
-endingMainMsg = được gửi bởi <b> {0} <span style="text-transform:uppercase">{1}</span></b> đã hết hạn và bị xóa bởi <b>system</b>.
-subject = Tài liệu chia sẻ  {0} đã hết hạn. 
-fileNameEndOfLine = {0}'WHERE id=27;
+fileNameEndOfLine = {0}' WHERE id=27;

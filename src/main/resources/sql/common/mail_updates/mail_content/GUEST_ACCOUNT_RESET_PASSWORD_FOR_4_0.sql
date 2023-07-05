@@ -49,20 +49,12 @@ mainTitle = In order to enhance the security of your account, you must change yo
 resetLinkTitle = LinShare reset password link
 subject =  Security update
 userNameTitle = Username',
-messages_russian= 'urlExpiryDateTitle = Истечение срока действия URL
-additionalMsg = Вы также можете использовать форму сброса пароля для выполнения этой задачи.
-noteMsg = Эта ссылка может быть использована только один раз и будет действительна в течение 1 недели.
-changePasswordBtn = Изменить пароль
-mainTitle = Чтобы повысить уровень безопасности, вы должны изменить пароль своей учетной записи LinShare. Любое соединение будет запрещено до тех пор, пока этот шаг не будет выполнен.
-resetLinkTitle = Ссылка для сброса пароля LinShare
-subject =  Обновление безопасности
-userNameTitle = Имя пользователя',
-messages_vietnamese= 'urlExpiryDateTitle = URL ngày hết hạn 
-additionalMsg = Bạn cũng có thể dùng form đổi mật khẩu để thực hiện việc này. 
-noteMsg = Đường dẫn này chỉ được dùng một ngày và có giá trị trong 1 tuần. 
-changePasswordBtn = Đổi mật khẩu 
-mainTitle = Để nâng cao bảo bật cho tài khoản LinShare của bạn, bạn cần phải đổi mật khẩu tài khoản. Bất cứ kết nối nào cũng sẽ bị chặn cho đến khi bạn hoàn thành bước này. 
-resetLinkTitle = Đường dẫn đổi mật khẩu LinShare. 
-subject =  Cập nhật bảo mật 
-userNameTitle = Tên người dùng '
+messages_russian= 'urlExpiryDateTitle = URL expiry date
+additionalMsg = You can also use the reset password form to do this task.
+noteMsg = This link can be used only once and will be valid for 1 week. 
+changePasswordBtn = Change password
+mainTitle = In order to enhance the security of your account, you must change your password to your LinShare account. Any connection will be forbidden until this step is not carried out.
+resetLinkTitle = LinShare reset password link
+subject =  Security update
+userNameTitle = Username'
 WHERE id= 37;

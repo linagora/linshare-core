@@ -63,10 +63,4 @@ mainMsgNext= был обновлен
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
 subject =  Ваш статус в рабочей группе {0} был обновлен.
 workGroupRight = Действующий статус
-workGroupNameTitle = Название рабочей группы',messages_vietnamese='workGroupUpdatedDateTitle = Ngày cập nhật 
-mainMsg = Quyền của bạn trong workgroup 
-mainMsgNext= đã được cập nhật 
-mainMsgNextBy= bởi <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Quyền của bạn trong workgroup {0} đã được cập nhật 
-workGroupRight = Quyền hiện tại 
-workGroupNameTitle = Tên Workgroup' WHERE id=29;
+workGroupNameTitle = Название рабочей группы' WHERE id=29;

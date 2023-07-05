@@ -47,23 +47,7 @@ workGroupRightReadTitle = Читатель
 workSpaceRoleAdminTitle = WorkSpace: Администратор
 workSpaceRoleWriteTitle = WorkSpace: Автор
 workSpaceRoleReadTitle = WorkSpace: Читатель
-welcomeMessage = Здравствуйте {0},',messages_vietnamese='common.availableUntil = Ngày hết hạn 
-common.byYou= Bởi bạn 
-common.download= Tải xuống 
-common.filesInShare = Tài liệu đính kèm 
-common.recipients = Người nhận 
-common.titleSharedThe= NGày tạo 
-date.format= d MMMM, yyyy
-productCompagny= Linagora
-productName=LinShare
-workGroupRightAdminTitle = Quản trị viên 
-workGroupRightWirteTitle = Người viết 
-workGroupRightContributeTitle = Người đóng góp 
-workGroupRightReadTitle = Người đọc 
-workSpaceRoleAdminTitle = WorkSpace: Quản trị viên 
-workSpaceRoleWriteTitle = WorkSpace: Người viết 
-workSpaceRoleReadTitle = WorkSpace: Người đọc 
-welcomeMessage = Xin chào {0},',layout='<!DOCTYPE html>
+welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>

@@ -63,7 +63,7 @@ subject =  {0}  has uploaded {1}  in your Upload Request
 uploadedOverTotal = {0} / {1} files
 totalUploaded = {0} files',messages_russian='endingMainMsg = в вашем запросе загрузки
 fileSize = Размер файла
-buttonLabel = Просмотр
+buttonLabel = View
 fileUploadedThe = Дата загрузки
 invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
@@ -71,14 +71,4 @@ beginningMainMsg =  <b> {0} </b> загрузил файл
 numFilesInDepot = Всего загруженных файлов
 subject =  {0}  загрузил {1}  в ваш запрос загрузки
 uploadedOverTotal = {0} / {1} файлы
-totalUploaded = {0} файлы',messages_vietnamese='endingMainMsg = trong yêu cầu tải lên của bạn
-fileSize =  Kích cỡ file 
-buttonLabel = Xem 
-fileUploadedThe = Ngày tải lên 
-invitationClosureDate = Ngày đóng 
-invitationCreationDate = Ngày kích hoạt 
-beginningMainMsg =  <b> {0} </b> đã tải lên file 
-numFilesInDepot = Tổng số file tải lên 
-subject =  {0}  đã tải lên {1}  trong yêu cầu tải của bạn 
-uploadedOverTotal = {0} / {1} files
-totalUploaded = {0} files' WHERE id=10;
+totalUploaded = {0} файлы' WHERE id=10;

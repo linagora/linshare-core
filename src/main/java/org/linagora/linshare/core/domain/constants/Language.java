@@ -21,7 +21,7 @@ import java.util.Locale;
  * Defines supported languages.
  */
 public enum Language {
-	ENGLISH(0, "en"), FRENCH(1, "fr"), RUSSIAN(2, "ru"), VIETNAMESE(3, "vi");
+	ENGLISH(0, "en"), FRENCH(1, "fr"), RUSSIAN(2, "ru");
 
 	private int value;
 	private String tapestryLocale;
@@ -51,25 +51,18 @@ public enum Language {
 		if (locale.toString().equals("ru")) {
 			return RUSSIAN;
 		}
-		if (locale.toString().equals("vi")) {
-			return VIETNAMESE;
-		}
 		return ENGLISH;
 	}
 
 	public static Locale toLocale(Language language) {
-
+		//TODO workAround russian locale not existent
+		Locale russian = new Locale.Builder().setLanguage("ru").setScript("Cyrl").build();
 		if (language != null) {
 			if (language.equals(FRENCH)) {
 				return Locale.FRENCH ;
 			}
 			if (language.equals(RUSSIAN)) {
-				//TODO workAround russian locale not existent
-				return new Locale.Builder().setLanguage("ru").setScript("Cyrl").build();
-			}
-			if (language.equals(VIETNAMESE)) {
-				//TODO workAround vietnamese locale not existent
-				return new Locale.Builder().setLanguage("vi").setScript("Latn").build();
+				return russian;
 			}
 		}
 		return Locale.ENGLISH;

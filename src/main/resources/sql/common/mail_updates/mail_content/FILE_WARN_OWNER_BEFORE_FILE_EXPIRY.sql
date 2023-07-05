@@ -39,7 +39,4 @@ subject = The file {0} is about to be deleted
 uploadedThe = Upload date',messages_russian='beginningMainMsgInt = Ваш файл
 endingMainMsgInt = будет автоматически удален через <b> {0} дней</b> из вашего личного пространства.
 subject = Файл {0} будет удален
-uploadedThe = Дата загрузки',messages_vietnamese='beginningMainMsgInt = Tài liệu của bạn
-endingMainMsgInt = sẽ tự động bị xóa trong <b> {0} ngày </b> từ Không gian cá nhân của bạn. 
-subject = File {0} sắp bị xóa. 
-uploadedThe = Ngày tải lên' WHERE id=1;
+uploadedThe = Дата загрузки' WHERE id=1;

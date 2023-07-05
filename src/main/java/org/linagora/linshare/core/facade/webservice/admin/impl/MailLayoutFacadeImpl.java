@@ -114,7 +114,6 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 		layout.setMessagesEnglish(dto.getMessagesEnglish());
 		layout.setMessagesFrench(dto.getMessagesFrench());
 		layout.setMessagesRussian(dto.getMessagesRussian());
-		layout.setMessagesVietnamese(dto.getMessagesVietnamese());
 	}
 
 	private MailLayout findLayout(User authUser, String uuid)

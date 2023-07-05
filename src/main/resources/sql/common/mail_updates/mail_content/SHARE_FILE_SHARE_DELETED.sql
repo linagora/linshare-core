@@ -35,6 +35,4 @@ subject = {0} {1} a supprimé le partage de {2}',messages_english='deletedDate =
 mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span></b> has deleted the  fileshare
 subject = {0} {1} has deleted the fileshare {2}',messages_russian='deletedDate = Дата удаления
 mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span></b> удалил файл рассылки
-subject = {0} {1} удалил файл рассылки {2}',messages_vietnamese='deletedDate = Ngày xóa
-mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span></b> đã xóa tài liệu chia sẻ 
-subject = {0} {1} đã xóa tài liệu chia sẻ  {2}' WHERE id=5;
+subject = {0} {1} удалил файл рассылки {2}' WHERE id=5;

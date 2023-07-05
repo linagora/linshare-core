@@ -63,14 +63,4 @@ beginningMainMsg = Срок действия файла рассылки
 endingMainMsg =  закончится через {0} дней, а файла не были скачаны получателем <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 subject = Срок действия рассылки скоро закончится, а файлы не были скачаны
 name = {0} {1}
-fileNameEndOfLine = {0}',messages_vietnamese='accessToLinshareBTn = Tài liệu chia sẻ của bạn sắp hết hạn 
-shareRecipientTitle = Người nhận 
-shareFileTitle = Tài liệu chia sẻ 
-shareCreationDateTitle = Ngày tạo 
-shareExpiryDateTitle = Ngày hết hạn 
-activationLinkTitle = Đường dẫn 
-beginningMainMsg =  Tài liệu chia sẻ 
-endingMainMsg =  sẽ hết hạn trong {0} ngày và người nhận vẫn chưa tải về <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-subject = Tài liệu chia sẻ của bạn sắp hết hạn và vẫn chưa được tải về 
-name = {0} {1}
 fileNameEndOfLine = {0}' WHERE id=26;

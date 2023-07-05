@@ -18,15 +18,14 @@ package org.linagora.linshare.core.domain.constants;
 public enum UserLanguage {
 	ENGLISH,
 	FRENCH,
-	RUSSIAN,
-	VIETNAMESE;
+	RUSSIAN;
 
 	public static UserLanguage from(SupportedLanguage supportedLanguage) {
 		switch (supportedLanguage) {
 			case FRENCH: return FRENCH;
 			case RUSSIAN: return RUSSIAN;
-			case VIETNAMESE: return VIETNAMESE;
 			case ENGLISH:
+			case VIETNAMESE:
 			default: return ENGLISH;
 		}
 	}
@@ -35,7 +34,6 @@ public enum UserLanguage {
 		switch (language) {
 			case FRENCH: return FRENCH;
 			case RUSSIAN: return RUSSIAN;
-			case VIETNAMESE: return VIETNAMESE;
 			case ENGLISH:
 			default: return ENGLISH;
 		}
@@ -45,7 +43,6 @@ public enum UserLanguage {
 		switch (this) {
 			case FRENCH: return SupportedLanguage.FRENCH;
 			case RUSSIAN: return SupportedLanguage.RUSSIAN;
-			case VIETNAMESE: return SupportedLanguage.VIETNAMESE;
 			case ENGLISH:
 			default: return SupportedLanguage.ENGLISH;
 		}
@@ -55,7 +52,6 @@ public enum UserLanguage {
 		switch (this) {
 			case FRENCH: return Language.FRENCH;
 			case RUSSIAN: return Language.RUSSIAN;
-			case VIETNAMESE: return Language.VIETNAMESE;
 			case ENGLISH:
 			default: return Language.ENGLISH;
 		}

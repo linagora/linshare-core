@@ -52,11 +52,4 @@ endingMainMsg = Если вы не запрашивали смену парол�
 mainTile = Забыли пароль?
 resetLinkTitle = Ссылка на смену пароля LinShare
 subject =  Инструкция по смену пароля LinShare
-userNameTitle = Имя пользователя' ,messages_vietnamese='accountExpiryDateTitle = Ngày hết hạn tài khoản
-beginingMainMsg =  Bấm vào link dưới đây để đặt lại mật khẩu cho tài khoản LinShare của bạn.
-changePasswordBtn = Đổi mật khẩu
-endingMainMsg = Nếu bạn không yêu cầu đổi mật khẩu, hãy bỏ qua thư này. Mật khẩu của bạn sẽ không được đổi trừ khi bạn tạo một mật khẩu mới thông qua đường dẫn trên.
-mainTile = Bạn quên mật khẩu? 
-resetLinkTitle = Đường dẫn đổi mật khẩu 
-subject =  Hướng dẫn đổi mật khẩu LinShare 
-userNameTitle = Tên người dùng' WHERE id=9;
+userNameTitle = Имя пользователя' WHERE id=9;

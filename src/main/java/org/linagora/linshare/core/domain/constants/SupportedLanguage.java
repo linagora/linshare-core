@@ -77,22 +77,16 @@ public enum SupportedLanguage {
 	}
 	
 	public static SupportedLanguage fromLanguage(Language language){
-		switch (language) {
-			case FRENCH: return FRENCH;
-			case RUSSIAN: return RUSSIAN;
-			case VIETNAMESE: return VIETNAMESE;
-			case ENGLISH:
-			default: return ENGLISH;
+		if (language == Language.FRENCH){
+			return SupportedLanguage.FRENCH;
 		}
+		return SupportedLanguage.ENGLISH;
 	}
 
 	public static Language toLanguage(SupportedLanguage language){
-		switch (language) {
-			case FRENCH: return Language.FRENCH;
-			case RUSSIAN: return Language.RUSSIAN;
-			case VIETNAMESE: return Language.VIETNAMESE;
-			case ENGLISH:
-			default: return Language.ENGLISH;
+		if (language == SupportedLanguage.FRENCH){
+			return Language.FRENCH;
 		}
+		return Language.ENGLISH;
 	}
 }
