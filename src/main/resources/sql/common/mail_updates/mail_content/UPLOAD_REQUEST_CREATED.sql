@@ -80,4 +80,12 @@ mainMsg = <b>{0} {1}</b> открыл для вас доступ к его за�
 msgFrom = Сообщение от
 name = {0} {1}
 recipientsOfDepot = Получатели
-subject = {0} {1} открыл для вас доступ к его запросу загрузки.' WHERE id=20;
+subject = {0} {1} открыл для вас доступ к его запросу загрузки.',messages_vietnamese='activationDate = Ngày kích hoạt 
+closureDate = Ngày đóng 
+customDate= MMMM d, yyyy.
+depotSize = Dung lượng cho phép
+mainMsg = <b>{0} {1}</b> đã mời bạn truy cập Yêu cầu tải lên của anh ấy <b>{2}</b>, sẽ được mở vào 
+msgFrom = Tin nhắn từ 
+name = {0} {1}
+recipientsOfDepot = Người nhận 
+subject = {0} {1} đã gửi lời mời truy cập Yêu cầu tải lên của anh ấy.' WHERE id=20;

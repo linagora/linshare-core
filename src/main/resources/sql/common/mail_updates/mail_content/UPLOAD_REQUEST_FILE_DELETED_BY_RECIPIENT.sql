@@ -34,4 +34,7 @@ mainMsg = <b>{0}</b> has deleted the file <b> {1} </b>from your Upload Request <
 subject = {0} has deleted a file from the Upload Request {1}',messages_russian='invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
 mainMsg = <b>{0}</b> удалил файл <b> {1} </b> из вашего запроса загрузки <b>{2}</b>.
-subject = {0} удалил файл из загрузки {1}' WHERE id=15;
+subject = {0} удалил файл из загрузки {1}',messages_vietnamese='invitationClosureDate = Ngày đóng 
+invitationCreationDate = Ngày kích hoạt 
+mainMsg = <b>{0}</b> đã xóa file <b> {1} </b>từ yêu cầu tảu lên của bạn <b>{2}</b>.
+subject = {0} đã xóa 1 file từ Yêu cầu tải lên {1}' WHERE id=15;

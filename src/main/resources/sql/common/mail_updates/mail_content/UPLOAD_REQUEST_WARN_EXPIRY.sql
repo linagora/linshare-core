@@ -107,4 +107,17 @@ invitationClosureDate = Дата закрытия
 invitationCreationDate = Дата активации
 recipientsURequest = Получатели
 subjectForOwner = Ваше приглашение  {0} больше не действительно
-subjectForRecipient =  {0} {1}''''s  приглешение {2} больше не действительно' WHERE id=13;
+subjectForRecipient =  {0} {1}''''s  приглешение {2} больше не действительно',messages_vietnamese='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Yêu cầu tải lên đã hết hạn.
+beginningMainMsgCollective = Yêu cầu tải chung của bạn đã hết hạn 
+beginningMainMsgIndividual = Yêu cầu tải lên của bạn đã hết hạn 
+endingMainMsgPlural = và bạn nhận được tổng cộng <b>{0} files</b>.
+endingMainMsgPluralForRecipient = và bạn hiện tại đã gửi  <b> {0} files </b>.
+endingMainMsgSingular = và bạn nhận được tổng cộng <b>1 file</b>.
+endingMainMsgSingularForRecipient = và bạn đã tải lên <b>1 file </b> vào thư mục. 
+filesInURDepot = Các file được tải lên 
+formatMailSubject = : {0}
+invitationClosureDate = Ngày đóng 
+invitationCreationDate = Ngày kích hoạt
+recipientsURequest = Người nhận 
+subjectForOwner = Lời mời của bạn {0} bây giờ đã được đóng 
+subjectForRecipient =  {0} {1}''''s  lời mời {2} đã được đóng bây giờ' WHERE id=13;

@@ -106,4 +106,15 @@ msgUnProtected = Получите доступ, перейдя по ссылке
 name = {0} {1}
 password = Пароль
 recipientsOfDepot = Получатель
-subject = {0} {1}  пригласил вас в свой запрос загрузки {2}' WHERE id=16;
+subject = {0} {1}  пригласил вас в свой запрос загрузки {2}',messages_vietnamese='buttonMsg = Truy cập 
+closureDate = Ngày đóng 
+depotSize = Dung lượng cho phép 
+mainMsg = <b>{0} {1}</b> đã mời bạn vào yêu cầu tải : <b>{2}</b>.
+msgFrom = Tin nhắn từ 
+msgAlt = Yêu cầu tải {0} từ {1} {2} được kích hoạt bây giờ.
+msgProtected = mở khóa bằng việc mở đường dẫn dưới đây và điền mật khẩu 
+msgUnProtected = Truy cập bằng việc mở đường dẫn dưới đây 
+name = {0} {1}
+password = Mật khẩu 
+recipientsOfDepot = Người nhận 
+subject = {0} {1} đã mời bạn vào yêu cầu tải : {2}' WHERE id=16;
