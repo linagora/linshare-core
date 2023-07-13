@@ -91,7 +91,7 @@ linshare.db.hbm2ddl.auto=validate
 #        Limitation : maximum size file size is 5GB
 # * openstack-swift : storing documents into openstack swift with region support.(regionId will be mandatory)
 #        Limitation : maximum size file size is 5GB
-# * s3 : storing documents into Amazon S3.
+# * aws-s3 : storing documents into Amazon S3.
 #        Limitation : maximum size file size is 5GB
 linshare.documents.storage.mode=filesystem
 linshare.documents.storage.bucket=e0531829-8a75-49f8-bb30-4539574d66c7

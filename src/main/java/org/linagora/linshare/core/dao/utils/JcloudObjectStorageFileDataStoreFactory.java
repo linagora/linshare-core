@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -43,6 +44,7 @@ public class JcloudObjectStorageFileDataStoreFactory {
 	// Do not support object storage region
 	protected static String SWIFT_KEYSTONE = "swift-keystone";
 	protected static String S3 = "s3";
+	protected static String AWS_S3 = "aws-s3";
 
 	protected String provider;
 	protected String supportedProviders;
@@ -84,13 +86,19 @@ public class JcloudObjectStorageFileDataStoreFactory {
 
 	public ContextBuilder getContextBuilder() {
 		Validate.notEmpty(credential, "Missing credential");
-		Validate.notEmpty(endpoint, "Missing endpoint");
 		ContextBuilder contextBuilder = ContextBuilder.newBuilder(provider);
-		contextBuilder.endpoint(endpoint)
-			.credentials(identityBuilder.build(), credential)
+
+		if (!StringUtils.isEmpty(endpoint)) {
+			contextBuilder.endpoint(endpoint);
+		} else if (!S3.equals(provider) && !AWS_S3.equals(provider)) {
+			Validate.notEmpty(endpoint, "Missing endpoint");
+		}
+
+		contextBuilder.credentials(identityBuilder.build(), credential)
 			.modules(modules);
 		return contextBuilder;
 	}
+
 
 	public void setProvider(String provider) {
 		this.provider = provider;
