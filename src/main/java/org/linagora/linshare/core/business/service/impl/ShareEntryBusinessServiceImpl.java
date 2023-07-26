@@ -22,6 +22,7 @@ import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
+import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -117,4 +118,9 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		return shareEntryRepository.findAllExpiredEntries();
 	}
 
+
+	@Override
+	public List<ShareRecipientStatistic> getShareRecipientStatistic(String domainUuid, String beginDate, String endDate) {
+		return shareEntryRepository.getShareRecipientStatistic(domainUuid, beginDate, endDate);
+	}
 }

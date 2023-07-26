@@ -23,6 +23,7 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
+import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -59,5 +60,7 @@ public interface ShareEntryService {
 	Set<ShareEntry> create(Account actor, User owner, ShareContainer shareContainer, ShareEntryGroup shareEntryGroup);
 
 	List<String> findAllExpiredEntries(Account actor, Account owner);
+
+	List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate);
 
 }

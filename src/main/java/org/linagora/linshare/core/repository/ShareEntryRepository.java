@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.domain.entities.User;
 
 public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
@@ -49,4 +50,6 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
 	List<String> findUpcomingExpiredEntries(Integer date);
 
 	List<ShareEntry> findAllMyShareEntries(User owner, DocumentEntry entry);
+
+	List<ShareRecipientStatistic> getShareRecipientStatistic(String domainUuid, String beginDate, String endDate);
 }

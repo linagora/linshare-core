@@ -15,17 +15,23 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
@@ -155,5 +161,51 @@ public class ShareEntryRepositoryImpl extends
 		return findByCriteria(Restrictions.conjunction()
 				.add(Restrictions.eq("entryOwner", owner))
 				.add(Restrictions.eq("documentEntry", entry)));
+	}
+
+	@Override
+	public List<ShareRecipientStatistic> getShareRecipientStatistic(String domainUuid, String beginDate, String endDate) {
+
+		List<String> statements = new ArrayList<>();
+		checkDates(beginDate, endDate);
+		if (!StringUtils.isBlank(beginDate)) {
+			statements.add("s.creationDate >= '" + beginDate + "'");
+		}
+		if (!StringUtils.isBlank(endDate)) {
+			statements.add("s.creationDate <= '" + endDate + "'");
+		}
+		if (!StringUtils.isBlank(domainUuid)) {
+			statements.add("s.recipient.domain.uuid = '" + domainUuid + "'");
+		}
+		String whereStatement = statements.isEmpty() ? "" : " WHERE " + String.join(" AND ", statements);
+
+		@SuppressWarnings("unchecked") // we are casting to ShareRecipientStatistic within the query
+		Query<ShareRecipientStatistic> query = getCurrentSession().createQuery(
+				"SELECT NEW org.linagora.linshare.core.domain.entities.ShareRecipientStatistic" +
+						"(s.recipient.lsUuid, s.recipient.mail, count(s.documentEntry.size), sum(s.documentEntry.size))" +
+						" FROM org.linagora.linshare.core.domain.entities.ShareEntry s" +
+						whereStatement +
+						" GROUP BY s.recipient.lsUuid" +
+						" ORDER BY sum(s.documentEntry.size) DESC");
+		return query.list();
+	}
+
+	private void checkDates(String beginDate, String endDate) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date bDate = null;
+		Date eDate = null;
+		try {
+			if (beginDate != null) {
+				bDate = formatter.parse(beginDate);
+			}
+			if (endDate != null) {
+				eDate = formatter.parse(endDate);
+			}
+		} catch (ParseException e) {
+			throw new BusinessException("Cannot parse the dates.");
+		}
+		if (bDate != null && eDate != null && bDate.after(eDate)){
+			throw new BusinessException("End date cannot be before begin date.");
+		}
 	}
 }

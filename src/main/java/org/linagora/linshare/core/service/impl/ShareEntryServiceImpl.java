@@ -35,6 +35,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
+import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
@@ -334,6 +335,11 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
 		}
 		return shareEntryBusinessService.findAllExpiredEntries();
+	}
+
+	@Override
+	public List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate) {
+		return shareEntryBusinessService.getShareRecipientStatistic(domainUuid, beginDate, endDate);
 	}
 
 }
