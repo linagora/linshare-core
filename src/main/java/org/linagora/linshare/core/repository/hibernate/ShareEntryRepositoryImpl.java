@@ -40,6 +40,8 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
 public class ShareEntryRepositoryImpl extends
 		AbstractRepositoryImpl<ShareEntry> implements ShareEntryRepository {
 
+	public static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+
 	public ShareEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
@@ -191,21 +193,14 @@ public class ShareEntryRepositoryImpl extends
 	}
 
 	private void checkDates(String beginDate, String endDate) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		Date bDate = null;
-		Date eDate = null;
 		try {
-			if (beginDate != null) {
-				bDate = formatter.parse(beginDate);
-			}
-			if (endDate != null) {
-				eDate = formatter.parse(endDate);
+			Date bDate = StringUtils.isBlank(beginDate) ? null : FORMATTER.parse(beginDate);
+			Date eDate = StringUtils.isBlank(endDate) ? null : FORMATTER.parse(endDate);
+			if (bDate != null && eDate != null && bDate.after(eDate)) {
+				throw new BusinessException("End date cannot be before begin date.");
 			}
 		} catch (ParseException e) {
 			throw new BusinessException("Cannot parse the dates.");
-		}
-		if (bDate != null && eDate != null && bDate.after(eDate)){
-			throw new BusinessException("End date cannot be before begin date.");
 		}
 	}
 }
