@@ -15,12 +15,11 @@
  */
 package org.linagora.linshare.webservice.adminv5;
 
-import java.util.List;
-
 import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ShareRecipientStatisticDto;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 /**
  * Interface for the Share service REST jaxRS interface Allows for creation of a
@@ -30,6 +29,6 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.ShareRecipientSt
 @Path("/shares")
 public interface ShareRestService {
 
-	List<ShareRecipientStatisticDto> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate) throws BusinessException;
+	PageContainer<ShareRecipientStatisticDto> getTopSharesByFileSize(String domainUuid, String beginDate, String endDateInteger, Integer pageNumber, Integer pageSize) throws BusinessException;
 
 }

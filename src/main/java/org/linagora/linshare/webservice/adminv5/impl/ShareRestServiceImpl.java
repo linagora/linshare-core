@@ -15,9 +15,8 @@
  */
 package org.linagora.linshare.webservice.adminv5.impl;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,10 +24,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.ShareRecipientStatisticDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.ShareFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.ShareRecipientStatisticDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv5.ShareRestService;
+import org.linagora.linshare.webservice.utils.PageContainer;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -60,13 +60,16 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		)
 	})
 	@Override
-	public List<ShareRecipientStatisticDto> getTopSharesByFileSize(
+	public PageContainer<ShareRecipientStatisticDto> getTopSharesByFileSize(
 			@Parameter(description = "domain's uuid") @QueryParam("domainUuid") String domainUuid,
 			@Parameter(description = "shares range begin date") @QueryParam("beginDate") String beginDate,
-			@Parameter(description = "shares range end date") @QueryParam("endDate") String endDate
-			) throws BusinessException {
-		//TODO: pagination ? only size limit ? add more test data ?
-		return shareFacade.getTopSharesByFileSize(domainUuid, beginDate, endDate);
+			@Parameter(description = "shares range end date") @QueryParam("endDate") String endDate,
+			@Parameter(description = "page number to get", required = false) @QueryParam("page") Integer pageNumber,
+			@Parameter(description = "number of elements to get.", required = false) @QueryParam("size") @DefaultValue("50") Integer pageSize)
+			throws BusinessException {
+		//TODO: add more test data ?
+		PageContainer<ShareRecipientStatisticDto> container = new PageContainer<>(pageNumber, pageSize);
+		return container.loadDataAndCount(shareFacade.getTopSharesByFileSize(domainUuid, beginDate, endDate));
 	}
 
 }

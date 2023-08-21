@@ -114,6 +114,13 @@ public class PageContainer<T> {
 		return this;
 	}
 
+	public PageContainer<T> loadDataAndCount(List<T> list) {
+		this.list = list;
+		validateTotalPagesCount((long) list.size());
+		this.pageResponse = new PageResponse<T>(totalElements, totalPagesCount, list, isFirst(), isLast());
+		return this;
+	}
+
 	public List<T> getList() {
 		return list;
 	}

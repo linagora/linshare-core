@@ -82,7 +82,9 @@ public class SharesRestServiceImplTest {
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeValuesCheck() {
-		List<ShareRecipientStatisticDto> topSharesByFileSize = testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4));
+		List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isNotEmpty();
         ShareRecipientStatisticDto statistic = topSharesByFileSize.get(0);
@@ -97,7 +99,9 @@ public class SharesRestServiceImplTest {
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeIsOrdered() {
-		List<ShareRecipientStatisticDto> topSharesByFileSize = testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4));
+		List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isNotEmpty();
         assertThat(topSharesByFileSize.stream()
@@ -109,7 +113,9 @@ public class SharesRestServiceImplTest {
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeSuperAdmin() {
-		List<ShareRecipientStatisticDto> topSharesByFileSize = testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4));
+		List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isNotEmpty();
     }
@@ -117,7 +123,9 @@ public class SharesRestServiceImplTest {
 	@Test
     @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
 	public void getTopSharesByFileSizeAdmin() {
-		List<ShareRecipientStatisticDto> topSharesByFileSize = testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4));
+		List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isNotEmpty();
     }
@@ -125,7 +133,9 @@ public class SharesRestServiceImplTest {
 	@Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeDomain() {
-		List<ShareRecipientStatisticDto> topSharesByFileSize = testee.getTopSharesByFileSize("MySubDomain", getDate(-6), getDate(-4));
+		List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize("MySubDomain", getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isEmpty();
     }
@@ -133,7 +143,9 @@ public class SharesRestServiceImplTest {
 	@Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeNoDomainAllowed() {
-		List<ShareRecipientStatisticDto> topSharesByFileSize = testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4));
+		List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isNotEmpty();
     }
@@ -141,7 +153,7 @@ public class SharesRestServiceImplTest {
     @Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
     public void getTopSharesByFileSizeWrongDomain() {
-        assertThatThrownBy(() -> testee.getTopSharesByFileSize("not a domain", null, null))
+        assertThatThrownBy(() -> testee.getTopSharesByFileSize("not a domain", null, null, 0, 50))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("The current domain does not exist : not a domain");
     }
@@ -149,14 +161,16 @@ public class SharesRestServiceImplTest {
 	@Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeOnlyBegin() {
-        assertThat(testee.getTopSharesByFileSize(null, getDate(-5), null)).isNotEmpty();
-        assertThat(testee.getTopSharesByFileSize(null, getDate(-4), null)).isEmpty();
+        assertThat(testee.getTopSharesByFileSize(null, getDate(-5), null, 0, 50)
+                .getPageResponse().getContent()).isNotEmpty();
+        assertThat(testee.getTopSharesByFileSize(null, getDate(-4), null, 0, 50)
+                .getPageResponse().getContent()).isEmpty();
     }
 
 	@Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeImpossibleDate() {
-        assertThatThrownBy(() -> testee.getTopSharesByFileSize(null, getDate(-6), getDate(-7)))
+        assertThatThrownBy(() -> testee.getTopSharesByFileSize(null, getDate(-6), getDate(-7), 0, 50))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("End date cannot be before begin date.");
     }
@@ -164,7 +178,7 @@ public class SharesRestServiceImplTest {
 	@Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeNotDate() {
-        assertThatThrownBy(() -> testee.getTopSharesByFileSize(null, "not a date", getDate(-7)))
+        assertThatThrownBy(() -> testee.getTopSharesByFileSize(null, "not a date", getDate(-7), 0, 50))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("Cannot parse the dates.");
     }
