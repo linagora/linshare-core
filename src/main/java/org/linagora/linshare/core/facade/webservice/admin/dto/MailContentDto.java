@@ -33,6 +33,8 @@ public class MailContentDto {
 
 	@Schema(description = "Domain")
 	private String domain;
+	@Schema(description = "DomainLabel")
+	private String domainLabel;
 
 	@Schema(description = "Visible")
 	private boolean visible;
@@ -80,6 +82,7 @@ public class MailContentDto {
 	public MailContentDto(MailContent cont, boolean overrideReadonly) {
 		this.uuid = cont.getUuid();
 		this.domain = cont.getDomain().getUuid();
+		this.domainLabel = cont.getDomain().getLabel();
 		this.description = cont.getDescription();
 		this.body = cont.getBody();
 		this.subject = cont.getSubject();
@@ -112,6 +115,14 @@ public class MailContentDto {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	public String getDomainLabel() {
+		return domainLabel;
+	}
+
+	public void setDomainLabel(String domainLabel) {
+		this.domainLabel = domainLabel;
 	}
 
 	public boolean isVisible() {
