@@ -184,7 +184,7 @@ public class ShareEntryRepositoryImpl extends
 		@SuppressWarnings("unchecked") // we are casting to ShareRecipientStatistic within the query
 		Query<ShareRecipientStatistic> query = getCurrentSession().createQuery(
 				"SELECT NEW org.linagora.linshare.core.domain.entities.ShareRecipientStatistic" +
-						"(s.recipient.lsUuid, s.recipient.mail, count(s.documentEntry.size), sum(s.documentEntry.size))" +
+						"(s.recipient.lsUuid, s.recipient.mail, s.recipient.domain.uuid, s.recipient.domain.label, count(s.documentEntry.size), sum(s.documentEntry.size))" +
 						" FROM org.linagora.linshare.core.domain.entities.ShareEntry s" +
 						whereStatement +
 						" GROUP BY s.recipient.lsUuid" +

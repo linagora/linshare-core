@@ -21,6 +21,10 @@ public class ShareRecipientStatistic {
 
     protected String recipientMail;
 
+    protected String domainUuid;
+
+    protected String domainLabel;
+
     protected Long shareCount;
 
     protected Long shareTotalSize;
@@ -28,9 +32,13 @@ public class ShareRecipientStatistic {
     public ShareRecipientStatistic() {
     }
 
-    public ShareRecipientStatistic(String recipientUuid, String recipientMail, Long shareCount, Long shareTotalSize) {
+    public ShareRecipientStatistic(String recipientUuid, String recipientMail,
+                                   String domainUuid, String domainLabel,
+                                   Long shareCount, Long shareTotalSize) {
         this.recipientUuid = recipientUuid;
         this.recipientMail = recipientMail;
+        this.domainUuid = domainUuid;
+        this.domainLabel = domainLabel;
         this.shareCount = shareCount;
         this.shareTotalSize = shareTotalSize;
     }
@@ -49,6 +57,22 @@ public class ShareRecipientStatistic {
 
     public void setRecipientMail(String recipientMail) {
         this.recipientMail = recipientMail;
+    }
+
+    public String getDomainUuid() {
+        return domainUuid;
+    }
+
+    public void setDomainUuid(String domainUuid) {
+        this.domainUuid = domainUuid;
+    }
+
+    public String getDomainLabel() {
+        return domainLabel;
+    }
+
+    public void setDomainLabel(String domainLabel) {
+        this.domainLabel = domainLabel;
     }
 
     public Long getShareCount() {
@@ -72,6 +96,8 @@ public class ShareRecipientStatistic {
         return "ShareRecipientStatistic [" +
                 "recipientUuid='" + recipientUuid + '\'' +
                 ", recipientMail='" + recipientMail + '\'' +
+                ", domainUuid='" + domainUuid + '\'' +
+                ", domainLabel='" + domainLabel + '\'' +
                 ", shareCount=" + shareCount +
                 ", shareTotalSize=" + shareTotalSize +
                 ']';

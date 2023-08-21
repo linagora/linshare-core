@@ -30,6 +30,12 @@ public class ShareRecipientStatisticDto {
 	@Schema(description = "Recipient's mail")
 	private String recipientMail;
 
+	@Schema(description = "Domain's uuid")
+	private String domainUuid;
+
+	@Schema(description = "Domain's label")
+	private String domainLabel;
+
 	@Schema(description = "Shares count for this recipient")
 	private Long shareCount;
 
@@ -43,6 +49,8 @@ public class ShareRecipientStatisticDto {
 	protected ShareRecipientStatisticDto(ShareRecipientStatistic statistic) {
 		this.recipientUuid = statistic.getRecipientUuid();
 		this.recipientMail = statistic.getRecipientMail();
+		this.domainUuid = statistic.getDomainUuid();
+		this.domainLabel = statistic.getDomainLabel();
 		this.shareTotalSize = statistic.getShareTotalSize();
 		this.shareCount = statistic.getShareCount();
 	}
@@ -61,6 +69,22 @@ public class ShareRecipientStatisticDto {
 
 	public void setRecipientMail(String recipientMail) {
 		this.recipientMail = recipientMail;
+	}
+
+	public String getDomainUuid() {
+		return domainUuid;
+	}
+
+	public void setDomainUuid(String domainUuid) {
+		this.domainUuid = domainUuid;
+	}
+
+	public String getDomainLabel() {
+		return domainLabel;
+	}
+
+	public void setDomainLabel(String domainLabel) {
+		this.domainLabel = domainLabel;
 	}
 
 	public Long getShareCount() {
