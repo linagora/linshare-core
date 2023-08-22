@@ -17,30 +17,35 @@ package org.linagora.linshare.core.domain.entities;
 
 public class ShareRecipientStatistic {
 
+    protected String recipientType;
     protected String recipientUuid;
-
     protected String recipientMail;
-
     protected String domainUuid;
-
     protected String domainLabel;
-
     protected Long shareCount;
-
     protected Long shareTotalSize;
 
     public ShareRecipientStatistic() {
     }
 
-    public ShareRecipientStatistic(String recipientUuid, String recipientMail,
+    public ShareRecipientStatistic(String recipientType, String recipientUuid, String recipientMail,
                                    String domainUuid, String domainLabel,
                                    Long shareCount, Long shareTotalSize) {
+        this.recipientType = recipientType;
         this.recipientUuid = recipientUuid;
         this.recipientMail = recipientMail;
         this.domainUuid = domainUuid;
         this.domainLabel = domainLabel;
         this.shareCount = shareCount;
         this.shareTotalSize = shareTotalSize;
+    }
+
+    public String getRecipientType() {
+        return recipientType;
+    }
+
+    public void setRecipientType(String recipientType) {
+        this.recipientType = recipientType;
     }
 
     public String getRecipientUuid() {
@@ -94,7 +99,8 @@ public class ShareRecipientStatistic {
     @Override
     public String toString() {
         return "ShareRecipientStatistic [" +
-                "recipientUuid='" + recipientUuid + '\'' +
+                "recipientType='" + recipientType + '\'' +
+                ", recipientUuid='" + recipientUuid + '\'' +
                 ", recipientMail='" + recipientMail + '\'' +
                 ", domainUuid='" + domainUuid + '\'' +
                 ", domainLabel='" + domainLabel + '\'' +

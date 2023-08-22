@@ -24,6 +24,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "AdminV5", description = "A linshare share recipient statistic")
 public class ShareRecipientStatisticDto {
+	@Schema(description = "Recipient's type")
+	private String recipientType;
+
 	@Schema(description = "Recipient's uuid")
 	private String recipientUuid;
 
@@ -47,12 +50,21 @@ public class ShareRecipientStatisticDto {
 	}
 
 	protected ShareRecipientStatisticDto(ShareRecipientStatistic statistic) {
+		this.recipientType = statistic.getRecipientType();
 		this.recipientUuid = statistic.getRecipientUuid();
 		this.recipientMail = statistic.getRecipientMail();
 		this.domainUuid = statistic.getDomainUuid();
 		this.domainLabel = statistic.getDomainLabel();
 		this.shareTotalSize = statistic.getShareTotalSize();
 		this.shareCount = statistic.getShareCount();
+	}
+
+	public String getRecipientType() {
+		return recipientType;
+	}
+
+	public void setRecipientType(String recipientType) {
+		this.recipientType = recipientType;
 	}
 
 	public String getRecipientUuid() {

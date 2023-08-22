@@ -88,6 +88,7 @@ public class SharesRestServiceImplTest {
 
 		assertThat(topSharesByFileSize).isNotEmpty();
         ShareRecipientStatisticDto statistic = topSharesByFileSize.get(0);
+        assertThat(statistic.getRecipientType()).isEqualTo("internal");
         assertThat(statistic.getRecipientUuid()).isEqualTo("d896140a-39c0-11e5-b7f9-080027b8274b");
         assertThat(statistic.getRecipientMail()).isEqualTo("user2@linshare.org");
         assertThat(statistic.getDomainUuid()).isEqualTo("MyDomain");

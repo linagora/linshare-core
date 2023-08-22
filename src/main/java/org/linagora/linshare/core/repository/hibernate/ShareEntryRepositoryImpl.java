@@ -168,8 +168,14 @@ public class ShareEntryRepositoryImpl extends
 	@Override
 	public List<ShareRecipientStatistic> getShareRecipientStatistic(String domainUuid, String beginDate, String endDate) {
 
-		List<String> statements = new ArrayList<>();
 		checkDates(beginDate, endDate);
+		List<ShareRecipientStatistic> shares = getInternalShares(domainUuid, beginDate, endDate);
+		shares.addAll(getExternalShares(domainUuid, beginDate, endDate));
+		return shares;
+	}
+
+	private List<ShareRecipientStatistic> getInternalShares(String domainUuid, String beginDate, String endDate) {
+		List<String> statements = new ArrayList<>();
 		if (!StringUtils.isBlank(beginDate)) {
 			statements.add("s.creationDate >= '" + beginDate + "'");
 		}
@@ -184,10 +190,34 @@ public class ShareEntryRepositoryImpl extends
 		@SuppressWarnings("unchecked") // we are casting to ShareRecipientStatistic within the query
 		Query<ShareRecipientStatistic> query = getCurrentSession().createQuery(
 				"SELECT NEW org.linagora.linshare.core.domain.entities.ShareRecipientStatistic" +
-						"(s.recipient.lsUuid, s.recipient.mail, s.recipient.domain.uuid, s.recipient.domain.label, count(s.documentEntry.size), sum(s.documentEntry.size))" +
+						"('internal', s.recipient.lsUuid, s.recipient.mail, s.recipient.domain.uuid, s.recipient.domain.label, count(s.documentEntry.size), sum(s.documentEntry.size))" +
 						" FROM org.linagora.linshare.core.domain.entities.ShareEntry s" +
 						whereStatement +
 						" GROUP BY s.recipient.lsUuid" +
+						" ORDER BY sum(s.documentEntry.size) DESC");
+		return query.list();
+	}
+
+	private List<ShareRecipientStatistic> getExternalShares(String domainUuid, String beginDate, String endDate) {
+		if (!StringUtils.isBlank(domainUuid)) {
+			return List.of();
+		}
+		List<String> statements = new ArrayList<>();
+		if (!StringUtils.isBlank(beginDate)) {
+			statements.add("s.creationDate >= '" + beginDate + "'");
+		}
+		if (!StringUtils.isBlank(endDate)) {
+			statements.add("s.creationDate <= '" + endDate + "'");
+		}
+		String whereStatement = statements.isEmpty() ? "" : " WHERE " + String.join(" AND ", statements);
+
+		@SuppressWarnings("unchecked") // we are casting to ShareRecipientStatistic within the query
+		Query<ShareRecipientStatistic> query = getCurrentSession().createQuery(
+				"SELECT NEW org.linagora.linshare.core.domain.entities.ShareRecipientStatistic" +
+						"('external', '', s.anonymousUrl.contact.mail, '', '', count(s.documentEntry.size), sum(s.documentEntry.size))" +
+						" FROM org.linagora.linshare.core.domain.entities.AnonymousShareEntry s" +
+						whereStatement +
+						" GROUP BY s.anonymousUrl.contact.mail" +
 						" ORDER BY sum(s.documentEntry.size) DESC");
 		return query.list();
 	}
