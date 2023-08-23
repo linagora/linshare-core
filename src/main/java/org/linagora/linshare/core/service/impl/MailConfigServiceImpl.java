@@ -150,22 +150,13 @@ public class MailConfigServiceImpl implements MailConfigService {
 	}
 
 	@Override
-	public List<MailContent> findAllContents(User actor, String domainId)
+	public List<MailContent> findAllVisibleContents(User actor, String domainId)
 			throws BusinessException {
-		List<MailContent> contents = Lists.newArrayList();
-
-		for (AbstractDomain d : getParentDomains(domainId)) {
-			if (d.getUuid().equals(actor.getDomainId())) {
-				contents.addAll(d.getMailContents());
-			} else {
-				for (MailContent c : d.getMailContents()) {
-					if (c.isVisible()) {
-						contents.add(c);
-					}
-				}
-			}
-		}
-		return contents;
+		return getParentDomains(domainId).stream()
+				.flatMap(domain -> domain.getMailContents().stream())
+				.filter(content -> content.isVisible()
+						|| StringUtils.equals(domainId, content.getDomain().getUuid()))
+				.collect(Collectors.toList());
 	}
 
 	@Override

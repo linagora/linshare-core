@@ -113,6 +113,7 @@
 		<constructor-arg ref="mailConfigService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 	<bean id="wsAdminMailFooterLangFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.MailFooterLangFacadeImpl">

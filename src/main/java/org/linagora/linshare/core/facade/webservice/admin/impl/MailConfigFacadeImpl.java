@@ -143,7 +143,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		MailContentType type = MailContentType.valueOf(mailContentType.toUpperCase());
 		Set<MailContentDto> ret = Sets.newHashSet();
 
-		List<MailContent> all = mailConfigService.findAllContents(authUser,
+		List<MailContent> all = mailConfigService.findAllVisibleContents(authUser,
 				cfg.getDomain().getUuid());
 		// TODO Optimization needed.
 		for (MailContent mc : all) {

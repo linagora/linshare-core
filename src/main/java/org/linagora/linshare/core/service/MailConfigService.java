@@ -91,7 +91,7 @@ public interface MailConfigService {
 	 * @param domainId
 	 * @return List<MailContent>
 	 */
-	List<MailContent> findAllContents(User actor, String domainId)
+	List<MailContent> findAllVisibleContents(User actor, String domainId)
 			throws BusinessException;
 
 	/**

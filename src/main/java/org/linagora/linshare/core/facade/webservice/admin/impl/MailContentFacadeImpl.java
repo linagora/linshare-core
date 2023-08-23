@@ -15,7 +15,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.io.IOUtils;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -53,14 +53,18 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final MailBuildingService mailBuildingService;
 
+	private final DomainPermissionBusinessService domainPermissionService;
+
 	public MailContentFacadeImpl(final AccountService accountService,
 			final MailConfigService mailConfigService,
 			final AbstractDomainService abstractDomainService,
-			final MailBuildingService mailBuildingService) {
+			final MailBuildingService mailBuildingService,
+			final DomainPermissionBusinessService domainPermissionService) {
 		super(accountService);
 		this.mailConfigService = mailConfigService;
 		this.abstractDomainService = abstractDomainService;
 		this.mailBuildingService = mailBuildingService;
+		this.domainPermissionService = domainPermissionService;
 	}
 
 	@Override
@@ -102,13 +106,14 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 			domainIdentifier = user.getDomainId();
 		}
 
-		AbstractDomain domain = abstractDomainService
-				.retrieveDomain(domainIdentifier);
-		// TODO : check if the current user has the right to get MailContent of
-		// this domain
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+		if (!domainPermissionService.isAdminforThisDomain(user, domain)){
+			throw new BusinessException("You are not allowed to manage this domain.");
+		}
+
 		Set<MailContentDto> mailContentsDto = new HashSet<MailContentDto>();
 		Iterable<MailContent> contents = only ? domain.getMailContents()
-				: mailConfigService.findAllContents(user, domainIdentifier);
+				: mailConfigService.findAllVisibleContents(user, domainIdentifier);
 		for (MailContent mailContent : contents) {
 			mailContentsDto.add(new MailContentDto(mailContent, getOverrideReadonly()));
 		}
