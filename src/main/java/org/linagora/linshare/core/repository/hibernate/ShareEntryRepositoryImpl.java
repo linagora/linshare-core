@@ -166,18 +166,28 @@ public class ShareEntryRepositoryImpl extends
 	}
 
 	@Override
-	public List<ShareRecipientStatistic> getShareRecipientStatistic(String domainUuid, String beginDate, String endDate) {
-
+	public List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate) {
 		checkDates(beginDate, endDate);
-		List<ShareRecipientStatistic> shares = getInternalShares(domainUuid, beginDate, endDate);
+		List<ShareRecipientStatistic> shares = getInternalShares(domainUuid, beginDate, endDate, "sum");
 		if (StringUtils.isBlank(domainUuid)) {
-			shares.addAll(getExternalShares(beginDate, endDate));
+			shares.addAll(getExternalShares(beginDate, endDate, "sum"));
 			shares.sort((s1,s2)-> s2.getShareTotalSize().compareTo(s1.getShareTotalSize()));
 		}
 		return shares;
 	}
 
-	private List<ShareRecipientStatistic> getInternalShares(String domainUuid, String beginDate, String endDate) {
+	@Override
+	public List<ShareRecipientStatistic> getTopSharesByFileCount(String domainUuid, String beginDate, String endDate) {
+		checkDates(beginDate, endDate);
+		List<ShareRecipientStatistic> shares = getInternalShares(domainUuid, beginDate, endDate, "count");
+		if (StringUtils.isBlank(domainUuid)) {
+			shares.addAll(getExternalShares(beginDate, endDate, "count"));
+			shares.sort((s1,s2)-> s2.getShareCount().compareTo(s1.getShareCount()));
+		}
+		return shares;
+	}
+
+	private List<ShareRecipientStatistic> getInternalShares(String domainUuid, String beginDate, String endDate, String orderOperation) {
 		List<String> statements = new ArrayList<>();
 		if (!StringUtils.isBlank(beginDate)) {
 			statements.add("s.creationDate >= '" + beginDate + "'");
@@ -197,11 +207,11 @@ public class ShareEntryRepositoryImpl extends
 						" FROM org.linagora.linshare.core.domain.entities.ShareEntry s" +
 						whereStatement +
 						" GROUP BY s.recipient.lsUuid" +
-						" ORDER BY sum(s.documentEntry.size) DESC");
+						" ORDER BY " + orderOperation + "(s.documentEntry.size) DESC");
 		return query.list();
 	}
 
-	private List<ShareRecipientStatistic> getExternalShares(String beginDate, String endDate) {
+	private List<ShareRecipientStatistic> getExternalShares(String beginDate, String endDate, String orderOperation) {
 		List<String> statements = new ArrayList<>();
 		if (!StringUtils.isBlank(beginDate)) {
 			statements.add("s.creationDate >= '" + beginDate + "'");
@@ -218,7 +228,7 @@ public class ShareEntryRepositoryImpl extends
 						" FROM org.linagora.linshare.core.domain.entities.AnonymousShareEntry s" +
 						whereStatement +
 						" GROUP BY s.anonymousUrl.contact.mail" +
-						" ORDER BY sum(s.documentEntry.size) DESC");
+						" ORDER BY " + orderOperation + "(s.documentEntry.size) DESC");
 		return query.list();
 	}
 

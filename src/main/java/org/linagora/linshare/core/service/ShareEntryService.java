@@ -63,4 +63,5 @@ public interface ShareEntryService {
 
 	List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate);
 
+	List<ShareRecipientStatistic>  getTopSharesByFileCount(String domainUuid, String beginDate, String endDate);
 }

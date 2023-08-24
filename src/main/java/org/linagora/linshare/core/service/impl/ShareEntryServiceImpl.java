@@ -339,7 +339,12 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 
 	@Override
 	public List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate) {
-		return shareEntryBusinessService.getShareRecipientStatistic(domainUuid, beginDate, endDate);
+		return shareEntryBusinessService.getTopSharesByFileSize(domainUuid, beginDate, endDate);
+	}
+
+	@Override
+	public List<ShareRecipientStatistic> getTopSharesByFileCount(String domainUuid, String beginDate, String endDate) {
+		return shareEntryBusinessService.getTopSharesByFileCount(domainUuid, beginDate, endDate);
 	}
 
 }

@@ -120,7 +120,12 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 
 	@Override
-	public List<ShareRecipientStatistic> getShareRecipientStatistic(String domainUuid, String beginDate, String endDate) {
-		return shareEntryRepository.getShareRecipientStatistic(domainUuid, beginDate, endDate);
+	public List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate) {
+		return shareEntryRepository.getTopSharesByFileSize(domainUuid, beginDate, endDate);
+	}
+
+	@Override
+	public List<ShareRecipientStatistic> getTopSharesByFileCount(String domainUuid, String beginDate, String endDate) {
+		return shareEntryRepository.getTopSharesByFileCount(domainUuid, beginDate, endDate);
 	}
 }

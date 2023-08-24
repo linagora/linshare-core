@@ -8,4 +8,6 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.ShareRecipientSt
 public interface ShareFacade extends AdminGenericFacade {
 
     List<ShareRecipientStatisticDto> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate);
+
+    List<ShareRecipientStatisticDto> getTopSharesByFileCount(String domainUuid, String beginDate, String endDate);
 }

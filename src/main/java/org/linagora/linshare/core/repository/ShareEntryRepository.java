@@ -51,5 +51,7 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
 
 	List<ShareEntry> findAllMyShareEntries(User owner, DocumentEntry entry);
 
-	List<ShareRecipientStatistic> getShareRecipientStatistic(String domainUuid, String beginDate, String endDate);
+	List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate);
+
+	List<ShareRecipientStatistic> getTopSharesByFileCount(String domainUuid, String beginDate, String endDate);
 }

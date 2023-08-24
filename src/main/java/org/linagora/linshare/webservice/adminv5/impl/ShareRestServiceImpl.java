@@ -71,4 +71,25 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		return container.loadDataAndCount(shareFacade.getTopSharesByFileSize(domainUuid, beginDate, endDate));
 	}
 
+	@Path("/topSharesByFileCount")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Operation(summary = "Find top shares ordered by file count.", responses = {
+		@ApiResponse(
+			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShareRecipientStatisticDto.class))),
+			responseCode = "200"
+		)
+	})
+	@Override
+	public PageContainer<ShareRecipientStatisticDto> getTopSharesByFileCount(
+			@Parameter(description = "domain's uuid") @QueryParam("domainUuid") String domainUuid,
+			@Parameter(description = "shares range begin date") @QueryParam("beginDate") String beginDate,
+			@Parameter(description = "shares range end date") @QueryParam("endDate") String endDate,
+			@Parameter(description = "page number to get", required = false) @QueryParam("page") Integer pageNumber,
+			@Parameter(description = "number of elements to get.", required = false) @QueryParam("size") @DefaultValue("50") Integer pageSize)
+			throws BusinessException {
+		PageContainer<ShareRecipientStatisticDto> container = new PageContainer<>(pageNumber, pageSize);
+		return container.loadDataAndCount(shareFacade.getTopSharesByFileCount(domainUuid, beginDate, endDate));
+	}
+
 }

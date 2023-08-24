@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
@@ -67,17 +66,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         "classpath:springContext-batches.xml",
         "classpath:springContext-test.xml" })
 public class SharesRestServiceImplTest {
-
     @Autowired
     private ShareRestServiceImpl testee;
-
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static final double DAY_MILLISECONDS = 8.64E7;
 
-    @BeforeEach
-    public void setUp() {
-    }
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
@@ -192,6 +186,123 @@ public class SharesRestServiceImplTest {
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeNotDate() {
         assertThatThrownBy(() -> testee.getTopSharesByFileSize(null, "not a date", getDate(-7), 0, 50))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Cannot parse the dates.");
+    }
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileCountValuesCheck() {
+		List<ShareRecipientStatisticDto> topSharesByFileCount =
+                testee.getTopSharesByFileCount(null, getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
+
+		assertThat(topSharesByFileCount).isNotEmpty();
+        assertThat(topSharesByFileCount.size()).isEqualTo(3);
+
+        ShareRecipientStatisticDto internal = topSharesByFileCount.get(0);
+        assertThat(internal.getRecipientType()).isEqualTo("internal");
+        assertThat(internal.getRecipientUuid()).isEqualTo("d896140a-39c0-11e5-b7f9-080027b8274b");
+        assertThat(internal.getRecipientMail()).isEqualTo("user2@linshare.org");
+        assertThat(internal.getDomainUuid()).isEqualTo("MyDomain");
+        assertThat(internal.getDomainLabel()).isEqualTo("MyDomain");
+        assertThat(internal.getShareCount()).isEqualTo(4L);
+        assertThat(internal.getShareTotalSize()).isEqualTo(4096L);
+
+        ShareRecipientStatisticDto external = "external".equals(topSharesByFileCount.get(1).getRecipientType()) ? topSharesByFileCount.get(1) : topSharesByFileCount.get(2);
+        assertThat(external.getRecipientType()).isEqualTo("external");
+        assertThat(external.getRecipientUuid()).isEqualTo("");
+        assertThat(external.getRecipientMail()).isEqualTo("yoda@linshare.org");
+        assertThat(external.getDomainUuid()).isEqualTo("");
+        assertThat(external.getDomainLabel()).isEqualTo("");
+        assertThat(external.getShareCount()).isEqualTo(3L);
+        assertThat(external.getShareTotalSize()).isEqualTo(12288L);
+    }
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileCountIsOrdered() {
+		List<ShareRecipientStatisticDto> topSharesByFileCount =
+                testee.getTopSharesByFileCount(null, getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
+
+		assertThat(topSharesByFileCount).isNotEmpty();
+		assertThat(topSharesByFileCount.size()).isEqualTo(3);
+        assertThat(topSharesByFileCount.stream()
+                .map(ShareRecipientStatisticDto::getShareCount)
+                .collect(Collectors.toList()))
+                .isSortedAccordingTo(Comparator.reverseOrder());
+    }
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileCountSuperAdmin() {
+		List<ShareRecipientStatisticDto> topSharesByFileCount =
+                testee.getTopSharesByFileCount("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
+
+		assertThat(topSharesByFileCount).isNotEmpty();
+    }
+
+	@Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void getTopSharesByFileCountAdmin() {
+		List<ShareRecipientStatisticDto> topSharesByFileCount =
+                testee.getTopSharesByFileCount("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
+
+		assertThat(topSharesByFileCount).isNotEmpty();
+    }
+
+	@Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileCountDomain() {
+		List<ShareRecipientStatisticDto> topSharesByFileCount =
+                testee.getTopSharesByFileCount("MySubDomain", getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
+
+		assertThat(topSharesByFileCount).isEmpty();
+    }
+
+	@Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileCountNoDomainAllowed() {
+		List<ShareRecipientStatisticDto> topSharesByFileCount =
+                testee.getTopSharesByFileCount(null, getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
+
+		assertThat(topSharesByFileCount).isNotEmpty();
+    }
+
+    @Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+    public void getTopSharesByFileCountWrongDomain() {
+        assertThatThrownBy(() -> testee.getTopSharesByFileCount("not a domain", null, null, 0, 50))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("The current domain does not exist : not a domain");
+    }
+
+	@Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileCountOnlyBegin() {
+        assertThat(testee.getTopSharesByFileCount(null, getDate(-5), null, 0, 50)
+                .getPageResponse().getContent()).isNotEmpty();
+        assertThat(testee.getTopSharesByFileCount(null, getDate(-4), null, 0, 50)
+                .getPageResponse().getContent()).isEmpty();
+    }
+
+	@Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileCountImpossibleDate() {
+        assertThatThrownBy(() -> testee.getTopSharesByFileCount(null, getDate(-6), getDate(-7), 0, 50))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("End date cannot be before begin date.");
+    }
+
+	@Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileCountNotDate() {
+        assertThatThrownBy(() -> testee.getTopSharesByFileCount(null, "not a date", getDate(-7), 0, 50))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("Cannot parse the dates.");
     }

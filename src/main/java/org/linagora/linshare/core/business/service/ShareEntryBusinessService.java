@@ -43,5 +43,7 @@ public interface ShareEntryBusinessService {
 
 	List<String> findAllExpiredEntries();
 
-	List<ShareRecipientStatistic> getShareRecipientStatistic(String domainUuid, String beginDate, String endDate);
+	List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate);
+
+	List<ShareRecipientStatistic> getTopSharesByFileCount(String domainUuid, String beginDate, String endDate);
 }

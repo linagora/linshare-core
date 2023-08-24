@@ -30,15 +30,27 @@ public class ShareFacadeImpl extends AdminGenericFacadeImpl implements ShareFaca
 
     @Override
     public List<ShareRecipientStatisticDto> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate) {
+        domainCheck(domainUuid);
+        return shareService.getTopSharesByFileSize(domainUuid, beginDate, endDate).stream()
+                .map(ShareRecipientStatisticDto.toDto()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ShareRecipientStatisticDto> getTopSharesByFileCount(String domainUuid, String beginDate, String endDate) {
+        domainCheck(domainUuid);
+        return shareService.getTopSharesByFileCount(domainUuid, beginDate, endDate).stream()
+                .map(ShareRecipientStatisticDto.toDto()).collect(Collectors.toList());
+    }
+
+    private void domainCheck(String domainUuid) {
         Account authUser = checkAuthentication(Role.ADMIN);
-        if (!StringUtils.isBlank(domainUuid)){
+        if (!StringUtils.isBlank(domainUuid)) {
             AbstractDomain domain = abstractDomainService.findById(domainUuid);
-            if (domain == null){
+            if (domain == null) {
                 throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST, "Cannot find domain with uuid : " + domainUuid);
-            } else if (!domain.isManagedBy(authUser)){
+            } else if (!domain.isManagedBy(authUser)) {
                 throw new BusinessException(BusinessErrorCode.DOMAIN_FORBIDDEN, "You are not allowed to manage this domain");
             }
         }
-        return shareService.getTopSharesByFileSize(domainUuid, beginDate, endDate).stream().map(ShareRecipientStatisticDto.toDto()).collect(Collectors.toList());
     }
 }
