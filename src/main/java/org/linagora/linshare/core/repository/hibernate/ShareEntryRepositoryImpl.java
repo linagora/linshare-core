@@ -170,7 +170,10 @@ public class ShareEntryRepositoryImpl extends
 
 		checkDates(beginDate, endDate);
 		List<ShareRecipientStatistic> shares = getInternalShares(domainUuid, beginDate, endDate);
-		shares.addAll(getExternalShares(domainUuid, beginDate, endDate));
+		if (StringUtils.isBlank(domainUuid)) {
+			shares.addAll(getExternalShares(beginDate, endDate));
+			shares.sort((s1,s2)-> s2.getShareTotalSize().compareTo(s1.getShareTotalSize()));
+		}
 		return shares;
 	}
 
@@ -198,10 +201,7 @@ public class ShareEntryRepositoryImpl extends
 		return query.list();
 	}
 
-	private List<ShareRecipientStatistic> getExternalShares(String domainUuid, String beginDate, String endDate) {
-		if (!StringUtils.isBlank(domainUuid)) {
-			return List.of();
-		}
+	private List<ShareRecipientStatistic> getExternalShares(String beginDate, String endDate) {
 		List<String> statements = new ArrayList<>();
 		if (!StringUtils.isBlank(beginDate)) {
 			statements.add("s.creationDate >= '" + beginDate + "'");

@@ -83,28 +83,40 @@ public class SharesRestServiceImplTest {
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeValuesCheck() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
-                testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4), 0, 50)
                         .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isNotEmpty();
-        ShareRecipientStatisticDto statistic = topSharesByFileSize.get(0);
-        assertThat(statistic.getRecipientType()).isEqualTo("internal");
-        assertThat(statistic.getRecipientUuid()).isEqualTo("d896140a-39c0-11e5-b7f9-080027b8274b");
-        assertThat(statistic.getRecipientMail()).isEqualTo("user2@linshare.org");
-        assertThat(statistic.getDomainUuid()).isEqualTo("MyDomain");
-        assertThat(statistic.getDomainLabel()).isEqualTo("MyDomain");
-        assertThat(statistic.getShareCount()).isEqualTo(4L);
-        assertThat(statistic.getShareTotalSize()).isEqualTo(4096L);
+        assertThat(topSharesByFileSize.size()).isEqualTo(3);
+
+        ShareRecipientStatisticDto external = topSharesByFileSize.get(0);
+        assertThat(external.getRecipientType()).isEqualTo("external");
+        assertThat(external.getRecipientUuid()).isEqualTo("");
+        assertThat(external.getRecipientMail()).isEqualTo("yoda@linshare.org");
+        assertThat(external.getDomainUuid()).isEqualTo("");
+        assertThat(external.getDomainLabel()).isEqualTo("");
+        assertThat(external.getShareCount()).isEqualTo(3L);
+        assertThat(external.getShareTotalSize()).isEqualTo(12288L);
+
+        ShareRecipientStatisticDto internal = topSharesByFileSize.get(1);
+        assertThat(internal.getRecipientType()).isEqualTo("internal");
+        assertThat(internal.getRecipientUuid()).isEqualTo("d896140a-39c0-11e5-b7f9-080027b8274b");
+        assertThat(internal.getRecipientMail()).isEqualTo("user2@linshare.org");
+        assertThat(internal.getDomainUuid()).isEqualTo("MyDomain");
+        assertThat(internal.getDomainLabel()).isEqualTo("MyDomain");
+        assertThat(internal.getShareCount()).isEqualTo(4L);
+        assertThat(internal.getShareTotalSize()).isEqualTo(4096L);
     }
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeIsOrdered() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
-                testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4), 0, 50)
                         .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isNotEmpty();
+		assertThat(topSharesByFileSize.size()).isEqualTo(3);
         assertThat(topSharesByFileSize.stream()
                 .map(ShareRecipientStatisticDto::getShareTotalSize)
                 .collect(Collectors.toList()))

@@ -14,7 +14,8 @@ INSERT INTO document (id, uuid, creation_date, type, human_mime_type, ls_size, c
 	VALUES (3, '113c7cc6-3ddc-4c17-bdbf-9254ad4e0f4f', now() - 10, 'data', 'others', 1024, false, false, true);
 
 INSERT INTO document (id, uuid, creation_date, type, human_mime_type, ls_size, check_mime_type, has_thumbnail, compute_thumbnail)
-	VALUES (4, 'b82ff544-41ab-11e5-9e6f-080027b8274b', now() - 10, 'data', 'others', 1024, false, false, true);
+	VALUES (4, 'b82ff544-41ab-11e5-9e6f-080027b8274b', now() - 10, 'data', 'others', 10240, false, false, true);
+
 
 
 -- Share 1 - one share was downloaded : 1/4
@@ -27,7 +28,7 @@ INSERT INTO document_entry (entry_id, document_id, ciphered, type, human_mime_ty
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (12, 10, now() - 10, now() - 10, 'DE test doc entry name 4', '', 'fd87394a-41ab-11e5-b191-080027b8274b', false);
 INSERT INTO document_entry (entry_id, document_id, ciphered, type, human_mime_type, ls_size, sha256sum, has_thumbnail, shared)
-	VALUES (12, 4, false, 'data', 'others', 1024, 'plop', false, 1);
+	VALUES (12, 4, false, 'data', 'others', 10240, 'plop', false, 1);
 
 -- SEG
 INSERT INTO share_entry_group (id, account_id, uuid, subject, creation_date, modification_date, notification_date, notified, processed, external_mail_locale)

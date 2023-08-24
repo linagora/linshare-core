@@ -67,7 +67,6 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 			@Parameter(description = "page number to get", required = false) @QueryParam("page") Integer pageNumber,
 			@Parameter(description = "number of elements to get.", required = false) @QueryParam("size") @DefaultValue("50") Integer pageSize)
 			throws BusinessException {
-		//TODO: add more test data with external users?
 		PageContainer<ShareRecipientStatisticDto> container = new PageContainer<>(pageNumber, pageSize);
 		return container.loadDataAndCount(shareFacade.getTopSharesByFileSize(domainUuid, beginDate, endDate));
 	}
