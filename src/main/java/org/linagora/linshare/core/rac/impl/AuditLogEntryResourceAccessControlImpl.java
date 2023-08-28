@@ -15,6 +15,9 @@ public class AuditLogEntryResourceAccessControlImpl extends
 
     @Override
     protected boolean hasReadPermission(Account authUser, Account account, AuditLogEntry entry, Object... opt) {
+        if (entry.getAuthUser().getUuid().equals(authUser.getLsUuid())) {
+            return true;
+        }
         if (authUser.hasDelegationRole()) {
             return hasPermission(authUser, TechnicalAccountPermissionType.AUDIT_LIST);
         }
@@ -29,6 +32,9 @@ public class AuditLogEntryResourceAccessControlImpl extends
 
     @Override
     protected boolean hasListPermission(Account authUser, Account account, AuditLogEntry entry, Object... opt) {
+        if (entry.getAuthUser().getUuid().equals(authUser.getLsUuid())) {
+            return true;
+        }
         if (authUser.hasDelegationRole()) {
             return hasPermission(authUser, TechnicalAccountPermissionType.AUDIT_LIST);
         }
@@ -38,6 +44,7 @@ public class AuditLogEntryResourceAccessControlImpl extends
         if (authUser.hasAdminRole() && account != null) {
             return account.getDomain().isManagedBy(authUser);
         }
+
         return false;
     }
 
