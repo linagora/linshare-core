@@ -108,4 +108,13 @@ public class ShareRecipientStatistic {
                 ", shareTotalSize=" + shareTotalSize +
                 ']';
     }
+
+    public static String getCsvHeader() {
+        return "recipientType,recipientUuid,recipientMail,domainUuid,domainLabel,shareCount,shareTotalSize";
+    }
+
+    public String toCsvLine() {
+        return recipientType + ',' + recipientUuid + ',' + recipientMail + ',' + domainUuid + ','
+                + domainLabel + ',' + shareCount + ',' + shareTotalSize;
+    }
 }
