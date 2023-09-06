@@ -42,6 +42,7 @@ include:
 check_author:
   image: docker-registry.linagora.com:5000/lgs-releases/gitlab-integrity-checks:latest
   stage: prepare
+  retry: 2
   tags:
     - ultralight
   script:
