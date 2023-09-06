@@ -236,4 +236,48 @@ public class MailContentRestServiceImplTest {
 				.contains(rootPublicContent, topPublicContent, topPrivateContent)
 				.doesNotContain(rootPrivateContent, subPublicContent, subPrivateContent);
 	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress) // Root
+	public void createShouldForbidNullType() {
+		MailContentDto newMailContent = testee.find(rootPublicContent);
+		newMailContent.setMailContentType(null);
+
+		assertThatThrownBy(() -> testee.create(newMailContent))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("Mail content type missing or unknown : null");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress) // Root
+	public void createShouldForbidEmptyType() {
+		MailContentDto newMailContent = testee.find(rootPublicContent);
+		newMailContent.setMailContentType("");
+
+		assertThatThrownBy(() -> testee.create(newMailContent))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("Mail content type missing or unknown : ");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress) // Root
+	public void createShouldForbidWrongType() {
+		MailContentDto newMailContent = testee.find(rootPublicContent);
+		newMailContent.setMailContentType("not a type");
+
+		assertThatThrownBy(() -> testee.create(newMailContent))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("Mail content type missing or unknown : not a type");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress) // Jane's uuid (admin on top domain 1)
+	public void createShouldAssignNewUUid() {
+		MailContentDto existingMailContent = testee.find(rootPublicContent);
+
+		MailContentDto createdMailContent = testee.create(existingMailContent);
+
+		assertThat(createdMailContent).isNotNull();
+		assertThat(createdMailContent.getUuid()).isNotEqualTo(existingMailContent.getUuid());
+	}
 }

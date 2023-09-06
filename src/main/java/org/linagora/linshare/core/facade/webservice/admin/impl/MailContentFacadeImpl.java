@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
@@ -214,13 +215,17 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private void transform(MailContent content, MailContentDto dto)
 			throws BusinessException {
+		String mailContentType = dto.getMailContentType();
+		if (StringUtils.isBlank(mailContentType) || !MailContentType.contains(mailContentType)) {
+			throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Mail content type missing or unknown : " + mailContentType);
+		}
+
 		content.setDomain(findDomain(dto.getDomain()));
 		content.setDescription(dto.getDescription());
 		content.setVisible(dto.isVisible());
 		content.setSubject(dto.getSubject());
 		content.setBody(dto.getBody());
-		content.setMailContentType(MailContentType.valueOf(
-				dto.getMailContentType()).toInt());
+		content.setMailContentType(MailContentType.valueOf(mailContentType).toInt());
 		content.setMessagesEnglish(dto.getMessagesEnglish());
 		content.setMessagesFrench(dto.getMessagesFrench());
 		content.setMessagesRussian(dto.getMessagesRussian());
