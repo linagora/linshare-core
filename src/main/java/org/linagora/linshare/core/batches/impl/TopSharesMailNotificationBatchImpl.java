@@ -18,19 +18,34 @@ package org.linagora.linshare.core.batches.impl;
 import java.io.File;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.SendFailedException;
+
+import org.jetbrains.annotations.NotNull;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.StringParameterDto;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.SingleRunBatchResultContext;
+import org.linagora.linshare.core.notifications.dto.StringParameter;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 
 import com.google.common.collect.Lists;
@@ -39,15 +54,26 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 
 	private final ShareEntryService shareEntryService;
 
+	private final NotifierService notifierService;
+
+
+	protected final AbstractDomainService abstractDomainService;
+
+	private String recipientsList;
+
 	public static final SimpleDateFormat DATE_FORMAT_TIMESTAMP = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public static final SimpleDateFormat DATE_FORMAT_DAY = new SimpleDateFormat("yyyy-MM-dd");
 
 	public TopSharesMailNotificationBatchImpl(
 			final AccountRepository<Account> accountRepository,
-			final ShareEntryService shareEntryService) {
+			final ShareEntryService shareEntryService,
+			final NotifierService notifierService,
+			final AbstractDomainService abstractDomainService) {
 		super(accountRepository);
 		this.shareEntryService = shareEntryService;
+		this.notifierService = notifierService;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -65,19 +91,54 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 		context.setProcessed(false);
 		try {
 			console.logInfo(batchRunContext, total, position, identifier);
-			File topSharesByFileSizeCsv = toCsv("Top_shares_by_file_size_" + getYesterdayDate(),
-					shareEntryService.getTopSharesByFileSize(null, getYesterdayBegin(), getYesterdayEnd()));
-			File topSharesByFileCountCsv = toCsv("Top_shares_by_file_count_" + getYesterdayDate(),
-					shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd()));
+
+			Map<String, DataSource> attachments = getAttachments();
+
+			sendNotification(attachments, batchRunContext);
 
 			context.setProcessed(true);
 		} catch (BusinessException businessException) {
 			BatchBusinessException exception = new BatchBusinessException(context, "Error while creating top shares mail notification");
 			exception.setBusinessException(businessException);
-			console.logError(batchRunContext, total, position, "Error while trying to create top shares mail notification", exception);
+			console.logError(batchRunContext, "Error while trying to create top shares mail notification", exception);
 			throw exception;
 		}
 		return context;
+	}
+
+	@NotNull
+	private Map<String, DataSource> getAttachments() {
+		Map<String, DataSource> attachments = new HashMap<String, DataSource>();
+
+		File topSharesByFileSizeCsv = toCsv("Top_shares_by_file_size_" + getYesterdayDate(),
+				shareEntryService.getTopSharesByFileSize(null, getYesterdayBegin(), getYesterdayEnd()));
+		attachments.put(topSharesByFileSizeCsv.getName(), new FileDataSource(topSharesByFileSizeCsv));
+
+		File topSharesByFileCountCsv = toCsv("Top_shares_by_file_count_" + getYesterdayDate(),
+				shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd()));
+		attachments.put(topSharesByFileCountCsv.getName(), new FileDataSource(topSharesByFileCountCsv));
+
+		return attachments;
+	}
+
+	private void sendNotification(Map<String, DataSource> attachments, BatchRunContext batchRunContext) {
+		String senderMail = getSenderMail();
+		getRecipients().forEach(recipient -> {
+			try {
+				notifierService.sendNotification(senderMail, null, recipient, getSubject(), getBody(),
+						null, null, attachments);
+			} catch (SendFailedException e) {
+				console.logError(batchRunContext, "Error while trying to send notification to " + recipient, e);
+			}
+		});
+	}
+
+	private String getSenderMail() {
+		return abstractDomainService.getUniqueRootDomain().getFunctionalities()
+				.stream()
+				.filter(func -> func.equalsIdentifier(FunctionalityNames.DOMAIN__MAIL))
+				.map(func -> (((StringParameterDto) func.getParameter()).getDefaut()).getValue())
+				.findFirst().orElse(accountRepository.getBatchSystemAccount().getMail());
 	}
 
 	private File toCsv(String filename, List<ShareRecipientStatistic> topShares) throws BusinessException {
@@ -132,5 +193,36 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 		calendar.set(GregorianCalendar.MILLISECOND, 999);
 
 		return DATE_FORMAT_TIMESTAMP.format(calendar.getTime());
+	}
+
+	public void setRecipientsList(String recipientsList) {
+		this.recipientsList = recipientsList;
+	}
+
+	public List<String> getRecipients() {
+		return Arrays.stream(recipientsList.split(",")).collect(Collectors.toList());
+	}
+
+	private String getSubject(){
+		return "Rapport de partages Linshare du " + getYesterdayDate() + "";
+	}
+
+	public String getBody() {
+		return "<!DOCTYPE html>\n" +
+				"<body>\n" +
+				"<div>\n" +
+				"<h2>Rapport de partages Linshare du " + getYesterdayDate() + "</h2>\n" +
+				"<p>Bonjour,</p>\n" +
+				"<p>Vous trouverez en pièce jointe les rapports du " + getYesterdayBegin() + " au " + getYesterdayEnd() + " sur les partages de fichier dans Linshare. Le rapport se compose des fichiers au format csv suivants :</p>\n" +
+				"<ol>\n" +
+				"<li>Utilisateurs aillant reçu le plus grand nombre de fichiers</li>\n" +
+				"<li>Utilisateurs aillant reçu le plus grand volume de fichiers (somme de la taille des fichiers)</li>\n" +
+				"<li>Liste exhaustive des échanges</li>\n" +
+				"</ol>\n" +
+				"\n" +
+				"<p>Ce message est automatique, merci de ne pas répondre. En cas de problème ou question merci de contacter votre administrateur Linshare.</p>" +
+				"</div>\n" +
+				"</body>\n" +
+				"</html>";
 	}
 }
