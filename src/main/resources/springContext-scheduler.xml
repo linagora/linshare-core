@@ -233,6 +233,7 @@
                 <ref bean="dailyBatchJobTrigger"/>
                 <ref bean="synchronizingLdapGroupsJobTrigger"/>
                 <ref bean="gdprBatchJobTrigger"/>
+                <ref bean="topSharesMailNotificationBatchJobTrigger"/>
             </list>
         </property>
     </bean>

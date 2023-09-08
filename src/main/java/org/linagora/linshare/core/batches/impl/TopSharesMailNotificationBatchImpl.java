@@ -38,7 +38,7 @@ import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.StringParameterDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ParameterDto;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.SingleRunBatchResultContext;
@@ -46,11 +46,13 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
+import org.linagora.linshare.utils.Version;
 
 import com.google.common.collect.Lists;
 
 public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 
+	public static final String DEFAULT_SENDER_MAIL = "no-reply@linshare.org";
 	private final ShareEntryService shareEntryService;
 
 	private final NotifierService notifierService;
@@ -143,9 +145,9 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 		return abstractDomainService.getUniqueRootDomain().getFunctionalities()
 				.stream()
 				.filter(func -> func.equalsIdentifier(FunctionalityNames.DOMAIN__MAIL))
-				.map(func -> (((StringParameterDto) func.getParameter()).getDefaut()).getValue())
+				.map(func -> func.getParameters(Version.V6).stream().findFirst().orElse(new ParameterDto("")).getString())
 				.filter(mail -> !StringUtils.isBlank(mail))
-				.findFirst().orElse(accountRepository.getBatchSystemAccount().getMail());
+				.findFirst().orElse(DEFAULT_SENDER_MAIL);
 	}
 
 	private File toCsv(String filename, List<ShareRecipientStatistic> topShares) throws BusinessException {

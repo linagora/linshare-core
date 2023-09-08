@@ -206,7 +206,7 @@ public class ShareEntryRepositoryImpl extends
 						"('internal', s.recipient.lsUuid, s.recipient.mail, s.recipient.domain.uuid, s.recipient.domain.label, count(s.documentEntry.size), sum(s.documentEntry.size))" +
 						" FROM org.linagora.linshare.core.domain.entities.ShareEntry s" +
 						whereStatement +
-						" GROUP BY s.recipient.lsUuid" +
+						" GROUP BY s.recipient.lsUuid, s.recipient.mail, s.recipient.domain.uuid, s.recipient.domain.label" +
 						" ORDER BY " + orderOperation + "(s.documentEntry.size) DESC");
 		return query.list();
 	}
