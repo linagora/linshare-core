@@ -86,8 +86,6 @@ public class MailActivationFacadeImpl extends AdminGenericFacadeImpl implements
 		entity.getActivationPolicy().setPolicy(Policies.valueOf(ap));
 		entity.getActivationPolicy().setStatus(
 				mailActivation.getActivationPolicy().getStatus());
-		entity.getActivationPolicy().setParentAllowUpdate(
-				mailActivation.getActivationPolicy().getParentAllowUpdate());
 
 		// copy of configuration policy.
 		String cp = mailActivation.getConfigurationPolicy().getPolicy().trim()
@@ -95,8 +93,6 @@ public class MailActivationFacadeImpl extends AdminGenericFacadeImpl implements
 		entity.getConfigurationPolicy().setPolicy(Policies.valueOf(cp));
 		entity.getConfigurationPolicy().setStatus(
 				mailActivation.getConfigurationPolicy().getStatus());
-		entity.getConfigurationPolicy().setParentAllowUpdate(
-				mailActivation.getConfigurationPolicy().getParentAllowUpdate());
 
 		// copy of configuration policy.
 		String dp = mailActivation.getDelegationPolicy().getPolicy().trim()
@@ -104,8 +100,6 @@ public class MailActivationFacadeImpl extends AdminGenericFacadeImpl implements
 		entity.getDelegationPolicy().setPolicy(Policies.valueOf(dp));
 		entity.getDelegationPolicy().setStatus(
 				mailActivation.getDelegationPolicy().getStatus());
-		entity.getDelegationPolicy().setParentAllowUpdate(
-				mailActivation.getDelegationPolicy().getParentAllowUpdate());
 
 		// copy of parameters.
 		entity.setEnable(mailActivation.getEnable());
