@@ -168,7 +168,6 @@ public class Policy implements Cloneable {
 	public void updatePolicyFrom(Policy obj) {
 		this.setStatus(obj.getStatus());
 		this.setPolicy(obj.getPolicy());
-		this.setParentAllowUpdate(obj.getParentAllowUpdate());
 	}
 	
 	public void applyConsistency() {
