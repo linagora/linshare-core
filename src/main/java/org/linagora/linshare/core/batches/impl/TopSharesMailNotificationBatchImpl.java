@@ -24,13 +24,13 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.SendFailedException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -42,7 +42,6 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.parameters.Strin
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.SingleRunBatchResultContext;
-import org.linagora.linshare.core.notifications.dto.StringParameter;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -69,11 +68,13 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 			final AccountRepository<Account> accountRepository,
 			final ShareEntryService shareEntryService,
 			final NotifierService notifierService,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final String recipientsList) {
 		super(accountRepository);
 		this.shareEntryService = shareEntryService;
 		this.notifierService = notifierService;
 		this.abstractDomainService = abstractDomainService;
+		this.recipientsList = recipientsList;
 	}
 
 	@Override
@@ -91,6 +92,11 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 		context.setProcessed(false);
 		try {
 			console.logInfo(batchRunContext, total, position, identifier);
+
+			if (StringUtils.isBlank(recipientsList)) {
+				console.logError(batchRunContext, "No recipient mails set: please use parameter \"job.topSharesNotification.recipient.mails\" to add all comma separated recipient mails");
+				throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "No recipient mails set.");
+			}
 
 			Map<String, DataSource> attachments = getAttachments();
 
@@ -138,6 +144,7 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 				.stream()
 				.filter(func -> func.equalsIdentifier(FunctionalityNames.DOMAIN__MAIL))
 				.map(func -> (((StringParameterDto) func.getParameter()).getDefaut()).getValue())
+				.filter(mail -> !StringUtils.isBlank(mail))
 				.findFirst().orElse(accountRepository.getBatchSystemAccount().getMail());
 	}
 
@@ -195,12 +202,10 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 		return DATE_FORMAT_TIMESTAMP.format(calendar.getTime());
 	}
 
-	public void setRecipientsList(String recipientsList) {
-		this.recipientsList = recipientsList;
-	}
-
 	public List<String> getRecipients() {
-		return Arrays.stream(recipientsList.split(",")).collect(Collectors.toList());
+		return Arrays.stream(recipientsList.replaceAll("\\s", "")
+				.split(","))
+				.collect(Collectors.toList());
 	}
 
 	private String getSubject(){

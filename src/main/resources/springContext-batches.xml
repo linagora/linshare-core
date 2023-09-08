@@ -263,4 +263,13 @@
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg name="gdprActivated" value="${linshare.gdpr.enable}"/>
 	</bean>
+
+	<bean name="topSharesMailNotificationBatch"
+		  class="org.linagora.linshare.core.batches.impl.TopSharesMailNotificationBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="shareEntryService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg value="${job.topSharesNotification.recipient.mails}" />
+	</bean>
 </beans>

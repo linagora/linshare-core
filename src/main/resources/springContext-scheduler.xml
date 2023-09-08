@@ -236,4 +236,24 @@
             </list>
         </property>
     </bean>
+
+	<bean id="topSharesMailNotificationBatchJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+				  value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch">
+					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
+						<ref bean="topSharesMailNotificationBatch" />
+					</list>
+				</entry>
+				<entry key="batchRunner" value-ref="batchRunner" />
+			</map>
+		</property>
+	</bean>
+	<bean id="topSharesMailNotificationBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="topSharesMailNotificationBatchJob" />
+		<property name="cronExpression" value="${job.topSharesNotification.cron.expression}" />
+	</bean>
+
 </beans>
