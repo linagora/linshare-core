@@ -271,5 +271,6 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg name="recipientsList" value="${job.topSharesNotification.recipient.mails}" />
+		<constructor-arg name="topSharesNotificationActivated" value="${job.topSharesNotification.enable}"/>
 	</bean>
 </beans>

@@ -52,184 +52,200 @@ import com.google.common.collect.Lists;
 
 public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 
-	public static final String DEFAULT_SENDER_MAIL = "no-reply@linshare.org";
-	private final ShareEntryService shareEntryService;
+    public static final String DEFAULT_SENDER_MAIL = "no-reply@linshare.org";
+    private final ShareEntryService shareEntryService;
 
-	private final NotifierService notifierService;
+    private final NotifierService notifierService;
 
 
-	protected final AbstractDomainService abstractDomainService;
+    protected final AbstractDomainService abstractDomainService;
 
-	private String recipientsList;
+    private final String recipientsList;
 
-	public static final SimpleDateFormat DATE_FORMAT_TIMESTAMP = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final boolean jobActivated;
 
-	public static final SimpleDateFormat DATE_FORMAT_DAY = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat DATE_FORMAT_TIMESTAMP = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public TopSharesMailNotificationBatchImpl(
-			final AccountRepository<Account> accountRepository,
-			final ShareEntryService shareEntryService,
-			final NotifierService notifierService,
-			final AbstractDomainService abstractDomainService,
-			final String recipientsList) {
-		super(accountRepository);
-		this.shareEntryService = shareEntryService;
-		this.notifierService = notifierService;
-		this.abstractDomainService = abstractDomainService;
-		this.recipientsList = recipientsList;
-	}
+    public static final SimpleDateFormat DATE_FORMAT_DAY = new SimpleDateFormat("yyyy-MM-dd");
 
-	@Override
-	public List<String> getAll(BatchRunContext batchRunContext) {
-		logger.info(getClass().toString() + " job starting ...");
-		//It makes no sense to fetch each resource individually instead of doing it in a single request
-		//So we are sending a single "fake" resource to trigger a single run
-		return Lists.newArrayList("run_only_once_top_shared_mail_notification");
-	}
+    public TopSharesMailNotificationBatchImpl(
+            final AccountRepository<Account> accountRepository,
+            final ShareEntryService shareEntryService,
+            final NotifierService notifierService,
+            final AbstractDomainService abstractDomainService,
+            final String recipientsList,
+            final boolean topSharesNotificationActivated) {
+        super(accountRepository);
+        this.shareEntryService = shareEntryService;
+        this.notifierService = notifierService;
+        this.abstractDomainService = abstractDomainService;
+        this.recipientsList = recipientsList;
+        this.jobActivated = topSharesNotificationActivated;
+    }
 
-	@Override
-	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
-			throws BatchBusinessException, BusinessException {
-		ResultContext context = new SingleRunBatchResultContext(identifier);
-		context.setProcessed(false);
-		try {
-			console.logInfo(batchRunContext, total, position, identifier);
+    @Override
+    public List<String> getAll(BatchRunContext batchRunContext) {
+        logger.info(getClass().toString() + " job starting ...");
+        //It makes no sense to fetch each resource individually instead of doing it in a single request
+        //So we are sending a single "fake" resource to trigger a single run
+        return Lists.newArrayList("run_only_once_top_shared_mail_notification");
+    }
 
-			if (StringUtils.isBlank(recipientsList)) {
-				console.logError(batchRunContext, "No recipient mails set: please use parameter \"job.topSharesNotification.recipient.mails\" to add all comma separated recipient mails");
-				throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "No recipient mails set.");
-			}
+    @Override
+    public boolean needToRun() {
+        return jobActivated;
+    }
 
-			Map<String, DataSource> attachments = getAttachments();
+    @Override
+    public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
+            throws BatchBusinessException, BusinessException {
+        ResultContext context = new SingleRunBatchResultContext(identifier);
+        context.setProcessed(false);
+        try {
+            console.logInfo(batchRunContext, total, position, identifier);
 
-			sendNotification(attachments, batchRunContext);
+            if (StringUtils.isBlank(recipientsList)) {
+                console.logError(batchRunContext, "No recipient mails set: please use parameter \"job.topSharesNotification.recipient.mails\" to add all comma separated recipient mails");
+                throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "No recipient mails set.");
+            }
 
-			context.setProcessed(true);
-		} catch (BusinessException businessException) {
-			BatchBusinessException exception = new BatchBusinessException(context, "Error while creating top shares mail notification");
-			exception.setBusinessException(businessException);
-			console.logError(batchRunContext, "Error while trying to create top shares mail notification", exception);
-			throw exception;
-		}
-		return context;
-	}
+            Map<String, File> csvFiles = getCsvFiles();
+            sendNotification(csvFiles, batchRunContext);
 
-	@NotNull
-	private Map<String, DataSource> getAttachments() {
-		Map<String, DataSource> attachments = new HashMap<String, DataSource>();
+            csvFiles.values().forEach(file -> {
+                if (!file.delete()) {
+                    console.logError(batchRunContext, "Could not delete temporary file : ", file.getName());
+                }
+            });
+            context.setProcessed(true);
+        } catch (BusinessException businessException) {
+            BatchBusinessException exception = new BatchBusinessException(context, "Error while creating top shares mail notification");
+            exception.setBusinessException(businessException);
+            console.logError(batchRunContext, "Error while trying to create top shares mail notification", exception);
+            throw exception;
+        }
+        return context;
+    }
 
-		File topSharesByFileSizeCsv = toCsv("Top_shares_by_file_size_" + getYesterdayDate(),
-				shareEntryService.getTopSharesByFileSize(null, getYesterdayBegin(), getYesterdayEnd()));
-		attachments.put(topSharesByFileSizeCsv.getName(), new FileDataSource(topSharesByFileSizeCsv));
+    @NotNull
+    private Map<String, File> getCsvFiles() {
+        Map<String, File> attachments = new HashMap<String, File>();
 
-		File topSharesByFileCountCsv = toCsv("Top_shares_by_file_count_" + getYesterdayDate(),
-				shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd()));
-		attachments.put(topSharesByFileCountCsv.getName(), new FileDataSource(topSharesByFileCountCsv));
+        File topSharesByFileSizeCsv = toCsv("Top_shares_by_file_size_" + getYesterdayDate() + ".csv",
+                shareEntryService.getTopSharesByFileSize(null, getYesterdayBegin(), getYesterdayEnd()));
+        attachments.put(topSharesByFileSizeCsv.getName(), topSharesByFileSizeCsv);
 
-		return attachments;
-	}
+        File topSharesByFileCountCsv = toCsv("Top_shares_by_file_count_" + getYesterdayDate() + ".csv",
+                shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd()));
+        attachments.put(topSharesByFileCountCsv.getName(), topSharesByFileCountCsv);
 
-	private void sendNotification(Map<String, DataSource> attachments, BatchRunContext batchRunContext) {
-		String senderMail = getSenderMail();
-		getRecipients().forEach(recipient -> {
-			try {
-				notifierService.sendNotification(senderMail, null, recipient, getSubject(), getBody(),
-						null, null, attachments);
-			} catch (SendFailedException e) {
-				console.logError(batchRunContext, "Error while trying to send notification to " + recipient, e);
-			}
-		});
-	}
+        return attachments;
+    }
 
-	private String getSenderMail() {
-		return abstractDomainService.getUniqueRootDomain().getFunctionalities()
-				.stream()
-				.filter(func -> func.equalsIdentifier(FunctionalityNames.DOMAIN__MAIL))
-				.map(func -> func.getParameters(Version.V6).stream().findFirst().orElse(new ParameterDto("")).getString())
-				.filter(mail -> !StringUtils.isBlank(mail))
-				.findFirst().orElse(DEFAULT_SENDER_MAIL);
-	}
+    private void sendNotification(Map<String, File> csvFiles, BatchRunContext batchRunContext) {
+        String sender = getSenderMail();
+        Map<String, DataSource> attachments = csvFiles.entrySet().stream().collect(
+                Collectors.toMap(Map.Entry::getKey, entry -> new FileDataSource(entry.getValue())));
 
-	private File toCsv(String filename, List<ShareRecipientStatistic> topShares) throws BusinessException {
-		File csvOutputFile = new File(filename);
-		try (PrintWriter writer = new PrintWriter(csvOutputFile)) {
-			writer.println(ShareRecipientStatistic.getCsvHeader());
-			topShares.stream()
-					.map(ShareRecipientStatistic::toCsvLine)
-					.forEach(writer::println);
-			return csvOutputFile;
-		} catch (Exception e) {
-			throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "Error while writing the top shares by file size CSV", e);
-		}
-	}
+        getRecipients().forEach(recipient -> {
+            try {
+                notifierService.sendNotification(sender, null, recipient, getSubject(), getBody(),
+                        null, null, attachments);
+            } catch (SendFailedException e) {
+                console.logError(batchRunContext, "Error while trying to send notification to " + recipient, e);
+            }
+        });
+    }
 
-	@Override
-	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
-		console.logInfo(batchRunContext, total, position, "Top shares mail notification have been successfully sent");
-	}
+    private String getSenderMail() {
+        return abstractDomainService.getUniqueRootDomain().getFunctionalities()
+                .stream()
+                .filter(func -> func.equalsIdentifier(FunctionalityNames.DOMAIN__MAIL))
+                .map(func -> func.getParameters(Version.V6).stream().findFirst().orElse(new ParameterDto("")).getString())
+                .filter(mail -> !StringUtils.isBlank(mail))
+                .findFirst().orElse(DEFAULT_SENDER_MAIL);
+    }
 
-	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
-		console.logError(batchRunContext, total, position, "creating top shares mail notification : " + exception.getContext().getIdentifier());
-	}
+    private File toCsv(String filename, List<ShareRecipientStatistic> topShares) throws BusinessException {
+        File csvOutputFile = new File(filename);
+        try (PrintWriter writer = new PrintWriter(csvOutputFile)) {
+            writer.println(ShareRecipientStatistic.getCsvHeader());
+            topShares.stream()
+                    .map(ShareRecipientStatistic::toCsvLine)
+                    .forEach(writer::println);
+            return csvOutputFile;
+        } catch (Exception e) {
+            throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "Error while writing the top shares by file size CSV", e);
+        }
+    }
 
-	private String getYesterdayDate() {
-		Calendar calendar = Calendar.getInstance();
+    @Override
+    public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
+        console.logInfo(batchRunContext, total, position, "Top shares mail notification have been successfully sent");
+    }
+
+    @Override
+    public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
+        console.logError(batchRunContext, total, position, "creating top shares mail notification : " + exception.getContext().getIdentifier());
+    }
+
+    private String getYesterdayDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(GregorianCalendar.DATE, -1);
+        calendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
+        calendar.set(GregorianCalendar.MINUTE, 0);
+        calendar.set(GregorianCalendar.SECOND, 0);
+        calendar.set(GregorianCalendar.MILLISECOND, 0);
+        return DATE_FORMAT_DAY.format(calendar.getTime());
+    }
+
+    private String getYesterdayBegin() {
+        Calendar calendar = Calendar.getInstance();
 		calendar.add(GregorianCalendar.DATE, -1);
-		calendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		calendar.set(GregorianCalendar.MINUTE, 0);
-		calendar.set(GregorianCalendar.SECOND, 0);
-		calendar.set(GregorianCalendar.MILLISECOND, 0);
-		return DATE_FORMAT_DAY.format(calendar.getTime());
-	}
+        calendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
+        calendar.set(GregorianCalendar.MINUTE, 0);
+        calendar.set(GregorianCalendar.SECOND, 0);
+        calendar.set(GregorianCalendar.MILLISECOND, 0);
+        return DATE_FORMAT_TIMESTAMP.format(calendar.getTime());
+    }
 
-	private String getYesterdayBegin() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(GregorianCalendar.DATE, -1);
-		calendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		calendar.set(GregorianCalendar.MINUTE, 0);
-		calendar.set(GregorianCalendar.SECOND, 0);
-		calendar.set(GregorianCalendar.MILLISECOND, 0);
-		return DATE_FORMAT_TIMESTAMP.format(calendar.getTime());
-	}
+    private String getYesterdayEnd() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(GregorianCalendar.DATE, -1);
+        calendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
+        calendar.set(GregorianCalendar.MINUTE, 59);
+        calendar.set(GregorianCalendar.SECOND, 59);
+        calendar.set(GregorianCalendar.MILLISECOND, 999);
 
-	private String getYesterdayEnd() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(GregorianCalendar.DATE, -1);
-		calendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
-		calendar.set(GregorianCalendar.MINUTE, 59);
-		calendar.set(GregorianCalendar.SECOND, 59);
-		calendar.set(GregorianCalendar.MILLISECOND, 999);
+        return DATE_FORMAT_TIMESTAMP.format(calendar.getTime());
+    }
 
-		return DATE_FORMAT_TIMESTAMP.format(calendar.getTime());
-	}
+    public List<String> getRecipients() {
+        return Arrays.stream(recipientsList.replaceAll("\\s", "")
+                        .split(","))
+                .collect(Collectors.toList());
+    }
 
-	public List<String> getRecipients() {
-		return Arrays.stream(recipientsList.replaceAll("\\s", "")
-				.split(","))
-				.collect(Collectors.toList());
-	}
+    private String getSubject() {
+        return "Rapport de partages Linshare du " + getYesterdayDate() + "";
+    }
 
-	private String getSubject(){
-		return "Rapport de partages Linshare du " + getYesterdayDate() + "";
-	}
-
-	public String getBody() {
-		return "<!DOCTYPE html>\n" +
-				"<body>\n" +
-				"<div>\n" +
-				"<h2>Rapport de partages Linshare du " + getYesterdayDate() + "</h2>\n" +
-				"<p>Bonjour,</p>\n" +
-				"<p>Vous trouverez en pièce jointe les rapports du " + getYesterdayBegin() + " au " + getYesterdayEnd() + " sur les partages de fichier dans Linshare. Le rapport se compose des fichiers au format csv suivants :</p>\n" +
-				"<ol>\n" +
-				"<li>Utilisateurs aillant reçu le plus grand nombre de fichiers</li>\n" +
-				"<li>Utilisateurs aillant reçu le plus grand volume de fichiers (somme de la taille des fichiers)</li>\n" +
-				"<li>Liste exhaustive des échanges</li>\n" +
-				"</ol>\n" +
-				"\n" +
-				"<p>Ce message est automatique, merci de ne pas répondre. En cas de problème ou question merci de contacter votre administrateur Linshare.</p>" +
-				"</div>\n" +
-				"</body>\n" +
-				"</html>";
-	}
+    public String getBody() {
+        return "<!DOCTYPE html>\n" +
+                "<body>\n" +
+                "<div>\n" +
+                "<h2>Rapport de partages Linshare du " + getYesterdayDate() + "</h2>\n" +
+                "<p>Bonjour,</p>\n" +
+                "<p>Vous trouverez en pièce jointe les rapports du " + getYesterdayBegin() + " au " + getYesterdayEnd() + " sur les partages de fichier dans Linshare. Le rapport se compose des fichiers au format csv suivants :</p>\n" +
+                "<ol>\n" +
+                "<li>Utilisateurs aillant reçu le plus grand nombre de fichiers</li>\n" +
+                "<li>Utilisateurs aillant reçu le plus grand volume de fichiers (somme de la taille des fichiers)</li>\n" +
+                "<li>Liste exhaustive des échanges</li>\n" +
+                "</ol>\n" +
+                "\n" +
+                "<p>Ce message est automatique, merci de ne pas répondre. En cas de problème ou question merci de contacter votre administrateur Linshare.</p>" +
+                "</div>\n" +
+                "</body>\n" +
+                "</html>";
+    }
 }
