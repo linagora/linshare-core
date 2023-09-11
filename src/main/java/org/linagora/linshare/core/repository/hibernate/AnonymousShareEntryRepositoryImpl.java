@@ -105,4 +105,16 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 				 .add(Restrictions.eq("entryOwner", owner))
 				 .add(Restrictions.eq("documentEntry", entry)));
 	}
+
+
+	@Override
+	public List<AnonymousShareEntry> findAllSharesInRange(Calendar beginDate, Calendar endDate) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.gt("creationDate", beginDate));
+		criteria.add(Restrictions.lt("creationDate", endDate));
+		@SuppressWarnings("unchecked")
+		List<AnonymousShareEntry> list = listByCriteria(criteria);
+		return list;
+	}
+
 }

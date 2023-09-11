@@ -270,6 +270,8 @@
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="shareEntryRepository" />
+		<constructor-arg ref="anonymousShareEntryRepository" />
 		<constructor-arg name="recipientsList" value="${job.topSharesNotification.recipient.mails}" />
 		<constructor-arg name="topSharesNotificationActivated" value="${job.topSharesNotification.enable}"/>
 	</bean>

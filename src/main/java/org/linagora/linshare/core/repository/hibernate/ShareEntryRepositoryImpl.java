@@ -166,6 +166,16 @@ public class ShareEntryRepositoryImpl extends
 	}
 
 	@Override
+	public List<ShareEntry> findAllSharesInRange(Calendar beginDate, Calendar endDate) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+			criteria.add(Restrictions.gt("creationDate", beginDate));
+			criteria.add(Restrictions.lt("creationDate", endDate));
+		@SuppressWarnings("unchecked")
+		List<ShareEntry> list = listByCriteria(criteria);
+		return list;
+	}
+
+	@Override
 	public List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate) {
 		checkDates(beginDate, endDate);
 		List<ShareRecipientStatistic> shares = getInternalShares(domainUuid, beginDate, endDate, "sum");

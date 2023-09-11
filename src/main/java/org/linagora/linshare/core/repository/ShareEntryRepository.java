@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -51,7 +52,9 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
 
 	List<ShareEntry> findAllMyShareEntries(User owner, DocumentEntry entry);
 
-	List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate);
+    List<ShareEntry> findAllSharesInRange(Calendar beginDate, Calendar endDate);
+
+    List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate);
 
 	List<ShareRecipientStatistic> getTopSharesByFileCount(String domainUuid, String beginDate, String endDate);
 }

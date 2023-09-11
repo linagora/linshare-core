@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -38,4 +39,6 @@ public interface AnonymousShareEntryRepository extends
 
 	List<AnonymousShareEntry> findAllMyAnonymousShareEntries(User owner,
 			DocumentEntry entry);
+
+    List<AnonymousShareEntry> findAllSharesInRange(Calendar beginDate, Calendar endDate);
 }

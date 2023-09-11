@@ -34,7 +34,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -43,6 +45,8 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.SingleRunBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.hibernate.AnonymousShareEntryRepositoryImpl;
+import org.linagora.linshare.core.repository.hibernate.ShareEntryRepositoryImpl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
@@ -54,12 +58,11 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
 
     public static final String DEFAULT_SENDER_MAIL = "no-reply@linshare.org";
     private final ShareEntryService shareEntryService;
-
     private final NotifierService notifierService;
 
-
     protected final AbstractDomainService abstractDomainService;
-
+    private final ShareEntryRepositoryImpl shareRepository;
+    private final AnonymousShareEntryRepositoryImpl anonymousShareRepository;
     private final String recipientsList;
 
     private final boolean jobActivated;
@@ -73,12 +76,16 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
             final ShareEntryService shareEntryService,
             final NotifierService notifierService,
             final AbstractDomainService abstractDomainService,
+            final ShareEntryRepositoryImpl shareRepository,
+            final AnonymousShareEntryRepositoryImpl anonymousShareRepository,
             final String recipientsList,
             final boolean topSharesNotificationActivated) {
         super(accountRepository);
         this.shareEntryService = shareEntryService;
         this.notifierService = notifierService;
         this.abstractDomainService = abstractDomainService;
+        this.shareRepository = shareRepository;
+        this.anonymousShareRepository = anonymousShareRepository;
         this.recipientsList = recipientsList;
         this.jobActivated = topSharesNotificationActivated;
     }
@@ -139,7 +146,46 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
                 shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd()));
         attachments.put(topSharesByFileCountCsv.getName(), topSharesByFileCountCsv);
 
+        File allSharesCsv = getAllSharesCsv("All_shares_" + getYesterdayDate() + ".csv",
+                 getYesterdayBeginCalendar(), getYesterdayEndCalendar());
+        attachments.put(allSharesCsv.getName(), allSharesCsv);
+
         return attachments;
+    }
+
+    private File getAllSharesCsv(String filename, Calendar beginDate, Calendar endDate){
+        File file = new File(filename);
+        try (PrintWriter writer = new PrintWriter(file)) {
+            writer.println("senderMail,senderName,senderUid,senderDomainName," +
+                    "recipientMail,recipientType,recipientName,recipientUuid,recipientDomain," +
+                    "fileName,fileUuid,fileSize," +
+                    "timeStamp");
+
+            anonymousShareRepository.findAllSharesInRange(beginDate, endDate).forEach(share -> {
+                Account sender = share.getShareEntryGroup().getOwner();
+                DocumentEntry document = share.getDocumentEntry();
+                writer.println(String.join(",",sender.getMail(),sender.getFullName(),sender.getLsUuid(),sender.getDomain().getLabel(),
+                share.getAnonymousUrl().getContact().getMail(),"external","","","",
+                        document.getName(), document.getUuid(), document.getSize().toString(),
+                        DATE_FORMAT_TIMESTAMP.format(share.getCreationDate().getTime())));
+            });
+
+            shareRepository.findAllSharesInRange(beginDate,endDate).forEach(share -> {
+                Account sender = share.getShareEntryGroup().getOwner();
+                User recipient = share.getRecipient();
+                DocumentEntry document = share.getDocumentEntry();
+                writer.println(String.join(",",sender.getMail(),sender.getFullName(),sender.getLsUuid(),sender.getDomain().getLabel(),
+                        recipient.getMail(),"internal",recipient.getFullName(),recipient.getLsUuid(),recipient.getDomain().getLabel(),
+                        document.getName(), document.getUuid(), document.getSize().toString(),
+                        DATE_FORMAT_TIMESTAMP.format(share.getCreationDate().getTime())));
+            });
+            return file;
+        } catch (Exception e) {
+            throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "Error while writing the complete shares CSV", e);
+        }
+
+
+
     }
 
     private void sendNotification(Map<String, File> csvFiles, BatchRunContext batchRunContext) {
@@ -175,7 +221,7 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
                     .forEach(writer::println);
             return csvOutputFile;
         } catch (Exception e) {
-            throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "Error while writing the top shares by file size CSV", e);
+            throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "Error while writing the top shares CSV", e);
         }
     }
 
@@ -190,34 +236,37 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
     }
 
     private String getYesterdayDate() {
+        return DATE_FORMAT_DAY.format(getYesterdayBeginCalendar().getTime());
+    }
+
+    private String getYesterdayBegin() {
+        return DATE_FORMAT_TIMESTAMP.format(getYesterdayBeginCalendar().getTime());
+    }
+
+    @NotNull
+    private static Calendar getYesterdayBeginCalendar() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(GregorianCalendar.DATE, -1);
         calendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
         calendar.set(GregorianCalendar.MINUTE, 0);
         calendar.set(GregorianCalendar.SECOND, 0);
         calendar.set(GregorianCalendar.MILLISECOND, 0);
-        return DATE_FORMAT_DAY.format(calendar.getTime());
-    }
-
-    private String getYesterdayBegin() {
-        Calendar calendar = Calendar.getInstance();
-		calendar.add(GregorianCalendar.DATE, -1);
-        calendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
-        calendar.set(GregorianCalendar.MINUTE, 0);
-        calendar.set(GregorianCalendar.SECOND, 0);
-        calendar.set(GregorianCalendar.MILLISECOND, 0);
-        return DATE_FORMAT_TIMESTAMP.format(calendar.getTime());
+        return calendar;
     }
 
     private String getYesterdayEnd() {
+        return DATE_FORMAT_TIMESTAMP.format(getYesterdayEndCalendar().getTime());
+    }
+
+    @NotNull
+    private static Calendar getYesterdayEndCalendar() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(GregorianCalendar.DATE, -1);
         calendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
         calendar.set(GregorianCalendar.MINUTE, 59);
         calendar.set(GregorianCalendar.SECOND, 59);
         calendar.set(GregorianCalendar.MILLISECOND, 999);
-
-        return DATE_FORMAT_TIMESTAMP.format(calendar.getTime());
+        return calendar;
     }
 
     public List<String> getRecipients() {
