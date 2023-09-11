@@ -108,6 +108,7 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
             throws BatchBusinessException, BusinessException {
         ResultContext context = new SingleRunBatchResultContext(identifier);
         context.setProcessed(false);
+        Map<String, File> csvFiles = null;
         try {
             console.logInfo(batchRunContext, total, position, identifier);
 
@@ -116,20 +117,23 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
                 throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "No recipient mails set.");
             }
 
-            Map<String, File> csvFiles = getCsvFiles();
+            csvFiles = getCsvFiles();
             sendNotification(csvFiles, batchRunContext);
 
-            csvFiles.values().forEach(file -> {
-                if (!file.delete()) {
-                    console.logError(batchRunContext, "Could not delete temporary file : ", file.getName());
-                }
-            });
             context.setProcessed(true);
         } catch (BusinessException businessException) {
             BatchBusinessException exception = new BatchBusinessException(context, "Error while creating top shares mail notification");
             exception.setBusinessException(businessException);
             console.logError(batchRunContext, "Error while trying to create top shares mail notification", exception);
             throw exception;
+        } finally {
+            if (csvFiles != null) {
+                csvFiles.values().forEach(file -> {
+                    if (!file.delete()) {
+                        console.logError(batchRunContext, "Could not delete temporary file : ", file.getName());
+                    }
+                });
+            }
         }
         return context;
     }
