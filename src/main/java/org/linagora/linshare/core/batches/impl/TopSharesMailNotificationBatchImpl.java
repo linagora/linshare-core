@@ -117,43 +117,40 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
                 throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "No recipient mails set.");
             }
 
-            csvFiles = getCsvFiles();
+            csvFiles = getCsvFiles(batchRunContext);
             sendNotification(csvFiles, batchRunContext);
 
             context.setProcessed(true);
         } catch (BusinessException businessException) {
-            BatchBusinessException exception = new BatchBusinessException(context, "Error while creating top shares mail notification");
+            BatchBusinessException exception = new BatchBusinessException(context, "Error while creating top shares mail notification : " + businessException.getMessage());
             exception.setBusinessException(businessException);
             console.logError(batchRunContext, "Error while trying to create top shares mail notification", exception);
             throw exception;
         } finally {
-            if (csvFiles != null) {
-                csvFiles.values().forEach(file -> {
-                    if (!file.delete()) {
-                        console.logError(batchRunContext, "Could not delete temporary file : ", file.getName());
-                    }
-                });
-            }
+            cleanTempFiles(batchRunContext, csvFiles);
         }
         return context;
     }
 
     @NotNull
-    private Map<String, File> getCsvFiles() {
+    private Map<String, File> getCsvFiles(BatchRunContext batchRunContext) {
         Map<String, File> attachments = new HashMap<String, File>();
+        try {
+            File topSharesByFileSizeCsv = toCsv("Top_shares_by_file_size_" + getYesterdayDate() + ".csv",
+                    shareEntryService.getTopSharesByFileSize(null, getYesterdayBegin(), getYesterdayEnd()));
+            attachments.put(topSharesByFileSizeCsv.getName(), topSharesByFileSizeCsv);
 
-        File topSharesByFileSizeCsv = toCsv("Top_shares_by_file_size_" + getYesterdayDate() + ".csv",
-                shareEntryService.getTopSharesByFileSize(null, getYesterdayBegin(), getYesterdayEnd()));
-        attachments.put(topSharesByFileSizeCsv.getName(), topSharesByFileSizeCsv);
+            File topSharesByFileCountCsv = toCsv("Top_shares_by_file_count_" + getYesterdayDate() + ".csv",
+                    shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd()));
+            attachments.put(topSharesByFileCountCsv.getName(), topSharesByFileCountCsv);
 
-        File topSharesByFileCountCsv = toCsv("Top_shares_by_file_count_" + getYesterdayDate() + ".csv",
-                shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd()));
-        attachments.put(topSharesByFileCountCsv.getName(), topSharesByFileCountCsv);
-
-        File allSharesCsv = getAllSharesCsv("All_shares_" + getYesterdayDate() + ".csv",
-                 getYesterdayBeginCalendar(), getYesterdayEndCalendar());
-        attachments.put(allSharesCsv.getName(), allSharesCsv);
-
+            File allSharesCsv = getAllSharesCsv("All_shares_" + getYesterdayDate() + ".csv",
+                    getYesterdayBeginCalendar(), getYesterdayEndCalendar());
+            attachments.put(allSharesCsv.getName(), allSharesCsv);
+        } catch (Exception e) {
+            cleanTempFiles(batchRunContext, attachments);
+            throw e;
+        }
         return attachments;
     }
 
@@ -187,9 +184,6 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
         } catch (Exception e) {
             throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "Error while writing the complete shares CSV", e);
         }
-
-
-
     }
 
     private void sendNotification(Map<String, File> csvFiles, BatchRunContext batchRunContext) {
@@ -226,6 +220,16 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
             return csvOutputFile;
         } catch (Exception e) {
             throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "Error while writing the top shares CSV", e);
+        }
+    }
+
+    private void cleanTempFiles(BatchRunContext batchRunContext, Map<String, File> csvFiles) {
+        if (csvFiles != null) {
+            csvFiles.forEach((fileName, file) -> {
+                if (file != null && !file.delete()) {
+                    console.logError(batchRunContext, "Could not delete temporary file : ", fileName);
+                }
+            });
         }
     }
 
