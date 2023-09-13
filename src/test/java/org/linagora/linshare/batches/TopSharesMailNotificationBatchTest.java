@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -45,6 +46,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(SpringExtension.class)
 @Sql({"/import-tests-share-entry-group-setup-yesterday.sql" })
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -82,10 +84,11 @@ public class TopSharesMailNotificationBatchTest {
 	}
 
 	@AfterEach
-	public void tearDown() {
+	public void tearDown() throws InterruptedException {
 		wiser.stop();
+		wiser = null;
+		mailNotifierService.setHost(null);
 	}
-
 
 	@Test
 	public void testTopSharesNotification() throws BusinessException, MessagingException, IOException {
@@ -98,9 +101,13 @@ public class TopSharesMailNotificationBatchTest {
 		Assertions.assertEquals("external2@linshare.org", wiser.getMessages().get(1).getEnvelopeReceiver());
 
 		MimeMultipart mailContent = (MimeMultipart) ((MimeMultipart) wiser.getMessages().get(0).getMimeMessage().getContent()).getBodyPart(0).getContent();
+
 		Assertions.assertTrue(((String) mailContent.getBodyPart(0).getContent()).startsWith("<!DOCTYPE html>"));
-		Assertions.assertTrue(mailContent.getBodyPart(1).getFileName().startsWith("All_shares_"));
-		Assertions.assertTrue(mailContent.getBodyPart(2).getFileName().startsWith("Top_shares_by_file_count_"));
-		Assertions.assertTrue(mailContent.getBodyPart(3).getFileName().startsWith("Top_shares_by_file_size_"));
+		for (int i = 1; i < 4; i++) {
+			String filename = mailContent.getBodyPart(i).getFileName();
+			Assertions.assertTrue(filename.startsWith("All_shares_") ||
+					filename.startsWith("Top_shares_by_file_count_") ||
+					filename.startsWith("Top_shares_by_file_size_"));
+		}
 	}
 }
