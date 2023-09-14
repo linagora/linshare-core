@@ -15,6 +15,8 @@
  */
 package org.linagora.linshare.webservice.adminv5.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -61,14 +63,14 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	})
 	@Override
 	public PageContainer<ShareRecipientStatisticDto> getTopSharesByFileSize(
-			@Parameter(description = "domain's uuid") @QueryParam("domainUuid") String domainUuid,
+			@Parameter(description = "domain's uuid") @QueryParam("domainUuid") List<String> domainUuids,
 			@Parameter(description = "shares range begin date") @QueryParam("beginDate") String beginDate,
 			@Parameter(description = "shares range end date") @QueryParam("endDate") String endDate,
 			@Parameter(description = "page number to get", required = false) @QueryParam("page") Integer pageNumber,
 			@Parameter(description = "number of elements to get.", required = false) @QueryParam("size") @DefaultValue("50") Integer pageSize)
 			throws BusinessException {
 		PageContainer<ShareRecipientStatisticDto> container = new PageContainer<>(pageNumber, pageSize);
-		return container.loadDataAndCount(shareFacade.getTopSharesByFileSize(domainUuid, beginDate, endDate));
+		return container.loadDataAndCount(shareFacade.getTopSharesByFileSize(domainUuids, beginDate, endDate));
 	}
 
 	@Path("/topSharesByFileCount")
@@ -82,14 +84,14 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	})
 	@Override
 	public PageContainer<ShareRecipientStatisticDto> getTopSharesByFileCount(
-			@Parameter(description = "domain's uuid") @QueryParam("domainUuid") String domainUuid,
+			@Parameter(description = "domain's uuid") @QueryParam("domainUuids") List<String> domainUuids,
 			@Parameter(description = "shares range begin date") @QueryParam("beginDate") String beginDate,
 			@Parameter(description = "shares range end date") @QueryParam("endDate") String endDate,
 			@Parameter(description = "page number to get", required = false) @QueryParam("page") Integer pageNumber,
 			@Parameter(description = "number of elements to get.", required = false) @QueryParam("size") @DefaultValue("50") Integer pageSize)
 			throws BusinessException {
 		PageContainer<ShareRecipientStatisticDto> container = new PageContainer<>(pageNumber, pageSize);
-		return container.loadDataAndCount(shareFacade.getTopSharesByFileCount(domainUuid, beginDate, endDate));
+		return container.loadDataAndCount(shareFacade.getTopSharesByFileCount(domainUuids, beginDate, endDate));
 	}
 
 }

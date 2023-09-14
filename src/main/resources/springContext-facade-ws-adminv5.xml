@@ -142,5 +142,6 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 </beans>

@@ -121,7 +121,7 @@ public class SharesRestServiceImplTest {
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeSuperAdmin() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
-                testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                testee.getTopSharesByFileSize(List.of("MyDomain"), getDate(-6), getDate(-4), 0, 50)
                         .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isNotEmpty();
@@ -131,17 +131,35 @@ public class SharesRestServiceImplTest {
     @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
 	public void getTopSharesByFileSizeAdmin() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
-                testee.getTopSharesByFileSize("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                testee.getTopSharesByFileSize(List.of("MyDomain"), getDate(-6), getDate(-4), 0, 50)
                         .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isNotEmpty();
     }
 
 	@Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void getTopSharesByFileSizeAdminForbiddenDomain() {
+        assertThatThrownBy(() -> testee.getTopSharesByFileSize(List.of("MyDomain", LinShareConstants.rootDomainIdentifier), getDate(-6), getDate(-4), 0, 50))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not allowed to manage this domain : LinShareRootDomain");
+    }
+
+	@Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void getTopSharesByFileSizeAdminMultipleDomains() {
+        List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize(List.of("MyDomain", "MySubDomain"), getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
+
+        assertThat(topSharesByFileSize).isNotEmpty();
+    }
+
+	@Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeDomain() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
-                testee.getTopSharesByFileSize("MySubDomain", getDate(-6), getDate(-4), 0, 50)
+                testee.getTopSharesByFileSize(List.of("MySubDomain"), getDate(-6), getDate(-4), 0, 50)
                         .getPageResponse().getContent();
 
 		assertThat(topSharesByFileSize).isEmpty();
@@ -160,7 +178,7 @@ public class SharesRestServiceImplTest {
     @Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
     public void getTopSharesByFileSizeWrongDomain() {
-        assertThatThrownBy(() -> testee.getTopSharesByFileSize("not a domain", null, null, 0, 50))
+        assertThatThrownBy(() -> testee.getTopSharesByFileSize(List.of("not a domain"), null, null, 0, 50))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("The current domain does not exist : not a domain");
     }
@@ -238,7 +256,7 @@ public class SharesRestServiceImplTest {
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileCountSuperAdmin() {
 		List<ShareRecipientStatisticDto> topSharesByFileCount =
-                testee.getTopSharesByFileCount("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                testee.getTopSharesByFileCount(List.of("MyDomain"), getDate(-6), getDate(-4), 0, 50)
                         .getPageResponse().getContent();
 
 		assertThat(topSharesByFileCount).isNotEmpty();
@@ -248,7 +266,7 @@ public class SharesRestServiceImplTest {
     @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
 	public void getTopSharesByFileCountAdmin() {
 		List<ShareRecipientStatisticDto> topSharesByFileCount =
-                testee.getTopSharesByFileCount("MyDomain", getDate(-6), getDate(-4), 0, 50)
+                testee.getTopSharesByFileCount(List.of("MyDomain"), getDate(-6), getDate(-4), 0, 50)
                         .getPageResponse().getContent();
 
 		assertThat(topSharesByFileCount).isNotEmpty();
@@ -258,10 +276,29 @@ public class SharesRestServiceImplTest {
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileCountDomain() {
 		List<ShareRecipientStatisticDto> topSharesByFileCount =
-                testee.getTopSharesByFileCount("MySubDomain", getDate(-6), getDate(-4), 0, 50)
+                testee.getTopSharesByFileCount(List.of("MySubDomain"), getDate(-6), getDate(-4), 0, 50)
                         .getPageResponse().getContent();
 
 		assertThat(topSharesByFileCount).isEmpty();
+    }
+
+
+    @Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+    public void getTopSharesByFileCountAdminForbiddenDomain() {
+        assertThatThrownBy(() -> testee.getTopSharesByFileCount(List.of("MyDomain", LinShareConstants.rootDomainIdentifier), getDate(-6), getDate(-4), 0, 50))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not allowed to manage this domain : LinShareRootDomain");
+    }
+
+    @Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+    public void getTopSharesByFileCountAdminMultipleDomains() {
+        List<ShareRecipientStatisticDto> topSharesByFileCount =
+                testee.getTopSharesByFileCount(List.of("MyDomain", "MySubDomain"), getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
+
+        assertThat(topSharesByFileCount).isNotEmpty();
     }
 
 	@Test
@@ -277,7 +314,7 @@ public class SharesRestServiceImplTest {
     @Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
     public void getTopSharesByFileCountWrongDomain() {
-        assertThatThrownBy(() -> testee.getTopSharesByFileCount("not a domain", null, null, 0, 50))
+        assertThatThrownBy(() -> testee.getTopSharesByFileCount(List.of("not a domain"), null, null, 0, 50))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("The current domain does not exist : not a domain");
     }

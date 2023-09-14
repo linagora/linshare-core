@@ -137,11 +137,11 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
         Map<String, File> attachments = new HashMap<String, File>();
         try {
             File topSharesByFileSizeCsv = toCsv_TotalSize("Top_shares_by_file_size_" + getYesterdayDate() + ".csv",
-                    shareEntryService.getTopSharesByFileSize(null, getYesterdayBegin(), getYesterdayEnd()));
+                    shareEntryService.getTopSharesByFileSize(null, getYesterdayBegin(), getYesterdayEnd(), true));
             attachments.put(topSharesByFileSizeCsv.getName(), topSharesByFileSizeCsv);
 
             File topSharesByFileCountCsv = toCsv_Count("Top_shares_by_file_count_" + getYesterdayDate() + ".csv",
-                    shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd()));
+                    shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd(), true));
             attachments.put(topSharesByFileCountCsv.getName(), topSharesByFileCountCsv);
 
             File allSharesCsv = getAllSharesCsv("All_shares_" + getYesterdayDate() + ".csv",

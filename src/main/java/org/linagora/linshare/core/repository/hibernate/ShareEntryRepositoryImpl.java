@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
@@ -176,10 +177,10 @@ public class ShareEntryRepositoryImpl extends
 	}
 
 	@Override
-	public List<ShareRecipientStatistic> getTopSharesByFileSize(String domainUuid, String beginDate, String endDate) {
+	public List<ShareRecipientStatistic> getTopSharesByFileSize(List<String> domainUuids, String beginDate, String endDate, boolean addAnonymousShares) {
 		checkDates(beginDate, endDate);
-		List<ShareRecipientStatistic> shares = getInternalShares(domainUuid, beginDate, endDate, "sum");
-		if (StringUtils.isBlank(domainUuid)) {
+		List<ShareRecipientStatistic> shares = getInternalShares(domainUuids, beginDate, endDate, "sum");
+		if (addAnonymousShares) {
 			shares.addAll(getExternalShares(beginDate, endDate, "sum"));
 			shares.sort((s1,s2)-> s2.getShareTotalSize().compareTo(s1.getShareTotalSize()));
 		}
@@ -187,17 +188,17 @@ public class ShareEntryRepositoryImpl extends
 	}
 
 	@Override
-	public List<ShareRecipientStatistic> getTopSharesByFileCount(String domainUuid, String beginDate, String endDate) {
+	public List<ShareRecipientStatistic> getTopSharesByFileCount(List<String> domainUuids, String beginDate, String endDate, boolean addAnonymousShares) {
 		checkDates(beginDate, endDate);
-		List<ShareRecipientStatistic> shares = getInternalShares(domainUuid, beginDate, endDate, "count");
-		if (StringUtils.isBlank(domainUuid)) {
+		List<ShareRecipientStatistic> shares = getInternalShares(domainUuids, beginDate, endDate, "count");
+		if (addAnonymousShares) {
 			shares.addAll(getExternalShares(beginDate, endDate, "count"));
 			shares.sort((s1,s2)-> s2.getShareCount().compareTo(s1.getShareCount()));
 		}
 		return shares;
 	}
 
-	private List<ShareRecipientStatistic> getInternalShares(String domainUuid, String beginDate, String endDate, String orderOperation) {
+	private List<ShareRecipientStatistic> getInternalShares(List<String> domainUuids, String beginDate, String endDate, String orderOperation) {
 		List<String> statements = new ArrayList<>();
 		if (!StringUtils.isBlank(beginDate)) {
 			statements.add("s.creationDate >= '" + beginDate + "'");
@@ -205,8 +206,9 @@ public class ShareEntryRepositoryImpl extends
 		if (!StringUtils.isBlank(endDate)) {
 			statements.add("s.creationDate <= '" + endDate + "'");
 		}
-		if (!StringUtils.isBlank(domainUuid)) {
-			statements.add("s.recipient.domain.uuid = '" + domainUuid + "'");
+		if (domainUuids != null && !domainUuids.isEmpty()) {
+			String statement = domainUuids.stream().map(s -> "s.recipient.domain.uuid = '" + s + "'").collect(Collectors.joining(" OR "));
+			statements.add("(" + statement + ")");
 		}
 		String whereStatement = statements.isEmpty() ? "" : " WHERE " + String.join(" AND ", statements);
 
