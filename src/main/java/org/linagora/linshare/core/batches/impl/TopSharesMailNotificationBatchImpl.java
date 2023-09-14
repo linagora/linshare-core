@@ -136,11 +136,11 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
     private Map<String, File> getCsvFiles(BatchRunContext batchRunContext) {
         Map<String, File> attachments = new HashMap<String, File>();
         try {
-            File topSharesByFileSizeCsv = toCsv("Top_shares_by_file_size_" + getYesterdayDate() + ".csv",
+            File topSharesByFileSizeCsv = toCsv_TotalSize("Top_shares_by_file_size_" + getYesterdayDate() + ".csv",
                     shareEntryService.getTopSharesByFileSize(null, getYesterdayBegin(), getYesterdayEnd()));
             attachments.put(topSharesByFileSizeCsv.getName(), topSharesByFileSizeCsv);
 
-            File topSharesByFileCountCsv = toCsv("Top_shares_by_file_count_" + getYesterdayDate() + ".csv",
+            File topSharesByFileCountCsv = toCsv_Count("Top_shares_by_file_count_" + getYesterdayDate() + ".csv",
                     shareEntryService.getTopSharesByFileCount(null, getYesterdayBegin(), getYesterdayEnd()));
             attachments.put(topSharesByFileCountCsv.getName(), topSharesByFileCountCsv);
 
@@ -159,7 +159,7 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
         try (PrintWriter writer = new PrintWriter(file)) {
             writer.println("senderMail,senderName,senderUid,senderDomainName," +
                     "recipientMail,recipientType,recipientName,recipientUuid,recipientDomain," +
-                    "fileName,fileUuid,fileSize," +
+                    "fileName,fileUuid,fileSize (kB)," +
                     "timeStamp");
 
             anonymousShareRepository.findAllSharesInRange(beginDate, endDate).forEach(share -> {
@@ -167,7 +167,7 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
                 DocumentEntry document = share.getDocumentEntry();
                 writer.println(String.join(",",sender.getMail(),sender.getFullName(),sender.getLsUuid(),sender.getDomain().getLabel(),
                 share.getAnonymousUrl().getContact().getMail(),"external","","","",
-                        document.getName(), document.getUuid(), document.getSize().toString(),
+                        document.getName(), document.getUuid(), Long.toString(document.getSize() / 1000L),
                         DATE_FORMAT_TIMESTAMP.format(share.getCreationDate().getTime())));
             });
 
@@ -177,7 +177,7 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
                 DocumentEntry document = share.getDocumentEntry();
                 writer.println(String.join(",",sender.getMail(),sender.getFullName(),sender.getLsUuid(),sender.getDomain().getLabel(),
                         recipient.getMail(),"internal",recipient.getFullName(),recipient.getLsUuid(),recipient.getDomain().getLabel(),
-                        document.getName(), document.getUuid(), document.getSize().toString(),
+                        document.getName(), document.getUuid(), Long.toString(document.getSize() / 1000L),
                         DATE_FORMAT_TIMESTAMP.format(share.getCreationDate().getTime())));
             });
             return file;
@@ -210,12 +210,25 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
                 .findFirst().orElse(DEFAULT_SENDER_MAIL);
     }
 
-    private File toCsv(String filename, List<ShareRecipientStatistic> topShares) throws BusinessException {
+    private File toCsv_Count(String filename, List<ShareRecipientStatistic> topShares) throws BusinessException {
         File csvOutputFile = new File(filename);
         try (PrintWriter writer = new PrintWriter(csvOutputFile)) {
-            writer.println(ShareRecipientStatistic.getCsvHeader());
+            writer.println(ShareRecipientStatistic.getCsvHeader_Count());
             topShares.stream()
-                    .map(ShareRecipientStatistic::toCsvLine)
+                    .map(ShareRecipientStatistic::toCsvLine_Count)
+                    .forEach(writer::println);
+            return csvOutputFile;
+        } catch (Exception e) {
+            throw new BusinessException(BusinessErrorCode.BATCH_FAILURE, "Error while writing the top shares CSV", e);
+        }
+    }
+
+    private File toCsv_TotalSize(String filename, List<ShareRecipientStatistic> topShares) throws BusinessException {
+        File csvOutputFile = new File(filename);
+        try (PrintWriter writer = new PrintWriter(csvOutputFile)) {
+            writer.println(ShareRecipientStatistic.getCsvHeader_TotalSize());
+            topShares.stream()
+                    .map(ShareRecipientStatistic::toCsvLine_TotalSize)
                     .forEach(writer::println);
             return csvOutputFile;
         } catch (Exception e) {
