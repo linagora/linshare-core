@@ -63,7 +63,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	})
 	@Override
 	public PageContainer<ShareRecipientStatisticDto> getTopSharesByFileSize(
-			@Parameter(description = "domain's uuid") @QueryParam("domainUuid") List<String> domainUuids,
+			@Parameter(description = "domain's uuid") @QueryParam("domainUuids") List<String> domainUuids,
 			@Parameter(description = "shares range begin date") @QueryParam("beginDate") String beginDate,
 			@Parameter(description = "shares range end date") @QueryParam("endDate") String endDate,
 			@Parameter(description = "page number to get", required = false) @QueryParam("page") Integer pageNumber,

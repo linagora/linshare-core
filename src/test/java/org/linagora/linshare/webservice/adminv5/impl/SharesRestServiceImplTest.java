@@ -17,6 +17,7 @@ package org.linagora.linshare.webservice.adminv5.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.linagora.linshare.core.domain.constants.LinShareConstants.rootDomainIdentifier;
 
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -104,6 +105,17 @@ public class SharesRestServiceImplTest {
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileSizeOnRoot() {
+		List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize(List.of(rootDomainIdentifier), getDate(-6), getDate(-4), 0, 50)
+                        .getPageResponse().getContent();
+
+		assertThat(topSharesByFileSize).isEmpty();
+
+    }
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeIsOrdered() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
                 testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4), 0, 50)
@@ -140,7 +152,7 @@ public class SharesRestServiceImplTest {
 	@Test
     @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
 	public void getTopSharesByFileSizeAdminForbiddenDomain() {
-        assertThatThrownBy(() -> testee.getTopSharesByFileSize(List.of("MyDomain", LinShareConstants.rootDomainIdentifier), getDate(-6), getDate(-4), 0, 50))
+        assertThatThrownBy(() -> testee.getTopSharesByFileSize(List.of("MyDomain", rootDomainIdentifier), getDate(-6), getDate(-4), 0, 50))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("You are not allowed to manage this domain : LinShareRootDomain");
     }
@@ -286,7 +298,7 @@ public class SharesRestServiceImplTest {
     @Test
     @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
     public void getTopSharesByFileCountAdminForbiddenDomain() {
-        assertThatThrownBy(() -> testee.getTopSharesByFileCount(List.of("MyDomain", LinShareConstants.rootDomainIdentifier), getDate(-6), getDate(-4), 0, 50))
+        assertThatThrownBy(() -> testee.getTopSharesByFileCount(List.of("MyDomain", rootDomainIdentifier), getDate(-6), getDate(-4), 0, 50))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("You are not allowed to manage this domain : LinShareRootDomain");
     }

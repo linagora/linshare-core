@@ -36,7 +36,6 @@ public class ShareFacadeImpl extends AdminGenericFacadeImpl implements ShareFaca
     @Override
     public List<ShareRecipientStatisticDto> getTopSharesByFileSize(List<String> domainUuids, String beginDate, String endDate) {
         Account authUser = checkAuthentication(Role.ADMIN);
-        filterAllowedDomains(domainUuids, authUser);
         List<String> allowedDomains = filterAllowedDomains(domainUuids, authUser);
         boolean addAnonymousShares = domainUuids == null || domainUuids.isEmpty();
         return shareService.getTopSharesByFileSize(allowedDomains, beginDate, endDate, addAnonymousShares).stream()
