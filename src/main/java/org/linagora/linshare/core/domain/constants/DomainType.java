@@ -15,6 +15,8 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
+import java.util.Optional;
+
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.RootDomain;
@@ -103,6 +105,19 @@ public enum DomainType {
 
 		@Override
 		public GuestDomain createDomain(String name, AbstractDomain parent) {
+			if (!parent.getDomainType().equals(DomainType.TOPDOMAIN)) {
+				throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
+						"You must create a guest domain inside a TopDomain.");
+			}
+
+			Optional<AbstractDomain> otherGuestDomain = parent.getSubdomain().stream()
+					.filter(domain -> domain.isGuestDomain() && DomainPurgeStepEnum.IN_USE.equals(domain.getPurgeStep()))
+					.findFirst();
+			if (otherGuestDomain.isPresent()){
+				throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_OPERATION,
+						"Another guest domain already exist : " + otherGuestDomain.get().getLabel());
+			}
+
 			return new GuestDomain(name, parent);
 		}
 

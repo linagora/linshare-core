@@ -16,6 +16,10 @@
 package org.linagora.linshare.webservice.adminv5.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.linagora.linshare.core.domain.constants.LinShareTestConstants.GUEST_DOMAIN;
+import static org.linagora.linshare.core.domain.constants.LinShareTestConstants.SUB_DOMAIN;
+import static org.linagora.linshare.core.domain.constants.LinShareTestConstants.TOP_DOMAIN;
 
 import javax.transaction.Transactional;
 
@@ -29,6 +33,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainDto;
 import org.linagora.linshare.core.repository.hibernate.FunctionalityRepositoryImpl;
 import org.linagora.linshare.core.repository.hibernate.PolicyRepositoryImpl;
@@ -160,5 +165,52 @@ public class DomainRestServiceImplTest {
 
 		assertThat(newDomainDto).isNotNull();
 		assertThat(newDomainDto.getDefaultEmailLanguage()).isEqualTo(Language.FRENCH);
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void createSecondGuestDomainShouldBeForbidden() {
+		User root = userService.findByLsUuid(LinShareConstants.defaultRootMailAddress);
+		AbstractDomain guestDomain = domainService.find(root, GUEST_DOMAIN);
+		AbstractDomain topDomain = domainService.find(root, TOP_DOMAIN);
+		DomainDto newGuestDomain = DomainDto.getFull(guestDomain);
+		newGuestDomain.setUuid(null);
+		newGuestDomain.setName("new guest domain");
+		newGuestDomain.setParent(DomainDto.getLight(topDomain));
+
+		assertThatThrownBy(() -> testee.create(false, null, newGuestDomain))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("Another guest domain already exist : GuestDomain");
+	}
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void createGuestDomainShouldBeForbiddenOnRoot() {
+		User root = userService.findByLsUuid(LinShareConstants.defaultRootMailAddress);
+		AbstractDomain rootDomain = domainService.find(root, LinShareConstants.rootDomainIdentifier);
+		AbstractDomain guestDomain = domainService.find(root, GUEST_DOMAIN);
+		DomainDto newGuestDomain = DomainDto.getFull(guestDomain);
+		newGuestDomain.setUuid(null);
+		newGuestDomain.setName("new guest domain");
+		newGuestDomain.setParent(DomainDto.getLight(rootDomain));
+
+		assertThatThrownBy(() -> testee.create(false, null, newGuestDomain))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("You must create a guest domain inside a TopDomain.");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void createGuestDomainShouldBeForbiddenOnSubDomain() {
+		User root = userService.findByLsUuid(LinShareConstants.defaultRootMailAddress);
+		AbstractDomain subDomain = domainService.find(root, SUB_DOMAIN);
+		AbstractDomain guestDomain = domainService.find(root, GUEST_DOMAIN);
+		DomainDto newGuestDomain = DomainDto.getFull(guestDomain);
+		newGuestDomain.setUuid(null);
+		newGuestDomain.setName("new guest domain");
+		newGuestDomain.setParent(DomainDto.getLight(subDomain));
+
+		assertThatThrownBy(() -> testee.create(false, null, newGuestDomain))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("You must create a guest domain inside a TopDomain.");
 	}
 }
