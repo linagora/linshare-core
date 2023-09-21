@@ -13,24 +13,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.linagora.linshare.core.facade.webservice.admin;
-
-import java.util.Set;
+package org.linagora.linshare.webservice.adminv5;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
 
-public interface DomainPolicyFacade extends AdminGenericFacade {
-
-	Set<DomainPolicyDto> findAll() throws BusinessException;
-
-	DomainPolicyDto find(String identifier) throws BusinessException;
-
-	DomainPolicyDto create(DomainPolicyDto policy) throws BusinessException;
-
-	DomainPolicyDto update(DomainPolicyDto policy) throws BusinessException;
-
-	DomainPolicyDto delete(String identifier) throws BusinessException;
+public interface DomainDomainPolicyRestService {
 
 	void assign(String domainUuid, String domainPolicyUuid) throws BusinessException;
 }

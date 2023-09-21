@@ -18,6 +18,7 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -66,4 +67,6 @@ public interface DomainPolicyService {
 	 * @return List<AbstractDomain>
 	 */
 	public List<AbstractDomain> getAllAuthorizedDomain(AbstractDomain domain);
+
+	void assign(Account actor, String domainUuid, String domainPolicyUuid) throws BusinessException;
 }

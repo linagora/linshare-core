@@ -31,6 +31,7 @@ import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPolicyFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainAccessPolicyDto;
@@ -146,5 +147,12 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(identifier, "Domain policy identifier must be set");
 		DomainPolicy policy = domainPolicyService.delete(identifier);
 		return new DomainPolicyDto(policy);
+	}
+
+	public void assign(String domainUuid, String domainPolicyUuid) throws BusinessException {
+		User actor = checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(domainUuid, "Domain uuid must be set.");
+		Validate.notEmpty(domainPolicyUuid, "MimePolicy uuid must be set.");
+		domainPolicyService.assign(actor, domainUuid, domainPolicyUuid);
 	}
 }

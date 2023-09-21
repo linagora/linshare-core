@@ -15,6 +15,9 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import static org.linagora.linshare.core.exception.BusinessErrorCode.DOMAIN_FORBIDDEN;
+import static org.linagora.linshare.core.exception.BusinessErrorCode.DOMAIN_INVALID_OPERATION;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +28,7 @@ import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
@@ -356,4 +360,21 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		return result;
 	}
 
+	@Override
+	public void assign(Account actor, String domainUuid, String domainPolicyUuid) {
+		Validate.notEmpty(domainUuid, "Domain uuid must be set.");
+		Validate.notEmpty(domainPolicyUuid, "MimePolicy uuid must be set.");
+
+		AbstractDomain domain = domainBusinessService.find(domainUuid);
+		if (!domain.isManagedBy(actor)) {
+			throw new BusinessException(DOMAIN_FORBIDDEN, "You are not allowed to manage domain " + domainUuid + ".");
+		}
+		if (domain.isRootDomain()) {
+			throw new BusinessException(DOMAIN_INVALID_OPERATION, "Policies cannot be assigned to root domain.");
+		}
+
+		DomainPolicy domainPolicy = domainPolicyBusinessService.find(domainPolicyUuid);
+		domain.setPolicy(domainPolicy);
+		domainBusinessService.update(domain);
+	}
 }
