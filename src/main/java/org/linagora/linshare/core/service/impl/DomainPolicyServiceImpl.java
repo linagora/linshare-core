@@ -17,6 +17,7 @@ package org.linagora.linshare.core.service.impl;
 
 import static org.linagora.linshare.core.exception.BusinessErrorCode.DOMAIN_FORBIDDEN;
 import static org.linagora.linshare.core.exception.BusinessErrorCode.DOMAIN_INVALID_OPERATION;
+import static org.linagora.linshare.core.exception.BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -374,6 +375,10 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		}
 
 		DomainPolicy domainPolicy = domainPolicyBusinessService.find(domainPolicyUuid);
+		if (domainPolicy == null) {
+			throw new BusinessException(DOMAIN_POLICY_NOT_FOUND, "Policy not found : " + domainPolicyUuid);
+		}
+
 		domain.setPolicy(domainPolicy);
 		domainBusinessService.update(domain);
 	}
