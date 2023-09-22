@@ -73,7 +73,7 @@ public class DomainMimePolicyRestServiceImplTest {
 	private UserServiceImpl userService;
 
 	@Autowired
-	private DomainMimePolicyRestService testee;
+	private DomainMimePolicyRestServiceImpl testee;
 
 	private User root;
 
