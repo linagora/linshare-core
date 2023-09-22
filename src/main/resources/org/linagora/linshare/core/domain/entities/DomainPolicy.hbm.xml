@@ -10,8 +10,8 @@
 		<property access="field" column="uuid" name="uuid" index="index_domain_policy_identifier" not-null="true" unique="true" />
 		<property access="field" column="label" name="label" not-null="true" />
 		<property column="description" name="description" type="text" />
-		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
-		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp" />
+		<property name="modificationDate" column="modification_date" type="timestamp" />
 		<many-to-one name="domainAccessPolicy" class="org.linagora.linshare.core.domain.entities.DomainAccessPolicy"
 			column="domain_access_policy_id" unique="true" cascade="lock" lazy="false"/>
 	</class>

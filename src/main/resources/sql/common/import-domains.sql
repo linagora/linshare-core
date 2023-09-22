@@ -3,8 +3,8 @@ INSERT INTO domain_access_policy(id, creation_date, modification_date)
 	VALUES (1, now(), now());
 INSERT INTO domain_access_rule(id, domain_access_rule_type, domain_id, domain_access_policy_id, rule_index) 
 	VALUES (1, 0, null, 1,0);
-INSERT INTO domain_policy(id, uuid, label, domain_access_policy_id) 
-	VALUES (1, 'DefaultDomainPolicy', 'DefaultDomainPolicy', 1);
+INSERT INTO domain_policy(id, uuid, label, domain_access_policy_id, creation_date, modification_date)
+	VALUES (1, 'DefaultDomainPolicy', 'DefaultDomainPolicy', 1, now(), now());
 
 -- Root domain (application domain)
 INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, default_mail_locale, creation_date, modification_date, user_provider_id, domain_policy_id, parent_id, auth_show_order) 

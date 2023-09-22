@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -29,6 +30,23 @@ public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPol
 
 	public DomainPolicyRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
+	}
+
+	@Override
+	public DomainPolicy create(DomainPolicy policy){
+		if (policy != null){
+			policy.setCreationDate(new Date());
+			policy.setModificationDate(new Date());
+		}
+		return super.create(policy);
+	}
+
+	@Override
+	public DomainPolicy update(DomainPolicy policy){
+		if (policy != null){
+			policy.setModificationDate(new Date());
+		}
+		return super.update(policy);
 	}
 
 	@Override

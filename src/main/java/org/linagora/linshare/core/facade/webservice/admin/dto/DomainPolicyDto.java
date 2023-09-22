@@ -49,6 +49,8 @@ public class DomainPolicyDto {
 		this.label = p.getLabel();
 		this.description = p.getDescription();
 		this.accessPolicy = new DomainAccessPolicyDto(p.getDomainAccessPolicy());
+		this.modificationDate = p.getModificationDate();
+		this.creationDate = p.getCreationDate();
 	}
 
 	public DomainPolicyDto() {
