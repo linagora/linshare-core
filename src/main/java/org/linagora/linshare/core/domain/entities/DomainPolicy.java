@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
@@ -33,6 +34,10 @@ public class DomainPolicy {
 	private DomainAccessPolicy domainAccessPolicy;
 
 	private String description;
+
+	private Date creationDate;
+
+	private Date modificationDate;
 
 	public DomainPolicy() {
 		super();
@@ -108,6 +113,22 @@ public class DomainPolicy {
 
 	public void setPersistenceId(long persistenceId) {
 		this.persistenceId = persistenceId;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	@Override

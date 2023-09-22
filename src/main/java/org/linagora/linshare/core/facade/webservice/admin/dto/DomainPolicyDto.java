@@ -15,6 +15,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.dto;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
@@ -34,6 +36,11 @@ public class DomainPolicyDto {
 	@Schema(description = "Description")
 	private String description;
 
+	@Schema(description = "DCreation date. Read only.")
+	private Date creationDate;
+
+	@Schema(description = "Last modification date. Read only.")
+	private Date modificationDate;
 	@Schema(description = "Access policy of the domain")
 	private DomainAccessPolicyDto accessPolicy;
 
@@ -78,5 +85,21 @@ public class DomainPolicyDto {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 }
