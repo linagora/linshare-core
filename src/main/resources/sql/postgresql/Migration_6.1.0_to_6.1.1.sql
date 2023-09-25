@@ -86,7 +86,8 @@ SET client_min_messages = warning;
 
 -- update tables
 
-ALTER TABLE domain_policy ADD COLUMN creation_date date, ADD COLUMN modification_date date;
+ALTER TABLE domain_policy ADD COLUMN creation_date timestamp without time zone;
+ALTER TABLE domain_policy ADD COLUMN modification_date timestamp without time zone;
 
 ---- End of your queries
 
