@@ -26,7 +26,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPolicyFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.adminv5.DomainMimePolicyRestService;
+import org.linagora.linshare.webservice.adminv5.DomainDomainPolicyRestService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,7 +37,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Path("/domains/{domainUuid}/domain_policy")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-public class DomainDomainPolicyRestServiceImpl extends WebserviceBase implements DomainMimePolicyRestService {
+public class DomainDomainPolicyRestServiceImpl extends WebserviceBase implements DomainDomainPolicyRestService {
 
     private final DomainPolicyFacade domainPolicyFacade;
 

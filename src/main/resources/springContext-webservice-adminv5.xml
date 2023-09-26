@@ -135,6 +135,7 @@
 			<ref bean="adminV5AccountQuotaRestService" />
 			<ref bean="adminV5AuditLogEntryRestService" />
 			<ref bean="adminv5ShareRestService" />
+			<ref bean="adminv5DomainDomainPolicyRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
