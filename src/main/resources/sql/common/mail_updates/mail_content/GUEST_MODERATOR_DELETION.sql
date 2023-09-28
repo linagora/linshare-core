@@ -24,11 +24,11 @@ UPDATE mail_content SET subject='[( #{subject(${actor.firstName},${actor.lastNam
 </div>
 </body>
 </html>',messages_french='accessToLinshareBTn = Accéder
-subject = {0} {1} vous a supprimé de la liste des modérateurs d''invité
+subject = {0} {1} vous a supprimé de la liste des modérateurs d''''invité
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a supprimé de la liste des modérateurs de <b>{2}</b> <b>{3}</b>.
 guestNameTitle = Invité',
 messages_english='accessToLinshareBTn = Access
-subject = {0} {1} deleted you from guest moderator''s list
+subject = {0} {1} deleted you from guest moderator''''s list
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> deleted you from moderators list of <b>{2}</b> <b>{3}</b>.
 guestNameTitle = Guest',
 messages_russian='accessToLinshareBTn = Доступ

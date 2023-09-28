@@ -69,7 +69,7 @@ UPDATE mail_content SET subject='[(#{subject(${subject.value})})]',body='<!DOCTY
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',messages_french='activationDate = Date d''activation
+</html>',messages_french='activationDate = Date d''''activation
 closureRight = Droits de clôture
 deletionRight = Droits de suppression
 depotSize = Taille du dépôt
@@ -94,10 +94,10 @@ deletionRightParamAdded = Paramètre de droit de suppression ajouté
 deletionRightParamDeleted = Paramètre de droit de suppression annulé, ancienne valeur
 closureRightParamAdded = Paramètre de droits de clôture ajouté
 closureRightParamDeleted = Paramètre de droits de clôture annulé, ancienne valeur
-activationDateParamAdded = Paramètre de date d''activation ajouté
-activationDateParamDeleted = Paramètre de date d''activation annulé, ancienne valeur
-expiryDateParamAdded = Paramètre d''expiration ajouté
-expiryDateParamDeleted = Paramètre d''expiration annulé, ancienne valeur',messages_english='activationDate = Activation date
+activationDateParamAdded = Paramètre de date d''''activation ajouté
+activationDateParamDeleted = Paramètre de date d''''activation annulé, ancienne valeur
+expiryDateParamAdded = Paramètre d''''expiration ajouté
+expiryDateParamDeleted = Paramètre d''''expiration annulé, ancienne valeur',messages_english='activationDate = Activation date
 closureRight = Closure rights
 deletionRight = Deletion rights
 depotSize = Repository size

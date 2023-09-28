@@ -26,7 +26,7 @@ UPDATE mail_content SET subject='[( #{subject(${actor.firstName},${actor.lastNam
 </div>
 </body>
 </html>',messages_french='accessToLinshareBTn = Accéder
-subject = {0} {1} vous a ajouté comme modérateur d''invité
+subject = {0} {1} vous a ajouté comme modérateur d''''invité
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a ajouté comme modérateur de <b>{2}</b> <b>{3}</b> avec <b>{4}</b> role.
 guestNameTitle = Invité',
 messages_english='accessToLinshareBTn = Access
