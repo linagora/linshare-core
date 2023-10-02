@@ -75,6 +75,13 @@ public class DomainPolicy {
 		this.domainAccessPolicy = domainAccessPolicy;
 	}
 
+	public DomainPolicy(String label, String description) {
+		this.uuid = UUID.randomUUID().toString();
+		this.label = label;
+		this.description = description;
+		this.domainAccessPolicy = new DomainAccessPolicy();
+	}
+
 	public String getUuid() {
 		return uuid;
 	}

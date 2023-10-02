@@ -81,7 +81,7 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "policy dto must be set.");
 		Validate.notEmpty(dto.getLabel(), "policy identifier must be set.");
-		DomainPolicy policy = new DomainPolicy(dto.getLabel());
+		DomainPolicy policy = new DomainPolicy(dto.getLabel(), dto.getDescription());
 		policy.setDomainAccessPolicy(transformToDomainAccessPolicy(dto.getAccessPolicy()));
 		return new DomainPolicyDto(domainPolicyService.create(policy));
 	}
