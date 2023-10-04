@@ -121,6 +121,15 @@ public class PageContainer<T> {
 		return this;
 	}
 
+	public PageContainer<T> loadDataAndPaginate(List<T> list) {
+		this.list = list;
+		validateTotalPagesCount((long) list.size());
+		int fromIndex = pageNumber * pageSize; //inclusive
+		int toIndex = Math.min(fromIndex + pageSize, list.size()); //exclusive
+		this.pageResponse = new PageResponse<T>(totalElements, totalPagesCount, list.subList(fromIndex, toIndex), isFirst(), isLast());
+		return this;
+	}
+
 	public List<T> getList() {
 		return list;
 	}

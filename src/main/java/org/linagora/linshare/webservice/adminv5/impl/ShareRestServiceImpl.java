@@ -24,6 +24,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.ShareFacade;
@@ -31,6 +32,7 @@ import org.linagora.linshare.core.facade.webservice.adminv5.dto.ShareRecipientSt
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.adminv5.ShareRestService;
 import org.linagora.linshare.webservice.utils.PageContainer;
+import org.linagora.linshare.webservice.utils.PagingResponseBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -47,6 +49,8 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 
 	private final ShareFacade shareFacade;
 
+	private static final PagingResponseBuilder<ShareRecipientStatisticDto> pageResponseBuilder = new PagingResponseBuilder<>();
+
 	public ShareRestServiceImpl(final ShareFacade facade) {
 		this.shareFacade = facade;
 	}
@@ -62,15 +66,16 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		)
 	})
 	@Override
-	public PageContainer<ShareRecipientStatisticDto> getTopSharesByFileSize(
+	public Response getTopSharesByFileSize(
 			@Parameter(description = "domain's uuid") @QueryParam("domainUuids") List<String> domainUuids,
 			@Parameter(description = "shares range begin date") @QueryParam("beginDate") String beginDate,
 			@Parameter(description = "shares range end date") @QueryParam("endDate") String endDate,
-			@Parameter(description = "page number to get", required = false) @QueryParam("page") Integer pageNumber,
+			@Parameter(description = "page number to get", required = false) @QueryParam("page") @DefaultValue("0") Integer pageNumber,
 			@Parameter(description = "number of elements to get.", required = false) @QueryParam("size") @DefaultValue("50") Integer pageSize)
 			throws BusinessException {
 		PageContainer<ShareRecipientStatisticDto> container = new PageContainer<>(pageNumber, pageSize);
-		return container.loadDataAndCount(shareFacade.getTopSharesByFileSize(domainUuids, beginDate, endDate));
+		 container.loadDataAndPaginate(shareFacade.getTopSharesByFileSize(domainUuids, beginDate, endDate));
+		return pageResponseBuilder.build(container);
 	}
 
 	@Path("/topSharesByFileCount")
@@ -83,15 +88,16 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		)
 	})
 	@Override
-	public PageContainer<ShareRecipientStatisticDto> getTopSharesByFileCount(
+	public Response getTopSharesByFileCount(
 			@Parameter(description = "domain's uuid") @QueryParam("domainUuids") List<String> domainUuids,
 			@Parameter(description = "shares range begin date") @QueryParam("beginDate") String beginDate,
 			@Parameter(description = "shares range end date") @QueryParam("endDate") String endDate,
-			@Parameter(description = "page number to get", required = false) @QueryParam("page") Integer pageNumber,
+			@Parameter(description = "page number to get", required = false) @QueryParam("page") @DefaultValue("0") Integer pageNumber,
 			@Parameter(description = "number of elements to get.", required = false) @QueryParam("size") @DefaultValue("50") Integer pageSize)
 			throws BusinessException {
 		PageContainer<ShareRecipientStatisticDto> container = new PageContainer<>(pageNumber, pageSize);
-		return container.loadDataAndCount(shareFacade.getTopSharesByFileCount(domainUuids, beginDate, endDate));
+		container.loadDataAndPaginate(shareFacade.getTopSharesByFileCount(domainUuids, beginDate, endDate));
+		return pageResponseBuilder.build(container);
 	}
 
 }

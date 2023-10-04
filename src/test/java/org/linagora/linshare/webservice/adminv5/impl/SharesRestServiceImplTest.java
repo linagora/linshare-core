@@ -38,7 +38,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
+@SuppressWarnings("unchecked") //For lists casting
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
 @Transactional
@@ -79,7 +79,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileSizeValuesCheck() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
                 testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileSize).isNotEmpty();
         assertThat(topSharesByFileSize.size()).isEqualTo(3);
@@ -108,7 +108,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileSizeOnRoot() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
                 testee.getTopSharesByFileSize(List.of(rootDomainIdentifier), getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileSize).isEmpty();
 
@@ -119,7 +119,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileSizeIsOrdered() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
                 testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileSize).isNotEmpty();
 		assertThat(topSharesByFileSize.size()).isEqualTo(3);
@@ -131,10 +131,32 @@ public class SharesRestServiceImplTest {
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileSizeIsPaginated() {
+		List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4), 0, 2)
+                        .readEntity(List.class);
+
+		assertThat(topSharesByFileSize).isNotEmpty();
+		assertThat(topSharesByFileSize.size()).isEqualTo(2);
+    }
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void getTopSharesByFileSizeIsPaginatedLastPage() {
+		List<ShareRecipientStatisticDto> topSharesByFileSize =
+                testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4), 1, 2)
+                        .readEntity(List.class);
+
+		assertThat(topSharesByFileSize).isNotEmpty();
+		assertThat(topSharesByFileSize.size()).isEqualTo(1);
+    }
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeSuperAdmin() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
                 testee.getTopSharesByFileSize(List.of("MyDomain"), getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileSize).isNotEmpty();
     }
@@ -144,7 +166,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileSizeAdmin() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
                 testee.getTopSharesByFileSize(List.of("MyDomain"), getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileSize).isNotEmpty();
     }
@@ -162,7 +184,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileSizeAdminMultipleDomains() {
         List<ShareRecipientStatisticDto> topSharesByFileSize =
                 testee.getTopSharesByFileSize(List.of("MyDomain", "MySubDomain"), getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
         assertThat(topSharesByFileSize).isNotEmpty();
     }
@@ -172,7 +194,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileSizeDomain() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
                 testee.getTopSharesByFileSize(List.of("MySubDomain"), getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileSize).isEmpty();
     }
@@ -182,7 +204,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileSizeNoDomainAllowed() {
 		List<ShareRecipientStatisticDto> topSharesByFileSize =
                 testee.getTopSharesByFileSize(null, getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileSize).isNotEmpty();
     }
@@ -199,9 +221,9 @@ public class SharesRestServiceImplTest {
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileSizeOnlyBegin() {
         assertThat(testee.getTopSharesByFileSize(null, getDate(-5), null, 0, 50)
-                .getPageResponse().getContent()).isNotEmpty();
+                .readEntity(List.class)).isNotEmpty();
         assertThat(testee.getTopSharesByFileSize(null, getDate(-4), null, 0, 50)
-                .getPageResponse().getContent()).isEmpty();
+                .readEntity(List.class)).isEmpty();
     }
 
 	@Test
@@ -225,7 +247,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileCountValuesCheck() {
 		List<ShareRecipientStatisticDto> topSharesByFileCount =
                 testee.getTopSharesByFileCount(null, getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileCount).isNotEmpty();
         assertThat(topSharesByFileCount.size()).isEqualTo(3);
@@ -254,7 +276,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileCountIsOrdered() {
 		List<ShareRecipientStatisticDto> topSharesByFileCount =
                 testee.getTopSharesByFileCount(null, getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileCount).isNotEmpty();
 		assertThat(topSharesByFileCount.size()).isEqualTo(3);
@@ -264,12 +286,34 @@ public class SharesRestServiceImplTest {
                 .isSortedAccordingTo(Comparator.reverseOrder());
     }
 
+    @Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+    public void getTopSharesByFileCountIsPaginated() {
+        List<ShareRecipientStatisticDto> topSharesByFileCount =
+                testee.getTopSharesByFileCount(null, getDate(-6), getDate(-4), 0, 2)
+                        .readEntity(List.class);
+
+        assertThat(topSharesByFileCount).isNotEmpty();
+        assertThat(topSharesByFileCount.size()).isEqualTo(2);
+    }
+
+    @Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+    public void getTopSharesByFileCountIsPaginatedLastPage() {
+        List<ShareRecipientStatisticDto> topSharesByFileCount =
+                testee.getTopSharesByFileCount(null, getDate(-6), getDate(-4), 1, 2)
+                        .readEntity(List.class);
+
+        assertThat(topSharesByFileCount).isNotEmpty();
+        assertThat(topSharesByFileCount.size()).isEqualTo(1);
+    }
+
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileCountSuperAdmin() {
 		List<ShareRecipientStatisticDto> topSharesByFileCount =
                 testee.getTopSharesByFileCount(List.of("MyDomain"), getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileCount).isNotEmpty();
     }
@@ -279,7 +323,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileCountAdmin() {
 		List<ShareRecipientStatisticDto> topSharesByFileCount =
                 testee.getTopSharesByFileCount(List.of("MyDomain"), getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileCount).isNotEmpty();
     }
@@ -289,7 +333,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileCountDomain() {
 		List<ShareRecipientStatisticDto> topSharesByFileCount =
                 testee.getTopSharesByFileCount(List.of("MySubDomain"), getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileCount).isEmpty();
     }
@@ -308,7 +352,7 @@ public class SharesRestServiceImplTest {
     public void getTopSharesByFileCountAdminMultipleDomains() {
         List<ShareRecipientStatisticDto> topSharesByFileCount =
                 testee.getTopSharesByFileCount(List.of("MyDomain", "MySubDomain"), getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
         assertThat(topSharesByFileCount).isNotEmpty();
     }
@@ -318,7 +362,7 @@ public class SharesRestServiceImplTest {
 	public void getTopSharesByFileCountNoDomainAllowed() {
 		List<ShareRecipientStatisticDto> topSharesByFileCount =
                 testee.getTopSharesByFileCount(null, getDate(-6), getDate(-4), 0, 50)
-                        .getPageResponse().getContent();
+                        .readEntity(List.class);
 
 		assertThat(topSharesByFileCount).isNotEmpty();
     }
@@ -335,9 +379,9 @@ public class SharesRestServiceImplTest {
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getTopSharesByFileCountOnlyBegin() {
         assertThat(testee.getTopSharesByFileCount(null, getDate(-5), null, 0, 50)
-                .getPageResponse().getContent()).isNotEmpty();
+                .readEntity(List.class)).isNotEmpty();
         assertThat(testee.getTopSharesByFileCount(null, getDate(-4), null, 0, 50)
-                .getPageResponse().getContent()).isEmpty();
+                .readEntity(List.class)).isEmpty();
     }
 
 	@Test
