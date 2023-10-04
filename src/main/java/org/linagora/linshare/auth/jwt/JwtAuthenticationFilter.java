@@ -60,8 +60,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		String token = header.substring(AUTH_METHOD.length());
-		if (token == null || token.isEmpty()) {
-			logger.warn("Bearer header without token: ", header);
+		if (token.isEmpty()) {
+			logger.warn("Bearer header without token: {}", header);
 			filterChain.doFilter(request, response);
 			return;
 		}

@@ -69,7 +69,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-		JwtAuthenticationToken jwtAuthentication = (JwtAuthenticationToken)authentication;
+		JwtAuthenticationToken jwtAuthentication = (JwtAuthenticationToken) authentication;
 		final String token = jwtAuthentication.getToken();
 		Claims claims;
 		try {
