@@ -140,6 +140,8 @@ CREATE TABLE domain_policy (
   description             text,
   uuid                    varchar(255) NOT NULL UNIQUE,
   label                   varchar(255) NOT NULL,
+  creation_date           timestamp NOT NULL,
+  modification_date       timestamp NOT NULL,
   domain_access_policy_id int8,
   CONSTRAINT linshare_domain_policy_pkey
     PRIMARY KEY (id));
