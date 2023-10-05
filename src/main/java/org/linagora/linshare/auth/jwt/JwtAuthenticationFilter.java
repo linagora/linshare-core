@@ -15,6 +15,15 @@
  */
 package org.linagora.linshare.auth.jwt;
 
+import static org.apache.commons.lang3.StringUtils.trim;
+
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.linagora.linshare.auth.oidc.OidcJwtAuthenticationToken;
 import org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationToken;
@@ -25,14 +34,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-import static org.apache.commons.lang3.StringUtils.trim;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -65,27 +66,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authenticationIsRequired(token, currentAuthentication)) {
-			AbstractAuthenticationToken authentication = null;
-			// FIXME: it is a very dirty workaround to differentiate Opaque Token for JWT token. 
-			if (useOIDC) {
-				String appNAme = request.getHeader(CLIENT_APP_HEADER);
-				if (token.length() <= opaqueTokenThreshold) {
-					authentication = new OidcOpaqueAuthenticationToken(token);
-				} else if (LINSHARE_WEB_APP_NAME.equalsIgnoreCase(trim(appNAme))){
-					String idToken = request.getHeader(ID_TOKEN_HEADER);
-					if(StringUtils.isNotEmpty(idToken)) {
-						authentication = new OidcJwtAuthenticationToken(token, idToken);
-					}
-				}
-			} else {
-				authentication = new JwtAuthenticationToken(token);
-			}
+
+		if (authenticationIsRequired(token, SecurityContextHolder.getContext().getAuthentication())) {
+			AbstractAuthenticationToken authentication = selectAuthentication(request, token);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 		filterChain.doFilter(request, response);
+	}
+
+	// Workaround for mobile auth: first call to "/jwt" to create a permanent token is made with oidc opaque token,
+	// then all following calls are made with legacy jwt authentication (not oidc)
+	private AbstractAuthenticationToken selectAuthentication(HttpServletRequest request, String token) {
+		String idToken = request.getHeader(ID_TOKEN_HEADER);
+
+		// FIXME: it is a very dirty workaround to differentiate Opaque Token for JWT token.
+		if (useOIDC && token.length() <= opaqueTokenThreshold) {
+			return new OidcOpaqueAuthenticationToken(token);
+
+			//If we don't receive specifically the web app header, we assume the request come from mobile
+		} else if (useOIDC && isLinshareWebApp(request) && StringUtils.isNotEmpty(idToken)) {
+			return new OidcJwtAuthenticationToken(token, idToken);
+
+		} else {
+			return new JwtAuthenticationToken(token);
+		}
+	}
+
+	private static boolean isLinshareWebApp(HttpServletRequest request) {
+		return LINSHARE_WEB_APP_NAME.equalsIgnoreCase(trim(request.getHeader(CLIENT_APP_HEADER)));
 	}
 
 	private boolean authenticationIsRequired(String username, Authentication currentAuthentication) {
