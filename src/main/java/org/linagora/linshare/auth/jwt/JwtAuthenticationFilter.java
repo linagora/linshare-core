@@ -42,6 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private static final String AUTH_HEADER = "Authorization";
 	private static final String CLIENT_APP_HEADER = "X-LinShare-Client-App";
 	private static final String ID_TOKEN_HEADER = "X-LinShare-ID-Token";
+	private static final String AUTH_PROVIDER_HEADER = "X-LinShare-Auth-Provider";
+	private static final String AUTH_PROVIDER_OIDC_JWT = "Oidc-Jwt";
+	private static final String AUTH_PROVIDER_OIDC_OPAQUE = "Oidc-Opaque";
+	private static final String AUTH_PROVIDER_JWT = "Jwt";
 	private static final String LINSHARE_WEB_APP_NAME = "Linshare-Web";
 
 	// Do not remove trailer space.
@@ -75,17 +79,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 
-	// Workaround for mobile auth: first call to "/jwt" to create a permanent token is made with oidc opaque token,
+	// Workaround for mobile auth: first call to "/jwt" to create a permanent token is made with oidc opaque or oidc jwt token,
 	// then all following calls are made with legacy jwt authentication (not oidc)
 	private AbstractAuthenticationToken selectAuthentication(HttpServletRequest request, String token) {
 		String idToken = request.getHeader(ID_TOKEN_HEADER);
 
-		// FIXME: it is a very dirty workaround to differentiate Opaque Token for JWT token.
-		if (useOIDC && token.length() <= opaqueTokenThreshold) {
+		if (isLegacyJwtAuth(request)) {
+			return new JwtAuthenticationToken(token);
+
+			// FIXME: it is a very dirty workaround to differentiate Opaque Token for JWT token.
+		} else if (useOIDC && (token.length() <= opaqueTokenThreshold || isOidcOpaqueAuth(request))) {
 			return new OidcOpaqueAuthenticationToken(token);
 
-			//If we don't receive specifically the web app header, we assume the request come from mobile
-		} else if (useOIDC && isLinshareWebApp(request) && StringUtils.isNotEmpty(idToken)) {
+		} else if (useOIDC && StringUtils.isNotEmpty(idToken) && (isLinshareWebApp(request) || isOidcJwtAuth(request))) {
 			return new OidcJwtAuthenticationToken(token, idToken);
 
 		} else {
@@ -95,6 +101,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private static boolean isLinshareWebApp(HttpServletRequest request) {
 		return LINSHARE_WEB_APP_NAME.equalsIgnoreCase(trim(request.getHeader(CLIENT_APP_HEADER)));
+	}
+
+	private static boolean isLegacyJwtAuth(HttpServletRequest request) {
+		return AUTH_PROVIDER_JWT.equalsIgnoreCase(trim(request.getHeader(AUTH_PROVIDER_HEADER)));
+	}
+
+	private static boolean isOidcJwtAuth(HttpServletRequest request) {
+		return AUTH_PROVIDER_OIDC_JWT.equalsIgnoreCase(trim(request.getHeader(AUTH_PROVIDER_HEADER)));
+	}
+
+	private static boolean isOidcOpaqueAuth(HttpServletRequest request) {
+		return AUTH_PROVIDER_OIDC_OPAQUE.equalsIgnoreCase(trim(request.getHeader(AUTH_PROVIDER_HEADER)));
 	}
 
 	private boolean authenticationIsRequired(String username, Authentication currentAuthentication) {
