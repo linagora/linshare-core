@@ -107,11 +107,11 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@Parameter(description = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
 			@Parameter(description = "An optional description of a document.") @Multipart(value = "description", required = false) String description,
 			@Parameter(description = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
-			@Parameter(description = "Signature file stream.", required = false) @Multipart(value = "signaturefile", required = false) InputStream theSignatureFile,
-			@Parameter(description = "The given file name of the signature uploaded file.", required = false) @Multipart(value = "signatureFileName", required = false) String signatureFileName,
-			@Parameter(description = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
+			@Parameter(description = "(Not implemented yet) Signature file stream.", required = false) @Multipart(value = "signaturefile", required = false) InputStream theSignatureFile,
+			@Parameter(description = "(Not implemented yet) The given file name of the signature uploaded file.", required = false) @Multipart(value = "signatureFileName", required = false) String signatureFileName,
+			@Parameter(description = "(Not implemented yet) X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
 			@Parameter(description = "The given metadata of the uploaded file.", required = false) @Multipart(value = "metadata", required = false) String metaData,
-			@Parameter(description = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
+			@Parameter(description = "(Not implemented yet) True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
 			@Parameter(description = "file size (size validation purpose).", required = true) @Multipart(value = "filesize", required = true)  Long fileSize,
 			MultipartBody body)
 			throws BusinessException {

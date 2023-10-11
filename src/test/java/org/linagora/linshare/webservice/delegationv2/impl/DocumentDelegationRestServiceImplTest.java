@@ -22,43 +22,33 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.transaction.Transactional;
 
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
-import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
-import org.linagora.linshare.core.service.impl.DomainServiceImpl;
-import org.linagora.linshare.core.service.impl.LogEntryServiceImpl;
-import org.linagora.linshare.core.service.impl.SharedSpaceNodeServiceImpl;
-import org.linagora.linshare.core.service.impl.UserServiceImpl;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
 @Transactional
@@ -88,48 +78,36 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         "classpath:springContext-test.xml" })
 public class DocumentDelegationRestServiceImplTest {
 
+    public static final String TECHNICAL_USER_CREATE_DOCUMENT = "technical.create.document@linshare.org";
     public static final String TECHNICAL_USER_CREATE_NODE = "technical.create.node@linshare.org";
     public static final String TECHNICAL_USER_NONE = "technical.none@linshare.org";
 
     @Autowired
     private DocumentRestServiceImpl testee;
-    @Autowired
-    private SharedSpaceNodeServiceImpl nodeService;
-    @Autowired
-    private DomainServiceImpl domainService;
-    @Autowired
-    private UserServiceImpl userService;
-    @Autowired
-    LogEntryServiceImpl logEntryService;
 
-    private User root;
-    private User john;
 
-    private PhaseInterceptorChain chain;
-
+    // Mocks
     private Message message;
     private Exchange exchange;
-
-    @Before
-    public void setUpp() {
-        message = mock(Message.class);
-        exchange = mock(Exchange.class);
-        when(message.getExchange()).thenReturn(exchange);
-        exchange.put("org.linagora.linshare.webservice.interceptor.start_time",  new Date().getTime() - 1000L);
-
-        Phase phase1 = new Phase("phase1", 1);
-        SortedSet<Phase> phases = new TreeSet<>();
-        phases.add(phase1);
-
-        chain = new PhaseInterceptorChain(phases);
-        PhaseInterceptorChain.setCurrentMessage(chain, message);
-    }
+    private MockedStatic<PhaseInterceptorChain> phaseInterceptorChainMockedStatic;
+    private AbstractDomain rootDomain;
 
     @BeforeEach
     public void setUp() {
-        root = userService.findByLsUuid(LinShareConstants.defaultRootMailAddress);
-        AbstractDomain topDomain = domainService.find(root, LinShareTestConstants.TOP_DOMAIN);
-        john = userService.findUserInDB(topDomain.getUuid(), LinShareTestConstants.JOHN_ACCOUNT);
+        message = mock(Message.class);
+        exchange = mock(Exchange.class);
+        phaseInterceptorChainMockedStatic = Mockito.mockStatic(PhaseInterceptorChain.class);
+        when(message.getExchange()).thenReturn(exchange);
+        when(exchange.containsKey("org.linagora.linshare.webservice.interceptor.start_time")).thenReturn(true);
+        when(exchange.get("org.linagora.linshare.webservice.interceptor.start_time")).thenReturn(new Date().getTime() - 1000L);
+        when(PhaseInterceptorChain.getCurrentMessage()).thenReturn(message);
+
+    }
+
+    @AfterEach
+    public void tearDown() {
+        Mockito.reset(message, exchange);
+        phaseInterceptorChainMockedStatic.close();
     }
 
     @Test
@@ -141,7 +119,6 @@ public class DocumentDelegationRestServiceImplTest {
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("You are not authorized to use this service");
     }
-
 
     @Test
     @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
@@ -164,12 +141,22 @@ public class DocumentDelegationRestServiceImplTest {
     }
 
 	@Test
-    @WithMockUser(TECHNICAL_USER_CREATE_NODE)
+    @WithMockUser(TECHNICAL_USER_CREATE_DOCUMENT)
 	public void technicalUserCanCreateDocumentWithPermissions() throws IOException {
-        DocumentDto sharedSpaceNode =  testee.create(TECHNICAL_USER_CREATE_NODE,
+        DocumentDto document =  testee.create("aebe1b64-39c0-11e5-9fa8-080027b8254j",
                 getFileInputStream(), "test", "test",
                 null,  null, null, null, false, 0L, null);
-        assertThat(sharedSpaceNode).isNotNull();
+        assertThat(document).isNotNull();
+    }
+
+	@Test
+    @WithMockUser(TECHNICAL_USER_CREATE_NODE)
+	public void technicalUserCannotCreateDocumentWithWrongPermissions() {
+        assertThatThrownBy(() ->  testee.create(TECHNICAL_USER_CREATE_NODE,
+                getFileInputStream(), "test", "test",
+                null,  null, null, null, false, 0L, null))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to create an entry.");
     }
 
 	@Test
