@@ -113,14 +113,25 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 	}
 
 	@Override
-	public TechnicalAccount update(Account actor, TechnicalAccount dto)
+	public TechnicalAccount update(Account actor, TechnicalAccount updatedAccount)
+			throws BusinessException {
+		return update(actor, updatedAccount, null);
+	}
+
+	@Override
+	public TechnicalAccount update(Account actor, TechnicalAccount updatedAccount, Boolean unlock)
 			throws BusinessException {
 		// TODO : check rights, log actions.
-		TechnicalAccount entity = find(actor, dto.getLsUuid());
-		checkAccountPermission(actor, entity, dto);
-		entity.setLastName(sanitize(dto.getLastName()));
-		entity.setMail(dto.getMail());
-		entity.setEnable(dto.isEnable());
+		TechnicalAccount entity = find(actor, updatedAccount.getLsUuid());
+		checkAccountPermission(actor, entity, updatedAccount);
+		entity.setLastName(sanitize(updatedAccount.getLastName()));
+		entity.setMail(updatedAccount.getMail());
+		entity.setEnable(updatedAccount.isEnable());
+
+		if (entity.isLocked() && unlock){
+			entity = (TechnicalAccount) userService.unlockUser(actor, entity);
+		}
+
 		return technicalAccountBusinessService.update(entity);
 	}
 
