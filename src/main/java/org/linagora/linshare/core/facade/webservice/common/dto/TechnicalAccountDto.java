@@ -60,6 +60,7 @@ public class TechnicalAccountDto extends AccountDto {
 		this.enable = account.isEnable();
 		this.creationDate = account.getCreationDate();
 		this.modificationDate = account.getModificationDate();
+		this.locked = account.isLocked();
 		TechnicalAccountPermission permission = account.getPermission();
 		if (permission != null) {
 			for (AccountPermission p : permission.getAccountPermissions()) {

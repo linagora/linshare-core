@@ -32,26 +32,31 @@ INSERT INTO account
     (id, mail, account_type, ls_uuid, technical_account_permission_id,
 	creation_date, modification_date, role_id, mail_locale, external_mail_locale, cmis_locale, enable, password,
 	destroyed, domain_id, purge_step, first_name, last_name, can_upload, comment, restricted,
-	CAN_CREATE_GUEST, inconsistent, authentication_failure_count)
+	CAN_CREATE_GUEST, inconsistent, authentication_failure_count, authentication_failure_last_date)
 VALUES
 	-- technical user with audit permissions
-	(100, 'technical.audit@linshare.org', 2, 'technical.audit@linshare.org', 1,
+	(100, 'technical.audit@linshare.org', 4, 'technical.audit@linshare.org', 1,
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'audit', 'technical', true, '', false,
-	true, false, 0),
+	true, false, 0, null),
 	-- technical user with create shared space node permission
-	(102, 'technical.create.node@linshare.org', 2, 'technical.create.node@linshare.org', 3,
+	(102, 'technical.create.node@linshare.org', 4, 'technical.create.node@linshare.org', 3,
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
-	true, false, 0),
+	true, false, 0, null),
 	-- technical user with no permissions
-	(101, 'technical.none@linshare.org', 2, 'technical.none@linshare.org', 2,
+	(101, 'technical.none@linshare.org', 4, 'technical.none@linshare.org', 2,
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
-	true, false, 0),
+	true, false, 0, null),
 	-- technical user with create document permissions
-	(103, 'technical.create.document@linshare.org', 2, 'technical.create.document@linshare.org', 4,
+	(103, 'technical.create.document@linshare.org', 4, 'technical.create.document@linshare.org', 4,
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
-	true, false, 0);
+	true, false, 0, null),
+	-- technical user with create document permissions
+	(104, 'technical.locked@linshare.org', 4, 'technical.locked@linshare.org', 1,
+	now(), now(), 4, 'en', 'en', 'en', true, null,
+	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
+	true, false, 30, now());
 
