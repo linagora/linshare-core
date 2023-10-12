@@ -105,7 +105,7 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 		Validate.notEmpty(dto.getName(), "name must be set.");
 		Validate.notEmpty(dto.getMail(), "mail must be set.");
 		TechnicalAccount newUser = TechnicalAccountDto.toObject(dto);
-		boolean unlock = dto.isLocked() != null & !dto.isLocked();
+		boolean unlock = dto.isLocked() != null && !dto.isLocked();
 		TechnicalAccount account = technicalAccountService.update(authUser, newUser, unlock);
 		return new TechnicalAccountDto(account);
 	}
