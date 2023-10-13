@@ -51,6 +51,9 @@ public class MailingListDto {
 	@Schema(description = "Domain id/uuid")
 	private String domainId;
 
+	@Schema(description = "Domain label")
+	private String domainLabel;
+
 	public MailingListDto() {
 		super();
 	}
@@ -66,6 +69,7 @@ public class MailingListDto {
 		this.isPublic = list.isPublic();
 		this.owner = UserDto.getSimple(list.getOwner());
 		this.domainId = list.getDomain().getUuid();
+		this.domainLabel = list.getDomain().getLabel();
 		if (full) {
 			for (ContactListContact current : list.getContactListContacts()) {
 				contacts.add(new MailingListContactDto(current));
@@ -139,6 +143,14 @@ public class MailingListDto {
 
 	public void setDomainId(String domainId) {
 		this.domainId = domainId;
+	}
+
+	public String getDomainLabel() {
+		return domainLabel;
+	}
+
+	public void setDomainLabel(String domainLabel) {
+		this.domainLabel = domainLabel;
 	}
 
 	/*
