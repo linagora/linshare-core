@@ -23,7 +23,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
 public interface MailingListFacade extends AdminGenericFacade {
 
-	Set<MailingListDto> findAll() throws BusinessException;
+	Set<MailingListDto> findAll(Boolean isPublic, String domainUUid, String ownerUuid, String memberMail) throws BusinessException;
 
 	MailingListDto find(String uuid) throws BusinessException;
 

@@ -15,9 +15,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -49,15 +48,17 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	 */
 
 	@Override
-	public Set<MailingListDto> findAll() throws BusinessException {
+	public Set<MailingListDto> findAll(Boolean isPublic, String domainUUid, String ownerUuid, String memberMail) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
-		List<ContactList> lists = contactListService.findAllListByUser(
-				authUser.getLsUuid(), authUser.getLsUuid());
-		Set<MailingListDto> ret = new HashSet<MailingListDto>();
-		for (ContactList list : lists) {
-			ret.add(new MailingListDto(list));
-		}
-		return ret;
+		return contactListService.findAllListByUser(authUser.getLsUuid(), authUser.getLsUuid())
+						.stream()
+						.filter(list -> isPublic == null || isPublic.equals(list.isPublic()))
+						.filter(list -> domainUUid == null || domainUUid.equals(list.getDomain().getUuid()))
+						.filter(list -> ownerUuid == null || ownerUuid.equals(list.getOwner().getLsUuid()))
+						.filter(list -> memberMail == null || list.getContactListContacts().stream()
+								.anyMatch(contact -> memberMail.equals(contact.getMail()) ))
+						.map(MailingListDto::new)
+						.collect(Collectors.toSet());
 	}
 
 	@Override

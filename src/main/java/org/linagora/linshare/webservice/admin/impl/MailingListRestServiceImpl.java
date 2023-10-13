@@ -26,6 +26,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -65,8 +66,12 @@ public class MailingListRestServiceImpl extends WebserviceBase implements
 		)
 	})
 	@Override
-	public Set<MailingListDto> findAll() throws BusinessException {
-		return mailingListFacade.findAll();
+	public Set<MailingListDto> findAll(
+			@QueryParam(value = "isPublic") Boolean isPublic,
+			@QueryParam(value = "domainUuid") String domainUUid,
+			@QueryParam(value = "ownerUuid") String ownerUuid,
+			@QueryParam(value = "memberMail") String memberMail) throws BusinessException {
+		return mailingListFacade.findAll(isPublic, domainUUid, ownerUuid, memberMail);
 	}
 
 	@Path("/{uuid}")
