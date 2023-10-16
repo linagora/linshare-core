@@ -93,6 +93,7 @@
 	<bean id="mailingListBusinessService" class="org.linagora.linshare.core.business.service.impl.MailingListBusinessServiceImpl">
 		<constructor-arg ref="mailingListRepository" />
 		<constructor-arg ref="mailingListContactRepository" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 
 	<bean id="mailConfigBusinessService" class="org.linagora.linshare.core.business.service.impl.MailConfigBusinessServiceImpl">

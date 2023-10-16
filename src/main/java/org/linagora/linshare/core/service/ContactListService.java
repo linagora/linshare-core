@@ -33,6 +33,8 @@ public interface ContactListService {
 
 	ContactList findByUuid(String actorUuid, String uuid) throws BusinessException;
 
+	List<ContactList> findAllListManagedByUser(String actorUuid, String userUuid);
+
 	/**
 	 * Find all list (private and public) of the selected user
 	 * 

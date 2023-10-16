@@ -50,7 +50,7 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<MailingListDto> findAll(Boolean isPublic, String domainUUid, String ownerUuid, String memberMail) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
-		return contactListService.findAllListByUser(authUser.getLsUuid(), authUser.getLsUuid())
+		return contactListService.findAllListManagedByUser(authUser.getLsUuid(), authUser.getLsUuid())
 						.stream()
 						.filter(list -> isPublic == null || isPublic.equals(list.isPublic()))
 						.filter(list -> domainUUid == null || domainUUid.equals(list.getDomain().getUuid()))

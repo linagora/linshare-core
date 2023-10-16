@@ -17,7 +17,9 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
@@ -34,12 +36,15 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	private static final Logger logger = LoggerFactory.getLogger(MailingListBusinessServiceImpl.class);
 	private final MailingListRepository listRepository;
 	private final MailingListContactRepository contactRepository;
-	
+	private final DomainPermissionBusinessService domainPermissionBusinessService;
+
 	public MailingListBusinessServiceImpl(MailingListRepository mailingListRepository,
-			MailingListContactRepository mailingListContactRepository) {
+										  MailingListContactRepository mailingListContactRepository,
+										  DomainPermissionBusinessService domainPermissionBusinessService) {
 		super();
 		this.listRepository = mailingListRepository;
 		this.contactRepository = mailingListContactRepository;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
 	}
 
 	/**
@@ -107,6 +112,15 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	@Override
 	public List<ContactList> searchListByUser(User user, String input) {
 		return listRepository.searchListWithInput(user, input);
+	}
+
+
+	public List<ContactList> findAllListManagedByUser(User user){
+		if (user.hasSuperAdminRole()) {
+			return listRepository.findAll();
+		}
+		List<AbstractDomain> domains = domainPermissionBusinessService.getMyAdministratedDomains(user);
+		return listRepository.findAllByDomains(domains);
 	}
 
 	@Override

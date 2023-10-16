@@ -20,10 +20,12 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -198,6 +200,17 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<ContactLis
 		// lists.
 		det.add(Restrictions.or(Restrictions.eq("owner", user), allMyDomainPublicLists));
 
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<ContactList> findAllByDomains(List<AbstractDomain> domains) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(
+				Restrictions.or(
+						domains.stream()
+						.map(domain -> (Criterion) Restrictions.eq("domain", domain))
+						.toArray(Criterion[]::new)));
 		return findByCriteria(det);
 	}
 

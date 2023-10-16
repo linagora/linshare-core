@@ -147,4 +147,6 @@ public interface MailingListBusinessService {
 	List<ContactList> findAllMineByMemberEmail(Account actor, User user, String email);
 
 	List<ContactList> findAllOthersByMemberEmail(Account actor, User user, String email);
+
+	List<ContactList> findAllListManagedByUser(User user);
 }

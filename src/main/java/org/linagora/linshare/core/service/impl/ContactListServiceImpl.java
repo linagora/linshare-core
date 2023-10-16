@@ -110,6 +110,13 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 	}
 
 	@Override
+	public List<ContactList> findAllListManagedByUser(String actorUuid, String userUuid) {
+		Validate.notEmpty(actorUuid);
+		User user = userService.findByLsUuid(userUuid);
+		return contactListBusinessService.findAllListManagedByUser(user);
+	}
+
+	@Override
 	public List<ContactList> findAllListByUser(String actorUuid, String userUuid) {
 		Validate.notEmpty(actorUuid);
 		User user = userService.findByLsUuid(userUuid);

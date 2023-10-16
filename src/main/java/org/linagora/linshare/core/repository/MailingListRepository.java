@@ -17,6 +17,7 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -50,6 +51,8 @@ public interface MailingListRepository extends AbstractRepository<ContactList> {
 	List<ContactList> searchMyListWithInput(User user, String input);
 
 	List<ContactList> searchWithInputByVisibility(User user, boolean isPublic, String input);
+
+	List<ContactList> findAllByDomains(List<AbstractDomain> domains);
 
 	ContactList update(ContactList entity) throws BusinessException;
 
