@@ -76,19 +76,22 @@ public class MailingListRestServiceImplTest {
 		Set<MailingListDto> lists = testee.findAll(null, null, null, null);
 
 		assertThat(lists.stream().map(MailingListDto::getDomainLabel).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder(LinShareTestConstants.TOP_DOMAIN,LinShareTestConstants.TOP_DOMAIN);
+				.containsExactlyInAnyOrder(LinShareTestConstants.TOP_DOMAIN
+						,LinShareTestConstants.TOP_DOMAIN
+						,LinShareTestConstants.SUB_DOMAIN
+						,LinShareTestConstants.ROOT_DOMAIN);
 	}
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getAllRootCanSeeAllLists() {
-		assertThat(testee.findAll(null, null, null, null)).isNotEmpty();
+		assertThat(testee.findAll(null, null, null, null).size()).isEqualTo(4);
 	}
 
 	@Test
 	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
-	public void getAllAdminCanSeeHisLists() {
-		assertThat(testee.findAll(null, null, null, null)).isNotEmpty();
+	public void getAllAdminCanSeeListsInHisDomain() {
+		assertThat(testee.findAll(null, null, null, null).size()).isEqualTo(3);
 	}
 
 	@Test
@@ -104,33 +107,35 @@ public class MailingListRestServiceImplTest {
 	public void getAllFilterOnVisibility() {
 		Set<MailingListDto> listPublic = testee.findAll(true, null, null, null);
 		assertThat(listPublic).isNotEmpty();
-		assertThat(listPublic.size()).isEqualTo(2);
+		assertThat(listPublic.size()).isEqualTo(3);
 
 		Set<MailingListDto> listPrivate = testee.findAll(false, null, null, null);
-		assertThat(listPrivate).isEmpty();
+		assertThat(listPrivate).isNotEmpty();
+		assertThat(listPrivate.size()).isEqualTo(1);
 	}
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getAllFilterOnDomain() {
-		Set<MailingListDto> listPublic = testee.findAll(null, LinShareTestConstants.TOP_DOMAIN, null, null);
-		assertThat(listPublic).isNotEmpty();
-		assertThat(listPublic.size()).isEqualTo(2);
+		Set<MailingListDto> topList = testee.findAll(null, LinShareTestConstants.TOP_DOMAIN, null, null);
+		assertThat(topList).isNotEmpty();
+		assertThat(topList.size()).isEqualTo(2);
 
-		Set<MailingListDto> listPrivate = testee.findAll(null, LinShareTestConstants.SUB_DOMAIN, null, null);
-		assertThat(listPrivate).isEmpty();
+		Set<MailingListDto> subList = testee.findAll(null, LinShareTestConstants.SUB_DOMAIN, null, null);
+		assertThat(subList).isNotEmpty();
+		assertThat(subList.size()).isEqualTo(1);
 	}
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getAllFilterOnOwner() {
 		String amyUuid = "d896140a-39c0-11e5-b7f9-080027b8274b";
-		Set<MailingListDto> listPublic = testee.findAll(null, null, amyUuid, null);
-		assertThat(listPublic).isNotEmpty();
-		assertThat(listPublic.size()).isEqualTo(2);
+		Set<MailingListDto> amysLists = testee.findAll(null, null, amyUuid, null);
+		assertThat(amysLists).isNotEmpty();
+		assertThat(amysLists.size()).isEqualTo(3);
 
-		Set<MailingListDto> listPrivate = testee.findAll(null, null, LinShareConstants.defaultRootMailAddress, null);
-		assertThat(listPrivate).isEmpty();
+		Set<MailingListDto> rootsList = testee.findAll(null, null, LinShareConstants.defaultRootMailAddress, null);
+		assertThat(rootsList).isEmpty();
 	}
 
 	@Test
@@ -138,7 +143,7 @@ public class MailingListRestServiceImplTest {
 	public void getAllFilterOnMember() {
 		Set<MailingListDto> ListsWithFelton = testee.findAll(null, null, null, "felton.gumper@linshare.org");
 		assertThat(ListsWithFelton).isNotEmpty();
-		assertThat(ListsWithFelton.size()).isEqualTo(2);
+		assertThat(ListsWithFelton.size()).isEqualTo(4);
 
 		Set<MailingListDto> listWithGrant = testee.findAll(null, null, null, "grant.big@linshare.org");
 		assertThat(listWithGrant).isNotEmpty();
