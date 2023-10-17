@@ -5,6 +5,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public class AuditLogEntryResourceAccessControlImpl extends
 		AbstractResourceAccessControlImpl<Account, Account, AuditLogEntry> implements
@@ -15,37 +16,42 @@ public class AuditLogEntryResourceAccessControlImpl extends
 
     @Override
     protected boolean hasReadPermission(Account authUser, Account account, AuditLogEntry entry, Object... opt) {
-        if (entry.getAuthUser().getUuid().equals(authUser.getLsUuid())) {
+        if (authUser.hasSuperAdminRole()) {
             return true;
         }
-        if (authUser.hasDelegationRole()) {
-            return hasPermission(authUser, TechnicalAccountPermissionType.AUDIT_LIST);
-        }
-        if (authUser.hasSuperAdminRole()) {
+        if (isUserRelated(authUser, entry)) {
             return true;
         }
         if (authUser.hasAdminRole() && account != null) {
             return account.getDomain().isManagedBy(authUser);
+        }
+        if (authUser.hasDelegationRole()) {
+            return hasPermission(authUser, TechnicalAccountPermissionType.AUDIT_LIST);
         }
         return false;
     }
 
     @Override
     protected boolean hasListPermission(Account authUser, Account account, AuditLogEntry entry, Object... opt) {
-        if (entry.getAuthUser().getUuid().equals(authUser.getLsUuid())) {
+        if (authUser.hasSuperAdminRole()) {
             return true;
         }
-        if (authUser.hasDelegationRole()) {
-            return hasPermission(authUser, TechnicalAccountPermissionType.AUDIT_LIST);
-        }
-        if (authUser.hasSuperAdminRole()) {
+        if (isUserRelated(authUser, entry)) {
             return true;
         }
         if (authUser.hasAdminRole() && account != null) {
             return account.getDomain().isManagedBy(authUser);
         }
-
+        if (authUser.hasDelegationRole()) {
+            return hasPermission(authUser, TechnicalAccountPermissionType.AUDIT_LIST);
+        }
         return false;
+    }
+
+    private static boolean isUserRelated(Account authUser, AuditLogEntry entry) {
+        boolean authUserIsOwner = entry.getAuthUser().getUuid().equals(authUser.getLsUuid());
+        boolean authUserIsRelated = entry instanceof AuditLogEntryUser && ((AuditLogEntryUser) entry).getRelatedAccounts().contains(authUser.getLsUuid());
+        return authUserIsOwner || authUserIsRelated;
     }
 
     @Override
