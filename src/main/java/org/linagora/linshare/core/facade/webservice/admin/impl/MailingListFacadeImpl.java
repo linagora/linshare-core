@@ -31,6 +31,8 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ContactListService;
 
+import com.nimbusds.oauth2.sdk.util.StringUtils;
+
 public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 		MailingListFacade {
 
@@ -50,12 +52,12 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<MailingListDto> findAll(Boolean isPublic, String domainUUid, String ownerUuid, String memberMail) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
-		return contactListService.findAllListManagedByUser(authUser.getLsUuid(), authUser.getLsUuid())
+		return contactListService.findAllListManagedByUser(authUser.getLsUuid())
 						.stream()
 						.filter(list -> isPublic == null || isPublic.equals(list.isPublic()))
-						.filter(list -> domainUUid == null || domainUUid.equals(list.getDomain().getUuid()))
-						.filter(list -> ownerUuid == null || ownerUuid.equals(list.getOwner().getLsUuid()))
-						.filter(list -> memberMail == null || list.getContactListContacts().stream()
+						.filter(list -> StringUtils.isBlank(domainUUid) || domainUUid.equals(list.getDomain().getUuid()))
+						.filter(list -> StringUtils.isBlank(ownerUuid) || ownerUuid.equals(list.getOwner().getLsUuid()))
+						.filter(list -> StringUtils.isBlank(memberMail) || list.getContactListContacts().stream()
 								.anyMatch(contact -> memberMail.equals(contact.getMail()) ))
 						.map(MailingListDto::new)
 						.collect(Collectors.toSet());
