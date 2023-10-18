@@ -216,6 +216,7 @@
 		<constructor-arg ref="technicalAccountPermissionService" />
 		<constructor-arg ref="passwordService" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="auditAdminMongoRepository" />
 	</bean>
 
 	<bean id="technicalAccountPermissionService" class="org.linagora.linshare.core.service.impl.TechnicalAccountPermissionServiceImpl">

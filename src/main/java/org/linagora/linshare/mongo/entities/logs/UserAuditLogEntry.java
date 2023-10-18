@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
@@ -37,7 +38,8 @@ public class UserAuditLogEntry extends AuditLogEntryUser {
 	public UserAuditLogEntry(Account authUser, Account actor, LogAction action, AuditLogEntryType type, User user) {
 		super(new AccountMto(authUser), new AccountMto(actor), action, type, user.getLsUuid());
 		this.resource = new UserMto(user);
-		this.addRelatedDomains(user.getDomain().getUuid());
+		AbstractDomain domain = user.getDomain();
+		this.addRelatedDomains(domain != null ? domain.getUuid() : actor.getDomainId());
 	}
 
 	public AccountMto getResource() {

@@ -21,7 +21,9 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.TechnicalAccountBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
@@ -32,120 +34,140 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.UserMto;
+import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
 
 public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 
-	private final TechnicalAccountBusinessService technicalAccountBusinessService;
+    private final TechnicalAccountBusinessService technicalAccountBusinessService;
 
-	private final TechnicalAccountPermissionService technicalAccountPermissionService;
-	
-	private final PasswordService passwordService;
+    private final TechnicalAccountPermissionService technicalAccountPermissionService;
 
-	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
+    private final PasswordService passwordService;
 
-	private final UserService userService;
+    private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
-	public TechnicalAccountServiceImpl(
-			final TechnicalAccountBusinessService technicalAccountBusinessService,
-			final TechnicalAccountPermissionService technicalAccountPermissionService,
-			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			final PasswordService passwordService,
-			final UserService userService) {
-		super();
-		this.technicalAccountBusinessService = technicalAccountBusinessService;
-		this.technicalAccountPermissionService = technicalAccountPermissionService;
-		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
-		this.passwordService = passwordService;
-		this.userService = userService;
-	}
+    private final UserService userService;
 
-	@Override
-	public TechnicalAccount create(Account actor, TechnicalAccount account) throws BusinessException {
-		Validate.notNull(actor, "actor must be set.");
-		Validate.notNull(account, "account must be set.");
-		Validate.notEmpty(account.getLastName(), "last name must be set.");
-		// TODO : check rights, log actions.
-		// Check role : only uploadprop or delegation
-		// mail unicity ?
-		TechnicalAccountPermission accountPermission = technicalAccountPermissionService.create(actor, new TechnicalAccountPermission());
-		account.setPermission(accountPermission);
-		account.setLastName(sanitize(account.getLastName()));
-		account = technicalAccountBusinessService.create(actor.getDomainId(), account);
-		passwordService.validateAndStorePassword(account, account.getPassword());
-		return account;
-	}
+    private final AuditAdminMongoRepository auditMongoRepository;
 
-	private String sanitize (String input) {
-		return sanitizerInputHtmlBusinessService.strictClean(input);
-	}
+    public TechnicalAccountServiceImpl(
+            final TechnicalAccountBusinessService technicalAccountBusinessService,
+            final TechnicalAccountPermissionService technicalAccountPermissionService,
+            final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+            final PasswordService passwordService,
+            final UserService userService,
+            final AuditAdminMongoRepository auditMongoRepository) {
+        super();
+        this.technicalAccountBusinessService = technicalAccountBusinessService;
+        this.technicalAccountPermissionService = technicalAccountPermissionService;
+        this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
+        this.passwordService = passwordService;
+        this.userService = userService;
+        this.auditMongoRepository = auditMongoRepository;
+    }
 
-	@Override
-	public void delete(Account actor, TechnicalAccount account)
-			throws BusinessException {
-		// TODO : check rights, log actions.
-		TechnicalAccountPermission permission = account.getPermission();
-		account.setPermission(null);
-		technicalAccountBusinessService.update(account);
-		if (permission != null) {
-			technicalAccountPermissionService.delete(actor, permission);
-		}
-		technicalAccountBusinessService.delete(account);
-	}
+    @Override
+    public TechnicalAccount create(Account actor, TechnicalAccount account) throws BusinessException {
+        Validate.notNull(actor, "actor must be set.");
+        Validate.notNull(account, "account must be set.");
+        Validate.notEmpty(account.getLastName(), "last name must be set.");
+        // TODO : check right
+        // Check role : only uploadprop or delegation
+        // mail unicity ?
+        TechnicalAccountPermission accountPermission = technicalAccountPermissionService.create(actor, new TechnicalAccountPermission());
+        account.setPermission(accountPermission);
+        account.setLastName(sanitize(account.getLastName()));
+        account = technicalAccountBusinessService.create(actor.getDomainId(), account);
+        passwordService.validateAndStorePassword(account, account.getPassword());
 
-	@Override
-	public TechnicalAccount find(Account actor, String uuid)
-			throws BusinessException {
-		// TODO : check rights, log actions.
-		TechnicalAccount account = technicalAccountBusinessService.find(uuid);
-		if (account == null) {
-			throw new BusinessException(BusinessErrorCode.TECHNICAL_ACCOUNT_NOT_FOUND,
-					"The technical account does not exist : " + uuid);
-		}
-		return account;
-	}
+        UserAuditLogEntry log = new UserAuditLogEntry(actor, account, LogAction.CREATE, AuditLogEntryType.USER, account);
+        auditMongoRepository.insert(log);
 
-	@Override
-	public Set<TechnicalAccount> findAll(Account actor)
-			throws BusinessException {
-		// TODO : check rights, log actions.
-		return technicalAccountBusinessService.findAll(LinShareConstants.rootDomainIdentifier);
-	}
+        return account;
+    }
 
-	@Override
-	public TechnicalAccount update(Account actor, TechnicalAccount updatedAccount)
-			throws BusinessException {
-		return update(actor, updatedAccount, null);
-	}
+    private String sanitize(String input) {
+        return sanitizerInputHtmlBusinessService.strictClean(input);
+    }
 
-	@Override
-	public TechnicalAccount update(Account actor, TechnicalAccount updatedAccount, Boolean unlock)
-			throws BusinessException {
-		// TODO : check rights, log actions.
-		TechnicalAccount entity = find(actor, updatedAccount.getLsUuid());
-		checkAccountPermission(actor, entity, updatedAccount);
-		entity.setLastName(sanitize(updatedAccount.getLastName()));
-		entity.setMail(updatedAccount.getMail());
-		entity.setEnable(updatedAccount.isEnable());
+    @Override
+    public void delete(Account actor, TechnicalAccount account)
+            throws BusinessException {
+        // TODO : check rights
+        TechnicalAccountPermission permission = account.getPermission();
+        account.setPermission(null);
+        technicalAccountBusinessService.update(account);
+        if (permission != null) {
+            technicalAccountPermissionService.delete(actor, permission);
+        }
+        technicalAccountBusinessService.delete(account);
 
-		if (entity.isLocked() && unlock){
-			entity = (TechnicalAccount) userService.unlockUser(actor, entity);
-		}
+        UserAuditLogEntry log = new UserAuditLogEntry(actor, account, LogAction.DELETE, AuditLogEntryType.USER, account);
+        auditMongoRepository.insert(log);
+    }
 
-		return technicalAccountBusinessService.update(entity);
-	}
+    @Override
+    public TechnicalAccount find(Account actor, String uuid)
+            throws BusinessException {
+        // TODO : check rights
+        TechnicalAccount account = technicalAccountBusinessService.find(uuid);
+        if (account == null) {
+            throw new BusinessException(BusinessErrorCode.TECHNICAL_ACCOUNT_NOT_FOUND,
+                    "The technical account does not exist : " + uuid);
+        }
+        return account;
+    }
 
-	private void checkAccountPermission(Account actor, TechnicalAccount foundAccount, TechnicalAccount account) {
-		if (Role.DELEGATION.equals(foundAccount.getRole())) {
-			TechnicalAccountPermission permissionDto = account.getPermission();
-			permissionDto.setUuid(foundAccount.getPermission().getUuid());
-			technicalAccountPermissionService.update(actor, permissionDto);
-		}
-	}
+    @Override
+    public Set<TechnicalAccount> findAll(Account actor)
+            throws BusinessException {
+        // TODO : check rights
+        return technicalAccountBusinessService.findAll(LinShareConstants.rootDomainIdentifier);
+    }
 
-	@Override
-	public void changePassword(User authUser, User actor, String oldPassword, String newPassword)
-			throws BusinessException {
-		userService.changePassword(authUser, actor, oldPassword, newPassword);
-	}
+    @Override
+    public TechnicalAccount update(Account actor, TechnicalAccount updatedAccount)
+            throws BusinessException {
+        return update(actor, updatedAccount, null);
+    }
+
+    @Override
+    public TechnicalAccount update(Account actor, TechnicalAccount account, Boolean unlock)
+            throws BusinessException {
+        // TODO : check rights
+        TechnicalAccount entity = find(actor, account.getLsUuid());
+        checkAccountPermission(actor, entity, account);
+        entity.setLastName(sanitize(account.getLastName()));
+        entity.setMail(account.getMail());
+        entity.setEnable(account.isEnable());
+
+        if (entity.isLocked() && unlock) {
+            entity = (TechnicalAccount) userService.unlockUser(actor, entity);
+        }
+        TechnicalAccount updatedUser = technicalAccountBusinessService.update(entity);
+
+        UserAuditLogEntry log = new UserAuditLogEntry(actor, entity, LogAction.UPDATE, AuditLogEntryType.USER, entity);
+        log.setResource(new UserMto(entity));
+        log.setResourceUpdated(new UserMto(updatedUser));
+        auditMongoRepository.insert(log);
+
+        return updatedUser;
+    }
+
+    private void checkAccountPermission(Account actor, TechnicalAccount foundAccount, TechnicalAccount account) {
+        if (Role.DELEGATION.equals(foundAccount.getRole())) {
+            TechnicalAccountPermission permissionDto = account.getPermission();
+            permissionDto.setUuid(foundAccount.getPermission().getUuid());
+            technicalAccountPermissionService.update(actor, permissionDto);
+        }
+    }
+
+    @Override
+    public void changePassword(User authUser, User actor, String oldPassword, String newPassword)
+            throws BusinessException {
+        userService.changePassword(authUser, actor, oldPassword, newPassword);
+    }
 }
