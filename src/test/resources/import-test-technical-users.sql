@@ -5,7 +5,8 @@ VALUES
     (1, 'technicalAccountPermissionUuid1', now(), now()),
     (2, 'technicalAccountPermissionUuid2', now(), now()),
     (3, 'technicalAccountPermissionUuid3', now(), now()),
-    (4, 'technicalAccountPermissionUuid4', now(), now());
+    (4, 'technicalAccountPermissionUuid4', now(), now()),
+    (5, 'technicalAccountPermissionUuid5', now(), now());
 
 INSERT INTO account_permission
     (id, technical_account_permission_id, permission)
@@ -16,7 +17,8 @@ VALUES
 	(4, 3, 'SHARED_SPACE_PERMISSION_CREATE'),
 	(5, 3, 'SHARED_SPACE_ROLE_LIST'),
 	(6, 3, 'SHARED_SPACE_ROLE_GET'),
-	(7, 4, 'DOCUMENT_ENTRIES_CREATE');
+	(7, 4, 'DOCUMENT_ENTRIES_CREATE'),
+	(8, 5, 'DOCUMENT_ENTRIES_LIST');
 
 
 INSERT INTO TECHNICAL_ACCOUNT_PERMISSION_DOMAIN_ABSTRACT
@@ -25,7 +27,8 @@ VALUES
     (1, 1),
     (2, 1),
     (3, 1),
-    (4, 1);
+    (4, 1),
+    (5, 1);
 
 -- LinShare Users
 INSERT INTO account
@@ -54,9 +57,14 @@ VALUES
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
 	true, false, 0, null),
-	-- technical user with create document permissions
+	-- technical user with locked account
 	(104, 'technical.locked@linshare.org', 4, 'technical.locked@linshare.org', 1,
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
-	true, false, 30, now());
+	true, false, 30, now()),
+	-- technical user with list document permissions
+	(105, 'technical.list.document@linshare.org', 4, 'technical.list.document@linshare.org', 5,
+	now(), now(), 4, 'en', 'en', 'en', true, null,
+	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
+	true, false, 0, null);
 

@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -54,6 +55,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Transactional
 @Sql({ "/import-tests-make-user2-admin.sql"})
 @Sql({ "/import-test-technical-users.sql"})
+@Sql({ "/import-tests-document-entry-setup.sql"})
 @ContextConfiguration(locations = {
         "classpath:springContext-datasource.xml",
         "classpath:springContext-dao.xml",
@@ -79,8 +81,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class DocumentDelegationRestServiceImplTest {
 
     public static final String TECHNICAL_USER_CREATE_DOCUMENT = "technical.create.document@linshare.org";
+    public static final String TECHNICAL_USER_LIST_DOCUMENT = "technical.list.document@linshare.org";
     public static final String TECHNICAL_USER_CREATE_NODE = "technical.create.node@linshare.org";
     public static final String TECHNICAL_USER_NONE = "technical.none@linshare.org";
+    public static final String USER1_UUID = "aebe1b64-39c0-11e5-9fa8-080027b8274b";
 
     @Autowired
     private DocumentRestServiceImpl testee;
@@ -162,6 +166,56 @@ public class DocumentDelegationRestServiceImplTest {
 	@Test
     @WithMockUser(TECHNICAL_USER_NONE)
 	public void technicalUserCannotCreateDocumentWithoutPermissions() {
+        assertThatThrownBy(() ->  testee.create(TECHNICAL_USER_NONE,
+                getFileInputStream(), "test", "test",
+                null,  null, null, null, false, 0L, null))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to create an entry.");
+    }
+
+    @Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void rootCannotGetAllDocument() {
+        assertThatThrownBy(() -> testee.findAll(LinShareConstants.defaultRootMailAddress))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void adminCannotGetAllDocument() {
+        assertThatThrownBy(() -> testee.findAll("d896140a-39c0-11e5-b7f9-080027b8274b"))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+	@Test
+    @WithMockUser("aebe1b64-39c0-11e5-9fa8-080027b8254j") // Amy's uuid (simple)
+	public void userCannotGetAllDocument() {
+        assertThatThrownBy(() ->  testee.findAll("aebe1b64-39c0-11e5-9fa8-080027b8254j"))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+	@Test
+    @WithMockUser(TECHNICAL_USER_LIST_DOCUMENT)
+	public void technicalUserCanGetAllDocumentWithPermissions() throws IOException {
+        List<DocumentDto> documents =  testee.findAll(USER1_UUID);
+        assertThat(documents).isNotNull();
+        assertThat(documents).isNotEmpty();
+    }
+
+	@Test
+    @WithMockUser(TECHNICAL_USER_CREATE_NODE)
+	public void technicalUserCannotGetAllDocumentWithWrongPermissions() {
+        assertThatThrownBy(() ->  testee.findAll(TECHNICAL_USER_CREATE_NODE))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to list all entries.");
+    }
+
+	@Test
+    @WithMockUser(TECHNICAL_USER_NONE)
+	public void technicalUserCannotGetAllDocumentWithoutPermissions() {
         assertThatThrownBy(() ->  testee.create(TECHNICAL_USER_NONE,
                 getFileInputStream(), "test", "test",
                 null,  null, null, null, false, 0L, null))
