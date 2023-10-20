@@ -31,6 +31,7 @@ import javax.transaction.Transactional;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,6 +84,8 @@ public class DocumentDelegationRestServiceImplTest {
     public static final String TECHNICAL_USER_CREATE_DOCUMENT = "technical.create.document@linshare.org";
     public static final String TECHNICAL_USER_LIST_DOCUMENT = "technical.list.document@linshare.org";
     public static final String TECHNICAL_USER_DELETE_DOCUMENT = "technical.delete.document@linshare.org";
+    public static final String TECHNICAL_USER_GET_DOCUMENT = "technical.get.document@linshare.org";
+    public static final String TECHNICAL_USER_UPDATE_DOCUMENT = "technical.update.document@linshare.org";
     public static final String TECHNICAL_USER_CREATE_NODE = "technical.create.node@linshare.org";
     public static final String TECHNICAL_USER_NONE = "technical.none@linshare.org";
     public static final String USER1_UUID = "aebe1b64-39c0-11e5-9fa8-080027b8274b";
@@ -96,7 +99,6 @@ public class DocumentDelegationRestServiceImplTest {
     private Message message;
     private Exchange exchange;
     private MockedStatic<PhaseInterceptorChain> phaseInterceptorChainMockedStatic;
-    private AbstractDomain rootDomain;
 
     @BeforeEach
     public void setUp() {
@@ -274,6 +276,113 @@ public class DocumentDelegationRestServiceImplTest {
                 .hasMessage("You are not authorized to get this entry.");
     }
 
+    @Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+    public void rootCannotGetDocument() {
+        assertThatThrownBy(() -> testee.find(LinShareConstants.defaultRootMailAddress, SAMPLE_DOCUMENT_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+    public void adminCannotGetDocument() {
+        assertThatThrownBy(() -> testee.find("d896140a-39c0-11e5-b7f9-080027b8274b", SAMPLE_DOCUMENT_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("aebe1b64-39c0-11e5-9fa8-080027b8254j") // Amy's uuid (simple)
+    public void userCannotGetDocument() {
+        assertThatThrownBy(() -> testee.find("aebe1b64-39c0-11e5-9fa8-080027b8254j", SAMPLE_DOCUMENT_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_GET_DOCUMENT)
+    public void technicalUserCanGetDocumentWithPermissions() throws IOException {
+        DocumentDto document = testee.find(USER1_UUID, SAMPLE_DOCUMENT_UUID);
+        assertThat(document).isNotNull();
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_CREATE_NODE)
+    public void technicalUserCannotGetDocumentWithWrongPermissions() {
+        assertThatThrownBy(() -> testee.find(TECHNICAL_USER_CREATE_NODE, SAMPLE_DOCUMENT_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_NONE)
+    public void technicalUserCannotGetDocumentWithoutPermissions() {
+        assertThatThrownBy(() -> testee.find(TECHNICAL_USER_NONE, SAMPLE_DOCUMENT_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    @Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+    public void rootCannotUpdateDocument() {
+        assertThatThrownBy(() -> testee.update(LinShareConstants.defaultRootMailAddress, SAMPLE_DOCUMENT_UUID, new DocumentDto()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+    public void adminCannotUpdateDocument() {
+        assertThatThrownBy(() -> testee.update("d896140a-39c0-11e5-b7f9-080027b8274b", SAMPLE_DOCUMENT_UUID, new DocumentDto()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("aebe1b64-39c0-11e5-9fa8-080027b8254j") // Amy's uuid (simple)
+    public void userCannotUpdateDocument() {
+        assertThatThrownBy(() -> testee.update("aebe1b64-39c0-11e5-9fa8-080027b8254j", SAMPLE_DOCUMENT_UUID, new DocumentDto()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_UPDATE_DOCUMENT)
+    public void technicalUserCanUpdateDocumentWithPermissions() throws IOException {
+        DocumentDto document = getDocumentDto();
+
+        DocumentDto updatedDocument = testee.update(USER1_UUID, SAMPLE_DOCUMENT_UUID, document);
+        assertThat(updatedDocument).isNotNull();
+        assertThat(updatedDocument.getName()).isEqualTo("test");
+        assertThat(updatedDocument.getDescription()).isEqualTo("nouvelle description");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_CREATE_NODE)
+    public void technicalUserCannotUpdateDocumentWithWrongPermissions() {
+        DocumentDto document = getDocumentDto();
+        assertThatThrownBy(() -> testee.update(TECHNICAL_USER_CREATE_NODE, SAMPLE_DOCUMENT_UUID, document))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_NONE)
+    public void technicalUserCannotUpdateDocumentWithoutPermissions() {
+        DocumentDto document = getDocumentDto();
+        assertThatThrownBy(() -> testee.update(TECHNICAL_USER_NONE, SAMPLE_DOCUMENT_UUID, document))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    @NotNull
+    private static DocumentDto getDocumentDto() {
+        DocumentDto document = new DocumentDto();
+        document.setName("test");
+        document.setDescription("nouvelle description");
+        return document;
+    }
 
     private static FileInputStream getFileInputStream() throws IOException {
         return new FileInputStream(File.createTempFile("my-text-file.1", "txt"));
