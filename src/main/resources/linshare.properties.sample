@@ -123,6 +123,8 @@ linshare.documents.storage.endpoint=
 # required if you are using Swift with region (openstack-swift)
 linshare.documents.storage.regionId=
 linshare.documents.storage.multipartupload=true
+#accepted values are 2 or 4; others will be ignored
+linshare.documents.storage.forceS3SignatureVersion=0
 
 #### Mongo storage options ####
 

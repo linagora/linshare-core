@@ -19,6 +19,7 @@
 		<property name="keystoneVersion" value="${linshare.documents.storage.keystone.version}" />
 		<property name="bucketIdentifier" value="${linshare.documents.storage.bucket}" />
 		<property name="multipartUpload" value="${linshare.documents.storage.multipartupload}" />
+		<property name="forceS3SignatureVersion" value="${linshare.documents.storage.forceS3SignatureVersion}" />
 		<property name="jcloudProperties">
 			<map>
 				<entry key="jclouds.trust-all-certs" value="${linshare.jclouds.trust-all-certs}" />

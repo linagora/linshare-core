@@ -25,6 +25,7 @@ import org.apache.commons.lang3.Validate;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.dao.JcloudObjectStorageFileDataStore;
 import org.linagora.linshare.core.dao.impl.DefaultJcloudFileDataStoreImpl;
 import org.linagora.linshare.core.dao.impl.FileSystemJcloudFileDataStoreImpl;
@@ -56,6 +57,7 @@ public class JcloudObjectStorageFileDataStoreFactory {
 	protected String regionId;
 	protected String bucketIdentifier;
 	protected boolean multipartUpload;
+	protected int forceS3SignatureVersion;
 
 	protected IdentityBuilder identityBuilder = IdentityBuilder.New();
 	protected String projectName;
@@ -70,8 +72,7 @@ public class JcloudObjectStorageFileDataStoreFactory {
 		if (!this.supportedProviders.contains(provider)) {
 			throw new IllegalArgumentException("Supported providers: " + this.supportedProviders.toString());
 		}
-		Properties properties = new Properties();
-		jcloudProperties.forEach((k, v) ->  { logger.debug("jcloudProperties: {}={}", k, v);properties.setProperty(k, v);});
+		Properties properties = getProperties();
 		if (provider.equals(FILESYSTEM)) {
 			return new FileSystemJcloudFileDataStoreImpl(modules, properties, bucketIdentifier, baseDirectory);
 		} else if (provider.equals(OPENSTACK_SWIFT)) {
@@ -84,6 +85,24 @@ public class JcloudObjectStorageFileDataStoreFactory {
 		}
 	}
 
+	@NotNull
+	private Properties getProperties() {
+		Properties properties = new Properties();
+
+		jcloudProperties.forEach((k, v) ->  {
+			logger.debug("jcloudProperties: {}={}", k, v);
+			properties.setProperty(k, v);
+		});
+
+		if ((provider.equals(S3) || provider.equals(AWS_S3))
+				&& (forceS3SignatureVersion == 2 || forceS3SignatureVersion == 4)){
+			properties.setProperty("jclouds.s3.signer-version", String.valueOf(forceS3SignatureVersion));
+			logger.debug("jcloudProperties: jclouds.s3.signer-version=" + forceS3SignatureVersion);
+		}
+
+		return properties;
+	}
+
 	public ContextBuilder getContextBuilder() {
 		Validate.notEmpty(credential, "Missing credential");
 		ContextBuilder contextBuilder = ContextBuilder.newBuilder(provider);
@@ -94,8 +113,10 @@ public class JcloudObjectStorageFileDataStoreFactory {
 			Validate.notEmpty(endpoint, "Missing endpoint");
 		}
 
-		contextBuilder.credentials(identityBuilder.build(), credential)
-			.modules(modules);
+		contextBuilder
+				.modules(modules)
+				.credentials(identityBuilder.build(), credential);
+
 		return contextBuilder;
 	}
 
@@ -154,6 +175,10 @@ public class JcloudObjectStorageFileDataStoreFactory {
 
 	public void setMultipartUpload(boolean multipartUpload) {
 		this.multipartUpload = multipartUpload;
+	}
+
+	public void setForceS3SignatureVersion(int forceS3SignatureVersion) {
+		this.forceS3SignatureVersion = forceS3SignatureVersion;
 	}
 
 	public void setJcloudProperties(Map<String, String> jcloudProperties) {
