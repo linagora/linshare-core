@@ -71,6 +71,10 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 	protected abstract String getEntryRepresentation(E entry);
 
 	protected void appendOwner(StringBuilder sb, E entry, Object... opt) {
+		if (entry == null) {
+			return;
+		}
+
 		A owner = getOwner(entry, opt);
 		if (owner != null) {
 			String or = getOwnerRepresentation(owner);
