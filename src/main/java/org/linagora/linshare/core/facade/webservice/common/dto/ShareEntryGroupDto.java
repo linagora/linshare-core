@@ -97,6 +97,7 @@ public class ShareEntryGroupDto {
 
 	public ShareEntryGroup toObject() {
 		ShareEntryGroup e = new ShareEntryGroup();
+		e.setUuid(getUuid());
 		e.setModificationDate(getModificationDate());
 		e.setSubject(getSubject());
 		e.setExpirationDate(getExpirationDate());

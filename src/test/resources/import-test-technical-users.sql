@@ -11,7 +11,10 @@ VALUES
     (7, 'technicalAccountPermissionUuid7', now(), now()),
     (8, 'technicalAccountPermissionUuid8', now(), now()),
     (9, 'technicalAccountPermissionUuid9', now(), now()),
-    (10, 'technicalAccountPermissionUuid10', now(), now());
+    (10, 'technicalAccountPermissionUuid10', now(), now()),
+    (11, 'technicalAccountPermissionUuid11', now(), now()),
+    (12, 'technicalAccountPermissionUuid12', now(), now()),
+    (13, 'technicalAccountPermissionUuid13', now(), now());
 
 INSERT INTO account_permission
     (id, technical_account_permission_id, permission)
@@ -31,12 +34,14 @@ VALUES
 	(13, 8, 'DOCUMENT_ENTRIES_UPDATE'),
 	(14, 9, 'SHARE_ENTRIES_CREATE'),
 	(15, 9, 'DOCUMENT_ENTRIES_GET'),
-	(16, 10, 'SHARE_ENTRY_GROUPS_LIST');
-
---	SHARE_ENTRY_GROUPS_GET,
---	SHARE_ENTRY_GROUPS_LIST,
---	SHARE_ENTRY_GROUPS_UPDATE,
---	SHARE_ENTRY_GROUPS_DELETE,
+	(16, 10, 'SHARE_ENTRY_GROUPS_LIST'),
+	(17, 11, 'SHARE_ENTRY_GROUPS_GET'),
+	(18, 12, 'SHARE_ENTRY_GROUPS_UPDATE'),
+	(19, 12, 'SHARE_ENTRY_GROUPS_GET'),
+	(20, 13, 'SHARE_ENTRY_GROUPS_DELETE'),
+	(21, 13, 'SHARE_ENTRY_GROUPS_GET'),
+	(22, 13, 'SHARE_ENTRIES_GET'),
+	(23, 13, 'SHARE_ENTRIES_DELETE');
 
 INSERT INTO TECHNICAL_ACCOUNT_PERMISSION_DOMAIN_ABSTRACT
     (TECHNICAL_ACCOUNT_PERMISSION_ID, DOMAIN_ABSTRACT_ID)
@@ -50,7 +55,10 @@ VALUES
     (7, 1),
     (8, 1),
     (9, 1),
-    (10, 1);
+    (10, 1),
+    (11, 1),
+    (12, 1),
+    (13, 1);
 
 -- LinShare Users
 INSERT INTO account
@@ -109,8 +117,23 @@ VALUES
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
 	true, false, 0, null),
-	-- technical user with create list permissions
+	-- technical user with list share entry group permissions
 	(110, 'technical.list.shareEntryGroup@linshare.org', 4, 'technical.list.shareEntryGroup@linshare.org', 10,
+	now(), now(), 4, 'en', 'en', 'en', true, null,
+	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
+	true, false, 0, null),
+	-- technical user with get share entry group permissions
+	(111, 'technical.get.shareEntryGroup@linshare.org', 4, 'technical.get.shareEntryGroup@linshare.org', 11,
+	now(), now(), 4, 'en', 'en', 'en', true, null,
+	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
+	true, false, 0, null),
+	-- technical user with update share entry group permissions
+	(112, 'technical.update.shareEntryGroup@linshare.org', 4, 'technical.update.shareEntryGroup@linshare.org', 12,
+	now(), now(), 4, 'en', 'en', 'en', true, null,
+	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
+	true, false, 0, null),
+	-- technical user with delete share entry group permissions
+	(113, 'technical.delete.shareEntryGroup@linshare.org', 4, 'technical.delete.shareEntryGroup@linshare.org', 13,
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
 	true, false, 0, null);

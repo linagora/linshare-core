@@ -29,9 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareEntryGroupDto;
-import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.core.service.impl.UserServiceImpl;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +71,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class ShareEntryGroupDelegationRestServiceImplTest {
 
     public static final String TECHNICAL_USER_LIST_SHARE_ENTRY_GROUP = "technical.list.shareEntryGroup@linshare.org";
+    public static final String TECHNICAL_USER_GET_SHARE_ENTRY_GROUP = "technical.get.shareEntryGroup@linshare.org";
+    public static final String TECHNICAL_USER_UPDATE_SHARE_ENTRY_GROUP = "technical.update.shareEntryGroup@linshare.org";
+    public static final String TECHNICAL_USER_DELETE_SHARE_ENTRY_GROUP = "technical.delete.shareEntryGroup@linshare.org";
     public static final String TECHNICAL_USER_CREATE_NODE = "technical.create.node@linshare.org";
     public static final String TECHNICAL_USER_NONE = "technical.none@linshare.org";
+    public static final String SHARE_ENTRY_GROUP_UUID = "61eae04b-9496-4cb1-900e-eda8caac6703";
 
     @Autowired
     private ShareEntryGroupRestServiceImpl testee;
@@ -89,7 +91,7 @@ public class ShareEntryGroupDelegationRestServiceImplTest {
         john = userService.findByLsUuid("aebe1b64-39c0-11e5-9fa8-080027b8274b");
     }
 
-        @Test
+    @Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
     public void rootCannotGetAllShareEntries() {
         assertThatThrownBy(() -> testee.findAll(john.getLsUuid(), false))
@@ -137,14 +139,157 @@ public class ShareEntryGroupDelegationRestServiceImplTest {
                 .hasMessage("You are not authorized to list all entries.");
     }
 
-    private ShareCreationDto getShareCreationDto() throws IOException {
-        ShareCreationDto sc = new ShareCreationDto();
-        sc.setDocuments(List.of("bfaf3fea-c64a-4ee0-bae8-b1482f1f6401", "fd87394a-41ab-11e5-b191-080027b8274b"));
-        sc.setSubject("test subject");
-        sc.setMessage("test share");
-        sc.setSecured(false);
-        sc.setRecipients(List.of(new GenericUserDto(john)));
-        return sc;
+    @Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+    public void rootCannotGetShareEntries() {
+        assertThatThrownBy(() -> testee.find(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID, true))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+    public void adminCannotGetShareEntries() {
+        assertThatThrownBy(() -> testee.find(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID, true))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("aebe1b64-39c0-11e5-9fa8-080027b8254j") // Amy's uuid (simple)
+    public void userCannotGetShareEntries() {
+        assertThatThrownBy(() -> testee.find(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID, true))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_GET_SHARE_ENTRY_GROUP)
+    public void technicalUserCanGetShareEntriesWithPermissions() throws IOException {
+        ShareEntryGroupDto shareEntryGroup = testee.find(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID, true);
+        assertThat(shareEntryGroup).isNotNull();
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_CREATE_NODE)
+    public void technicalUserCannotGetShareEntriesWithWrongPermissions() {
+        assertThatThrownBy(() -> testee.find(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID, true))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_NONE)
+    public void technicalUserCannotGetShareEntriesWithoutPermissions() {
+        assertThatThrownBy(() -> testee.find(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID, true))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    @Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+    public void rootCannotUpdateShareEntries() {
+        assertThatThrownBy(() -> testee.update(john.getLsUuid(), getShareEntryGroupForUpdate()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+    public void adminCannotUpdateShareEntries() {
+        assertThatThrownBy(() -> testee.update(john.getLsUuid(), getShareEntryGroupForUpdate()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("aebe1b64-39c0-11e5-9fa8-080027b8254j") // Amy's uuid (simple)
+    public void userCannotUpdateShareEntries() {
+        assertThatThrownBy(() -> testee.update(john.getLsUuid(), getShareEntryGroupForUpdate()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_UPDATE_SHARE_ENTRY_GROUP)
+    public void technicalUserCanUpdateShareEntriesWithPermissions() throws IOException {
+        ShareEntryGroupDto shareEntryGroup = testee.update(john.getLsUuid(), getShareEntryGroupForUpdate());
+        assertThat(shareEntryGroup).isNotNull();
+        assertThat(shareEntryGroup.getSubject()).isEqualTo("new subject");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_CREATE_NODE)
+    public void technicalUserCannotUpdateShareEntriesWithWrongPermissions() {
+        assertThatThrownBy(() -> testee.update(john.getLsUuid(), getShareEntryGroupForUpdate()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_NONE)
+    public void technicalUserCannotUpdateShareEntriesWithoutPermissions() {
+        assertThatThrownBy(() -> testee.update(john.getLsUuid(), getShareEntryGroupForUpdate()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    @Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+    public void rootCannotDeleteShareEntries() {
+        assertThatThrownBy(() -> testee.delete(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+    public void adminCannotDeleteShareEntries() {
+        assertThatThrownBy(() -> testee.delete(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser("aebe1b64-39c0-11e5-9fa8-080027b8254j") // Amy's uuid (simple)
+    public void userCannotDeleteShareEntries() {
+        assertThatThrownBy(() -> testee.delete(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to use this service");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_DELETE_SHARE_ENTRY_GROUP)
+    public void technicalUserCanDeleteShareEntriesWithPermissions() throws IOException {
+        ShareEntryGroupDto shareEntryGroup = testee.delete(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID);
+        assertThat(shareEntryGroup).isNotNull();
+
+        assertThatThrownBy(() -> testee.find(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID, true))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Share entry group with uuid :61eae04b-9496-4cb1-900e-eda8caac6703 was not found.");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_CREATE_NODE)
+    public void technicalUserCannotDeleteShareEntriesWithWrongPermissions() {
+        assertThatThrownBy(() -> testee.delete(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    @Test
+    @WithMockUser(TECHNICAL_USER_NONE)
+    public void technicalUserCannotDeleteShareEntriesWithoutPermissions() {
+        assertThatThrownBy(() -> testee.delete(john.getLsUuid(), SHARE_ENTRY_GROUP_UUID))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("You are not authorized to get this entry.");
+    }
+
+    private ShareEntryGroupDto getShareEntryGroupForUpdate() {
+        ShareEntryGroupDto shareEntryGroupDto = new ShareEntryGroupDto();
+        shareEntryGroupDto.setUuid(SHARE_ENTRY_GROUP_UUID);
+        shareEntryGroupDto.setSubject("new subject");
+        return shareEntryGroupDto;
     }
 
 }

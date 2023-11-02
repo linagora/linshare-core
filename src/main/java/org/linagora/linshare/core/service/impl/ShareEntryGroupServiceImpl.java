@@ -16,6 +16,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -77,13 +78,13 @@ public class ShareEntryGroupServiceImpl extends GenericServiceImpl<Account, Shar
 		}
 		checkDeletePermission(actor, seg.getOwner(), ShareEntryGroup.class,
 				BusinessErrorCode.SHARE_ENTRY_GROUP_FORBIDDEN, seg);
-		for (ShareEntry se : seg.getShareEntries()) {
+		for (ShareEntry se : Set.copyOf(seg.getShareEntries())) {
 			// AKO : Remove the entry from the list first to avoid hibernate
 			// ObjectDeleted exception.
 			seg.getShareEntries().remove(se);
 			shareEntryService.delete(actor, actor, se.getUuid(), null);
 		}
-		for (AnonymousShareEntry ase : seg.getAnonymousShareEntries()) {
+		for (AnonymousShareEntry ase : Set.copyOf(seg.getAnonymousShareEntries())) {
 //			AKO : Remove the entry from the list first to avoid hibernate ObjectDeleted exception.
 			seg.getAnonymousShareEntries().remove(ase);
 			anonymousShareEntryService.delete(actor, actor, ase.getUuid());
