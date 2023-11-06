@@ -18,6 +18,7 @@ package org.linagora.linshare.webservice.adminv5.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainLightDto;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.RestrictedContactDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto;
 import org.linagora.linshare.core.service.impl.DomainServiceImpl;
 import org.linagora.linshare.core.service.impl.UserServiceImpl;
@@ -53,6 +55,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(LdapServerRule.class)
 @Transactional
 @Sql({ "/import-tests-make-user2-admin.sql"})
+@Sql({ "/import-tests-allowed-contacts.sql"})
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
         "classpath:springContext-dao.xml",
         "classpath:springContext-ldap.xml",
@@ -77,7 +80,9 @@ import com.google.common.collect.Lists;
         "classpath:springContext-test.xml" })
 public class UserRestServiceImplTest {
 
-    @Autowired
+	public static final String GUEST101_UUID = "9fcf8335-7e0d-43a0-9474-be57eaaa76de";
+
+	@Autowired
     private DomainServiceImpl domainService;
 
     @Autowired
@@ -120,6 +125,7 @@ public class UserRestServiceImplTest {
                 "user6@linshare.org",
                 "user7@linshare.org",
                 "guest@linshare.org",
+				"guest101@linshare.org",
                 "abbey.curry@linshare.org",
                 "cornell.able@linshare.org",
                 "peter.wilson@linshare.org",
@@ -171,7 +177,8 @@ public class UserRestServiceImplTest {
                 "user5@linshare.org",
                 "user6@linshare.org",
                 "user7@linshare.org",
-                "guest@linshare.org");
+                "guest@linshare.org",
+				"guest101@linshare.org");
     }
 
 	@Test
@@ -181,7 +188,7 @@ public class UserRestServiceImplTest {
 
         assertThat(userSet).isNotNull();
         assertThat(userSet.stream().map(UserDto::getMail)).containsExactlyInAnyOrder(
-				"guest@linshare.org");
+				"guest@linshare.org","guest101@linshare.org");
     }
 
 	@Test
@@ -613,6 +620,7 @@ public class UserRestServiceImplTest {
 
 		assertThat(usersDto.stream().map(UserDto::getMail).collect(Collectors.toList()))
 				.containsExactlyInAnyOrder("guest@linshare.org",
+						"guest101@linshare.org",
 						"amy.wolsh@linshare.org",
 						"user2@linshare.org",
 						"user1@linshare.org",
@@ -630,6 +638,7 @@ public class UserRestServiceImplTest {
 
 		assertThat(usersDto.stream().map(UserDto::getMail).collect(Collectors.toList()))
 				.containsExactlyInAnyOrder("guest@linshare.org",
+						"guest101@linshare.org",
 						"user2@linshare.org",
 						"user1@linshare.org",
 						"user3@linshare.org");
@@ -810,6 +819,27 @@ public class UserRestServiceImplTest {
 
 		assertThat(userDto.isSecondFAEnabled()).isNotEqualTo(updatedUserDto.isSecondFAEnabled());
 	}
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") //admin uuid
+	public void findAllUserRestrictedContactsAllowedAsNestedAdmin() {
+		List<RestrictedContactDto> restrictedContacts = testee.findAllRestrictedContacts(GUEST101_UUID, null, null, null);
+		assertThat(restrictedContacts).isNotNull();
+		assertThat(restrictedContacts).isNotEmpty();
+		assertThat(restrictedContacts.stream().map(RestrictedContactDto::getMail).collect(Collectors.toList()))
+				.containsExactlyInAnyOrder("user1@linshare.org", "user2@linshare.org");
+	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress) //root uuid
+	public void findAllUserRestrictedContactsAllowedAsSuperAdmin() {
+		List<RestrictedContactDto> restrictedContacts = testee.findAllRestrictedContacts(GUEST101_UUID, null, null, null);
+		assertThat(restrictedContacts).isNotNull();
+		assertThat(restrictedContacts).isNotEmpty();
+		assertThat(restrictedContacts.stream().map(RestrictedContactDto::getMail).collect(Collectors.toList()))
+				.containsExactlyInAnyOrder("user1@linshare.org", "user2@linshare.org");
+	}
+
 
 	private static void compareUserDtos(UserDto expected, UserDto actual) {
 		assertThat(expected.getFirstName()).isEqualTo(actual.getFirstName());

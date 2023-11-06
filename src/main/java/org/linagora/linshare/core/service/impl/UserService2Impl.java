@@ -186,7 +186,7 @@ public class UserService2Impl extends GenericServiceImpl<Account, User> implemen
 	public List<AllowedContact> findAllRestrictedContacts(Account authUser, Account actor, User user, String mail,
 			String firstName, String lastName) {
 		preChecks(authUser, actor);
-		checkListPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null);
+		checkListPermission(authUser, actor, User.class, BusinessErrorCode.USER_FORBIDDEN, null, List.of(user.getDomain()));
 		if (!user.isRestricted()) {
 			logger.info("You can not list the restricted contacts for a not restricted user.");
 			return Lists.newArrayList();
