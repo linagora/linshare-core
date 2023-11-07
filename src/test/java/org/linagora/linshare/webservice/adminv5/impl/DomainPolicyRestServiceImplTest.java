@@ -117,4 +117,20 @@ public class DomainPolicyRestServiceImplTest {
 		assertThat(newPolicy).isNotNull();
 		assertThat(newPolicy.getDescription()).isEqualTo("test policy description");
 	}
+
+	@Test
+	@WithMockUser(LinShareConstants.defaultRootMailAddress)
+	public void updatePoliciesShouldSetLabelAndDescription() {
+		DomainPolicyDto defaultPolicy = testee.find(defaultDomainPolicyIdentifier);
+		defaultPolicy.setLabel("test policy");
+		defaultPolicy.setDescription("test policy description");
+		defaultPolicy.setCreationDate(null);
+		defaultPolicy.setModificationDate(null);
+
+		DomainPolicyDto newPolicy = testee.update(defaultPolicy);
+
+		assertThat(newPolicy).isNotNull();
+		assertThat(newPolicy.getDescription()).isEqualTo("test policy description");
+		assertThat(newPolicy.getLabel()).isEqualTo("test policy");
+	}
 }
