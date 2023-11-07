@@ -27,8 +27,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
+import org.linagora.linshare.core.service.impl.ContactListServiceImpl;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.linagora.linshare.webservice.admin.impl.MailingListRestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +70,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         "classpath:springContext-test.xml" })
 public class MailingListRestServiceImplTest {
 
+	public static final String TOP_LIST = "1c8a8877-3c14-4664-979e-77047a536005";
+	public static final String SUB_LIST = "5beafe05-daf5-4789-9c26-784365d766b5";
+	public static final String ADMINS_ROOT_LIST = "af1d8a27-0d8f-447d-ae1d-83b382724412";
+	public static final String ROOTS_ROOT_LIST = "8df3223c-f083-455c-bd24-52f4ffc13382";
+
     @Autowired
     private MailingListRestServiceImpl testee;
+
+	@Autowired
+	private ContactListServiceImpl contactListService;
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
@@ -79,13 +90,14 @@ public class MailingListRestServiceImplTest {
 				.containsExactlyInAnyOrder(LinShareTestConstants.TOP_DOMAIN
 						,LinShareTestConstants.TOP_DOMAIN
 						,LinShareTestConstants.SUB_DOMAIN
+						,LinShareTestConstants.ROOT_DOMAIN
 						,LinShareTestConstants.ROOT_DOMAIN);
 	}
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
 	public void getAllRootCanSeeAllLists() {
-		assertThat(testee.findAll(null, null, null, null).size()).isEqualTo(4);
+		assertThat(testee.findAll(null, null, null, null).size()).isEqualTo(5);
 	}
 
 	@Test
@@ -107,7 +119,7 @@ public class MailingListRestServiceImplTest {
 	public void getAllFilterOnVisibility() {
 		Set<MailingListDto> listPublic = testee.findAll(true, null, null, null);
 		assertThat(listPublic).isNotEmpty();
-		assertThat(listPublic.size()).isEqualTo(3);
+		assertThat(listPublic.size()).isEqualTo(4);
 
 		Set<MailingListDto> listPrivate = testee.findAll(false, null, null, null);
 		assertThat(listPrivate).isNotEmpty();
@@ -135,7 +147,8 @@ public class MailingListRestServiceImplTest {
 		assertThat(amysLists.size()).isEqualTo(3);
 
 		Set<MailingListDto> rootsList = testee.findAll(null, null, LinShareConstants.defaultRootMailAddress, null);
-		assertThat(rootsList).isEmpty();
+		assertThat(rootsList).isNotEmpty();
+		assertThat(rootsList.size()).isEqualTo(1);
 	}
 
 	@Test
@@ -143,7 +156,7 @@ public class MailingListRestServiceImplTest {
 	public void getAllFilterOnMember() {
 		Set<MailingListDto> ListsWithFelton = testee.findAll(null, null, null, "felton.gumper@linshare.org");
 		assertThat(ListsWithFelton).isNotEmpty();
-		assertThat(ListsWithFelton.size()).isEqualTo(4);
+		assertThat(ListsWithFelton.size()).isEqualTo(5);
 
 		Set<MailingListDto> listWithGrant = testee.findAll(null, null, null, "grant.big@linshare.org");
 		assertThat(listWithGrant).isNotEmpty();
@@ -152,4 +165,90 @@ public class MailingListRestServiceImplTest {
 		Set<MailingListDto> listWithNobody = testee.findAll(null, null, null, "nobody");
 		assertThat(listWithNobody).isEmpty();
 	}
+
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void adminCanDeleteListInHisDomain() {
+		//Allowed
+		assertThat(testee.delete(TOP_LIST)).isNotNull();
+		assertThat(testee.delete(SUB_LIST)).isNotNull();
+		assertThat(testee.delete(ADMINS_ROOT_LIST)).isNotNull();
+
+		//Not allowed
+		assertThatThrownBy(() -> testee.delete(ROOTS_ROOT_LIST))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("You are not authorized to delete this list.");
+	}
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void adminCanEditListInHisDomain() {
+		//Allowed
+		assertThat(testee.update(getTestMailingList(TOP_LIST))).isNotNull();
+		assertThat(testee.update(getTestMailingList(SUB_LIST))).isNotNull();
+		assertThat(testee.update(getTestMailingList(ADMINS_ROOT_LIST))).isNotNull();
+
+		//Not allowed
+		assertThatThrownBy(() -> testee.update(getTestMailingList(ROOTS_ROOT_LIST)))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("You are not authorized to update this list.");
+	}
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void adminCanGetAllLists() {
+		//Allowed
+		assertThat(testee.find(TOP_LIST)).isNotNull();
+		assertThat(testee.find(SUB_LIST)).isNotNull();
+		assertThat(testee.find(ADMINS_ROOT_LIST)).isNotNull();
+		assertThat(testee.find(ROOTS_ROOT_LIST)).isNotNull();
+	}
+
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void adminCanCreateContactOnAllLists() {
+		//Allowed
+		testee.createContact(TOP_LIST, getContactFor(TOP_LIST));
+		testee.createContact(SUB_LIST, getContactFor(SUB_LIST));
+		testee.createContact(ADMINS_ROOT_LIST, getContactFor(ADMINS_ROOT_LIST));
+
+		assertThatThrownBy(() -> testee.createContact(ROOTS_ROOT_LIST, getContactFor(ROOTS_ROOT_LIST)))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("You are not authorized to create a contact");
+	}
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
+	public void adminCanDeleteContactOnAllLists() {
+		//Allowed
+		testee.deleteContact(TOP_LIST, getFeltonOn(TOP_LIST));
+		testee.deleteContact(SUB_LIST, getFeltonOn(SUB_LIST));
+		testee.deleteContact(ADMINS_ROOT_LIST, getFeltonOn(ADMINS_ROOT_LIST));
+
+		assertThatThrownBy(() -> testee.deleteContact(ROOTS_ROOT_LIST, getFeltonOn(ROOTS_ROOT_LIST)))
+				.isInstanceOf(BusinessException.class)
+				.hasMessage("You are not authorized to delete a contact");
+	}
+
+	private MailingListContactDto getContactFor(String list) {
+		MailingListContactDto mailingListContactDto = new MailingListContactDto();
+		mailingListContactDto.setMail("user1@linshare.org");
+		mailingListContactDto.setUuid("aebe1b64-39c0-11e5-9fa8-080027b8274b");
+		mailingListContactDto.setFirstName("o");
+		mailingListContactDto.setLastName("sef");
+		mailingListContactDto.setMailingListUuid(list);
+		return mailingListContactDto;
+	}
+
+	private MailingListContactDto getFeltonOn(String list){
+		return new MailingListContactDto(contactListService.findContactWithMail(null, list, "felton.gumper@linshare.org"));
+	}
+	private MailingListDto getTestMailingList(String uuid){
+		ContactList contactListDto = contactListService.findByUuid(null, uuid);
+		contactListDto.setDescription("new description");
+		return new MailingListDto(contactListDto);
+	}
+
 }

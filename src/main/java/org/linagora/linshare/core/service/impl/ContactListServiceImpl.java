@@ -171,7 +171,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		User actor = userService.findByLsUuid(actorUuid);
 		ContactList found = contactListBusinessService.findByUuid(listToUpdate.getUuid());
 		if (!actor.hasSuperAdminRole()) {
-			checkRights(actor, listToUpdate, "You are not authorized to update this list.");
+			checkRights(actor, found, "You are not authorized to update this list.");
 		} else {
 			// only super admin is authorized to modify list owner.
 			User owner = listToUpdate.getOwner();
@@ -261,6 +261,8 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 
 	private void checkRights(User actor, ContactList list, String msg) throws BusinessException {
 		if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM))
+			return;
+		if (actor.getRole().equals(Role.ADMIN) && list.getDomain().isManagedBy(actor))
 			return;
 		ContactList entityList = findByUuid(actor.getLsUuid(), list.getUuid());
 		if (!actor.equals(entityList.getOwner()))
