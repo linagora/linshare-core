@@ -117,7 +117,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailConfig createConfig(User actor, MailConfig config)
 			throws BusinessException {
-		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
+		if (!permissionService.isAdminForThisDomain(actor, config.getDomain()))
 			throw new BusinessException(BusinessErrorCode.MAILCONFIG_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail config in this domain "
 					+ actor.getDomainId());
@@ -185,7 +185,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailContent createContent(User actor, MailContent content)
 			throws BusinessException {
-		if (!permissionService.isAdminforThisDomain(actor, content.getDomain()))
+		if (!permissionService.isAdminForThisDomain(actor, content.getDomain()))
 			throw new BusinessException(BusinessErrorCode.MAILCONTENT_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail content in this domain "
 					+ actor.getDomainId());
@@ -236,7 +236,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throws BusinessException {
 		MailConfig config = contentLang.getMailConfig();
 
-		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
+		if (!permissionService.isAdminForThisDomain(actor, config.getDomain()))
 			throw new BusinessException(BusinessErrorCode.MAILCONTENTLANG_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
@@ -288,7 +288,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailFooter createFooter(User actor, MailFooter footer)
 			throws BusinessException {
-		if (!permissionService.isAdminforThisDomain(actor, footer.getDomain()))
+		if (!permissionService.isAdminForThisDomain(actor, footer.getDomain()))
 			throw new BusinessException(BusinessErrorCode.MAILFOOTER_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail footer in this domain "
 					+ actor.getDomainId());
@@ -339,7 +339,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throws BusinessException {
 		MailConfig config = footerLang.getMailConfig();
 
-		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
+		if (!permissionService.isAdminForThisDomain(actor, config.getDomain()))
 			throw new BusinessException(BusinessErrorCode.MAILFOOTERLANG_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
@@ -393,7 +393,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailLayout createLayout(User actor, MailLayout layout)
 			throws BusinessException {
-		if (!permissionService.isAdminforThisDomain(actor, layout.getDomain()))
+		if (!permissionService.isAdminForThisDomain(actor, layout.getDomain()))
 			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail layout in this domain "
 					+ actor.getDomainId());
@@ -510,7 +510,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 				forbidden = true;
 			}
 		}
-		if (!permissionService.isAdminforThisDomain(actor, domain)) {
+		if (!permissionService.isAdminForThisDomain(actor, domain)) {
 			forbidden = true;
 		}
 		return forbidden;

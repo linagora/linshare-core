@@ -23,7 +23,9 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 
 public interface DomainPermissionBusinessService {
 
-	boolean isAdminforThisDomain(Account actor, AbstractDomain domain);
+	boolean isAdminForThisDomain(Account actor, AbstractDomain domain);
+
+	boolean isAdminForThisDomain(Account actor, String domain);
 
 	boolean isAdminForThisUploadRequest(Account actor, UploadRequest request);
 

@@ -103,7 +103,7 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 			throws BusinessException {
 		MimeType mimeType = mimeTypeBusinessService.find(uuid);
 
-		if (!domainPermissionService.isAdminforThisDomain(actor, mimeType
+		if (!domainPermissionService.isAdminForThisDomain(actor, mimeType
 				.getMimePolicy().getDomain())) {
 			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to update this MimeType.";

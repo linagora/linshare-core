@@ -104,7 +104,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(domainService.findById(domainId))
 				.thenReturn(domain);
 
-		when(domainPermissionBusinessService.isAdminforThisDomain(authUser, domain))
+		when(domainPermissionBusinessService.isAdminForThisDomain(authUser, domain))
 				.thenReturn(false);
 
 		PermanentToken entry = null;
@@ -139,7 +139,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(domainService.findById(domainId))
 				.thenReturn(domain);
 
-		when(domainPermissionBusinessService.isAdminforThisDomain(authUser, domain))
+		when(domainPermissionBusinessService.isAdminForThisDomain(authUser, domain))
 				.thenReturn(false);
 
 		PermanentToken entry = null;
@@ -254,7 +254,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 		when(domainService.findById(any()))
 				.thenReturn(domain);
 
-		when(domainPermissionBusinessService.isAdminforThisDomain(authUser, domain))
+		when(domainPermissionBusinessService.isAdminForThisDomain(authUser, domain))
 				.thenReturn(false);
 
 		PermanentToken entry = null;
@@ -564,7 +564,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(entryDomain);
 		when(domainService.findById(eq(uuid)))
 				.thenReturn(domain);
-		when(domainPermissionBusinessService.isAdminforThisDomain(eq(account), eq(domain)))
+		when(domainPermissionBusinessService.isAdminForThisDomain(eq(account), eq(domain)))
 				.thenReturn(false);
 
 		Account authUser = null;
@@ -778,7 +778,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(entryDomain);
 		when(domainService.findById(eq(uuid)))
 				.thenReturn(domain);
-		when(domainPermissionBusinessService.isAdminforThisDomain(eq(account), eq(domain)))
+		when(domainPermissionBusinessService.isAdminForThisDomain(eq(account), eq(domain)))
 				.thenReturn(false);
 
 		Account authUser = null;
@@ -992,7 +992,7 @@ public class JwtLongTimeResourceAccessControlImplTest {
 				.thenReturn(entryDomain);
 		when(domainService.findById(eq(uuid)))
 				.thenReturn(domain);
-		when(domainPermissionBusinessService.isAdminforThisDomain(eq(account), eq(domain)))
+		when(domainPermissionBusinessService.isAdminForThisDomain(eq(account), eq(domain)))
 				.thenReturn(false);
 
 		Account authUser = null;

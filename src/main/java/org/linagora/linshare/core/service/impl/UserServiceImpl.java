@@ -237,7 +237,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean isAdminForThisUser(Account actor, User user) {
-		if(domainPermisionService.isAdminforThisDomain(actor, user.getDomain())) {
+		if(domainPermisionService.isAdminForThisDomain(actor, user.getDomain())) {
 			return true;
 		}
 		if (user.isGuest()) {

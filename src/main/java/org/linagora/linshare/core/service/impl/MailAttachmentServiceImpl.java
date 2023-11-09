@@ -105,7 +105,7 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 	}
 
 	private void checkAdminFor(Account actor, AbstractDomain domain) throws BusinessException {
-		if (!domainPermissionService.isAdminforThisDomain(actor, domain)) {
+		if (!domainPermissionService.isAdminForThisDomain(actor, domain)) {
 			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to perform this operation.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);

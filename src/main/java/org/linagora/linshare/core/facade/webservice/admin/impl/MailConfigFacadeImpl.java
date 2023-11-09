@@ -73,7 +73,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
-		if (!domainPermissionService.isAdminforThisDomain(user, domain)){
+		if (!domainPermissionService.isAdminForThisDomain(user, domain)){
 			throw new BusinessException("You are not allowed to manage this domain.");
 		}
 
@@ -230,7 +230,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(mailConfigUuid, "Mail config uuid must be set.");
 
 		MailConfig mailConfig = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
-		if (!domainPermissionService.isAdminforThisDomain(actor, mailConfig.getDomain())){
+		if (!domainPermissionService.isAdminForThisDomain(actor, mailConfig.getDomain())){
 			throw new BusinessException("You are not allowed to manage this mail configuration");
 		}
 

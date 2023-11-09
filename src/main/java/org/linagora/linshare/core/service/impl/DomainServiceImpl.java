@@ -165,7 +165,7 @@ public class DomainServiceImpl extends DomainServiceCommonImpl implements Domain
 		Optional<AbstractDomain> parent = Optional.empty();
 		if (parentUuid.isPresent()) {
 			parent = Optional.of(businessService.findById(parentUuid.get()));
-			boolean adminforThisDomain = permissionService.isAdminforThisDomain(authUser, parent.get());
+			boolean adminforThisDomain = permissionService.isAdminForThisDomain(authUser, parent.get());
 			if (!adminforThisDomain) {
 				throw new BusinessException(
 					BusinessErrorCode.STATISTIC_FORBIDDEN,

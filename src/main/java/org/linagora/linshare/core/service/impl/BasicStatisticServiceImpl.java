@@ -154,7 +154,7 @@ public class BasicStatisticServiceImpl extends StatisticServiceUtils implements 
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<BasicStatistic> container) {
 		Validate.notNull(authUser, "authUser must be set.");
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(
 					BusinessErrorCode.STATISTIC_FORBIDDEN,
 					"You are not allowed to query this domain");

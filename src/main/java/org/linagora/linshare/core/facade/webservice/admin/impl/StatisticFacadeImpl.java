@@ -64,7 +64,7 @@ public class StatisticFacadeImpl extends AdminGenericFacadeImpl implements
 		Account actor = null;
 		if (domainUuid != null) {
 			domain = abstractDomainService.findById(domainUuid);
-			if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 				throw new BusinessException(
 						BusinessErrorCode.STATISTIC_READ_DOMAIN_ERROR,
 						"You are not allowed to use this domain");

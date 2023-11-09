@@ -124,7 +124,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 
 		AbstractDomain domain = domainBusinessService
 				.findById(domainIdentifier);
-		if (!domainPermissionService.isAdminforThisDomain(actor, domain)) {
+		if (!domainPermissionService.isAdminForThisDomain(actor, domain)) {
 			String msg = "The current actor " + actor.getAccountRepresentation()
 					+ " does not have the right to get all MimePolicies.";
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
@@ -171,7 +171,7 @@ public class MimePolicyServiceImpl implements MimePolicyService {
 	private boolean isAdminFor(Account actor, MimePolicy mimePolicy) {
 		// we check if the current actor is admin of the domain which belongs
 		// the MimePolicy
-		return domainPermissionService.isAdminforThisDomain(actor,
+		return domainPermissionService.isAdminForThisDomain(actor,
 				mimePolicy.getDomain());
 	}
 

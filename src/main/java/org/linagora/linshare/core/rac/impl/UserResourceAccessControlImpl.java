@@ -66,7 +66,7 @@ public class UserResourceAccessControlImpl extends AbstractResourceAccessControl
 		List<AbstractDomain> domains = (List<AbstractDomain>) opt[0];
 		List<String> notAllowedDomains = Lists.newArrayList();
 		for (AbstractDomain domain : domains) {
-			if (!permissionService.isAdminforThisDomain(actor, domain)) {
+			if (!permissionService.isAdminForThisDomain(actor, domain)) {
 				notAllowedDomains.add(domain.getUuid());
 			}
 		}

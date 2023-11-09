@@ -18,6 +18,7 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -45,13 +46,18 @@ public class DomainPermissionBusinessServiceImpl implements
 	}
 
 	@Override
-	public boolean isAdminforThisDomain(Account actor, AbstractDomain domain) {
+	public boolean isAdminForThisDomain(Account actor, AbstractDomain domain) {
 		if (!(actor.hasSuperAdminRole() || actor.hasSystemAccountRole())) {
 			if (!domain.isManagedBy(actor)) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isAdminForThisDomain(Account actor, String domain) {
+		return !StringUtils.isBlank(domain) && isAdminForThisDomain(actor, domainBusinessService.find(domain));
 	}
 
 	@Override
@@ -70,7 +76,7 @@ public class DomainPermissionBusinessServiceImpl implements
 			} else {
 				for (String uuid : domains) {
 					AbstractDomain domain = domainBusinessService.findById(uuid);
-					if (isAdminforThisDomain(actor, domain)) {
+					if (isAdminForThisDomain(actor, domain)) {
 						allowedDomainUuids.add(domain.getUuid());
 					} else {
 						logger.debug("You are not admin of this domain: {}", uuid);
@@ -85,7 +91,7 @@ public class DomainPermissionBusinessServiceImpl implements
 
 	@Override
 	public boolean isAdminForThisUploadRequest(Account actor, UploadRequest request) {
-		return isAdminforThisDomain(actor, request.getUploadRequestGroup().getAbstractDomain())
+		return isAdminForThisDomain(actor, request.getUploadRequestGroup().getAbstractDomain())
 				|| isOwner(actor, request);
 	}
 

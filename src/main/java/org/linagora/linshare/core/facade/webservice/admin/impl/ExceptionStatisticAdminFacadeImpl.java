@@ -69,7 +69,7 @@ public class ExceptionStatisticAdminFacadeImpl extends AdminGenericFacadeImpl im
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainUuid);
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_READ_DOMAIN_ERROR,
 					"You are not allowed to use this domain");
 		}

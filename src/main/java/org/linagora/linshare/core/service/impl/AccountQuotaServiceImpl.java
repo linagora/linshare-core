@@ -75,7 +75,7 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 					"Can not found account quota with uuid : " + uuid);
 		}
 //		checkReadPermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		if (!permissionService.isAdminforThisDomain(actor, domain) || !domain.equals(accountQuota.getDomain())) {
+		if (!permissionService.isAdminForThisDomain(actor, domain) || !domain.equals(accountQuota.getDomain())) {
 			throw new BusinessException(
 					BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
 					"You are not allowed to query this domain");
@@ -137,7 +137,7 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<AccountQuota> container) {
 		Validate.notNull(authUser, "authUser must be set.");
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(
 					BusinessErrorCode.ACCOUNT_QUOTA_CANNOT_GET,
 					"You are not allowed to query this domain");

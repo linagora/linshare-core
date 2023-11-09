@@ -391,7 +391,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	@Override
 	public AuditLogEntry find(Account authUser, AbstractDomain domain, String uuid) {
 		Validate.notNull(authUser, "authUser must be set.");
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(
 					BusinessErrorCode.FORBIDDEN,
 					"You are not allowed to query this domain");
@@ -554,7 +554,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	private void checkDomainPermissions(Account authUser, AbstractDomain domain, Set<String> domains) {
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(
 					BusinessErrorCode.FORBIDDEN,
 					"You are not allowed to query this domain");
@@ -562,7 +562,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		if (!domains.isEmpty()) {
 			for (String domainUuid : domains) {
 				AbstractDomain d = domainService.findById(domainUuid);
-				if (!permissionService.isAdminforThisDomain(authUser, d)) {
+				if (!permissionService.isAdminForThisDomain(authUser, d)) {
 					throw new BusinessException(
 							BusinessErrorCode.FORBIDDEN,
 							"You are not allowed to query this domain: " + domainUuid);

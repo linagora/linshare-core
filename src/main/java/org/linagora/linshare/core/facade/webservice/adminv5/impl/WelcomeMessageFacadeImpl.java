@@ -84,7 +84,7 @@ public class WelcomeMessageFacadeImpl extends AdminGenericFacadeImpl implements 
 		if (authUser.getRole().equals(Role.SUPERADMIN)) {
 			return false;
 		}
-		if (domainPermissionBusinessService.isAdminforThisDomain(authUser, welcomeMessages.getDomain())) {
+		if (domainPermissionBusinessService.isAdminForThisDomain(authUser, welcomeMessages.getDomain())) {
 			return false;
 		}
 		return true;

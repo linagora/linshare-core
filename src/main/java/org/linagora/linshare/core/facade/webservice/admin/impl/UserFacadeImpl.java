@@ -246,7 +246,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	private void checkAdminPermission(Account actor, Account user) {
-		if (!domainPermissionBusinessService.isAdminforThisDomain(actor, user.getDomain())) {
+		if (!domainPermissionBusinessService.isAdminForThisDomain(actor, user.getDomain())) {
 			logger.error("Not allowed to perform this action, You are not an admin for domain {}",
 					user.getDomainId());
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_SECOND_FACTOR_FORBIDEN,

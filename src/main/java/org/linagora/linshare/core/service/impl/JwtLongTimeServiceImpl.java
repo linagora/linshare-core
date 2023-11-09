@@ -180,7 +180,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN, "JWT long time functionality forbidden.");
 		}
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN,
 					"You are not allowed to use this domain");
 		}

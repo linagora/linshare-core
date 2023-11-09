@@ -57,7 +57,7 @@ public class JwtLongTimeResourceAccessControlImpl extends
 		}
 		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
 			AbstractDomain domain = abstractDomainService.findById(account.getDomainId());
-			return permissionService.isAdminforThisDomain(authUser, domain);
+			return permissionService.isAdminForThisDomain(authUser, domain);
 		} else if (authUser.isInternal() || authUser.isGuest()) {
 			if (account != null && authUser.equals(account)) {
 				return true;
@@ -131,7 +131,7 @@ public class JwtLongTimeResourceAccessControlImpl extends
 		}
 		if (account.hasAdminRole() && functionality.getConfigurationPolicy().getStatus()) {
 			AbstractDomain domain = abstractDomainService.findById(entry.getDomain().getUuid());
-			return permissionService.isAdminforThisDomain(account, domain);
+			return permissionService.isAdminForThisDomain(account, domain);
 		}
 		if (account.isInternal() || account.isGuest()) {
 			if (account != null && account.equals(authUser)) {

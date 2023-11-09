@@ -88,7 +88,7 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 
 		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-		if (!domainPermissionService.isAdminforThisDomain(user, domain)) {
+		if (!domainPermissionService.isAdminForThisDomain(user, domain)) {
 			throw new BusinessException("You are not allowed to manage this domain.");
 		}
 

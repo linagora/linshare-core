@@ -128,7 +128,7 @@ public abstract class AbstractFunctionalityServiceImpl<T extends AbstractFunctio
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST, "The input domain does not exist.");
 		}
 		if (!domainPermissionBusinessService
-				.isAdminforThisDomain(actor, domain)) {
+				.isAdminForThisDomain(actor, domain)) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"The current domain does not exist : " + domainId);
 		}

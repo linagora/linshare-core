@@ -84,7 +84,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_NOT_FOUND, "Public key not found ");
 		}
 		AbstractDomain domain = abstractDomainService.findById(publicKey.getDomainUuid());
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_FORBIDDEN,
 					"You are not allowed to use this domain");
 		}
@@ -99,7 +99,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 		Validate.notEmpty(publicKey.getPublicKey(), "Public key must be set");
 		Validate.notNull(publicKey.getFormat(), "Format must be set");
 		Validate.notNull(domain, "domain must be set");
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_CREATE,
 					"You are not allowed to use this domain");
 		}
@@ -141,7 +141,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 	public List<PublicKeyLs> findAll(Account authUser, AbstractDomain domain) {
 		Validate.notNull(domain);
 		Validate.notNull(authUser);
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_FORBIDDEN,
 					"You are not allowed to use this domain");
 		}
@@ -154,7 +154,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 	public PublicKeyLs delete(Account authUser, PublicKeyLs publicKeyLs) throws BusinessException {
 		Validate.notNull(authUser);
 		AbstractDomain domain = abstractDomainService.findById(publicKeyLs.getDomainUuid());
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if (!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_DELETE,
 					"You are not allowed to use this domain");
 		}
@@ -168,7 +168,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 	@Override
 	public Set<AuditLogEntryAdmin> findAllAudit(User authUser, AbstractDomain domain, List<LogAction> actions) {
 		Validate.notNull(domain);
-		if(!permissionService.isAdminforThisDomain(authUser, domain)) {
+		if(!permissionService.isAdminForThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_FORBIDDEN,
 					"You are not allowed to use this domain");
 		}

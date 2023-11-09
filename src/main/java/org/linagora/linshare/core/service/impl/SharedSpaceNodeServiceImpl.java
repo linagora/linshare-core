@@ -280,7 +280,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 				null);
 		Sort sort = Sort.by(SortOrder.getSortDir(sortOrder), sortField.toString());
 		if (Objects.nonNull(account)) {
-			if (!domainPermissionBusinessService.isAdminforThisDomain(actor, account.getDomain())) {
+			if (!domainPermissionBusinessService.isAdminForThisDomain(actor, account.getDomain())) {
 				throw new BusinessException(BusinessErrorCode.USER_FORBIDDEN,
 						"You are not authorized to retieve the sharedSpaces of this account: " + account.getLsUuid());
 			}
