@@ -545,6 +545,7 @@
 				<entry key="WORK_SPACE" value-ref="sharedSpaceMemberWorkSpaceService" />
 			</map>
 		</constructor-arg>
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 	<bean id="sharedSpaceLdapGroupMemberService" class="org.linagora.linshare.core.ldap.service.impl.SharedSpaceMemberServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupMemberBusinessService" />
@@ -559,6 +560,7 @@
 				<entry key="WORK_SPACE" value-ref="sharedSpaceMemberWorkSpaceService" />
 			</map>
 		</constructor-arg>
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 	<bean id="sharedSpaceMemberWorkSpaceService" class="org.linagora.linshare.core.service.fragment.impl.WorkSpaceMemberServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />

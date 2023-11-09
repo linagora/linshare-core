@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
@@ -36,14 +37,18 @@ public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends
 	
 	protected SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
 
+	protected DomainPermissionBusinessService domainPermissionBusinessService;
+
 	public AbstractSharedSpaceResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
 			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
 			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository,
-			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
+			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
+			DomainPermissionBusinessService domainPermissionBusinessService) {
 		super(functionalityService);
 		this.sharedSpaceMemberMongoRepository = sharedSpaceMemberMongoRepository;
 		this.sharedSpacePermissionMongoRepository = sharedSpacePermissionMongoRepository;
 		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
 	}
 
 	protected abstract SharedSpaceResourceType getSharedSpaceResourceType();
@@ -100,6 +105,12 @@ public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser, permission);
 		}
+
+		String domainUuid = sharedSpaceNodeMongoRepository.findByUuid(sharedSpaceNodeUuid).getDomainUuid();
+		if (authUser.hasAdminRole() && domainPermissionBusinessService.isAdminForThisDomain(actor, domainUuid)) {
+ 			return true;
+		}
+
 		if (authUser.isInternal() || authUser.isGuest()) {
 			if (actor != null && authUser.equals(actor)) {
 				SharedSpaceMember foundMember = sharedSpaceMemberMongoRepository.findByAccountAndNode(actor.getLsUuid(),

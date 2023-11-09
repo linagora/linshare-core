@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
@@ -35,8 +36,13 @@ public class SharedSpaceMemberResourceAccessControlImpl
 	public SharedSpaceMemberResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
 			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
 			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository,
-			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
-		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository, sharedSpaceNodeMongoRepository);
+			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
+			DomainPermissionBusinessService domainPermissionBusinessService) {
+		super(functionalityService,
+				sharedSpaceMemberMongoRepository,
+				sharedSpacePermissionMongoRepository,
+				sharedSpaceNodeMongoRepository,
+				domainPermissionBusinessService);
 	}
 	
 	@Override
@@ -71,6 +77,12 @@ public class SharedSpaceMemberResourceAccessControlImpl
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser, TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_DELETE);
 		}
+		if (authUser.hasAdminRole()) {
+			String domainUuid = sharedSpaceNodeMongoRepository.findByUuid(nodeUuid).getDomainUuid();
+			if (domainPermissionBusinessService.isAdminForThisDomain(actor, domainUuid)) {
+				return true;
+			}
+		}
 		if (authUser.isInternal() || authUser.isGuest()) {
 			// could be either workSpace or Workgroup member
 			SharedSpaceMember nodeMember = sharedSpaceMemberMongoRepository.findByAccountAndNode(actor.getLsUuid(),
@@ -96,8 +108,6 @@ public class SharedSpaceMemberResourceAccessControlImpl
 									SharedSpaceResourceType.MEMBER);
 				}
 			}
-		} else {
-			// TODO: Check administrator permissions (User with role Role.ADMIN)
 		}
 		return false;
 	}

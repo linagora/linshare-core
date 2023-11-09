@@ -19,6 +19,7 @@ package org.linagora.linshare.core.ldap.service.impl;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -52,9 +53,10 @@ public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.ser
 			LogEntryService logEntryService,
 			UserRepository<User> userRepository,
 			Map<NodeType, SharedSpaceMemberFragmentService> sharedSpaceBuildingService,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			DomainPermissionBusinessService domainPermissionBusinessService) {
 		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository,
-				sharedSpaceBuildingService, sanitizerInputHtmlBusinessService);
+				sharedSpaceBuildingService, sanitizerInputHtmlBusinessService, domainPermissionBusinessService);
 		this.businessService = businessService;
 	}
 

@@ -18,6 +18,7 @@ package org.linagora.linshare.core.rac.impl;
 import java.util.Objects;
 import java.util.Set;
 
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
@@ -39,10 +40,15 @@ public class SharedSpaceNodeResourceAccessControlImpl
 		implements SharedSpaceNodeResourceAccessControl {
 
 	public SharedSpaceNodeResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
-			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
-			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository,
-			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
-		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository, sharedSpaceNodeMongoRepository);
+													SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
+													SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository,
+													SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
+													DomainPermissionBusinessService domainPermissionBusinessService) {
+		super(functionalityService,
+				sharedSpaceMemberMongoRepository,
+				sharedSpacePermissionMongoRepository,
+				sharedSpaceNodeMongoRepository,
+				domainPermissionBusinessService);
 	}
 
 	@Override

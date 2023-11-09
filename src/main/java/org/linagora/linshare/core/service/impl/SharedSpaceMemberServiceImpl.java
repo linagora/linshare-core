@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
@@ -65,14 +66,17 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	protected final Map<NodeType, SharedSpaceMemberFragmentService> sharedSpaceBuildingService;
 
+	protected  final DomainPermissionBusinessService domainPermissionBusinessService;
+
 	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
-			NotifierService notifierService,
-			MailBuildingService mailBuildingService,
-			SharedSpaceMemberResourceAccessControl rac,
-			LogEntryService logEntryService,
-			UserRepository<User> userRepository,
-			Map<NodeType, SharedSpaceMemberFragmentService> sharedSpaceBuildingService,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+										NotifierService notifierService,
+										MailBuildingService mailBuildingService,
+										SharedSpaceMemberResourceAccessControl rac,
+										LogEntryService logEntryService,
+										UserRepository<User> userRepository,
+										Map<NodeType, SharedSpaceMemberFragmentService> sharedSpaceBuildingService,
+										SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+										DomainPermissionBusinessService domainPermissionBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.businessService = businessService;
 		this.logEntryService = logEntryService;
@@ -80,6 +84,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.sharedSpaceBuildingService = sharedSpaceBuildingService;
+		this.domainPermissionBusinessService = domainPermissionBusinessService;
 	}
 
 	@Override
@@ -249,13 +254,21 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		preChecks(authUser, actor);
 		Validate.notEmpty(parentUuid, "ParentUuid must be set");
 		Validate.notEmpty(accountUuid, "AccountUuid must be set");
-		if (authUser.getRole().equals(Role.SUPERADMIN)) {
+		if (authUser.getRole().equals(Role.SUPERADMIN) ||
+				(authUser.getRole().equals(Role.ADMIN) && isManager(actor, accountUuid))) {
 			return businessService.findAllNodesByParent(parentUuid);
 		} else if (authUser.getRole().equals(Role.SIMPLE)) {
 			return businessService.findAllByParentAndAccount(accountUuid, parentUuid);
 		}
 		throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				"You are not authorized to use this service !!");
+	}
+
+	private boolean isManager(Account actor, String accountUuid) {
+		SharedSpaceMember sharedSpaceMember = businessService.find(accountUuid);
+		return sharedSpaceMember == null ||
+				sharedSpaceMember.getNode() == null ||
+				domainPermissionBusinessService.isAdminForThisDomain(actor, sharedSpaceMember.getNode().getDomainUuid());
 	}
 
 	private SharedSpaceMemberFragmentService getService(NodeType type) {

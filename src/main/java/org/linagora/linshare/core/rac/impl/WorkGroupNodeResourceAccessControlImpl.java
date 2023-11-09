@@ -18,6 +18,7 @@ package org.linagora.linshare.core.rac.impl;
 import java.util.Objects;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
@@ -44,8 +45,13 @@ public class WorkGroupNodeResourceAccessControlImpl
 			FunctionalityReadOnlyService functionalityService,
 			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
 			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository,
-			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
-		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository, sharedSpaceNodeMongoRepository);
+			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
+			DomainPermissionBusinessService domainPermissionBusinessService) {
+		super(functionalityService,
+				sharedSpaceMemberMongoRepository,
+				sharedSpacePermissionMongoRepository,
+				sharedSpaceNodeMongoRepository,
+				domainPermissionBusinessService);
 	}
 
 	@Override
@@ -143,6 +149,12 @@ public class WorkGroupNodeResourceAccessControlImpl
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser, TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE);
 		}
+
+		String domainUuid = sharedSpaceNodeMongoRepository.findByUuid(entry.getParent()).getDomainUuid();
+		if (authUser.hasAdminRole() && domainPermissionBusinessService.isAdminForThisDomain(actor, domainUuid)) {
+			return true;
+		}
+
 		if (authUser.isInternal() || authUser.isGuest()) {
 			if (actor != null && authUser.equals(actor)) {
 				SharedSpaceMember foundMember = sharedSpaceMemberMongoRepository.findByAccountAndNode(actor.getLsUuid(),
